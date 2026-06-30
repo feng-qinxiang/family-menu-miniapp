@@ -229,6 +229,45 @@ class PaymentFlowTests {
         assertThat(json(status).get("vip").asBoolean()).isFalse();
     }
 
+    /**
+     * T4-1: 商户未配置时 prepay 返回 mockMode=true，不需要任何 WeChat 凭据即可通过。
+     */
+    @Test
+    void prepayReturnsMockModeWhenNotConfigured() throws Exception {
+        String token = guestLogin();
+        String outTradeNo = createOrder(token, "monthly");
+
+        MvcResult result = mockMvc.perform(post("/api/payment/orders/" + outTradeNo + "/prepay")
+                        .header("X-Auth-Token", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{}"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        JsonNode resp = json(result);
+        // 测试环境未配置 WECHAT_MCH_ID 等，期望 mockMode=true
+        assertThat(resp.get("mockMode").asBoolean()).isTrue();
+    }
+
+    /**
+     * T4-2: 无签名直接 POST /api/payment/notify → 商户未配置时返回 {code:"FAIL"} 或非 2xx。
+     */
+    @Test
+    void notifyRequiresMchConfigured() throws Exception {
+        // 发送一个没有签名的空通知体
+        MvcResult result = mockMvc.perform(post("/api/payment/notify")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"id\":\"test\",\"resource\":{\"algorithm\":\"AEAD_AES_256_GCM\",\"ciphertext\":\"invalid\",\"nonce\":\"abc\"}}"))
+                .andReturn();
+
+        // 商户未配置时 WechatPayService.verifyAndDecryptNotify 抛出异常 → controller catch → {code:FAIL}
+        // 或 HTTP 非 200
+        int status = result.getResponse().getStatus();
+        String body = result.getResponse().getContentAsString();
+        boolean failResponse = status != 200 || body.contains("FAIL");
+        assertThat(failResponse).isTrue();
+    }
+
     // 读取本人会员到期日的 epoch 秒，用于断言幂等不叠加、续费叠加。
     private long membershipExpiresEpoch(String token) throws Exception {
         MvcResult result = mockMvc.perform(get("/api/payment/membership")

@@ -1,31 +1,29 @@
-// pages/vip/orders · 我的订单（开通记录）
-// 当前无专用订单表，页面根据 getVipStatus 展示当前会员开通记录。
-const { getVipStatus } = require('../../../utils/api');
+// pages/vip/orders · 我的订单（真实订单流水）
+const { getPaymentOrders } = require('../../../utils/api');
 
 function fmtDate(value) {
   if (!value) return '';
   return String(value).slice(0, 10).replace(/-/g, '.');
 }
 
-function buildOrder(status) {
-  if (!status || !status.vip) return null;
-  const planName = status.planName || '家庭云同步年卡';
-  const amount = planName.indexOf('月') >= 0 ? '9' : '68';
-  const endDate = fmtDate(status.expireAt) || '以服务端为准';
-  const source = `${planName}|${endDate}`;
-  let hash = 0;
-  for (let i = 0; i < source.length; i++) hash = (hash * 31 + source.charCodeAt(i)) >>> 0;
+function mapOrder(raw) {
+  const amountFen = Number(raw.amountFen) || 0;
+  const yuan = Math.floor(amountFen / 100);
+  const cents = '.' + String(amountFen % 100).padStart(2, '0');
+  const planId = raw.planId || '';
+  const isPaid = (raw.status || '').toUpperCase() === 'PAID';
   return {
-    orderNo: `VIP.${hash.toString(16).toUpperCase()}`,
-    productName: planName,
+    orderId: raw.orderId,
+    orderNo: raw.outTradeNo || String(raw.orderId),
+    productName: raw.planName || (planId === 'annual' ? '家庭年卡' : planId === 'monthly' ? '家庭月卡' : '会员'),
     productTag: '全家共享菜单 · 实时同步',
-    amount,
-    cents: planName.indexOf('月') >= 0 ? '.90' : '.00',
-    startDate: '当前账号',
-    endDate,
-    status: 'live',
-    statusText: '生效中',
-    iconGold: true
+    amount: String(yuan),
+    cents,
+    startDate: fmtDate(raw.createdAt) || '已开通',
+    endDate: fmtDate(raw.expireAt) || '',
+    status: isPaid ? 'live' : 'pending',
+    statusText: isPaid ? '生效中' : '待支付',
+    iconGold: isPaid,
   };
 }
 
@@ -58,23 +56,19 @@ Page({
     this.setData({ loading: true });
     let orders = [];
     try {
-      const status = await getVipStatus();
-      const current = buildOrder(status);
-      orders = current ? [current] : [];
+      const raw = await getPaymentOrders();
+      orders = Array.isArray(raw) ? raw.map(mapOrder) : [];
     } catch (err) {
       console.error('orders load failed', err);
       orders = [];
     }
-
-    // 汇总累计支付
-    const total = orders.reduce((sum, o) => sum + (parseInt(o.amount, 10) || 0), 0);
-    this.setData({
-      orders,
-      totalCount: orders.length,
-      totalSpent: String(total),
-      totalCents: '.00',
-      loading: false
-    });
+    const totalFen = orders.reduce((sum, o) => {
+      const fen = (parseInt(o.amount, 10) || 0) * 100 + parseInt((o.cents || '.00').slice(1), 10);
+      return sum + fen;
+    }, 0);
+    const totalYuan = Math.floor(totalFen / 100);
+    const totalCents = '.' + String(totalFen % 100).padStart(2, '0');
+    this.setData({ orders, totalCount: orders.length, totalSpent: String(totalYuan), totalCents, loading: false });
   },
 
   // 续费 → 跳转 vip/upgrade

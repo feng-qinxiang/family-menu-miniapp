@@ -1,12 +1,13 @@
-// pages/payment/success/index · 开通成功页（二级页）
+// pages/payment/success · 开通成功页
+// orderId 由 checkout 传入，查真实订单流水展示
 const api = require('../../../utils/api');
 
 Page({
   data: {
     loading: true,
-    toastVisible: false,
-    toastText: '',
-    planName: '家庭云同步 · 年卡',
+    planName: '家庭云同步年卡',
+    payAmount: '',
+    orderId: '',
     perks: [
       '最多 8 位家人共享',
       '无限收藏菜谱',
@@ -14,60 +15,55 @@ Page({
       '智能口味推荐',
     ],
     order: {
-      orderNo: 'FM20260606093341',
-      payAmount: '¥66.00',
-      expireAt: '2027.06.06',
+      orderNo: '',
+      payAmount: '',
+      expireAt: '',
     },
+    toastVisible: false,
+    toastText: '',
   },
 
-  onLoad(query) {
-    // 接收上游传入的开通参数，缺省走兜底文案
-    const order = Object.assign({}, this.data.order);
-    if (query && query.orderNo) order.orderNo = query.orderNo;
-    if (query && query.amount) order.payAmount = `¥${query.amount}`;
-    if (query && query.planName) {
-      this.setData({ planName: decodeURIComponent(query.planName) });
-    }
-    this.setData({ order });
-    this.activateVip(query && query.planName);
-  },
+  async onLoad(query) {
+    const orderId = (query && query.orderId) || '';
+    const amount  = (query && query.amount)  || '';
+    const planName = (query && query.planName) ? decodeURIComponent(query.planName) : this.data.planName;
+    this.setData({ orderId, planName });
 
-  // 激活 VIP，写入会员状态；失败不阻断成功页展示
-  activateVip(planName) {
-    api
-      .activateVip(planName || this.data.planName)
-      .then((res) => {
-        const data = res || {};
-        const next = { loading: false };
-        if (Array.isArray(data.benefits) && data.benefits.length) {
-          next.perks = data.benefits;
-        }
-        if (data.planName) next.planName = data.planName;
-        if (data.expireAt) {
-          next.order = Object.assign({}, this.data.order, { expireAt: data.expireAt });
-        }
-        this.setData(next);
-      })
-      .catch(() => {
-        // 容错：接口异常仍展示成功页的兜底内容
-        this.setData({ loading: false });
+    // 尝试从真实订单列表找到对应订单
+    try {
+      const orders = await api.getPaymentOrders();
+      const matched = Array.isArray(orders) && orderId
+        ? orders.find((o) => String(o.orderId) === String(orderId))
+        : null;
+      const order = {
+        orderNo: (matched && matched.outTradeNo) || orderId || '--',
+        payAmount: amount ? `¥${Number(amount).toFixed(2)}` : (matched && matched.amountFen ? `¥${(matched.amountFen / 100).toFixed(2)}` : ''),
+        expireAt: (matched && matched.expireAt) ? String(matched.expireAt).slice(0, 10).replace(/-/g, '.') : '',
+      };
+      this.setData({ order, loading: false });
+      // 刷新全局 VIP 状态
+      const app = getApp();
+      if (app && typeof app.refreshVipStatus === 'function') app.refreshVipStatus();
+    } catch (err) {
+      console.error('[success] load order failed', err);
+      this.setData({
+        order: { orderNo: orderId || '--', payAmount: amount ? `¥${amount}` : '', expireAt: '' },
+        loading: false,
       });
+    }
   },
 
-  // 开始使用 → 回到首页 tab
   onStart() {
     wx.switchTab({
       url: '/pages/home/index',
-      fail: () => {
-        wx.navigateBack({ delta: 1 });
-      },
+      fail: () => wx.navigateBack({ delta: 1 }),
     });
   },
 
   onViewOrder() {
     wx.navigateTo({
       url: '/pages/vip/orders/index',
-      fail: () => this.setData({ toastVisible: true, toastText: '已开通记录可在会员页查看' })
+      fail: () => this.setData({ toastVisible: true, toastText: '请在"我的→会员"查看记录' }),
     });
   },
 

@@ -46,7 +46,7 @@ public class HomeController {
 
     @GetMapping("/home/dashboard")
     public HomeDashboard dashboard(@CurrentUser(orGuest = true) AuthUser user) {
-        return store.dashboard(user.userId());
+        return store.dashboard(user.userId(), user.familyId());
     }
 
     @GetMapping("/recipes")

@@ -3,7 +3,7 @@ const { guestLogin, getVipStatus } = require('./utils/api');
 App({
   globalData: {
     appName: '点菜小程序-家庭版',
-    apiBaseUrl: 'http://192.168.1.61:9088',
+    apiBaseUrl: 'http://localhost:9088',
     isVip: false,
     vipPlanName: '免费版'
   },

@@ -17,6 +17,17 @@ spring:
 wechat:
   app-id: ${WECHAT_APP_ID:}
   app-secret: ${WECHAT_APP_SECRET:}
+  pay:
+    # 微信支付 v3 JSAPI 商户配置。任一关键项留空 → prepay 接口返回 mockMode:true 优雅降级，绝不崩溃。
+    mch-id: ${WECHAT_MCH_ID:}                    # 商户号
+    api-v3-key: ${WECHAT_PAY_API_V3_KEY:}        # APIv3 密钥（32 位，用于回调 AES-256-GCM 解密）
+    cert-serial-no: ${WECHAT_PAY_CERT_SERIAL:}   # 商户证书序列号
+    private-key-path: ${WECHAT_PAY_KEY_PATH:}    # 商户私钥 PEM 文件路径（apiclient_key.pem）
+    notify-url: ${WECHAT_PAY_NOTIFY_URL:}        # 回调地址（公网 https）
+
+sms:
+  # 短信网关供应商：noop=未接入（落库 + 日志告警），后续可接 aliyun/tencent。
+  provider: ${SMS_PROVIDER:noop}
 
 auth:
   # 安全默认关闭：开发态固定验证码(246810)与验证码明文回显仅供联调，

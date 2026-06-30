@@ -1,5 +1,7 @@
 package com.familymenu.daily.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.familymenu.daily.dto.ApiModels.AddFamilyMemberRequest;
 import com.familymenu.daily.dto.ApiModels.CreateFamilyRequest;
 import com.familymenu.daily.dto.ApiModels.FamilyJoinPreview;
@@ -18,10 +20,14 @@ import java.util.UUID;
 @Service
 public class FamilyService {
 
-    private final JdbcTemplate jdbcTemplate;
+    private static final TypeReference<List<String>> STRING_LIST = new TypeReference<>() {};
 
-    public FamilyService(JdbcTemplate jdbcTemplate) {
+    private final JdbcTemplate jdbcTemplate;
+    private final ObjectMapper objectMapper;
+
+    public FamilyService(JdbcTemplate jdbcTemplate, ObjectMapper objectMapper) {
         this.jdbcTemplate = jdbcTemplate;
+        this.objectMapper = objectMapper;
     }
 
     public FamilyProfile getProfile(long familyId) {
@@ -105,6 +111,8 @@ public class FamilyService {
         String nickname = request == null || request.nickname() == null || request.nickname().isBlank() ? "新成员" : request.nickname().trim();
         String avatarUrl = request == null || request.avatarUrl() == null ? "" : request.avatarUrl().trim();
         String role = normalizeMemberRole(request == null ? null : request.role());
+        List<String> avoidTags = request == null || request.avoidTags() == null ? List.of() : request.avoidTags();
+        String avoidTagsJson = writeStringList(avoidTags);
         String openid = "invite-" + UUID.randomUUID().toString().replace("-", "").substring(0, 24);
         jdbcTemplate.update(
                 "INSERT INTO user_account(openid, nickname, avatar_url) VALUES (?, ?, ?)",
@@ -118,15 +126,16 @@ public class FamilyService {
         }
         jdbcTemplate.update(
                 """
-                INSERT INTO family_member(family_id, user_id, member_role, member_status)
-                VALUES (?, ?, ?, 'ACTIVE')
-                ON DUPLICATE KEY UPDATE member_role = VALUES(member_role), member_status = 'ACTIVE'
+                INSERT INTO family_member(family_id, user_id, member_role, member_status, avoid_tags_json)
+                VALUES (?, ?, ?, 'ACTIVE', ?)
+                ON DUPLICATE KEY UPDATE member_role = VALUES(member_role), member_status = 'ACTIVE', avoid_tags_json = VALUES(avoid_tags_json)
                 """,
                 familyId,
                 userId,
-                role
+                role,
+                avoidTagsJson
         );
-        return new FamilyMemberItem(userId, nickname, avatarUrl, role, "ACTIVE");
+        return new FamilyMemberItem(userId, nickname, avatarUrl, role, "ACTIVE", avoidTags);
     }
 
     /**
@@ -224,7 +233,7 @@ public class FamilyService {
 
     private List<FamilyMemberItem> loadMembers(long familyId) {
         return jdbcTemplate.query("""
-                        SELECT u.id, u.nickname, u.avatar_url, m.member_role, m.member_status
+                        SELECT u.id, u.nickname, u.avatar_url, m.member_role, m.member_status, m.avoid_tags_json
                         FROM family_member m
                         JOIN user_account u ON u.id = m.user_id
                         WHERE m.family_id = ? AND m.member_status = 'ACTIVE'
@@ -235,9 +244,34 @@ public class FamilyService {
                         rs.getString("nickname"),
                         rs.getString("avatar_url"),
                         rs.getString("member_role"),
-                        rs.getString("member_status")
+                        rs.getString("member_status"),
+                        readStringList(rs.getString("avoid_tags_json"))
                 ),
                 familyId
         );
+    }
+
+    /** 读取忌口标签 JSON 数组，容错返回空列表。 */
+    private List<String> readStringList(String json) {
+        if (json == null || json.isBlank()) {
+            return List.of();
+        }
+        try {
+            return objectMapper.readValue(json, STRING_LIST);
+        } catch (Exception ex) {
+            return List.of();
+        }
+    }
+
+    /** 序列化忌口标签为 JSON 字符串；空列表写 null。 */
+    private String writeStringList(List<String> tags) {
+        if (tags == null || tags.isEmpty()) {
+            return null;
+        }
+        try {
+            return objectMapper.writeValueAsString(tags);
+        } catch (Exception ex) {
+            return null;
+        }
     }
 }

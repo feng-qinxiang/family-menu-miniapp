@@ -1,4 +1,4 @@
-const { getFamilyProfile, addFamilyMember, removeFamilyMember } = require('../../../utils/api');
+const { getFamilyProfile, getFamilyInviteCode, removeFamilyMember } = require('../../../utils/api');
 
 // 身份 → 展示文案 / badge 样式
 const ROLE_MAP = {
@@ -44,9 +44,20 @@ Page({
 
   loadProfile() {
     getFamilyProfile()
-      .then((profile) => this.applyProfile(profile))
+      .then((profile) => {
+        this.applyProfile(profile);
+        // 若 profile 未带邀请码，主动拉取一次
+        if (!profile || !profile.inviteCode) {
+          return getFamilyInviteCode()
+            .then((info) => {
+              if (info && info.inviteCode) {
+                this.setData({ inviteCode: info.inviteCode });
+              }
+            })
+            .catch(() => {}); // 邀请码拉取失败不影响主流程
+        }
+      })
       .catch(() => {
-        // 容错：拉取失败也给出空态而非白屏
         this.setData({ members: [], memberCount: 0, loaded: true });
         this.showToast('家庭信息加载失败');
       });
@@ -135,30 +146,12 @@ Page({
       });
   },
 
-  // 邀请新成员：调用真实 addFamilyMember 添加占位成员
+  // 邀请新成员：跳转到邀请码页面，由对方扫码/输码加入
   onInvite() {
-    const seq = this.data.memberCount + 1;
-    addFamilyMember({ nickname: '家人' + seq, role: 'member' })
-      .then((member) => {
-        const role = (member.role || 'member').toLowerCase();
-        const roleInfo = ROLE_MAP[role] || ROLE_MAP.member;
-        const nickname = member.nickname || ('家人' + seq);
-        const idx = this.data.members.length;
-        const next = this.data.members.concat([{
-          userId: member.userId,
-          nickname,
-          initial: nickname.slice(0, 1),
-          roleLabel: roleInfo.label,
-          roleBadge: roleInfo.badge,
-          tone: AVT_TONES[idx % AVT_TONES.length],
-          sub: '刚刚加入',
-          isSelf: false,
-          removable: true
-        }]);
-        this.setData({ members: next, memberCount: next.length });
-        this.showToast('已添加新成员');
-      })
-      .catch(() => this.showToast('邀请失败，请稍后再试'));
+    wx.navigateTo({
+      url: '/pages/family/invite/index',
+      fail: () => this.showToast('页面跳转失败，请重试'),
+    });
   },
 
   showToast(text) {

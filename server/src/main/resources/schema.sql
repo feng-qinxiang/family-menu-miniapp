@@ -297,3 +297,7 @@ ALTER TABLE user_account ADD COLUMN current_family_id BIGINT NULL;
 -- 新库无此列时 continue-on-error 安全跳过；数据已不再读取，删除不影响业务。
 ALTER TABLE user_account DROP COLUMN vip_status;
 ALTER TABLE user_account DROP COLUMN plan_name;
+
+-- T3: 成员忌口标签（JSON 数组），创建/编辑成员可写，菜单推荐与今日菜单过滤读取。
+-- 不使用 IF NOT EXISTS（部分 MySQL 版本不支持），依赖 continue-on-error 兜底旧部署列已存在的情况。
+ALTER TABLE family_member ADD COLUMN avoid_tags_json TEXT DEFAULT NULL COMMENT '忌口标签JSON数组';

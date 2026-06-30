@@ -38,6 +38,7 @@ public class AuthService {
     private final JdbcTemplate jdbcTemplate;
     private final RestClient restClient;
     private final com.familymenu.daily.payment.MembershipService membershipService;
+    private final SmsGateway smsGateway;
     private final String appId;
     private final String appSecret;
     private final boolean devOtpEnabled;
@@ -46,11 +47,13 @@ public class AuthService {
 
     public AuthService(JdbcTemplate jdbcTemplate,
                        com.familymenu.daily.payment.MembershipService membershipService,
+                       SmsGateway smsGateway,
                        @Value("${wechat.app-id:}") String appId,
                        @Value("${wechat.app-secret:}") String appSecret,
                        @Value("${auth.dev-otp-enabled:true}") boolean devOtpEnabled) {
         this.jdbcTemplate = jdbcTemplate;
         this.membershipService = membershipService;
+        this.smsGateway = smsGateway;
         this.restClient = RestClient.create();
         this.appId = appId == null ? "" : appId.trim();
         this.appSecret = appSecret == null ? "" : appSecret.trim();
@@ -96,6 +99,8 @@ public class AuthService {
                 buildOtpHash(phone, code),
                 LocalDateTime.now().plusMinutes(5)
         );
+        // 调用短信网关 SPI，未配置时 NoopSmsGateway 记录 WARN 日志
+        smsGateway.send(phone, code);
         return new OtpChallenge(phone, 300, devOtpEnabled ? "DEV" : "SMS", devOtpEnabled ? code : "");
     }
 

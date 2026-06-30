@@ -457,6 +457,33 @@ function getPantryMatch() {
   return request('/api/pantry/match', { fallback: () => [] });
 }
 
+// ===== Payment =====
+
+function createPaymentOrder(planId) {
+  return requestStrict('/api/payment/orders', {
+    method: 'POST',
+    data: { planId }
+  });
+}
+
+function prepayOrder(orderId) {
+  return requestStrict(`/api/payment/orders/${encodeURIComponent(orderId)}/prepay`, {
+    method: 'POST',
+    data: {}
+  });
+}
+
+function mockPayOrder(orderId) {
+  return requestStrict('/api/payment/mock-pay', {
+    method: 'POST',
+    data: { orderId }
+  });
+}
+
+function getPaymentOrders() {
+  return request('/api/payment/orders', { fallback: () => [] });
+}
+
 function submitFeedback(payload) {
   return requestStrict('/api/feedback', {
     method: 'POST',
@@ -479,6 +506,10 @@ function markNotificationsRead(ids) {
 
 module.exports = {
   getAuthToken,
+  createPaymentOrder,
+  prepayOrder,
+  mockPayOrder,
+  getPaymentOrders,
   addCommunityComment,
   addCookHistory,
   addPantryItem,

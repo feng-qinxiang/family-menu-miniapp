@@ -151,7 +151,8 @@ public final class ApiModels {
             String nickname,
             String avatarUrl,
             String role,
-            String status
+            String status,
+            List<String> avoidTags
     ) {
     }
 
@@ -166,7 +167,8 @@ public final class ApiModels {
     public record AddFamilyMemberRequest(
             @NotBlank String nickname,
             String avatarUrl,
-            String role
+            String role,
+            List<String> avoidTags
     ) {
     }
 
@@ -415,6 +417,21 @@ public final class ApiModels {
 
     public record ShareScopeRequest(
             @NotBlank String shareScope
+    ) {
+    }
+
+    /**
+     * 预下单响应：mockMode=true 时商户未配置，前端降级走 mock-pay；
+     * mockMode=false 时包含 wx.requestPayment 所需全部参数。
+     */
+    public record PrepayResponse(
+            boolean mockMode,
+            String appId,
+            String timeStamp,
+            String nonceStr,
+            String packageValue,   // "prepay_id=xxx"，前端映射到 package 字段
+            String signType,
+            String paySign
     ) {
     }
 

@@ -213,7 +213,37 @@ Page({
   },
 
   writeReview() {
-    wx.showToast({ title: '评价功能开发中', icon: 'none' });
+    if (!this.data.recipe) return;
+    const recipe = this.data.recipe;
+    wx.showModal({
+      title: '写评价',
+      editable: true,
+      placeholderText: '我也做了，写两句给家人看看…',
+      success: async (res) => {
+        if (!res.confirm) return;
+        const content = (res.content || '').trim();
+        if (!content) {
+          wx.showToast({ title: '说点什么吧', icon: 'none' });
+          return;
+        }
+        wx.showLoading({ title: '提交中', mask: true });
+        try {
+          await addCookHistory({ recipeId: recipe.id, score: 5, remark: content });
+          wx.hideLoading();
+          // 乐观更新本地评价列表
+          const reviews = (this.data.recipe.reviews || []).slice();
+          reviews.unshift({ author: '我', when: '刚刚', score: 5, content });
+          this.setData({
+            'recipe.reviews': reviews,
+            'recipe.cookCount': (this.data.recipe.cookCount || 0) + 1
+          });
+          wx.showToast({ title: '已发布', icon: 'success' });
+        } catch (err) {
+          wx.hideLoading();
+          wx.showToast({ title: '提交失败', icon: 'none' });
+        }
+      }
+    });
   },
 
   goBack() {

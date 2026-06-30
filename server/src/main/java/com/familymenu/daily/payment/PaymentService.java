@@ -4,6 +4,11 @@ import com.familymenu.daily.dto.ApiModels.CreateOrderResponse;
 import com.familymenu.daily.dto.ApiModels.MembershipView;
 import com.familymenu.daily.dto.ApiModels.OrderView;
 import com.familymenu.daily.dto.ApiModels.PayResult;
+import com.familymenu.daily.dto.ApiModels.PrepayResponse;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -29,12 +34,19 @@ import java.util.concurrent.ThreadLocalRandom;
 @Service
 public class PaymentService {
 
+    private static final Logger log = LoggerFactory.getLogger(PaymentService.class);
+
     private final JdbcTemplate jdbcTemplate;
     private final MembershipService membershipService;
+    private final WechatPayService wechatPayService;
+    private final ObjectMapper objectMapper;
 
-    public PaymentService(JdbcTemplate jdbcTemplate, MembershipService membershipService) {
+    public PaymentService(JdbcTemplate jdbcTemplate, MembershipService membershipService,
+                          WechatPayService wechatPayService, ObjectMapper objectMapper) {
         this.jdbcTemplate = jdbcTemplate;
         this.membershipService = membershipService;
+        this.wechatPayService = wechatPayService;
+        this.objectMapper = objectMapper;
     }
 
     /**
@@ -53,6 +65,107 @@ public class PaymentService {
                 outTradeNo, payerUserId, familyId, plan.code(), plan.amountFen(), plan.durationDays()
         );
         return new CreateOrderResponse(outTradeNo, plan.code(), plan.amountFen(), plan.durationDays(), "PENDING");
+    }
+
+    /**
+     * 微信支付预下单：查询订单，获取付款人 openid，调用 WechatPayService 生成预支付参数。
+     * 商户未配置时返回 mockMode=true 降级响应。
+     */
+    public PrepayResponse prepay(long requesterUserId, String outTradeNo) {
+        // 检查订单归属
+        Map<String, Object> order = lockOrder(outTradeNo);
+        long payerUserId = ((Number) order.get("payer_user_id")).longValue();
+        if (payerUserId != requesterUserId) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "无权操作他人订单");
+        }
+        String status = (String) order.get("status");
+        if ("PAID".equals(status)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "订单已支付，无需重复预下单");
+        }
+        if (!"PENDING".equals(status)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "订单状态不可预下单: " + status);
+        }
+
+        if (!wechatPayService.isConfigured()) {
+            log.warn("[Payment] WechatPay not configured, prepay returns mockMode for outTradeNo={}", outTradeNo);
+            return new PrepayResponse(true, "", "", "", "", "RSA", "");
+        }
+
+        // 获取付款人 openid
+        String openid = jdbcTemplate.query(
+                "SELECT openid FROM user_account WHERE id = ?",
+                rs -> rs.next() ? rs.getString("openid") : null,
+                payerUserId
+        );
+        if (openid == null || openid.startsWith("guest-") || openid.startsWith("phone-")
+                || openid.startsWith("invite-")) {
+            log.warn("[Payment] user {} has no real WeChat openid, prepay mockMode", payerUserId);
+            return new PrepayResponse(true, "", "", "", "", "RSA", "");
+        }
+
+        String planCode = (String) order.get("plan_code");
+        long amountFen = ((Number) order.get("amount_fen")).longValue();
+        String description = PlanCatalog.displayName(planCode);
+
+        String prepayId = wechatPayService.createPrepayOrder(outTradeNo, openid, amountFen, description);
+        if (prepayId == null) {
+            log.warn("[Payment] prepayOrder returned null for outTradeNo={}, fallback mockMode", outTradeNo);
+            return new PrepayResponse(true, "", "", "", "", "RSA", "");
+        }
+
+        Map<String, String> jsParams = wechatPayService.buildJsapiPayParams(prepayId);
+        return new PrepayResponse(
+                false,
+                jsParams.get("appId"),
+                jsParams.get("timeStamp"),
+                jsParams.get("nonceStr"),
+                jsParams.get("package"),
+                "RSA",
+                jsParams.get("paySign")
+        );
+    }
+
+    /**
+     * 处理微信支付回调：验签 + 解密 → 标记订单 PAID → 开通会员（幂等）。
+     * 由 WechatPayService 完成验签解密，仅在成功后写库。
+     */
+    @Transactional
+    public void handleWechatNotify(Map<String, String> headers, String body) {
+        String decrypted = wechatPayService.verifyAndDecryptNotify(headers, body);
+        try {
+            JsonNode json = objectMapper.readTree(decrypted);
+            String outTradeNo = json.get("out_trade_no").asText();
+            String tradeState = json.get("trade_state").asText();
+            if (!"SUCCESS".equals(tradeState)) {
+                log.info("[WechatNotify] outTradeNo={} tradeState={}, skipping", outTradeNo, tradeState);
+                return;
+            }
+            // 无需校验 requesterUserId，由微信通知驱动，按订单 payer_user_id 开通
+            Map<String, Object> order = lockOrder(outTradeNo);
+            String currentStatus = (String) order.get("status");
+            if ("PAID".equals(currentStatus)) {
+                log.info("[WechatNotify] outTradeNo={} already PAID, idempotent skip", outTradeNo);
+                return;
+            }
+            if (!"PENDING".equals(currentStatus)) {
+                log.warn("[WechatNotify] outTradeNo={} status={}, skip", outTradeNo, currentStatus);
+                return;
+            }
+            long payerUserId = ((Number) order.get("payer_user_id")).longValue();
+            String planCode = (String) order.get("plan_code");
+            int durationDays = ((Number) order.get("duration_days")).intValue();
+
+            jdbcTemplate.update(
+                    "UPDATE payment_order SET status = 'PAID', payment_method = 'WECHAT', paid_at = NOW() WHERE out_trade_no = ?",
+                    outTradeNo
+            );
+            membershipService.grant(payerUserId, planCode, durationDays);
+            log.info("[WechatNotify] outTradeNo={} PAID, membership granted to user {}", outTradeNo, payerUserId);
+        } catch (ResponseStatusException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new RuntimeException("handleWechatNotify parse failed: " + ex.getMessage(), ex);
+        }
     }
 
     // 商户订单号：时间戳 + 随机串，全局唯一由表上 uk_order_out_trade_no 兜底。
@@ -97,7 +210,7 @@ public class PaymentService {
     private Map<String, Object> lockOrder(String outTradeNo) {
         try {
             return jdbcTemplate.queryForMap(
-                    "SELECT payer_user_id, plan_code, duration_days, status FROM payment_order WHERE out_trade_no = ? FOR UPDATE",
+                    "SELECT payer_user_id, plan_code, amount_fen, duration_days, status FROM payment_order WHERE out_trade_no = ? FOR UPDATE",
                     outTradeNo
             );
         } catch (EmptyResultDataAccessException ex) {

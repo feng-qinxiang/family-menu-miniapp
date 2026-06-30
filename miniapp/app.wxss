@@ -115,17 +115,26 @@ page {
 .safe-top { padding-top: env(safe-area-inset-top); }
 
 /* ============ 镂空撞色标题（Hero 通用）============ */
+/* iOS：text-stroke 描出镂空白边；Android：不支持 stroke 时由 text-shadow 兜底，
+   text-shadow 依字形渲染（与 transparent 填充无关），故白底镂空+安卓可读两不误。 */
 .title-stroke {
   color: transparent;
   -webkit-text-stroke: 3rpx #fff;
+  text-shadow: 0 0 1rpx #fff, 2rpx 0 1rpx #fff, -2rpx 0 1rpx #fff, 0 2rpx 1rpx #fff, 0 -2rpx 1rpx #fff, 2rpx 2rpx 1rpx #fff, -2rpx -2rpx 1rpx #fff;
   font-family: var(--sans);
   font-weight: 900;
 }
 .title-stroke .pop {
   color: var(--pop);
   -webkit-text-stroke: 0;
+  text-shadow: none;
 }
-/* Android 兜底：无 text-stroke 时用多向白描边模拟 */
+/* 浅底（paper）镂空标题：墨色描边 + 墨色 text-shadow 兜底，避免白影在浅底看不见 */
+.title-stroke--ink {
+  -webkit-text-stroke-color: var(--ink);
+  text-shadow: 0 0 1rpx var(--ink), 2rpx 0 1rpx var(--ink), -2rpx 0 1rpx var(--ink), 0 2rpx 1rpx var(--ink), 0 -2rpx 1rpx var(--ink), 2rpx 2rpx 1rpx var(--ink), -2rpx -2rpx 1rpx var(--ink);
+}
+/* Android 兜底（旧）：纯实心白字 + 多向白描边，仍保留以兼容历史用法 */
 .title-shadow {
   color: #fff;
   text-shadow: 0 0 1rpx #fff, 2rpx 0 1rpx #fff, -2rpx 0 1rpx #fff, 0 2rpx 1rpx #fff, 0 -2rpx 1rpx #fff;

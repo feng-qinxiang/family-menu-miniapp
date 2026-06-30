@@ -38,15 +38,19 @@ Page({
 
   onMoreTap(e) {
     const key = e.currentTarget.dataset.key;
-    const tipMap = {
-      update: '已是最新版本',
-      agreement: '用户协议（演示）',
-      privacy: '隐私政策（演示）',
-      rate: '感谢支持，去应用市场夸夸我们吧',
-    };
-    wx.showToast({
-      title: tipMap[key] || '功能演示中',
-      icon: 'none',
-    });
+    if (key === 'agreement') {
+      wx.navigateTo({ url: '/pages/legal/terms/index' });
+      return;
+    }
+    if (key === 'privacy') {
+      wx.navigateTo({ url: '/pages/legal/privacy/index' });
+      return;
+    }
+    if (key === 'rate') {
+      wx.showToast({ title: '感谢支持！', icon: 'none' });
+      return;
+    }
+    // update
+    wx.showToast({ title: '已是最新版本', icon: 'none' });
   },
 });

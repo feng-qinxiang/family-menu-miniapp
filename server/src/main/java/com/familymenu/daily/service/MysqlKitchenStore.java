@@ -84,7 +84,7 @@ public class MysqlKitchenStore {
         seedCommunityExtrasIfNeeded();
     }
 
-    public HomeDashboard dashboard(long userId) {
+    public HomeDashboard dashboard(long userId, long familyId) {
         List<RecipeCard> all = listRecipes("all");
         List<RecipeCard> owned = new ArrayList<>();
         List<RecipeCard> community = new ArrayList<>();
@@ -97,7 +97,16 @@ public class MysqlKitchenStore {
                 default -> { }
             }
         }
+        // 忌口过滤：收集当前家庭所有 ACTIVE 成员的 avoid_tags，推荐时排除含对应标签的菜谱
+        java.util.Set<String> familyAvoidTags = loadFamilyAvoidTags(familyId);
         List<RecipeCard> recommended = new ArrayList<>(all);
+        if (!familyAvoidTags.isEmpty()) {
+            recommended.removeIf(card -> {
+                if (card.tasteTags() == null) return false;
+                return card.tasteTags().stream().anyMatch(tag ->
+                        familyAvoidTags.contains(tag == null ? "" : tag.trim().toLowerCase(java.util.Locale.ROOT)));
+            });
+        }
         recommended.sort(Comparator.comparing(RecipeCard::rating, Comparator.nullsLast(Comparator.reverseOrder())));
         return new HomeDashboard(
                 "今天做什么",
@@ -109,6 +118,38 @@ public class MysqlKitchenStore {
                 communityPosts(userId).stream().limit(4).toList(),
                 vipStatus(userId)
         );
+    }
+
+    /** 查询家庭中所有 ACTIVE 成员的忌口标签合集（小写），用于推荐过滤。 */
+    private java.util.Set<String> loadFamilyAvoidTags(long familyId) {
+        if (familyId <= 0) {
+            return java.util.Set.of();
+        }
+        java.util.Set<String> result = new java.util.HashSet<>();
+        try {
+            jdbcTemplate.query("""
+                    SELECT avoid_tags_json FROM family_member
+                    WHERE family_id = ? AND member_status = 'ACTIVE' AND avoid_tags_json IS NOT NULL
+                    """,
+                    rs -> {
+                        String json = rs.getString("avoid_tags_json");
+                        if (json != null && !json.isBlank()) {
+                            try {
+                                List<String> tags = objectMapper.readValue(json, new com.fasterxml.jackson.core.type.TypeReference<List<String>>() {});
+                                for (String t : tags) {
+                                    if (t != null && !t.isBlank()) {
+                                        result.add(t.trim().toLowerCase(java.util.Locale.ROOT));
+                                    }
+                                }
+                            } catch (Exception ignored) { }
+                        }
+                    },
+                    familyId
+            );
+        } catch (Exception ex) {
+            // avoid_tags_json 列可能尚未存在（旧库未跑 ALTER），降级为空集合
+        }
+        return result;
     }
 
     public List<RecipeCard> listRecipes(String source) {
