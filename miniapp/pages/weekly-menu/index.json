@@ -1,0 +1,7 @@
+{
+  "navigationStyle": "custom",
+  "navigationBarTitleText": "周菜单",
+  "usingComponents": {
+    "nav-bar": "/components/nav-bar/index"
+  }
+}

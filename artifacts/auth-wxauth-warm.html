@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>家庭点菜 · 微信授权</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-font-smoothing:antialiased; }
+  :root{
+    --paper:#fbf8f3; --paper-2:#f0ebe2;
+    --ink:#2c241b; --ink-deep:#3a2e23;
+    --mut:#9a8e7d; --mut-2:#b3a795; --mut-strong:#7a6e5d;
+    --gold:#f4d9a8; --gold-deep:#b08949;
+    --pop:#e8472a; --pop-soft:#fdece6;
+    --wx:#07c160;
+    --serif:"Georgia","Times New Roman",serif;
+  }
+  body {
+    display:flex; align-items:center; justify-content:center;
+    min-height:100vh; background:#d9d2c7;
+    font-family:-apple-system,"SF Pro Text","Helvetica Neue",Helvetica,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  }
+  .phone {
+    position:relative; width:390px; height:844px;
+    background:var(--paper); border-radius:46px;
+    box-shadow:0 30px 70px rgba(60,45,30,.4), 0 0 0 11px #1b1714, 0 0 0 12px #2c2520;
+    overflow:hidden;
+  }
+  .status {
+    position:absolute; top:0; left:0; right:0; height:50px; z-index:60;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 30px 0 34px; color:#fff; font-size:15px; font-weight:600; pointer-events:none;
+  }
+  .status .right { display:flex; align-items:center; gap:7px; }
+  .notch { position:absolute; top:11px; left:50%; transform:translateX(-50%); width:118px; height:33px; background:#1b1714; border-radius:20px; z-index:61; }
+  .tapscale { transition:transform .12s ease; }
+  .tapscale:active { transform:scale(.97); }
+  .home-ind { position:absolute; bottom:9px; left:50%; transform:translateX(-50%); width:134px; height:5px; border-radius:3px; background:#fff; opacity:.85; z-index:80; }
+
+  /* ===== 背景:登录页(虚化变暗) ===== */
+  .bg { position:absolute; inset:0; z-index:1; filter:saturate(.9); }
+  .bg .hero { position:absolute; inset:0 0 auto 0; height:452px; background:url('img/chicken-congee.jpg') center/cover no-repeat; }
+  .bg .hero::after { content:""; position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(20,14,8,.5) 0%, rgba(20,14,8,0) 28%, rgba(20,14,8,.18) 52%, rgba(20,14,8,.9) 100%); }
+  .bg .brandbar { position:absolute; top:62px; left:24px; z-index:3; display:flex; align-items:center; gap:10px; }
+  .bg .brandbar .logo { width:40px; height:40px; border-radius:13px; background:var(--pop); display:flex; align-items:center; justify-content:center; box-shadow:0 8px 18px rgba(232,71,42,.4); }
+  .bg .brandbar .en { font-family:var(--serif); font-style:italic; font-size:11px; letter-spacing:1.5px; opacity:.85; color:#fff; }
+  .bg .brandbar .cn { font-size:15px; font-weight:800; letter-spacing:-.3px; margin-top:1px; color:#fff; }
+  .bg .hero-body { position:absolute; left:24px; right:24px; top:300px; z-index:3; color:#fff; }
+  .bg .tag { display:inline-block; font-family:var(--serif); font-style:italic; font-size:12px; letter-spacing:1.5px; font-weight:700; color:#fff; background:var(--pop); padding:6px 14px; border-radius:4px; }
+  .bg .hero-title { font-size:54px; line-height:.9; font-weight:900; letter-spacing:-3px; margin:16px 0 0;
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    color:transparent; -webkit-text-stroke:1.6px #fff; text-stroke:1.6px #fff; }
+  .bg .sheet { position:absolute; left:0; right:0; top:426px; bottom:0; background:var(--paper); border-radius:28px 28px 0 0; padding:26px 24px; }
+  .bg .btn-wx { width:100%; background:var(--wx); color:#fff; border-radius:18px; padding:17px; font-size:16.5px; font-weight:800; text-align:center; }
+
+  /* ===== 遮罩 ===== */
+  .mask { position:absolute; inset:0; z-index:30; background:rgba(28,20,12,.5); backdrop-filter:blur(2px); }
+
+  /* ===== 授权卡(底部弹出) ===== */
+  .auth { position:absolute; left:0; right:0; bottom:0; z-index:40;
+    background:#fff; border-radius:26px 26px 0 0; padding:24px 24px 30px;
+    box-shadow:0 -8px 40px rgba(40,25,12,.28); }
+  .auth .grab { width:38px; height:5px; border-radius:3px; background:#e6ddcf; margin:0 auto 18px; }
+
+  .auth-top { display:flex; align-items:center; gap:13px; padding-bottom:18px; margin-bottom:20px; border-bottom:1px solid #f0eadf; }
+  .auth-top .alogo { width:52px; height:52px; border-radius:16px; background:var(--pop); flex:none; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 18px rgba(232,71,42,.32); }
+  .auth-top .at-tx { flex:1; min-width:0; }
+  .auth-top .at-tx .eyebrow { font-family:var(--serif); font-style:italic; font-size:11px; letter-spacing:1px; color:var(--gold-deep); font-weight:700; }
+  .auth-top .at-tx h1 { font-size:18px; font-weight:900; color:var(--ink); letter-spacing:-.4px; margin-top:2px;
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; }
+  .auth-top .wxbadge { display:flex; align-items:center; gap:5px; background:#eafaf0; padding:6px 11px; border-radius:30px; flex:none; }
+  .auth-top .wxbadge span { font-size:11px; font-weight:800; color:var(--wx); }
+
+  .auth-desc { font-size:13.5px; color:var(--mut-strong); line-height:1.55; margin-bottom:22px; }
+  .auth-desc b { color:var(--ink); font-weight:800; }
+
+  .alabel { font-size:11px; letter-spacing:1px; font-weight:800; text-transform:uppercase; color:var(--gold-deep); margin-bottom:11px; display:block; }
+
+  /* 头像预览 */
+  .ava-row { display:flex; align-items:center; gap:15px; margin-bottom:22px; }
+  .ava { width:64px; height:64px; border-radius:50%; background:url('img/chicken-congee.jpg') center/cover; flex:none; border:2px solid #fff; box-shadow:0 4px 12px rgba(60,40,20,.18), 0 0 0 1px #efe9df; position:relative; }
+  .ava .cam { position:absolute; right:-2px; bottom:-2px; width:24px; height:24px; border-radius:50%; background:var(--ink-deep); border:2px solid #fff; display:flex; align-items:center; justify-content:center; }
+  .ava-row .ava-tx h4 { font-size:14.5px; font-weight:800; color:var(--ink); }
+  .ava-row .ava-tx p { font-size:12px; color:var(--mut); margin-top:3px; }
+
+  /* 昵称输入 */
+  .field { margin-bottom:24px; }
+  .field .inp { display:flex; align-items:center; gap:11px; background:var(--paper); border:1.5px solid #ece4d6; border-radius:14px; padding:14px 16px; }
+  .field .inp.focus { border-color:var(--pop); background:#fff; }
+  .field .inp .txt { font-size:16px; font-weight:700; color:var(--ink); }
+  .field .inp .cur { width:2px; height:20px; background:var(--pop); margin-left:-4px; border-radius:1px; }
+  .field .inp .wxfill { margin-left:auto; font-size:11.5px; font-weight:700; color:var(--wx); display:flex; align-items:center; gap:4px; }
+
+  .allow { width:100%; background:var(--pop); color:#fff; border:none; border-radius:16px; padding:17px; font-size:16.5px; font-weight:800; letter-spacing:.5px;
+    box-shadow:0 2px 6px rgba(180,40,20,.3), 0 14px 30px rgba(232,71,42,.34); font-family:inherit; }
+  .deny { display:block; width:100%; text-align:center; background:none; border:none; margin-top:6px; padding:15px; font-size:14.5px; font-weight:700; color:var(--mut-strong); font-family:inherit; }
+  .auth-foot { display:flex; align-items:center; justify-content:center; gap:6px; margin-top:8px; }
+  .auth-foot svg { flex:none; }
+  .auth-foot span { font-size:11px; color:var(--mut); }
+  .auth-foot a { color:var(--gold-deep); font-weight:700; text-decoration:none; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status">
+    <span>9:41</span>
+    <span class="right">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="#fff"/><rect x="5" y="4.5" width="3" height="7.5" rx="1" fill="#fff"/><rect x="10" y="2" width="3" height="10" rx="1" fill="#fff"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#fff" opacity=".4"/></svg>
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><path d="M8.5 2.5C11 2.5 13.2 3.5 14.8 5.1L8.5 11.4 2.2 5.1C3.8 3.5 6 2.5 8.5 2.5Z" fill="#fff"/></svg>
+      <svg width="26" height="13" viewBox="0 0 26 13" fill="none"><rect x="1" y="1" width="21" height="11" rx="3" stroke="#fff" stroke-width="1.2" opacity=".5"/><rect x="3" y="3" width="16" height="7" rx="1.5" fill="#fff"/><rect x="23.5" y="4.5" width="2" height="4" rx="1" fill="#fff" opacity=".6"/></svg>
+    </span>
+  </div>
+
+  <!-- 背景:登录页 -->
+  <div class="bg">
+    <div class="hero"></div>
+    <div class="brandbar">
+      <div class="logo"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5L12 4l8 6.5"/><path d="M6 9.5V20h12V9.5"/><path d="M10 20v-4h4v4"/></svg></div>
+      <div><div class="en">家的味道</div><div class="cn">家庭点菜</div></div>
+    </div>
+    <div class="hero-body">
+      <span class="tag">欢迎回家</span>
+      <div class="hero-title">今天吃什么</div>
+    </div>
+    <div class="sheet"><div class="btn-wx">微信一键登录</div></div>
+  </div>
+
+  <!-- 遮罩 -->
+  <div class="mask"></div>
+
+  <!-- 授权卡 -->
+  <div class="auth">
+    <div class="grab"></div>
+    <div class="auth-top">
+      <div class="alogo"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5L12 4l8 6.5"/><path d="M6 9.5V20h12V9.5"/><path d="M10 20v-4h4v4"/></svg></div>
+      <div class="at-tx">
+        <div class="eyebrow">家的味道</div>
+        <h1>申请获取你的头像、昵称</h1>
+      </div>
+      <div class="wxbadge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="#07c160"><path d="M9.2 3C5 3 1.6 5.9 1.6 9.5c0 2 1.1 3.8 2.9 5l-.7 2.2 2.6-1.3c.9.2 1.8.4 2.8.4h.5a5.6 5.6 0 01-.3-1.8c0-3.4 3.2-6.1 7.1-6.1h.5C16.8 5.2 13.4 3 9.2 3z"/></svg>
+        <span>微信</span>
+      </div>
+    </div>
+
+    <p class="auth-desc">「家庭点菜」想使用你的微信<b>头像和昵称</b>，方便家人在共享菜单里认出你。授权后你可随时修改。</p>
+
+    <span class="alabel">头像</span>
+    <div class="ava-row">
+      <div class="ava"><div class="cam"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 012-2h2l1.5-2h7L18 6h2a2 2 0 012 2v9a2 2 0 01-2 2H4a2 2 0 01-2-2V8z" stroke="none" fill="none"/><rect x="3" y="7" width="18" height="13" rx="2.5"/><circle cx="12" cy="13" r="3.4"/></svg></div></div>
+      <div class="ava-tx"><h4>使用微信头像</h4><p>点击可从相册更换</p></div>
+    </div>
+
+    <span class="alabel">昵称</span>
+    <div class="field">
+      <div class="inp focus">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#e8472a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6"/></svg>
+        <span class="txt">小张</span><span class="cur"></span>
+        <span class="wxfill"><svg width="13" height="13" viewBox="0 0 24 24" fill="#07c160"><path d="M9.2 3C5 3 1.6 5.9 1.6 9.5c0 2 1.1 3.8 2.9 5l-.7 2.2 2.6-1.3c.9.2 1.8.4 2.8.4h.5a5.6 5.6 0 01-.3-1.8c0-3.4 3.2-6.1 7.1-6.1h.5C16.8 5.2 13.4 3 9.2 3z"/></svg>已填入</span>
+      </div>
+    </div>
+
+    <button class="allow tapscale">允许</button>
+    <button class="deny tapscale">拒绝</button>
+
+    <div class="auth-foot">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9a8e7d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>
+      <span>授权信息已加密，仅用于<a href="#">家庭共享</a></span>
+    </div>
+  </div>
+
+  <div class="home-ind"></div>
+</div>
+</body>
+</html>

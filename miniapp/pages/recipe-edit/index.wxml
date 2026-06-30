@@ -1,0 +1,154 @@
+<nav-bar title="{{isEdit ? '编辑菜谱' : '新建菜谱'}}">
+  <view slot class="rc-save tap-scale" bindtap="submit">保存</view>
+</nav-bar>
+
+<view class="rc-body">
+  <!-- Hero 镂空标题 -->
+  <view class="rc-hero g-fade-up">
+    <view class="rc-h1 title-shadow">{{isEdit ? '改一道' : '记一道'}}<text class="pop">菜</text></view>
+    <view class="rc-tip" wx:if="{{tipText}}">
+      <view class="rc-tip-ic">!</view>
+      <text>{{tipText}}</text>
+    </view>
+  </view>
+
+  <!-- 封面虚线框 -->
+  <view class="rc-cover g-fade-up g-d1" wx:if="{{!form.coverImage}}" bindtap="chooseCover">
+    <view class="rc-cover-ic">
+      <image class="rc-cover-emoji" src="/assets/dishes/hongshao-pork.jpg" mode="aspectFill" />
+    </view>
+    <view class="rc-cover-t">拍张菜的照片</view>
+    <view class="rc-cover-s">好看的封面，全家都想点</view>
+  </view>
+  <view class="rc-cover-preview g-fade-up g-d1" wx:else>
+    <image class="rc-cover-img" src="{{form.coverImage}}" mode="aspectFill" />
+    <view class="rc-cover-remove" catchtap="removeCover">×</view>
+  </view>
+
+  <!-- Basics -->
+  <view class="rc-sec g-fade-up g-d2">
+    <view class="rc-eyebrow">Basics</view>
+    <view class="rc-sec-h2">基本信息</view>
+
+    <view class="rc-field">
+      <view class="rc-label">菜名</view>
+      <input class="rc-input" placeholder="例如：红烧肉" value="{{form.title}}" bindinput="onInput" data-field="title" />
+    </view>
+
+    <view class="rc-field">
+      <view class="rc-label">菜系</view>
+      <view class="rc-chips">
+        <view
+          class="chip {{form.cuisine === item ? 'on' : ''}}"
+          wx:for="{{cuisineOptions}}"
+          wx:key="*this"
+          data-value="{{item}}"
+          bindtap="selectCuisine"
+        >{{item}}</view>
+      </view>
+    </view>
+
+    <view class="rc-duo">
+      <view class="rc-field rc-field-flex">
+        <view class="rc-label">耗时（分钟）</view>
+        <view class="rc-stepper">
+          <view class="rc-step-b tap-scale" data-field="timeCost" data-delta="-1" bindtap="stepperChange">−</view>
+          <text class="rc-step-v">{{form.timeCost}}</text>
+          <view class="rc-step-b tap-scale" data-field="timeCost" data-delta="1" bindtap="stepperChange">+</view>
+        </view>
+      </view>
+      <view class="rc-field rc-field-flex">
+        <view class="rc-label">几人份</view>
+        <view class="rc-stepper">
+          <view class="rc-step-b tap-scale" data-field="servings" data-delta="-1" bindtap="stepperChange">−</view>
+          <text class="rc-step-v">{{form.servings}}</text>
+          <view class="rc-step-b tap-scale" data-field="servings" data-delta="1" bindtap="stepperChange">+</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="rc-field">
+      <view class="rc-label">难度</view>
+      <view class="rc-chips">
+        <view
+          class="chip {{form.difficulty === item.key ? 'on' : ''}}"
+          wx:for="{{difficultyOptions}}"
+          wx:key="key"
+          data-key="{{item.key}}"
+          bindtap="selectDifficulty"
+        >{{item.label}}</view>
+      </view>
+    </view>
+
+    <view class="rc-field">
+      <view class="rc-label">常用标签</view>
+      <view class="rc-chips">
+        <view
+          class="chip {{item.active ? 'on' : ''}}"
+          wx:for="{{commonTags}}"
+          wx:key="name"
+          data-tag="{{item.name}}"
+          bindtap="toggleCommonTag"
+        >{{item.name}}</view>
+      </view>
+    </view>
+
+    <view class="rc-field">
+      <view class="rc-label">简介（选填）</view>
+      <textarea class="rc-textarea" placeholder="一句话介绍这道菜" value="{{form.summary}}" bindinput="onInput" data-field="summary" />
+    </view>
+  </view>
+
+  <!-- Ingredients -->
+  <view class="rc-sec g-fade-up g-d3">
+    <view class="rc-eyebrow">Ingredients</view>
+    <view class="rc-sec-h2">用到的食材</view>
+    <view class="rc-list">
+      <view class="rc-listrow" wx:for="{{form.ingredients}}" wx:key="index">
+        <input class="rc-row-nm" placeholder="食材名" value="{{item.name}}" bindinput="onIngredientInput" data-index="{{index}}" data-field="name" />
+        <input class="rc-row-amt" placeholder="量" value="{{item.amount}}" bindinput="onIngredientInput" data-index="{{index}}" data-field="amount" />
+        <input class="rc-row-unit" placeholder="单位" value="{{item.unit}}" bindinput="onIngredientInput" data-index="{{index}}" data-field="unit" />
+        <view class="rc-del" data-index="{{index}}" bindtap="removeIngredient">
+          <view class="rc-del-x">×</view>
+        </view>
+      </view>
+      <view class="rc-addrow tap-scale" bindtap="addIngredient">
+        <text class="rc-addrow-plus">+</text>添加食材
+      </view>
+    </view>
+  </view>
+
+  <!-- Steps -->
+  <view class="rc-sec g-fade-up g-d4">
+    <view class="rc-eyebrow">Steps</view>
+    <view class="rc-sec-h2">做法步骤</view>
+    <view class="rc-list">
+      <view class="rc-steprow" wx:for="{{form.steps}}" wx:key="index">
+        <view class="rc-steprow-top">
+          <view class="rc-stepnum">{{index + 1}}</view>
+          <textarea class="rc-steptext" placeholder="描述这一步的做法" value="{{item.text}}" bindinput="onStepInput" data-index="{{index}}" auto-height />
+          <view class="rc-del" data-index="{{index}}" bindtap="removeStep">
+            <view class="rc-del-x">×</view>
+          </view>
+        </view>
+        <view class="rc-step-img">
+          <view class="rc-step-img-add tap-scale" wx:if="{{!item.image}}" data-index="{{index}}" bindtap="chooseStepImage">+ 配图</view>
+          <view class="rc-step-img-wrap" wx:else>
+            <image class="rc-step-img-pic" src="{{item.image}}" mode="aspectFill" />
+            <view class="rc-step-img-del" data-index="{{index}}" catchtap="removeStepImage">×</view>
+          </view>
+        </view>
+      </view>
+      <view class="rc-addrow tap-scale" bindtap="addStep">
+        <text class="rc-addrow-plus">+</text>添加步骤
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 固定底部保存 -->
+<view class="rc-footbar safe-bottom">
+  <view class="rc-savebtn tap-scale" bindtap="submit">
+    <text class="rc-savebtn-check">✓</text>{{isEdit ? '保存修改' : '保存到我的菜谱'}}
+  </view>
+</view>

@@ -1,0 +1,229 @@
+/* ============================================================
+   state-toast · 轻提示组件 4 变体
+   复用 app.wxss 全局 token：--paper / --ink-deep / --pop /
+   --gold / --gold-deep / --mut-strong / --paper-2 等
+   仅写组件特有样式
+   ============================================================ */
+
+.st {
+  position: fixed;
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+/* ---- 1) 顶部成功 ---- */
+.st-top {
+  top: calc(env(safe-area-inset-top) + 24rpx);
+  left: 36rpx;
+  right: 36rpx;
+  gap: 22rpx;
+  padding: 28rpx 32rpx;
+  background: #fff;
+  border-radius: 36rpx;
+  border: 2rpx solid #f1ece2;
+  box-shadow: 0 4rpx 12rpx rgba(60, 40, 20, 0.08), 0 36rpx 80rpx rgba(120, 70, 30, 0.22);
+}
+.st-ic {
+  width: 76rpx;
+  height: 76rpx;
+  border-radius: 24rpx;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.st-ic-ok {
+  background: #3a9d5d;
+  box-shadow: 0 12rpx 28rpx rgba(58, 157, 93, 0.4);
+}
+
+/* 纯 CSS 对勾 */
+.st-check {
+  width: 30rpx;
+  height: 16rpx;
+  border-left: 6rpx solid #fff;
+  border-bottom: 6rpx solid #fff;
+  transform: rotate(-45deg);
+  margin-top: -6rpx;
+}
+.st-check-lg {
+  width: 38rpx;
+  height: 20rpx;
+  border-left: 7rpx solid #7fd29a;
+  border-bottom: 7rpx solid #7fd29a;
+}
+
+.st-tx { flex: 1; min-width: 0; }
+.st-h5 {
+  font-size: 30rpx;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.4rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.st-h5-light { color: var(--paper); font-weight: 700; }
+.st-p {
+  font-size: 24rpx;
+  color: var(--mut-strong);
+  margin-top: 4rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.st-p-gold { color: rgba(244, 217, 168, 0.7); }
+
+.st-close {
+  margin-left: auto;
+  width: 52rpx;
+  height: 52rpx;
+  border-radius: 50%;
+  background: var(--paper-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  position: relative;
+}
+.st-x, .st-x::after {
+  position: absolute;
+  width: 24rpx;
+  height: 5rpx;
+  border-radius: 3rpx;
+  background: var(--mut);
+}
+.st-x { transform: rotate(45deg); }
+.st-x::after { content: ""; transform: rotate(90deg); }
+
+/* ---- 2) 居中深色 ---- */
+.st-center {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  flex-direction: column;
+  gap: 26rpx;
+  text-align: center;
+  background: rgba(30, 22, 15, 0.92);
+  border-radius: 48rpx;
+  padding: 56rpx 68rpx;
+  min-width: 300rpx;
+  box-shadow: 0 48rpx 120rpx rgba(0, 0, 0, 0.4);
+  border: 2rpx solid rgba(255, 255, 255, 0.08);
+}
+.st-ring {
+  width: 124rpx;
+  height: 124rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(58, 157, 93, 0.18);
+  border: 3rpx solid rgba(120, 210, 150, 0.4);
+}
+.st-ring .st-check-lg { margin-top: -8rpx; }
+.st-center-tx {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 1rpx;
+}
+
+/* ---- 3) 错误胶囊 ---- */
+.st-error {
+  top: 280rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  gap: 14rpx;
+  max-width: 640rpx;
+  padding: 24rpx 36rpx;
+  background: var(--pop);
+  border-radius: var(--r-pill);
+  box-shadow: var(--sh-pop);
+}
+.st-ic-err {
+  width: 48rpx;
+  height: 48rpx;
+  flex: none;
+  border-radius: 50%;
+  border: 4rpx solid #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 32rpx;
+  font-weight: 900;
+  line-height: 1;
+}
+.st-err-tx {
+  font-size: 27rpx;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.4rpx;
+  white-space: nowrap;
+}
+.st-retry {
+  margin-left: 8rpx;
+  flex: none;
+  font-size: 25rpx;
+  font-weight: 800;
+  color: #fff;
+  padding: 10rpx 24rpx;
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, 0.22);
+  border: 2rpx solid rgba(255, 255, 255, 0.35);
+}
+
+/* ---- 4) 底部撤销 ---- */
+.st-bottom {
+  bottom: calc(env(safe-area-inset-bottom) + 200rpx);
+  left: 36rpx;
+  right: 36rpx;
+  gap: 20rpx;
+  padding: 28rpx 32rpx;
+  background: var(--ink-deep);
+  border-radius: 36rpx;
+  box-shadow: 0 36rpx 80rpx rgba(40, 28, 16, 0.4);
+  border: 2rpx solid rgba(255, 255, 255, 0.06);
+}
+.st-ic-undo { background: rgba(244, 217, 168, 0.16); width: 68rpx; height: 68rpx; }
+/* 纯 CSS 垃圾桶 */
+.st-bin {
+  position: relative;
+  width: 28rpx;
+  height: 26rpx;
+  border: 4rpx solid var(--gold);
+  border-top: none;
+  border-radius: 0 0 6rpx 6rpx;
+}
+.st-bin::before {
+  content: "";
+  position: absolute;
+  top: -10rpx;
+  left: -8rpx;
+  width: 40rpx;
+  height: 4rpx;
+  border-radius: 3rpx;
+  background: var(--gold);
+}
+.st-bin::after {
+  content: "";
+  position: absolute;
+  top: -16rpx;
+  left: 8rpx;
+  width: 16rpx;
+  height: 4rpx;
+  border-radius: 3rpx;
+  background: var(--gold);
+}
+.st-undo {
+  flex: none;
+  font-size: 25rpx;
+  font-weight: 800;
+  color: var(--gold);
+  padding: 12rpx 26rpx;
+  border-radius: var(--r-pill);
+  background: rgba(244, 217, 168, 0.14);
+}

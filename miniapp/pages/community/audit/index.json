@@ -1,0 +1,10 @@
+{
+  "navigationStyle": "custom",
+  "navigationBarTitleText": "审核队列",
+  "usingComponents": {
+    "nav-bar": "/components/nav-bar/index",
+    "state-empty": "/components/state-empty/index",
+    "state-dialog": "/components/state-dialog/index",
+    "state-toast": "/components/state-toast/index"
+  }
+}

@@ -1,0 +1,195 @@
+<!-- 买菜清单 · 精致美食杂志撞色风（设计稿 shopping-final.html）-->
+<view class="mkt-page">
+  <!-- 二级页导航：透明覆盖在 hero 上 -->
+  <view class="mkt-nav">
+    <nav-bar title="" show-back="{{true}}"></nav-bar>
+  </view>
+
+  <!-- HERO · 本地菜图 long-beans -->
+  <view class="mkt-hero g-fade-in">
+    <image class="mkt-hero-img" src="/assets/dishes/long-beans.jpg" mode="aspectFill" />
+    <view class="mkt-hero-mask"></view>
+    <text class="mkt-hero-bignum">{{summary.totalCount}}</text>
+    <text class="mkt-hero-eyebrow">Shopping List</text>
+
+    <view class="mkt-hero-body">
+      <view class="mkt-hero-left">
+        <text class="mkt-tag">Today's Basket</text>
+        <view class="mkt-hero-title title-stroke">今天<text class="pop">买菜</text></view>
+        <view class="mkt-hero-sub">{{summary.statusText}}，已买 <text class="b">{{summary.purchasedCount}}/{{summary.totalCount}}</text> 样</view>
+      </view>
+
+      <!-- 采购进度环 -->
+      <view class="mkt-ring">
+        <view class="mkt-ring-svg">
+          <view class="mkt-ring-bg"></view>
+          <view class="mkt-ring-fg" style="background: conic-gradient(var(--pop) {{summary.progressPercent}}%, rgba(255,255,255,0.22) 0);"></view>
+          <view class="mkt-ring-hole"></view>
+        </view>
+        <view class="mkt-ring-txt">
+          <text class="big">{{summary.progressPercent}}%</text>
+          <text class="cap">已买</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- SHEET · 内容区 -->
+  <view class="mkt-sheet">
+    <!-- 顶部 tab：待买 / 家里已有 -->
+    <view class="sp-seg">
+      <view class="sp-seg-item {{tab === 'shopping' ? 'on' : ''}}" data-tab="shopping" bindtap="switchTab">待买清单</view>
+      <view class="sp-seg-item {{tab === 'pantry' ? 'on' : ''}}" data-tab="pantry" bindtap="switchTab">家里已有 {{pantryCount ? '(' + pantryCount + ')' : ''}}</view>
+    </view>
+
+    <!-- 待买清单视图 -->
+    <block wx:if="{{tab === 'shopping'}}">
+    <!-- 进度条卡片 -->
+    <view class="mkt-pbar card g-fade-up g-d1">
+      <view class="mkt-pbar-head">
+        <text class="l">采购进度</text>
+        <text class="r">{{summary.purchasedCount}} / {{summary.totalCount}} 样</text>
+      </view>
+      <view class="mkt-ptrack">
+        <view class="mkt-pfill" style="width: {{summary.progressPercent}}%;"></view>
+      </view>
+    </view>
+
+    <!-- 骨架屏 -->
+    <view class="mkt-pad" wx:if="{{loading}}">
+      <view class="mkt-sk card" wx:for="{{skeletonRows}}" wx:key="*this">
+        <view class="mkt-sk-dot skeleton shimmer"></view>
+        <view class="mkt-sk-lines">
+          <view class="mkt-sk-line strong skeleton shimmer"></view>
+          <view class="mkt-sk-line skeleton shimmer"></view>
+        </view>
+      </view>
+    </view>
+
+    <block wx:if="{{!loading}}">
+      <!-- 空态 -->
+      <view class="mkt-pad" wx:if="{{!shoppingList.items.length}}">
+        <state-empty title="今天不用买" desc="今晚的菜都在库存里，歇一歇吧"></state-empty>
+      </view>
+
+      <!-- 待买分组 -->
+      <view class="mkt-pad" wx:for="{{groupedPending}}" wx:key="key" wx:for-item="group">
+        <view class="mkt-ghead g-fade-up">
+          <view class="mkt-gdot {{group.key === 'seasoning' ? 'spice' : group.key}}"></view>
+          <text class="mkt-gname">{{group.label}}</text>
+          <text class="mkt-gen">{{group.key === 'veg' ? 'Greens' : group.key === 'meat' ? 'Protein' : group.key === 'seasoning' ? 'Seasoning' : 'Others'}}</text>
+          <text class="mkt-gcount">{{group.items.length}} 样</text>
+        </view>
+
+        <view class="mkt-item g-fade-up g-d{{idx % 5 + 1}}" wx:for="{{group.items}}" wx:for-item="food" wx:for-index="idx" wx:key="itemId">
+          <view class="mkt-check tap-scale" data-id="{{food.itemId}}" data-purchased="{{food.purchased}}" bindtap="toggleItem"></view>
+          <view class="mkt-imid">
+            <text class="nm">{{food.ingredientName}}</text>
+            <text class="amt">{{food.amount}} {{food.unit}}</text>
+            <view class="mkt-tags">
+              <text class="src">{{food.sourceText}}</text>
+              <text class="src pantry" wx:if="{{food.pantryText}}">{{food.pantryText}}</text>
+            </view>
+          </view>
+          <view class="mkt-del tap-scale" data-id="{{food.itemId}}" catchtap="deleteItem">移除</view>
+        </view>
+      </view>
+
+      <!-- 已入篮分组 -->
+      <view class="mkt-pad" wx:if="{{purchasedItems.length}}">
+        <view class="mkt-shead">
+          <view class="mkt-shead-main">
+            <view class="shead-bar"></view>
+            <text class="eyebrow">In The Basket</text>
+            <view class="mkt-shead-title">已入篮 <text class="pop">{{purchasedItems.length}}</text></view>
+          </view>
+        </view>
+
+        <block wx:for="{{groupedPurchased}}" wx:key="key" wx:for-item="group">
+          <view class="mkt-item done" wx:for="{{group.items}}" wx:for-item="food" wx:key="itemId">
+            <view class="mkt-check done tap-scale" data-id="{{food.itemId}}" data-purchased="{{food.purchased}}" bindtap="toggleItem">
+              <view class="mkt-tick"></view>
+            </view>
+            <view class="mkt-imid">
+              <text class="nm">{{food.ingredientName}}</text>
+              <text class="amt">{{food.amount}} {{food.unit}}</text>
+            </view>
+          </view>
+        </block>
+      </view>
+
+      <!-- 临时加购 -->
+      <view class="mkt-pad">
+        <view class="mkt-shead">
+          <view class="mkt-shead-main">
+            <view class="shead-bar"></view>
+            <text class="eyebrow">Add Your Own</text>
+            <view class="mkt-shead-title">临时<text class="pop">加购</text></view>
+          </view>
+        </view>
+      </view>
+
+      <view class="mkt-addbar">
+        <view class="mkt-add-ic">＋</view>
+        <input class="mkt-add-input" placeholder="食材名" placeholder-class="mkt-ph" value="{{newItem.ingredientName}}" data-field="ingredientName" bindinput="onNewItemInput" />
+        <input class="mkt-add-input sm" placeholder="量" placeholder-class="mkt-ph" value="{{newItem.amount}}" data-field="amount" bindinput="onNewItemInput" />
+        <input class="mkt-add-input sm" placeholder="单位" placeholder-class="mkt-ph" value="{{newItem.unit}}" data-field="unit" bindinput="onNewItemInput" />
+        <view class="mkt-addbtn tap-scale" bindtap="addItem">添加</view>
+      </view>
+
+      <scroll-view class="mkt-quicks" scroll-x enhanced show-scrollbar="{{false}}">
+        <view class="mkt-quicks-inner">
+          <view class="mkt-quick tap-scale" wx:for="{{quickItems}}" wx:key="ingredientName" data-name="{{item.ingredientName}}" data-amount="{{item.amount}}" data-unit="{{item.unit}}" bindtap="addQuickItem">
+            <text class="plus">＋</text>{{item.ingredientName}}
+          </view>
+        </view>
+      </scroll-view>
+
+      <!-- 重新整理 -->
+      <view class="mkt-pad mkt-refresh-wrap">
+        <view class="btn btn-dark btn-block tap-scale" bindtap="refreshList">按今日菜单重新整理</view>
+      </view>
+    </block>
+    </block>
+
+    <!-- 家里已有（库存）视图 -->
+    <block wx:if="{{tab === 'pantry'}}">
+      <view class="sp-pantry-wrap">
+        <!-- 分类列表 -->
+        <view wx:if="{{pantryCategories.length}}">
+          <view class="sp-pcat" wx:for="{{pantryCategories}}" wx:key="key">
+            <view class="sp-pcat-head">
+              <text class="sp-pcat-label">{{item.label}}</text>
+              <text class="sp-pcat-count">{{item.items.length}} 项</text>
+            </view>
+            <view class="sp-pitem" wx:for="{{item.items}}" wx:for-item="it" wx:key="id">
+              <view class="sp-pitem-dot"></view>
+              <text class="sp-pitem-name ellipsis">{{it.ingredientName || it.name}}</text>
+              <text class="sp-pitem-qty">{{it.amount || ''}}{{it.unit || ''}}</text>
+              <view class="sp-pitem-del tap-scale" data-id="{{it.id || it.pantryItemId}}" catchtap="removePantryEntry">×</view>
+            </view>
+          </view>
+        </view>
+        <view class="sp-pantry-empty" wx:elif="{{!pantryCategories.length}}">
+          <state-empty title="冰箱还空着" desc="把家里的食材记下来，点菜时可以先用现有的" />
+        </view>
+
+        <!-- 添加入口 -->
+        <view class="sp-pantry-add-btn tap-scale" bindtap="togglePantryForm">
+          {{showPantryForm ? '收起' : '+ 添加食材'}}
+        </view>
+        <view class="sp-pantry-form" wx:if="{{showPantryForm}}">
+          <input class="mkt-add-input" placeholder="食材名" placeholder-class="mkt-ph"
+            value="{{newPantryItem.ingredientName}}" data-field="ingredientName" bindinput="onPantryInput" />
+          <input class="mkt-add-input sm" placeholder="量" placeholder-class="mkt-ph"
+            value="{{newPantryItem.amount}}" data-field="amount" bindinput="onPantryInput" />
+          <input class="mkt-add-input sm" placeholder="单位" placeholder-class="mkt-ph"
+            value="{{newPantryItem.unit}}" data-field="unit" bindinput="onPantryInput" />
+          <view class="mkt-addbtn tap-scale" bindtap="addPantryEntry">记入</view>
+        </view>
+      </view>
+    </block>
+
+    <view class="safe-bottom"></view>
+  </view>
+</view>

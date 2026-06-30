@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>买菜清单 · 精致撞色</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-font-smoothing:antialiased; }
+  :root{
+    --paper:#fbf8f3; --paper-2:#f0ebe2;
+    --ink:#2c241b; --ink-deep:#3a2e23;
+    --mut:#9a8e7d; --mut-2:#b3a795;
+    --gold:#f4d9a8; --gold-deep:#b08949;
+    --pop:#e8472a;
+    --pop-soft:#fdece6;
+    --pine:#2f4a3a;
+    --serif:"Georgia","Times New Roman",serif;
+  }
+  body {
+    display:flex; align-items:center; justify-content:center;
+    min-height:100vh; background:#d9d2c7;
+    font-family:-apple-system,"SF Pro Text","Helvetica Neue",Helvetica,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  }
+  .phone {
+    position:relative; width:390px; height:844px;
+    background:var(--paper); border-radius:46px;
+    box-shadow:0 30px 70px rgba(60,45,30,.4), 0 0 0 11px #1b1714, 0 0 0 12px #2c2520;
+    overflow:hidden;
+  }
+  .status {
+    position:absolute; top:0; left:0; right:0; height:50px; z-index:60;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 30px 0 34px; color:#fff; font-size:15px; font-weight:600; pointer-events:none;
+  }
+  .status .right { display:flex; align-items:center; gap:7px; }
+  .notch { position:absolute; top:11px; left:50%; transform:translateX(-50%); width:118px; height:33px; background:#1b1714; border-radius:20px; z-index:61; }
+  .scroll { position:absolute; inset:0; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch; }
+  .scroll::-webkit-scrollbar { display:none; }
+  :active { }
+  .add:active, .chip:active, .item:active, .navbtn:active, .addbtn:active, .quick:active { transform:scale(.97); }
+
+  /* hero (真实菜图) */
+  .hero { position:relative; height:446px; background:url('img/long-beans.jpg') center/cover no-repeat; }
+  .hero::before { content:""; position:absolute; inset:0; z-index:1;
+    background:radial-gradient(120% 80% at 50% 0%, rgba(255,180,80,.16), transparent 55%); mix-blend-mode:overlay; }
+  .hero::after { content:""; position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(20,14,8,.5) 0%, rgba(20,14,8,0) 28%, rgba(20,14,8,.18) 52%, rgba(20,14,8,.9) 100%); }
+  .hero-bignum { position:absolute; top:78px; right:14px; z-index:2; font-family:var(--serif); font-size:220px; font-weight:700; line-height:1; color:rgba(255,255,255,.07); pointer-events:none; }
+  .hero-top { position:absolute; top:58px; left:24px; right:24px; z-index:10; display:flex; align-items:center; justify-content:space-between; }
+  .navbtn { width:42px; height:42px; border-radius:50%; background:rgba(255,255,255,.16); backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,.22);
+    display:flex; align-items:center; justify-content:center; }
+  .hero-top .title { font-size:12px; font-weight:700; letter-spacing:2.5px; color:#fff; opacity:.85; text-transform:uppercase; }
+  .hero-body { position:absolute; left:24px; right:24px; bottom:30px; z-index:10; color:#fff; display:flex; align-items:flex-end; justify-content:space-between; gap:16px; }
+  .hero-left { flex:1; min-width:0; }
+  .tag { display:inline-block; font-family:var(--serif); font-style:italic; font-size:12px; letter-spacing:1.5px; font-weight:700;
+    color:#fff; background:var(--pop); padding:6px 14px; border-radius:4px; }
+  .hero-title { font-size:60px; line-height:.88; font-weight:900; letter-spacing:-3px; margin:16px 0 12px;
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    color:transparent; -webkit-text-stroke:1.6px #fff; text-stroke:1.6px #fff; }
+  .hero-title .pop { color:var(--pop); -webkit-text-stroke:0; text-stroke:0; }
+  .hero-sub { font-size:14px; font-weight:600; color:rgba(255,255,255,.85); }
+  .hero-sub b { color:var(--pop); font-weight:900; }
+  /* progress ring */
+  .ring { position:relative; width:92px; height:92px; flex:none; }
+  .ring svg { transform:rotate(-90deg); }
+  .ring .rtxt { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .ring .rtxt .big { font-size:25px; font-weight:900; letter-spacing:-1px; line-height:1; color:#fff; }
+  .ring .rtxt .cap { font-size:10px; color:rgba(255,255,255,.7); margin-top:3px; letter-spacing:.5px; }
+
+  /* sheet */
+  .sheet { position:relative; margin-top:-26px; background:var(--paper); border-radius:28px 28px 0 0; padding:26px 0 40px; z-index:20; }
+  .pad { padding:0 24px; }
+
+  /* progress bar card */
+  .pbar { margin:0 24px 8px; background:#fff; border-radius:20px; padding:17px 18px; border:1px solid #f1ece2;
+    box-shadow:0 2px 6px rgba(60,40,20,.06), 0 18px 40px rgba(120,70,30,.14); }
+  .pbar .ph { display:flex; align-items:center; justify-content:space-between; margin-bottom:11px; }
+  .pbar .ph .l { font-size:13.5px; font-weight:800; color:var(--ink); }
+  .pbar .ph .r { font-size:13.5px; font-weight:900; color:var(--pop); }
+  .ptrack { height:9px; border-radius:6px; background:var(--paper-2); overflow:hidden; }
+  .pfill { height:100%; width:50%; border-radius:6px; background:linear-gradient(90deg,#f0853f,var(--pop)); box-shadow:0 1px 4px rgba(232,71,42,.4); }
+
+  /* section head */
+  .shead { display:flex; align-items:flex-end; justify-content:space-between; margin:30px 0 14px; }
+  .ghead { display:flex; align-items:center; gap:9px; margin:26px 0 12px; }
+  .gdot { width:10px; height:10px; border-radius:50%; flex:none; }
+  .gdot.veg { background:#5a8a4a; } .gdot.meat { background:var(--pop); } .gdot.spice { background:var(--gold-deep); }
+  .ghead .gname { font-size:18px; font-weight:900; color:var(--ink); letter-spacing:-.5px; }
+  .ghead .gen { font-family:var(--serif); font-style:italic; font-size:12px; color:var(--mut); font-weight:700; }
+  .ghead .gcount { margin-left:auto; font-size:12px; font-weight:700; color:var(--mut); background:var(--paper-2); padding:3px 11px; border-radius:20px; }
+  .shead > div:first-child { position:relative; padding-left:15px; }
+  .shead > div:first-child::before { content:""; position:absolute; left:0; top:3px; bottom:3px; width:4px; border-radius:3px; background:var(--pop); }
+  .shead .eyebrow { font-family:var(--serif); font-style:italic; font-size:12px; letter-spacing:1px; color:var(--gold-deep); font-weight:700; }
+  .shead h2 { font-size:31px; font-weight:900; color:var(--ink); letter-spacing:-1.5px; margin-top:6px;
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; line-height:.96; }
+  .shead h2 .pop { color:var(--pop); }
+
+  /* item */
+  .item { display:flex; align-items:center; gap:14px; background:#fff; border-radius:18px; padding:14px 15px; margin-bottom:11px; border:1px solid #f1ece2;
+    box-shadow:0 2px 6px rgba(60,40,20,.05), 0 12px 26px rgba(120,70,30,.1); }
+  .check { width:26px; height:26px; border-radius:9px; border:2px solid #d8cebd; flex:none; display:flex; align-items:center; justify-content:center; }
+  .imid { flex:1; min-width:0; }
+  .imid .nm { font-size:16.5px; font-weight:800; color:var(--ink); letter-spacing:-.3px; }
+  .imid .amt { font-size:13px; font-weight:700; color:var(--pop); margin-top:3px; }
+  .imid .src { display:inline-block; font-size:11px; font-weight:700; color:#7a6e5d; background:var(--paper-2); padding:3px 9px; border-radius:20px; margin-top:7px; }
+  .qty { display:flex; align-items:center; gap:9px; flex:none; }
+  .item > .check { padding:8px; margin:-8px; }
+  .qty .check { width:40px; height:40px; border-radius:12px; }
+
+  /* done item */
+  .item.done { background:#f6f2ea; box-shadow:none; border-color:#efe9df; }
+  .item.done .check { background:var(--pine); border-color:var(--pine); }
+  .item.done .nm, .item.done .amt { color:#8a7d6b; text-decoration:line-through; }
+  .item.done .amt { font-weight:700; }
+  .item.done .src { opacity:.6; }
+
+  /* add bar */
+  .addbar { margin:6px 24px 0; display:flex; gap:10px; align-items:center; background:#fff; border:1.5px dashed #d8cebd; border-radius:18px; padding:13px 14px; }
+  .addbar .ic { width:36px; height:36px; border-radius:12px; background:var(--pop); flex:none; display:flex; align-items:center; justify-content:center; color:#fff;
+    box-shadow:0 1px 2px rgba(180,40,20,.3), 0 8px 16px rgba(232,71,42,.35); }
+  .addbar input { flex:1; border:none; background:transparent; font-size:15px; font-weight:600; color:var(--ink); outline:none; }
+  .addbar input::placeholder { color:var(--mut-2); }
+  .addbtn { font-size:14px; font-weight:800; color:#fff; background:var(--ink-deep); padding:11px 18px; border-radius:13px; flex:none; }
+  .quicks { display:flex; gap:8px; overflow-x:auto; padding:13px 24px 2px; }
+  .quicks::-webkit-scrollbar { display:none; }
+  .quick { flex:none; font-size:12.5px; font-weight:700; color:#7a6e5d; background:var(--paper-2); padding:10px 15px; border-radius:20px; white-space:nowrap; }
+  .quick svg { vertical-align:-1px; margin-right:3px; }
+
+  /* tabbar */
+  .tabbar { position:absolute; bottom:0; left:0; right:0; height:88px; z-index:50; background:rgba(251,248,243,.92); backdrop-filter:blur(18px); border-top:1px solid #ece5d9; display:flex; justify-content:space-around; align-items:flex-start; padding-top:13px; }
+  .tab { display:flex; flex-direction:column; align-items:center; gap:5px; color:var(--mut-2); font-size:10.5px; font-weight:600; }
+  .tab.on { color:var(--pop); }
+  .home-ind { position:absolute; bottom:9px; left:50%; transform:translateX(-50%); width:134px; height:5px; border-radius:3px; background:#2c241b; opacity:.85; z-index:55; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status">
+    <span>9:41</span>
+    <span class="right">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="#fff"/><rect x="5" y="4.5" width="3" height="7.5" rx="1" fill="#fff"/><rect x="10" y="2" width="3" height="10" rx="1" fill="#fff"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#fff" opacity=".4"/></svg>
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><path d="M8.5 2.5C11 2.5 13.2 3.5 14.8 5.1L8.5 11.4 2.2 5.1C3.8 3.5 6 2.5 8.5 2.5Z" fill="#fff"/></svg>
+      <svg width="26" height="13" viewBox="0 0 26 13" fill="none"><rect x="1" y="1" width="21" height="11" rx="3" stroke="#fff" stroke-width="1.2" opacity=".5"/><rect x="3" y="3" width="16" height="7" rx="1.5" fill="#fff"/><rect x="23.5" y="4.5" width="2" height="4" rx="1" fill="#fff" opacity=".6"/></svg>
+    </span>
+  </div>
+
+  <div class="scroll">
+    <div class="hero">
+      <div class="hero-bignum">8</div>
+      <div class="hero-top">
+        <div class="navbtn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></div>
+        <div class="title">今天买菜</div>
+        <div class="navbtn"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+      </div>
+      <div class="hero-body">
+        <div class="hero-left">
+          <span class="tag">给全家备菜</span>
+          <div class="hero-title">今天<span class="pop">买菜</span></div>
+          <div class="hero-sub">今晚 3 道菜要买 8 样，<b>买完 4 样了</b></div>
+        </div>
+        <div class="ring">
+          <svg width="92" height="92" viewBox="0 0 92 92">
+            <circle cx="46" cy="46" r="38" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="9"/>
+            <circle cx="46" cy="46" r="38" fill="none" stroke="#e8472a" stroke-width="9" stroke-linecap="round" stroke-dasharray="239" stroke-dashoffset="120"/>
+          </svg>
+          <div class="rtxt"><div class="big">50%</div><div class="cap">已买</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sheet">
+      <div class="pbar">
+        <div class="ph"><div class="l">采购进度</div><div class="r">4 / 8 样</div></div>
+        <div class="ptrack"><div class="pfill"></div></div>
+      </div>
+
+      <!-- 蔬菜区 -->
+      <div class="pad">
+        <div class="ghead">
+          <div class="gdot veg"></div>
+          <div class="gname">蔬菜区</div>
+          <div class="gen">新鲜菜蔬</div>
+          <div class="gcount">3 样</div>
+        </div>
+
+        <div class="item">
+          <div class="check"></div>
+          <div class="imid"><div class="nm">番茄</div><div class="amt">3 个</div><div class="src">番茄炒蛋</div></div>
+          <div class="qty"><div class="check" style="border:none;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#b3a795" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.6 13a2 2 0 002 1.6h9.7a2 2 0 002-1.6L23 6H6" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        </div>
+
+        <div class="item">
+          <div class="check"></div>
+          <div class="imid"><div class="nm">紫菜</div><div class="amt">1 小把</div><div class="src">蛋花汤</div></div>
+          <div class="qty"><div class="check" style="border:none;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#b3a795" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.6 13a2 2 0 002 1.6h9.7a2 2 0 002-1.6L23 6H6" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        </div>
+
+        <div class="item done">
+          <div class="check"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></div>
+          <div class="imid"><div class="nm">葱姜蒜</div><div class="amt">各一小把</div><div class="src">麻婆豆腐</div></div>
+        </div>
+      </div>
+
+      <!-- 肉蛋·豆制品区 -->
+      <div class="pad">
+        <div class="ghead">
+          <div class="gdot meat"></div>
+          <div class="gname">肉蛋·豆制品区</div>
+          <div class="gen">肉蛋豆香</div>
+          <div class="gcount">3 样</div>
+        </div>
+
+        <div class="item">
+          <div class="check"></div>
+          <div class="imid"><div class="nm">豆腐</div><div class="amt">2 块</div><div class="src">麻婆豆腐</div></div>
+          <div class="qty"><div class="check" style="border:none;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#b3a795" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.6 13a2 2 0 002 1.6h9.7a2 2 0 002-1.6L23 6H6" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        </div>
+
+        <div class="item done">
+          <div class="check"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></div>
+          <div class="imid"><div class="nm">猪肉末</div><div class="amt">200 g</div><div class="src">麻婆豆腐</div></div>
+        </div>
+
+        <div class="item done">
+          <div class="check"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></div>
+          <div class="imid"><div class="nm">鸡蛋</div><div class="amt">4 个</div><div class="src">番茄炒蛋</div></div>
+        </div>
+      </div>
+
+      <!-- 调料区 -->
+      <div class="pad">
+        <div class="ghead">
+          <div class="gdot spice"></div>
+          <div class="gname">调料区</div>
+          <div class="gen">厨房调料</div>
+          <div class="gcount">2 样</div>
+        </div>
+
+        <div class="item">
+          <div class="check"></div>
+          <div class="imid"><div class="nm">郫县豆瓣</div><div class="amt">2 勺</div><div class="src">麻婆豆腐</div></div>
+          <div class="qty"><div class="check" style="border:none;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#b3a795" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.6 13a2 2 0 002 1.6h9.7a2 2 0 002-1.6L23 6H6" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        </div>
+
+        <div class="item done">
+          <div class="check"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></div>
+          <div class="imid"><div class="nm">生抽</div><div class="amt">家里还有</div><div class="src">番茄炒蛋</div></div>
+        </div>
+      </div>
+
+      <!-- 手动添加 -->
+      <div class="pad" style="margin-top:30px;">
+        <div class="shead" style="margin-bottom:14px;">
+          <div>
+            <div class="eyebrow">顺手再添一笔</div>
+            <h2>临时<span class="pop">加购</span></h2>
+          </div>
+        </div>
+      </div>
+      <div class="addbar">
+        <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div>
+        <input placeholder="想买点啥，写下来…" />
+        <div class="addbtn">添加</div>
+      </div>
+      <div class="quicks">
+        <div class="quick"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9a8e7d" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>食用油</div>
+        <div class="quick"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9a8e7d" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>大米</div>
+        <div class="quick"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9a8e7d" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>盐</div>
+        <div class="quick"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9a8e7d" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>蚝油</div>
+        <div class="quick"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9a8e7d" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>水果</div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

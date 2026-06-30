@@ -1,0 +1,18 @@
+var cuisineMap = {
+  '川菜': 'chuancai',
+  '粤菜': 'yuecai',
+  '家常': 'jiachang',
+  '湘菜': 'xiangcai',
+  '鲁菜': 'lucai',
+  '西餐': 'xican',
+  '日料': 'riliao'
+};
+
+module.exports = {
+  toPinyin: function(name) {
+    return cuisineMap[name] || 'jiachang';
+  },
+  toEmoji: function() {
+    return '';
+  }
+};

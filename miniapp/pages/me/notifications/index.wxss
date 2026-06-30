@@ -1,0 +1,316 @@
+/* pages/me/notifications · 消息中心 · 杂志风 + 番茄红撞色 */
+.notif-page {
+  min-height: 100vh;
+  background: var(--paper);
+}
+
+/* nav-bar 右侧「全部已读」 */
+.nb-readall {
+  display: inline-flex;
+  align-items: center;
+  gap: 10rpx;
+  padding: 14rpx 8rpx;
+  font-size: 24rpx;
+  font-weight: 700;
+  color: var(--gold-deep);
+}
+.nb-check {
+  width: 26rpx;
+  height: 26rpx;
+  border-left: 5rpx solid var(--gold-deep);
+  border-bottom: 5rpx solid var(--gold-deep);
+  transform: rotate(-45deg) translate(2rpx, -3rpx);
+}
+
+.notif-scroll {
+  box-sizing: border-box;
+  height: 100vh;
+  padding-top: calc(env(safe-area-inset-top) + 96rpx);
+}
+
+/* ===== Hero ===== */
+.hero {
+  padding: 16rpx 46rpx 34rpx;
+}
+.hero-eyebrow {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 23rpx;
+  letter-spacing: 2rpx;
+  color: var(--gold-deep);
+  font-weight: 700;
+}
+.hero-h2 {
+  display: block;
+  margin-top: 10rpx;
+  font-size: 64rpx;
+  letter-spacing: -3rpx;
+  line-height: 0.96;
+}
+/* 镂空标题在浅底用墨色描边更可读 */
+.hero-h2.title-stroke {
+  -webkit-text-stroke: 3rpx var(--ink);
+  color: var(--paper);
+}
+.hero-h2 .pop {
+  color: var(--pop);
+  -webkit-text-stroke: 0;
+}
+.hero-unread {
+  margin-top: 18rpx;
+  font-size: 25rpx;
+  font-weight: 600;
+  color: var(--mut-strong);
+}
+.hero-unread .unread-num {
+  color: var(--pop);
+  font-weight: 900;
+}
+
+/* ===== Tabs ===== */
+.tabs {
+  width: 100%;
+  white-space: nowrap;
+  padding: 4rpx 0 12rpx;
+}
+.tabs-inner {
+  display: inline-flex;
+  gap: 18rpx;
+  padding: 0 46rpx;
+}
+.chip .tab-dot {
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  background: var(--pop);
+  margin-left: 4rpx;
+}
+
+/* ===== 列表 ===== */
+.list {
+  padding: 24rpx 46rpx 20rpx;
+}
+.day-block { margin-top: 8rpx; }
+.daylbl {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 23rpx;
+  letter-spacing: 2rpx;
+  color: var(--gold-deep);
+  font-weight: 700;
+  margin: 22rpx 0 22rpx;
+}
+
+.ncard {
+  position: relative;
+  display: flex;
+  gap: 26rpx;
+  background: #fff;
+  border-radius: var(--r-card);
+  padding: 28rpx 30rpx;
+  margin-bottom: 24rpx;
+  border: var(--bd-card);
+  box-shadow: var(--sh-card);
+}
+.ncard.unread {
+  background: linear-gradient(180deg, var(--pop-soft) 0%, #fff 38%);
+}
+.ncard.unread::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 34rpx;
+  bottom: 34rpx;
+  width: 8rpx;
+  border-radius: 0 6rpx 6rpx 0;
+  background: var(--pop);
+}
+
+/* icon 容器 */
+.ic {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: var(--r-md);
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.ic-fam { background: var(--pop-soft); }
+.ic-com { background: #eef3ee; }
+.ic-sys { background: var(--gold); }
+.ic-img { width: 88rpx; height: 88rpx; border-radius: var(--r-md); }
+
+/* 用 CSS 画简易类型图标（避免 background-image 本地图） */
+.ic-svg { width: 40rpx; height: 40rpx; }
+.ic-home {
+  border: 4rpx solid var(--pop);
+  border-top: none;
+  width: 44rpx; height: 34rpx;
+  position: relative;
+}
+.ic-home::before {
+  content: "";
+  position: absolute;
+  top: -22rpx; left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 30rpx; height: 30rpx;
+  border-top: 4rpx solid var(--pop);
+  border-right: 4rpx solid var(--pop);
+}
+.ic-user {
+  position: relative;
+  width: 40rpx; height: 40rpx;
+}
+.ic-user::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 22rpx; height: 22rpx;
+  border-radius: 50%;
+  border: 4rpx solid var(--pop);
+}
+.ic-user::after {
+  content: "";
+  position: absolute;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 38rpx; height: 18rpx;
+  border-radius: 20rpx 20rpx 0 0;
+  border: 4rpx solid var(--pop);
+  border-bottom: none;
+}
+.ic-bell {
+  position: relative;
+  width: 34rpx; height: 34rpx;
+  border-radius: 50% 50% 8rpx 8rpx;
+  border: 4rpx solid var(--gold-deep);
+  border-bottom: none;
+}
+.ic-bell::after {
+  content: "";
+  position: absolute;
+  bottom: -10rpx; left: 50%;
+  transform: translateX(-50%);
+  width: 12rpx; height: 12rpx;
+  border-radius: 50%;
+  background: var(--gold-deep);
+}
+.ic-heart {
+  position: relative;
+  width: 38rpx; height: 34rpx;
+}
+.ic-heart::before, .ic-heart::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 20rpx; height: 30rpx;
+  border-radius: 20rpx 20rpx 0 0;
+  background: var(--pine);
+}
+.ic-heart::before { left: 9rpx; transform: rotate(-45deg); transform-origin: 0 100%; }
+.ic-heart::after { right: 9rpx; transform: rotate(45deg); transform-origin: 100% 100%; }
+.ic-clock {
+  position: relative;
+  width: 38rpx; height: 38rpx;
+  border-radius: 50%;
+  border: 4rpx solid var(--gold-deep);
+}
+.ic-clock::after {
+  content: "";
+  position: absolute;
+  top: 8rpx; left: 50%;
+  width: 4rpx; height: 13rpx;
+  background: var(--gold-deep);
+  transform-origin: bottom;
+  transform: translateX(-50%) rotate(40deg);
+}
+
+/* 中段文本 */
+.nmid { flex: 1; min-width: 0; }
+.nt {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+.nt-h3 {
+  font-size: 29rpx;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.5rpx;
+  flex: 1;
+  min-width: 0;
+}
+.nt-time {
+  font-size: 21rpx;
+  font-weight: 600;
+  color: var(--mut);
+  flex: none;
+}
+.nt-body {
+  margin-top: 10rpx;
+  font-size: 25rpx;
+  line-height: 1.5;
+  color: var(--mut-strong);
+}
+.seg-hl { color: var(--ink-deep); font-weight: 800; }
+.seg-at { color: var(--pop); font-weight: 800; }
+
+.nfoot {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-top: 20rpx;
+}
+.nfoot-spacer { flex: 1; }
+.thumb-dish {
+  width: 82rpx;
+  height: 82rpx;
+  border-radius: var(--r-sm);
+  flex: none;
+}
+
+.nbtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8rpx;
+  flex: none;
+  padding: 13rpx 28rpx;
+  border-radius: var(--r-pill);
+  font-size: 23rpx;
+  font-weight: 800;
+  color: #fff;
+  background: var(--pop);
+  box-shadow: var(--sh-pop);
+}
+.nbtn.ghost {
+  background: var(--paper-2);
+  color: var(--ink-deep);
+  box-shadow: none;
+}
+.nbtn-arrow {
+  width: 13rpx;
+  height: 13rpx;
+  border-top: 4rpx solid #fff;
+  border-right: 4rpx solid #fff;
+  transform: rotate(45deg);
+}
+.nbtn-arrow.arrow-ink {
+  border-top-color: var(--ink-deep);
+  border-right-color: var(--ink-deep);
+}
+
+/* 未读红点 */
+.reddot {
+  position: absolute;
+  top: 28rpx;
+  right: 28rpx;
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  background: var(--pop);
+  box-shadow: 0 0 0 6rpx var(--pop-soft);
+}

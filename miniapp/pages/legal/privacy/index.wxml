@@ -1,0 +1,64 @@
+<!-- pages/legal/privacy · 隐私政策（静态二级页）-->
+<nav-bar title="隐私政策" show-back="{{true}}" status-bar-height="{{statusBarHeight}}"></nav-bar>
+
+<view class="page">
+  <view class="body">
+    <!-- Hero -->
+    <view class="eyebrow eyebrow-serif g-fade-up">Privacy Policy</view>
+    <view class="doctitle title-stroke title-shadow g-fade-up g-d1">
+      你的<text class="pop">隐私</text>{{'\n'}}我们认真守护
+    </view>
+    <view class="effective g-fade-up g-d2">
+      <text class="effective-dot"></text>生效日期：{{effectiveDate}}
+    </view>
+    <view class="intro g-fade-up g-d3">{{intro}}</view>
+
+    <!-- 文字分组 01~04 -->
+    <view
+      class="sec g-fade-up"
+      wx:for="{{sections}}"
+      wx:key="no"
+      style="animation-delay: {{0.18 + index * 0.06}}s;"
+    >
+      <view class="sec-head">
+        <text class="sec-no">{{item.no}}</text>
+        <text class="sec-title">{{item.title}}</text>
+      </view>
+      <view class="sec-body">{{item.body}}</view>
+    </view>
+
+    <!-- 05 权限卡 -->
+    <view class="sec g-fade-up g-d6">
+      <view class="sec-head">
+        <text class="sec-no">05</text>
+        <text class="sec-title">权限说明</text>
+      </view>
+      <view class="perm">
+        <view class="card perm-item" wx:for="{{permissions}}" wx:key="name" wx:for-item="p">
+          <view class="perm-ic">
+            <!-- user -->
+            <view wx:if="{{p.icon === 'user'}}" class="ic-glyph ic-user"></view>
+            <!-- camera -->
+            <view wx:elif="{{p.icon === 'camera'}}" class="ic-glyph ic-camera"></view>
+            <!-- bell -->
+            <view wx:else class="ic-glyph ic-bell"></view>
+          </view>
+          <view class="perm-txt">
+            <view class="perm-name">{{p.name}}</view>
+            <view class="perm-desc">{{p.desc}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 联系框 -->
+    <view class="card-dark footnote g-fade-up g-d8">
+      <view class="deco-circle"></view>
+      <view class="ft-eb">Contact Us</view>
+      <view class="ft-text">如对本隐私政策有任何疑问，或希望行使查询、更正、删除个人信息的权利，欢迎随时联系我们：</view>
+      <view class="ft-mail tap-scale" catchtap="onCopyMail">{{contactMail}}</view>
+    </view>
+
+    <view class="safe-bottom"></view>
+  </view>
+</view>

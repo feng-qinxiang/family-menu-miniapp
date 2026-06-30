@@ -1,0 +1,111 @@
+<view class="mem-page">
+  <!-- 二级页顶部导航 -->
+  <nav-bar title="家庭管理" show-back="{{true}}" status-bar-height="{{statusBarHeight}}" />
+
+  <view class="mem-scroll">
+    <!-- Hero 标题 -->
+    <view class="mem-head g-fade-up">
+      <text class="mem-eyebrow">Family Members</text>
+      <view class="mem-h1">家庭<text class="t-pop">成员</text></view>
+    </view>
+
+    <!-- 家庭信息暗卡 -->
+    <view class="card-dark famcard g-fade-up g-d1">
+      <view class="deco-circle"></view>
+      <view class="fam-top">
+        <view class="fam-emoji">
+          <image class="fam-emoji-img" src="/assets/dishes/hongshao-pork.jpg" mode="aspectFill" />
+        </view>
+        <view class="fam-name-wrap">
+          <text class="fam-feyebrow">Our Kitchen</text>
+          <view class="fam-name ellipsis">{{familyName}}</view>
+        </view>
+      </view>
+      <view class="fam-bot">
+        <view class="fam-invite tap-scale" catchtap="onCopyCode">
+          <text class="fam-cap">邀请码</text>
+          <view class="fam-code">{{inviteCode}}</view>
+        </view>
+        <view class="fam-count">
+          <text class="fam-count-dot"></text>
+          共 {{memberCount}} 人
+        </view>
+      </view>
+    </view>
+
+    <!-- Section 标题 -->
+    <view class="shead">
+      <view class="shead-main">
+        <view class="shead-bar"></view>
+        <text class="eyebrow">Who's Cooking</text>
+        <view class="shead-title">成员列表</view>
+      </view>
+      <text class="seeall">{{memberCount}} 位成员</text>
+    </view>
+
+    <!-- 成员列表 -->
+    <view wx:if="{{members.length}}" class="mlist card g-fade-up g-d2">
+      <view
+        wx:for="{{members}}"
+        wx:key="userId"
+        class="mrow"
+      >
+        <view class="mavt mavt-{{item.tone}}">{{item.initial}}</view>
+        <view class="mmid">
+          <view class="mname">
+            <text class="mname-txt ellipsis">{{item.nickname}}</text>
+            <text class="badge badge-{{item.roleBadge}}">{{item.roleLabel}}</text>
+          </view>
+          <view class="msub">{{item.sub}}</view>
+        </view>
+        <view wx:if="{{item.isSelf}}" class="mself">本人</view>
+        <view
+          wx:else
+          class="mremove tap-scale"
+          data-id="{{item.userId}}"
+          catchtap="onRemoveTap"
+        >
+          <view class="mremove-icon"></view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 空态 -->
+    <view wx:elif="{{loaded}}" class="mlist card g-fade-up g-d2 mem-empty">
+      <text class="mem-empty-txt">还没有家庭成员，邀请家人一起点菜吧</text>
+    </view>
+
+    <view wx:if="{{members.length}}" class="mend">全家都在这儿了</view>
+
+    <view class="mem-tail"></view>
+  </view>
+
+  <!-- 底部邀请按钮 -->
+  <view class="mem-footer safe-bottom">
+    <view class="btn btn-pop btn-block mem-invbtn tap-scale" catchtap="onInvite">
+      <view class="mem-invbtn-icon"></view>
+      邀请新成员
+    </view>
+  </view>
+
+  <!-- 移除确认弹窗 -->
+  <state-dialog
+    visible="{{removeDialogVisible}}"
+    variant="danger"
+    title="移除成员"
+    content="{{pendingRemove ? '确定把「' + pendingRemove.nickname + '」移出家庭吗？移除后 TA 将无法查看家庭菜单。' : ''}}"
+    confirm-text="移除"
+    cancel-text="再想想"
+    bind:confirm="onRemoveConfirm"
+    bind:cancel="onRemoveCancel"
+  />
+
+  <!-- 轻提示 -->
+  <state-toast
+    visible="{{toastVisible}}"
+    type="top"
+    text="{{toastText}}"
+    duration="2000"
+    bind:close="onToastClose"
+  />
+</view>

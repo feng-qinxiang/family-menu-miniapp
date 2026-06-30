@@ -1,0 +1,65 @@
+<view class="ob-root">
+  <swiper
+    class="ob-swiper"
+    current="{{current}}"
+    autoplay="{{false}}"
+    duration="380"
+    circular="{{false}}"
+    bindchange="onSwiperChange"
+  >
+    <swiper-item wx:for="{{slides}}" wx:key="num" class="ob-item">
+      <!-- hero image（本地图禁 background-image，用 image 铺满） -->
+      <view class="ob-hero">
+        <image class="ob-hero-img" src="{{item.image}}" mode="aspectFill" />
+        <view class="ob-hero-mask"></view>
+        <text class="ob-bignum">{{item.num}}</text>
+      </view>
+
+      <!-- 内容区 -->
+      <view class="ob-content safe-bottom">
+        <text class="ob-tag eyebrow-serif">{{item.tag}}</text>
+        <view class="ob-title">
+          <text class="ob-line">{{item.line1}}</text>
+          <text class="ob-line">{{item.line2a}}<text class="pop">{{item.pop}}</text>{{item.line2b}}</text>
+        </view>
+        <text class="ob-slogan">{{item.slogan}}</text>
+
+        <!-- 进度点 -->
+        <view class="ob-dots">
+          <view
+            wx:for="{{slides}}"
+            wx:for-item="d"
+            wx:key="num"
+            class="ob-dot {{index === current ? 'on' : ''}}"
+          ></view>
+        </view>
+
+        <!-- 操作 -->
+        <view class="ob-actions">
+          <button class="btn btn-pop btn-block ob-next tap-scale" hover-class="none" bindtap="onNext">
+            <text>{{ current === slides.length - 1 ? '开始使用' : '下一步' }}</text>
+            <text class="ob-arrow">›</text>
+          </button>
+          <view class="ob-skip-link tap-scale" bindtap="onGuest">先随便逛逛</view>
+        </view>
+      </view>
+    </swiper-item>
+  </swiper>
+
+  <!-- 品牌 badge -->
+  <view class="ob-brand">
+    <view class="ob-logo">
+      <text class="ob-logo-ico">叉</text>
+    </view>
+    <view class="ob-bname">
+      家庭点菜
+      <text class="ob-bname-en">FAMILY MENU</text>
+    </view>
+  </view>
+
+  <!-- 跳过 -->
+  <view class="ob-skip tap-scale" bindtap="onSkip">
+    <text>跳过</text>
+    <text class="ob-skip-arrow">›</text>
+  </view>
+</view>

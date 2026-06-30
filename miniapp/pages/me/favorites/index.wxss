@@ -1,0 +1,165 @@
+/* pages/me/favorites/index.wxss · 我的收藏
+   视觉对标 my-favorites.html，全部走 app.wxss 新 token，禁硬编码配色 */
+.fav-scroll {
+  box-sizing: border-box;
+  height: 100vh;
+  background: var(--paper);
+}
+.fav-scroll .container {
+  padding: 0 28rpx 40rpx;
+}
+
+/* ============ Hero ============ */
+.fav-head {
+  padding: 96rpx 0 0;
+}
+.fav-title {
+  margin-top: 8rpx;
+  font-family: var(--sans);
+  font-size: 80rpx;
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -4rpx;
+  color: var(--ink);
+}
+.fav-title .pop {
+  color: var(--pop);
+}
+.fav-count {
+  margin-top: 22rpx;
+  font-size: 25rpx;
+  font-weight: 600;
+  color: var(--mut-strong);
+}
+
+/* ============ Tabs ============ */
+.fav-tabs {
+  display: flex;
+  gap: 54rpx;
+  margin-top: 42rpx;
+  padding-bottom: 0;
+  border-bottom: 2rpx solid #ece5d9;
+}
+.fav-tab {
+  position: relative;
+  padding-bottom: 24rpx;
+  font-size: 31rpx;
+  font-weight: 800;
+  letter-spacing: -0.4rpx;
+  color: var(--mut-strong);
+}
+.fav-tab.on {
+  color: var(--ink);
+}
+.fav-tab.on::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2rpx;
+  height: 6rpx;
+  border-radius: 6rpx;
+  background: var(--pop);
+}
+.fav-tab-badge {
+  margin-left: 8rpx;
+  font-size: 21rpx;
+  font-weight: 700;
+  color: var(--mut);
+}
+
+/* ============ body ============ */
+.fav-body {
+  padding-top: 38rpx;
+}
+
+/* 菜谱 2 列网格 */
+.fav-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 29rpx;
+}
+.fav-grid-cell {
+  min-width: 0;
+}
+
+/* ============ 帖子行卡（对标 .pcard）============ */
+.fav-pcard {
+  display: flex;
+  gap: 27rpx;
+  margin-bottom: 27rpx;
+  padding: 25rpx;
+  border-radius: var(--r-card);
+  background: #fff;
+  border: var(--bd-card);
+  box-shadow: var(--sh-card);
+}
+.fav-pthumb {
+  width: 177rpx;
+  height: 177rpx;
+  border-radius: var(--r-md);
+  flex: none;
+  background: var(--paper-2);
+}
+.fav-pmid {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.fav-ptag {
+  align-self: flex-start;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 21rpx;
+  letter-spacing: 1rpx;
+  font-weight: 700;
+  color: var(--gold-deep);
+}
+.fav-ptitle {
+  margin-top: 6rpx;
+  font-size: 31rpx;
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.6rpx;
+  color: var(--ink);
+}
+.fav-pby {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  margin-top: auto;
+  padding-top: 14rpx;
+}
+.fav-pav {
+  width: 44rpx;
+  height: 44rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  font-size: 21rpx;
+  font-weight: 800;
+  color: #fff;
+}
+.fav-pnm {
+  flex: 1;
+  min-width: 0;
+  font-size: 23rpx;
+  font-weight: 600;
+  color: var(--mut-strong);
+}
+.fav-plk {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 7rpx;
+  font-size: 23rpx;
+  font-weight: 700;
+  color: var(--pop);
+}
+.fav-plk-ic {
+  font-size: 24rpx;
+  color: var(--pop);
+}

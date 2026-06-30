@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>隐私政策 · 家庭点菜</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-font-smoothing:antialiased; }
+  :root{
+    --paper:#fbf8f3; --paper-2:#f0ebe2;
+    --ink:#2c241b; --ink-deep:#3a2e23;
+    --mut:#9a8e7d; --mut-strong:#7a6e5d;
+    --gold-deep:#b08949;
+    --pop:#e8472a; --pop-soft:#fdece6;
+    --serif:"Georgia","Times New Roman",serif;
+  }
+  body {
+    display:flex; align-items:center; justify-content:center;
+    min-height:100vh; background:#d9d2c7;
+    font-family:-apple-system,"SF Pro Text","Helvetica Neue",Helvetica,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  }
+  .phone {
+    position:relative; width:390px; height:844px;
+    background:var(--paper); border-radius:46px;
+    box-shadow:0 30px 70px rgba(60,45,30,.4), 0 0 0 11px #1b1714, 0 0 0 12px #2c2520;
+    overflow:hidden;
+  }
+  .status { position:absolute; top:0; left:0; right:0; height:50px; z-index:60;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 30px 0 34px; color:var(--ink); font-size:15px; font-weight:600; pointer-events:none; }
+  .status .right { display:flex; align-items:center; gap:7px; }
+  .notch { position:absolute; top:11px; left:50%; transform:translateX(-50%); width:118px; height:33px; background:#1b1714; border-radius:20px; z-index:61; }
+  .scroll { position:absolute; inset:0; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch; }
+  .scroll::-webkit-scrollbar { display:none; }
+
+  .nav { position:sticky; top:0; z-index:40; background:rgba(251,248,243,.94); backdrop-filter:blur(16px);
+    padding:58px 24px 16px; display:flex; align-items:center; gap:14px; border-bottom:1px solid #ece5d9; }
+  .back { width:44px; height:44px; border-radius:50%; background:var(--ink-deep); flex:none;
+    display:flex; align-items:center; justify-content:center; box-shadow:0 6px 16px rgba(60,40,20,.22); }
+  .nav h1 { font-size:21px; font-weight:900; color:var(--ink); letter-spacing:-.6px;
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; }
+
+  .body { padding:24px 24px 60px; }
+  .eyebrow { font-family:var(--serif); font-style:italic; font-size:13px; letter-spacing:1px; color:var(--gold-deep); font-weight:700; }
+  .doctitle { font-size:34px; font-weight:900; color:var(--ink); letter-spacing:-1.6px; line-height:.95; margin:7px 0 14px;
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; }
+  .doctitle .pop { color:var(--pop); }
+  .effective { display:inline-flex; align-items:center; gap:7px; font-size:12.5px; font-weight:700; color:var(--mut-strong);
+    background:var(--paper-2); padding:8px 14px; border-radius:30px; }
+  .intro { font-size:13.5px; line-height:1.85; color:var(--mut-strong); margin:18px 0 4px; }
+
+  .sec { margin-top:26px; }
+  .sec-head { display:flex; align-items:center; gap:12px; }
+  .sec-no { font-family:var(--serif); font-size:14px; font-weight:700; color:#fff; background:var(--pop);
+    width:30px; height:30px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex:none; }
+  .sec-head h2 { font-size:18px; font-weight:900; color:var(--ink-deep); letter-spacing:-.4px;
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; }
+  .sec p { font-size:13.5px; line-height:1.85; color:var(--mut-strong); margin-top:11px; }
+  .sec p .em { color:var(--ink); font-weight:700; }
+
+  .perm { margin-top:13px; display:flex; flex-direction:column; gap:10px; }
+  .perm .item { background:#fff; border:1px solid #f1ece2; border-radius:16px; padding:14px 16px;
+    box-shadow:0 2px 6px rgba(60,40,20,.06), 0 18px 40px rgba(120,70,30,.08); display:flex; gap:13px; align-items:flex-start; }
+  .perm .ic { width:38px; height:38px; border-radius:11px; background:var(--pop-soft); flex:none;
+    display:flex; align-items:center; justify-content:center; }
+  .perm .pt { flex:1; }
+  .perm .pt h4 { font-size:14.5px; font-weight:800; color:var(--ink); letter-spacing:-.2px; }
+  .perm .pt p { font-size:12.5px; line-height:1.65; color:var(--mut-strong); margin-top:4px; }
+
+  .footnote { margin-top:30px; padding:18px 18px; background:var(--ink-deep); border-radius:18px; color:var(--paper); }
+  .footnote .ft-eb { font-family:var(--serif); font-style:italic; font-size:12px; color:var(--gold-deep); font-weight:700; }
+  .footnote p { font-size:12.5px; line-height:1.8; color:rgba(251,248,243,.82); margin-top:7px; }
+  .footnote .mail { color:#fff; font-weight:800; }
+
+  .home-ind { position:absolute; bottom:9px; left:50%; transform:translateX(-50%); width:134px; height:5px; border-radius:3px; background:#2c241b; opacity:.85; z-index:55; }
+  .back:active { transform:scale(.97); }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status">
+    <span>9:41</span>
+    <span class="right">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="#2c241b"/><rect x="5" y="4.5" width="3" height="7.5" rx="1" fill="#2c241b"/><rect x="10" y="2" width="3" height="10" rx="1" fill="#2c241b"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#2c241b" opacity=".4"/></svg>
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><path d="M8.5 2.5C11 2.5 13.2 3.5 14.8 5.1L8.5 11.4 2.2 5.1C3.8 3.5 6 2.5 8.5 2.5Z" fill="#2c241b"/></svg>
+      <svg width="26" height="13" viewBox="0 0 26 13" fill="none"><rect x="1" y="1" width="21" height="11" rx="3" stroke="#2c241b" stroke-width="1.2" opacity=".5"/><rect x="3" y="3" width="16" height="7" rx="1.5" fill="#2c241b"/><rect x="23.5" y="4.5" width="2" height="4" rx="1" fill="#2c241b" opacity=".6"/></svg>
+    </span>
+  </div>
+
+  <div class="scroll">
+    <div class="nav">
+      <div class="back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fbf8f3" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></div>
+      <h1>隐私政策</h1>
+    </div>
+
+    <div class="body">
+      <div class="eyebrow">家里人的隐私</div>
+      <div class="doctitle">你的<span class="pop">隐私</span><br>我们认真守护</div>
+      <span class="effective"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M4 10h16M8 3v4M16 3v4" stroke-linecap="round"/></svg>生效日期：2026 年 6 月 1 日</span>
+      <p class="intro">「家庭点菜」尊重并保护每一位用户的个人隐私。本政策说明我们如何收集、使用、存储你的信息，以及你对这些信息所拥有的权利。请你在使用前仔细阅读。</p>
+
+      <div class="sec">
+        <div class="sec-head"><span class="sec-no">01</span><h2>信息收集</h2></div>
+        <p>为了向你提供点菜、菜单管理与买菜清单服务，我们会收集你<span class="em">主动填写</span>的内容，包括菜谱、家庭成员昵称、口味偏好；以及在你授权后获取的微信头像与昵称。我们不会收集与服务无关的信息。</p>
+      </div>
+
+      <div class="sec">
+        <div class="sec-head"><span class="sec-no">02</span><h2>信息使用</h2></div>
+        <p>收集到的信息仅用于：生成你的<span class="em">个性化菜单</span>、同步家庭成员的点菜记录、推荐常做菜品。我们不会将你的信息用于广告投放，也不会向任何第三方出售。</p>
+      </div>
+
+      <div class="sec">
+        <div class="sec-head"><span class="sec-no">03</span><h2>信息存储</h2></div>
+        <p>你的数据存储于<span class="em">境内合规云服务器</span>，并采用加密传输与脱敏处理。我们仅在为你提供服务所必需的期间内保留数据，账号注销后将在 15 个工作日内删除或匿名化。</p>
+      </div>
+
+      <div class="sec">
+        <div class="sec-head"><span class="sec-no">04</span><h2>第三方服务</h2></div>
+        <p>本小程序基于微信平台运行，登录与支付环节会调用微信官方接口。这部分数据由<span class="em">微信依其隐私政策</span>处理。除此之外，我们不接入任何额外的第三方数据统计或广告 SDK。</p>
+      </div>
+
+      <div class="sec">
+        <div class="sec-head"><span class="sec-no">05</span><h2>权限说明</h2></div>
+        <div class="perm">
+          <div class="item">
+            <div class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#e8472a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6"/></svg></div>
+            <div class="pt"><h4>微信资料</h4><p>用于显示你的头像与昵称，方便家庭成员互相识别。</p></div>
+          </div>
+          <div class="item">
+            <div class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#e8472a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18M8 6V4M16 6V4"/></svg></div>
+            <div class="pt"><h4>相册 / 相机</h4><p>仅在你上传自家菜品照片时调用，照片只用于你的菜谱。</p></div>
+          </div>
+          <div class="item">
+            <div class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#e8472a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg></div>
+            <div class="pt"><h4>通知</h4><p>用于提醒今晚菜单与买菜清单，可随时在系统设置中关闭。</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footnote">
+        <div class="ft-eb">有事找我们</div>
+        <p>如对本隐私政策有任何疑问，或希望行使查询、更正、删除个人信息的权利，欢迎随时联系我们：<br><span class="mail">privacy@jiating-dingcai.com</span></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="home-ind"></div>
+</div>
+</body>
+</html>

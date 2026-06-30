@@ -1,0 +1,144 @@
+<!-- pages/community/audit · 社区举报审核队列 -->
+<nav-bar title="审核队列" status-bar-height="{{statusBarHeight}}"></nav-bar>
+
+<view class="container" style="padding-top: {{statusBarHeight + 92}}px;">
+
+  <!-- Hero 镂空标题 + 待处理计数 badge -->
+  <view class="hero g-fade-up">
+    <view class="hero-tt">
+      <view class="eyebrow-serif">Moderation</view>
+      <view class="title-stroke title-shadow hero-h1">审核<text class="pop">队列</text></view>
+    </view>
+    <view wx:if="{{pending.length}}" class="hero-badge">{{pending.length}}</view>
+  </view>
+
+  <!-- Tab 切换 -->
+  <view class="tabs g-fade-up g-d1">
+    <view
+      class="chip tap-scale {{activeTab === 'PENDING' ? 'on' : ''}}"
+      data-tab="PENDING"
+      bindtap="switchTab"
+    >待处理 · {{pending.length}}</view>
+    <view
+      class="chip tap-scale {{activeTab === 'REVIEWED' ? 'on' : ''}}"
+      data-tab="REVIEWED"
+      bindtap="switchTab"
+    >已处理 · {{reviewed.length}}</view>
+  </view>
+
+  <!-- 加载占位 -->
+  <view wx:if="{{loading}}" class="empty-state">
+    <view class="empty-text">正在加载举报队列…</view>
+  </view>
+
+  <!-- 待处理列表 -->
+  <block wx:elif="{{activeTab === 'PENDING'}}">
+    <view wx:if="{{pending.length}}" class="list">
+      <view
+        wx:for="{{pending}}"
+        wx:key="reportId"
+        class="rcard card g-fade-up g-d{{index < 6 ? index + 2 : 6}}"
+      >
+        <view class="rc-top">
+          <image
+            class="rc-thumb"
+            src="{{item.cover || '/assets/dishes/' + item.fallbackDish + '.jpg'}}"
+            mode="aspectFill"
+          ></image>
+          <view class="rc-tx">
+            <view class="rc-title clamp-2">{{item.title}}</view>
+            <view class="rc-excerpt clamp-2">{{item.excerpt}}</view>
+          </view>
+        </view>
+
+        <view class="reason-tag">{{item.reasonLabel}}</view>
+
+        <view class="rc-meta">
+          <text class="m">举报人 {{item.reporter}}</text>
+          <text wx:if="{{item.timeText}}" class="m">{{item.timeText}}</text>
+        </view>
+
+        <view class="rc-actions">
+          <view
+            class="actbtn act-del tap-scale"
+            data-id="{{item.reportId}}"
+            data-title="{{item.title}}"
+            bindtap="onDelete"
+          >通过删除</view>
+          <view
+            class="actbtn act-ignore tap-scale"
+            data-id="{{item.reportId}}"
+            bindtap="onIgnore"
+          >忽略</view>
+        </view>
+      </view>
+    </view>
+
+    <state-empty
+      wx:else
+      type="pop"
+      title="队列已清空"
+      desc="当前没有待处理的举报，社区很干净"
+    ></state-empty>
+  </block>
+
+  <!-- 已处理列表 -->
+  <block wx:else>
+    <view wx:if="{{reviewed.length}}" class="list">
+      <view class="done-sep">Resolved · 近期处理</view>
+      <view
+        wx:for="{{reviewed}}"
+        wx:key="reportId"
+        class="rcard card done g-fade-up g-d{{index < 6 ? index + 2 : 6}}"
+      >
+        <view class="rc-top">
+          <image
+            class="rc-thumb"
+            src="{{item.cover || '/assets/dishes/' + item.fallbackDish + '.jpg'}}"
+            mode="aspectFill"
+          ></image>
+          <view class="rc-tx">
+            <view class="rc-title clamp-2">{{item.title}}</view>
+            <view class="rc-excerpt clamp-2">{{item.excerpt}}</view>
+          </view>
+        </view>
+
+        <view class="reason-tag">{{item.reasonLabel}}</view>
+
+        <view class="resolved-bar {{item.resultIgnored ? 'ign' : 'del'}}">
+          {{item.resultText}}
+        </view>
+      </view>
+    </view>
+
+    <state-empty
+      wx:else
+      type="gray"
+      title="还没有处理记录"
+      desc="处理过的举报会归档到这里"
+    ></state-empty>
+  </block>
+
+  <view class="safe-bottom"></view>
+</view>
+
+<!-- 确认弹窗 -->
+<state-dialog
+  visible="{{dialogVisible}}"
+  variant="{{dialogVariant}}"
+  title="{{dialogTitle}}"
+  content="{{dialogContent}}"
+  confirm-text="{{dialogConfirmText}}"
+  cancel-text="再想想"
+  bind:confirm="onDialogConfirm"
+  bind:cancel="onDialogCancel"
+></state-dialog>
+
+<!-- 操作反馈 -->
+<state-toast
+  visible="{{toastVisible}}"
+  type="center"
+  text="{{toastText}}"
+  duration="1800"
+  bind:close="onToastClose"
+></state-toast>

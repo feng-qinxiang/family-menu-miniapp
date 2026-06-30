@@ -1,0 +1,190 @@
+<view class="imp-page">
+  <!-- 固定顶部返回（透明叠加在 hero 上）-->
+  <view class="imp-nav" style="padding-top: {{statusBarHeight}}px;">
+    <nav-bar title="导入配方" status-bar-height="{{statusBarHeight}}"></nav-bar>
+  </view>
+
+  <!-- HERO -->
+  <view class="imp-hero">
+    <image class="imp-hero-img" src="/assets/dishes/orange-chicken.jpg" mode="aspectFill" />
+    <view class="imp-hero-mask"></view>
+    <text class="imp-hero-bignum">+</text>
+    <view class="imp-hero-body g-fade-up">
+      <text class="imp-tag">Import</text>
+      <view class="imp-hero-title title-stroke">导入<text class="pop">配方</text></view>
+      <view class="imp-hero-sub">从小红书、下厨房复制文案，自动拆成菜名、食材和步骤。</view>
+    </view>
+  </view>
+
+  <!-- SHEET -->
+  <view class="imp-sheet">
+    <!-- 导入方式 -->
+    <view class="imp-methods g-fade-up g-d1">
+      <view class="imp-method imp-method-main tap-scale {{activeTab === 'xhs' ? 'on' : ''}}" data-tab="xhs" bindtap="switchTab">
+        <view class="deco-circle"></view>
+        <view class="m-icon m-icon-gold">
+          <view class="ic-link"></view>
+        </view>
+        <view class="m-name">链接解析</view>
+        <view class="m-desc">粘贴小红书 / 下厨房分享文案</view>
+        <text class="m-badge">主打</text>
+      </view>
+      <view class="imp-mcol">
+        <view class="imp-method tap-scale {{activeTab === 'manual' ? 'on' : ''}}" data-tab="manual" bindtap="switchTab">
+          <view class="m-icon"><view class="ic-text"></view></view>
+          <view class="m-name">纯文本</view>
+          <view class="m-desc">手敲或粘贴文字</view>
+        </view>
+        <view class="imp-method tap-scale" data-tab="photo" bindtap="switchTab">
+          <view class="m-icon"><view class="ic-cam"></view></view>
+          <view class="m-name">拍照识别</view>
+          <view class="m-desc">截图自动提文字</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 粘贴区 -->
+    <view class="imp-pad">
+      <view class="shead g-fade-up g-d2">
+        <view class="shead-main">
+          <view class="shead-bar"></view>
+          <view class="eyebrow">Paste Here</view>
+          <view class="shead-title">粘贴<text class="pop">菜谱</text>文案</view>
+        </view>
+        <view class="sample tap-scale" bindtap="sampleText">填入示例 +</view>
+      </view>
+
+      <view class="ta-wrap card g-fade-up g-d3">
+        <textarea
+          class="ta-input"
+          placeholder="{{activeTab === 'xhs' ? '粘贴小红书 / 下厨房分享文案或链接…' : '菜名、食材、步骤，每行一条…'}}"
+          placeholder-class="ta-ph"
+          value="{{rawText}}"
+          bindinput="onInput"
+          auto-height
+          maxlength="-1"
+        ></textarea>
+        <view wx:if="{{!rawText}}" class="ta-cursor"></view>
+        <view class="ta-foot">
+          <text class="ta-cnt">已粘贴 {{charCount}} 字</text>
+          <view class="parsebtn tap-scale" bindtap="parseImport">开始解析 →</view>
+        </view>
+      </view>
+
+      <!-- 检测 banner -->
+      <view class="imp-detected g-fade-up" wx:if="{{preview}}">
+        <view class="dt-icon"><view class="ic-shield"></view></view>
+        <view class="dt-txt">
+          检测到 <text class="b">{{preview.isXhs ? '小红书链接' : (preview.sourceUrl ? '外部链接' : '纯文本')}}</text>，已提取文案。链接需复制文字，不会自动爬取原图。
+        </view>
+      </view>
+
+      <!-- 解析结果卡 -->
+      <view class="rescard g-fade-up" wx:if="{{preview}}">
+        <view class="res-top">
+          <view class="res-cover">
+            <image wx:if="{{preview.coverImage}}" class="res-cover-img" src="{{preview.coverImage}}" mode="aspectFill" />
+            <image wx:else class="res-cover-img" src="/assets/dishes/orange-chicken.jpg" mode="aspectFill" />
+            <view wx:if="{{!preview.coverImage}}" class="res-cover-add" bindtap="chooseCover">+ 封面</view>
+            <view wx:else class="res-cover-del" catchtap="removeCover">×</view>
+          </view>
+          <view class="res-info">
+            <text class="res-tag">已解析</text>
+            <input class="res-title" value="{{preview.title}}" bindinput="onPreviewTitleInput" placeholder="菜名" />
+            <view class="res-meta">
+              <view class="rm-cuisine">
+                <input class="rm-cuisine-in" value="{{preview.detectedCuisine}}" bindinput="onPreviewCuisineInput" placeholder="菜系" />
+              </view>
+              <text class="rm-pill">⏱ {{preview.timeCost}} 分钟</text>
+              <text class="rm-pill">👤 {{preview.servings}} 人份</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 难度 -->
+        <view class="res-block">
+          <view class="blabel">难度选择 <text class="en">Level</text></view>
+          <view class="diff-row">
+            <view
+              wx:for="{{difficultyOptions}}"
+              wx:key="key"
+              class="chip diff-chip {{preview.difficulty === item.key ? 'on' : ''}}"
+              data-key="{{item.key}}"
+              bindtap="selectDifficulty"
+            >{{item.label}}</view>
+          </view>
+        </view>
+
+        <!-- 食材 -->
+        <view class="res-block">
+          <view class="blabel">食材清单 <text class="en">Ingredients</text></view>
+          <view wx:if="{{!preview.ingredients.length}}" class="res-empty">未识别到食材，可手动补充</view>
+          <view class="ing-grid">
+            <view class="ing" wx:for="{{preview.ingredients}}" wx:key="name">
+              <text>{{item.name}}</text>
+              <text class="amt" wx:if="{{item.amount}}">{{item.amount}} {{item.unit}}</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 步骤 -->
+        <view class="res-block">
+          <view class="blabel">做法步骤 <text class="en">Steps</text></view>
+          <view wx:if="{{!preview.steps.length}}" class="res-empty">未识别到步骤，可手动补充</view>
+          <view class="step" wx:for="{{preview.steps}}" wx:key="index">
+            <view class="sno">{{index + 1}}</view>
+            <view class="step-main">
+              <view class="stext">{{item.text}}</view>
+              <view class="step-img-add" wx:if="{{!item.image}}" data-index="{{index}}" bindtap="chooseStepImage">+ 配图</view>
+              <view class="step-img-wrap" wx:else>
+                <image class="step-img" src="{{item.image}}" mode="aspectFill" />
+                <view class="step-img-del" data-index="{{index}}" catchtap="removeStepImage">×</view>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <!-- 来源 -->
+        <view class="source" wx:if="{{preview.sourceUrl || preview.isXhs}}">
+          <view class="s-icon"><view class="ic-link ic-link-pop"></view></view>
+          <view class="s-body">
+            <view class="st">来源 · {{preview.isXhs ? '小红书' : '外部链接'}}</view>
+            <view class="sl ellipsis">{{preview.sourceUrl || '已保留原文文案'}}</view>
+          </view>
+        </view>
+
+        <!-- 备注 -->
+        <view class="note-list" wx:if="{{preview.notes.length}}">
+          <view class="note-item" wx:for="{{preview.notes}}" wx:key="*this">· {{item}}</view>
+        </view>
+
+        <view class="res-cta">
+          <button class="btn btn-pop btn-block tap-scale" bindtap="saveImport" loading="{{saving}}">存入我的菜谱</button>
+        </view>
+      </view>
+
+      <!-- 最近导入 -->
+      <block wx:if="{{recentImports.length}}">
+        <view class="shead">
+          <view class="shead-main">
+            <view class="shead-bar"></view>
+            <view class="eyebrow">Recent Imports</view>
+            <view class="shead-title">最近<text class="pop">导入</text></view>
+          </view>
+        </view>
+        <view class="recent-list g-fade-up">
+          <view class="recent tap-scale" wx:for="{{recentImports}}" wx:key="id" data-id="{{item.id}}" bindtap="openRecent">
+            <image class="r-thumb" src="{{item.cover}}" mode="aspectFill" />
+            <view class="r-mid">
+              <view class="r-title ellipsis">{{item.title}}</view>
+              <view class="r-sub">{{item.srcLabel}}</view>
+            </view>
+            <view class="r-state">已保存</view>
+          </view>
+        </view>
+      </block>
+    </view>
+
+    <view class="safe-bottom imp-botspace"></view>
+  </view>
+</view>

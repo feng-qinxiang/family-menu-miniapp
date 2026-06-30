@@ -1,0 +1,409 @@
+/* 做菜记录 · cook-log/index
+   全量复用全局 token：--paper/--ink/--ink-deep/--pop/--gold/--gold-deep/--pine/--serif 等
+   仅本页局部排版，禁止硬编码配色、禁止重定义 token */
+.cl-page {
+  position: relative;
+  min-height: 100vh;
+  background: var(--paper);
+}
+
+/* 自定义导航叠在 hero 上 */
+.cl-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 60;
+}
+
+.cl-scroll {
+  height: 100vh;
+}
+
+/* ===== Hero ===== */
+.hero {
+  position: relative;
+  height: 870rpx;
+  overflow: hidden;
+}
+.hero-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.hero-mask {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(20, 14, 8, 0.5) 0%,
+    rgba(20, 14, 8, 0) 28%,
+    rgba(20, 14, 8, 0.18) 52%,
+    rgba(20, 14, 8, 0.9) 100%
+  );
+}
+.hero-bignum {
+  position: absolute;
+  top: 150rpx;
+  right: 26rpx;
+  font-family: var(--serif);
+  font-size: 408rpx;
+  font-weight: 700;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.07);
+  pointer-events: none;
+}
+.hero-body {
+  position: absolute;
+  left: 46rpx;
+  right: 46rpx;
+  bottom: 50rpx;
+  z-index: 10;
+  color: #fff;
+}
+.hero-tag {
+  display: inline-block;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 23rpx;
+  letter-spacing: 3rpx;
+  font-weight: 700;
+  color: #fff;
+  background: var(--pop);
+  padding: 11rpx 27rpx;
+  border-radius: var(--r-xs);
+}
+.hero-title {
+  font-size: 116rpx;
+  line-height: 0.9;
+  letter-spacing: -6rpx;
+  margin: 28rpx 0 8rpx;
+  -webkit-text-stroke: 3rpx #fff;
+}
+
+/* 成就玻璃条 */
+.ach {
+  display: flex;
+  gap: 26rpx;
+  margin-top: 34rpx;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.13);
+  border: 2rpx solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--r-md);
+  padding: 26rpx 30rpx;
+}
+.ach .a { flex: 1; }
+.ach .num {
+  font-size: 58rpx;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -3rpx;
+  line-height: 1;
+}
+.ach .num .u {
+  font-size: 23rpx;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  margin-left: 4rpx;
+}
+.ach .a.hl .num { color: var(--pop); }
+.ach .cap {
+  font-size: 21rpx;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 10rpx;
+  letter-spacing: 0.8rpx;
+}
+.ach-div {
+  width: 2rpx;
+  align-self: stretch;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+/* ===== Sheet ===== */
+.sheet {
+  position: relative;
+  margin-top: -50rpx;
+  background: var(--paper);
+  border-radius: 54rpx 54rpx 0 0;
+  padding: 46rpx 0 36rpx;
+  z-index: 20;
+}
+.pad { padding: 0 28rpx; }
+
+/* 本周打卡（复用 .card-dark + .deco-circle） */
+.calwrap {
+  margin: 0 28rpx;
+  padding: 30rpx 30rpx 32rpx;
+}
+.cal-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 25rpx;
+  position: relative;
+  z-index: 1;
+}
+.cal-top .ct { font-size: 25rpx; font-weight: 800; color: #fff; }
+.cal-top .cs {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 21rpx;
+  color: var(--gold);
+}
+.cal-days {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  z-index: 1;
+}
+.cal-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rpx;
+}
+.cal-day .dw {
+  font-size: 20rpx;
+  color: rgba(255, 255, 255, 0.65);
+  font-weight: 600;
+}
+.cal-day .dd {
+  width: 70rpx;
+  height: 70rpx;
+  border-radius: var(--r-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.06);
+}
+.cal-day.done .dd {
+  background: var(--pop);
+  color: #fff;
+  box-shadow: 0 8rpx 20rpx rgba(232, 71, 42, 0.4);
+}
+.cal-day.today .dd {
+  background: #fff;
+  color: var(--ink-deep);
+}
+.cal-day.miss .dd {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.42);
+  border: 2rpx dashed rgba(255, 255, 255, 0.34);
+}
+.cal-day.miss:active .dd {
+  background: rgba(232, 71, 42, 0.16);
+  border-color: var(--pop);
+  color: #fff;
+}
+.cal-day .fix {
+  font-size: 17rpx;
+  font-weight: 700;
+  color: var(--gold);
+  margin-top: -4rpx;
+}
+.cal-day .fix::before { content: "+ "; }
+
+/* chip 行 */
+.chips {
+  margin-top: 42rpx;
+  width: 100%;
+}
+.chips .hscroll-inner { padding: 4rpx 28rpx; }
+.chip .av {
+  width: 36rpx;
+  height: 36rpx;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 18rpx;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gold-deep);
+}
+.chip.on .av { background: var(--pop); }
+
+/* ===== Section 标题局部覆写（shead 已全局，补 men 斜体）===== */
+.shead { margin: 38rpx 0 22rpx; }
+
+/* ===== Timeline ===== */
+.timeline { position: relative; }
+.month-sep {
+  display: flex;
+  align-items: center;
+  gap: 22rpx;
+  margin: 8rpx 0 22rpx;
+}
+.month-sep:not(:first-child) { margin-top: 22rpx; }
+.month-sep .mtag {
+  font-family: var(--serif);
+  font-size: 27rpx;
+  font-weight: 800;
+  color: var(--ink-deep);
+  letter-spacing: 0.6rpx;
+  flex: none;
+}
+.month-sep .mtag .men {
+  font-style: italic;
+  color: var(--gold-deep);
+  font-size: 23rpx;
+  font-weight: 700;
+  margin-left: 10rpx;
+}
+.month-sep .mline {
+  flex: 1;
+  height: 2rpx;
+  background: linear-gradient(90deg, #e3dccd, transparent);
+}
+.month-sep .mcnt {
+  font-size: 21rpx;
+  color: var(--mut-strong);
+  font-weight: 600;
+  flex: none;
+}
+
+/* 记录卡 */
+.tcard {
+  display: flex;
+  gap: 26rpx;
+  background: #fff;
+  border-radius: 42rpx;
+  padding: 25rpx;
+  margin-bottom: 26rpx;
+  box-shadow: var(--sh-card);
+  border: var(--bd-card);
+}
+.tcard .thumb {
+  width: 162rpx;
+  height: 162rpx;
+  border-radius: 30rpx;
+  flex: none;
+  position: relative;
+  overflow: hidden;
+}
+.tcard .thumb-img { width: 100%; height: 100%; }
+.tcard .date {
+  position: absolute;
+  bottom: 12rpx;
+  left: 12rpx;
+  font-size: 18rpx;
+  font-weight: 800;
+  letter-spacing: 1rpx;
+  color: #fff;
+  background: rgba(40, 30, 20, 0.62);
+  padding: 5rpx 13rpx;
+  border-radius: 10rpx;
+}
+.tcard .tbody { flex: 1; min-width: 0; padding-top: 2rpx; }
+.tcard .trow1 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+.tcard .th4 {
+  font-size: 33rpx;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.6rpx;
+  min-width: 0;
+  flex: 1;
+}
+
+/* 星级（纯 CSS 五角星，复用 pop 色） */
+.stars { display: flex; gap: 3rpx; flex: none; }
+.star {
+  width: 25rpx;
+  height: 25rpx;
+  clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+}
+.star-on { background: var(--pop); }
+.star-off { background: #e7e0d4; }
+
+/* 厨师 + 备注 */
+.cook { display: flex; align-items: center; gap: 12rpx; margin-top: 14rpx; }
+.cook .ca {
+  width: 42rpx;
+  height: 42rpx;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 20rpx;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+.cook .cn { font-size: 24rpx; color: var(--mut); font-weight: 600; }
+.cook .cn-b { color: var(--ink-deep); font-weight: 700; }
+
+.note {
+  margin-top: 18rpx;
+  font-size: 24rpx;
+  line-height: 1.5;
+  color: var(--ink-deep);
+  background: var(--pop-soft);
+  border-radius: 20rpx;
+  padding: 15rpx 21rpx;
+}
+.note .who { color: var(--pop); font-weight: 800; margin-right: 8rpx; }
+.note.plain { background: var(--paper-2); }
+.note.plain .who { color: var(--gold-deep); }
+
+/* 厨师色调（与设计稿一致，限定本页局部头像底色） */
+.tone-a { background: #c75b39; }
+.tone-b { background: var(--pine); }
+.tone-c { background: var(--gold-deep); }
+.tone-d { background: #6b7b8c; }
+.tone-e { background: #9a5b8c; }
+
+/* 展开更早 */
+.loadmore {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14rpx;
+  margin: 12rpx 0 8rpx;
+  padding: 26rpx;
+  background: var(--paper-2);
+  border-radius: var(--r-sm);
+  font-size: 25rpx;
+  font-weight: 700;
+  color: var(--ink-deep);
+}
+.loadmore:active { background: #e6ded0; }
+.loadmore .lm-i {
+  width: 30rpx;
+  height: 30rpx;
+  border-right: 4rpx solid var(--gold-deep);
+  border-bottom: 4rpx solid var(--gold-deep);
+  transform: rotate(45deg);
+  margin-top: -8rpx;
+}
+
+/* 列表尾 */
+.listend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22rpx;
+  margin: 34rpx 0 4rpx;
+}
+.listend .le-line { width: 88rpx; height: 2rpx; background: #ddd5c6; }
+.listend .le-txt {
+  font-size: 21rpx;
+  color: var(--mut-strong);
+  font-weight: 600;
+  letter-spacing: 1rpx;
+}
+
+/* 骨架 */
+.sk-list { padding-top: 8rpx; }
+.sk-card { height: 212rpx; margin-bottom: 26rpx; }
+
+
+

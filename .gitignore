@@ -1,0 +1,17 @@
+/.idea/
+/*.iml
+/node_modules/
+/dist/
+/coverage/
+/target/
+/server/target/
+/miniapp/miniprogram_npm/
+*.log
+.DS_Store
+Thumbs.db
+*.class
+*.jar
+*.war
+.env
+.env.*
+!.env.example

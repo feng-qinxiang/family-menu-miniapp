@@ -1,0 +1,91 @@
+<!-- pages/vip/orders · 我的订单（开通记录）二级页 -->
+<nav-bar title="我的订单" status-bar-height="{{statusBarHeight}}"></nav-bar>
+
+<scroll-view scroll-y class="page" style="padding-top: {{statusBarHeight + 44}}px;">
+  <!-- Hero 标题 -->
+  <view class="head g-fade-up">
+    <view class="eyebrow-serif">My Subscriptions</view>
+    <view class="hero-ttl title-stroke title-shadow">开通<text class="pop">记录</text></view>
+    <view class="lead">家庭云同步年卡的开通与续费记录都在这儿。</view>
+  </view>
+
+  <!-- 统计条暗卡 -->
+  <view wx:if="{{orders.length}}" class="card-dark strip g-fade-up g-d1">
+    <view class="deco-circle"></view>
+    <view class="strip-l">
+      <view class="strip-e">Total Spent</view>
+      <view class="strip-n">已开通 {{totalCount}} 次</view>
+    </view>
+    <view class="strip-r">
+      <view class="strip-v">¥{{totalSpent}}<text class="strip-u">{{totalCents}}</text></view>
+      <view class="strip-c">累计支付</view>
+    </view>
+  </view>
+
+  <!-- 订单卡列表 -->
+  <view wx:if="{{orders.length}}" class="list">
+    <view
+      wx:for="{{orders}}"
+      wx:key="orderNo"
+      class="ocard card tap-scale g-fade-up {{'g-d' + (index + 2 < 8 ? index + 2 : 8)}}"
+    >
+      <!-- 状态 badge -->
+      <view class="badge badge--{{item.status}}">
+        <view class="badge-dot"></view>{{item.statusText}}
+      </view>
+
+      <!-- 产品 -->
+      <view class="ocard-top">
+        <view class="ocard-ic {{item.iconGold ? 'ocard-ic--gold' : ''}}">
+          <image class="ocard-ic-img"
+            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 24 24' fill='none' stroke='{{item.iconGold ? \"%23b08949\" : item.status === \"gray\" ? \"%239a8e7d\" : \"%23e8472a\"}}' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 7h16v12H4z'/%3E%3Cpath d='M4 7l4-4h8l4 4'/%3E%3Cpath d='M9 12h6'/%3E%3C/svg%3E"
+            mode="aspectFit" />
+        </view>
+        <view class="ocard-mid">
+          <view class="ocard-name ellipsis">{{item.productName}}</view>
+          <view class="ocard-tag ellipsis">{{item.productTag}}</view>
+        </view>
+        <view class="ocard-price">
+          <view class="ocard-amt"><text class="ocard-y">¥</text>{{item.amount}}</view>
+        </view>
+      </view>
+
+      <!-- 日期 -->
+      <view class="dates">
+        <view class="dcol">
+          <view class="dlab">开通日期</view>
+          <view class="dval {{item.status === 'gray' ? 'dval--muted' : ''}}">{{item.startDate}}</view>
+        </view>
+        <view class="dcol">
+          <view class="dlab">到期日期</view>
+          <view class="dval {{item.status === 'gray' ? 'dval--muted' : ''}}">{{item.endDate}}</view>
+        </view>
+      </view>
+
+      <!-- 订单号 + 续费 -->
+      <view class="oid">
+        <text class="oid-no ellipsis">订单号 {{item.orderNo}}</text>
+        <view class="oid-re tap-scale" catchtap="onRenew">
+          续费
+          <image class="oid-arr"
+            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='%23e8472a' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 6l6 6-6 6'/%3E%3C/svg%3E"
+            mode="aspectFit" />
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空态 -->
+  <view wx:if="{{!loading && !orders.length}}" class="empty-wrap">
+    <state-empty
+      type="gold"
+      title="还没有开通记录"
+      desc="开通家庭云同步年卡，全家菜单与买菜清单实时共享，换设备也不丢。"
+      cta="立即开通 ¥68/年"
+      cta-style="pop"
+      bind:action="onActivate"
+    ></state-empty>
+  </view>
+
+  <view class="safe-bottom"></view>
+</scroll-view>

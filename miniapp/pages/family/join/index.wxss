@@ -1,0 +1,339 @@
+/* pages/family/join · 加入家庭 · 全量复用 app.wxss 新 token */
+
+.nav-eyebrow {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 23rpx;
+  letter-spacing: 1rpx;
+  color: var(--gold-deep);
+  font-weight: 700;
+}
+
+.container {
+  padding: 0 46rpx 40rpx;
+}
+
+/* ===== Hero ===== */
+.head {
+  padding: 50rpx 0 0;
+}
+.hero-title {
+  font-size: 92rpx;
+  line-height: 0.92;
+  letter-spacing: -5rpx;
+  margin-top: 16rpx;
+}
+.lead {
+  margin-top: 26rpx;
+  font-size: 27rpx;
+  line-height: 1.6;
+  color: var(--mut-strong);
+}
+
+/* ===== 6 位邀请码 ===== */
+.code-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 56rpx 0 0;
+}
+.code-label-tx {
+  font-size: 22rpx;
+  letter-spacing: 2rpx;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+}
+.paste {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  font-size: 24rpx;
+  font-weight: 700;
+  color: var(--mut-strong);
+}
+.paste-ic {
+  width: 26rpx;
+  height: 26rpx;
+  border: 4rpx solid var(--mut-strong);
+  border-radius: 6rpx;
+  box-sizing: border-box;
+}
+
+.codeboxes {
+  display: flex;
+  gap: 18rpx;
+  padding: 26rpx 0 0;
+}
+.cell {
+  flex: 1;
+  height: 120rpx;
+  background: #fff;
+  border: 3rpx solid #ece4d6;
+  border-radius: var(--r-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 50rpx;
+  font-weight: 900;
+  color: var(--ink);
+  box-shadow: var(--sh-soft);
+}
+.cell.empty {
+  color: var(--mut-2);
+}
+.cell.on {
+  border-color: var(--pop);
+  box-shadow: 0 4rpx 12rpx rgba(232, 71, 42, 0.14), 0 16rpx 38rpx rgba(232, 71, 42, 0.12);
+}
+.cell.cur {
+  position: relative;
+  border-color: var(--pop);
+}
+.cell.cur::after {
+  content: "";
+  width: 4rpx;
+  height: 54rpx;
+  background: var(--pop);
+  border-radius: 2rpx;
+  animation: blink 1s steps(1) infinite;
+}
+.code-input {
+  position: absolute;
+  left: -9999rpx;
+  width: 1rpx;
+  height: 1rpx;
+  opacity: 0;
+}
+
+/* ===== 扫码 ===== */
+.scanrow {
+  padding: 34rpx 0 0;
+}
+.scanbtn {
+  width: 100%;
+  box-sizing: border-box;
+  background: #fff;
+  border: 3rpx solid #ece4d6;
+  border-radius: var(--r-md);
+  padding: 28rpx;
+  font-size: 28rpx;
+  font-weight: 800;
+  color: var(--ink-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18rpx;
+  box-shadow: var(--sh-soft);
+}
+.scan-ic {
+  width: 36rpx;
+  height: 36rpx;
+  border: 4rpx solid var(--ink-deep);
+  border-radius: 10rpx;
+  position: relative;
+  box-sizing: border-box;
+}
+.scan-ic::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  background: var(--ink-deep);
+}
+
+/* ===== 分隔 ===== */
+.ln-divider {
+  display: flex;
+  align-items: center;
+  gap: 26rpx;
+  margin: 50rpx 0 0;
+}
+.ln-divider .ln {
+  flex: 1;
+  height: 2rpx;
+  background: #e6ddcf;
+}
+.ln-tx {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 24rpx;
+  letter-spacing: 1rpx;
+  color: var(--gold-deep);
+  font-weight: 700;
+}
+
+/* ===== 家庭预览卡 ===== */
+.previewwrap {
+  padding: 42rpx 0 0;
+}
+.pvlabel {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 23rpx;
+  letter-spacing: 1rpx;
+  color: var(--gold-deep);
+  font-weight: 700;
+  margin-bottom: 22rpx;
+}
+.famcard {
+  padding: 38rpx;
+}
+.fc-top {
+  display: flex;
+  align-items: center;
+  gap: 28rpx;
+}
+.fc-cover {
+  width: 116rpx;
+  height: 116rpx;
+  border-radius: var(--r-md);
+  flex: none;
+  position: relative;
+  overflow: visible;
+  box-shadow: 0 12rpx 28rpx rgba(120, 70, 30, 0.22);
+}
+.fc-cover-img {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--r-md);
+  display: block;
+}
+.fc-cover .badge {
+  position: absolute;
+  bottom: -10rpx;
+  right: -10rpx;
+  width: 46rpx;
+  height: 46rpx;
+  border-radius: 50%;
+  background: var(--pop);
+  border: 5rpx solid #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.badge-ic {
+  width: 18rpx;
+  height: 10rpx;
+  border-left: 5rpx solid #fff;
+  border-bottom: 5rpx solid #fff;
+  transform: rotate(-45deg) translateY(-2rpx);
+}
+
+.fc-mid {
+  flex: 1;
+  min-width: 0;
+}
+.fc-name {
+  font-size: 40rpx;
+  font-weight: 900;
+  color: var(--ink);
+  letter-spacing: -1rpx;
+}
+.fc-sub {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  margin-top: 10rpx;
+  font-size: 24rpx;
+  color: var(--mut-strong);
+}
+.home-ic {
+  width: 24rpx;
+  height: 20rpx;
+  border: 4rpx solid var(--mut-strong);
+  border-top: none;
+  box-sizing: border-box;
+  position: relative;
+  flex: none;
+}
+.home-ic::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -16rpx;
+  transform: translateX(-50%) rotate(45deg);
+  width: 16rpx;
+  height: 16rpx;
+  border-top: 4rpx solid var(--mut-strong);
+  border-right: 4rpx solid var(--mut-strong);
+}
+.fc-divider {
+  height: 2rpx;
+  background: #efe9df;
+  margin: 30rpx 0;
+}
+.fc-bot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.avatars {
+  display: flex;
+}
+.avatars .av {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  border: 5rpx solid #fff;
+  margin-left: -22rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 25rpx;
+  font-weight: 800;
+  color: #fff;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.12);
+}
+.avatars .av:first-child {
+  margin-left: 0;
+}
+.avatars .more {
+  background: var(--paper-2);
+  color: var(--mut-strong);
+}
+.count {
+  font-size: 24rpx;
+  color: var(--mut-strong);
+  font-weight: 700;
+}
+.count-b {
+  color: var(--ink);
+  font-weight: 900;
+}
+
+/* ===== 申请加入 ===== */
+.applybtn {
+  margin-top: 46rpx;
+  gap: 16rpx;
+  font-size: 32rpx;
+  letter-spacing: 1rpx;
+}
+.applybtn.is-disabled {
+  opacity: 0.4;
+}
+.apply-arrow {
+  width: 18rpx;
+  height: 18rpx;
+  border-top: 5rpx solid #fff;
+  border-right: 5rpx solid #fff;
+  transform: rotate(45deg);
+}
+
+/* ===== 创建新家 ===== */
+.createnew {
+  text-align: center;
+  margin: 34rpx 0 0;
+}
+.createnew-link {
+  display: inline-block;
+  padding: 16rpx 8rpx;
+  font-size: 27rpx;
+  font-weight: 600;
+  color: var(--ink-deep);
+  border-bottom: 2rpx solid var(--mut-2);
+}

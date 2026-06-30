@@ -1,0 +1,33 @@
+<!-- components/recipe-card/index.wxml -->
+<!-- 横向行卡 -->
+<view wx:if="{{variant === 'row'}}" class="rc-row tap-scale" bindtap="onTap">
+  <image class="rc-row-thumb" src="{{cover}}" mode="aspectFill" />
+  <view class="rc-row-mid">
+    <view class="rc-row-title ellipsis">{{title}}</view>
+    <view class="rc-row-sub">
+      <text wx:if="{{timeText}}" class="rc-row-sub-i">{{timeText}}</text>
+      <text wx:if="{{metaText}}" class="rc-row-sub-i">{{metaText}}</text>
+    </view>
+  </view>
+  <view wx:if="{{showAdd}}" class="rc-row-add tap-scale" catchtap="onAdd">
+    <text class="rc-plus">＋</text>
+  </view>
+</view>
+
+<!-- 纵向大卡 -->
+<view wx:else class="rc-card tap-scale" bindtap="onTap">
+  <view class="rc-ph">
+    <image class="rc-ph-img" src="{{cover}}" mode="aspectFill" />
+    <view wx:if="{{label}}" class="rc-lbl">{{label}}</view>
+    <view wx:if="{{showFav}}" class="rc-fav {{favorited ? 'on' : ''}}" catchtap="onFav">
+      <text class="rc-heart">{{favorited ? '♥' : '♡'}}</text>
+    </view>
+  </view>
+  <view class="rc-info">
+    <view class="rc-name ellipsis">{{title}}</view>
+    <view class="rc-meta">
+      <text wx:if="{{timeText}}">{{timeText}}</text>
+      <text wx:if="{{metaText}}">{{metaText}}</text>
+    </view>
+  </view>
+</view>

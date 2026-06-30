@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "重置密码",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "nav-bar": "/components/nav-bar/index"
+  }
+}

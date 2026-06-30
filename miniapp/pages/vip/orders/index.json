@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "我的订单",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "nav-bar": "/components/nav-bar/index",
+    "state-empty": "/components/state-empty/index"
+  }
+}

@@ -1,0 +1,236 @@
+/* ============================================================
+   偏好画像页 · 我们家的口味
+   配色/字体/圆角/阴影全部复用 app.wxss 新 token：
+   --paper / --paper-2 / --ink / --ink-deep / --mut / --mut-strong
+   --gold / --gold-deep / --pop / --pop-soft / --pine / --serif
+   ============================================================ */
+.pp {
+  padding-top: 0;
+}
+
+/* ===== 加载骨架 ===== */
+.pp-loading { padding-top: 16rpx; }
+.sk-hero { height: 354rpx; border-radius: var(--r-card); margin-bottom: 32rpx; }
+.sk-card { height: 280rpx; border-radius: var(--r-card); margin-bottom: 28rpx; }
+
+/* ===== Hero 统计卡（深色菜图 + 大数字水印）===== */
+.ov {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--r-card);
+  min-height: 354rpx;
+  margin-top: 8rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 42rpx;
+  box-shadow: var(--sh-card);
+}
+.ov-bg { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; }
+.ov-mask {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(20, 14, 8, 0.25) 0%, rgba(20, 14, 8, 0.42) 45%, rgba(20, 14, 8, 0.9) 100%);
+}
+.ov-big {
+  position: absolute;
+  top: 4rpx;
+  right: 20rpx;
+  z-index: 2;
+  font-family: var(--serif);
+  font-size: 250rpx;
+  font-weight: 700;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.09);
+}
+.ov-content { position: relative; z-index: 3; }
+.ov-eyebrow {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 23rpx;
+  letter-spacing: 1rpx;
+  color: var(--gold);
+  font-weight: 700;
+}
+.ov-row { display: flex; margin-top: 24rpx; }
+.ov-stat { flex: 1; min-width: 0; }
+.ov-stat + .ov-stat {
+  border-left: 2rpx solid rgba(255, 255, 255, 0.18);
+  padding-left: 30rpx;
+}
+.ov-stat:not(:last-child) { padding-right: 26rpx; }
+.ov-n {
+  font-size: 54rpx;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -2rpx;
+  line-height: 1.05;
+}
+.ov-n.red { color: var(--pop); }
+.ov-u { font-size: 25rpx; font-weight: 700; margin-left: 4rpx; }
+.ov-c {
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.78);
+  margin-top: 6rpx;
+  font-weight: 600;
+}
+
+/* ===== 空态小提示 ===== */
+.empty-mini {
+  text-align: center;
+  color: var(--mut);
+  font-size: 26rpx;
+  padding: 48rpx 28rpx;
+}
+
+/* ===== 菜系分布条形图 ===== */
+.bar { margin-bottom: 33rpx; }
+.bar:last-child { margin-bottom: 0; }
+.bar-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 14rpx;
+}
+.bar-nm { font-size: 28rpx; font-weight: 800; color: var(--ink); }
+.bar-pc {
+  font-size: 27rpx;
+  font-weight: 900;
+  color: var(--ink-deep);
+  font-family: var(--serif);
+}
+.bar-track {
+  height: 27rpx;
+  border-radius: 16rpx;
+  background: var(--paper-2);
+  overflow: hidden;
+}
+.bar-fill {
+  height: 100%;
+  border-radius: 16rpx;
+  transition: width 0.6s var(--g-power3-out);
+}
+
+/* ===== 口味标签云（4 档尺寸）===== */
+.cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 19rpx 21rpx;
+  align-items: center;
+}
+.tcl {
+  display: inline-flex;
+  align-items: center;
+  gap: 8rpx;
+  font-weight: 800;
+  border-radius: var(--r-chip);
+  line-height: 1;
+}
+.tcl-ct { font-size: 0.62em; font-weight: 700; opacity: 0.7; }
+.tcl-xl {
+  font-size: 48rpx;
+  padding: 25rpx 38rpx;
+  background: var(--pop);
+  color: #fff;
+  box-shadow: var(--sh-pop);
+}
+.tcl-lg {
+  font-size: 38rpx;
+  padding: 21rpx 33rpx;
+  background: var(--pop-soft);
+  color: var(--pop);
+}
+.tcl-md {
+  font-size: 31rpx;
+  padding: 17rpx 29rpx;
+  background: var(--ink-deep);
+  color: var(--paper);
+}
+.tcl-sm {
+  font-size: 27rpx;
+  padding: 15rpx 25rpx;
+  background: var(--paper-2);
+  color: var(--mut-strong);
+}
+
+/* ===== 最常做 TOP5 ===== */
+.trow {
+  display: flex;
+  align-items: center;
+  gap: 26rpx;
+  padding: 25rpx 0;
+  border-bottom: 2rpx solid #efe9df;
+}
+.trow:last-child { border-bottom: none; padding-bottom: 0; }
+.trow:first-child { padding-top: 0; }
+.rk {
+  font-family: var(--serif);
+  font-size: 42rpx;
+  font-weight: 700;
+  font-style: italic;
+  color: var(--gold-deep);
+  width: 46rpx;
+  flex: none;
+  text-align: center;
+}
+.rk.one { color: var(--pop); }
+.tmb {
+  width: 112rpx;
+  height: 112rpx;
+  border-radius: 30rpx;
+  flex: none;
+  background: var(--paper-2);
+}
+.mid { flex: 1; min-width: 0; }
+.mid-h {
+  font-size: 31rpx;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.5rpx;
+}
+.mid-sb { font-size: 23rpx; color: var(--mut-strong); margin-top: 8rpx; }
+.cnt { flex: none; text-align: right; }
+.cnt-v {
+  font-size: 38rpx;
+  font-weight: 900;
+  color: var(--ink-deep);
+  font-family: var(--serif);
+  line-height: 1;
+}
+.cnt-u { font-size: 21rpx; color: var(--mut-strong); font-weight: 600; margin-top: 4rpx; }
+
+/* ===== 提示卡 ===== */
+.note {
+  display: flex;
+  align-items: flex-start;
+  gap: 21rpx;
+  margin-top: 42rpx;
+  padding: 29rpx 33rpx;
+  background: var(--paper-2);
+  border-radius: var(--r-md);
+}
+.note-ic {
+  width: 58rpx;
+  height: 58rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #d4a857, var(--gold), var(--gold-deep));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+.note-star {
+  width: 28rpx;
+  height: 28rpx;
+  background: var(--ink-deep);
+  /* 五角星 clip-path 兜底为菱形也可读 */
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+}
+.note-p {
+  font-size: 23rpx;
+  color: var(--mut-strong);
+  line-height: 1.6;
+  font-weight: 500;
+}
+.note-p .b { color: var(--ink-deep); font-weight: 800; }

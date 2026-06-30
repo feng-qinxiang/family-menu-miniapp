@@ -1,0 +1,103 @@
+<!-- pages/recipes/search · 搜索结果页 -->
+<view class="search-page">
+  <!-- sticky 搜索栏：状态栏占位 + 返回 + 输入 + 清除 + 取消 -->
+  <view class="searchbar" style="padding-top: {{statusBarHeight}}px;">
+    <view class="searchbar-inner">
+      <view class="backbtn tap-scale" catchtap="onBack">
+        <view class="backbtn-icon"></view>
+      </view>
+
+      <view class="sbox">
+        <view class="sbox-ic">
+          <view class="ic-ring"></view>
+          <view class="ic-handle"></view>
+        </view>
+        <input
+          class="sbox-input"
+          value="{{keyword}}"
+          placeholder="搜菜名 / 菜系 / 口味"
+          placeholder-class="sbox-ph"
+          confirm-type="search"
+          bindinput="onInput"
+        />
+        <view wx:if="{{keyword}}" class="clr tap-scale" catchtap="onClear">
+          <view class="clr-x"></view>
+        </view>
+      </view>
+
+      <text class="cancel tap-scale" catchtap="onCancel">取消</text>
+    </view>
+  </view>
+
+  <!-- 结果区 -->
+  <scroll-view class="scroll" scroll-y enhanced show-scrollbar="{{false}}">
+    <view class="pad">
+      <!-- 结果标题 -->
+      <view class="rhead g-fade-up">
+        <text class="eyebrow-serif">Results</text>
+      </view>
+      <view class="rtitle g-fade-up g-d1">
+        <text class="rtitle-t">找到「</text><text class="rtitle-kw pop">{{keyword || '全部'}}</text><text class="rtitle-t">」</text>
+      </view>
+      <view class="rcount g-fade-up g-d2">
+        共 <text class="rcount-n">{{total}}</text> 道相关菜谱 · 按相关度排序
+      </view>
+
+      <!-- 排序 / 筛选 chip 横滑 -->
+      <scroll-view class="sortrow hscroll" scroll-x enhanced show-scrollbar="{{false}}">
+        <view class="hscroll-inner">
+          <view
+            wx:for="{{sorts}}"
+            wx:key="key"
+            class="chip tap-scale {{activeSort === item.key ? 'on' : ''}}"
+            data-key="{{item.key}}"
+            catchtap="onSortTap"
+          >{{item.label}}</view>
+        </view>
+      </scroll-view>
+
+      <!-- 2 列网格 -->
+      <view wx:if="{{list.length}}" class="grid">
+        <view
+          wx:for="{{list}}"
+          wx:key="id"
+          class="gcard tap-scale g-fade-up"
+          style="animation-delay: {{index * 0.04 + 0.1}}s"
+          data-id="{{item.id}}"
+          bindtap="onCardTap"
+        >
+          <view class="gc-ph">
+            <image class="gc-img" src="{{item.cover}}" mode="aspectFill" />
+            <view wx:if="{{item.label}}" class="gc-lbl">{{item.label}}</view>
+            <view class="gc-fav {{item.favorited ? 'on' : ''}}" data-id="{{item.id}}" catchtap="onFavTap">
+              <text class="gc-heart">{{item.favorited ? '♥' : '♡'}}</text>
+            </view>
+          </view>
+          <view class="gc-info">
+            <view class="gc-name ellipsis">
+              <text wx:for="{{item.titleParts}}" wx:for-item="seg" wx:key="index" class="{{seg.hl ? 'hl' : ''}}">{{seg.t}}</text>
+            </view>
+            <view class="gc-meta">
+              <text class="gc-meta-i">{{item.cuisine}}</text>
+              <text class="gc-dot"></text>
+              <text wx:if="{{item.timeText}}" class="gc-meta-i">{{item.timeText}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 空状态 -->
+      <state-empty
+        wx:elif="{{loaded}}"
+        type="search"
+        title="没有找到相关菜谱"
+        desc="换个关键词，或试试上面的筛选"
+        cta="清空搜索"
+        ctaStyle="ghost"
+        bind:action="onClear"
+      />
+
+      <view class="safe-bottom"></view>
+    </view>
+  </scroll-view>
+</view>

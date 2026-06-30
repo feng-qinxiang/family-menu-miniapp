@@ -1,0 +1,45 @@
+<!-- state-toast · 轻提示组件 4 变体 -->
+<view wx:if="{{show}}" class="st st-{{type}} g-fade-{{type === 'bottom' ? 'up' : (type === 'top' ? 'down' : 'in')}}">
+
+  <!-- 1) 顶部成功 -->
+  <block wx:if="{{type === 'top'}}">
+    <view class="st-ic st-ic-ok">
+      <view class="st-check"></view>
+    </view>
+    <view class="st-tx">
+      <view class="st-h5">{{text || '操作成功'}}</view>
+      <view wx:if="{{subText}}" class="st-p">{{subText}}</view>
+    </view>
+    <view class="st-close tap-scale" catchtap="onClose">
+      <view class="st-x"></view>
+    </view>
+  </block>
+
+  <!-- 2) 居中深色 -->
+  <block wx:elif="{{type === 'center'}}">
+    <view class="st-ring">
+      <view class="st-check st-check-lg"></view>
+    </view>
+    <text class="st-center-tx">{{text || '操作成功'}}</text>
+  </block>
+
+  <!-- 3) 错误胶囊 -->
+  <block wx:elif="{{type === 'error'}}">
+    <view class="st-ic-err">!</view>
+    <text class="st-err-tx">{{text || '网络错误，请重试'}}</text>
+    <view wx:if="{{actionText}}" class="st-retry tap-scale" catchtap="onAction">{{actionText}}</view>
+  </block>
+
+  <!-- 4) 底部撤销 -->
+  <block wx:else>
+    <view class="st-ic st-ic-undo">
+      <view class="st-bin"></view>
+    </view>
+    <view class="st-tx">
+      <view class="st-h5 st-h5-light">{{text || '已移除'}}</view>
+      <view wx:if="{{subText}}" class="st-p st-p-gold">{{subText}}</view>
+    </view>
+    <view wx:if="{{actionText}}" class="st-undo tap-scale" catchtap="onAction">{{actionText}}</view>
+  </block>
+
+</view>

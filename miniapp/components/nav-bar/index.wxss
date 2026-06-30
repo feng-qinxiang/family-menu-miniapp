@@ -1,0 +1,59 @@
+/* nav-bar · 组件特有样式（配色 token 复用 app.wxss 全局变量）*/
+.navbar {
+  box-sizing: border-box;
+  width: 100%;
+}
+.navbar-inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 88rpx;
+  padding: 18rpx 24rpx;
+}
+
+/* 返回圆按钮：深棕 ink-deep 44rpx 圆（双倍 88rpx 触控区）*/
+.navbar-back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 50%;
+  background: var(--ink-deep);
+  flex: none;
+}
+.navbar-back--hover { opacity: 0.85; }
+.navbar-side { width: 88rpx; height: 88rpx; flex: none; }
+
+/* 返回箭头：纯 CSS 描边三角，避免外部图标依赖 */
+.navbar-back-icon {
+  width: 20rpx;
+  height: 20rpx;
+  border-left: 5rpx solid var(--paper);
+  border-bottom: 5rpx solid var(--paper);
+  transform: translateX(3rpx) rotate(45deg);
+  border-radius: 2rpx;
+}
+
+/* 居中标题：绝对居中，不受左右块宽度影响 */
+.navbar-title {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 56%;
+  text-align: center;
+  font-size: 34rpx;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -1rpx;
+}
+
+/* 右侧 slot 容器 */
+.navbar-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: 88rpx;
+}

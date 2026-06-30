@@ -1,0 +1,257 @@
+/* pages/me/profile-edit · 编辑资料 · 套用全局 token（--paper/--pop/--ink-deep/--gold-deep/--serif） */
+.pe-page {
+  min-height: 100vh;
+  background: var(--paper);
+}
+
+/* nav-bar 右侧保存文字 */
+.pe-navsave {
+  font-size: 27rpx;
+  font-weight: 800;
+  color: var(--gold-deep);
+  letter-spacing: 1rpx;
+  padding: 8rpx 6rpx;
+}
+
+.pe-scroll {
+  box-sizing: border-box;
+  height: calc(100vh - 0rpx);
+  padding: 8rpx 0 40rpx;
+}
+
+/* ===== 文字头像 ===== */
+.pe-avatar-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 30rpx 0 16rpx;
+}
+.pe-eyebrow {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 23rpx;
+  letter-spacing: 2rpx;
+  color: var(--gold-deep);
+  font-weight: 700;
+  margin-bottom: 24rpx;
+}
+.pe-avatar {
+  position: relative;
+  width: 208rpx;
+  height: 208rpx;
+}
+.pe-ava-txt {
+  width: 208rpx;
+  height: 208rpx;
+  border-radius: 50%;
+  background: var(--pop);
+  border: 6rpx solid #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 88rpx;
+  font-weight: 900;
+  letter-spacing: 2rpx;
+  box-shadow: var(--sh-card);
+}
+.pe-ava-img {
+  width: 208rpx;
+  height: 208rpx;
+  border-radius: 50%;
+  border: 6rpx solid #fff;
+  display: block;
+  box-sizing: border-box;
+  box-shadow: var(--sh-card);
+  background: var(--paper-2);
+}
+.pe-cam {
+  position: absolute;
+  right: -4rpx;
+  bottom: -4rpx;
+  width: 74rpx;
+  height: 74rpx;
+  border-radius: 50%;
+  background: var(--pop);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 6rpx solid var(--paper);
+  box-shadow: var(--sh-pop);
+}
+.pe-cam-icon {
+  width: 30rpx;
+  height: 24rpx;
+  border: 4rpx solid #fff;
+  border-radius: 6rpx;
+  position: relative;
+}
+.pe-cam-icon::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  border: 3rpx solid #fff;
+}
+.pe-avatar-hint {
+  margin-top: 24rpx;
+  font-size: 25rpx;
+  font-weight: 700;
+  color: var(--mut-strong);
+}
+
+/* ===== 分组标题 ===== */
+.pe-grlabel {
+  padding: 0 46rpx;
+  margin: 36rpx 0 16rpx;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 23rpx;
+  letter-spacing: 1rpx;
+  color: var(--gold-deep);
+  font-weight: 700;
+}
+
+/* ===== 表单组（复用 .card）===== */
+.pe-group {
+  margin: 0 28rpx;
+  padding: 0;
+  overflow: hidden;
+}
+.pe-frow {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  padding: 30rpx 30rpx;
+  border-bottom: 2rpx solid #f1ece2;
+}
+.pe-group .pe-frow:last-child {
+  border-bottom: none;
+}
+.pe-fic {
+  width: 70rpx;
+  height: 70rpx;
+  border-radius: 22rpx;
+  background: var(--paper-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+.pe-ic-dot {
+  width: 26rpx;
+  height: 26rpx;
+  border-radius: 8rpx;
+  background: var(--gold-deep);
+  opacity: 0.85;
+}
+.pe-flabel {
+  font-size: 29rpx;
+  font-weight: 700;
+  color: var(--ink);
+  flex: none;
+  width: 104rpx;
+}
+.pe-flabel-wide {
+  width: 132rpx;
+}
+.pe-finput {
+  flex: 1;
+  text-align: right;
+  font-size: 29rpx;
+  font-weight: 600;
+  color: var(--ink-deep);
+}
+.pe-fval {
+  flex: 1;
+  text-align: right;
+  font-size: 29rpx;
+  font-weight: 600;
+  color: var(--ink-deep);
+}
+.pe-ph {
+  color: var(--mut);
+  font-weight: 500;
+}
+.pe-chev {
+  flex: none;
+  width: 18rpx;
+  height: 18rpx;
+  border-top: 4rpx solid var(--mut);
+  border-right: 4rpx solid var(--mut);
+  transform: rotate(45deg);
+  margin-left: 8rpx;
+}
+.pe-picker {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* 性别 pill 行 */
+.pe-pillrow {
+  flex: 1;
+  display: flex;
+  gap: 16rpx;
+  justify-content: flex-end;
+}
+.pe-pill {
+  padding: 14rpx 30rpx;
+  font-size: 26rpx;
+  border-radius: var(--r-pill);
+}
+/* 选中态：番茄红软底 + 红字红框（区别于全局 .chip.on 的深墨底） */
+.pe-pill.on {
+  background: var(--pop-soft);
+  color: var(--pop);
+  border-color: rgba(232, 71, 42, 0.3);
+}
+
+/* 口味偏好：纵向 tags */
+.pe-frow-col {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 22rpx;
+}
+.pe-frow-head {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+}
+.pe-tagwrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+.pe-tag {
+  padding: 14rpx 30rpx;
+  font-size: 26rpx;
+  border-radius: var(--r-pill);
+}
+.pe-tag.on {
+  background: var(--pop-soft);
+  color: var(--pop);
+  border-color: rgba(232, 71, 42, 0.3);
+}
+
+/* ===== 保存按钮 ===== */
+.pe-savebar {
+  padding: 48rpx 28rpx 40rpx;
+}
+.pe-savebar .btn {
+  gap: 14rpx;
+  letter-spacing: 1rpx;
+}
+.pe-save-check {
+  width: 28rpx;
+  height: 16rpx;
+  border-left: 5rpx solid #fff;
+  border-bottom: 5rpx solid #fff;
+  transform: rotate(-45deg);
+  margin-top: -6rpx;
+}

@@ -1,0 +1,8 @@
+{
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "nav-bar": "/components/nav-bar/index",
+    "state-empty": "/components/state-empty/index",
+    "state-toast": "/components/state-toast/index"
+  }
+}

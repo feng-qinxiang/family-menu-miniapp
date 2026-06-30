@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>家庭点菜 · 启动引导</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-font-smoothing:antialiased; }
+  :root{
+    --paper:#fbf8f3; --paper-2:#f0ebe2;
+    --ink:#2c241b; --ink-deep:#3a2e23;
+    --mut:#9a8e7d; --mut-strong:#7a6e5d;
+    --gold:#f4d9a8; --gold-deep:#b08949;
+    --pop:#e8472a;
+    --serif:"Georgia","Times New Roman",serif;
+  }
+  body {
+    display:flex; align-items:center; justify-content:center;
+    min-height:100vh; background:#d9d2c7;
+    font-family:-apple-system,"SF Pro Text","Helvetica Neue",Helvetica,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  }
+  .phone {
+    position:relative; width:390px; height:844px;
+    background:var(--paper); border-radius:46px;
+    box-shadow:0 30px 70px rgba(60,45,30,.4), 0 0 0 11px #1b1714, 0 0 0 12px #2c2520;
+    overflow:hidden;
+  }
+  .status {
+    position:absolute; top:0; left:0; right:0; height:50px; z-index:60;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 30px 0 34px; color:#fff; font-size:15px; font-weight:600; pointer-events:none;
+  }
+  .status .right { display:flex; align-items:center; gap:7px; }
+  .notch { position:absolute; top:11px; left:50%; transform:translateX(-50%); width:118px; height:33px; background:#1b1714; border-radius:20px; z-index:61; }
+
+  /* hero image area */
+  .hero {
+    position:absolute; top:0; left:0; right:0; height:560px;
+    background:url('img/mapo-tofu.jpg') center/cover no-repeat;
+  }
+  .hero::before { content:""; position:absolute; inset:0; z-index:1;
+    background:radial-gradient(110% 70% at 50% 6%, rgba(255,180,80,.22), transparent 55%); mix-blend-mode:overlay; }
+  .hero::after { content:""; position:absolute; inset:0; z-index:1;
+    background:linear-gradient(180deg, rgba(20,14,8,.55) 0%, rgba(20,14,8,.1) 24%, rgba(60,46,35,.12) 52%, rgba(180,160,140,.4) 74%, rgba(251,248,243,.85) 88%, var(--paper) 100%); }
+  .hero-bignum { position:absolute; top:96px; left:18px; z-index:2; font-family:var(--serif); font-size:200px; font-weight:700; line-height:1; color:rgba(255,255,255,.07); pointer-events:none; }
+
+  /* skip */
+  .skip { position:absolute; top:62px; right:24px; z-index:30; color:rgba(255,255,255,.92); font-size:13.5px; font-weight:600; letter-spacing:.5px; display:flex; align-items:center; gap:4px; }
+
+  /* brand badge */
+  .brand { position:absolute; top:60px; left:24px; z-index:30; display:flex; align-items:center; gap:9px; }
+  .brand .logo { width:38px; height:38px; border-radius:12px; background:var(--pop); display:flex; align-items:center; justify-content:center; box-shadow:0 6px 16px rgba(232,71,42,.4); }
+  .brand .bname { color:#fff; font-size:15px; font-weight:800; letter-spacing:-.3px; }
+  .brand .bname small { display:block; font-family:var(--serif); font-style:italic; font-weight:600; font-size:10px; letter-spacing:1.5px; opacity:.8; margin-top:1px; }
+
+  /* content */
+  .content { position:absolute; left:0; right:0; bottom:0; z-index:20; padding:0 30px 44px; }
+  .tag { display:inline-block; font-family:var(--serif); font-style:italic; font-size:12px; letter-spacing:1.5px; font-weight:700;
+    color:var(--gold-deep); margin-bottom:14px; }
+  .title {
+    font-size:62px; line-height:1.18; font-weight:900; letter-spacing:-3.5px; color:var(--ink);
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  }
+  .title .line1, .title .line2 { display:block; line-height:1.0; }
+  .title .line2 { color:var(--ink); margin-top:6px; }
+  .title .pop { color:var(--pop); }
+  .slogan { font-size:15.5px; line-height:1.6; color:var(--mut-strong); margin-top:18px; max-width:300px; font-weight:500; }
+
+  /* dots */
+  .dots { display:flex; gap:8px; margin-top:34px; align-items:center; }
+  .dots .d { width:8px; height:8px; border-radius:50%; background:#d8cfbf; }
+  .dots .d.on { width:26px; background:var(--pop); }
+
+  /* actions */
+  .actions { margin-top:30px; }
+  .btn-next { width:100%; height:56px; border:none; background:var(--pop); color:#fff; font-size:16.5px; font-weight:800; letter-spacing:.5px;
+    border-radius:18px; display:flex; align-items:center; justify-content:center; gap:9px;
+    box-shadow:0 2px 6px rgba(180,40,20,.3), 0 16px 34px rgba(232,71,42,.4); }
+  .skip-link { display:block; text-align:center; margin-top:18px; font-size:13.5px; color:var(--mut-strong); font-weight:600; }
+
+  .home-ind { position:absolute; bottom:9px; left:50%; transform:translateX(-50%); width:134px; height:5px; border-radius:3px; background:#2c241b; opacity:.5; z-index:55; }
+
+  .skip:active, .btn-next:active, .skip-link:active { transform:scale(.97); }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status">
+    <span>9:41</span>
+    <span class="right">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="#fff"/><rect x="5" y="4.5" width="3" height="7.5" rx="1" fill="#fff"/><rect x="10" y="2" width="3" height="10" rx="1" fill="#fff"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#fff" opacity=".4"/></svg>
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><path d="M8.5 2.5C11 2.5 13.2 3.5 14.8 5.1L8.5 11.4 2.2 5.1C3.8 3.5 6 2.5 8.5 2.5Z" fill="#fff"/></svg>
+      <svg width="26" height="13" viewBox="0 0 26 13" fill="none"><rect x="1" y="1" width="21" height="11" rx="3" stroke="#fff" stroke-width="1.2" opacity=".5"/><rect x="3" y="3" width="16" height="7" rx="1.5" fill="#fff"/><rect x="23.5" y="4.5" width="2" height="4" rx="1" fill="#fff" opacity=".6"/></svg>
+    </span>
+  </div>
+
+  <div class="hero">
+    <div class="hero-bignum">01</div>
+  </div>
+
+  <div class="brand">
+    <div class="logo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3v7a3 3 0 003 3v8M8 3v6M11 3v6M16 3c-1.5 0-2.5 2-2.5 5s1 4 2.5 4v9"/></svg></div>
+    <div class="bname">家庭点菜<small>今天这一桌</small></div>
+  </div>
+
+  <div class="skip">跳过
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>
+  </div>
+
+  <div class="content">
+    <span class="tag">欢迎回家吃饭</span>
+    <div class="title"><span class="line1">全家一起</span><span class="line2">点<span class="pop">菜</span></span></div>
+    <p class="slogan">今天吃什么，不用再纠结。一家人各自挑，菜单自动凑齐，买菜清单一键生成。</p>
+
+    <div class="dots">
+      <div class="d on"></div>
+      <div class="d"></div>
+      <div class="d"></div>
+    </div>
+
+    <div class="actions">
+      <button class="btn-next">下一步
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </button>
+      <a class="skip-link">先随便逛逛</a>
+    </div>
+  </div>
+
+  <div class="home-ind"></div>
+</div>
+</body>
+</html>

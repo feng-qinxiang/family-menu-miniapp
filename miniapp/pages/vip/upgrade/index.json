@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "开通家庭同步",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "nav-bar": "/components/nav-bar/index"
+  }
+}

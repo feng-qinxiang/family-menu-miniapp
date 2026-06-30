@@ -1,0 +1,122 @@
+<!-- pages/vip/upgrade · 开通家庭同步会员 -->
+<nav-bar title="开通家庭同步" status-bar-height="{{statusBarHeight}}"></nav-bar>
+
+<scroll-view class="vu-scroll" scroll-y="true">
+  <view class="vu-wrap">
+    <!-- 引导文案 -->
+    <view class="vu-lead g-fade-up g-d1">
+      <view class="vu-eyebrow">Family Sync · Premium</view>
+      <view class="vu-h1 title-stroke title-shadow">全家共享<text class="pop">一份菜单</text></view>
+      <view class="vu-lead-p">开通后，家人实时同步今日菜单、买菜清单和菜谱收藏，再也不用反复问"今晚吃啥"。</view>
+    </view>
+
+    <!-- Hero 图 -->
+    <view class="vu-hero card g-fade-up g-d2">
+      <image class="vu-hero-img" src="/assets/dishes/hongshao-pork.jpg" mode="aspectFill"></image>
+      <view class="vu-hero-mask"></view>
+      <view class="vu-hero-ic">
+        <view class="vu-hero-et">Family Menu Plus</view>
+        <view class="vu-hero-ht">家庭同步会员</view>
+        <view class="vu-hero-hs">最多 8 位家人 · 无限菜谱</view>
+      </view>
+    </view>
+
+    <!-- 选择套餐 -->
+    <view class="shead vu-shead g-fade-up g-d3">
+      <view class="shead-main">
+        <view class="shead-bar"></view>
+        <view class="shead-title">选择套餐</view>
+      </view>
+    </view>
+    <view class="vu-plans g-fade-up g-d3">
+      <view
+        class="vu-plan tap-scale {{selectedPlan==='yearly' ? 'on' : ''}}"
+        data-plan="yearly"
+        bindtap="selectPlan"
+      >
+        <view class="vu-badge">推荐</view>
+        <view class="vu-tick">{{selectedPlan==='yearly' ? '✓' : ''}}</view>
+        <view class="vu-ptop">
+          <view class="vu-pname">年卡</view>
+          <view class="vu-pprice"><text class="vu-yuan">¥</text>68<text class="vu-per">/年</text></view>
+          <view class="vu-pnote"><text class="vu-del">¥118</text> 每月仅 5.6 元</view>
+        </view>
+      </view>
+      <view
+        class="vu-plan tap-scale {{selectedPlan==='monthly' ? 'on' : ''}}"
+        data-plan="monthly"
+        bindtap="selectPlan"
+      >
+        <view class="vu-tick">{{selectedPlan==='monthly' ? '✓' : ''}}</view>
+        <view class="vu-ptop">
+          <view class="vu-pname">月卡</view>
+          <view class="vu-pprice"><text class="vu-yuan">¥</text>9.9<text class="vu-per">/月</text></view>
+          <view class="vu-pnote">随时取消 · 灵活体验</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 价格明细 -->
+    <view class="shead vu-shead g-fade-up g-d4">
+      <view class="shead-main">
+        <view class="shead-bar"></view>
+        <view class="shead-title">价格明细</view>
+      </view>
+    </view>
+    <view class="card vu-detail g-fade-up g-d4">
+      <block wx:if="{{selectedPlan==='yearly'}}">
+        <view class="vu-drow"><text class="vu-k">年卡原价</text><text class="vu-v"><text class="vu-del">¥118.00</text></text></view>
+        <view class="vu-drow disc"><text class="vu-k">限时优惠</text><text class="vu-v">- ¥50.00</text></view>
+        <view class="vu-dline"></view>
+        <view class="vu-drow total"><text class="vu-k">实付金额</text><text class="vu-v-big"><text class="vu-yuan">¥</text>68.00</text></view>
+        <view class="vu-savetip">
+          <text class="vu-star">★</text>
+          已为你省下 ¥50，相当于 5.8 折
+        </view>
+      </block>
+      <block wx:else>
+        <view class="vu-drow"><text class="vu-k">月卡价格</text><text class="vu-v">¥9.90</text></view>
+        <view class="vu-dline"></view>
+        <view class="vu-drow total"><text class="vu-k">实付金额</text><text class="vu-v-big"><text class="vu-yuan">¥</text>9.90</text></view>
+        <view class="vu-savetip">
+          <text class="vu-star">★</text>
+          随时取消，灵活体验家庭同步
+        </view>
+      </block>
+    </view>
+
+    <!-- 会员权益 -->
+    <view class="shead vu-shead g-fade-up g-d5">
+      <view class="shead-main">
+        <view class="shead-bar"></view>
+        <view class="shead-title">会员权益</view>
+      </view>
+    </view>
+    <view class="card vu-benes g-fade-up g-d5">
+      <view
+        class="vu-bene"
+        wx:for="{{benefits}}"
+        wx:key="title"
+      >
+        <view class="vu-bi">{{item.icon}}</view>
+        <view class="vu-bm">
+          <view class="vu-bh">{{item.title}}</view>
+          <view class="vu-bp">{{item.desc}}</view>
+        </view>
+        <view class="vu-chk">✓</view>
+      </view>
+    </view>
+  </view>
+</scroll-view>
+
+<!-- 底部支付栏 -->
+<view class="vu-paybar safe-bottom">
+  <view class="vu-amt">
+    <view class="vu-cap">实付</view>
+    <view class="vu-big"><text class="vu-yuan">¥</text>{{plan.price}}</view>
+  </view>
+  <view class="vu-paybtn btn btn-pop tap-scale {{activating ? 'loading' : ''}}" bindtap="goCheckout">
+    <text class="vu-wxic">💬</text>
+    {{isVip ? '续费会员' : '立即开通'}}
+  </view>
+</view>

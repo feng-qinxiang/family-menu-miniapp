@@ -1,0 +1,141 @@
+<!-- pages/community/post-detail · 帖子详情 -->
+<nav-bar title="帖子详情" show-back="{{true}}"></nav-bar>
+
+<view class="page">
+  <!-- 加载中骨架 -->
+  <view wx:if="{{loading}}" class="loading">
+    <view class="sk-line sk-w60"></view>
+    <view class="sk-line sk-w90"></view>
+    <view class="sk-img skeleton shimmer"></view>
+    <view class="sk-line sk-w80"></view>
+  </view>
+
+  <!-- 加载失败 -->
+  <state-empty
+    wx:elif="{{loadError || !post}}"
+    type="offline"
+    title="帖子走丢了"
+    desc="没找到这篇分享，换个网络再试试"
+    cta="重新加载"
+    bind:action="onRetry"
+  ></state-empty>
+
+  <!-- 正文 -->
+  <scroll-view wx:else scroll-y="true" class="scroll" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <view class="body">
+      <!-- 作者块 -->
+      <view class="author g-fade-up">
+        <view class="ava ava-{{post.avaTheme}}">{{post.avaText}}</view>
+        <view class="acol">
+          <view class="aname ellipsis">{{post.author}}</view>
+          <view class="atime ellipsis">{{post.authorMeta}}</view>
+        </view>
+      </view>
+
+      <!-- 标题 -->
+      <view class="eyebrow-serif eyebrow-mt g-fade-up g-d1">Home Cooking</view>
+      <view class="post-title title-stroke title-shadow g-fade-up g-d1">{{post.title}}</view>
+
+      <!-- 正文段落 -->
+      <view class="post-text g-fade-up g-d2">
+        <view wx:for="{{post.paragraphs}}" wx:key="index" class="ptext-p">{{item}}</view>
+      </view>
+
+      <!-- 菜图 -->
+      <image class="dish-img g-fade-up g-d2" src="{{post.cover}}" mode="aspectFill"></image>
+      <view class="imgcap">— 出锅那一刻，香气直接拉满 —</view>
+
+      <!-- 标签 -->
+      <view wx:if="{{post.tags.length}}" class="ptags g-fade-up g-d3">
+        <text wx:for="{{post.tags}}" wx:key="*this" class="ptag">#{{item}}</text>
+      </view>
+
+      <!-- 关联菜谱卡 -->
+      <view
+        wx:if="{{post.recipe}}"
+        class="recipe-card tap-scale g-fade-up g-d3"
+        bindtap="onOpenRecipe"
+      >
+        <image class="rc-img" src="{{post.recipe.coverImage || post.cover}}" mode="aspectFill"></image>
+        <view class="rc-mid">
+          <view class="rc-kick">关联菜谱</view>
+          <view class="rc-name ellipsis">{{post.recipe.title}}</view>
+          <view class="rc-meta ellipsis">{{post.recipe.cuisine || '家常'}}{{post.recipe.timeCost ? ' · ' + post.recipe.timeCost + ' 分钟' : ''}}{{post.recipe.servings ? ' · ' + post.recipe.servings + ' 人份' : ''}}</view>
+        </view>
+        <view class="rc-go">
+          <view class="rc-arrow"></view>
+        </view>
+      </view>
+
+      <!-- 操作栏 -->
+      <view class="react-bar g-fade-up g-d4">
+        <view class="react liked">
+          <text class="ricon">♥</text>
+          <text class="n">{{post.likeCount}}</text>
+        </view>
+        <view
+          class="react tap-scale {{post.favorited ? 'fav-on' : ''}}"
+          bindtap="onToggleFavorite"
+        >
+          <text class="ricon">{{post.favorited ? '★' : '☆'}}</text>
+          <text class="n">收藏 {{post.favoriteCount}}</text>
+        </view>
+        <view class="react react-end">
+          <text class="ricon">💬</text>
+          <text class="n">{{post.commentCount}}</text>
+        </view>
+      </view>
+
+      <!-- 评论区 -->
+      <view class="csec">
+        <view class="cs-head">
+          <text class="cs-title">评论</text>
+          <text class="cnt">{{post.commentCount}} 条</text>
+        </view>
+
+        <view wx:if="{{comments.length}}" class="cmt-list">
+          <view wx:for="{{comments}}" wx:key="commentId" class="cmt">
+            <view class="ava ava-sm ava-{{item.avaTheme}}">{{item.avaText}}</view>
+            <view class="ccol">
+              <view class="crow">
+                <text class="cname ellipsis">{{item.author}}</text>
+                <text class="ctime">{{item.createdAt}}</text>
+              </view>
+              <view class="ctext">{{item.content}}</view>
+            </view>
+          </view>
+        </view>
+
+        <state-empty
+          wx:else
+          type="gray"
+          title="还没有评论"
+          desc="来说两句，给楼主点个鼓励"
+        ></state-empty>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 底部输入框 -->
+  <view wx:if="{{!loading && !loadError && post}}" class="inputbar safe-bottom">
+    <input
+      class="field"
+      value="{{commentText}}"
+      placeholder="写下你的评论…"
+      placeholder-class="field-ph"
+      confirm-type="send"
+      bindinput="onCommentInput"
+      bindconfirm="onSubmitComment"
+    />
+    <view class="send tap-scale {{submitting ? 'send-busy' : ''}}" bindtap="onSubmitComment">
+      <view class="send-icon"></view>
+    </view>
+  </view>
+</view>
+
+<state-toast
+  visible="{{toast.visible}}"
+  type="{{toast.type}}"
+  text="{{toast.text}}"
+  bind:close="onToastClose"
+></state-toast>

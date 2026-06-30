@@ -1,0 +1,342 @@
+/* ============================================================
+   pages/community · 邻里厨房「深色 hero + 撞色帖子流」
+   配色/工具类全部复用 app.wxss token，本文件不重定义配色。
+   ============================================================ */
+.community-page {
+  position: relative;
+  min-height: 100vh;
+  background: var(--paper);
+}
+
+/* nav-bar 透明覆盖在 hero 上，文字反白 */
+.community-page nav-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 60;
+}
+/* 覆盖 nav-bar 内部：返回钮玻璃化 + 标题反白 */
+.community-page .navbar-back {
+  background: rgba(255, 255, 255, 0.18);
+  border: 2rpx solid rgba(255, 255, 255, 0.24);
+}
+.community-page .navbar-back-icon {
+  border-left-color: #fff;
+  border-bottom-color: #fff;
+}
+.community-page .navbar-title { color: #fff; }
+
+/* 顶部右侧发帖小钮 */
+.nav-post-btn {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 12rpx 26rpx;
+  border-radius: var(--r-pill);
+  background: var(--pop);
+  color: #fff;
+  font-size: 26rpx;
+  font-weight: 800;
+  box-shadow: var(--sh-pop);
+}
+.nav-post-plus { font-size: 30rpx; font-weight: 900; line-height: 1; }
+
+.community-scroll {
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+/* ===================== Hero ===================== */
+.hero {
+  position: relative;
+  height: 840rpx;
+  overflow: hidden;
+}
+.hero-bg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.hero-mask {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(20, 14, 8, 0.5) 0%,
+    rgba(20, 14, 8, 0) 28%,
+    rgba(20, 14, 8, 0.28) 52%,
+    rgba(20, 14, 8, 0.9) 100%
+  );
+}
+.hero-bignum {
+  position: absolute;
+  top: 150rpx;
+  right: 26rpx;
+  font-family: var(--serif);
+  font-size: 420rpx;
+  font-weight: 700;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.07);
+}
+.hero-body {
+  position: absolute;
+  left: 46rpx;
+  right: 46rpx;
+  bottom: 58rpx;
+  color: #fff;
+}
+.hero-tag {
+  display: inline-block;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 23rpx;
+  letter-spacing: 3rpx;
+  font-weight: 700;
+  color: #fff;
+  background: var(--pop);
+  padding: 10rpx 26rpx;
+  border-radius: 8rpx;
+}
+.hero-title {
+  font-size: 116rpx;
+  line-height: 0.9;
+  letter-spacing: -6rpx;
+  margin: 28rpx 0 22rpx;
+  -webkit-text-stroke: 3rpx #fff;
+}
+.hero-sub {
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.5;
+  max-width: 560rpx;
+}
+.cstats { display: flex; margin-top: 34rpx; gap: 18rpx; }
+.cstat {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.14);
+  border: 2rpx solid rgba(255, 255, 255, 0.2);
+  border-radius: 30rpx;
+  padding: 22rpx 26rpx;
+}
+.cstat-num { font-size: 46rpx; font-weight: 900; letter-spacing: -2rpx; color: #fff; }
+.cstat-lab { font-size: 21rpx; color: rgba(255, 255, 255, 0.7); letter-spacing: 1rpx; margin-top: 4rpx; }
+
+/* ===================== Sheet ===================== */
+.sheet {
+  position: relative;
+  margin-top: -50rpx;
+  background: var(--paper);
+  border-radius: 54rpx 54rpx 0 0;
+  padding: 50rpx 0 40rpx;
+  z-index: 20;
+}
+.pad { padding: 0 46rpx; }
+
+/* ===================== 帖子卡 ===================== */
+.post-list { display: block; }
+.pcard {
+  background: #fff;
+  border-radius: 42rpx;
+  padding: 34rpx 34rpx 30rpx;
+  margin-bottom: 34rpx;
+  box-shadow: var(--sh-card);
+  border: var(--bd-card);
+}
+.ptop { display: flex; align-items: center; gap: 22rpx; }
+.pavatar {
+  width: 84rpx;
+  height: 84rpx;
+  border-radius: 26rpx;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36rpx;
+  font-weight: 900;
+  color: #fff;
+  font-family: var(--serif);
+}
+.pmeta { flex: 1; min-width: 0; }
+.pname { font-size: 29rpx; font-weight: 800; color: var(--ink); letter-spacing: -0.4rpx; }
+.pstats {
+  font-size: 22rpx;
+  color: var(--mut);
+  margin-top: 6rpx;
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+}
+.pstats-heart::before { content: "\2665"; color: var(--pop); font-size: 24rpx; line-height: 1; }
+.ptime { font-size: 22rpx; color: var(--mut-2); flex: none; }
+.ptitle { font-size: 34rpx; font-weight: 900; color: var(--ink); letter-spacing: -1rpx; margin: 26rpx 0 13rpx; line-height: 1.25; }
+.pcontent { font-size: 26rpx; color: var(--mut-strong); line-height: 1.6; }
+.pphoto { display: block; width: 100%; height: 322rpx; border-radius: 30rpx; margin-top: 24rpx; }
+
+/* 关联菜谱 */
+.precipe {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  margin-top: 26rpx;
+  padding: 20rpx;
+  background: var(--paper);
+  border-radius: 28rpx;
+  border: 2rpx solid #efe9df;
+}
+.precipe .rthumb { width: 104rpx; height: 104rpx; border-radius: 22rpx; flex: none; }
+.precipe .rmid { flex: 1; min-width: 0; }
+.precipe .rk { font-family: var(--serif); font-style: italic; font-size: 20rpx; color: var(--gold-deep); font-weight: 700; }
+.precipe .rn { font-size: 28rpx; font-weight: 800; color: var(--ink); margin-top: 2rpx; }
+.precipe .rm { font-size: 22rpx; color: var(--mut); margin-top: 6rpx; }
+.precipe .rgo {
+  width: 58rpx;
+  height: 58rpx;
+  border-radius: 50%;
+  background: var(--ink-deep);
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.rgo-arrow {
+  width: 16rpx;
+  height: 16rpx;
+  border-top: 4rpx solid #fff;
+  border-right: 4rpx solid #fff;
+  transform: rotate(45deg) translate(-2rpx, 2rpx);
+}
+
+/* 标签 */
+.ptags { display: flex; flex-wrap: wrap; gap: 14rpx; margin-top: 24rpx; }
+.p-tag {
+  font-size: 22rpx;
+  font-weight: 700;
+  color: var(--gold-deep);
+  background: var(--paper-2);
+  padding: 10rpx 22rpx;
+  border-radius: var(--r-pill);
+}
+
+/* 操作栏 */
+.pactions {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-top: 28rpx;
+  padding-top: 26rpx;
+  border-top: 2rpx solid #efe9df;
+}
+.pa-btn {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  font-size: 24rpx;
+  font-weight: 700;
+  color: var(--mut);
+  padding: 8rpx 6rpx;
+}
+.pa-btn.on { color: var(--pop); }
+.pa-ico { font-size: 28rpx; line-height: 1; }
+.ico-star::before { content: "\2606"; }
+.ico-star.on::before { content: "\2605"; }
+.ico-chat::before { content: "\1F4AC"; }
+.ico-warn::before { content: "\26A0"; }
+.pa-spacer { flex: 1; }
+.pa-report { font-size: 22rpx; color: var(--mut-2); font-weight: 600; display: flex; align-items: center; gap: 8rpx; }
+
+/* ===================== 空态 ===================== */
+.community-page .empty-state { padding: 80rpx 28rpx; }
+
+/* ===================== 热门话题 ===================== */
+.topics { margin: 46rpx 46rpx 0; }
+.thead { display: flex; align-items: center; gap: 14rpx; margin-bottom: 26rpx; }
+.thead .tk { font-family: var(--serif); font-style: italic; font-size: 23rpx; letter-spacing: 1rpx; color: var(--gold-deep); font-weight: 700; }
+.thead .th-title { font-size: 33rpx; font-weight: 900; color: var(--ink); letter-spacing: -1rpx; }
+.tchips { display: flex; flex-wrap: wrap; gap: 18rpx; }
+.tchip {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  background: #fff;
+  border: var(--bd-card);
+  border-radius: var(--r-pill);
+  padding: 16rpx 28rpx;
+  box-shadow: var(--sh-soft);
+}
+.tchip .tt { font-size: 25rpx; font-weight: 800; color: var(--ink); letter-spacing: -0.4rpx; }
+.tchip .th { font-size: 20rpx; font-weight: 700; color: var(--pop); background: var(--pop-soft); padding: 4rpx 14rpx; border-radius: 20rpx; }
+
+/* ===================== 流末 ===================== */
+.feed-end { display: flex; align-items: center; justify-content: center; gap: 22rpx; margin: 40rpx 0 8rpx; }
+.feed-end::before, .feed-end::after { content: ""; height: 2rpx; width: 88rpx; background: #e3dacb; }
+.feed-end text { font-size: 22rpx; color: var(--mut-strong); letter-spacing: 2rpx; font-weight: 600; }
+
+/* ===================== 发帖 FAB ===================== */
+.fab {
+  position: fixed;
+  right: 38rpx;
+  bottom: calc(env(safe-area-inset-bottom) + 56rpx);
+  width: 112rpx;
+  height: 112rpx;
+  border-radius: 50%;
+  background: var(--pop);
+  z-index: 56;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 20rpx 46rpx rgba(232, 71, 42, 0.45), 0 4rpx 12rpx rgba(60, 40, 20, 0.18);
+}
+.fab-plus { position: relative; width: 44rpx; height: 44rpx; }
+.fab-plus::before, .fab-plus::after { content: ""; position: absolute; background: #fff; border-radius: 4rpx; }
+.fab-plus::before { left: 50%; top: 4rpx; bottom: 4rpx; width: 6rpx; transform: translateX(-50%); }
+.fab-plus::after { top: 50%; left: 4rpx; right: 4rpx; height: 6rpx; transform: translateY(-50%); }
+
+/* ===================== 发帖弹层 ===================== */
+.pf-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 14, 8, 0.5);
+  z-index: 80;
+}
+.pf-sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 81;
+  background: var(--paper);
+  border-radius: 44rpx 44rpx 0 0;
+  padding: 24rpx 46rpx 28rpx;
+  box-shadow: 0 -20rpx 50rpx rgba(60, 40, 20, 0.22);
+  transform: translateY(100%);
+  transition: transform 0.32s var(--g-power3-out);
+}
+.pf-sheet--on { transform: translateY(0); }
+.pf-grip { width: 76rpx; height: 8rpx; border-radius: 4rpx; background: #ddd3c4; margin: 0 auto 22rpx; }
+.pf-head { font-size: 36rpx; font-weight: 900; color: var(--ink); letter-spacing: -1rpx; margin-bottom: 24rpx; }
+.pf-input {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 88rpx;
+  padding: 22rpx 26rpx;
+  margin-bottom: 20rpx;
+  border: var(--bd-card);
+  border-radius: var(--r-card);
+  background: #fff;
+  color: var(--ink);
+  font-size: 28rpx;
+}
+.pf-textarea {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 220rpx;
+  padding: 22rpx 26rpx;
+  margin-bottom: 20rpx;
+  border: var(--bd-card);
+  border-radius: var(--r-card);
+  background: #fff;
+  color: var(--ink);
+  font-size: 28rpx;
+  line-height: 1.5;
+}
+.pf-ph { color: var(--mut-2); }
+.pf-actions { display: flex; gap: 20rpx; margin-top: 8rpx; }
+.pf-cancel { flex: 1; }
+.pf-submit { flex: 2; }

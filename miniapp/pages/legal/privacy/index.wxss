@@ -1,0 +1,228 @@
+/* pages/legal/privacy · 隐私政策 —— 复用全局 token，禁硬编码配色 */
+.page {
+  box-sizing: border-box;
+  min-height: 100vh;
+  background: var(--paper);
+}
+
+.body {
+  padding: 46rpx 46rpx 60rpx;
+}
+
+/* —— Hero —— */
+.doctitle {
+  font-size: 66rpx;
+  letter-spacing: -3rpx;
+  line-height: 1.02;
+  margin: 14rpx 0 26rpx;
+  white-space: pre-line;
+}
+
+.effective {
+  display: inline-flex;
+  align-items: center;
+  gap: 14rpx;
+  font-size: 24rpx;
+  font-weight: 700;
+  color: var(--mut-strong);
+  background: var(--paper-2);
+  padding: 16rpx 28rpx;
+  border-radius: var(--r-pill);
+}
+.effective .effective-dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 4rpx;
+  background: var(--pop);
+}
+
+.intro {
+  font-size: 26rpx;
+  line-height: 1.85;
+  color: var(--mut-strong);
+  margin: 34rpx 0 4rpx;
+}
+
+/* —— 文字分组 —— */
+.sec {
+  margin-top: 50rpx;
+}
+.sec-head {
+  display: flex;
+  align-items: center;
+  gap: 22rpx;
+}
+.sec-no {
+  font-family: var(--serif);
+  font-size: 26rpx;
+  font-weight: 700;
+  color: #fff;
+  background: var(--pop);
+  box-shadow: var(--sh-pop);
+  width: 58rpx;
+  height: 58rpx;
+  border-radius: var(--r-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+.sec-title {
+  font-size: 35rpx;
+  font-weight: 900;
+  color: var(--ink-deep);
+  letter-spacing: -0.8rpx;
+}
+.sec-body {
+  font-size: 26rpx;
+  line-height: 1.85;
+  color: var(--mut-strong);
+  margin-top: 22rpx;
+}
+
+/* —— 权限卡 —— */
+.perm {
+  margin-top: 26rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+.perm-item {
+  display: flex;
+  gap: 26rpx;
+  align-items: flex-start;
+  padding: 28rpx 30rpx;
+}
+.perm-ic {
+  width: 74rpx;
+  height: 74rpx;
+  border-radius: var(--r-sm);
+  background: var(--pop-soft);
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.perm-txt {
+  flex: 1;
+}
+.perm-name {
+  font-size: 28rpx;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.4rpx;
+}
+.perm-desc {
+  font-size: 24rpx;
+  line-height: 1.65;
+  color: var(--mut-strong);
+  margin-top: 8rpx;
+}
+
+/* —— 权限图标（CSS 描边几何，用 pop 主色）—— */
+.ic-glyph {
+  position: relative;
+  width: 38rpx;
+  height: 38rpx;
+}
+/* user：头 + 肩 */
+.ic-user::before {
+  content: "";
+  position: absolute;
+  top: 2rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 18rpx;
+  height: 18rpx;
+  border-radius: 50%;
+  border: 4rpx solid var(--pop);
+  box-sizing: border-box;
+}
+.ic-user::after {
+  content: "";
+  position: absolute;
+  bottom: 2rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32rpx;
+  height: 18rpx;
+  border: 4rpx solid var(--pop);
+  border-bottom: none;
+  border-radius: 18rpx 18rpx 0 0;
+  box-sizing: border-box;
+}
+/* camera：机身 + 镜头 */
+.ic-camera::before {
+  content: "";
+  position: absolute;
+  top: 8rpx;
+  left: 0;
+  width: 38rpx;
+  height: 28rpx;
+  border: 4rpx solid var(--pop);
+  border-radius: 6rpx;
+  box-sizing: border-box;
+}
+.ic-camera::after {
+  content: "";
+  position: absolute;
+  top: 15rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14rpx;
+  height: 14rpx;
+  border-radius: 50%;
+  border: 4rpx solid var(--pop);
+  box-sizing: border-box;
+}
+/* bell：钟身 + 钟摆 */
+.ic-bell::before {
+  content: "";
+  position: absolute;
+  top: 3rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28rpx;
+  height: 26rpx;
+  border: 4rpx solid var(--pop);
+  border-bottom: none;
+  border-radius: 16rpx 16rpx 0 0;
+  box-sizing: border-box;
+}
+.ic-bell::after {
+  content: "";
+  position: absolute;
+  bottom: 4rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10rpx;
+  height: 10rpx;
+  border-radius: 50%;
+  background: var(--pop);
+}
+
+/* —— 联系框（深色卡）—— */
+.footnote {
+  margin-top: 56rpx;
+  padding: 36rpx 36rpx;
+}
+.ft-eb {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 23rpx;
+  color: var(--gold-deep);
+  font-weight: 700;
+}
+.ft-text {
+  font-size: 24rpx;
+  line-height: 1.8;
+  color: rgba(251, 248, 243, 0.82);
+  margin-top: 14rpx;
+}
+.ft-mail {
+  display: inline-block;
+  margin-top: 14rpx;
+  color: #fff;
+  font-weight: 800;
+  font-size: 27rpx;
+}

@@ -1,0 +1,244 @@
+/* 帮助中心 · 静态 FAQ 手风琴。配色全部走 app.wxss 全局 token */
+.help {
+  padding-top: 12rpx;
+}
+
+/* ===== Hero ===== */
+.hero {
+  padding: 16rpx 8rpx 12rpx;
+}
+.hero-h {
+  margin-top: 10rpx;
+  font-size: 84rpx;
+  line-height: 0.92;
+  letter-spacing: -4rpx;
+}
+
+/* ===== 搜索框 ===== */
+.searchwrap {
+  padding: 12rpx 4rpx 8rpx;
+}
+.search {
+  display: flex;
+  align-items: center;
+  gap: 22rpx;
+  padding: 28rpx 34rpx;
+  background: #fff;
+  border: var(--bd-card);
+  border-radius: var(--r-md);
+  box-shadow: var(--sh-card);
+}
+.search-icon {
+  position: relative;
+  width: 36rpx;
+  height: 36rpx;
+  flex: none;
+}
+.si-ring {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 26rpx;
+  height: 26rpx;
+  border: 4rpx solid var(--mut);
+  border-radius: 50%;
+  box-sizing: border-box;
+}
+.si-tail {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 14rpx;
+  height: 4rpx;
+  background: var(--mut);
+  border-radius: 4rpx;
+  transform: rotate(45deg);
+  transform-origin: right bottom;
+}
+.search-input {
+  flex: 1;
+  font-size: 28rpx;
+  color: var(--ink);
+}
+.search-ph {
+  color: var(--mut);
+}
+
+/* ===== Section 标签（Georgia 斜体）===== */
+.seclbl {
+  padding: 40rpx 8rpx 8rpx;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 24rpx;
+  letter-spacing: 1rpx;
+  color: var(--gold-deep);
+  font-weight: 700;
+}
+
+/* ===== FAQ 手风琴 ===== */
+.faq {
+  display: flex;
+  flex-direction: column;
+  gap: 22rpx;
+}
+.item {
+  background: #fff;
+  border: var(--bd-card);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  box-shadow: var(--sh-card);
+}
+.q {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  padding: 34rpx 34rpx;
+}
+.qnum {
+  flex: none;
+  width: 46rpx;
+  font-family: var(--serif);
+  font-size: 34rpx;
+  font-weight: 700;
+  color: var(--gold-deep);
+}
+.q-title {
+  flex: 1;
+  font-size: 30rpx;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.5rpx;
+  line-height: 1.35;
+}
+.caret {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 58rpx;
+  height: 58rpx;
+  border-radius: 50%;
+  background: var(--paper-2);
+  transition: transform 0.25s var(--g-power2-out), background 0.25s ease;
+}
+.caret-arrow {
+  width: 18rpx;
+  height: 18rpx;
+  border-right: 5rpx solid var(--mut-strong);
+  border-bottom: 5rpx solid var(--mut-strong);
+  transform: rotate(45deg);
+  margin-top: -6rpx;
+  transition: border-color 0.25s ease;
+}
+.item.open .caret {
+  transform: rotate(180deg);
+  background: var(--pop);
+}
+.item.open .caret-arrow {
+  border-right-color: #fff;
+  border-bottom-color: #fff;
+}
+
+/* 展开区 max-height 过渡 */
+.a {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+  padding: 0 34rpx 0 104rpx;
+}
+.item.open .a {
+  max-height: 600rpx;
+  padding: 0 34rpx 36rpx 104rpx;
+}
+.a-lead {
+  display: block;
+  font-size: 27rpx;
+  line-height: 1.7;
+  color: var(--mut-strong);
+}
+.step {
+  display: flex;
+  align-items: flex-start;
+  gap: 18rpx;
+  margin-top: 18rpx;
+}
+.step .dot {
+  flex: none;
+  width: 14rpx;
+  height: 14rpx;
+  border-radius: 50%;
+  background: var(--pop);
+  margin-top: 12rpx;
+}
+.step-txt {
+  flex: 1;
+  font-size: 27rpx;
+  line-height: 1.6;
+  color: var(--mut-strong);
+}
+
+/* ===== 搜索无结果 ===== */
+.no-result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80rpx 28rpx;
+  text-align: center;
+}
+.nr-emoji {
+  font-size: 72rpx;
+}
+.nr-txt {
+  margin-top: 20rpx;
+  font-size: 30rpx;
+  font-weight: 800;
+  color: var(--ink);
+}
+.nr-sub {
+  margin-top: 10rpx;
+  font-size: 25rpx;
+  color: var(--mut);
+}
+
+/* ===== 客服暗卡 ===== */
+.contact {
+  margin: 50rpx 0 16rpx;
+}
+.contact-body {
+  position: relative;
+  z-index: 1;
+}
+.eyebrow2 {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 23rpx;
+  letter-spacing: 1rpx;
+  color: var(--gold);
+  font-weight: 700;
+}
+.contact-h {
+  margin-top: 10rpx;
+  font-size: 42rpx;
+  font-weight: 900;
+  letter-spacing: -1rpx;
+  color: var(--paper);
+}
+.contact-p {
+  display: block;
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.62);
+}
+.csbtn {
+  margin-top: 30rpx;
+  gap: 14rpx;
+  border-radius: var(--r-chip);
+}
+.cs-icon {
+  width: 32rpx;
+  height: 30rpx;
+  border: 4rpx solid #fff;
+  border-radius: 12rpx 12rpx 12rpx 4rpx;
+  box-sizing: border-box;
+}

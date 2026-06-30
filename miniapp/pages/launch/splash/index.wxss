@@ -1,0 +1,134 @@
+/* ============================================================
+   pages/launch/splash · 启动页
+   全屏径向暖光 + logo 圆环 + 内联 SVG 碗筷 + serif slogan
+   全部基于 app.wxss 全局 token，禁硬编码配色
+   ============================================================ */
+.splash {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 36%, var(--paper) 0%, var(--paper-2) 100%);
+}
+
+/* 暖色光晕（径向渐变） */
+.bloom {
+  position: absolute;
+  top: 34%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 880rpx;
+  height: 880rpx;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(176, 137, 73, 0.16), transparent 62%);
+  pointer-events: none;
+}
+.ring-deco {
+  position: absolute;
+  top: 34%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 576rpx;
+  height: 576rpx;
+  border-radius: 50%;
+  border: 2rpx solid rgba(176, 137, 73, 0.2);
+  pointer-events: none;
+}
+
+.stage {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.eyebrow-lg {
+  font-size: 25rpx;
+  letter-spacing: 3rpx;
+  margin-bottom: 56rpx;
+}
+
+/* logo 圆环 + 内嵌金箔 SVG */
+.logo {
+  position: relative;
+  width: 208rpx;
+  height: 208rpx;
+}
+.logo-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #fff, var(--gold));
+  box-shadow: var(--sh-soft), 0 36rpx 80rpx rgba(120, 70, 30, 0.16);
+  border: 2rpx solid var(--paper-2);
+}
+.logo-mark {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mark-svg {
+  width: 208rpx;
+  height: 208rpx;
+}
+
+/* 应用名（镂空撞色风格的撞色字，沿用 .pop） */
+.app-name {
+  margin-top: 64rpx;
+  font-family: var(--sans);
+  font-size: 96rpx;
+  font-weight: 900;
+  letter-spacing: -4rpx;
+  line-height: 1;
+  color: var(--ink);
+}
+.app-name .pop {
+  color: var(--pop);
+}
+
+.slogan {
+  margin-top: 30rpx;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 31rpx;
+  letter-spacing: 2rpx;
+  color: var(--mut-strong);
+  font-weight: 400;
+}
+.rule {
+  margin-top: 42rpx;
+  width: 88rpx;
+  height: 6rpx;
+  border-radius: 6rpx;
+  background: var(--pop);
+}
+
+.footer {
+  position: absolute;
+  bottom: calc(env(safe-area-inset-bottom) + 96rpx);
+  left: 0;
+  right: 0;
+  z-index: 2;
+  text-align: center;
+}
+.footer .tagline {
+  font-size: 26rpx;
+  letter-spacing: 4rpx;
+  color: var(--mut-strong);
+  font-weight: 600;
+}
+.footer .ver {
+  margin-top: 18rpx;
+  font-family: var(--serif);
+  font-size: 22rpx;
+  letter-spacing: 2rpx;
+  color: var(--mut);
+}

@@ -1,0 +1,39 @@
+<view class="splash">
+  <view class="bloom"></view>
+  <view class="ring-deco"></view>
+
+  <view class="stage">
+    <view class="eyebrow-serif eyebrow-lg g-fade-in g-d1">FAMILY KITCHEN · EST. 2026</view>
+
+    <view class="logo g-scale-in g-d2">
+      <view class="logo-ring"></view>
+      <view class="logo-mark">
+        <svg class="mark-svg" width="108" height="108" viewBox="0 0 108 108" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="foil" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#d4a857"/>
+              <stop offset="0.5" stop-color="#f3d796"/>
+              <stop offset="1" stop-color="#b8863a"/>
+            </linearGradient>
+          </defs>
+          <line x1="62" y1="30" x2="78" y2="58" stroke="url(#foil)" stroke-width="3.4" stroke-linecap="round"/>
+          <line x1="69" y1="28" x2="83" y2="57" stroke="url(#foil)" stroke-width="3.4" stroke-linecap="round"/>
+          <path d="M28 52 H80 A26 26 0 0 1 28 52 Z" fill="url(#foil)"/>
+          <path d="M28 52 H80 A26 26 0 0 1 28 52 Z" stroke="#a87d35" stroke-width="1.2" stroke-linejoin="round"/>
+          <path d="M44 78 H64 L60 70 H48 Z" fill="url(#foil)"/>
+          <path d="M44 42 q-4 -7 0 -13 q4 -6 0 -12" stroke="#c9a35a" stroke-width="2.4" stroke-linecap="round" fill="none" opacity=".75"/>
+          <path d="M56 42 q4 -7 0 -13 q-4 -6 0 -12" stroke="#c9a35a" stroke-width="2.4" stroke-linecap="round" fill="none" opacity=".55"/>
+        </svg>
+      </view>
+    </view>
+
+    <view class="app-name g-fade-up g-d3">家庭<text class="pop">点菜</text></view>
+    <view class="slogan g-fade-up g-d4">Today's Family Menu</view>
+    <view class="rule g-fade-up g-d5"></view>
+  </view>
+
+  <view class="footer g-fade-in g-d6">
+    <view class="tagline">为一家人的餐桌</view>
+    <view class="ver">Version {{version}}</view>
+  </view>
+</view>

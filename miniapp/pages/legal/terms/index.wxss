@@ -1,0 +1,178 @@
+/* pages/legal/terms · 用户协议 —— 配色全量复用 app.wxss 新 token，零硬编码颜色 */
+.terms-page {
+  position: relative;
+  min-height: 100vh;
+  background: var(--paper);
+}
+
+/* nav-bar 固定贴顶（组件已含状态栏高度），盖在滚动区之上 */
+.terms-page nav-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  background: var(--paper);
+}
+
+/* 滚动条款区：top 让出状态栏，再用 padding 让出 nav-bar 主体高度 */
+.terms-scroll {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  box-sizing: border-box;
+}
+.terms-pad {
+  box-sizing: border-box;
+  padding: 140rpx 46rpx 280rpx;
+}
+
+/* ============ Hero ============ */
+.hero-title {
+  margin-top: 12rpx;
+  font-size: 66rpx;
+  line-height: 1.05;
+  letter-spacing: -3rpx;
+  /* title-shadow 兜底白描边，pop 子字自带番茄红 */
+}
+.hero-title.title-shadow { color: var(--ink); text-shadow: none; }
+.hero-title .pop { color: var(--pop); }
+
+.effdate {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  margin-top: 24rpx;
+  font-size: 24rpx;
+  color: var(--mut-strong);
+}
+.effdate-ico {
+  flex: none;
+  width: 26rpx;
+  height: 24rpx;
+  border: 3rpx solid var(--mut-strong);
+  border-radius: 5rpx;
+  position: relative;
+}
+.effdate-ico::before {
+  content: "";
+  position: absolute;
+  left: -3rpx;
+  right: -3rpx;
+  top: 6rpx;
+  height: 3rpx;
+  background: var(--mut-strong);
+}
+
+.hr {
+  height: 2rpx;
+  margin: 40rpx 0 4rpx;
+  background: var(--paper-2);
+}
+
+.lead {
+  display: block;
+  margin-top: 32rpx;
+  font-size: 27rpx;
+  line-height: 1.75;
+  color: var(--mut-strong);
+}
+
+/* ============ 条款 ============ */
+.clause { margin-top: 48rpx; }
+.clause-head {
+  display: flex;
+  align-items: baseline;
+  gap: 18rpx;
+}
+.clause-no {
+  flex: none;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 30rpx;
+  font-weight: 700;
+  color: var(--pop);
+}
+.clause-tx {
+  font-size: 33rpx;
+  font-weight: 800;
+  letter-spacing: -0.6rpx;
+  color: var(--ink-deep);
+}
+
+.clause-p {
+  display: block;
+  margin-top: 20rpx;
+  font-size: 28rpx;
+  line-height: 1.75;
+  color: var(--mut-strong);
+}
+
+.clause-li {
+  display: flex;
+  margin-top: 18rpx;
+  padding-left: 4rpx;
+}
+.clause-dot {
+  flex: none;
+  width: 10rpx;
+  height: 10rpx;
+  margin: 18rpx 22rpx 0 0;
+  border-radius: 50%;
+  background: var(--gold-deep);
+}
+.clause-li-tx {
+  flex: 1;
+  font-size: 28rpx;
+  line-height: 1.75;
+  color: var(--mut-strong);
+}
+
+.footnote {
+  margin-top: 58rpx;
+  font-size: 24rpx;
+  line-height: 1.75;
+  color: var(--mut);
+  text-align: center;
+}
+.footnote-br { display: block; }
+
+/* ============ 底部渐变 + CTA ============ */
+.ctawrap {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  box-sizing: border-box;
+  padding: 60rpx 46rpx 28rpx;
+  background: linear-gradient(180deg, rgba(251, 248, 243, 0) 0%, var(--paper) 26%);
+}
+.cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18rpx;
+  height: 104rpx;
+  border-radius: var(--r-pill);
+  background: var(--pop);
+  color: #fff;
+  font-size: 31rpx;
+  font-weight: 800;
+  letter-spacing: 1rpx;
+  box-shadow: var(--sh-pop);
+}
+.cta--hover { opacity: 0.92; }
+
+/* CTA 勾选图标：纯 CSS 对勾 */
+.cta-check {
+  flex: none;
+  width: 26rpx;
+  height: 14rpx;
+  margin-top: -6rpx;
+  border-left: 5rpx solid #fff;
+  border-bottom: 5rpx solid #fff;
+  transform: rotate(-45deg);
+  border-radius: 2rpx;
+}

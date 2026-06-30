@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>家庭点菜 · 完整产品设计册</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased}
+  :root{--paper:#fbf8f3;--ink:#2c241b;--ink-deep:#3a2e23;--gold-deep:#b08949;--pop:#e8472a;--serif:"Georgia","Times New Roman",serif}
+  body{min-height:100vh;background:#1b1714;color:var(--paper);font-family:-apple-system,"PingFang SC","Helvetica Neue",sans-serif;padding:56px 44px 90px;
+    background-image:radial-gradient(900px 500px at 15% -5%,#3a2e23 0,#1b1714 60%)}
+  .head{max-width:1500px;margin:0 auto 14px}
+  .head .eyebrow{font-family:var(--serif);font-style:italic;font-size:15px;color:var(--gold-deep);letter-spacing:1px}
+  .head h1{font-size:54px;font-weight:900;letter-spacing:-2px;margin-top:8px;line-height:1}
+  .head h1 .pop{color:var(--pop)}
+  .head p{font-size:15px;color:rgba(251,248,243,.55);margin-top:14px;line-height:1.6;max-width:820px}
+  .head .stat{margin-top:18px;display:flex;gap:22px;font-size:13px;color:rgba(251,248,243,.5)}
+  .head .stat b{color:var(--pop);font-weight:900;font-size:17px}
+  .group{max-width:1500px;margin:48px auto 0}
+  .gtitle{display:flex;align-items:baseline;gap:13px;padding-bottom:18px;border-bottom:1px solid rgba(251,248,243,.12);margin-bottom:28px}
+  .gtitle .eb{font-family:var(--serif);font-style:italic;font-size:13px;color:var(--gold-deep)}
+  .gtitle h2{font-size:24px;font-weight:900;letter-spacing:-.5px}
+  .gtitle .cnt{font-size:13px;color:rgba(251,248,243,.4);font-weight:600}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:26px}
+  .card{background:rgba(251,248,243,.04);border:1px solid rgba(251,248,243,.1);border-radius:22px;padding:15px;transition:all .25s;text-decoration:none;color:inherit;display:block}
+  .card:hover{background:rgba(251,248,243,.07);border-color:rgba(232,71,42,.5);transform:translateY(-4px)}
+  .frame{width:100%;aspect-ratio:390/844;border-radius:18px;overflow:hidden;background:var(--paper);position:relative;box-shadow:0 16px 36px -12px rgba(0,0,0,.6);margin-bottom:12px}
+  .frame iframe{width:390px;height:844px;border:0;transform-origin:0 0;pointer-events:none;position:absolute;top:0;left:0}
+  .meta h3{font-size:16px;font-weight:800;letter-spacing:-.2px}
+  .meta .eb{font-family:var(--serif);font-style:italic;font-size:10px;color:var(--gold-deep)}
+</style>
+<script>
+function fit(){document.querySelectorAll('.frame').forEach(fr=>{var f=fr.querySelector('iframe');f.style.transform='scale('+(fr.clientWidth/390)+')';});}
+window.addEventListener('load',fit);window.addEventListener('resize',fit);
+</script>
+</head>
+<body>
+  <div class="head">
+    <div class="eyebrow">Complete Product Design Book · v4.0</div>
+    <h1>家庭<span class="pop">点菜</span> · 完整产品</h1>
+    <p>精致美食杂志 + 大胆撞色 · 全产品页面、流程、弹窗、合规页一应俱全。统一设计语言，真实菜图，可直接落地小程序。</p>
+    <div class="stat"><span><b>50</b> 屏</span><span><b>7</b> 大模块</span><span><b>1</b> 套设计语言</span><span><b>0</b> emoji</span></div>
+  </div>
+  <div class="group">
+    <div class="gtitle"><span class="eb">MAIN FLOW</span><h2>主流程</h2><span class="cnt">14 屏</span></div>
+    <div class="grid">
+      <a class="card" href="home-final.html" target="_blank"><div class="frame"><iframe src="home-final.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Home</div><h3>今天吃什么</h3></div></a>
+      <a class="card" href="recipes-final.html" target="_blank"><div class="frame"><iframe src="recipes-final.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Recipes</div><h3>菜谱库</h3></div></a>
+      <a class="card" href="menu-final.html" target="_blank"><div class="frame"><iframe src="menu-final.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Menu</div><h3>今日餐桌</h3></div></a>
+      <a class="card" href="dish-pick.html" target="_blank"><div class="frame"><iframe src="dish-pick.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Order</div><h3>今日餐盘</h3></div></a>
+      <a class="card" href="me-final.html" target="_blank"><div class="frame"><iframe src="me-final.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Profile</div><h3>家庭厨房</h3></div></a>
+      <a class="card" href="recipe-detail-final.html" target="_blank"><div class="frame"><iframe src="recipe-detail-final.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Detail</div><h3>菜谱详情</h3></div></a>
+      <a class="card" href="recipe-edit-final.html" target="_blank"><div class="frame"><iframe src="recipe-edit-final.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Edit</div><h3>新建菜谱</h3></div></a>
+      <a class="card" href="cook-log-final.html" target="_blank"><div class="frame"><iframe src="cook-log-final.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Cook Log</div><h3>做菜记录</h3></div></a>
+      <a class="card" href="shopping-final.html" target="_blank"><div class="frame"><iframe src="shopping-final.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Shopping</div><h3>买菜清单</h3></div></a>
+      <a class="card" href="pantry-final.html" target="_blank"><div class="frame"><iframe src="pantry-final.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Pantry</div><h3>冰箱库存</h3></div></a>
+      <a class="card" href="weekly-final.html" target="_blank"><div class="frame"><iframe src="weekly-final.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Weekly</div><h3>本周菜单</h3></div></a>
+      <a class="card" href="community-final.html" target="_blank"><div class="frame"><iframe src="community-final.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Community</div><h3>邻里厨房</h3></div></a>
+      <a class="card" href="import-final.html" target="_blank"><div class="frame"><iframe src="import-final.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Import</div><h3>导入配方</h3></div></a>
+      <a class="card" href="vip-final.html" target="_blank"><div class="frame"><iframe src="vip-final.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">VIP</div><h3>家庭云同步</h3></div></a>
+    </div>
+  </div>
+  <div class="group">
+    <div class="gtitle"><span class="eb">AUTH</span><h2>登录注册</h2><span class="cnt">8 屏</span></div>
+    <div class="grid">
+      <a class="card" href="auth-final.html" target="_blank"><div class="frame"><iframe src="auth-final.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Welcome</div><h3>登录落地页</h3></div></a>
+      <a class="card" href="auth-wxauth.html" target="_blank"><div class="frame"><iframe src="auth-wxauth.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">WeChat</div><h3>微信授权</h3></div></a>
+      <a class="card" href="auth-phone.html" target="_blank"><div class="frame"><iframe src="auth-phone.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Phone</div><h3>手机号登录</h3></div></a>
+      <a class="card" href="auth-register.html" target="_blank"><div class="frame"><iframe src="auth-register.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Register</div><h3>注册账号</h3></div></a>
+      <a class="card" href="auth-otp.html" target="_blank"><div class="frame"><iframe src="auth-otp.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">OTP</div><h3>短信验证码</h3></div></a>
+      <a class="card" href="auth-reset.html" target="_blank"><div class="frame"><iframe src="auth-reset.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Reset</div><h3>重置密码</h3></div></a>
+      <a class="card" href="family-create.html" target="_blank"><div class="frame"><iframe src="family-create.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Create</div><h3>创建家庭</h3></div></a>
+      <a class="card" href="family-join.html" target="_blank"><div class="frame"><iframe src="family-join.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Join</div><h3>加入家庭</h3></div></a>
+    </div>
+  </div>
+  <div class="group">
+    <div class="gtitle"><span class="eb">PAYMENT</span><h2>支付开通</h2><span class="cnt">4 屏</span></div>
+    <div class="grid">
+      <a class="card" href="vip-confirm.html" target="_blank"><div class="frame"><iframe src="vip-confirm.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Confirm</div><h3>套餐确认</h3></div></a>
+      <a class="card" href="pay-wechat.html" target="_blank"><div class="frame"><iframe src="pay-wechat.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Pay</div><h3>微信支付</h3></div></a>
+      <a class="card" href="pay-success.html" target="_blank"><div class="frame"><iframe src="pay-success.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Success</div><h3>开通成功</h3></div></a>
+      <a class="card" href="my-orders.html" target="_blank"><div class="frame"><iframe src="my-orders.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Orders</div><h3>我的订单</h3></div></a>
+    </div>
+  </div>
+  <div class="group">
+    <div class="gtitle"><span class="eb">FEATURES</span><h2>功能子页</h2><span class="cnt">8 屏</span></div>
+    <div class="grid">
+      <a class="card" href="search-result.html" target="_blank"><div class="frame"><iframe src="search-result.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Search</div><h3>搜索结果</h3></div></a>
+      <a class="card" href="post-detail.html" target="_blank"><div class="frame"><iframe src="post-detail.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Post</div><h3>帖子详情</h3></div></a>
+      <a class="card" href="member-manage.html" target="_blank"><div class="frame"><iframe src="member-manage.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Members</div><h3>成员管理</h3></div></a>
+      <a class="card" href="member-invite.html" target="_blank"><div class="frame"><iframe src="member-invite.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Invite</div><h3>邀请家人</h3></div></a>
+      <a class="card" href="profile-edit.html" target="_blank"><div class="frame"><iframe src="profile-edit.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Edit</div><h3>资料编辑</h3></div></a>
+      <a class="card" href="settings.html" target="_blank"><div class="frame"><iframe src="settings.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Settings</div><h3>设置</h3></div></a>
+      <a class="card" href="notifications.html" target="_blank"><div class="frame"><iframe src="notifications.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Notice</div><h3>消息通知</h3></div></a>
+      <a class="card" href="my-favorites.html" target="_blank"><div class="frame"><iframe src="my-favorites.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Favorites</div><h3>我的收藏</h3></div></a>
+    </div>
+  </div>
+  <div class="group">
+    <div class="gtitle"><span class="eb">LEGAL</span><h2>合规辅助</h2><span class="cnt">5 屏</span></div>
+    <div class="grid">
+      <a class="card" href="legal-terms.html" target="_blank"><div class="frame"><iframe src="legal-terms.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Terms</div><h3>用户协议</h3></div></a>
+      <a class="card" href="legal-privacy.html" target="_blank"><div class="frame"><iframe src="legal-privacy.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Privacy</div><h3>隐私政策</h3></div></a>
+      <a class="card" href="about.html" target="_blank"><div class="frame"><iframe src="about.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">About</div><h3>关于我们</h3></div></a>
+      <a class="card" href="feedback.html" target="_blank"><div class="frame"><iframe src="feedback.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Feedback</div><h3>意见反馈</h3></div></a>
+      <a class="card" href="help-faq.html" target="_blank"><div class="frame"><iframe src="help-faq.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Help</div><h3>帮助中心</h3></div></a>
+    </div>
+  </div>
+  <div class="group">
+    <div class="gtitle"><span class="eb">EXTENDED</span><h2>扩展功能</h2><span class="cnt">6 屏</span></div>
+    <div class="grid">
+      <a class="card" href="splash.html" target="_blank"><div class="frame"><iframe src="splash.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Splash</div><h3>启动闪屏</h3></div></a>
+      <a class="card" href="onboarding.html" target="_blank"><div class="frame"><iframe src="onboarding.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Onboarding</div><h3>新手引导</h3></div></a>
+      <a class="card" href="cook-mode.html" target="_blank"><div class="frame"><iframe src="cook-mode.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Cook Mode</div><h3>烹饪模式</h3></div></a>
+      <a class="card" href="preference-profile.html" target="_blank"><div class="frame"><iframe src="preference-profile.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Taste</div><h3>口味画像</h3></div></a>
+      <a class="card" href="share-card.html" target="_blank"><div class="frame"><iframe src="share-card.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Share</div><h3>分享海报</h3></div></a>
+      <a class="card" href="community-audit.html" target="_blank"><div class="frame"><iframe src="community-audit.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Audit</div><h3>社区审核</h3></div></a>
+    </div>
+  </div>
+  <div class="group">
+    <div class="gtitle"><span class="eb">STATES</span><h2>弹窗与状态</h2><span class="cnt">6 屏</span></div>
+    <div class="grid">
+      <a class="card" href="state-dialog.html" target="_blank"><div class="frame"><iframe src="state-dialog.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Dialog</div><h3>确认弹窗</h3></div></a>
+      <a class="card" href="state-loading.html" target="_blank"><div class="frame"><iframe src="state-loading.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Loading</div><h3>加载骨架</h3></div></a>
+      <a class="card" href="state-empty.html" target="_blank"><div class="frame"><iframe src="state-empty.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Empty</div><h3>空状态</h3></div></a>
+      <a class="card" href="state-toast.html" target="_blank"><div class="frame"><iframe src="state-toast.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Toast</div><h3>提示反馈</h3></div></a>
+      <a class="card" href="state-sheet.html" target="_blank"><div class="frame"><iframe src="state-sheet.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Sheet</div><h3>操作面板</h3></div></a>
+      <a class="card" href="state-imgview.html" target="_blank"><div class="frame"><iframe src="state-imgview.html" loading="lazy"></iframe></div><div class="meta"><div class="eb">Viewer</div><h3>图片预览</h3></div></a>
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,299 @@
+.vip-page {
+  min-height: 100vh;
+  background: var(--paper);
+}
+
+/* ===== HERO ===== */
+.vip-hero {
+  position: relative;
+  height: 620rpx;
+  overflow: hidden;
+}
+.vip-hero-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.vip-hero-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(20, 14, 8, 0.55) 0%, rgba(20, 14, 8, 0.1) 35%, rgba(20, 14, 8, 0.4) 65%, rgba(20, 14, 8, 0.92) 100%);
+}
+.vip-hero-bignum {
+  position: absolute;
+  top: 150rpx;
+  right: 28rpx;
+  font-family: var(--serif);
+  font-size: 360rpx;
+  font-weight: 700;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.08);
+}
+.vip-hero-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 24rpx 32rpx;
+}
+.vip-backbtn {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1rpx solid rgba(255, 255, 255, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.vip-back-ico { color: #fff; font-size: 44rpx; line-height: 1; }
+.vip-navtitle { color: #fff; font-size: 30rpx; font-weight: 700; }
+.vip-hero-body {
+  position: absolute;
+  left: 36rpx;
+  right: 36rpx;
+  bottom: 56rpx;
+  z-index: 10;
+  color: #fff;
+}
+.vip-tag {
+  display: inline-block;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 23rpx;
+  font-weight: 700;
+  letter-spacing: 2rpx;
+  color: #fff;
+  background: var(--pop);
+  padding: 8rpx 20rpx;
+  border-radius: 8rpx;
+}
+.vip-hero-title {
+  font-size: 96rpx;
+  line-height: 0.95;
+  letter-spacing: -4rpx;
+  margin: 22rpx 0 16rpx;
+}
+.vip-hero-sub {
+  font-size: 26rpx;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.85);
+}
+.vip-hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14rpx;
+  margin-top: 26rpx;
+}
+.vip-m {
+  font-size: 23rpx;
+  font-weight: 600;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.16);
+  padding: 12rpx 22rpx;
+  border-radius: 999rpx;
+}
+
+/* ===== SHEET ===== */
+.vip-sheet {
+  position: relative;
+  margin-top: -50rpx;
+  background: var(--paper);
+  border-radius: var(--r-sheet) var(--r-sheet) 0 0;
+  padding: 16rpx 32rpx 40rpx;
+  z-index: 20;
+}
+
+/* ===== 权益网格 ===== */
+.vip-bgrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20rpx;
+}
+.vip-bcard {
+  box-sizing: border-box;
+  width: calc((100% - 20rpx) / 2);
+  padding: 28rpx 24rpx;
+  background: #fff;
+  border: var(--bd-card);
+  border-radius: var(--r-card);
+  box-shadow: var(--sh-soft);
+}
+.vip-bic {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 18rpx;
+  background: var(--pop-soft);
+  margin-bottom: 16rpx;
+}
+.vip-bc-title {
+  font-size: 28rpx;
+  font-weight: 800;
+  color: var(--ink);
+  margin-bottom: 8rpx;
+}
+.vip-bc-desc {
+  font-size: 22rpx;
+  line-height: 1.45;
+  color: var(--mut-strong);
+}
+
+/* ===== 版本对比 ===== */
+.vip-cmp {
+  background: #fff;
+  border: var(--bd-card);
+  border-radius: var(--r-card);
+  overflow: hidden;
+  box-shadow: var(--sh-soft);
+}
+.vip-crow {
+  display: flex;
+  align-items: center;
+  border-bottom: 1rpx solid #f1ece2;
+}
+.vip-crow:last-child { border-bottom: none; }
+.vip-chead { background: var(--paper-2); }
+.vip-lab, .vip-feat {
+  flex: 1.4;
+  padding: 24rpx 26rpx;
+  font-size: 25rpx;
+  font-weight: 700;
+  color: var(--ink);
+}
+.vip-chead .vip-lab { color: var(--mut-strong); font-size: 23rpx; }
+.vip-col, .vip-cell {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24rpx 0;
+  font-size: 23rpx;
+  font-weight: 700;
+  color: var(--mut-strong);
+}
+.vip-col-on { color: var(--pop); }
+.vip-tick { color: var(--mut-2); font-size: 30rpx; font-weight: 900; }
+.vip-tick.on { color: var(--pop); }
+.vip-cross { color: #c4b8a6; font-size: 26rpx; }
+.vip-cell-txt { font-size: 22rpx; font-weight: 700; color: var(--mut); }
+
+/* ===== 套餐 ===== */
+.vip-plans {
+  display: flex;
+  gap: 20rpx;
+}
+.vip-plan {
+  position: relative;
+  flex: 1;
+  padding: 32rpx 24rpx 28rpx;
+  background: #fff;
+  border: 3rpx solid #f1ece2;
+  border-radius: var(--r-card);
+  overflow: hidden;
+}
+.vip-plan.on {
+  border-color: var(--pop);
+  background: var(--pop-soft);
+}
+.vip-corner {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: var(--pop);
+  color: #fff;
+  font-size: 20rpx;
+  font-weight: 800;
+  padding: 6rpx 18rpx;
+  border-bottom-left-radius: 16rpx;
+}
+.vip-pname { font-size: 26rpx; font-weight: 700; color: var(--ink); }
+.vip-price {
+  font-size: 52rpx;
+  font-weight: 900;
+  color: var(--ink);
+  margin-top: 10rpx;
+}
+.vip-price-u { font-size: 24rpx; font-weight: 700; color: var(--mut); }
+.vip-per { font-size: 22rpx; color: var(--mut); margin-top: 6rpx; }
+.vip-save {
+  display: inline-block;
+  margin-top: 12rpx;
+  font-size: 20rpx;
+  font-weight: 800;
+  color: var(--pine);
+  background: #e7efe9;
+  padding: 5rpx 14rpx;
+  border-radius: 999rpx;
+}
+.vip-radio {
+  position: absolute;
+  top: 28rpx;
+  right: 24rpx;
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  border: 3rpx solid #e0d6c6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.vip-radio.on { background: var(--pop); border-color: var(--pop); }
+.vip-radio-tick { color: #fff; font-size: 24rpx; font-weight: 900; }
+
+/* ===== 成员 ===== */
+.vip-members {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28rpx;
+  background: #fff;
+  border: var(--bd-card);
+  border-radius: var(--r-card);
+  box-shadow: var(--sh-soft);
+}
+.vip-pile { display: flex; }
+.vip-av {
+  width: 76rpx;
+  height: 76rpx;
+  margin-left: -18rpx;
+  border-radius: 22rpx;
+  border: 3rpx solid #fff;
+  color: #fff;
+  font-size: 28rpx;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.vip-av:first-child { margin-left: 0; }
+.vip-more { background: var(--paper-2); color: var(--mut-strong); }
+.vip-synced {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  font-size: 24rpx;
+  font-weight: 700;
+  color: var(--pine);
+}
+.vip-sdot {
+  width: 14rpx;
+  height: 14rpx;
+  border-radius: 50%;
+  background: var(--pine);
+}
+
+/* ===== CTA ===== */
+.vip-cta { margin-top: 40rpx; }
+.vip-cta .btn { min-height: 96rpx; font-size: 30rpx; }
+.btn.disabled { opacity: 0.6; }
+.vip-note {
+  margin-top: 16rpx;
+  text-align: center;
+  font-size: 22rpx;
+  color: var(--mut);
+}

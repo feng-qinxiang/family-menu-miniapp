@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "family-menu-server",
+      "runtimeExecutable": "mvn",
+      "runtimeArgs": ["-f", "server/pom.xml", "spring-boot:run"],
+      "port": 9088
+    }
+  ]
+}

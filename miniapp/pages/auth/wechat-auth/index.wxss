@@ -1,0 +1,504 @@
+/* pages/auth/wechat-auth · 微信授权(底部 sheet 弹层)
+   设计稿 auth-wxauth.html。px→rpx ×1.923。配色全部走全局 token。 */
+.wa {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--paper);
+}
+
+/* ===== 背景:登录页(虚化变暗) ===== */
+.wa-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  filter: saturate(0.9) blur(1px);
+}
+.wa-hero {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 870rpx;
+}
+.wa-hero-img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.wa-hero-mask {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(20, 14, 8, 0.5) 0%,
+    rgba(20, 14, 8, 0) 28%,
+    rgba(20, 14, 8, 0.18) 52%,
+    rgba(20, 14, 8, 0.9) 100%
+  );
+}
+.wa-brandbar {
+  position: absolute;
+  left: 46rpx;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+.wa-logo {
+  width: 78rpx;
+  height: 78rpx;
+  border-radius: 26rpx;
+  background: var(--pop);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--sh-pop);
+}
+.wa-brand-en {
+  display: block;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 21rpx;
+  letter-spacing: 3rpx;
+  color: #fff;
+  opacity: 0.85;
+}
+.wa-brand-cn {
+  display: block;
+  font-size: 29rpx;
+  font-weight: 800;
+  letter-spacing: -0.6rpx;
+  color: #fff;
+  margin-top: 2rpx;
+}
+.wa-hero-body {
+  position: absolute;
+  left: 46rpx;
+  right: 46rpx;
+  top: 576rpx;
+  z-index: 3;
+}
+.wa-hero-tag {
+  display: inline-block;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 23rpx;
+  letter-spacing: 3rpx;
+  font-weight: 700;
+  color: #fff;
+  background: var(--pop);
+  padding: 12rpx 27rpx;
+  border-radius: 8rpx;
+}
+.wa-hero-title {
+  font-size: 104rpx;
+  line-height: 0.9;
+  letter-spacing: -6rpx;
+  margin-top: 30rpx;
+  -webkit-text-stroke: 3rpx #fff;
+}
+.wa-bg-sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 820rpx;
+  bottom: 0;
+  background: var(--paper);
+  border-radius: 54rpx 54rpx 0 0;
+  padding: 50rpx 46rpx;
+}
+.wa-bg-wx {
+  width: 100%;
+  border-radius: 34rpx;
+  padding: 33rpx;
+  font-size: 32rpx;
+  font-weight: 800;
+  text-align: center;
+}
+
+/* ===== 遮罩 ===== */
+.wa-mask {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  background: rgba(28, 20, 12, 0.5);
+  backdrop-filter: blur(4rpx);
+  opacity: 0;
+  transition: opacity 0.32s var(--g-power3-out);
+}
+.wa-mask.is-in {
+  opacity: 1;
+}
+
+/* ===== 授权 sheet(底部弹出) ===== */
+.wa-sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+  box-sizing: border-box;
+  background: #fff;
+  border-radius: 50rpx 50rpx 0 0;
+  padding: 46rpx 46rpx 40rpx;
+  box-shadow: 0 -16rpx 80rpx rgba(40, 25, 12, 0.28);
+  transform: translateY(105%);
+  transition: transform 0.46s var(--g-back-out);
+}
+.wa-sheet.is-in {
+  transform: translateY(0);
+}
+.wa-grab {
+  width: 73rpx;
+  height: 10rpx;
+  border-radius: 6rpx;
+  background: var(--paper-2);
+  margin: 0 auto 35rpx;
+}
+
+/* 顶部 */
+.wa-top {
+  display: flex;
+  align-items: center;
+  gap: 25rpx;
+  padding-bottom: 35rpx;
+  margin-bottom: 38rpx;
+  border-bottom: 2rpx solid #f0eadf;
+}
+.wa-alogo {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 31rpx;
+  background: var(--pop);
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--sh-pop);
+}
+.wa-at-tx {
+  flex: 1;
+  min-width: 0;
+}
+.wa-eyebrow {
+  display: block;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 21rpx;
+  letter-spacing: 2rpx;
+  color: var(--gold-deep);
+  font-weight: 700;
+}
+.wa-h1 {
+  display: block;
+  font-size: 35rpx;
+  font-weight: 900;
+  color: var(--ink);
+  letter-spacing: -0.8rpx;
+  margin-top: 4rpx;
+}
+.wa-wxbadge {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  background: #eafaf0;
+  padding: 12rpx 21rpx;
+  border-radius: 58rpx;
+  flex: none;
+}
+.wa-wxbadge text {
+  font-size: 21rpx;
+  font-weight: 800;
+  color: var(--wx);
+}
+
+.wa-desc {
+  display: block;
+  font-size: 26rpx;
+  color: var(--mut-strong);
+  line-height: 1.55;
+  margin-bottom: 42rpx;
+}
+.wa-desc-b {
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.wa-label {
+  display: block;
+  font-size: 21rpx;
+  letter-spacing: 2rpx;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+  margin-bottom: 21rpx;
+}
+
+/* 头像预览 */
+.wa-ava-row {
+  display: flex;
+  align-items: center;
+  gap: 29rpx;
+  margin-bottom: 42rpx;
+}
+.wa-ava {
+  width: 123rpx;
+  height: 123rpx;
+  border-radius: 50%;
+  flex: none;
+  position: relative;
+  border: 4rpx solid #fff;
+  box-shadow: 0 8rpx 23rpx rgba(60, 40, 20, 0.18), 0 0 0 2rpx #efe9df;
+}
+.wa-ava-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: block;
+}
+.wa-ava-cam {
+  position: absolute;
+  right: -4rpx;
+  bottom: -4rpx;
+  width: 46rpx;
+  height: 46rpx;
+  border-radius: 50%;
+  background: var(--ink-deep);
+  border: 4rpx solid #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.wa-ava-h4 {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 800;
+  color: var(--ink);
+}
+.wa-ava-p {
+  display: block;
+  font-size: 23rpx;
+  color: var(--mut);
+  margin-top: 6rpx;
+}
+
+/* 昵称输入 */
+.wa-field {
+  margin-bottom: 46rpx;
+}
+.wa-inp {
+  display: flex;
+  align-items: center;
+  gap: 21rpx;
+  background: var(--paper);
+  border: 3rpx solid #ece4d6;
+  border-radius: 27rpx;
+  padding: 27rpx 31rpx;
+  transition: border-color 0.18s ease, background 0.18s ease;
+}
+.wa-inp.is-focus {
+  border-color: var(--pop);
+  background: #fff;
+}
+.wa-input {
+  flex: 1;
+  min-width: 0;
+  font-size: 31rpx;
+  font-weight: 700;
+  color: var(--ink);
+}
+.wa-ph {
+  color: var(--mut-2);
+  font-weight: 600;
+}
+.wa-wxfill {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  font-size: 22rpx;
+  font-weight: 700;
+  color: var(--wx);
+  flex: none;
+}
+
+/* 操作按钮 */
+.wa-allow {
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--pop);
+  color: #fff;
+  border-radius: 31rpx;
+  padding: 33rpx;
+  font-size: 32rpx;
+  font-weight: 800;
+  letter-spacing: 1rpx;
+  text-align: center;
+  box-shadow: 0 4rpx 12rpx rgba(180, 40, 20, 0.3), var(--sh-pop);
+}
+.wa-deny {
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  margin-top: 12rpx;
+  padding: 29rpx;
+  font-size: 28rpx;
+  font-weight: 700;
+  color: var(--mut-strong);
+}
+.wa-foot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  margin-top: 16rpx;
+}
+.wa-foot-tx {
+  font-size: 21rpx;
+  color: var(--mut);
+}
+.wa-foot-link {
+  color: var(--gold-deep);
+  font-weight: 700;
+}
+.wa-home-ind {
+  width: 258rpx;
+  height: 10rpx;
+  border-radius: 6rpx;
+  background: var(--ink-deep);
+  opacity: 0.18;
+  margin: 30rpx auto 0;
+}
+
+/* ===== 纯 CSS 图标 ===== */
+/* home/房子图标(白描边) */
+.ic-home {
+  width: 42rpx;
+  height: 38rpx;
+  position: relative;
+}
+.ic-home::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 30rpx;
+  height: 30rpx;
+  border: 4rpx solid #fff;
+  border-radius: 6rpx 6rpx 4rpx 4rpx;
+  transform: translateX(-50%) translateY(8rpx);
+}
+.ic-home::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -2rpx;
+  width: 26rpx;
+  height: 26rpx;
+  border-top: 4rpx solid #fff;
+  border-left: 4rpx solid #fff;
+  transform: translateX(-50%) rotate(45deg);
+  border-radius: 6rpx 0 0 0;
+}
+/* 微信小图标(绿气泡) */
+.ic-wx-mini {
+  width: 26rpx;
+  height: 26rpx;
+  border-radius: 50% 50% 50% 4rpx;
+  background: var(--wx);
+  position: relative;
+}
+.ic-wx-mini::before,
+.ic-wx-mini::after {
+  content: "";
+  position: absolute;
+  width: 5rpx;
+  height: 5rpx;
+  border-radius: 50%;
+  background: #fff;
+  top: 9rpx;
+}
+.ic-wx-mini::before { left: 7rpx; }
+.ic-wx-mini::after { right: 7rpx; }
+/* 相机图标(白描边) */
+.ic-cam {
+  width: 24rpx;
+  height: 18rpx;
+  border: 3rpx solid #fff;
+  border-radius: 5rpx;
+  position: relative;
+}
+.ic-cam::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 8rpx;
+  height: 8rpx;
+  border: 3rpx solid #fff;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+/* 用户图标(番茄红描边) */
+.ic-user {
+  width: 36rpx;
+  height: 36rpx;
+  position: relative;
+  flex: none;
+}
+.ic-user::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 2rpx;
+  width: 13rpx;
+  height: 13rpx;
+  border: 3rpx solid var(--pop);
+  border-radius: 50%;
+  transform: translateX(-50%);
+}
+.ic-user::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 2rpx;
+  width: 26rpx;
+  height: 14rpx;
+  border: 3rpx solid var(--pop);
+  border-bottom: none;
+  border-radius: 14rpx 14rpx 0 0;
+  transform: translateX(-50%);
+}
+/* 锁图标(灰描边) */
+.ic-lock {
+  width: 22rpx;
+  height: 22rpx;
+  position: relative;
+  flex: none;
+}
+.ic-lock::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 22rpx;
+  height: 13rpx;
+  border: 3rpx solid var(--mut);
+  border-radius: 3rpx;
+  box-sizing: border-box;
+}
+.ic-lock::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 12rpx;
+  height: 11rpx;
+  border: 3rpx solid var(--mut);
+  border-bottom: none;
+  border-radius: 8rpx 8rpx 0 0;
+  transform: translateX(-50%);
+  box-sizing: border-box;
+}

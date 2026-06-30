@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>家庭点菜 · 消息</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-font-smoothing:antialiased; }
+  :root{
+    --paper:#fbf8f3; --paper-2:#f0ebe2;
+    --ink:#2c241b; --ink-deep:#3a2e23;
+    --mut:#9a8e7d; --mut-strong:#7a6e5d;
+    --gold:#f4d9a8; --gold-deep:#b08949;
+    --pop:#e8472a; --pop-soft:#fdece6;
+    --pine:#2f4a3a;
+    --serif:"Georgia","Times New Roman",serif;
+  }
+  body { display:flex; align-items:center; justify-content:center; min-height:100vh; background:#d9d2c7;
+    font-family:-apple-system,"SF Pro Text","Helvetica Neue",Helvetica,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; }
+  .phone { position:relative; width:390px; height:844px; background:var(--paper); border-radius:46px;
+    box-shadow:0 30px 70px rgba(60,45,30,.4), 0 0 0 11px #1b1714, 0 0 0 12px #2c2520; overflow:hidden; }
+  .status { position:absolute; top:0; left:0; right:0; height:50px; z-index:60;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 30px 0 34px; color:var(--ink); font-size:15px; font-weight:600; pointer-events:none; }
+  .status .right { display:flex; align-items:center; gap:7px; }
+  .notch { position:absolute; top:11px; left:50%; transform:translateX(-50%); width:118px; height:33px; background:#1b1714; border-radius:20px; z-index:61; }
+  .scroll { position:absolute; inset:0; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch; }
+  .scroll::-webkit-scrollbar { display:none; }
+
+  /* nav */
+  .nav { position:relative; padding:62px 24px 14px; display:flex; align-items:center; justify-content:space-between; background:var(--paper); }
+  .backbtn { width:44px; height:44px; border-radius:50%; background:var(--ink-deep); display:flex; align-items:center; justify-content:center; flex:none; }
+  .nav h1 { font-size:21px; font-weight:900; color:var(--ink); letter-spacing:-.5px; }
+  .readall { font-size:12.5px; font-weight:700; color:var(--gold-deep); display:flex; align-items:center; gap:5px; padding:8px 4px; }
+
+  /* hero title block */
+  .titleblk { padding:8px 24px 18px; }
+  .titleblk .eyebrow { font-family:var(--serif); font-style:italic; font-size:12px; letter-spacing:1px; color:var(--gold-deep); font-weight:700; }
+  .titleblk h2 { font-size:33px; font-weight:900; color:var(--ink); letter-spacing:-1.8px; margin-top:5px; line-height:.96;
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; }
+  .titleblk h2 .pop { color:var(--pop); }
+  .titleblk .unread { font-size:13px; color:var(--mut-strong); margin-top:9px; font-weight:600; }
+  .titleblk .unread b { color:var(--pop); font-weight:900; }
+
+  /* tabs */
+  .tabs { display:flex; gap:9px; overflow-x:auto; padding:2px 24px 6px; }
+  .tabs::-webkit-scrollbar { display:none; }
+  .ftab { flex:none; font-size:13.5px; font-weight:600; color:var(--mut-strong); padding:9px 17px; border-radius:30px; background:var(--paper-2); white-space:nowrap; border:1px solid transparent; }
+  .ftab.on { background:var(--ink-deep); color:var(--paper); border-color:var(--ink-deep); }
+  .ftab .dot { display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--pop); margin-left:5px; vertical-align:middle; }
+
+  /* list */
+  .list { padding:20px 24px 40px; }
+  .daylbl { font-family:var(--serif); font-style:italic; font-size:12px; letter-spacing:1px; color:var(--gold-deep); font-weight:700; margin:6px 0 12px; }
+  .ncard { display:flex; gap:14px; background:#fff; border-radius:20px; padding:15px 16px; margin-bottom:13px; position:relative;
+    box-shadow:0 2px 6px rgba(60,40,20,.06), 0 18px 40px rgba(120,70,30,.14); border:1px solid #f1ece2; }
+  .ncard.unread { background:linear-gradient(180deg,#fffdfa,#fff); }
+  .ncard.unread::before { content:""; position:absolute; left:0; top:18px; bottom:18px; width:4px; border-radius:0 3px 3px 0; background:var(--pop); }
+  .ic { width:46px; height:46px; border-radius:14px; flex:none; display:flex; align-items:center; justify-content:center; }
+  .ic.fam { background:var(--pop-soft); color:var(--pop); }
+  .ic.com { background:#eef3ee; color:var(--pine); }
+  .ic.sys { background:#f5edda; color:var(--gold-deep); }
+  .ic .av { width:46px; height:46px; border-radius:14px; background-size:cover; background-position:center; }
+  .nmid { flex:1; min-width:0; }
+  .nmid .nt { display:flex; align-items:baseline; justify-content:space-between; gap:8px; }
+  .nmid h3 { font-size:15px; font-weight:800; color:var(--ink); letter-spacing:-.3px; }
+  .nmid .time { font-size:11px; color:var(--mut); font-weight:600; flex:none; }
+  .nmid p { font-size:13px; color:var(--mut-strong); line-height:1.5; margin-top:5px; }
+  .nmid p .hl { color:var(--ink-deep); font-weight:800; }
+  .nmid p .at { color:var(--pop); font-weight:800; }
+  .reddot { position:absolute; top:15px; right:15px; width:8px; height:8px; border-radius:50%; background:var(--pop); box-shadow:0 0 0 3px var(--pop-soft); }
+  .thumb-dish { width:42px; height:42px; border-radius:11px; background-size:cover; background-position:center; flex:none; margin-top:9px; }
+  .nbtn { margin-top:11px; font-size:12px; font-weight:800; color:#fff; background:var(--pop); padding:7px 15px; border-radius:30px; display:inline-flex; align-items:center; gap:5px; box-shadow:0 6px 14px rgba(232,71,42,.35); }
+  .nbtn.ghost { background:var(--paper-2); color:var(--ink-deep); box-shadow:none; }
+
+  .home-ind { position:absolute; bottom:9px; left:50%; transform:translateX(-50%); width:134px; height:5px; border-radius:3px; background:#2c241b; opacity:.85; z-index:55; }
+  .backbtn:active, .readall:active, .ftab:active, .ncard:active, .nbtn:active { transform:scale(.97); }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status">
+    <span>9:41</span>
+    <span class="right">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="#2c241b"/><rect x="5" y="4.5" width="3" height="7.5" rx="1" fill="#2c241b"/><rect x="10" y="2" width="3" height="10" rx="1" fill="#2c241b"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#2c241b" opacity=".4"/></svg>
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><path d="M8.5 2.5C11 2.5 13.2 3.5 14.8 5.1L8.5 11.4 2.2 5.1C3.8 3.5 6 2.5 8.5 2.5Z" fill="#2c241b"/></svg>
+      <svg width="26" height="13" viewBox="0 0 26 13" fill="none"><rect x="1" y="1" width="21" height="11" rx="3" stroke="#2c241b" stroke-width="1.2" opacity=".5"/><rect x="3" y="3" width="16" height="7" rx="1.5" fill="#2c241b"/><rect x="23.5" y="4.5" width="2" height="4" rx="1" fill="#2c241b" opacity=".6"/></svg>
+    </span>
+  </div>
+
+  <div class="scroll">
+    <div class="nav">
+      <div class="backbtn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fbf8f3" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></div>
+      <h1>消息</h1>
+      <span class="readall"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg>全部已读</span>
+    </div>
+
+    <div class="titleblk">
+      <div class="eyebrow">Notifications</div>
+      <h2>家里的<span class="pop">动静</span></h2>
+      <div class="unread">你有 <b>3</b> 条未读消息</div>
+    </div>
+
+    <div class="tabs">
+      <div class="ftab on">全部<span class="dot"></span></div>
+      <div class="ftab">家庭</div>
+      <div class="ftab">社区</div>
+      <div class="ftab">系统</div>
+    </div>
+
+    <div class="list">
+      <div class="daylbl">Today · 今天</div>
+
+      <div class="ncard unread">
+        <div class="ic fam"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></svg></div>
+        <div class="nmid">
+          <div class="nt"><h3>家庭菜单</h3><span class="time">5 分钟前</span></div>
+          <p><span class="hl">妈妈</span> 把 <span class="hl">红烧肉</span> 加入了今日菜单</p>
+          <div style="display:flex; align-items:flex-end; justify-content:space-between;">
+            <div class="thumb-dish" style="background-image:url('img/hongshao-pork.jpg')"></div>
+            <span class="nbtn">去看看 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></span>
+          </div>
+        </div>
+        <span class="reddot"></span>
+      </div>
+
+      <div class="ncard unread">
+        <div class="ic com"><div class="av" style="background-image:url('img/kungpao-chicken.jpg')"></div></div>
+        <div class="nmid">
+          <div class="nt"><h3>社区互动</h3><span class="time">28 分钟前</span></div>
+          <p><span class="at">@老王头</span> 评论了你的帖子：「这个宫保鸡丁火候掌握得绝了，求详细比例！」</p>
+          <span class="nbtn ghost">回复 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3a2e23" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17H5a2 2 0 01-2-2V7a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-7l-4 3z"/></svg></span>
+        </div>
+        <span class="reddot"></span>
+      </div>
+
+      <div class="ncard unread">
+        <div class="ic fam"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6"/></svg></div>
+        <div class="nmid">
+          <div class="nt"><h3>家庭成员</h3><span class="time">2 小时前</span></div>
+          <p><span class="hl">奶奶</span> 给 <span class="hl">蒜蓉空心菜</span> 点了赞，说想这周吃</p>
+        </div>
+        <span class="reddot"></span>
+      </div>
+
+      <div class="daylbl" style="margin-top:18px;">Earlier · 更早</div>
+
+      <div class="ncard">
+        <div class="ic sys"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+        <div class="nmid">
+          <div class="nt"><h3>系统通知</h3><span class="time">昨天</span></div>
+          <p>你的 <span class="hl">家庭云同步</span> 即将到期，续费后可继续多人实时共享菜单</p>
+          <span class="nbtn">立即续费 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></span>
+        </div>
+      </div>
+
+      <div class="ncard">
+        <div class="ic com"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-9.5A3.8 3.8 0 0112 8a3.8 3.8 0 017 2.5C19 15.6 12 20 12 20z"/></svg></div>
+        <div class="nmid">
+          <div class="nt"><h3>社区互动</h3><span class="time">昨天</span></div>
+          <p><span class="at">@阿琳</span> 等 <span class="hl">12 人</span> 收藏了你分享的 <span class="hl">番茄炒蛋</span> 菜谱</p>
+        </div>
+      </div>
+
+      <div class="ncard">
+        <div class="ic sys"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg></div>
+        <div class="nmid">
+          <div class="nt"><h3>系统通知</h3><span class="time">3 天前</span></div>
+          <p>本周买菜清单已自动生成，共 <span class="hl">5 样</span> 食材待采购</p>
+          <span class="nbtn ghost">查看清单 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3a2e23" stroke-width="2.6" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="home-ind"></div>
+</div>
+</body>
+</html>

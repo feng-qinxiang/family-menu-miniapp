@@ -1,0 +1,321 @@
+/* pages/auth/register · 注册账号 · 全用全局 token */
+.rg {
+  min-height: 100vh;
+  background: var(--paper);
+}
+.rg-scroll {
+  height: 100vh;
+}
+
+/* —— Hero —— */
+.rg-hero {
+  position: relative;
+  height: 600rpx;
+  overflow: hidden;
+}
+.rg-hero-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.rg-hero-mask {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(20, 14, 8, 0.5) 0%, rgba(20, 14, 8, 0) 30%, rgba(20, 14, 8, 0.2) 54%, rgba(20, 14, 8, 0.92) 100%);
+}
+.rg-bignum {
+  position: absolute;
+  top: 90rpx;
+  right: -4rpx;
+  font-family: var(--serif);
+  font-size: 384rpx;
+  font-weight: 700;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.08);
+  pointer-events: none;
+}
+.rg-hero-body {
+  position: absolute;
+  left: 46rpx;
+  right: 46rpx;
+  bottom: 80rpx;
+  color: #fff;
+}
+.rg-tag {
+  display: inline-block;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 23rpx;
+  letter-spacing: 3rpx;
+  font-weight: 700;
+  color: #fff;
+  background: var(--pop);
+  padding: 11rpx 27rpx;
+  border-radius: var(--r-xs);
+}
+.rg-hero-title {
+  margin: 26rpx 0 22rpx;
+  font-size: 96rpx;
+  line-height: 0.9;
+  letter-spacing: -5rpx;
+  -webkit-text-stroke: 3rpx #fff;
+}
+.rg-slogan {
+  display: block;
+  font-size: 29rpx;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: 1rpx;
+}
+
+/* —— sheet —— */
+.rg-sheet {
+  position: relative;
+  margin-top: -50rpx;
+  background: var(--paper);
+  border-radius: var(--r-sheet) var(--r-sheet) 0 0;
+  padding: 50rpx 46rpx 80rpx;
+  z-index: 2;
+}
+
+/* —— 字段 —— */
+.rg-field { margin-bottom: 30rpx; }
+.rg-label {
+  display: block;
+  font-size: 21rpx;
+  letter-spacing: 2rpx;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+  margin-bottom: 16rpx;
+}
+.rg-inp {
+  display: flex;
+  align-items: center;
+  gap: 21rpx;
+  padding: 27rpx 30rpx;
+  background: #fff;
+  border: 3rpx solid #ece4d6;
+  border-radius: var(--r-sm);
+  box-shadow: var(--sh-soft);
+}
+.rg-inp.is-focus {
+  border-color: var(--pop);
+  box-shadow: 0 4rpx 18rpx rgba(232, 71, 42, 0.15);
+}
+.rg-ic { flex: none; width: 36rpx; height: 38rpx; display: flex; align-items: center; justify-content: center; }
+.rg-input {
+  flex: none;
+  width: auto;
+  font-size: 30rpx;
+  font-weight: 700;
+  color: var(--ink);
+}
+.rg-input.grow { flex: 1; }
+.rg-ph { color: var(--mut-2); font-weight: 600; }
+
+.rg-hint {
+  display: block;
+  font-size: 22rpx;
+  line-height: 1.5;
+  color: var(--mut-strong);
+  margin: -14rpx 4rpx 30rpx;
+}
+
+/* phone 图标 */
+.ic-phone {
+  width: 24rpx;
+  height: 36rpx;
+  border: 4rpx solid var(--mut-2);
+  border-radius: 7rpx;
+  position: relative;
+}
+.ic-phone.on { border-color: var(--pop); }
+.ic-phone::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 3rpx;
+  transform: translateX(-50%);
+  width: 8rpx;
+  height: 4rpx;
+  border-radius: 2rpx;
+  background: var(--mut-2);
+}
+.ic-phone.on::after { background: var(--pop); }
+/* mail 图标 */
+.ic-mail {
+  width: 38rpx;
+  height: 28rpx;
+  border: 4rpx solid var(--mut-2);
+  border-radius: 6rpx;
+  position: relative;
+  overflow: hidden;
+}
+.ic-mail::after {
+  content: "";
+  position: absolute;
+  top: -8rpx;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 20rpx;
+  height: 20rpx;
+  border-bottom: 4rpx solid var(--mut-2);
+  border-right: 4rpx solid var(--mut-2);
+}
+/* lock 图标 */
+.ic-lock {
+  width: 32rpx;
+  height: 24rpx;
+  margin-top: 12rpx;
+  border-radius: 5rpx;
+  background: var(--mut-2);
+  position: relative;
+}
+.ic-lock::before {
+  content: "";
+  position: absolute;
+  top: -14rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 18rpx;
+  height: 18rpx;
+  border: 4rpx solid var(--mut-2);
+  border-bottom: none;
+  border-radius: 9rpx 9rpx 0 0;
+}
+
+/* 眼睛切换 */
+.rg-eye {
+  flex: none;
+  width: 56rpx;
+  height: 56rpx;
+  margin: -14rpx -10rpx -14rpx 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ic-eye {
+  width: 40rpx;
+  height: 26rpx;
+  border-radius: 50% 50% 50% 50% / 70% 70% 70% 70%;
+  border: 3rpx solid var(--mut);
+  position: relative;
+}
+.ic-eye::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  background: var(--mut);
+}
+.ic-eye.off::before {
+  content: "";
+  position: absolute;
+  left: -2rpx;
+  top: 8rpx;
+  width: 44rpx;
+  height: 3rpx;
+  background: var(--mut);
+  transform: rotate(38deg);
+  transform-origin: center;
+}
+
+/* 验证码按钮 */
+.rg-codebtn {
+  flex: none;
+  font-size: 25rpx;
+  font-weight: 800;
+  color: var(--pop);
+  padding: 14rpx 24rpx;
+  border-radius: var(--r-xs);
+  background: var(--pop-soft);
+  border: 2rpx solid #f6cfc4;
+  white-space: nowrap;
+}
+.rg-codebtn.is-wait {
+  color: var(--mut-strong);
+  background: var(--paper-2);
+  border-color: #e6ddcf;
+}
+
+/* —— 注册按钮 —— */
+.rg-createbtn {
+  margin-top: 12rpx;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16rpx;
+  padding: 32rpx;
+  border-radius: var(--r-md);
+  font-size: 32rpx;
+  font-weight: 800;
+  letter-spacing: 1rpx;
+}
+.ic-arrow {
+  width: 16rpx;
+  height: 16rpx;
+  border-top: 5rpx solid #fff;
+  border-right: 5rpx solid #fff;
+  transform: rotate(45deg);
+}
+
+/* —— 去登录 —— */
+.rg-gotologin {
+  text-align: center;
+  margin-top: 40rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--mut-strong);
+}
+.rg-login-link {
+  color: var(--pop);
+  font-weight: 800;
+  border-bottom: 3rpx solid var(--pop-soft);
+  padding-bottom: 2rpx;
+}
+
+/* —— 协议 —— */
+.rg-agree {
+  display: flex;
+  align-items: flex-start;
+  gap: 16rpx;
+  margin-top: 44rpx;
+}
+.rg-box {
+  flex: none;
+  width: 38rpx;
+  height: 38rpx;
+  margin-top: 2rpx;
+  border-radius: var(--r-xs);
+  border: 3rpx solid #d8d0c2;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.rg-box.is-on {
+  border-color: var(--pop);
+  background: var(--pop);
+}
+.rg-check {
+  width: 16rpx;
+  height: 9rpx;
+  border-left: 4rpx solid #fff;
+  border-bottom: 4rpx solid #fff;
+  transform: rotate(-45deg) translateY(-2rpx);
+}
+.rg-agree-tx {
+  font-size: 22rpx;
+  line-height: 1.6;
+  color: var(--mut-strong);
+}
+.rg-link { color: var(--gold-deep); font-weight: 700; }
+
+

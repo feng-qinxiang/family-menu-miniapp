@@ -1,0 +1,34 @@
+server:
+  port: ${SERVER_PORT:9088}
+
+spring:
+  application:
+    name: family-menu-daily-server
+  datasource:
+    url: jdbc:mysql://${DB_HOST:127.0.0.1}:${DB_PORT:3306}/${DB_NAME:family_menu_daily_db}?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:123456}
+  sql:
+    init:
+      mode: always
+      encoding: UTF-8
+      continue-on-error: true
+
+wechat:
+  app-id: ${WECHAT_APP_ID:}
+  app-secret: ${WECHAT_APP_SECRET:}
+
+auth:
+  # 安全默认关闭：开发态固定验证码(246810)与验证码明文回显仅供联调，
+  # 生产/默认环境必须保持 false，避免任意手机号被未授权登录。本地联调用 AUTH_DEV_OTP_ENABLED=true 显式开启。
+  dev-otp-enabled: ${AUTH_DEV_OTP_ENABLED:false}
+
+upload:
+  dir: ${UPLOAD_DIR:uploads}
+
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:9088,http://127.0.0.1:9088}
+
+logging:
+  level:
+    com.familymenu.daily: ${LOG_LEVEL:info}

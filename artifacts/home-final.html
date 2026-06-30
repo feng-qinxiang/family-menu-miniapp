@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>家庭点菜 · 精致撞色</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-font-smoothing:antialiased; }
+  :root{
+    --paper:#fbf8f3; --paper-2:#f0ebe2;
+    --ink:#2c241b; --ink-deep:#3a2e23;
+    --mut:#9a8e7d; --mut-2:#b3a795;
+    --gold:#f4d9a8; --gold-deep:#b08949;
+    --gold-foil:linear-gradient(135deg,#d4a857,#f3d796,#b8863a);
+    --pop:#e8472a;          /* 8号撞色:番茄红 */
+    --pop-soft:#fdece6;
+    --pine:#2f4a3a;         /* 墨绿锚点色 */
+    --serif:"Georgia","Times New Roman",serif;
+  }
+  body {
+    display:flex; align-items:center; justify-content:center;
+    min-height:100vh; background:#d9d2c7;
+    font-family:-apple-system,"SF Pro Text","Helvetica Neue",Helvetica,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  }
+  .phone {
+    position:relative; width:390px; height:844px;
+    background:var(--paper); border-radius:46px;
+    box-shadow:0 30px 70px rgba(60,45,30,.4), 0 0 0 11px #1b1714, 0 0 0 12px #2c2520;
+    overflow:hidden;
+  }
+  .status {
+    position:absolute; top:0; left:0; right:0; height:50px; z-index:60;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 30px 0 34px; color:#fff; font-size:15px; font-weight:600; pointer-events:none;
+  }
+  .status .right { display:flex; align-items:center; gap:7px; }
+  .notch { position:absolute; top:11px; left:50%; transform:translateX(-50%); width:118px; height:33px; background:#1b1714; border-radius:20px; z-index:61; }
+  .scroll { position:absolute; inset:0; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch; }
+  .scroll::-webkit-scrollbar { display:none; }
+
+  /* hero */
+  .hero { position:relative; height:466px; background:url('img/mapo-tofu.jpg') center/cover no-repeat; }
+  .hero::before { content:""; position:absolute; inset:0; z-index:1;
+    background:radial-gradient(120% 80% at 50% 0%, rgba(255,180,80,.16), transparent 55%); mix-blend-mode:overlay; }
+  .hero::after { content:""; position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(20,14,8,.5) 0%, rgba(20,14,8,0) 28%, rgba(20,14,8,.18) 52%, rgba(20,14,8,.9) 100%); }
+  .hero-bignum { position:absolute; top:84px; right:14px; z-index:2; font-family:var(--serif); font-size:230px; font-weight:700; line-height:1; color:rgba(255,255,255,.07); pointer-events:none; }
+  .hero-top { position:absolute; top:58px; left:24px; right:24px; z-index:10; display:flex; align-items:center; justify-content:space-between; }
+  .greet .hi { font-size:12px; letter-spacing:2.5px; text-transform:uppercase; opacity:.85; font-weight:700; color:#fff; }
+  .greet .name { font-size:17px; font-weight:600; margin-top:3px; color:#fff; }
+  .iconbtn { width:42px; height:42px; border-radius:50%; background:rgba(255,255,255,.16); backdrop-filter:blur(8px);
+    display:flex; align-items:center; justify-content:center; border:1px solid rgba(255,255,255,.22); }
+  .bell-dot { position:absolute; top:8px; right:9px; width:9px; height:9px; border-radius:50%; background:var(--pop); border:1.5px solid #fff; }
+  .hero-body { position:absolute; left:24px; right:24px; bottom:30px; z-index:10; color:#fff; }
+  .tag { display:inline-block; font-family:var(--serif); font-style:italic; font-size:12px; letter-spacing:1.5px; font-weight:700;
+    color:#fff; background:var(--pop); padding:6px 14px; border-radius:4px; }
+  .hero-title {
+    font-size:66px; line-height:.88; font-weight:900; letter-spacing:-4px; margin:16px 0 12px;
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    color:transparent; -webkit-text-stroke:1.6px #fff; text-stroke:1.6px #fff;
+  }
+  .hero-title .pop { color:var(--pop); -webkit-text-stroke:0; text-stroke:0; }
+  .hero-sub { font-size:14px; color:rgba(255,255,255,.85); font-weight:400; }
+  .hero-meta { display:flex; gap:10px; margin-top:18px; align-items:center; flex-wrap:wrap; }
+  .hero-meta .m { display:flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:#fff;
+    background:rgba(255,255,255,.16); backdrop-filter:blur(6px); padding:7px 13px; border-radius:30px; }
+
+  /* sheet */
+  .sheet { position:relative; margin-top:-26px; background:var(--paper); border-radius:28px 28px 0 0; padding:26px 0 120px; z-index:20; }
+  .pad { padding:0 24px; }
+  .chips { display:flex; gap:9px; overflow-x:auto; padding:0 24px 4px; }
+  .chips::-webkit-scrollbar { display:none; }
+  .chip { flex:none; font-size:13.5px; font-weight:600; color:var(--mut); padding:9px 17px; border-radius:30px; background:var(--paper-2); white-space:nowrap; border:1px solid transparent; }
+  .chip.on { background:var(--ink-deep); color:var(--paper); border-color:var(--ink-deep); }
+
+  .shead { display:flex; align-items:flex-end; justify-content:space-between; margin:30px 0 16px; }
+  .shead > div:first-child { position:relative; padding-left:15px; }
+  .shead > div:first-child::before { content:""; position:absolute; left:0; top:3px; bottom:3px; width:4px; border-radius:3px; background:var(--pop); }
+  .shead .eyebrow { font-family:var(--serif); font-style:italic; font-size:12px; letter-spacing:1px; color:var(--gold-deep); font-weight:700; }
+  .shead h2 { font-size:31px; font-weight:900; color:var(--ink); letter-spacing:-1.5px; margin-top:6px;
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; line-height:.96; }
+  .shead h2 .pop { color:var(--pop); }
+  .seeall { font-size:13px; color:var(--gold-deep); font-weight:700; display:flex; align-items:center; gap:3px; flex:none; padding-bottom:3px; }
+
+  .hcards { display:flex; gap:16px; overflow-x:auto; padding:2px 24px 6px; }
+  .hcards::-webkit-scrollbar { display:none; }
+  .rcard { flex:none; width:210px; background:#fff; border-radius:22px; overflow:hidden; box-shadow:0 2px 6px rgba(60,40,20,.06), 0 18px 40px rgba(120,70,30,.16); border:1px solid #f1ece2; }
+  .rcard .ph { height:150px; background-size:cover; background-position:center; position:relative; }
+  .rcard .lbl { position:absolute; top:11px; left:11px; font-size:9.5px; letter-spacing:1.5px; font-weight:800; text-transform:uppercase;
+    color:#fff; background:rgba(40,30,20,.55); backdrop-filter:blur(4px); padding:4px 9px; border-radius:4px; }
+  .rcard .fav { position:absolute; top:10px; right:10px; width:38px; height:38px; border-radius:50%; background:rgba(255,255,255,.92); display:flex; align-items:center; justify-content:center; }
+  .rcard .info { padding:14px 15px 16px; }
+  .rcard .info h3 { font-size:17px; font-weight:800; color:var(--ink); letter-spacing:-.3px; }
+  .rcard .info .meta { display:flex; gap:13px; margin-top:9px; }
+  .rcard .info .meta span { display:flex; align-items:center; gap:4px; font-size:12px; color:#7d7160; }
+  .seeall-card { width:130px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:9px; background:var(--paper-2); border:1px dashed #d8cdbb; box-shadow:none; }
+  .seeall-card .sa-circle { width:52px; height:52px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(60,40,20,.06); }
+  .seeall-card .sa-t { font-size:14.5px; font-weight:800; color:var(--ink); }
+  .seeall-card .sa-s { font-size:11.5px; color:var(--mut-strong,#7a6e5d); font-weight:600; }
+
+  .row { display:flex; align-items:center; gap:15px; padding:14px 0; border-bottom:1px solid #efe9df; }
+  .row:last-child { border-bottom:none; }
+  .row .thumb { width:76px; height:76px; border-radius:18px; background-size:cover; background-position:center; flex:none; }
+  .row .rmid { flex:1; min-width:0; }
+  .row .rmid h4 { font-size:17px; font-weight:800; color:var(--ink); letter-spacing:-.3px; }
+  .row .rmid .sub { font-size:12.5px; color:var(--mut); margin-top:5px; display:flex; gap:12px; }
+  .row .rmid .sub span { display:flex; align-items:center; gap:4px; }
+  .row .add { width:42px; height:42px; border-radius:14px; background:var(--pop); flex:none; display:flex; align-items:center; justify-content:center; color:#fff; box-shadow:0 1px 2px rgba(180,40,20,.3), 0 8px 18px rgba(232,71,42,.4); }
+
+  .menucard { margin:26px 0 0; background:var(--ink-deep); border-radius:24px; padding:22px 22px 20px; color:var(--paper); position:relative; overflow:hidden; }
+  .menucard::after { content:""; position:absolute; right:-30px; top:-30px; width:140px; height:140px; border-radius:50%; background:rgba(232,71,42,.16); }
+  .menucard .eyebrow2 { font-family:var(--serif); font-style:italic; font-size:12px; letter-spacing:1px; color:var(--gold); font-weight:700; }
+  .menucard h3 { font-size:24px; font-weight:900; margin-top:6px; letter-spacing:-.5px; font-family:"PingFang SC","Microsoft YaHei",sans-serif; }
+  .menucard .mc-names { font-size:13px; color:rgba(255,255,255,.78); font-weight:600; margin-top:8px; }
+  .menucard .pile { display:flex; margin-top:14px; }
+  .menucard .pile .d { width:48px; height:48px; border-radius:14px; background-size:cover; background-position:center; border:2px solid var(--ink-deep); margin-left:-12px; box-shadow:0 2px 6px rgba(0,0,0,.25); }
+  .menucard .pile .d:first-child { margin-left:0; }
+  .menucard .mc-bot { display:flex; align-items:center; justify-content:space-between; margin-top:18px; padding-top:16px; border-top:1px solid rgba(255,255,255,.13); }
+  .menucard .stat .num { font-size:24px; font-weight:900; }
+  .menucard .stat .num .u { font-size:12px; font-weight:600; color:rgba(255,255,255,.6); margin-left:2px; }
+  .menucard .stat .cap { font-size:11px; color:rgba(255,255,255,.6); letter-spacing:.5px; margin-top:1px; }
+  .menucard .gobtn { background:var(--pop); color:#fff; font-size:13.5px; font-weight:800; padding:12px 19px; border-radius:30px; display:flex; align-items:center; gap:6px; box-shadow:0 8px 18px rgba(232,71,42,.35); }
+
+  .tabbar { position:absolute; bottom:0; left:0; right:0; height:88px; z-index:50; background:rgba(251,248,243,.92); backdrop-filter:blur(18px); border-top:1px solid #ece5d9; display:flex; justify-content:space-around; align-items:flex-start; padding-top:13px; }
+  .tab { display:flex; flex-direction:column; align-items:center; gap:5px; color:#857a68; font-size:10.5px; font-weight:600; }
+  .tab.on { color:var(--pop); }
+  .home-ind { position:absolute; bottom:9px; left:50%; transform:translateX(-50%); width:134px; height:5px; border-radius:3px; background:#2c241b; opacity:.85; z-index:55; }
+  .add:active, .fav:active, .chip:active { transform:scale(.96); }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status">
+    <span>9:41</span>
+    <span class="right">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="#fff"/><rect x="5" y="4.5" width="3" height="7.5" rx="1" fill="#fff"/><rect x="10" y="2" width="3" height="10" rx="1" fill="#fff"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#fff" opacity=".4"/></svg>
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><path d="M8.5 2.5C11 2.5 13.2 3.5 14.8 5.1L8.5 11.4 2.2 5.1C3.8 3.5 6 2.5 8.5 2.5Z" fill="#fff"/></svg>
+      <svg width="26" height="13" viewBox="0 0 26 13" fill="none"><rect x="1" y="1" width="21" height="11" rx="3" stroke="#fff" stroke-width="1.2" opacity=".5"/><rect x="3" y="3" width="16" height="7" rx="1.5" fill="#fff"/><rect x="23.5" y="4.5" width="2" height="4" rx="1" fill="#fff" opacity=".6"/></svg>
+    </span>
+  </div>
+
+  <div class="scroll">
+    <div class="hero">
+      <div class="hero-bignum">01</div>
+      <div class="hero-top">
+        <div class="greet">
+          <div class="hi">晚上好</div>
+          <div class="name">小张，今晚想吃点啥</div>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <div class="iconbtn" style="position:relative;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="bell-dot"></span></div>
+          <div class="iconbtn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3"/></svg></div>
+        </div>
+      </div>
+      <div class="hero-body">
+        <span class="tag">Tonight's Pick</span>
+        <div class="hero-title">麻婆<span class="pop">豆腐</span></div>
+        <div class="hero-sub">家里做过 3 次，全家都说好</div>
+        <div class="hero-meta">
+          <span class="m"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round"/></svg>35 分钟</span>
+          <span class="m"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.2"/><path d="M3 19c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke-linecap="round"/></svg>2 人份</span>
+          <span class="m">川菜 · 麻辣</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sheet">
+      <div class="chips">
+        <div class="chip on">全部</div><div class="chip">川菜</div><div class="chip">粤菜</div><div class="chip">家常</div><div class="chip">面点</div>
+      </div>
+
+      <div class="pad">
+        <div class="shead">
+          <div>
+            <div class="eyebrow">Family Favorites</div>
+            <h2>家里<span class="pop">常做</span>的菜</h2>
+          </div>
+          <span class="seeall">全部 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></span>
+        </div>
+      </div>
+      <div class="hcards">
+        <div class="rcard">
+          <div class="ph" style="background-image:url('img/tomato-egg.jpg')"><span class="lbl">家常</span><span class="fav"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3a2e23" stroke-width="2"><path d="M12 20s-7-4.4-7-9.5A3.8 3.8 0 0112 8a3.8 3.8 0 017 2.5C19 15.6 12 20 12 20z"/></svg></span></div>
+          <div class="info"><h3>番茄炒蛋</h3><div class="meta"><span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b3a795" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round"/></svg>15 分钟</span><span>下饭快手</span></div></div>
+        </div>
+        <div class="rcard">
+          <div class="ph" style="background-image:url('img/hongshao-pork.jpg')"><span class="lbl">家常</span><span class="fav"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3a2e23" stroke-width="2"><path d="M12 20s-7-4.4-7-9.5A3.8 3.8 0 0112 8a3.8 3.8 0 017 2.5C19 15.6 12 20 12 20z"/></svg></span></div>
+          <div class="info"><h3>红烧肉</h3><div class="meta"><span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b3a795" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round"/></svg>50 分钟</span><span>做过 6 次</span></div></div>
+        </div>
+        <div class="rcard">
+          <div class="ph" style="background-image:url('img/kungpao-chicken.jpg')"><span class="lbl">川菜</span><span class="fav"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3a2e23" stroke-width="2"><path d="M12 20s-7-4.4-7-9.5A3.8 3.8 0 0112 8a3.8 3.8 0 017 2.5C19 15.6 12 20 12 20z"/></svg></span></div>
+          <div class="info"><h3>宫保鸡丁</h3><div class="meta"><span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b3a795" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round"/></svg>25 分钟</span><span>微辣</span></div></div>
+        </div>
+        <a class="rcard seeall-card">
+          <span class="sa-circle"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold-deep)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+          <span class="sa-t">查看全部</span>
+          <span class="sa-s">28 道家常菜</span>
+        </a>
+      </div>
+
+      <div class="pad">
+        <div class="shead"><div><div class="eyebrow">Quick Tonight</div><h2>再来两道<span class="pop">清淡</span>的</h2></div></div>
+        <div class="row">
+          <div class="thumb" style="background-image:url('img/long-beans.jpg')"></div>
+          <div class="rmid"><h4>蒜蓉空心菜</h4><div class="sub"><span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#b3a795" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round"/></svg>10 分钟</span><span>家常 · 奶奶爱吃</span></div></div>
+          <div class="add"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div>
+        </div>
+        <div class="row">
+          <div class="thumb" style="background-image:url('img/shrimp-peas.jpg')"></div>
+          <div class="rmid"><h4>清蒸虾仁</h4><div class="sub"><span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#b3a795" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round"/></svg>25 分钟</span><span>粤菜 · 鲜</span></div></div>
+          <div class="add"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div>
+        </div>
+
+        <div class="menucard">
+          <div class="eyebrow2">Today's Menu</div>
+          <h3>今日菜单</h3>
+          <div class="mc-names">麻婆豆腐 · 番茄炒蛋 · 蛋花汤</div>
+          <div class="pile">
+            <div class="d" style="background-image:url('img/mapo-tofu.jpg')"></div>
+            <div class="d" style="background-image:url('img/tomato-egg.jpg')"></div>
+            <div class="d" style="background-image:url('img/egg-drop-soup.jpg')"></div>
+          </div>
+          <div class="mc-bot">
+            <div style="display:flex; gap:26px;">
+              <div class="stat"><div class="num">3<span class="u">道</span></div><div class="cap">已点</div></div>
+              <div class="stat"><div class="num">4<span class="u">样</span></div><div class="cap">待买</div></div>
+            </div>
+            <div class="gobtn">去买菜 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabbar">
+    <div class="tab on"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5L12 4l8 6.5"/><path d="M6 9.5V20h12V9.5"/></svg>首页</div>
+    <div class="tab"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h11a2 2 0 012 2v14l-7-3-6 3V4z"/></svg>菜谱</div>
+    <div class="tab"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg>菜单</div>
+    <div class="tab"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6"/></svg>我的</div>
+  </div>
+  <div class="home-ind"></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!-- 偏好画像 · 我们家的口味（二级页：nav-bar + Hero 统计 + 菜系条形图 + 标签云 + TOP5 + 提示卡）-->
+<nav-bar title="我们家的口味" show-back="{{true}}" status-bar-height="{{statusBarHeight}}"></nav-bar>
+
+<view class="container pp">
+
+  <!-- 加载骨架 -->
+  <view wx:if="{{loading}}" class="pp-loading">
+    <view class="sk-hero skeleton shimmer"></view>
+    <view class="sk-card skeleton shimmer"></view>
+    <view class="sk-card skeleton shimmer"></view>
+  </view>
+
+  <!-- 加载失败 -->
+  <state-empty
+    wx:elif="{{failed}}"
+    type="offline"
+    title="口味画像没读出来"
+    desc="网络好像开小差了，点下面重试一下"
+    cta="重新加载"
+    bind:action="onRetry"
+  ></state-empty>
+
+  <block wx:else>
+    <!-- Hero 统计卡：深色菜图 + 大数字水印 -->
+    <view class="ov g-fade-up">
+      <image class="ov-bg" src="{{heroImg}}" mode="aspectFill"></image>
+      <view class="ov-mask"></view>
+      <text class="ov-big">{{totalCooks}}</text>
+      <view class="ov-content">
+        <view class="ov-eyebrow">Taste Profile · 本月</view>
+        <view class="ov-row">
+          <view class="ov-stat">
+            <view class="ov-n">{{totalCooks}}<text class="ov-u">道</text></view>
+            <view class="ov-c">累计做菜</view>
+          </view>
+          <view class="ov-stat">
+            <view class="ov-n red ellipsis">{{favoriteCuisine}}</view>
+            <view class="ov-c">最爱菜系</view>
+          </view>
+          <view class="ov-stat">
+            <view class="ov-n ellipsis">{{favoriteTaste}}</view>
+            <view class="ov-c">口味偏好</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 菜系分布条形图 -->
+    <view class="shead">
+      <view class="shead-main">
+        <view class="shead-bar"></view>
+        <view class="eyebrow">Cuisine Breakdown</view>
+        <view class="shead-title">菜系<text class="pop">分布</text></view>
+      </view>
+    </view>
+    <view wx:if="{{bars.length}}" class="card g-fade-up g-d1">
+      <view class="bar" wx:for="{{bars}}" wx:key="name">
+        <view class="bar-top">
+          <text class="bar-nm">{{item.name}}</text>
+          <text class="bar-pc">{{item.pct}}%</text>
+        </view>
+        <view class="bar-track">
+          <view class="bar-fill" style="width:{{item.width}}%;background:{{item.grad}}"></view>
+        </view>
+      </view>
+    </view>
+    <view wx:else class="card empty-mini g-fade-up g-d1">还没有足够的做菜记录</view>
+
+    <!-- 口味标签云 -->
+    <view class="shead">
+      <view class="shead-main">
+        <view class="shead-bar"></view>
+        <view class="eyebrow">Flavor Cloud</view>
+        <view class="shead-title">口味<text class="pop">标签</text></view>
+      </view>
+    </view>
+    <view wx:if="{{cloud.length}}" class="card g-fade-up g-d2">
+      <view class="cloud">
+        <view class="tcl tap-scale tcl-{{item.size}}" wx:for="{{cloud}}" wx:key="name">
+          {{item.name}} <text class="tcl-ct">·{{item.count}}</text>
+        </view>
+      </view>
+    </view>
+    <view wx:else class="card empty-mini g-fade-up g-d2">口味标签会随做菜越来越丰富</view>
+
+    <!-- 最常做 TOP5 -->
+    <view class="shead">
+      <view class="shead-main">
+        <view class="shead-bar"></view>
+        <view class="eyebrow">Most Cooked · Top 5</view>
+        <view class="shead-title">最常做的<text class="pop">菜</text></view>
+      </view>
+    </view>
+    <view wx:if="{{topList.length}}" class="card g-fade-up g-d3">
+      <view
+        class="trow tap-scale"
+        wx:for="{{topList}}"
+        wx:key="title"
+        data-id="{{item.recipeId}}"
+        data-title="{{item.title}}"
+        bindtap="onTapDish"
+      >
+        <text class="rk {{item.rank === 1 ? 'one' : ''}}">{{item.rank}}</text>
+        <image class="tmb" src="{{item.img}}" mode="aspectFill"></image>
+        <view class="mid">
+          <view class="mid-h ellipsis">{{item.title}}</view>
+          <view class="mid-sb ellipsis">{{item.sub}}</view>
+        </view>
+        <view class="cnt">
+          <view class="cnt-v">{{item.count}}</view>
+          <view class="cnt-u">次</view>
+        </view>
+      </view>
+    </view>
+    <view wx:else class="card empty-mini g-fade-up g-d3">开始做菜后，这里会列出全家最常做的菜</view>
+
+    <!-- 提示卡 -->
+    <view class="note g-fade-up g-d4">
+      <view class="note-ic">
+        <view class="note-star"></view>
+      </view>
+      <view class="note-p">
+        基于<text class="b">全家做菜记录</text>智能分析，累计 <text class="b">{{historyTotal}}</text> 次烹饪。口味画像会随大家做菜越多越准，常做的菜也会优先推荐。
+      </view>
+    </view>
+
+    <view class="safe-bottom"></view>
+  </block>
+</view>
+
+<state-toast
+  visible="{{toast.visible}}"
+  type="center"
+  text="{{toast.text}}"
+  duration="1600"
+  bind:close="onToastHide"
+></state-toast>

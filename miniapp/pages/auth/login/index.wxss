@@ -1,0 +1,269 @@
+/* pages/auth/login/index · 登录落地页样式
+   token 全量复用 app.wxss：--paper/--ink/--pop/--gold-deep/--serif/--ink-deep/--wx/--pop-soft */
+.login-page {
+  position: relative;
+  min-height: 100vh;
+  background: var(--paper);
+}
+.login-scroll {
+  height: 100vh;
+}
+
+/* ============ Hero ============ */
+.hero {
+  position: relative;
+  height: 869rpx;
+  overflow: hidden;
+}
+.hero-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.hero-mask {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(20, 14, 8, 0.5) 0%,
+    rgba(20, 14, 8, 0) 28%,
+    rgba(20, 14, 8, 0.18) 52%,
+    rgba(20, 14, 8, 0.9) 100%
+  );
+}
+.hero-bignum {
+  position: absolute;
+  top: 142rpx;
+  right: -4rpx;
+  font-family: var(--serif);
+  font-size: 442rpx;
+  font-weight: 700;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.07);
+}
+
+/* 品牌条 */
+.brandbar {
+  position: absolute;
+  top: 138rpx;
+  left: 46rpx;
+  display: flex;
+  align-items: center;
+  gap: 19rpx;
+  z-index: 10;
+}
+.brandbar .logo {
+  width: 77rpx;
+  height: 77rpx;
+  border-radius: 25rpx;
+  background: var(--pop);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--sh-pop);
+}
+.brandbar .logo-glyph {
+  color: #fff;
+  font-size: 38rpx;
+  font-weight: 900;
+}
+.brandbar .bt { color: #fff; display: flex; flex-direction: column; }
+.brandbar .bt .en {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 21rpx;
+  letter-spacing: 3rpx;
+  opacity: 0.85;
+}
+.brandbar .bt .cn {
+  font-size: 29rpx;
+  font-weight: 800;
+  letter-spacing: -0.6rpx;
+  margin-top: 2rpx;
+}
+
+/* hero 文案 */
+.hero-body {
+  position: absolute;
+  left: 46rpx;
+  right: 46rpx;
+  bottom: 130rpx;
+  z-index: 10;
+  color: #fff;
+}
+.hero-body .tag {
+  display: inline-block;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 23rpx;
+  letter-spacing: 3rpx;
+  font-weight: 700;
+  color: #fff;
+  background: var(--pop);
+  padding: 11rpx 27rpx;
+  border-radius: 8rpx;
+}
+.hero-title {
+  font-size: 104rpx;
+  line-height: 0.9;
+  letter-spacing: -6rpx;
+  margin: 30rpx 0 26rpx;
+  -webkit-text-stroke: 3rpx #fff;
+}
+.hero-title .br { display: block; height: 0; }
+.slogan {
+  font-size: 31rpx;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: 1rpx;
+}
+.slogan .pop { color: var(--pop); font-weight: 800; }
+
+/* ============ Sheet ============ */
+.sheet {
+  position: relative;
+  margin-top: -50rpx;
+  background: var(--paper);
+  border-radius: 54rpx 54rpx 0 0;
+  padding: 50rpx 46rpx 80rpx;
+  z-index: 20;
+}
+
+/* 微信登录主按钮（复用 .btn-wx 全局基色，本页扩展尺寸/阴影） */
+.login-wx {
+  width: 100%;
+  border-radius: 35rpx;
+  padding: 33rpx;
+  font-size: 32rpx;
+  font-weight: 800;
+  letter-spacing: 1rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 19rpx;
+  box-shadow: 0 4rpx 12rpx rgba(7, 140, 70, 0.3), 0 27rpx 58rpx rgba(7, 193, 96, 0.32);
+}
+.login-wx::after { border: none; }
+.wx-glyph { font-size: 36rpx; }
+
+/* 手机号登录次按钮 */
+.btn-phone {
+  width: 100%;
+  margin-top: 27rpx;
+  box-sizing: border-box;
+  background: #fff;
+  color: var(--ink-deep);
+  border: 3rpx solid #ece4d6;
+  border-radius: 35rpx;
+  padding: 31rpx;
+  font-size: 31rpx;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 19rpx;
+  box-shadow: var(--sh-soft);
+}
+.phone-glyph { font-size: 30rpx; color: var(--ink-deep); }
+
+/* 注册 / 忘记密码 */
+.authlinks {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 38rpx;
+}
+.authlink {
+  font-size: 26rpx;
+  font-weight: 700;
+  color: var(--ink-deep);
+  padding: 15rpx 31rpx;
+}
+.authlinks .sep { width: 2rpx; height: 25rpx; background: #d8cebd; }
+
+/* 游客 */
+.guest { text-align: center; margin-top: 15rpx; }
+.guest-link {
+  display: inline-block;
+  font-size: 27rpx;
+  font-weight: 600;
+  color: var(--mut);
+  padding: 19rpx 8rpx;
+}
+
+/* 分隔 Why Family Menu */
+.divider-deco {
+  display: flex;
+  align-items: center;
+  gap: 27rpx;
+  margin: 50rpx 0 38rpx;
+}
+.divider-deco .ln { flex: 1; height: 2rpx; background: #e6ddcf; }
+.divider-deco .dt {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 23rpx;
+  letter-spacing: 2rpx;
+  color: var(--gold-deep);
+  font-weight: 700;
+}
+
+/* 信任点 */
+.trust { display: flex; flex-direction: column; gap: 27rpx; }
+.trust .ti { display: flex; align-items: center; gap: 25rpx; }
+.trust .tic {
+  width: 77rpx;
+  height: 77rpx;
+  border-radius: 25rpx;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--pop-soft);
+}
+.trust .tic-glyph { font-size: 36rpx; }
+.trust .ttx { display: flex; flex-direction: column; }
+.trust .ttx .th {
+  font-size: 28rpx;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.6rpx;
+}
+.trust .ttx .ts {
+  font-size: 23rpx;
+  color: var(--mut);
+  margin-top: 4rpx;
+}
+
+/* 协议勾选 */
+.agree {
+  display: flex;
+  align-items: flex-start;
+  gap: 17rpx;
+  margin-top: 50rpx;
+  padding: 0 8rpx;
+}
+.agree .box {
+  width: 35rpx;
+  height: 35rpx;
+  flex: none;
+  margin-top: 2rpx;
+  border-radius: 12rpx;
+  border: 3rpx solid #d8d0c2;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.agree .box.on {
+  background: var(--pop);
+  border-color: var(--pop);
+}
+.agree .box .check { color: #fff; font-size: 24rpx; font-weight: 900; }
+.agree .tx {
+  font-size: 22rpx;
+  color: var(--mut-strong);
+  line-height: 1.6;
+}
+.agree .tx .lk { color: var(--gold-deep); font-weight: 700; }

@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "编辑菜谱",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "nav-bar": "/components/nav-bar/index"
+  }
+}

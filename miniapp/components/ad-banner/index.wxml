@@ -1,0 +1,9 @@
+<view class="notice-container" wx:if="{{!isVip}}">
+  <view class="notice-mark">VIP</view>
+  <view class="notice-content">
+    <view class="notice-kicker">云端同步</view>
+    <view class="notice-title">{{adTitle}}</view>
+    <view class="notice-desc">{{adDesc}}</view>
+    <view class="notice-action" bindtap="goVip">去开通 ›</view>
+  </view>
+</view>

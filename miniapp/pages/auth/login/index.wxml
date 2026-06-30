@@ -1,0 +1,87 @@
+<!-- pages/auth/login/index · 登录落地页（hero + 微信一键登录 + 手机号 + 游客） -->
+<view class="login-page">
+  <scroll-view class="login-scroll" scroll-y enhanced show-scrollbar="{{false}}">
+
+    <!-- Hero -->
+    <view class="hero">
+      <image class="hero-img" src="/assets/dishes/chicken-congee.jpg" mode="aspectFill" />
+      <view class="hero-mask"></view>
+      <text class="hero-bignum">01</text>
+
+      <view class="brandbar g-fade-down g-d1">
+        <view class="logo">
+          <text class="logo-glyph">家</text>
+        </view>
+        <view class="bt">
+          <text class="en">FAMILY MENU</text>
+          <text class="cn">家庭点菜</text>
+        </view>
+      </view>
+
+      <view class="hero-body">
+        <text class="tag g-fade-up g-d2">Welcome</text>
+        <view class="hero-title title-stroke g-fade-up g-d3">今天吃什么<text class="br"></text>一家人<text class="pop">说了算</text></view>
+        <view class="slogan g-fade-up g-d4">一家人的饭桌，<text class="pop">一家人</text>做主</view>
+      </view>
+    </view>
+
+    <!-- Sheet -->
+    <view class="sheet g-fade-up g-d4">
+      <button class="btn-wx login-wx tap-scale" hover-class="none" bindtap="onWechatLogin">
+        <text class="wx-glyph">✦</text>
+        微信一键登录
+      </button>
+
+      <view class="btn-phone tap-scale" bindtap="onPhoneLogin">
+        <text class="phone-glyph">▢</text>
+        手机号登录
+      </view>
+
+      <view class="authlinks">
+        <text class="authlink" bindtap="onRegister">注册新账号</text>
+        <view class="sep"></view>
+        <text class="authlink" bindtap="onReset">忘记密码</text>
+      </view>
+
+      <view class="guest">
+        <text class="guest-link tap-scale" bindtap="onGuest">先随便逛逛 ›</text>
+      </view>
+
+      <view class="divider-deco">
+        <view class="ln"></view>
+        <text class="dt">Why Family Menu</text>
+        <view class="ln"></view>
+      </view>
+
+      <view class="trust">
+        <view class="ti" wx:for="{{trustList}}" wx:key="h">
+          <view class="tic"><text class="tic-glyph">{{item.icon}}</text></view>
+          <view class="ttx">
+            <text class="th">{{item.h}}</text>
+            <text class="ts">{{item.s}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="agree">
+        <view class="box tap-scale {{agreed ? 'on' : ''}}" bindtap="onToggleAgree">
+          <text wx:if="{{agreed}}" class="check">✓</text>
+        </view>
+        <view class="tx">
+          登录即表示你已阅读并同意
+          <text class="lk" bindtap="onTerms">用户协议</text>
+          与
+          <text class="lk" bindtap="onPrivacy">隐私政策</text>
+          ，我们仅用微信昵称和头像帮你和家人互相认出。
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <state-toast
+    visible="{{toast.visible}}"
+    text="{{toast.text}}"
+    type="top"
+    bind:close="onToastClose"
+  ></state-toast>
+</view>

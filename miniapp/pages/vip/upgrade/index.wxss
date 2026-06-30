@@ -1,0 +1,329 @@
+/* pages/vip/upgrade · 开通家庭同步会员 · 实质使用全局 token */
+.vu-scroll {
+  height: 100vh;
+  box-sizing: border-box;
+  background: var(--paper);
+}
+.vu-wrap {
+  padding: 16rpx 46rpx 300rpx;
+}
+
+/* 引导文案 */
+.vu-lead {
+  position: relative;
+  margin: 12rpx 0 42rpx;
+  padding-left: 29rpx;
+}
+.vu-lead::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 6rpx;
+  bottom: 6rpx;
+  width: 8rpx;
+  border-radius: 6rpx;
+  background: var(--pop);
+}
+.vu-eyebrow {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 23rpx;
+  letter-spacing: 2rpx;
+  color: var(--gold-deep);
+  font-weight: 700;
+}
+.vu-h1 {
+  font-size: 60rpx;
+  font-weight: 900;
+  letter-spacing: -3rpx;
+  line-height: 1.04;
+  margin-top: 12rpx;
+}
+.vu-lead-p {
+  font-size: 25rpx;
+  color: var(--mut-strong);
+  margin-top: 18rpx;
+  line-height: 1.5;
+}
+
+/* Hero 图 */
+.vu-hero {
+  position: relative;
+  height: 266rpx;
+  padding: 0;
+  overflow: hidden;
+  margin-bottom: 42rpx;
+}
+.vu-hero-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.vu-hero-mask {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(20, 14, 8, 0.82) 0%, rgba(20, 14, 8, 0.3) 60%, rgba(20, 14, 8, 0) 100%);
+}
+.vu-hero-ic {
+  position: absolute;
+  left: 35rpx;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #fff;
+}
+.vu-hero-et {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 21rpx;
+  letter-spacing: 3rpx;
+  color: var(--gold);
+  font-weight: 700;
+}
+.vu-hero-ht {
+  font-size: 40rpx;
+  font-weight: 900;
+  letter-spacing: -1rpx;
+  margin-top: 8rpx;
+}
+.vu-hero-hs {
+  font-size: 23rpx;
+  color: rgba(255, 255, 255, 0.82);
+  margin-top: 10rpx;
+}
+
+.vu-shead { margin: 0 0 25rpx; }
+
+/* 套餐切换 */
+.vu-plans {
+  display: flex;
+  gap: 25rpx;
+  margin-bottom: 42rpx;
+}
+.vu-plan {
+  flex: 1;
+  position: relative;
+  box-sizing: border-box;
+  background: #fff;
+  border: 4rpx solid #ece4d6;
+  border-radius: var(--r-card);
+  padding: 38rpx 31rpx 35rpx;
+  box-shadow: var(--sh-soft);
+}
+.vu-plan.on {
+  border-color: var(--pop);
+  box-shadow: var(--sh-soft), var(--sh-pop);
+}
+.vu-badge {
+  position: absolute;
+  top: -21rpx;
+  right: 27rpx;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 20rpx;
+  letter-spacing: 1rpx;
+  font-weight: 700;
+  color: #fff;
+  background: var(--pop);
+  padding: 8rpx 21rpx;
+  border-radius: var(--r-pill);
+  box-shadow: 0 12rpx 27rpx rgba(232, 71, 42, 0.4);
+}
+.vu-tick {
+  position: absolute;
+  top: 27rpx;
+  left: 27rpx;
+  width: 42rpx;
+  height: 42rpx;
+  border-radius: 50%;
+  border: 4rpx solid #ddd4c4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  font-weight: 900;
+  color: #fff;
+}
+.vu-plan.on .vu-tick {
+  background: var(--pop);
+  border-color: var(--pop);
+}
+.vu-ptop { padding-left: 58rpx; }
+.vu-pname {
+  font-size: 27rpx;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -1rpx;
+}
+.vu-pprice {
+  font-size: 58rpx;
+  font-weight: 900;
+  color: var(--ink);
+  letter-spacing: -3rpx;
+  margin-top: 15rpx;
+  line-height: 1;
+}
+.vu-plan.on .vu-pprice { color: var(--pop); }
+.vu-yuan {
+  font-size: 33rpx;
+  font-weight: 800;
+  vertical-align: top;
+  margin-right: 2rpx;
+}
+.vu-per {
+  font-size: 23rpx;
+  font-weight: 600;
+  color: var(--mut);
+  letter-spacing: 0;
+}
+.vu-pnote {
+  font-size: 22rpx;
+  color: var(--mut-strong);
+  margin-top: 13rpx;
+}
+.vu-del {
+  color: var(--mut-2);
+  text-decoration: line-through;
+}
+
+/* 价格明细 */
+.vu-detail { margin-bottom: 42rpx; }
+.vu-drow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 17rpx 0;
+  font-size: 27rpx;
+}
+.vu-k { color: var(--mut-strong); font-weight: 600; }
+.vu-v { color: var(--ink); font-weight: 700; }
+.vu-drow.disc .vu-v { color: var(--pop); font-weight: 800; }
+.vu-dline {
+  height: 2rpx;
+  background: #efe9df;
+  margin: 12rpx 0;
+}
+.vu-drow.total {
+  padding-top: 27rpx;
+  align-items: flex-end;
+}
+.vu-drow.total .vu-k {
+  font-size: 29rpx;
+  color: var(--ink);
+  font-weight: 800;
+}
+.vu-v-big {
+  font-size: 58rpx;
+  color: var(--pop);
+  font-weight: 900;
+  letter-spacing: -2rpx;
+  line-height: 1;
+}
+.vu-savetip {
+  margin-top: 23rpx;
+  background: var(--pop-soft);
+  border-radius: var(--r-sm);
+  padding: 19rpx 25rpx;
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  font-size: 23rpx;
+  font-weight: 700;
+  color: var(--pop);
+}
+.vu-star { font-size: 26rpx; color: var(--pop); }
+
+/* 会员权益 */
+.vu-benes {
+  padding: 15rpx 38rpx;
+  margin-bottom: 20rpx;
+}
+.vu-bene {
+  display: flex;
+  align-items: center;
+  gap: 25rpx;
+  padding: 27rpx 0;
+  border-bottom: 2rpx solid #efe9df;
+}
+.vu-bene:last-child { border-bottom: none; }
+.vu-bi {
+  width: 77rpx;
+  height: 77rpx;
+  border-radius: var(--r-sm);
+  background: var(--pop-soft);
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36rpx;
+}
+.vu-bm { flex: 1; min-width: 0; }
+.vu-bh {
+  font-size: 28rpx;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.5rpx;
+}
+.vu-bp {
+  font-size: 22rpx;
+  color: var(--mut-strong);
+  margin-top: 6rpx;
+  line-height: 1.4;
+}
+.vu-chk {
+  width: 46rpx;
+  height: 46rpx;
+  border-radius: 50%;
+  background: var(--pop);
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  font-weight: 900;
+  color: #fff;
+  box-shadow: 0 12rpx 27rpx rgba(232, 71, 42, 0.32);
+}
+
+/* 底部支付栏 */
+.vu-paybar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  box-sizing: border-box;
+  background: rgba(251, 248, 243, 0.94);
+  backdrop-filter: blur(18rpx);
+  border-top: 2rpx solid #ece5d9;
+  padding: 27rpx 46rpx;
+  display: flex;
+  align-items: center;
+  gap: 27rpx;
+}
+.vu-amt { flex: none; }
+.vu-cap {
+  font-size: 21rpx;
+  color: var(--mut-strong);
+  font-weight: 600;
+}
+.vu-big {
+  font-size: 52rpx;
+  font-weight: 900;
+  color: var(--pop);
+  letter-spacing: -2rpx;
+  line-height: 1.05;
+}
+.vu-big .vu-yuan { font-size: 31rpx; }
+.vu-paybtn {
+  flex: 1;
+  min-height: 104rpx;
+  height: 104rpx;
+  font-size: 32rpx;
+  font-weight: 800;
+  letter-spacing: 1rpx;
+  gap: 17rpx;
+  border-radius: var(--r-md);
+}
+.vu-paybtn.loading { opacity: 0.7; }
+.vu-wxic { font-size: 36rpx; }

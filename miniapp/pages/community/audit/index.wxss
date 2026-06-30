@@ -1,0 +1,154 @@
+/* pages/community/audit · 社区举报审核队列
+   配色/工具类全部复用 app.wxss 全局 token，本文件只写页面结构布局 */
+
+.container { padding-bottom: 60rpx; }
+
+/* ============ Hero ============ */
+.hero {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20rpx;
+  margin: 12rpx 0 28rpx;
+}
+.hero-tt { flex: 1; min-width: 0; }
+.hero-h1 {
+  font-size: 64rpx;
+  line-height: 0.96;
+  letter-spacing: -3rpx;
+  margin-top: 8rpx;
+}
+.hero-badge {
+  flex: none;
+  min-width: 58rpx;
+  height: 58rpx;
+  padding: 0 18rpx;
+  margin-top: 18rpx;
+  border-radius: 30rpx;
+  background: var(--pop);
+  color: #fff;
+  font-size: 28rpx;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--sh-pop);
+}
+
+/* ============ Tabs ============ */
+.tabs {
+  display: flex;
+  gap: 18rpx;
+  margin-bottom: 8rpx;
+}
+
+/* ============ 列表 ============ */
+.list { padding-top: 22rpx; }
+.done-sep {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 23rpx;
+  letter-spacing: 1rpx;
+  color: var(--gold-deep);
+  font-weight: 700;
+  margin: 4rpx 4rpx 24rpx;
+}
+
+/* ============ 举报卡 ============ */
+.rcard {
+  padding: 34rpx 34rpx 30rpx;
+  margin-bottom: 30rpx;
+}
+.rcard.done { opacity: 0.66; }
+
+.rc-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 24rpx;
+}
+.rc-thumb {
+  width: 124rpx;
+  height: 124rpx;
+  border-radius: var(--r-md);
+  flex: none;
+  background: var(--paper-2);
+}
+.rc-tx { flex: 1; min-width: 0; }
+.rc-title {
+  font-size: 32rpx;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.5rpx;
+  line-height: 1.28;
+}
+.rc-excerpt {
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  color: var(--mut-strong);
+  line-height: 1.5;
+}
+
+/* 举报原因标签 */
+.reason-tag {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 24rpx;
+  font-size: 23rpx;
+  font-weight: 800;
+  letter-spacing: 0.4rpx;
+  color: var(--pop);
+  background: var(--pop-soft);
+  padding: 13rpx 22rpx;
+  border-radius: var(--r-xs);
+}
+
+/* 元信息 */
+.rc-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 26rpx;
+  margin-top: 24rpx;
+}
+.rc-meta .m {
+  font-size: 23rpx;
+  color: var(--mut-strong);
+  font-weight: 600;
+}
+
+/* 操作按钮 */
+.rc-actions {
+  display: flex;
+  gap: 18rpx;
+  margin-top: 28rpx;
+}
+.actbtn {
+  flex: 1;
+  height: 92rpx;
+  border-radius: var(--r-md);
+  font-size: 27rpx;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.act-del {
+  background: var(--pop);
+  color: #fff;
+  box-shadow: var(--sh-pop);
+}
+.act-ignore {
+  background: var(--paper-2);
+  color: var(--ink-deep);
+}
+
+/* 已处理结果条 */
+.resolved-bar {
+  margin-top: 26rpx;
+  padding: 24rpx 0 4rpx;
+  border-top: 2rpx solid #efe9df;
+  font-size: 25rpx;
+  font-weight: 800;
+}
+.resolved-bar.del { color: var(--pop); }
+.resolved-bar.ign { color: var(--mut-strong); }

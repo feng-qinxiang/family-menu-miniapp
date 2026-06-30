@@ -1,0 +1,7 @@
+{
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "nav-bar": "/components/nav-bar/index",
+    "state-toast": "/components/state-toast/index"
+  }
+}

@@ -1,0 +1,81 @@
+<!-- 帮助中心 · 静态 FAQ 手风琴 + 搜索 + 客服暗卡 -->
+<nav-bar title="帮助中心" show-back="{{true}}" status-bar-height="{{statusBarHeight}}"></nav-bar>
+
+<view class="container help">
+  <!-- Hero 标题 -->
+  <view class="hero g-fade-up">
+    <view class="eyebrow-serif">Need a hand?</view>
+    <view class="hero-h title-stroke title-shadow">帮助<text class="pop">中心</text></view>
+  </view>
+
+  <!-- 搜索框 -->
+  <view class="searchwrap g-fade-up g-d1">
+    <view class="search">
+      <view class="search-icon">
+        <view class="si-ring"></view>
+        <view class="si-tail"></view>
+      </view>
+      <input
+        class="search-input"
+        type="text"
+        value="{{keyword}}"
+        placeholder="搜索问题，比如「邀请家人」"
+        placeholder-class="search-ph"
+        confirm-type="search"
+        bindinput="onSearchInput"
+        bindconfirm="onSearch"
+      />
+    </view>
+  </view>
+
+  <!-- FAQ 列表 -->
+  <view class="seclbl">Frequently Asked</view>
+
+  <view wx:if="{{visibleList.length > 0}}" class="faq">
+    <view
+      wx:for="{{visibleList}}"
+      wx:key="num"
+      class="item g-fade-up {{item.open ? 'open' : ''}} g-d{{index < 6 ? index + 1 : 6}}"
+    >
+      <view class="q tap-scale" catchtap="onToggle" data-num="{{item.num}}">
+        <text class="qnum">{{item.num}}</text>
+        <text class="q-title clamp-2">{{item.question}}</text>
+        <view class="caret">
+          <view class="caret-arrow"></view>
+        </view>
+      </view>
+      <view class="a">
+        <view class="a-inner">
+          <text class="a-lead">{{item.answer}}</text>
+          <view wx:for="{{item.steps}}" wx:for-item="step" wx:key="*this" class="step">
+            <view class="dot"></view>
+            <text class="step-txt">{{step}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 搜索无结果 -->
+  <view wx:else class="no-result">
+    <text class="nr-emoji">🍳</text>
+    <text class="nr-txt">没找到「{{keyword}}」相关的问题</text>
+    <text class="nr-sub">换个关键词，或直接联系客服小厨</text>
+  </view>
+
+  <!-- 客服暗卡 -->
+  <view class="contact card-dark g-fade-up g-d6">
+    <view class="deco-circle"></view>
+    <view class="contact-body">
+      <view class="eyebrow2">Still stuck?</view>
+      <view class="contact-h">没找到答案？</view>
+      <text class="contact-p">客服小厨在线时间 9:00 - 21:00，有问题随时找我们聊聊。</text>
+      <view class="csbtn btn btn-pop tap-scale" catchtap="onContact">
+        <view class="cs-icon"></view>
+        <text>联系客服</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="safe-bottom"></view>
+</view>

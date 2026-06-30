@@ -1,0 +1,163 @@
+/* pages/payment/success/index · 开通成功页
+   全部走 app.wxss 全局 token，无硬编码配色 */
+.ps-wrap {
+  box-sizing: border-box;
+  min-height: 100vh;
+  padding: 200rpx 58rpx 66rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--paper);
+}
+
+/* —— 成功徽章 + 金光晕 —— */
+.ps-badge {
+  position: relative;
+  width: 170rpx;
+  height: 170rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--gold), var(--gold-deep) 70%, var(--gold-deep));
+  box-shadow: var(--sh-gold), 0 26rpx 70rpx rgba(176, 137, 73, 0.4);
+}
+.ps-badge-ring {
+  position: absolute;
+  inset: -18rpx;
+  border-radius: 50%;
+  border: 4rpx solid rgba(176, 137, 73, 0.3);
+}
+.ps-badge-check {
+  color: #fff;
+  font-size: 92rpx;
+  font-weight: 900;
+  line-height: 1;
+}
+
+/* —— 标题区 —— */
+.ps-eyebrow {
+  margin-top: 42rpx;
+}
+.ps-title {
+  margin-top: 12rpx;
+  font-size: 66rpx;
+  letter-spacing: -3rpx;
+  line-height: 1.05;
+}
+.ps-sub {
+  margin-top: 20rpx;
+  max-width: 540rpx;
+  text-align: center;
+  font-size: 26rpx;
+  line-height: 1.55;
+  color: var(--mut-strong);
+}
+
+/* —— VIP 标签 —— */
+.ps-viptag {
+  display: inline-flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-top: 30rpx;
+  padding: 14rpx 30rpx;
+  border-radius: var(--r-pill);
+  background: var(--ink-deep);
+  color: var(--gold);
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 24rpx;
+  font-weight: 700;
+  letter-spacing: 1rpx;
+}
+.ps-viptag-star {
+  color: var(--gold);
+  font-size: 24rpx;
+}
+
+/* —— 权益清单 —— */
+.ps-perks {
+  width: 100%;
+  margin-top: 38rpx;
+  padding: 10rpx 38rpx;
+}
+.ps-perk {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  padding: 24rpx 0;
+  border-bottom: var(--bd-card);
+}
+.ps-perk:last-child {
+  border-bottom: none;
+}
+.ps-perk-ck {
+  flex: none;
+  width: 50rpx;
+  height: 50rpx;
+  border-radius: 50%;
+  background: var(--pop-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ps-perk-ck-tx {
+  color: var(--pop);
+  font-size: 28rpx;
+  font-weight: 900;
+  line-height: 1;
+}
+.ps-perk-tx {
+  flex: 1;
+  font-size: 29rpx;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* —— 订单卡 —— */
+.ps-order {
+  width: 100%;
+  margin-top: 26rpx;
+  padding: 8rpx 34rpx;
+}
+.ps-orow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 0;
+  border-bottom: var(--bd-card);
+  font-size: 26rpx;
+}
+.ps-orow:last-child {
+  border-bottom: none;
+}
+.ps-ol {
+  color: var(--mut-strong);
+  font-weight: 600;
+}
+.ps-ov {
+  color: var(--ink);
+  font-weight: 700;
+}
+.ps-ov-pay {
+  color: var(--pop);
+  font-size: 30rpx;
+}
+
+/* —— 操作区 —— */
+.ps-actions {
+  width: 100%;
+  margin-top: 56rpx;
+}
+.ps-actions .btn-pop {
+  height: 104rpx;
+  font-size: 31rpx;
+}
+.ps-link {
+  display: block;
+  margin-top: 34rpx;
+  text-align: center;
+  font-size: 27rpx;
+  font-weight: 600;
+  color: var(--mut-strong);
+}

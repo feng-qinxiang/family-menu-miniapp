@@ -1,0 +1,168 @@
+<!-- 做菜记录 · 二级页（非 tab）。hero + 成就 + 周打卡 + chip筛选 + 月份分组 Timeline -->
+<view class="cl-page">
+  <!-- 自定义导航：透明叠在 hero 上 -->
+  <view class="cl-nav">
+    <nav-bar title="做菜记录" show-back="{{true}}" status-bar-height="{{statusBarHeight}}"></nav-bar>
+  </view>
+
+  <scroll-view class="cl-scroll" scroll-y enhanced show-scrollbar="{{false}}">
+    <!-- ===== Hero ===== -->
+    <view class="hero">
+      <image class="hero-img" src="{{heroCover}}" mode="aspectFill"></image>
+      <view class="hero-mask"></view>
+      <text class="hero-bignum serif">{{bigNum}}</text>
+
+      <view class="hero-body g-fade-up">
+        <text class="hero-tag">Cook Log</text>
+        <view class="hero-title title-stroke">做菜<text class="pop">记录</text></view>
+
+        <view class="ach g-fade-up g-d2">
+          <view class="a hl">
+            <view class="num">{{stats.dishes}}<text class="u">道</text></view>
+            <view class="cap">本月做的菜</view>
+          </view>
+          <view class="ach-div"></view>
+          <view class="a">
+            <view class="num">{{stats.fireDays}}<text class="u">天</text></view>
+            <view class="cap">本月开火</view>
+          </view>
+          <view class="ach-div"></view>
+          <view class="a">
+            <view class="num">{{stats.praise}}<text class="u">次</text></view>
+            <view class="cap">家人好评</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- ===== Sheet ===== -->
+    <view class="sheet">
+      <!-- 本周打卡 -->
+      <view class="calwrap card-dark g-fade-up g-d1">
+        <view class="deco-circle"></view>
+        <view class="cal-top">
+          <text class="ct">本周打卡</text>
+          <text class="cs serif">{{weekDoneText}}</text>
+        </view>
+        <view class="cal-days">
+          <view
+            wx:for="{{week}}"
+            wx:key="key"
+            class="cal-day {{item.state}} {{item.state === 'miss' ? 'tap-scale' : ''}}"
+            data-state="{{item.state}}"
+            bindtap="onCalTap"
+          >
+            <text class="dw">{{item.dw}}</text>
+            <text class="dd">{{item.dd}}</text>
+            <text wx:if="{{item.state === 'miss'}}" class="fix">补记</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- chip 筛选 -->
+      <scroll-view class="chips hscroll" scroll-x enhanced show-scrollbar="{{false}}">
+        <view class="hscroll-inner">
+          <view class="chip tap-scale {{activeFilter === 'all' ? 'on' : ''}}" data-value="all" bindtap="onSelectFilter">全部</view>
+          <view
+            wx:for="{{cooks}}"
+            wx:key="name"
+            class="chip tap-scale {{activeFilter === 'cook:' + item.name ? 'on' : ''}}"
+            data-value="cook:{{item.name}}"
+            bindtap="onSelectFilter"
+          >
+            <text class="av {{item.tone}}">{{item.initial}}</text>{{item.name}}
+          </view>
+          <view class="chip tap-scale {{activeFilter === 'star5' ? 'on' : ''}}" data-value="star5" bindtap="onSelectFilter">五星好评</view>
+        </view>
+      </scroll-view>
+
+      <view class="pad">
+        <!-- Section 标题 -->
+        <view class="shead">
+          <view class="shead-main">
+            <view class="shead-bar"></view>
+            <view class="eyebrow">Recently Cooked</view>
+            <view class="shead-title">最近<text class="pop">上桌</text>的</view>
+          </view>
+          <text class="seeall">共 {{totalCount}} 条</text>
+        </view>
+
+        <!-- 空态 -->
+        <view wx:if="{{!loading && totalCount === 0}}" class="g-fade-up">
+          <state-empty
+            type="gold"
+            title="还没有做菜记录"
+            desc="下厨之后记一笔，攒齐家人的好评与吐槽"
+          ></state-empty>
+        </view>
+
+        <!-- 骨架 -->
+        <view wx:if="{{loading}}" class="sk-list">
+          <view class="sk-card skeleton shimmer" wx:for="{{[1,2,3]}}" wx:key="*this"></view>
+        </view>
+
+        <!-- Timeline -->
+        <view wx:if="{{!loading && totalCount > 0}}" class="timeline">
+          <block wx:for="{{visibleGroups}}" wx:key="key" wx:for-item="group">
+            <view class="month-sep g-fade-up">
+              <text class="mtag">{{group.label}}<text class="men">{{group.en}}</text></text>
+              <view class="mline"></view>
+              <text class="mcnt">{{group.count}} 道</text>
+            </view>
+
+            <view
+              wx:for="{{group.items}}"
+              wx:key="id"
+              wx:for-item="rec"
+              class="tcard tap-scale g-fade-up"
+              bindtap="onCardTap"
+              data-id="{{rec.id}}"
+              data-recipe-id="{{rec.recipeId}}"
+              data-title="{{rec.title}}"
+            >
+              <view class="thumb">
+                <image class="thumb-img" src="{{rec.cover}}" mode="aspectFill"></image>
+                <text class="date">{{rec.dateLabel}}</text>
+              </view>
+              <view class="tbody">
+                <view class="trow1">
+                  <text class="th4 ellipsis">{{rec.title}}</text>
+                  <view class="stars">
+                    <view
+                      wx:for="{{rec.stars}}"
+                      wx:key="index"
+                      wx:for-item="filled"
+                      class="star {{filled ? 'star-on' : 'star-off'}}"
+                    ></view>
+                  </view>
+                </view>
+                <view class="cook">
+                  <text class="ca {{rec.cookTone}}">{{rec.cookInitial}}</text>
+                  <text class="cn"><text class="cn-b">{{rec.cookName}}</text> 掌勺</text>
+                </view>
+                <view wx:if="{{rec.remark}}" class="note {{rec.score >= 4 ? '' : 'plain'}}">
+                  <text class="who">{{rec.score >= 4 ? '好评' : '备注'}}</text>{{rec.remark}}
+                </view>
+              </view>
+            </view>
+          </block>
+
+          <!-- 展开更早 -->
+          <view wx:if="{{!expanded && hiddenCount > 0}}" class="loadmore tap-scale" bindtap="onToggleExpand">
+            <view class="lm-i"></view>
+            <text>展开更早的 {{hiddenCount}} 条</text>
+          </view>
+
+          <!-- 列表尾 -->
+          <view wx:if="{{expanded || hiddenCount === 0}}" class="listend">
+            <view class="le-line"></view>
+            <text class="le-txt">— 更早的记录 —</text>
+            <view class="le-line"></view>
+          </view>
+        </view>
+
+        <view class="safe-bottom"></view>
+      </view>
+    </view>
+  </scroll-view>
+</view>

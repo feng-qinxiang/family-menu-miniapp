@@ -1,0 +1,154 @@
+/* pages/auth/verify-otp · 短信验证码页样式
+   全量复用 app.wxss 新 token：--paper/--ink/--pop/--gold-deep/--serif/--ink-deep 等，禁止硬编码配色 */
+.otp-page {
+  position: relative;
+  box-sizing: border-box;
+  min-height: 100vh;
+  padding: 0 54rpx calc(env(safe-area-inset-bottom) + 60rpx);
+  background: var(--paper);
+  overflow: hidden;
+}
+
+/* 背景大字（衬线、低饱和金描边） */
+.bignum {
+  position: absolute;
+  top: 150rpx;
+  right: 12rpx;
+  z-index: 0;
+  font-family: var(--serif);
+  font-size: 384rpx;
+  font-weight: 700;
+  line-height: 1;
+  color: rgba(176, 137, 73, 0.07);
+  pointer-events: none;
+}
+
+.wrap {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 120rpx);
+  padding-top: 24rpx;
+}
+
+/* 标题区 */
+.head { margin-top: 36rpx; }
+.hero-title {
+  margin-top: 18rpx;
+  font-size: 96rpx;
+  line-height: 0.92;
+  letter-spacing: -4rpx;
+}
+/* 浅底页面镂空标题改用墨色描边，保证可读 */
+.title-stroke--ink { -webkit-text-stroke-color: var(--ink); }
+.sent {
+  margin-top: 34rpx;
+  font-size: 28rpx;
+  line-height: 1.5;
+  color: var(--mut-strong);
+}
+.sent-phone {
+  color: var(--ink);
+  font-weight: 800;
+  letter-spacing: 1rpx;
+}
+
+/* 6 格 otp */
+.otp {
+  display: flex;
+  gap: 21rpx;
+  margin-top: 64rpx;
+}
+.cell {
+  flex: 1;
+  height: 124rpx;
+  border-radius: var(--r-sm);
+  background: #fff;
+  border: 3rpx solid #ece4d6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--serif);
+  font-size: 58rpx;
+  font-weight: 700;
+  color: var(--ink);
+  box-shadow: var(--sh-soft);
+}
+.cell.empty { color: var(--mut-2); }
+.cell.active {
+  border-color: var(--pop);
+  border-width: 4rpx;
+  background: var(--pop-soft);
+  box-shadow: 0 4rpx 12rpx rgba(232, 71, 42, 0.12), 0 20rpx 46rpx rgba(232, 71, 42, 0.16);
+}
+.cell .cur {
+  width: 4rpx;
+  height: 58rpx;
+  border-radius: 2rpx;
+  background: var(--pop);
+  animation: blink 1s steps(1) infinite;
+}
+
+/* 隐藏聚焦 input */
+.hidden-input {
+  position: absolute;
+  left: -9999rpx;
+  width: 1rpx;
+  height: 1rpx;
+  opacity: 0;
+}
+
+/* 倒计时 / 重发 */
+.resend {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  margin-top: 54rpx;
+  font-size: 27rpx;
+  font-weight: 700;
+  color: var(--mut-strong);
+}
+.resend-dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  background: var(--mut-2);
+}
+.resend--can .resend-dot { background: var(--pop); }
+.resend .can { color: var(--pop); }
+
+.spacer { flex: 1; min-height: 48rpx; }
+
+/* 验证按钮 */
+.submit {
+  gap: 16rpx;
+  height: 102rpx;
+  border-radius: var(--r-sm);
+  font-size: 32rpx;
+  letter-spacing: 1rpx;
+}
+.submit--disabled {
+  opacity: 0.5;
+  box-shadow: none;
+}
+.submit-arrow {
+  width: 18rpx;
+  height: 18rpx;
+  border-top: 5rpx solid #fff;
+  border-right: 5rpx solid #fff;
+  transform: rotate(45deg);
+}
+
+.other {
+  margin-top: 42rpx;
+  text-align: center;
+}
+.other text {
+  display: inline-block;
+  padding: 16rpx 8rpx;
+  font-size: 28rpx;
+  font-weight: 700;
+  color: var(--ink-deep);
+  border-bottom: 2rpx solid var(--mut-2);
+}

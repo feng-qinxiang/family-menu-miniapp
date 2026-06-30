@@ -1,0 +1,174 @@
+<view class="container me-mag">
+  <!-- HERO：真实菜图 + 镂空撞色标题 + 家庭成员头像 stack -->
+  <view class="mag-hero g-fade-up">
+    <image class="mag-hero-img" src="/assets/dishes/hongshao-pork.jpg" mode="aspectFill" />
+    <view class="mag-hero-mask"></view>
+    <view class="mag-hero-bignum">{{monthCookCount}}</view>
+
+    <view class="mag-hero-top">
+      <view>
+        <view class="mag-hi-en">My Kitchen</view>
+        <view class="mag-hi-cn">本月一起做了 {{monthCookCount}} 道菜</view>
+      </view>
+    </view>
+
+    <view class="mag-hero-body">
+      <view class="mag-hero-tag">My Kitchen</view>
+      <view class="mag-hero-title title-stroke">{{familyProfile.familyName || '我的家'}}<text class="pop">·</text></view>
+      <view class="mag-hero-sub">一家人围着一张桌子吃饭</view>
+
+      <view class="mag-fam">
+        <view class="mag-ava {{item.tone}}" wx:for="{{familyProfile.members}}" wx:key="userId">{{item.initial}}</view>
+        <view class="mag-fam-lbl"><text class="b">{{memberCount}}</text> 位成员</view>
+        <view class="mag-manage tap-scale" bindtap="addMember">＋ 管理</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 奶油 sheet -->
+  <view class="mag-sheet">
+    <!-- VIP banner -->
+    <view class="mag-vip tap-scale" bindtap="goVip">
+      <view class="mag-vip-ic">★</view>
+      <view class="mag-vip-mid">
+        <view class="mag-vip-t">{{vipStatus.vip ? '已开通' : '开通'}}<text class="hl">家庭云同步</text></view>
+        <view class="mag-vip-s">{{vipStatus.vip ? (vipStatus.planName || '全家共享 · 多设备实时同步') : '菜谱与做菜记录全家共享，多设备实时同步'}}</view>
+      </view>
+      <view class="mag-vip-go">{{vipStatus.vip ? '查看' : '开通'}} ›</view>
+    </view>
+
+    <!-- 数据卡 -->
+    <view class="mag-stats g-fade-up g-d1">
+      <view class="mag-stat tap-scale" bindtap="goRecipes">
+        <view class="mag-snum pop">{{savedCount}}</view>
+        <view class="mag-scap">收藏菜谱</view>
+        <view class="mag-scap-en">Saved</view>
+      </view>
+      <view class="mag-stat tap-scale">
+        <view class="mag-snum">{{monthCookCount}}</view>
+        <view class="mag-scap">本月做菜</view>
+        <view class="mag-scap-en">Dishes</view>
+      </view>
+      <view class="mag-stat tap-scale">
+        <view class="mag-snum">{{memberCount}}</view>
+        <view class="mag-scap">家庭成员</view>
+        <view class="mag-scap-en">Members</view>
+      </view>
+    </view>
+
+    <!-- 最近上桌 -->
+    <view class="g-fade-up g-d2" wx:if="{{cookHistory.length}}">
+      <section-head eyebrow="Recently Cooked" title="最近" popPart="上桌" hint="全部" more="{{true}}" bindtapmore="goRecipes" />
+      <view class="card mag-history">
+        <view class="mag-hrow tap-scale" wx:for="{{cookHistory}}" wx:key="id">
+          <image class="mag-thumb" src="{{item.cover}}" mode="aspectFill" />
+          <view class="mag-hmid">
+            <view class="mag-hname">{{item.recipeTitle}}</view>
+            <view class="mag-hsub">{{item.whenLabel}}</view>
+          </view>
+          <view class="mag-stars">
+            <text class="mag-star {{star <= item.score ? 'on' : ''}}" wx:for="{{[1,2,3,4,5]}}" wx:for-item="star" wx:key="*this">★</text>
+          </view>
+        </view>
+        <view class="mag-hmore tap-scale" bindtap="goRecipes">查看全部记录 ›</view>
+      </view>
+    </view>
+
+    <!-- 厨房工具 -->
+    <view class="g-fade-up g-d3">
+      <section-head eyebrow="Kitchen Tools" title="厨房" popPart="工具" />
+      <view class="card mag-tools">
+        <view class="mag-trow tap-scale" bindtap="goWeekly">
+          <view class="mag-ticon ti-1">周</view>
+          <view class="mag-tmid"><view class="mag-tname">周菜单计划</view><view class="mag-tdesc">一周吃什么提前排好</view></view>
+          <view class="mag-tarrow">›</view>
+        </view>
+        <view class="mag-trow tap-scale" bindtap="goPantry">
+          <view class="mag-ticon ti-2">箱</view>
+          <view class="mag-tmid"><view class="mag-tname">冰箱库存</view><view class="mag-tdesc">家里还剩哪些食材</view></view>
+          <view class="mag-tarrow">›</view>
+        </view>
+        <view class="mag-trow tap-scale" bindtap="goShopping">
+          <view class="mag-ticon ti-3">篮</view>
+          <view class="mag-tmid"><view class="mag-tname">菜篮子</view><view class="mag-tdesc">要买的食材一键清点</view></view>
+          <view class="mag-tarrow">›</view>
+        </view>
+        <view class="mag-trow tap-scale" bindtap="goImport">
+          <view class="mag-ticon ti-4">导</view>
+          <view class="mag-tmid"><view class="mag-tname">导入菜谱</view><view class="mag-tdesc">粘贴文字一键生成菜谱</view></view>
+          <view class="mag-tarrow">›</view>
+        </view>
+        <view class="mag-trow tap-scale" bindtap="goCommunity">
+          <view class="mag-ticon ti-5">社</view>
+          <view class="mag-tmid"><view class="mag-tname">社区菜谱 <text class="mag-tvip" wx:if="{{!vipStatus.vip}}">VIP</text></view><view class="mag-tdesc">看看别人家在做什么菜</view></view>
+          <view class="mag-tarrow">›</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 口味偏好 -->
+    <view class="g-fade-up g-d4" wx:if="{{prefBars.length}}">
+      <section-head eyebrow="Taste Profile" title="本月" popPart="口味" />
+      <view class="card mag-pref">
+        <view class="mag-prow" wx:for="{{prefBars}}" wx:key="label">
+          <view class="mag-ptop">
+            <view class="mag-pl">{{item.isCuisine ? '偏爱' : ''}}<text class="pop" wx:if="{{item.isCuisine}}">{{item.label}}</text><text wx:else>{{item.label}}</text></view>
+            <view class="mag-pr">{{item.right}}</view>
+          </view>
+          <view class="mag-pbar {{item.alt ? 'alt' : ''}}"><view class="mag-pbar-i" style="width:{{item.pct}}%"></view></view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 偏好画像入口 -->
+    <view class="g-fade-up g-d5">
+      <section-head eyebrow="Preference Profile" title="偏好" popPart="画像" />
+      <view class="card mag-tools">
+        <view class="mag-trow tap-scale" bindtap="goPreference">
+          <view class="mag-ticon ti-pref">偏</view>
+          <view class="mag-tmid">
+            <view class="mag-tname">我的偏好画像</view>
+            <view class="mag-tdesc">口味、忌口、菜系偏好设置</view>
+          </view>
+          <view class="mag-tarrow">›</view>
+        </view>
+        <view class="mag-trow tap-scale" bindtap="goFamilyMembers">
+          <view class="mag-ticon ti-fam">家</view>
+          <view class="mag-tmid">
+            <view class="mag-tname">家庭成员管理</view>
+            <view class="mag-tdesc">添加成员、设置角色权限</view>
+          </view>
+          <view class="mag-tarrow">›</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 设置 & 关于 -->
+    <view class="g-fade-up g-d6">
+      <view class="card mag-settings">
+        <view class="mag-srow tap-scale" bindtap="goSettings">
+          <view class="mag-sname">设置</view>
+          <view class="mag-sarrow">›</view>
+        </view>
+        <view class="mag-srow tap-scale" bindtap="goFeedback">
+          <view class="mag-sname">意见反馈</view>
+          <view class="mag-sarrow">›</view>
+        </view>
+        <view class="mag-srow tap-scale" bindtap="goAbout">
+          <view class="mag-sname">关于我们</view>
+          <view class="mag-sarrow">›</view>
+        </view>
+        <view class="mag-srow tap-scale" bindtap="goPrivacy">
+          <view class="mag-sname">隐私政策</view>
+          <view class="mag-sarrow">›</view>
+        </view>
+        <view class="mag-srow tap-scale last" bindtap="goTerms">
+          <view class="mag-sname">用户协议</view>
+          <view class="mag-sarrow">›</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="mag-footer">{{appVersion || 'v1.0.0'}} · 家庭版</view>
+  </view>
+</view>

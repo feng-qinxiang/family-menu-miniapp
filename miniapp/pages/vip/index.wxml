@@ -1,0 +1,122 @@
+<view class="vip-page">
+  <!-- HERO -->
+  <view class="vip-hero">
+    <image class="vip-hero-img" src="/assets/dishes/shrimp-peas.jpg" mode="aspectFill" />
+    <view class="vip-hero-shade"></view>
+    <text class="vip-hero-bignum">VIP</text>
+    <view class="vip-hero-top safe-top">
+      <view class="vip-backbtn tap-scale" bindtap="goBack">
+        <text class="vip-back-ico">‹</text>
+      </view>
+      <view class="vip-navtitle">会员中心</view>
+    </view>
+    <view class="vip-hero-body g-fade-up">
+      <text class="vip-tag">Family Sync</text>
+      <view class="vip-hero-title title-stroke">家庭云<text class="pop">同步</text></view>
+      <view class="vip-hero-sub">菜谱、菜单、买菜清单全家实时共享，谁改了哪样大家都看得到。</view>
+      <view class="vip-hero-meta">
+        <view class="vip-m">实时云同步</view>
+        <view class="vip-m">成员无限</view>
+        <view class="vip-m">¥68/年</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- SHEET -->
+  <view class="vip-sheet">
+    <!-- 权益网格 -->
+    <view class="shead">
+      <view class="shead-main">
+        <view class="shead-bar"></view>
+        <view class="eyebrow">What You Get</view>
+        <view class="shead-title">开通后<text class="pop">解锁</text>这些</view>
+      </view>
+    </view>
+    <view class="vip-bgrid">
+      <view class="vip-bcard tap-scale g-fade-up g-d{{index % 6 + 1}}" wx:for="{{benefits}}" wx:key="title">
+        <view class="vip-bic vip-ic-{{item.icon}}"></view>
+        <view class="vip-bc-title">{{item.title}}</view>
+        <view class="vip-bc-desc">{{item.desc}}</view>
+      </view>
+    </view>
+
+    <!-- 版本对比 -->
+    <view class="shead">
+      <view class="shead-main">
+        <view class="shead-bar"></view>
+        <view class="eyebrow">Free vs Sync</view>
+        <view class="shead-title">两个版本<text class="pop">对比</text></view>
+      </view>
+    </view>
+    <view class="vip-cmp">
+      <view class="vip-crow vip-chead">
+        <view class="vip-lab">功能</view>
+        <view class="vip-col">免费版</view>
+        <view class="vip-col vip-col-on">同步版</view>
+      </view>
+      <view class="vip-crow" wx:for="{{compareRows}}" wx:key="feat">
+        <view class="vip-feat">{{item.feat}}</view>
+        <view class="vip-cell">
+          <text wx:if="{{item.freeText}}" class="vip-cell-txt">{{item.freeText}}</text>
+          <text wx:elif="{{item.free}}" class="vip-tick">✓</text>
+          <text wx:else class="vip-cross">✕</text>
+        </view>
+        <view class="vip-cell">
+          <text wx:if="{{item.vip}}" class="vip-tick on">✓</text>
+          <text wx:else class="vip-cross">✕</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 套餐选择 -->
+    <view class="shead">
+      <view class="shead-main">
+        <view class="shead-bar"></view>
+        <view class="eyebrow">Choose a Plan</view>
+        <view class="shead-title">选个<text class="pop">合适</text>的</view>
+      </view>
+    </view>
+    <view class="vip-plans">
+      <view
+        class="vip-plan tap-scale {{selectedPlan === item.key ? 'on' : ''}}"
+        wx:for="{{plans}}"
+        wx:key="key"
+        data-plan="{{item.key}}"
+        bindtap="selectPlan"
+      >
+        <view wx:if="{{item.recommend}}" class="vip-corner">推荐</view>
+        <view class="vip-pname">{{item.name}}</view>
+        <view class="vip-price">{{item.price}}<text wx:if="{{item.unit}}" class="vip-price-u">{{item.unit}}</text></view>
+        <view class="vip-per">{{item.per}}</view>
+        <view wx:if="{{item.save}}" class="vip-save">{{item.save}}</view>
+        <view class="vip-radio {{selectedPlan === item.key ? 'on' : ''}}">
+          <text wx:if="{{selectedPlan === item.key}}" class="vip-radio-tick">✓</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 家庭成员 -->
+    <view class="shead">
+      <view class="shead-main">
+        <view class="shead-bar"></view>
+        <view class="eyebrow">Your Family</view>
+        <view class="shead-title">家里<text class="pop">这几口</text></view>
+      </view>
+    </view>
+    <view class="vip-members">
+      <view class="vip-pile">
+        <view class="vip-av" wx:for="{{familyAvatars}}" wx:key="initial" style="background: {{item.tone}};">{{item.initial}}</view>
+        <view class="vip-av vip-more">{{familyMore}}</view>
+      </view>
+      <view class="vip-synced"><view class="vip-sdot"></view>{{isVip ? '已同步' : '开通后同步'}}</view>
+    </view>
+
+    <!-- CTA -->
+    <view class="vip-cta safe-bottom">
+      <view class="btn btn-pop btn-block tap-scale {{activating ? 'disabled' : ''}}" bindtap="activateVip">
+        {{isVip ? '已开通 · ' + planName : (selectedPlan === 'yearly' ? '开通家庭同步 · ¥68/年' : '开通家庭同步 · ¥9.9/月')}}
+      </view>
+      <view class="vip-note">连续包{{selectedPlan === 'yearly' ? '年' : '月'}}，可随时在设置中取消</view>
+    </view>
+  </view>
+</view>

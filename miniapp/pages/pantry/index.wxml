@@ -1,0 +1,136 @@
+<view class="pantry-page">
+  <!-- 二级页顶部返回（透明叠在 hero 上）-->
+  <view class="nav-float">
+    <nav-bar title="" show-back="{{true}}" status-bar-height="{{statusBarHeight}}" />
+  </view>
+
+  <!-- Hero · 真实菜图 + 撞色镂空标题 + 三宫格统计 -->
+  <view class="phero g-fade-up">
+    <image class="phero-img" src="/assets/dishes/tomato-egg.jpg" mode="aspectFill" />
+    <view class="phero-mask"></view>
+    <view class="phero-bignum">{{pantrySummary.count}}</view>
+    <view class="phero-copy">
+      <text class="phero-tag">My Pantry</text>
+      <view class="title-stroke title-shadow phero-title">冰箱<text class="pop">库存</text></view>
+      <view class="phero-sub">家里现在有什么，点菜前先看一眼</view>
+      <view class="phero-stats">
+        <view class="phstat">
+          <view class="phstat-n">{{pantrySummary.count}}</view>
+          <view class="phstat-c">在库食材</view>
+        </view>
+        <view class="phstat">
+          <view class="phstat-n warn">{{pantrySummary.expiringCount}}</view>
+          <view class="phstat-c">临期待用</view>
+        </view>
+        <view class="phstat">
+          <view class="phstat-n">{{pantrySummary.categoryCount}}</view>
+          <view class="phstat-c">分类</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 内容卡片层 -->
+  <view class="psheet">
+    <!-- 现在有的 -->
+    <view class="shead">
+      <view class="shead-main">
+        <view class="shead-bar"></view>
+        <view class="eyebrow">In Stock</view>
+        <view class="shead-title">现在<text class="pop">有的</text></view>
+      </view>
+      <text class="seeall">共 {{pantrySummary.count}} 项</text>
+    </view>
+
+    <!-- 空态 -->
+    <state-empty
+      wx:if="{{loaded && !categories.length}}"
+      type="pop"
+      title="冰箱还空着"
+      desc="把家里有的食材记进来，点菜时就能先看能做什么"
+    />
+
+    <!-- 分类 + 商品列表 -->
+    <view class="cat g-fade-up g-d{{cidx + 1}}" wx:for="{{categories}}" wx:for-item="cat" wx:for-index="cidx" wx:key="key">
+      <view class="cat-name">
+        <view class="cat-ic cat-ic-{{cat.icon}}"></view>
+        <text class="cat-h3">{{cat.label}}</text>
+        <text class="cat-qty">· {{cat.qty}} 项</text>
+      </view>
+      <view class="pcard">
+        <view
+          class="pitem {{it.expiringSoon ? 'warn' : ''}}"
+          wx:for="{{cat.items}}"
+          wx:for-item="it"
+          wx:key="id"
+        >
+          <view class="pi-dot"></view>
+          <view class="pi-mid">
+            <view class="pi-nm ellipsis">{{it.ingredientName}}</view>
+            <view class="pi-ex {{it.expiringSoon ? 'red' : ''}}">{{it.expiresText}}</view>
+          </view>
+          <view class="pi-qt">{{it.amountText}}</view>
+          <view class="pi-del tap-scale" data-id="{{it.id}}" bindtap="removeItem">
+            <view class="pi-del-x"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 添加食材卡 -->
+    <view class="addcard tap-scale" bindtap="toggleAddForm">
+      <view class="add-pl"><view class="add-plus"></view></view>
+      <view class="add-at">
+        <view class="add-t">添加食材</view>
+        <view class="add-s">记下食材名、数量和到期日</view>
+      </view>
+      <view class="add-arrow {{showAddForm ? 'up' : ''}}"></view>
+    </view>
+
+    <!-- 添加表单（展开）-->
+    <view class="add-form" wx:if="{{showAddForm}}">
+      <view class="af-row">
+        <input class="af-input af-main" placeholder="食材名" placeholder-class="af-ph" value="{{newItem.ingredientName}}" bindinput="onNewInput" data-field="ingredientName" />
+        <input class="af-input af-sm" placeholder="量" placeholder-class="af-ph" value="{{newItem.amount}}" bindinput="onNewInput" data-field="amount" />
+        <input class="af-input af-sm" placeholder="单位" placeholder-class="af-ph" value="{{newItem.unit}}" bindinput="onNewInput" data-field="unit" />
+      </view>
+      <input class="af-input af-date" placeholder="到期日 如 2026-06-20（选填）" placeholder-class="af-ph" value="{{newItem.expiresAt}}" bindinput="onNewInput" data-field="expiresAt" />
+      <view class="btn btn-pop btn-block af-submit" bindtap="addItem">记入冰箱</view>
+    </view>
+
+    <!-- 现在就能做 -->
+    <view class="shead" wx:if="{{showMatch && matchResults.length}}">
+      <view class="shead-main">
+        <view class="shead-bar"></view>
+        <view class="eyebrow">Cook Now</view>
+        <view class="shead-title">现在就<text class="pop">能做</text></view>
+      </view>
+      <text class="seeall">按库存匹配</text>
+    </view>
+
+    <view
+      class="mcard g-fade-up g-d{{midx + 1}}"
+      wx:for="{{matchResults}}"
+      wx:for-index="midx"
+      wx:key="id"
+    >
+      <view class="mc-top">
+        <image class="mc-ph" src="{{item.coverImage}}" mode="aspectFill" />
+        <view class="mc-mi">
+          <view class="mc-h4 ellipsis">{{item.title}}</view>
+          <view class="mc-meta">{{item.metaText}}</view>
+          <view class="mc-miss ellipsis {{item.full ? 'full' : ''}}">{{item.missingText}}</view>
+        </view>
+        <view class="mc-badge">
+          <view class="mc-pct">{{item.haveText}}</view>
+          <view class="mc-lab">匹配</view>
+        </view>
+      </view>
+      <view class="mc-bar">
+        <view class="mc-bar-i {{item.full ? 'full' : ''}}" style="width: {{item.percentWidth}}%;"></view>
+      </view>
+    </view>
+
+    <view class="safe-bottom"></view>
+  </view>
+</view>

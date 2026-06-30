@@ -1,0 +1,108 @@
+<!-- pages/cook-mode/index.wxml · 烹饪模式（沉浸暗底分步引导） -->
+<view class="cook" style="--sbh: {{statusBarHeight}}px;">
+
+  <!-- 顶部：返回 X + 菜名步数 + 计时入口 -->
+  <view class="topbar" style="padding-top: {{statusBarHeight}}px;">
+    <view class="nbtn tap-scale" catchtap="onClose">
+      <view class="ic-x"></view>
+    </view>
+    <view class="dishbar">
+      <view class="dn ellipsis">{{dishName || '烹饪模式'}}</view>
+      <view class="prog" wx:if="{{total}}">Step {{current + 1}} / {{total}} · {{steps[current].cn}}</view>
+    </view>
+    <view class="nbtn keep {{running ? 'on' : ''}}" catchtap="toggleTimer">
+      <view class="ic-clock"></view>
+    </view>
+  </view>
+
+  <!-- 加载态 -->
+  <view wx:if="{{loading}}" class="loading">
+    <view class="spinner"></view>
+    <text class="loading-tx">正在备菜…</text>
+  </view>
+
+  <!-- 空数据守护 -->
+  <view wx:elif="{{!total}}" class="empty-wrap">
+    <state-empty type="gray" title="暂无烹饪步骤" desc="这道菜还没有录入分步教程，去菜谱看看吧" cta="返回" cta-style="ghost" bind:action="onClose" />
+  </view>
+
+  <!-- 正文 -->
+  <view wx:else class="body">
+
+    <!-- 进度点条 -->
+    <view class="dots">
+      <view
+        wx:for="{{dots}}"
+        wx:key="index"
+        class="dot {{item}}"
+      ></view>
+    </view>
+
+    <!-- 步骤大图 -->
+    <view class="stepimg g-fade-in">
+      <image class="stepimg-pic" src="{{steps[current].image}}" mode="aspectFill" />
+      <view class="stepimg-mask"></view>
+      <view wx:if="{{hasTimer}}" class="timetag">
+        <view class="ic-clock-sm"></view>
+        <text>约 {{timerTotal >= 60 ? (timerTotal / 60) : timerTotal}} {{timerTotal >= 60 ? '分钟' : '秒'}}</text>
+      </view>
+      <view class="bignum title-stroke"><text>{{steps[current].num}}</text></view>
+      <view class="small">
+        <view class="e">{{steps[current].en}}</view>
+        <view class="t ellipsis">{{steps[current].cn}}</view>
+      </view>
+    </view>
+
+    <!-- 步骤文本滚动区 -->
+    <scroll-view class="stepwrap" scroll-y scroll-with-animation scroll-top="{{0}}">
+      <view class="stepeyebrow">Now Cooking</view>
+      <view class="steptext">{{steps[current].text}}</view>
+
+      <!-- 食材 tags -->
+      <view wx:if="{{ingredients.length}}" class="ings">
+        <view
+          wx:for="{{ingredients}}"
+          wx:key="name"
+          class="ing tap-scale"
+        >
+          <view class="dotmark"></view>
+          <text>{{item.label}}</text>
+        </view>
+      </view>
+
+      <!-- 计时卡 -->
+      <view wx:if="{{hasTimer}}" class="timer">
+        <view class="tl">
+          <view class="cap">这一步计时</view>
+          <view class="num">{{timerText[0]}}{{timerText[1]}}<text class="pop">:</text>{{timerText[3]}}{{timerText[4]}}</view>
+        </view>
+        <view class="timer-acts">
+          <view class="tbtn ghost tap-scale" catchtap="resetTimer">
+            <view class="ic-reset"></view>
+          </view>
+          <view class="tbtn tap-scale" catchtap="toggleTimer">
+            <view class="{{running ? 'ic-pause' : 'ic-play'}}"></view>
+          </view>
+        </view>
+      </view>
+
+      <view class="scroll-pad"></view>
+    </scroll-view>
+
+    <!-- 底部上/下一步 -->
+    <view class="footer">
+      <view
+        class="btn prev tap-scale {{current === 0 ? 'disabled' : ''}}"
+        catchtap="onPrev"
+      >
+        <view class="ic-arrow-l"></view>
+        <text>上一步</text>
+      </view>
+      <view class="btn next tap-scale" catchtap="onNext">
+        <text wx:if="{{current < total - 1}}">下一步：{{steps[current + 1].cn}}</text>
+        <text wx:else>完成 · 记一笔</text>
+        <view class="ic-arrow-r"></view>
+      </view>
+    </view>
+  </view>
+</view>

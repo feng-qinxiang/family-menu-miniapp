@@ -1,0 +1,92 @@
+<view class="fc-page">
+  <scroll-view class="fc-scroll" scroll-y enhanced show-scrollbar="{{false}}">
+
+    <!-- ===== Hero 大图 ===== -->
+    <view class="fc-hero">
+      <image class="fc-hero-img" src="/assets/dishes/hongshao-pork.jpg" mode="aspectFill" />
+      <view class="fc-hero-mask"></view>
+      <view class="fc-hero-bignum serif">02</view>
+
+      <!-- 顶部导航：复用 nav-bar，仅返回 -->
+      <nav-bar title="" status-bar-height="{{statusBarHeight}}"></nav-bar>
+
+      <!-- Hero 文案 -->
+      <view class="fc-hero-body">
+        <text class="fc-tag">New Family</text>
+        <view class="fc-hero-title title-stroke">创建你的<text class="pop">家</text></view>
+      </view>
+    </view>
+
+    <!-- ===== Sheet 内容 ===== -->
+    <view class="fc-sheet">
+
+      <!-- 家庭头像上传 -->
+      <view class="fc-ava-wrap g-fade-up">
+        <view class="fc-ava tap-scale {{avatar ? 'has' : ''}}" bindtap="chooseAvatar">
+          <image wx:if="{{avatar}}" class="fc-ava-img" src="{{avatar}}" mode="aspectFill" />
+          <block wx:else>
+            <view class="fc-ava-cam">
+              <view class="fc-ic fc-ic-cam"></view>
+            </view>
+            <text class="fc-ava-ct">家庭头像</text>
+          </block>
+          <view class="fc-ava-badge">
+            <view class="fc-ic fc-ic-plus"></view>
+          </view>
+        </view>
+        <view class="fc-ava-hint">给你们的小家选一张照片</view>
+      </view>
+
+      <!-- 表单 -->
+      <view class="fc-form g-fade-up g-d1">
+        <view class="fc-field">
+          <view class="fc-label">家庭名称</view>
+          <view class="fc-inp {{focusName ? 'focus' : ''}}">
+            <view class="fc-ic fc-ic-home"></view>
+            <input
+              class="fc-input"
+              placeholder="张家厨房"
+              placeholder-class="fc-ph"
+              value="{{familyName}}"
+              maxlength="20"
+              bindinput="onNameInput"
+              bindfocus="onNameFocus"
+              bindblur="onNameBlur"
+            />
+          </view>
+        </view>
+
+        <view class="fc-field">
+          <view class="fc-label">所在地区 <text class="fc-opt">（选填）</text></view>
+          <picker mode="region" value="{{region}}" bindchange="onRegionChange">
+            <view class="fc-inp">
+              <view class="fc-ic fc-ic-pin"></view>
+              <text class="fc-inp-txt {{regionText ? '' : 'fc-ph'}}">{{regionText || '选择城市，方便找应季食材'}}</text>
+              <view class="fc-chev"></view>
+            </view>
+          </picker>
+        </view>
+
+        <view class="fc-createbtn tap-scale" bindtap="onCreate">
+          <text>创建家庭</text>
+          <view class="fc-ic fc-ic-arrow"></view>
+        </view>
+
+        <!-- Tip 卡片 -->
+        <view class="fc-tipcard">
+          <view class="fc-ic fc-ic-bulb"></view>
+          <view class="fc-tip-tx">创建后会生成一个<text class="fc-tip-b">专属邀请码</text>，把它发给家人，大家就能一起点菜、共享买菜清单啦。</view>
+        </view>
+      </view>
+
+      <!-- 加入链接 -->
+      <view class="fc-joinlink g-fade-up g-d2">
+        <text class="fc-join-small">家人已经建好家了？</text>
+        <text class="fc-join-a tap-scale" bindtap="goJoin">去加入 ›</text>
+      </view>
+
+    </view>
+
+    <view class="safe-bottom"></view>
+  </scroll-view>
+</view>

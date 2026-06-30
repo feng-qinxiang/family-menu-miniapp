@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>家庭点菜 · 搜索结果</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-font-smoothing:antialiased; }
+  :root{
+    --paper:#fbf8f3; --paper-2:#f0ebe2;
+    --ink:#2c241b; --ink-deep:#3a2e23;
+    --mut:#9a8e7d; --mut-2:#b3a795; --mut-strong:#7a6e5d;
+    --gold:#f4d9a8; --gold-deep:#b08949;
+    --pop:#e8472a; --pop-soft:#fdece6;
+    --pine:#2f4a3a;
+    --serif:"Georgia","Times New Roman",serif;
+  }
+  body {
+    display:flex; align-items:center; justify-content:center;
+    min-height:100vh; background:#d9d2c7;
+    font-family:-apple-system,"SF Pro Text","Helvetica Neue",Helvetica,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  }
+  .phone {
+    position:relative; width:390px; height:844px;
+    background:var(--paper); border-radius:46px;
+    box-shadow:0 30px 70px rgba(60,45,30,.4), 0 0 0 11px #1b1714, 0 0 0 12px #2c2520;
+    overflow:hidden;
+  }
+  .status {
+    position:absolute; top:0; left:0; right:0; height:50px; z-index:60;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 30px 0 34px; color:var(--ink); font-size:15px; font-weight:600; pointer-events:none;
+  }
+  .status .right { display:flex; align-items:center; gap:7px; }
+  .notch { position:absolute; top:11px; left:50%; transform:translateX(-50%); width:118px; height:33px; background:#1b1714; border-radius:20px; z-index:61; }
+
+  /* search bar */
+  .searchbar { position:absolute; top:50px; left:0; right:0; z-index:40; background:var(--paper);
+    display:flex; align-items:center; gap:12px; padding:8px 20px 14px; }
+  .backbtn { width:40px; height:40px; border-radius:50%; background:var(--ink-deep); flex:none;
+    display:flex; align-items:center; justify-content:center; }
+  .sbox { flex:1; display:flex; align-items:center; gap:9px; background:var(--paper-2); border-radius:30px;
+    padding:0 16px; height:44px; border:1.5px solid #e6ddcd; }
+  .sbox input { flex:1; border:none; background:transparent; outline:none; font-size:15px; font-weight:600;
+    color:var(--ink); font-family:inherit; }
+  .sbox .clr { width:20px; height:20px; border-radius:50%; background:#c9bda9; flex:none;
+    display:flex; align-items:center; justify-content:center; }
+  .cancel { font-size:14.5px; font-weight:700; color:var(--gold-deep); flex:none; }
+
+  .scroll { position:absolute; top:116px; left:0; right:0; bottom:0; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch; }
+  .scroll::-webkit-scrollbar { display:none; }
+  .pad { padding:0 24px; }
+
+  /* result head */
+  .rhead { display:flex; align-items:baseline; gap:8px; margin:18px 0 16px; }
+  .rhead .eyebrow { font-family:var(--serif); font-style:italic; font-size:12px; letter-spacing:1px; color:var(--gold-deep); font-weight:700; }
+  .rhead h2 { font-size:25px; font-weight:900; color:var(--ink); letter-spacing:-1px;
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; }
+  .rhead h2 .pop { color:var(--pop); }
+  .rcount { font-size:13px; color:var(--mut-strong); font-weight:600; margin-bottom:14px; }
+  .rcount b { color:var(--pop); font-weight:800; }
+
+  .sortrow { display:flex; gap:9px; overflow-x:auto; padding-bottom:16px; }
+  .sortrow::-webkit-scrollbar { display:none; }
+  .sortchip { flex:none; font-size:13px; font-weight:600; color:var(--mut-strong); padding:7px 15px; border-radius:30px; background:var(--paper-2); white-space:nowrap; border:1px solid transparent; }
+  .sortchip.on { background:var(--ink-deep); color:var(--paper); border-color:var(--ink-deep); }
+
+  /* result grid */
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; padding-bottom:36px; }
+  .gcard { background:#fff; border-radius:20px; overflow:hidden;
+    box-shadow:0 2px 6px rgba(60,40,20,.06), 0 18px 40px rgba(120,70,30,.14); border:1px solid #f1ece2; }
+  .gcard .ph { height:128px; background-size:cover; background-position:center; position:relative; }
+  .gcard .lbl { position:absolute; top:9px; left:9px; font-size:9px; letter-spacing:1.3px; font-weight:800; text-transform:uppercase;
+    color:#fff; background:rgba(40,30,20,.55); backdrop-filter:blur(4px); padding:4px 8px; border-radius:4px; }
+  .gcard .fav { position:absolute; top:8px; right:8px; width:34px; height:34px; border-radius:50%; background:rgba(255,255,255,.92); display:flex; align-items:center; justify-content:center; }
+  .gcard .info { padding:12px 13px 14px; }
+  .gcard .info h3 { font-size:16px; font-weight:800; color:var(--ink); letter-spacing:-.3px; }
+  .gcard .info h3 .hl { color:var(--pop); }
+  .gcard .info .meta { display:flex; align-items:center; gap:9px; margin-top:8px; }
+  .gcard .info .meta span { display:flex; align-items:center; gap:4px; font-size:11.5px; color:var(--mut-strong); font-weight:500; }
+  .gcard .info .meta .dot { width:3px; height:3px; border-radius:50%; background:var(--mut-2); }
+
+  .home-ind { position:absolute; bottom:9px; left:50%; transform:translateX(-50%); width:134px; height:5px; border-radius:3px; background:#2c241b; opacity:.85; z-index:55; }
+  .backbtn:active, .gcard:active, .fav:active, .sortchip:active, .clr:active { transform:scale(.97); }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status">
+    <span>9:41</span>
+    <span class="right">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="#2c241b"/><rect x="5" y="4.5" width="3" height="7.5" rx="1" fill="#2c241b"/><rect x="10" y="2" width="3" height="10" rx="1" fill="#2c241b"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#2c241b" opacity=".4"/></svg>
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><path d="M8.5 2.5C11 2.5 13.2 3.5 14.8 5.1L8.5 11.4 2.2 5.1C3.8 3.5 6 2.5 8.5 2.5Z" fill="#2c241b"/></svg>
+      <svg width="26" height="13" viewBox="0 0 26 13" fill="none"><rect x="1" y="1" width="21" height="11" rx="3" stroke="#2c241b" stroke-width="1.2" opacity=".5"/><rect x="3" y="3" width="16" height="7" rx="1.5" fill="#2c241b"/><rect x="23.5" y="4.5" width="2" height="4" rx="1" fill="#2c241b" opacity=".6"/></svg>
+    </span>
+  </div>
+
+  <div class="searchbar">
+    <div class="backbtn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fbf8f3" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></div>
+    <div class="sbox">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9a8e7d" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3"/></svg>
+      <input type="text" value="宫保鸡丁" />
+      <div class="clr"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fbf8f3" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></div>
+    </div>
+    <span class="cancel">取消</span>
+  </div>
+
+  <div class="scroll">
+    <div class="pad">
+      <div class="rhead">
+        <span class="eyebrow">Results</span>
+      </div>
+      <div class="rhead" style="margin-top:-8px;">
+        <h2>找到「<span class="pop">宫保</span>」</h2>
+      </div>
+      <div class="rcount">共 <b>6</b> 道相关菜谱 · 按相关度排序</div>
+
+      <div class="sortrow">
+        <div class="sortchip on">综合</div>
+        <div class="sortchip">最快</div>
+        <div class="sortchip">川菜</div>
+        <div class="sortchip">家常</div>
+        <div class="sortchip">做过的</div>
+      </div>
+
+      <div class="grid">
+        <div class="gcard">
+          <div class="ph" style="background-image:url('img/kungpao-chicken.jpg')"><span class="lbl">川菜</span><span class="fav"><svg width="14" height="14" viewBox="0 0 24 24" fill="#e8472a" stroke="#e8472a" stroke-width="2"><path d="M12 20s-7-4.4-7-9.5A3.8 3.8 0 0112 8a3.8 3.8 0 017 2.5C19 15.6 12 20 12 20z"/></svg></span></div>
+          <div class="info"><h3><span class="hl">宫保</span>鸡丁</h3><div class="meta"><span>川菜</span><span class="dot"></span><span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#7a6e5d" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round"/></svg>25 分钟</span></div></div>
+        </div>
+        <div class="gcard">
+          <div class="ph" style="background-image:url('img/hongshao-pork.jpg')"><span class="lbl">川菜</span><span class="fav"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3a2e23" stroke-width="2"><path d="M12 20s-7-4.4-7-9.5A3.8 3.8 0 0112 8a3.8 3.8 0 017 2.5C19 15.6 12 20 12 20z"/></svg></span></div>
+          <div class="info"><h3><span class="hl">宫保</span>虾球</h3><div class="meta"><span>川菜</span><span class="dot"></span><span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#7a6e5d" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round"/></svg>30 分钟</span></div></div>
+        </div>
+        <div class="gcard">
+          <div class="ph" style="background-image:url('img/tomato-egg.jpg')"><span class="lbl">家常</span><span class="fav"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3a2e23" stroke-width="2"><path d="M12 20s-7-4.4-7-9.5A3.8 3.8 0 0112 8a3.8 3.8 0 017 2.5C19 15.6 12 20 12 20z"/></svg></span></div>
+          <div class="info"><h3><span class="hl">宫保</span>豆腐</h3><div class="meta"><span>家常</span><span class="dot"></span><span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#7a6e5d" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round"/></svg>20 分钟</span></div></div>
+        </div>
+        <div class="gcard">
+          <div class="ph" style="background-image:url('img/long-beans.jpg')"><span class="lbl">素菜</span><span class="fav"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3a2e23" stroke-width="2"><path d="M12 20s-7-4.4-7-9.5A3.8 3.8 0 0112 8a3.8 3.8 0 017 2.5C19 15.6 12 20 12 20z"/></svg></span></div>
+          <div class="info"><h3><span class="hl">宫保</span>杏鲍菇</h3><div class="meta"><span>素菜</span><span class="dot"></span><span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#7a6e5d" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round"/></svg>18 分钟</span></div></div>
+        </div>
+        <div class="gcard">
+          <div class="ph" style="background-image:url('img/shrimp-peas.jpg')"><span class="lbl">主食</span><span class="fav"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3a2e23" stroke-width="2"><path d="M12 20s-7-4.4-7-9.5A3.8 3.8 0 0112 8a3.8 3.8 0 017 2.5C19 15.6 12 20 12 20z"/></svg></span></div>
+          <div class="info"><h3><span class="hl">宫保</span>鸡丁盖饭</h3><div class="meta"><span>主食</span><span class="dot"></span><span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#7a6e5d" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round"/></svg>28 分钟</span></div></div>
+        </div>
+        <div class="gcard">
+          <div class="ph" style="background-image:url('img/egg-drop-soup.jpg')"><span class="lbl">面点</span><span class="fav"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3a2e23" stroke-width="2"><path d="M12 20s-7-4.4-7-9.5A3.8 3.8 0 0112 8a3.8 3.8 0 017 2.5C19 15.6 12 20 12 20z"/></svg></span></div>
+          <div class="info"><h3><span class="hl">宫保</span>鸡丁面</h3><div class="meta"><span>面点</span><span class="dot"></span><span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#7a6e5d" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round"/></svg>22 分钟</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="home-ind"></div>
+</div>
+</body>
+</html>

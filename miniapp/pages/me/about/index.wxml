@@ -1,0 +1,70 @@
+<!-- 关于页 · 静态展示：品牌 + 数据 + 故事 + 团队 + 更多 + 版权 -->
+<nav-bar title="关于" show-back="{{true}}" status-bar-height="{{statusBarHeight}}"></nav-bar>
+
+<view class="container about">
+  <!-- 品牌区 -->
+  <view class="brand g-fade-up">
+    <view class="logo">
+      <view class="logo-deco"></view>
+      <text class="logo-mark">家</text>
+    </view>
+    <view class="eyebrow-serif brand-eyebrow">Cook Together</view>
+    <view class="appname title">家庭<text class="t-pop">点菜</text></view>
+    <view class="ver">{{version}}</view>
+    <view class="slogan">{{slogan}}</view>
+  </view>
+
+  <!-- 数据徽章 -->
+  <view class="stats g-fade-up g-d1">
+    <view class="st" wx:for="{{stats}}" wx:key="label">
+      <view class="st-v">{{item.value}}<text class="st-unit">{{item.unit}}</text></view>
+      <view class="st-l">{{item.label}}</view>
+    </view>
+  </view>
+
+  <!-- 故事卡 -->
+  <view class="story card g-fade-up g-d2">
+    <view class="story-qm">”</view>
+    <view class="eyebrow-serif">Why We Built It</view>
+    <view class="story-h">为了少问一句<text class="t-pop">“今晚吃啥”</text></view>
+    <view class="story-p" wx:for="{{story}}" wx:key="*this">{{item}}</view>
+  </view>
+
+  <!-- 团队署名 -->
+  <view class="team g-fade-up g-d3">
+    <view class="team-badge">
+      <view class="team-badge-heart"></view>
+    </view>
+    <view class="team-tt">
+      <view class="team-h">一支爱做饭的小团队</view>
+      <view class="team-s">我们自己也天天用它点菜。有想法、有 bug，欢迎在「意见反馈」里告诉我们。</view>
+    </view>
+  </view>
+
+  <!-- 更多分组 -->
+  <view class="lhead eyebrow-serif g-fade-up g-d4">More</view>
+  <view class="list card g-fade-up g-d4">
+    <view
+      class="item tap-scale"
+      wx:for="{{moreList}}"
+      wx:key="key"
+      data-key="{{item.key}}"
+      bindtap="onMoreTap"
+    >
+      <view class="item-ic"><view class="item-ic-dot"></view></view>
+      <view class="item-t">
+        <view class="item-nm">{{item.name}}</view>
+        <view class="item-ds ellipsis">{{item.desc}}</view>
+      </view>
+      <view class="item-chev"></view>
+    </view>
+  </view>
+
+  <!-- 版权 -->
+  <view class="copy g-fade-up g-d5">
+    <view class="copy-c1">© {{year}} 家庭点菜</view>
+    <view class="copy-c2 eyebrow-serif">Made with care for every family table</view>
+  </view>
+
+  <view class="safe-bottom"></view>
+</view>

@@ -1,0 +1,317 @@
+/* ============================================================
+   pages/family/members · 家庭成员管理
+   设计稿 artifacts/member-manage.html · 全量复用 app.wxss token
+   ============================================================ */
+.mem-page {
+  position: relative;
+  min-height: 100vh;
+  background: var(--paper);
+}
+
+.mem-scroll {
+  padding: 0 46rpx 0;
+}
+
+/* —— Hero 标题 —— */
+.mem-head {
+  padding: 12rpx 0 34rpx;
+}
+.mem-eyebrow {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 25rpx;
+  letter-spacing: 2rpx;
+  color: var(--gold-deep);
+  font-weight: 700;
+}
+.mem-h1 {
+  margin-top: 10rpx;
+  font-size: 77rpx;
+  font-weight: 900;
+  color: var(--ink);
+  letter-spacing: -4rpx;
+  line-height: 0.95;
+  font-family: var(--sans);
+}
+
+/* —— 家庭信息暗卡 —— */
+.famcard {
+  margin: 6rpx 0 8rpx;
+  padding: 42rpx 42rpx 38rpx;
+}
+.fam-top {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 27rpx;
+}
+.fam-emoji {
+  width: 104rpx;
+  height: 104rpx;
+  border-radius: var(--r-sm);
+  flex: none;
+  overflow: hidden;
+  background: linear-gradient(135deg, #d4a857, #f3d796, #b8863a);
+  box-shadow: 0 8rpx 22rpx rgba(0, 0, 0, 0.25);
+}
+.fam-emoji-img {
+  width: 100%;
+  height: 100%;
+}
+.fam-feyebrow {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 23rpx;
+  letter-spacing: 2rpx;
+  color: var(--gold);
+  font-weight: 700;
+}
+.fam-name {
+  margin-top: 6rpx;
+  font-size: 48rpx;
+  font-weight: 900;
+  letter-spacing: -1rpx;
+  color: var(--paper);
+  font-family: var(--sans);
+}
+.fam-bot {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 34rpx;
+  padding-top: 30rpx;
+  border-top: 2rpx solid rgba(255, 255, 255, 0.13);
+}
+.fam-cap {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 21rpx;
+  letter-spacing: 1.5rpx;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+.fam-code {
+  margin-top: 6rpx;
+  font-size: 42rpx;
+  font-weight: 900;
+  letter-spacing: 8rpx;
+  color: #fff;
+  font-family: var(--serif);
+}
+.fam-count {
+  display: flex;
+  align-items: center;
+  gap: 13rpx;
+  padding: 17rpx 29rpx;
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  font-size: 25rpx;
+  font-weight: 700;
+}
+.fam-count-dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  background: var(--gold);
+}
+
+/* —— 成员列表 —— */
+.mlist {
+  padding: 8rpx 32rpx;
+}
+.mrow {
+  display: flex;
+  align-items: center;
+  gap: 27rpx;
+  padding: 29rpx 0;
+  border-bottom: 2rpx solid #efe9df;
+}
+.mrow:last-child {
+  border-bottom: none;
+}
+.mavt {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: var(--r-sm);
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 37rpx;
+  font-weight: 800;
+  font-family: var(--sans);
+}
+.mavt-pine { background: var(--pine); }
+.mavt-gold { background: var(--gold-deep); }
+.mavt-inkdeep { background: var(--ink-deep); }
+.mavt-pop { background: var(--pop); }
+
+.mmid {
+  flex: 1;
+  min-width: 0;
+}
+.mname {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+.mname-txt {
+  max-width: 280rpx;
+  font-size: 32rpx;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.5rpx;
+}
+.badge {
+  flex: none;
+  font-size: 19rpx;
+  font-weight: 800;
+  padding: 6rpx 17rpx;
+  border-radius: var(--r-xs);
+  letter-spacing: 1rpx;
+}
+.badge-admin {
+  color: #fff;
+  background: var(--pop);
+}
+.badge-member {
+  color: var(--gold-deep);
+  background: var(--pop-soft);
+}
+.msub {
+  margin-top: 9rpx;
+  font-size: 23rpx;
+  color: var(--mut-strong);
+}
+.mself {
+  flex: none;
+  padding: 11rpx 21rpx;
+  border-radius: var(--r-sm);
+  background: var(--paper-2);
+  color: var(--mut-strong);
+  font-size: 21rpx;
+  font-weight: 700;
+}
+.mremove {
+  width: 73rpx;
+  height: 73rpx;
+  border-radius: var(--r-sm);
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper-2);
+}
+.mremove-icon {
+  position: relative;
+  width: 30rpx;
+  height: 32rpx;
+  border: 4rpx solid var(--gold-deep);
+  border-top: none;
+  border-radius: 0 0 7rpx 7rpx;
+}
+.mremove-icon::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -12rpx;
+  transform: translateX(-50%);
+  width: 40rpx;
+  height: 4rpx;
+  border-radius: 2rpx;
+  background: var(--gold-deep);
+}
+.mremove-icon::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -22rpx;
+  transform: translateX(-50%);
+  width: 18rpx;
+  height: 4rpx;
+  border-radius: 2rpx;
+  background: var(--gold-deep);
+}
+
+/* 空态 */
+.mem-empty {
+  padding: 72rpx 32rpx;
+  text-align: center;
+}
+.mem-empty-txt {
+  font-size: 26rpx;
+  color: var(--mut);
+}
+
+/* 列表结束分隔语 */
+.mend {
+  position: relative;
+  margin: 32rpx 0 8rpx;
+  text-align: center;
+  font-size: 23rpx;
+  font-weight: 600;
+  letter-spacing: 1rpx;
+  color: var(--mut-strong);
+}
+.mend::before,
+.mend::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 104rpx;
+  height: 2rpx;
+  background: #e3dccf;
+}
+.mend::before { left: 16%; }
+.mend::after { right: 16%; }
+
+.mem-tail {
+  height: 200rpx;
+}
+
+/* —— 底部邀请按钮 —— */
+.mem-footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+  padding: 32rpx 46rpx;
+  background: linear-gradient(180deg, rgba(251, 248, 243, 0), var(--paper) 32%);
+}
+.mem-invbtn {
+  height: 108rpx;
+  gap: 17rpx;
+  font-size: 31rpx;
+}
+.mem-invbtn-icon {
+  position: relative;
+  width: 34rpx;
+  height: 34rpx;
+}
+.mem-invbtn-icon::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 2rpx;
+  width: 24rpx;
+  height: 24rpx;
+  border: 4rpx solid #fff;
+  border-radius: 50%;
+}
+.mem-invbtn-icon::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 18rpx;
+  height: 4rpx;
+  background: #fff;
+  border-radius: 2rpx;
+  box-shadow: -7rpx -7rpx 0 -2rpx #fff;
+}

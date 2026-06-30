@@ -1,0 +1,185 @@
+<view class="community-page">
+  <!-- 二级页顶部导航（透明覆盖在 hero 上）-->
+  <nav-bar title="邻里厨房" status-bar-height="{{statusBarHeight}}">
+    <view class="nav-post-btn tap-scale" catchtap="togglePostForm">
+      <text class="nav-post-plus">+</text>{{showPostForm ? '收起' : '发帖'}}
+    </view>
+  </nav-bar>
+
+  <scroll-view class="community-scroll" scroll-y enhanced show-scrollbar="{{false}}">
+    <!-- ===== Hero ===== -->
+    <view class="hero">
+      <image class="hero-bg" src="/assets/dishes/sweet-sour-chicken.jpg" mode="aspectFill" />
+      <view class="hero-mask"></view>
+      <text class="hero-bignum">C</text>
+      <view class="hero-body g-fade-up">
+        <text class="hero-tag">Community</text>
+        <view class="hero-title title-stroke">邻里<text class="pop">厨房</text></view>
+        <view class="hero-sub">看看别人家今晚上桌什么，也把自己的拿手做法留下来。</view>
+        <view class="cstats">
+          <view class="cstat">
+            <view class="cstat-num">{{communitySummary.postCount}}</view>
+            <view class="cstat-lab">帖子</view>
+          </view>
+          <view class="cstat">
+            <view class="cstat-num">{{communitySummary.commentCount}}</view>
+            <view class="cstat-lab">评论</view>
+          </view>
+          <view class="cstat">
+            <view class="cstat-num">{{communitySummary.favoriteCount}}</view>
+            <view class="cstat-lab">收藏</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- ===== Sheet ===== -->
+    <view class="sheet">
+      <view class="pad">
+        <view class="shead">
+          <view class="shead-main">
+            <view class="shead-bar"></view>
+            <view class="eyebrow">Today on the Table</view>
+            <view class="shead-title">邻居们<text class="pop">在做</text>啥</view>
+          </view>
+        </view>
+
+        <!-- 空态 -->
+        <view wx:if="{{!posts.length}}" class="empty-state">
+          <view class="empty-text">还没有人发帖，来做第一个分享的人吧</view>
+        </view>
+
+        <!-- 帖子流 -->
+        <view class="post-list">
+          <view
+            class="pcard tap-scale g-fade-up g-d{{index % 5 + 1}}"
+            wx:for="{{posts}}"
+            wx:key="id"
+            data-id="{{item.id}}"
+            bindtap="openPost"
+          >
+            <view class="ptop">
+              <view class="pavatar" style="background:{{item.avatarColor}}">{{item.authorInitial}}</view>
+              <view class="pmeta">
+                <view class="pname">{{item.author}}</view>
+                <view class="pstats">
+                  <view class="pstats-heart"></view>{{item.likeCount}} 赞 · {{item.commentCount}} 评论
+                </view>
+              </view>
+              <view class="ptime">{{item.timeText || ''}}</view>
+            </view>
+
+            <view class="ptitle clamp-2">{{item.title}}</view>
+            <view class="pcontent clamp-2">{{item.content}}</view>
+
+            <image class="pphoto" src="{{item.photo}}" mode="aspectFill" />
+
+            <!-- 关联菜谱 -->
+            <view
+              wx:if="{{item.recipe}}"
+              class="precipe"
+              catchtap="openRecipe"
+              data-recipe-id="{{item.recipe.id}}"
+            >
+              <image class="rthumb" src="{{item.recipeThumb}}" mode="aspectFill" />
+              <view class="rmid">
+                <view class="rk">Linked Recipe</view>
+                <view class="rn ellipsis">{{item.recipe.title}}</view>
+                <view class="rm">{{item.recipe.cuisine}} · {{item.recipe.timeCost}} 分钟 · {{item.recipe.servings}} 人份</view>
+              </view>
+              <view class="rgo"><view class="rgo-arrow"></view></view>
+            </view>
+
+            <!-- 标签 -->
+            <view class="ptags" wx:if="{{item.tags.length}}">
+              <text wx:for="{{item.tags}}" wx:for-item="tag" wx:key="*this" class="p-tag">#{{tag}}</text>
+            </view>
+
+            <!-- 操作栏 -->
+            <view class="pactions">
+              <view
+                class="pa-btn {{item.favorited ? 'on' : ''}}"
+                catchtap="toggleFavorite"
+                data-id="{{item.id}}"
+              >
+                <view class="pa-ico ico-star {{item.favorited ? 'on' : ''}}"></view>{{item.favorited ? '已收藏' : '收藏'}}
+              </view>
+              <view class="pa-btn" catchtap="openPost" data-id="{{item.id}}">
+                <view class="pa-ico ico-chat"></view>评论
+              </view>
+              <view class="pa-spacer"></view>
+              <view class="pa-report" catchtap="reportPost" data-id="{{item.id}}">
+                <view class="pa-ico ico-warn"></view>举报
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 广告位 -->
+      <ad-banner placement="community-bottom"></ad-banner>
+
+      <!-- 热门话题 -->
+      <view class="topics">
+        <view class="thead">
+          <text class="tk">Trending</text>
+          <text class="th-title">热门话题</text>
+        </view>
+        <view class="tchips">
+          <view class="tchip tap-scale" wx:for="{{hotTopics}}" wx:key="tag">
+            <text class="tt">#{{item.tag}}</text>
+            <text class="th">{{item.heat}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 流末 -->
+      <view class="pad" wx:if="{{posts.length}}">
+        <view class="feed-end"><text>没有更多了</text></view>
+      </view>
+
+      <view class="safe-bottom" style="height: 40rpx;"></view>
+    </view>
+  </scroll-view>
+
+  <!-- 发帖 FAB -->
+  <view class="fab tap-scale" catchtap="togglePostForm">
+    <view class="fab-plus"></view>
+  </view>
+
+  <!-- ===== 发帖弹层 ===== -->
+  <view class="pf-mask" wx:if="{{showPostForm}}" catchtap="togglePostForm"></view>
+  <view class="pf-sheet {{showPostForm ? 'pf-sheet--on' : ''}}" wx:if="{{showPostForm}}" catchtap="noop">
+    <view class="pf-grip"></view>
+    <view class="pf-head">分享今天的菜</view>
+    <input
+      class="pf-input"
+      placeholder="给帖子起个标题"
+      placeholder-class="pf-ph"
+      value="{{postForm.title}}"
+      bindinput="onPostInput"
+      data-field="title"
+    />
+    <textarea
+      class="pf-textarea"
+      placeholder="说说做法、心得，或者今晚的灵魂拷问…"
+      placeholder-class="pf-ph"
+      value="{{postForm.content}}"
+      bindinput="onPostInput"
+      data-field="content"
+    />
+    <input
+      class="pf-input"
+      placeholder="标签，逗号分隔（如：川菜,下饭）"
+      placeholder-class="pf-ph"
+      value="{{postForm.tagsText}}"
+      bindinput="onPostInput"
+      data-field="tagsText"
+    />
+    <view class="pf-actions">
+      <view class="btn btn-ghost pf-cancel tap-scale" catchtap="togglePostForm">取消</view>
+      <view class="btn btn-pop pf-submit tap-scale" catchtap="submitPost">发布</view>
+    </view>
+    <view class="safe-bottom"></view>
+  </view>
+</view>

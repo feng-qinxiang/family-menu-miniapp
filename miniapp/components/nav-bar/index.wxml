@@ -1,0 +1,21 @@
+<!-- nav-bar · 二级页顶部导航：返回圆按钮 + 居中标题 + 右侧 slot -->
+<view class="navbar" style="padding-top: {{statusBarHeight}}px;">
+  <view class="navbar-inner">
+    <view
+      wx:if="{{showBack}}"
+      class="navbar-back tap-scale"
+      hover-class="navbar-back--hover"
+      hover-stay-time="80"
+      catchtap="onBack"
+    >
+      <view class="navbar-back-icon"></view>
+    </view>
+    <view wx:else class="navbar-side"></view>
+
+    <view class="navbar-title ellipsis">{{title}}</view>
+
+    <view class="navbar-right">
+      <slot></slot>
+    </view>
+  </view>
+</view>

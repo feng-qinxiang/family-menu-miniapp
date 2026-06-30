@@ -1,0 +1,272 @@
+/* pages/auth/login-phone · 手机号登录 · 全用全局 token */
+.lp {
+  min-height: 100vh;
+  background: var(--paper);
+}
+
+.lp-help {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 25rpx;
+  font-weight: 700;
+  color: var(--gold-deep);
+}
+
+.lp-body {
+  padding: 46rpx 54rpx 80rpx;
+}
+
+/* —— Hero —— */
+.lp-hero { margin-bottom: 12rpx; }
+.lp-eyebrow {
+  display: block;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 25rpx;
+  letter-spacing: 3rpx;
+  font-weight: 700;
+  color: var(--gold-deep);
+}
+.lp-title {
+  margin: 20rpx 0 26rpx;
+  font-size: 92rpx;
+  line-height: 0.92;
+  font-weight: 900;
+  letter-spacing: -5rpx;
+  -webkit-text-stroke: 3rpx var(--ink-deep);
+}
+.lp-title .pop { color: var(--pop); }
+.lp-sub {
+  display: block;
+  font-size: 27rpx;
+  line-height: 1.55;
+  color: var(--mut-strong);
+  margin-bottom: 50rpx;
+}
+
+/* —— 字段 —— */
+.lp-field { margin-bottom: 34rpx; }
+.lp-label {
+  display: block;
+  font-size: 21rpx;
+  letter-spacing: 2rpx;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+  margin-bottom: 17rpx;
+}
+.lp-inp {
+  display: flex;
+  align-items: center;
+  gap: 22rpx;
+  padding: 28rpx 30rpx;
+  background: #fff;
+  border: 3rpx solid #ece4d6;
+  border-radius: var(--r-sm);
+  box-shadow: var(--sh-soft);
+}
+.lp-inp.is-focus {
+  border-color: var(--pop);
+  box-shadow: 0 4rpx 18rpx rgba(232, 71, 42, 0.15);
+}
+.lp-ic { flex: none; width: 36rpx; height: 36rpx; }
+
+/* phone 图标 */
+.ic-phone {
+  width: 24rpx;
+  height: 36rpx;
+  margin: 0 auto;
+  border: 4rpx solid var(--pop);
+  border-radius: 7rpx;
+  position: relative;
+}
+.ic-phone::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 3rpx;
+  transform: translateX(-50%);
+  width: 8rpx;
+  height: 4rpx;
+  border-radius: 2rpx;
+  background: var(--pop);
+}
+/* mail 图标 */
+.ic-mail {
+  width: 38rpx;
+  height: 28rpx;
+  margin: 0 auto;
+  border: 4rpx solid var(--mut-2);
+  border-radius: 6rpx;
+  position: relative;
+  overflow: hidden;
+}
+.ic-mail::after {
+  content: "";
+  position: absolute;
+  top: -8rpx;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 20rpx;
+  height: 20rpx;
+  border-bottom: 4rpx solid var(--mut-2);
+  border-right: 4rpx solid var(--mut-2);
+}
+
+.lp-pre {
+  flex: none;
+  font-size: 30rpx;
+  font-weight: 800;
+  color: var(--ink);
+  padding-right: 22rpx;
+  border-right: 3rpx solid #ece4d6;
+}
+.lp-input {
+  flex: 1;
+  font-size: 30rpx;
+  font-weight: 700;
+  color: var(--ink);
+}
+.lp-input.grow { flex: 1; }
+.lp-ph { color: var(--mut-2); font-weight: 600; }
+
+.lp-codebtn {
+  flex: none;
+  font-size: 25rpx;
+  font-weight: 800;
+  color: var(--pop);
+  padding: 14rpx 22rpx;
+  border-radius: var(--r-xs);
+  background: var(--pop-soft);
+}
+.lp-codebtn.is-wait {
+  color: var(--mut-strong);
+  background: var(--paper-2);
+}
+
+/* —— 登录按钮 —— */
+.lp-loginbtn {
+  margin-top: 16rpx;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18rpx;
+  padding: 32rpx;
+  border-radius: var(--r-md);
+  font-size: 32rpx;
+  font-weight: 800;
+  letter-spacing: 1rpx;
+}
+.ic-arrow {
+  width: 18rpx;
+  height: 18rpx;
+  border-top: 5rpx solid #fff;
+  border-right: 5rpx solid #fff;
+  transform: rotate(45deg);
+}
+
+/* —— 协议 —— */
+.lp-agree {
+  display: flex;
+  align-items: flex-start;
+  gap: 16rpx;
+  margin-top: 38rpx;
+}
+.lp-box {
+  flex: none;
+  width: 36rpx;
+  height: 36rpx;
+  margin-top: 4rpx;
+  border-radius: var(--r-xs);
+  border: 3rpx solid #d8d0c2;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lp-box.is-on {
+  border-color: var(--pop);
+  background: var(--pop);
+}
+.lp-check {
+  width: 16rpx;
+  height: 9rpx;
+  border-left: 4rpx solid #fff;
+  border-bottom: 4rpx solid #fff;
+  transform: rotate(-45deg) translateY(-2rpx);
+}
+.lp-agree-tx {
+  font-size: 22rpx;
+  line-height: 1.6;
+  color: var(--mut-strong);
+}
+.lp-link { color: var(--gold-deep); font-weight: 700; }
+
+/* —— 分隔 —— */
+.lp-divider {
+  display: flex;
+  align-items: center;
+  gap: 26rpx;
+  margin: 60rpx 0 40rpx;
+}
+.lp-ln { flex: 1; height: 2rpx; background: #e6ddcf; }
+.lp-or {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 23rpx;
+  letter-spacing: 2rpx;
+  font-weight: 700;
+  color: var(--gold-deep);
+}
+
+/* —— 微信 —— */
+.lp-wxbtn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18rpx;
+  padding: 30rpx;
+  border-radius: var(--r-md);
+  font-size: 30rpx;
+  font-weight: 800;
+  letter-spacing: 1rpx;
+}
+.ic-wx {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  background: #fff;
+  position: relative;
+}
+.ic-wx::before,
+.ic-wx::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  background: var(--wx);
+}
+.ic-wx::before {
+  width: 12rpx; height: 6rpx;
+  left: 8rpx; top: 13rpx;
+}
+.ic-wx::after {
+  width: 12rpx; height: 6rpx;
+  right: 8rpx; bottom: 13rpx;
+}
+
+/* —— 注册 —— */
+.lp-reg {
+  text-align: center;
+  margin-top: 40rpx;
+  font-size: 27rpx;
+  font-weight: 600;
+  color: var(--ink-deep);
+}
+.lp-reg-pop {
+  color: var(--pop);
+  font-weight: 800;
+  border-bottom: 3rpx solid var(--pop);
+  padding-bottom: 3rpx;
+}

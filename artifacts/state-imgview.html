@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>图片预览 · 家庭点菜</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-font-smoothing:antialiased; }
+  :root{
+    --paper:#fbf8f3; --ink:#2c241b; --mut:#9a8e7d;
+    --gold-deep:#b08949; --pop:#e8472a;
+    --serif:"Georgia","Times New Roman",serif;
+  }
+  body {
+    display:flex; align-items:center; justify-content:center;
+    min-height:100vh; background:#d9d2c7;
+    font-family:-apple-system,"SF Pro Text","Helvetica Neue",Helvetica,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  }
+  .phone {
+    position:relative; width:390px; height:844px;
+    background:#1a1410; border-radius:46px;
+    box-shadow:0 30px 70px rgba(60,45,30,.4), 0 0 0 11px #1b1714, 0 0 0 12px #2c2520;
+    overflow:hidden;
+  }
+  .status {
+    position:absolute; top:0; left:0; right:0; height:50px; z-index:60;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 30px 0 34px; color:#fff; font-size:15px; font-weight:600; pointer-events:none;
+  }
+  .status .right { display:flex; align-items:center; gap:7px; }
+  .notch { position:absolute; top:11px; left:50%; transform:translateX(-50%); width:118px; height:33px; background:#000; border-radius:20px; z-index:61; }
+
+  /* viewer canvas */
+  .viewer { position:absolute; inset:0; background:#1a1410; overflow:hidden; }
+  .viewer::before { content:""; position:absolute; inset:0; z-index:1;
+    background:radial-gradient(80% 55% at 50% 42%, rgba(232,71,42,.10), transparent 70%); pointer-events:none; }
+
+  /* top bar */
+  .vtop { position:absolute; top:58px; left:0; right:0; z-index:30;
+    display:flex; align-items:center; justify-content:space-between; padding:0 22px; }
+  .closebtn { width:44px; height:44px; border-radius:50%; background:rgba(255,255,255,.12);
+    backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,.16);
+    display:flex; align-items:center; justify-content:center; }
+  .pageind { font-family:var(--serif); font-size:16px; font-weight:700; letter-spacing:1px;
+    color:#fff; background:rgba(255,255,255,.12); backdrop-filter:blur(10px);
+    border:1px solid rgba(255,255,255,.16); padding:9px 18px; border-radius:30px; }
+  .pageind .cur { color:var(--pop); }
+  .menubtn { width:44px; height:44px; border-radius:50%; background:rgba(255,255,255,.12);
+    backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,.16);
+    display:flex; align-items:center; justify-content:center; }
+
+  /* big image */
+  .stage { position:absolute; top:0; left:0; right:0; bottom:0; z-index:10;
+    display:flex; align-items:center; justify-content:center; }
+  .bigwrap { position:relative; width:390px; display:flex; align-items:center; justify-content:center; }
+  .bigwrap img { width:390px; height:390px; object-fit:cover; display:block;
+    transform:scale(1.04); box-shadow:0 40px 90px rgba(0,0,0,.55); }
+  .bigcap { position:absolute; left:24px; right:24px; bottom:-66px; text-align:center; z-index:12; }
+  .bigcap .ttl { font-family:"PingFang SC","Microsoft YaHei",sans-serif; font-size:24px; font-weight:900;
+    color:#fff; letter-spacing:-.5px; }
+  .bigcap .sub { font-family:var(--serif); font-style:italic; font-size:13px; color:var(--gold-deep);
+    font-weight:700; margin-top:6px; letter-spacing:.5px; }
+
+  /* nav arrows */
+  .arrow { position:absolute; top:50%; transform:translateY(-50%); z-index:25;
+    width:40px; height:40px; border-radius:50%; background:rgba(255,255,255,.10);
+    backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,.14);
+    display:flex; align-items:center; justify-content:center; }
+  .arrow.l { left:14px; } .arrow.r { right:14px; }
+
+  /* bottom thumbnails + save */
+  .vbot { position:absolute; left:0; right:0; bottom:0; z-index:30; padding:0 24px 34px;
+    background:linear-gradient(180deg, rgba(26,20,16,0) 0%, rgba(26,20,16,.85) 38%, #16110d 100%); padding-top:50px; }
+  .thumbs { display:flex; gap:12px; justify-content:center; margin-bottom:20px; }
+  .thumb { width:62px; height:62px; border-radius:16px; overflow:hidden; position:relative;
+    border:2px solid transparent; opacity:.55; }
+  .thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+  .thumb.on { border-color:var(--pop); opacity:1; box-shadow:0 6px 18px rgba(232,71,42,.4); }
+  .savebtn { display:flex; align-items:center; justify-content:center; gap:9px;
+    background:var(--pop); color:#fff; font-size:16px; font-weight:800; letter-spacing:.5px;
+    height:54px; border-radius:18px; box-shadow:0 10px 26px rgba(232,71,42,.42); }
+
+  .home-ind { position:absolute; bottom:9px; left:50%; transform:translateX(-50%); width:134px; height:5px; border-radius:3px; background:#fff; opacity:.85; z-index:55; }
+  .thumb:active, .savebtn:active, .closebtn:active, .arrow:active { transform:scale(.96); }
+  .savebtn:active { transform:scale(.98); }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status">
+    <span>9:41</span>
+    <span class="right">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="#fff"/><rect x="5" y="4.5" width="3" height="7.5" rx="1" fill="#fff"/><rect x="10" y="2" width="3" height="10" rx="1" fill="#fff"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#fff" opacity=".4"/></svg>
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><path d="M8.5 2.5C11 2.5 13.2 3.5 14.8 5.1L8.5 11.4 2.2 5.1C3.8 3.5 6 2.5 8.5 2.5Z" fill="#fff"/></svg>
+      <svg width="26" height="13" viewBox="0 0 26 13" fill="none"><rect x="1" y="1" width="21" height="11" rx="3" stroke="#fff" stroke-width="1.2" opacity=".5"/><rect x="3" y="3" width="16" height="7" rx="1.5" fill="#fff"/><rect x="23.5" y="4.5" width="2" height="4" rx="1" fill="#fff" opacity=".6"/></svg>
+    </span>
+  </div>
+
+  <div class="viewer">
+    <div class="vtop">
+      <div class="closebtn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></div>
+      <div class="pageind"><span class="cur">1</span> / 3</div>
+      <div class="menubtn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><circle cx="5" cy="12" r="1.4" fill="#fff"/><circle cx="12" cy="12" r="1.4" fill="#fff"/><circle cx="19" cy="12" r="1.4" fill="#fff"/></svg></div>
+    </div>
+
+    <div class="stage">
+      <div class="bigwrap">
+        <img src="img/mapo-tofu.jpg" alt="麻婆豆腐">
+        <div class="bigcap">
+          <div class="ttl">麻婆豆腐</div>
+          <div class="sub">Tonight's Pick · 川菜 · 麻辣</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow l"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg></div>
+    <div class="arrow r"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></div>
+
+    <div class="vbot">
+      <div class="thumbs">
+        <div class="thumb on"><img src="img/mapo-tofu.jpg" alt=""></div>
+        <div class="thumb"><img src="img/tomato-egg.jpg" alt=""></div>
+        <div class="thumb"><img src="img/hongshao-pork.jpg" alt=""></div>
+      </div>
+      <div class="savebtn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 19h14"/></svg>
+        保存图片
+      </div>
+    </div>
+  </div>
+
+  <div class="home-ind"></div>
+</div>
+</body>
+</html>

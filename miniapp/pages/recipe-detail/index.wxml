@@ -1,0 +1,188 @@
+<wxs src="../../utils/cuisine.wxs" module="cuisine" />
+
+<!-- ============ 正常态 ============ -->
+<view class="rd-page" wx:if="{{recipe}}">
+  <scroll-view class="rd-scroll" scroll-y enhanced show-scrollbar="{{false}}">
+
+    <!-- ===== Hero 大图 ===== -->
+    <view class="rd-hero">
+      <image class="rd-hero-img" src="{{recipe.cover}}" mode="aspectFill" />
+      <view class="rd-hero-mask"></view>
+      <view class="rd-hero-bignum serif">{{recipe.heroChar}}</view>
+
+      <!-- 顶部导航：复用 nav-bar，标题留空仅返回 + 右侧收藏/记录槽 -->
+      <nav-bar title="" status-bar-height="{{statusBarHeight}}">
+        <view class="rd-nav-actions">
+          <view class="rd-cbtn tap-scale" bindtap="addMissingToCart">
+            <view class="rd-ic rd-ic-cart"></view>
+          </view>
+        </view>
+      </nav-bar>
+
+      <!-- Hero 文案 -->
+      <view class="rd-hero-body">
+        <text wx:if="{{recipe.sourceLabel}}" class="rd-tag">{{recipe.sourceLabel}}</text>
+        <view class="rd-hero-title title-stroke">{{recipe.title}}</view>
+        <view class="rd-hero-meta">
+          <text class="rd-m rd-m-solid" wx:if="{{recipe.cuisine}}">{{recipe.cuisine}}</text>
+          <text class="rd-m" wx:if="{{recipe.timeCost}}">{{recipe.timeCost}} 分钟</text>
+          <!-- 圆形份量 stepper -->
+          <view class="rd-srv">
+            <view class="rd-sbtn tap-scale" data-delta="{{-1}}" bindtap="changeServings">
+              <view class="rd-sbtn-minus"></view>
+            </view>
+            <text class="rd-sval">{{servings}} 人份</text>
+            <view class="rd-sbtn tap-scale" data-delta="{{1}}" bindtap="changeServings">
+              <view class="rd-sbtn-plus"></view>
+            </view>
+          </view>
+          <text class="rd-m" wx:if="{{recipe.tasteTags.length}}">{{recipe.tasteTags[0]}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- ===== Sheet ===== -->
+    <view class="rd-sheet">
+
+      <!-- 食材清单 -->
+      <view class="shead">
+        <view class="shead-main">
+          <view class="shead-bar"></view>
+          <view class="eyebrow">Ingredients</view>
+          <view class="shead-title">食材<text class="pop">清单</text></view>
+        </view>
+        <text class="seeall" wx:if="{{recipe.totalCount}}">家里有 {{recipe.haveCount}}/{{recipe.totalCount}}</text>
+      </view>
+
+      <view class="card rd-card" wx:if="{{recipe.ingredients.length}}">
+        <view class="rd-ing" wx:for="{{recipe.ingredients}}" wx:key="name">
+          <view class="rd-dot {{item.inStock ? 'have' : 'miss'}}"></view>
+          <view class="rd-icw">
+            <view class="rd-ic rd-ic-box"></view>
+          </view>
+          <view class="rd-iname">
+            <view class="rd-iname-h">{{item.name}}</view>
+            <view class="rd-note {{item.inStock ? '' : 'miss'}}">{{item.inStock ? '冰箱里有' : '待采购'}}</view>
+          </view>
+          <text class="rd-amt">{{item.amountText}} {{item.unit}}</text>
+        </view>
+
+        <view class="rd-ing-cart" wx:if="{{missCount > 0}}">
+          <view class="rd-cart-btn tap-scale" bindtap="addMissingToCart">
+            <view class="rd-ic rd-ic-cart2"></view>
+            <text>把</text>
+            <text class="rd-cnum">{{missCount}}</text>
+            <text>样缺的加入买菜清单</text>
+          </view>
+        </view>
+      </view>
+      <view class="card rd-card rd-empty-mini" wx:else>暂无食材信息</view>
+
+      <!-- 做法步骤 -->
+      <view class="shead">
+        <view class="shead-main">
+          <view class="shead-bar"></view>
+          <view class="eyebrow">Steps</view>
+          <view class="shead-title">做法<text class="pop">步骤</text></view>
+        </view>
+        <text class="seeall">按顺序出菜</text>
+      </view>
+
+      <view class="card rd-card" wx:if="{{recipe.steps.length}}">
+        <view class="rd-step" wx:for="{{recipe.steps}}" wx:key="index">
+          <view class="rd-sno {{index === 2 ? 'hot' : ''}} serif">{{index + 1}}</view>
+          <view class="rd-stx">
+            <view class="rd-stx-p">{{item.text}}</view>
+            <image wx:if="{{item.image}}" class="rd-step-img" src="{{item.image}}" mode="widthFix"
+              bindtap="previewStepImage" data-url="{{item.image}}" />
+            <view wx:if="{{item.tip}}" class="rd-tip">
+              <view class="rd-ic rd-ic-star"></view>
+              <text>{{item.tip}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="card rd-card rd-empty-mini" wx:else>暂无步骤信息</view>
+
+      <!-- 家人评价 -->
+      <view class="shead">
+        <view class="shead-main">
+          <view class="shead-bar"></view>
+          <view class="eyebrow">Family Notes</view>
+          <view class="shead-title">家人<text class="pop">评价</text></view>
+        </view>
+        <text class="seeall" wx:if="{{recipe.cookCount}}">做过 {{recipe.cookCount}} 次</text>
+      </view>
+
+      <view class="card rd-card">
+        <block wx:if="{{recipe.reviews.length}}">
+          <view class="rd-rev" wx:for="{{recipe.reviews}}" wx:key="index">
+            <view class="rd-av" style="background: {{index % 2 === 0 ? 'var(--pine)' : 'var(--gold-deep)'}}">{{item.author[0]}}</view>
+            <view class="rd-rc">
+              <view class="rd-rtop">
+                <text class="rd-who">{{item.author}}</text>
+                <text class="rd-when">{{item.when || ''}}</text>
+              </view>
+              <view class="rd-stars">
+                <view class="rd-star {{star <= item.score ? 'on' : ''}}" wx:for="{{[1,2,3,4,5]}}" wx:for-item="star" wx:key="*this"></view>
+              </view>
+              <view class="rd-cm">{{item.content}}</view>
+            </view>
+          </view>
+        </block>
+
+        <!-- 写评价入口 -->
+        <view class="rd-rev-entry {{recipe.reviews.length ? '' : 'no-top'}}" bindtap="writeReview">
+          <view class="rd-meav">我</view>
+          <view class="rd-fakein ellipsis">我也做了 · 写两句给家人看看…</view>
+          <view class="rd-gobtn tap-scale">写评价</view>
+        </view>
+      </view>
+
+    </view>
+  </scroll-view>
+
+  <!-- ===== 底部 footbar ===== -->
+  <view class="rd-footbar safe-bottom">
+    <view class="rd-ghost-btn tap-scale" bindtap="recordCook">
+      <view class="rd-ic rd-ic-check"></view>
+      <text>记录做过</text>
+    </view>
+    <view class="rd-primary-btn tap-scale" bindtap="addToToday">
+      <view class="rd-ic rd-ic-plus"></view>
+      <text>加入今日菜单</text>
+    </view>
+    <view class="rd-cook-btn tap-scale" bindtap="startCook">
+      <view class="rd-ic rd-ic-play"></view>
+      <text>做菜</text>
+    </view>
+  </view>
+</view>
+
+<!-- ============ 加载骨架 ============ -->
+<view class="rd-page" wx:if="{{loading}}">
+  <view class="rd-hero rd-hero-skel">
+    <nav-bar title="" status-bar-height="{{statusBarHeight}}"></nav-bar>
+  </view>
+  <view class="rd-sheet">
+    <view class="card rd-card">
+      <view class="rd-skel-row" wx:for="{{skeletonRows}}" wx:key="*this">
+        <view class="rd-skel-dot skeleton shimmer"></view>
+        <view class="rd-skel-line skeleton shimmer"></view>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- ============ 空态 ============ -->
+<view class="rd-page rd-empty-page" wx:if="{{!loading && !recipe}}">
+  <nav-bar title="菜谱详情" status-bar-height="{{statusBarHeight}}"></nav-bar>
+  <state-empty
+    type="search"
+    title="菜谱纸没找到"
+    desc="可能已经删除，或者链接里的菜谱编号不对。"
+    cta="返回菜谱库"
+    cta-style="pop"
+    bind:action="goBack"
+  ></state-empty>
+</view>

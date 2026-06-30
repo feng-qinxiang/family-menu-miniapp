@@ -1,0 +1,162 @@
+<view class="container menu-page">
+  <!-- HERO 今日餐桌 -->
+  <view class="m-hero g-fade-up">
+    <image class="m-hero-img" src="{{heroImage}}" mode="aspectFill" />
+    <view class="m-hero-mask"></view>
+    <view class="m-hero-bignum">{{totalCount || 0}}</view>
+    <view class="m-hero-top">
+      <view class="m-hero-date">{{todayLabel}} · {{mealTimeLabel}}</view>
+      <view class="m-hd-add tap-scale" bindtap="goAddRecipe">
+        <view class="m-hd-add-main"><text class="m-plus">+</text></view>
+        <view class="m-hd-add-label">点菜</view>
+      </view>
+    </view>
+    <view class="m-hero-body">
+      <text class="m-hero-tag">Tonight's Table</text>
+      <view class="m-hero-title title-stroke">今日<text class="pop">餐桌</text></view>
+      <view class="m-hero-sub">{{totalCount ? '已排 ' + totalCount + ' 道菜，准备开饭' : '餐桌还空着，先去点菜'}}</view>
+    </view>
+  </view>
+
+  <view class="m-sheet">
+    <!-- segment: 今日 / 本周 (§3) -->
+    <view class="mn-seg">
+      <view class="mn-seg-item {{view === 'today' ? 'on' : ''}}" data-view="today" bindtap="switchView">今日三餐</view>
+      <view class="mn-seg-item {{view === 'week' ? 'on' : ''}}" data-view="week" bindtap="switchView">本周</view>
+    </view>
+
+    <block wx:if="{{view === 'today'}}">
+    <!-- 统计卡 -->
+    <view class="m-stat-card g-fade-up g-d1">
+      <view class="m-stat-row">
+        <view class="m-stat-cell">
+          <view class="m-stat-num">{{totalCount || 0}}</view>
+          <view class="m-stat-label">上桌菜</view>
+        </view>
+        <view class="m-stat-cell">
+          <view class="m-stat-num">{{totalTime || '?'}}<text class="m-stat-u">分</text></view>
+          <view class="m-stat-label">厨房耗时</view>
+        </view>
+        <view class="m-stat-cell">
+          <view class="m-stat-num">{{totalServings || '?'}}<text class="m-stat-u">人</text></view>
+          <view class="m-stat-label">适合人数</view>
+        </view>
+      </view>
+      <view class="m-shop-progress" wx:if="{{shoppingTotal}}">
+        <view class="m-shop-head">
+          <text>备菜进度</text>
+          <text class="m-shop-num">{{shoppingDone}} / {{shoppingTotal}}</text>
+        </view>
+        <view class="m-shop-bar">
+          <view class="m-shop-bar-fill" style="width: {{shoppingPercent}}%;"></view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 快捷三入口 -->
+    <view class="m-quick-row g-fade-up g-d2">
+      <view class="m-quick-card tap-scale" bindtap="goShopping">
+        <view class="m-quick-icon"><view class="m-ic-basket"></view></view>
+        <view class="m-quick-title">菜篮子</view>
+        <view class="m-quick-sub">{{shoppingPending ? shoppingPending + ' 样待买' : '食材已齐'}}</view>
+      </view>
+      <view class="m-quick-card tap-scale" bindtap="goWeekly">
+        <view class="m-quick-icon"><view class="m-ic-cal"></view></view>
+        <view class="m-quick-title">周菜单</view>
+        <view class="m-quick-sub">{{weeklyDays.length ? weeklyDays.length + ' 天计划' : '去排一周'}}</view>
+      </view>
+      <view class="m-quick-card tap-scale" bindtap="goPantry">
+        <view class="m-quick-icon"><view class="m-ic-fridge"></view></view>
+        <view class="m-quick-title">冰箱库存</view>
+        <view class="m-quick-sub">{{pantryReadyCount ? pantryReadyCount + ' 项可抵扣' : '查看现有食材'}}</view>
+      </view>
+    </view>
+
+    <!-- 餐次分组 -->
+    <block wx:if="{{mealGroups.length}}">
+      <view class="shead">
+        <view class="shead-main">
+          <view class="shead-bar"></view>
+          <view class="eyebrow">Plating</view>
+          <view class="shead-title">餐次<text class="pop">摆盘</text></view>
+        </view>
+        <text class="seeall">{{totalCount}} 道菜</text>
+      </view>
+
+      <view class="m-meal-block" wx:for="{{mealGroups}}" wx:for-item="group" wx:key="meal">
+        <view class="m-meal-label">{{group.label}} <text class="n">{{group.items.length}} 道</text></view>
+        <view
+          class="m-row tap-scale g-fade-up g-d{{index % 5 + 1}}"
+          wx:for="{{group.items}}"
+          wx:for-item="dish"
+          wx:key="recipeId"
+          data-id="{{dish.recipeId}}"
+          bindtap="goDetail"
+        >
+          <image class="m-thumb" src="{{dish.dishImage}}" mode="aspectFill" />
+          <view class="m-rmid">
+            <view class="m-rname">{{dish.recipe.title}}</view>
+            <view class="m-rsub">
+              <text class="cz">{{dish.recipe.cuisine || '家常'}}</text>
+              <text class="dot"></text>
+              <text>{{dish.recipe.timeCost || '?'}} 分钟</text>
+              <text class="dot"></text>
+              <text>{{dish.recipe.servings || '?'}} 人</text>
+            </view>
+          </view>
+          <view class="m-remove" data-id="{{dish.recipeId}}" catchtap="removeItem">撤</view>
+          <view class="m-acts">
+            <view class="m-act m-act-cook tap-scale" data-id="{{dish.recipeId}}" catchtap="startCook">开始做</view>
+            <view class="m-act m-act-done tap-scale" data-id="{{dish.recipeId}}" catchtap="markCooked">完成</view>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <empty-state
+      wx:elif="{{!loading}}"
+      title="餐桌还没有菜"
+      desc="从首页随机一道，或者去菜谱库挑几道常做菜。"
+      actionText="去点菜"
+      bind:action="goAddRecipe"
+    />
+    </block>
+
+    <!-- 本周视图 -->
+    <block wx:if="{{view === 'week'}}">
+    <view class="card-dark m-week-card g-fade-up g-d1" wx:if="{{weeklyDays.length}}">
+      <view class="deco-circle"></view>
+      <view class="m-week-head">
+        <view>
+          <view class="m-week-eyebrow">The Week Ahead</view>
+          <view class="m-week-title">未来几天<text class="pop">吃什么</text></view>
+        </view>
+        <text class="m-week-link" bindtap="genWeekly">重排 ›</text>
+      </view>
+      <view class="m-week-list">
+        <view class="m-wk-item tap-scale" wx:for="{{weeklyDays}}" wx:key="date" bindtap="goWeekly">
+          <view class="m-wk-day">
+            <view class="d1">{{item.d1}}</view>
+            <view class="d2">{{item.d2}}</view>
+          </view>
+          <view class="m-wk-recipe">{{item.recipeText}}</view>
+          <view class="m-wk-count">{{item.recipeCount}} 道</view>
+        </view>
+      </view>
+    </view>
+    <empty-state
+      wx:elif="{{!loading}}"
+      title="本周还没排"
+      desc="一键按家庭偏好生成 7 天计划"
+      actionText="生成本周菜单"
+      bind:action="genWeekly"
+    />
+    </block>
+  </view>
+
+  <!-- 底部固定行动条：一键生成购物清单 (§3) -->
+  <view class="m-fab-bar safe-bottom" wx:if="{{view === 'today' && totalCount}}">
+    <view class="m-fab-tip">{{shoppingPending ? shoppingPending + ' 样待买' : '清单已齐'}}</view>
+    <view class="m-fab-btn tap-scale" bindtap="buildShopping">一键生成购物清单 ›</view>
+  </view>
+</view>

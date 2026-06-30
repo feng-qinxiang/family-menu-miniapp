@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>家庭点菜 · 创建家庭</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-font-smoothing:antialiased; }
+  :root{
+    --paper:#fbf8f3; --paper-2:#f0ebe2;
+    --ink:#2c241b; --ink-deep:#3a2e23;
+    --mut:#9a8e7d; --mut-2:#b3a795; --mut-strong:#7a6e5d;
+    --gold:#f4d9a8; --gold-deep:#b08949;
+    --pop:#e8472a;
+    --pop-soft:#fdece6;
+    --serif:"Georgia","Times New Roman",serif;
+  }
+  body {
+    display:flex; align-items:center; justify-content:center;
+    min-height:100vh; background:#d9d2c7;
+    font-family:-apple-system,"SF Pro Text","Helvetica Neue",Helvetica,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  }
+  .phone {
+    position:relative; width:390px; height:844px;
+    background:var(--paper); border-radius:46px;
+    box-shadow:0 30px 70px rgba(60,45,30,.4), 0 0 0 11px #1b1714, 0 0 0 12px #2c2520;
+    overflow:hidden;
+  }
+  .status {
+    position:absolute; top:0; left:0; right:0; height:50px; z-index:60;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 30px 0 34px; color:#fff; font-size:15px; font-weight:600; pointer-events:none;
+  }
+  .status .right { display:flex; align-items:center; gap:7px; }
+  .notch { position:absolute; top:11px; left:50%; transform:translateX(-50%); width:118px; height:33px; background:#1b1714; border-radius:20px; z-index:61; }
+  .scroll { position:absolute; inset:0; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch; }
+  .scroll::-webkit-scrollbar { display:none; }
+  .tapscale { transition:transform .12s ease; }
+  .tapscale:active { transform:scale(.97); }
+
+  /* hero */
+  .hero { position:relative; height:288px; background:url('img/hongshao-pork.jpg') center/cover no-repeat; }
+  .hero::before { content:""; position:absolute; inset:0; z-index:1;
+    background:radial-gradient(120% 80% at 50% 0%, rgba(255,180,80,.16), transparent 55%); mix-blend-mode:overlay; }
+  .hero::after { content:""; position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(20,14,8,.55) 0%, rgba(20,14,8,.1) 34%, rgba(20,14,8,.35) 64%, rgba(20,14,8,.92) 100%); }
+  .hero-bignum { position:absolute; top:42px; right:6px; z-index:2; font-family:var(--serif); font-size:190px; font-weight:700; line-height:1; color:rgba(255,255,255,.07); pointer-events:none; }
+  .navback { position:absolute; top:60px; left:24px; z-index:12; width:44px; height:44px; border-radius:50%;
+    background:rgba(34,26,18,.5); backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,.2);
+    display:flex; align-items:center; justify-content:center; }
+  .hero-body { position:absolute; left:24px; right:24px; bottom:44px; z-index:10; color:#fff; }
+  .tag { display:inline-block; font-family:var(--serif); font-style:italic; font-size:12px; letter-spacing:1.5px; font-weight:700;
+    color:#fff; background:var(--pop); padding:6px 14px; border-radius:4px; }
+  .hero-title { font-size:50px; line-height:.9; font-weight:900; letter-spacing:-2.5px; margin:15px 0 0;
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    color:transparent; -webkit-text-stroke:1.6px #fff; text-stroke:1.6px #fff; }
+  .hero-title .pop { color:var(--pop); -webkit-text-stroke:0; text-stroke:0; }
+
+  /* sheet */
+  .sheet { position:relative; margin-top:-26px; background:var(--paper); border-radius:28px 28px 0 0; padding:0 24px 40px; z-index:20; }
+
+  /* avatar upload */
+  .ava-wrap { display:flex; flex-direction:column; align-items:center; margin-top:-44px; position:relative; z-index:30; }
+  .ava { width:104px; height:104px; border-radius:32px; background:#fff; border:2.5px dashed #d9cdb8;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px;
+    box-shadow:0 2px 6px rgba(60,40,20,.06), 0 18px 40px rgba(120,70,30,.16); position:relative; }
+  .ava .cam { width:38px; height:38px; border-radius:50%; background:var(--pop-soft); display:flex; align-items:center; justify-content:center; }
+  .ava .ct { font-size:11px; font-weight:700; color:var(--mut-strong); letter-spacing:.3px; }
+  .ava .badge { position:absolute; right:-4px; bottom:-4px; width:32px; height:32px; border-radius:50%; background:var(--pop);
+    border:3px solid var(--paper); display:flex; align-items:center; justify-content:center; box-shadow:0 6px 14px rgba(232,71,42,.4); }
+  .ava-hint { font-size:12px; color:var(--mut-strong); margin-top:12px; font-weight:500; }
+
+  /* form */
+  .form { margin-top:26px; }
+  .field { margin-bottom:18px; }
+  .field label { display:block; font-size:11px; letter-spacing:1px; font-weight:800; text-transform:uppercase; color:var(--gold-deep); margin-bottom:9px; }
+  .field .inp { display:flex; align-items:center; gap:11px; background:#fff; border:1.5px solid #ece4d6; border-radius:14px; padding:15px 16px; }
+  .field .inp.focus { border-color:var(--pop); box-shadow:0 0 0 3px rgba(232,71,42,.08); }
+  .field .inp svg { flex:none; }
+  .field .inp .txt { font-size:16px; font-weight:700; color:var(--ink); }
+  .field .inp .ph { color:var(--mut-2); font-weight:600; }
+  .field .inp .cur { width:2px; height:20px; background:var(--pop); margin-left:-5px; border-radius:1px; }
+  .field .inp .chev { margin-left:auto; }
+  .field .opt-tag { font-size:11px; font-weight:600; color:var(--mut); text-transform:none; letter-spacing:0; }
+
+  .createbtn { width:100%; margin-top:8px; background:var(--pop); color:#fff; border:none; border-radius:16px; padding:17px; font-size:16.5px; font-weight:800; letter-spacing:.5px;
+    display:flex; align-items:center; justify-content:center; gap:9px; box-shadow:0 2px 6px rgba(180,40,20,.3), 0 14px 30px rgba(232,71,42,.36); font-family:inherit; }
+
+  .tipcard { display:flex; align-items:flex-start; gap:11px; margin-top:20px; background:var(--pop-soft); border-radius:16px; padding:14px 15px; }
+  .tipcard .ic { flex:none; margin-top:1px; }
+  .tipcard .tx { font-size:12.5px; color:#8a5040; line-height:1.55; font-weight:500; }
+  .tipcard .tx b { color:var(--pop); font-weight:800; }
+
+  .joinlink { text-align:center; margin-top:26px; }
+  .joinlink .small { font-size:13px; color:var(--mut-strong); }
+  .joinlink a { font-size:14px; font-weight:800; color:var(--ink-deep); text-decoration:none; border-bottom:2px solid var(--gold); padding-bottom:2px; margin-left:5px; }
+
+  .home-ind { position:absolute; bottom:9px; left:50%; transform:translateX(-50%); width:134px; height:5px; border-radius:3px; background:#2c241b; opacity:.85; z-index:55; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status">
+    <span>9:41</span>
+    <span class="right">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="#fff"/><rect x="5" y="4.5" width="3" height="7.5" rx="1" fill="#fff"/><rect x="10" y="2" width="3" height="10" rx="1" fill="#fff"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#fff" opacity=".4"/></svg>
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><path d="M8.5 2.5C11 2.5 13.2 3.5 14.8 5.1L8.5 11.4 2.2 5.1C3.8 3.5 6 2.5 8.5 2.5Z" fill="#fff"/></svg>
+      <svg width="26" height="13" viewBox="0 0 26 13" fill="none"><rect x="1" y="1" width="21" height="11" rx="3" stroke="#fff" stroke-width="1.2" opacity=".5"/><rect x="3" y="3" width="16" height="7" rx="1.5" fill="#fff"/><rect x="23.5" y="4.5" width="2" height="4" rx="1" fill="#fff" opacity=".6"/></svg>
+    </span>
+  </div>
+
+  <div class="scroll">
+    <div class="hero">
+      <div class="hero-bignum">02</div>
+      <div class="navback tapscale">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+      </div>
+      <div class="hero-body">
+        <span class="tag">新建一家人</span>
+        <div class="hero-title">创建你们<span class="pop">家</span>的厨房</div>
+      </div>
+    </div>
+
+    <div class="sheet">
+      <div class="ava-wrap">
+        <div class="ava tapscale">
+          <div class="cam">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e8472a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 012-2h2l1.5-2h7L18 6h2a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/><circle cx="12" cy="13" r="3.5"/></svg>
+          </div>
+          <span class="ct">家庭头像</span>
+          <div class="badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          </div>
+        </div>
+        <div class="ava-hint">给你们的小家选一张照片</div>
+      </div>
+
+      <div class="form">
+        <div class="field">
+          <label>家庭名称</label>
+          <div class="inp focus">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#e8472a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5L12 4l8 6.5"/><path d="M6 9.5V20h12V9.5"/><path d="M10 20v-4h4v4"/></svg>
+            <span class="txt ph">张家厨房</span><span class="cur"></span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>所在地区 <span class="opt-tag">（选填）</span></label>
+          <div class="inp">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#b3a795" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.4 7-11a7 7 0 10-14 0c0 4.6 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+            <span class="txt ph">选择城市，方便找应季食材</span>
+            <span class="chev"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b3a795" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+          </div>
+        </div>
+
+        <button class="createbtn tapscale">创建家庭
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
+
+        <div class="tipcard">
+          <span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e8472a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 00-4 10.5c.6.6 1 1.3 1 2.1h6c0-.8.4-1.5 1-2.1A6 6 0 0012 3z"/></svg></span>
+          <div class="tx">创建后会生成一个<b>专属邀请码</b>，把它发给家人，大家就能一起点菜、共享买菜清单啦。</div>
+        </div>
+      </div>
+
+      <div class="joinlink">
+        <span class="small">家人已经建好家了？</span><a href="#" class="tapscale">去加入 ›</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="home-ind"></div>
+</div>
+</body>
+</html>

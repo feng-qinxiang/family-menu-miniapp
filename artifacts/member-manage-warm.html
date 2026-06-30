@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>家庭成员 · 管理</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-font-smoothing:antialiased; }
+  :root{
+    --paper:#fbf8f3; --paper-2:#f0ebe2;
+    --ink:#2c241b; --ink-deep:#3a2e23;
+    --mut:#9a8e7d; --mut-2:#b3a795; --mut-strong:#7a6e5d;
+    --gold:#f4d9a8; --gold-deep:#b08949;
+    --pop:#e8472a; --pop-soft:#fdece6;
+    --pine:#2f4a3a;
+    --serif:"Georgia","Times New Roman",serif;
+  }
+  body {
+    display:flex; align-items:center; justify-content:center;
+    min-height:100vh; background:#d9d2c7;
+    font-family:-apple-system,"SF Pro Text","Helvetica Neue",Helvetica,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  }
+  .phone {
+    position:relative; width:390px; height:844px;
+    background:var(--paper); border-radius:46px;
+    box-shadow:0 30px 70px rgba(60,45,30,.4), 0 0 0 11px #1b1714, 0 0 0 12px #2c2520;
+    overflow:hidden;
+  }
+  .status {
+    position:absolute; top:0; left:0; right:0; height:50px; z-index:60;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 30px 0 34px; color:var(--ink); font-size:15px; font-weight:600; pointer-events:none;
+  }
+  .status .right { display:flex; align-items:center; gap:7px; }
+  .notch { position:absolute; top:11px; left:50%; transform:translateX(-50%); width:118px; height:33px; background:#1b1714; border-radius:20px; z-index:61; }
+  .scroll { position:absolute; inset:0; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch; }
+  .scroll::-webkit-scrollbar { display:none; }
+
+  /* nav */
+  .nav { display:flex; align-items:center; justify-content:space-between; padding:62px 24px 8px; }
+  .backbtn { width:44px; height:44px; border-radius:50%; background:var(--ink-deep); display:flex; align-items:center; justify-content:center; box-shadow:0 6px 16px rgba(58,46,35,.28); }
+  .nav .navttl { font-size:13px; font-weight:700; color:var(--mut-strong); letter-spacing:.5px; }
+  .nav .navsp { width:44px; height:44px; }
+
+  .head { padding:6px 24px 18px; }
+  .head .eyebrow { font-family:var(--serif); font-style:italic; font-size:13px; letter-spacing:1px; color:var(--gold-deep); font-weight:700; }
+  .head h1 { font-size:40px; font-weight:900; color:var(--ink); letter-spacing:-2px; margin-top:5px; line-height:.95;
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; }
+  .head h1 .pop { color:var(--pop); }
+
+  .pad { padding:0 24px; }
+
+  /* family card */
+  .famcard { margin:6px 0 4px; background:var(--ink-deep); border-radius:24px; padding:22px 22px 20px; color:var(--paper); position:relative; overflow:hidden; }
+  .famcard::after { content:""; position:absolute; right:-34px; top:-34px; width:150px; height:150px; border-radius:50%; background:rgba(232,71,42,.18); }
+  .famcard .ftop { display:flex; align-items:center; gap:14px; position:relative; z-index:2; }
+  .famcard .femoji { width:54px; height:54px; border-radius:16px; background:var(--gold-deep); display:flex; align-items:center; justify-content:center; font-size:28px; flex:none; box-shadow:0 4px 12px rgba(0,0,0,.25); }
+  .famcard .feyebrow { font-family:var(--serif); font-style:italic; font-size:12px; letter-spacing:1px; color:var(--gold); font-weight:700; }
+  .famcard h3 { font-size:25px; font-weight:900; margin-top:3px; letter-spacing:-.5px; font-family:"PingFang SC","Microsoft YaHei",sans-serif; }
+  .famcard .fbot { display:flex; align-items:center; justify-content:space-between; margin-top:18px; padding-top:16px; border-top:1px solid rgba(255,255,255,.13); position:relative; z-index:2; }
+  .famcard .invite { }
+  .famcard .invite .cap { font-size:11px; color:rgba(255,255,255,.55); letter-spacing:.8px; text-transform:uppercase; font-family:var(--serif); font-style:italic; }
+  .famcard .invite .code { font-size:22px; font-weight:900; letter-spacing:4px; margin-top:3px; color:#fff; font-family:var(--serif); }
+  .famcard .members-n { display:flex; align-items:center; gap:7px; font-size:13px; font-weight:700; color:#fff; background:rgba(255,255,255,.14); padding:9px 15px; border-radius:30px; }
+
+  .shead { display:flex; align-items:flex-end; justify-content:space-between; margin:28px 0 14px; }
+  .shead > div:first-child { position:relative; padding-left:15px; }
+  .shead > div:first-child::before { content:""; position:absolute; left:0; top:3px; bottom:3px; width:4px; border-radius:3px; background:var(--pop); }
+  .shead .eyebrow { font-family:var(--serif); font-style:italic; font-size:12px; letter-spacing:1px; color:var(--gold-deep); font-weight:700; }
+  .shead h2 { font-size:24px; font-weight:900; color:var(--ink); letter-spacing:-1px; margin-top:4px;
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; line-height:.96; }
+  .shead .cnt { font-size:13px; color:var(--mut-strong); font-weight:700; padding-bottom:3px; }
+
+  /* member rows */
+  .mlist { background:#fff; border-radius:22px; padding:4px 16px; box-shadow:0 2px 6px rgba(60,40,20,.06), 0 18px 40px rgba(120,70,30,.14); border:1px solid #f1ece2; }
+  .mrow { display:flex; align-items:center; gap:14px; padding:15px 0; border-bottom:1px solid #efe9df; }
+  .mrow:last-child { border-bottom:none; }
+  .mrow .avt { width:50px; height:50px; border-radius:16px; flex:none; display:flex; align-items:center; justify-content:center; color:#fff; font-size:19px; font-weight:800; letter-spacing:.5px; font-family:"PingFang SC","Microsoft YaHei",sans-serif; }
+  .mrow .avt.a-dad { background:var(--pine); }
+  .mrow .avt.a-mom { background:var(--gold-deep); }
+  .mrow .avt.a-grandma { background:var(--ink-deep); }
+  .mrow .avt.a-kid { background:var(--pop); }
+  .mend { text-align:center; color:var(--mut-strong); font-size:12px; font-weight:600; letter-spacing:.5px; margin:16px 0 4px; position:relative; }
+  .mend::before, .mend::after { content:""; position:absolute; top:50%; width:54px; height:1px; background:#e3dccf; }
+  .mend::before { left:18%; } .mend::after { right:18%; }
+  .mrow .mmid { flex:1; min-width:0; }
+  .mrow .mname { display:flex; align-items:center; gap:8px; }
+  .mrow .mname h4 { font-size:16.5px; font-weight:800; color:var(--ink); letter-spacing:-.3px; }
+  .badge { font-size:10px; font-weight:800; padding:3px 9px; border-radius:6px; letter-spacing:.5px; }
+  .badge.admin { color:#fff; background:var(--pop); }
+  .badge.member { color:var(--gold-deep); background:var(--pop-soft); background:#f3ecdc; }
+  .mrow .msub { font-size:12px; color:var(--mut-strong); margin-top:5px; }
+  .mrow .remove { width:38px; height:38px; border-radius:12px; background:var(--paper-2); flex:none; display:flex; align-items:center; justify-content:center; }
+  .mrow .self { font-size:11px; font-weight:700; color:var(--mut-strong); flex:none; padding:6px 11px; background:var(--paper-2); border-radius:10px; }
+
+  /* invite button */
+  .footer { padding:24px; position:absolute; bottom:0; left:0; right:0; background:linear-gradient(180deg, rgba(251,248,243,0), var(--paper) 32%); z-index:40; }
+  .invbtn { width:100%; height:56px; border:none; background:var(--pop); color:#fff; font-size:16px; font-weight:800; border-radius:18px; display:flex; align-items:center; justify-content:center; gap:9px; box-shadow:0 8px 22px rgba(232,71,42,.4); font-family:inherit; }
+
+  .backbtn:active, .members-n:active, .remove:active, .invbtn:active { transform:scale(.97); }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status">
+    <span>9:41</span>
+    <span class="right">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="#2c241b"/><rect x="5" y="4.5" width="3" height="7.5" rx="1" fill="#2c241b"/><rect x="10" y="2" width="3" height="10" rx="1" fill="#2c241b"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#2c241b" opacity=".4"/></svg>
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><path d="M8.5 2.5C11 2.5 13.2 3.5 14.8 5.1L8.5 11.4 2.2 5.1C3.8 3.5 6 2.5 8.5 2.5Z" fill="#2c241b"/></svg>
+      <svg width="26" height="13" viewBox="0 0 26 13" fill="none"><rect x="1" y="1" width="21" height="11" rx="3" stroke="#2c241b" stroke-width="1.2" opacity=".5"/><rect x="3" y="3" width="16" height="7" rx="1.5" fill="#2c241b"/><rect x="23.5" y="4.5" width="2" height="4" rx="1" fill="#2c241b" opacity=".6"/></svg>
+    </span>
+  </div>
+
+  <div class="scroll">
+    <div class="nav">
+      <div class="backbtn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fbf8f3" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></div>
+      <div class="navttl">家庭管理</div>
+      <div class="navsp"></div>
+    </div>
+
+    <div class="head">
+      <div class="eyebrow">一家人在一起</div>
+      <h1>家庭<span class="pop">成员</span></h1>
+    </div>
+
+    <div class="pad">
+      <div class="famcard">
+        <div class="ftop">
+          <div class="femoji"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5L12 4l8 6.5"/><path d="M6 9.5V20h12V9.5"/><path d="M10 20v-5h4v5"/></svg></div>
+          <div>
+            <div class="feyebrow">咱家的厨房</div>
+            <h3>张家厨房</h3>
+          </div>
+        </div>
+        <div class="fbot">
+          <div class="invite">
+            <div class="cap">邀请码</div>
+            <div class="code">836295</div>
+          </div>
+          <div class="members-n">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.2"/><path d="M2 19c0-3.3 3-6 7-6s7 2.7 7 6" stroke-linecap="round"/><path d="M16 6.2a3 3 0 010 5.6M22 19c0-2.6-1.6-4.8-4-5.6" stroke-linecap="round"/></svg>
+            共 4 人
+          </div>
+        </div>
+      </div>
+
+      <div class="shead">
+        <div>
+          <div class="eyebrow">都是一家人</div>
+          <h2>成员列表</h2>
+        </div>
+        <span class="cnt">4 位成员</span>
+      </div>
+
+      <div class="mlist">
+        <div class="mrow">
+          <div class="avt a-dad">爸</div>
+          <div class="mmid">
+            <div class="mname"><h4>张爸爸</h4><span class="badge admin">管理员</span></div>
+            <div class="msub">2024 年 3 月加入</div>
+          </div>
+          <div class="self">本人</div>
+        </div>
+        <div class="mrow">
+          <div class="avt a-mom">妈</div>
+          <div class="mmid">
+            <div class="mname"><h4>张妈妈</h4><span class="badge member">成员</span></div>
+            <div class="msub">2024 年 3 月加入</div>
+          </div>
+          <div class="remove"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b08949" stroke-width="2" stroke-linecap="round"><path d="M5 7h14M9 7V5h6v2M7 7l1 13h8l1-13"/></svg></div>
+        </div>
+        <div class="mrow">
+          <div class="avt a-grandma">奶</div>
+          <div class="mmid">
+            <div class="mname"><h4>奶奶</h4><span class="badge member">成员</span></div>
+            <div class="msub">2024 年 5 月加入</div>
+          </div>
+          <div class="remove"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b08949" stroke-width="2" stroke-linecap="round"><path d="M5 7h14M9 7V5h6v2M7 7l1 13h8l1-13"/></svg></div>
+        </div>
+        <div class="mrow">
+          <div class="avt a-kid">张</div>
+          <div class="mmid">
+            <div class="mname"><h4>小张</h4><span class="badge member">成员</span></div>
+            <div class="msub">2024 年 9 月加入</div>
+          </div>
+          <div class="remove"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b08949" stroke-width="2" stroke-linecap="round"><path d="M5 7h14M9 7V5h6v2M7 7l1 13h8l1-13"/></svg></div>
+        </div>
+      </div>
+      <div class="mend">全家都在这儿了</div>
+      <div style="height:96px"></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <button class="invbtn">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><circle cx="9" cy="8" r="3.4"/><path d="M2.5 19c0-3.2 2.9-5.8 6.5-5.8"/><path d="M18 8v6M21 11h-6"/></svg>
+      邀请新成员
+    </button>
+  </div>
+</div>
+</body>
+</html>

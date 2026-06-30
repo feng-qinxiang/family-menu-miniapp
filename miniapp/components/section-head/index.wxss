@@ -1,0 +1,40 @@
+/* components/section-head/index.wxss
+ * 组件特有样式。.shead / .shead-bar / .eyebrow / .shead-title / .seeall 已在 app.wxss 定义，
+ * 这里只补：组件自身布局收口 + 右侧箭头（纯 WXSS 绘制，避免引图标库）。
+ * addGlobalClass:true 已开启，全局工具类可直接命中。
+ */
+.sh-comp {
+  /* 组件内复用全局 .shead，但允许调用方通过外层包裹覆盖外边距 */
+  align-items: flex-end;
+}
+
+/* 右侧箭头：用两条斜线拼一个 ">" */
+.seeall {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+}
+.seeall-arrow {
+  position: relative;
+  width: 18rpx;
+  height: 22rpx;
+  flex: none;
+}
+.arrow-line {
+  position: absolute;
+  left: 2rpx;
+  width: 14rpx;
+  height: 3rpx;
+  border-radius: 3rpx;
+  background: var(--gold-deep);
+}
+.arrow-line.al1 {
+  top: 6rpx;
+  transform: rotate(45deg);
+  transform-origin: left center;
+}
+.arrow-line.al2 {
+  bottom: 6rpx;
+  transform: rotate(-45deg);
+  transform-origin: left center;
+}

@@ -1,0 +1,8 @@
+{
+  "navigationStyle": "custom",
+  "navigationBarTitleText": "搜索",
+  "backgroundColor": "#fbf8f3",
+  "usingComponents": {
+    "state-empty": "/components/state-empty/index"
+  }
+}

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我们家的口味 · 偏好画像</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-font-smoothing:antialiased; }
+  :root{
+    --paper:#fbf8f3; --paper-2:#f0ebe2;
+    --ink:#2c241b; --ink-deep:#3a2e23;
+    --mut:#9a8e7d; --mut-strong:#7a6e5d;
+    --gold:#f4d9a8; --gold-deep:#b08949;
+    --pop:#e8472a; --pop-soft:#fdece6;
+    --pine:#2f4a3a;
+    --serif:"Georgia","Times New Roman",serif;
+  }
+  body {
+    display:flex; align-items:center; justify-content:center;
+    min-height:100vh; background:#d9d2c7;
+    font-family:-apple-system,"SF Pro Text","Helvetica Neue",Helvetica,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  }
+  .phone {
+    position:relative; width:390px; height:844px;
+    background:var(--paper); border-radius:46px;
+    box-shadow:0 30px 70px rgba(60,45,30,.4), 0 0 0 11px #1b1714, 0 0 0 12px #2c2520;
+    overflow:hidden;
+  }
+  .status {
+    position:absolute; top:0; left:0; right:0; height:50px; z-index:60;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 30px 0 34px; color:var(--ink); font-size:15px; font-weight:600; pointer-events:none;
+  }
+  .status .right { display:flex; align-items:center; gap:7px; }
+  .notch { position:absolute; top:11px; left:50%; transform:translateX(-50%); width:118px; height:33px; background:#1b1714; border-radius:20px; z-index:61; }
+  .scroll { position:absolute; inset:0; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch; }
+  .scroll::-webkit-scrollbar { display:none; }
+
+  /* nav */
+  .nav { position:relative; padding:62px 24px 8px; display:flex; align-items:center; gap:14px; }
+  .backbtn { width:42px; height:42px; border-radius:50%; background:var(--ink-deep); display:flex; align-items:center; justify-content:center; flex:none; box-shadow:0 2px 6px rgba(60,40,20,.18), 0 10px 22px rgba(120,70,30,.2); }
+  .nav h1 { font-size:23px; font-weight:900; color:var(--ink); letter-spacing:-1px; font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; }
+  .nav h1 .pop { color:var(--pop); }
+  .pad { padding:0 24px; }
+
+  /* overview hero */
+  .ov { margin:14px 24px 0; background:url('img/sichuan-eggplant.jpg') center/cover no-repeat; border-radius:24px; position:relative; overflow:hidden; padding:22px 22px 20px; min-height:184px; display:flex; flex-direction:column; justify-content:flex-end; }
+  .ov::after { content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(20,14,8,.25) 0%, rgba(20,14,8,.4) 45%, rgba(20,14,8,.88) 100%); }
+  .ov-big { position:absolute; top:2px; right:10px; z-index:1; font-family:var(--serif); font-size:130px; font-weight:700; line-height:1; color:rgba(255,255,255,.09); pointer-events:none; }
+  .ov-eyebrow { position:relative; z-index:2; font-family:var(--serif); font-style:italic; font-size:12px; letter-spacing:1px; color:var(--gold); font-weight:700; }
+  .ov-row { position:relative; z-index:2; display:flex; gap:0; margin-top:12px; }
+  .ov-stat { flex:1; }
+  .ov-stat + .ov-stat { border-left:1px solid rgba(255,255,255,.18); padding-left:16px; }
+  .ov-stat:not(:last-child) { padding-right:14px; }
+  .ov-stat .n { font-size:28px; font-weight:900; color:#fff; letter-spacing:-1px; font-family:"PingFang SC","Microsoft YaHei",sans-serif; }
+  .ov-stat .n .u { font-size:13px; font-weight:700; margin-left:2px; }
+  .ov-stat .n.red { color:var(--pop); }
+  .ov-stat .c { font-size:11.5px; color:rgba(255,255,255,.78); margin-top:3px; font-weight:600; }
+
+  /* section head */
+  .shead { margin:30px 0 16px; position:relative; padding-left:15px; }
+  .shead::before { content:""; position:absolute; left:0; top:3px; bottom:3px; width:4px; border-radius:3px; background:var(--pop); }
+  .shead .eyebrow { font-family:var(--serif); font-style:italic; font-size:12px; letter-spacing:1px; color:var(--gold-deep); font-weight:700; }
+  .shead h2 { font-size:27px; font-weight:900; color:var(--ink); letter-spacing:-1.3px; margin-top:5px; font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; line-height:.96; }
+  .shead h2 .pop { color:var(--pop); }
+
+  /* card */
+  .card { background:#fff; border-radius:22px; padding:20px 20px 18px; box-shadow:0 2px 6px rgba(60,40,20,.06), 0 18px 40px rgba(120,70,30,.14); border:1px solid #f1ece2; }
+
+  /* bar chart */
+  .bar { margin-bottom:17px; }
+  .bar:last-child { margin-bottom:0; }
+  .bar .top { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:7px; }
+  .bar .top .nm { font-size:14.5px; font-weight:800; color:var(--ink); }
+  .bar .top .pc { font-size:14px; font-weight:900; color:var(--ink-deep); font-family:var(--serif); }
+  .bar .track { height:14px; border-radius:8px; background:var(--paper-2); overflow:hidden; }
+  .bar .fill { height:100%; border-radius:8px; }
+
+  /* tag cloud */
+  .cloud { display:flex; flex-wrap:wrap; gap:10px 11px; align-items:center; }
+  .tcl { display:inline-flex; align-items:center; gap:5px; font-weight:800; border-radius:30px; line-height:1; }
+  .tcl .ct { font-size:.62em; font-weight:700; opacity:.7; }
+  .tcl.xl { font-size:25px; padding:13px 20px; background:var(--pop); color:#fff; box-shadow:0 8px 18px rgba(232,71,42,.3); }
+  .tcl.lg { font-size:20px; padding:11px 17px; background:var(--pop-soft); color:var(--pop); }
+  .tcl.md { font-size:16px; padding:9px 15px; background:var(--ink-deep); color:var(--paper); }
+  .tcl.sm { font-size:14px; padding:8px 13px; background:var(--paper-2); color:var(--mut-strong); }
+
+  /* top5 rows */
+  .trow { display:flex; align-items:center; gap:14px; padding:13px 0; border-bottom:1px solid #efe9df; }
+  .trow:last-child { border-bottom:none; padding-bottom:0; }
+  .trow:first-child { padding-top:0; }
+  .trow .rk { font-family:var(--serif); font-size:22px; font-weight:700; font-style:italic; color:var(--gold-deep); width:24px; flex:none; text-align:center; }
+  .trow .rk.one { color:var(--pop); }
+  .trow .tmb { width:58px; height:58px; border-radius:16px; background-size:cover; background-position:center; flex:none; }
+  .trow .mid { flex:1; min-width:0; }
+  .trow .mid h4 { font-size:16px; font-weight:800; color:var(--ink); letter-spacing:-.3px; }
+  .trow .mid .sb { font-size:12px; color:var(--mut-strong); margin-top:4px; }
+  .trow .cnt { flex:none; text-align:right; }
+  .trow .cnt .v { font-size:20px; font-weight:900; color:var(--ink-deep); font-family:var(--serif); line-height:1; }
+  .trow .cnt .u { font-size:11px; color:var(--mut-strong); font-weight:600; margin-top:2px; }
+
+  /* note */
+  .note { display:flex; align-items:flex-start; gap:11px; margin:22px 0 0; padding:15px 17px; background:var(--paper-2); border-radius:16px; }
+  .note .ic { width:30px; height:30px; border-radius:50%; background:var(--gold); display:flex; align-items:center; justify-content:center; flex:none; }
+  .note p { font-size:12px; color:var(--mut-strong); line-height:1.6; font-weight:500; }
+  .note p b { color:var(--ink-deep); font-weight:800; }
+
+  .backbtn:active, .tcl:active { transform:scale(.97); }
+  .home-ind { position:absolute; bottom:9px; left:50%; transform:translateX(-50%); width:134px; height:5px; border-radius:3px; background:#2c241b; opacity:.85; z-index:55; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status">
+    <span>9:41</span>
+    <span class="right">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="#2c241b"/><rect x="5" y="4.5" width="3" height="7.5" rx="1" fill="#2c241b"/><rect x="10" y="2" width="3" height="10" rx="1" fill="#2c241b"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#2c241b" opacity=".35"/></svg>
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><path d="M8.5 2.5C11 2.5 13.2 3.5 14.8 5.1L8.5 11.4 2.2 5.1C3.8 3.5 6 2.5 8.5 2.5Z" fill="#2c241b"/></svg>
+      <svg width="26" height="13" viewBox="0 0 26 13" fill="none"><rect x="1" y="1" width="21" height="11" rx="3" stroke="#2c241b" stroke-width="1.2" opacity=".5"/><rect x="3" y="3" width="16" height="7" rx="1.5" fill="#2c241b"/><rect x="23.5" y="4.5" width="2" height="4" rx="1" fill="#2c241b" opacity=".6"/></svg>
+    </span>
+  </div>
+
+  <div class="scroll">
+    <div class="nav">
+      <div class="backbtn"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fbf8f3" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></div>
+      <h1>我们家的<span class="pop">口味</span></h1>
+    </div>
+
+    <div class="ov">
+      <div class="ov-big">23</div>
+      <div class="ov-eyebrow">家里人的口味 · 本月</div>
+      <div class="ov-row">
+        <div class="ov-stat"><div class="n">23<span class="u">道</span></div><div class="c">本月做菜</div></div>
+        <div class="ov-stat"><div class="n red">川菜</div><div class="c">最爱菜系</div></div>
+        <div class="ov-stat"><div class="n">下饭</div><div class="c">口味偏好</div></div>
+      </div>
+    </div>
+
+    <div class="pad">
+      <div class="shead">
+        <div class="eyebrow">爱吃哪一口</div>
+        <h2>菜系<span class="pop">分布</span></h2>
+      </div>
+      <div class="card">
+        <div class="bar">
+          <div class="top"><span class="nm">川菜</span><span class="pc">40%</span></div>
+          <div class="track"><div class="fill" style="width:40%;background:linear-gradient(90deg,#e8472a,#f4794f)"></div></div>
+        </div>
+        <div class="bar">
+          <div class="top"><span class="nm">家常菜</span><span class="pc">35%</span></div>
+          <div class="track"><div class="fill" style="width:35%;background:linear-gradient(90deg,#b08949,#e0c389)"></div></div>
+        </div>
+        <div class="bar">
+          <div class="top"><span class="nm">粤菜</span><span class="pc">15%</span></div>
+          <div class="track"><div class="fill" style="width:15%;background:linear-gradient(90deg,#2f4a3a,#5a7d66)"></div></div>
+        </div>
+        <div class="bar">
+          <div class="top"><span class="nm">面点</span><span class="pc">10%</span></div>
+          <div class="track"><div class="fill" style="width:10%;background:linear-gradient(90deg,#7a6e5d,#b3a795)"></div></div>
+        </div>
+      </div>
+
+      <div class="shead">
+        <div class="eyebrow">家的味道关键词</div>
+        <h2>口味<span class="pop">标签</span></h2>
+      </div>
+      <div class="card">
+        <div class="cloud">
+          <span class="tcl xl">麻辣 <span class="ct">·18</span></span>
+          <span class="tcl lg">下饭 <span class="ct">·15</span></span>
+          <span class="tcl md">咸鲜 <span class="ct">·9</span></span>
+          <span class="tcl sm">清淡 <span class="ct">·6</span></span>
+          <span class="tcl lg">香辣 <span class="ct">·11</span></span>
+          <span class="tcl sm">微甜 <span class="ct">·4</span></span>
+          <span class="tcl md">家常 <span class="ct">·8</span></span>
+          <span class="tcl sm">酸辣 <span class="ct">·5</span></span>
+        </div>
+      </div>
+
+      <div class="shead">
+        <div class="eyebrow">做得最多的五道</div>
+        <h2>最常做的<span class="pop">菜</span></h2>
+      </div>
+      <div class="card">
+        <div class="trow">
+          <span class="rk one">1</span>
+          <div class="tmb" style="background-image:url('img/mapo-tofu.jpg')"></div>
+          <div class="mid"><h4>麻婆豆腐</h4><div class="sb">川菜 · 麻辣下饭</div></div>
+          <div class="cnt"><div class="v">12</div><div class="u">次</div></div>
+        </div>
+        <div class="trow">
+          <span class="rk">2</span>
+          <div class="tmb" style="background-image:url('img/tomato-egg.jpg')"></div>
+          <div class="mid"><h4>番茄炒蛋</h4><div class="sb">家常 · 下饭快手</div></div>
+          <div class="cnt"><div class="v">10</div><div class="u">次</div></div>
+        </div>
+        <div class="trow">
+          <span class="rk">3</span>
+          <div class="tmb" style="background-image:url('img/hongshao-pork.jpg')"></div>
+          <div class="mid"><h4>红烧肉</h4><div class="sb">家常 · 咸鲜微甜</div></div>
+          <div class="cnt"><div class="v">7</div><div class="u">次</div></div>
+        </div>
+        <div class="trow">
+          <span class="rk">4</span>
+          <div class="tmb" style="background-image:url('img/kungpao-chicken.jpg')"></div>
+          <div class="mid"><h4>宫保鸡丁</h4><div class="sb">川菜 · 香辣微酸</div></div>
+          <div class="cnt"><div class="v">6</div><div class="u">次</div></div>
+        </div>
+        <div class="trow">
+          <span class="rk">5</span>
+          <div class="tmb" style="background-image:url('img/egg-drop-soup.jpg')"></div>
+          <div class="mid"><h4>紫菜蛋花汤</h4><div class="sb">家常 · 清淡鲜</div></div>
+          <div class="cnt"><div class="v">5</div><div class="u">次</div></div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3a2e23" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.2 5.6L20 9.5l-4 4 1 6-5-3-5 3 1-6-4-4 5.8-.9z"/></svg></div>
+        <p>基于<b>全家做菜记录</b>智能分析，累计 <b>86</b> 次烹饪。口味画像会随大家做菜越多越准，常做的菜也会优先推荐。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="home-ind"></div>
+</div>
+</body>
+</html>

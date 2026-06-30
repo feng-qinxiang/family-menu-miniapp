@@ -1,0 +1,21 @@
+<!-- state-dialog · 确认弹窗组件 -->
+<view
+  class="sd-mask {{visible ? 'sd-mask--show' : ''}}"
+  catchtap="onCancel"
+  wx:if="{{showWrap}}"
+>
+  <view class="sd-dialog {{visible ? 'sd-dialog--in' : 'sd-dialog--out'}}" catchtap="noop">
+    <view class="sd-body">
+      <view class="sd-ic sd-ic--{{variant}}">
+        <text class="sd-ic-glyph">{{variant === 'warn' ? '!' : '×'}}</text>
+      </view>
+      <view class="sd-title">{{title}}</view>
+      <view class="sd-desc" wx:if="{{content}}">{{content}}</view>
+      <slot></slot>
+    </view>
+    <view class="sd-actions">
+      <view class="sd-btn sd-btn--ghost tap-scale" catchtap="onCancel">{{cancelText}}</view>
+      <view class="sd-btn sd-btn--{{variant}} tap-scale" catchtap="onConfirm">{{confirmText}}</view>
+    </view>
+  </view>
+</view>

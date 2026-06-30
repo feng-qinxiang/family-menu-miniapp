@@ -1,0 +1,133 @@
+<!-- pages/auth/register · 注册账号(二级页) -->
+<view class="rg safe-bottom">
+  <nav-bar title="注册账号" show-back="{{true}}"></nav-bar>
+
+  <scroll-view class="rg-scroll" scroll-y enhanced show-scrollbar="{{false}}">
+    <!-- Hero -->
+    <view class="rg-hero">
+      <image class="rg-hero-img" src="/assets/dishes/tomato-egg.jpg" mode="aspectFill"></image>
+      <view class="rg-hero-mask"></view>
+      <text class="rg-bignum">02</text>
+      <view class="rg-hero-body g-fade-up">
+        <text class="rg-tag">Sign Up</text>
+        <view class="rg-hero-title title-stroke">注册<text class="pop">账号</text></view>
+        <text class="rg-slogan">手机号注册，开启一家人的味蕾日记</text>
+      </view>
+    </view>
+
+    <!-- 表单 sheet -->
+    <view class="rg-sheet">
+      <!-- 手机号 -->
+      <view class="rg-field g-fade-up g-d1">
+        <text class="rg-label">手机号</text>
+        <view class="rg-inp {{phoneFocus ? 'is-focus' : ''}}">
+          <view class="rg-ic"><view class="ic-phone {{phoneFocus ? 'on' : ''}}"></view></view>
+          <input
+            class="rg-input"
+            type="number"
+            maxlength="11"
+            placeholder="138 8888 6666"
+            placeholder-class="rg-ph"
+            value="{{phone}}"
+            bindinput="onPhoneInput"
+            bindfocus="onPhoneFocus"
+            bindblur="onPhoneBlur"
+          />
+        </view>
+      </view>
+
+      <!-- 验证码 -->
+      <view class="rg-field g-fade-up g-d2">
+        <text class="rg-label">验证码</text>
+        <view class="rg-inp {{codeFocus ? 'is-focus' : ''}}">
+          <view class="rg-ic"><view class="ic-mail"></view></view>
+          <input
+            class="rg-input grow"
+            type="number"
+            maxlength="6"
+            placeholder="请输入 6 位验证码"
+            placeholder-class="rg-ph"
+            value="{{code}}"
+            bindinput="onCodeInput"
+            bindfocus="onCodeFocus"
+            bindblur="onCodeBlur"
+          />
+          <view class="rg-codebtn tap-scale {{counting ? 'is-wait' : ''}}" catchtap="onSendCode">
+            <text>{{counting ? countdown + 's 后重发' : '获取验证码'}}</text>
+          </view>
+        </view>
+      </view>
+      <text class="rg-hint">验证码将发送至上方手机号，60 秒内有效。</text>
+
+      <!-- 设置密码 -->
+      <view class="rg-field g-fade-up g-d3">
+        <text class="rg-label">设置密码</text>
+        <view class="rg-inp {{pwdFocus ? 'is-focus' : ''}}">
+          <view class="rg-ic"><view class="ic-lock"></view></view>
+          <input
+            class="rg-input grow"
+            password="{{!pwdShow}}"
+            maxlength="20"
+            placeholder="6-20 位密码"
+            placeholder-class="rg-ph"
+            value="{{pwd}}"
+            bindinput="onPwdInput"
+            bindfocus="onPwdFocus"
+            bindblur="onPwdBlur"
+          />
+          <view class="rg-eye tap-scale" catchtap="onTogglePwd">
+            <view class="ic-eye {{pwdShow ? '' : 'off'}}"></view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 确认密码 -->
+      <view class="rg-field g-fade-up g-d4">
+        <text class="rg-label">确认密码</text>
+        <view class="rg-inp {{pwd2Focus ? 'is-focus' : ''}}">
+          <view class="rg-ic"><view class="ic-lock"></view></view>
+          <input
+            class="rg-input grow"
+            password="{{!pwd2Show}}"
+            maxlength="20"
+            placeholder="再次输入密码"
+            placeholder-class="rg-ph"
+            value="{{pwd2}}"
+            bindinput="onPwd2Input"
+            bindfocus="onPwd2Focus"
+            bindblur="onPwd2Blur"
+          />
+          <view class="rg-eye tap-scale" catchtap="onTogglePwd2">
+            <view class="ic-eye {{pwd2Show ? '' : 'off'}}"></view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 注册按钮 -->
+      <view class="rg-createbtn btn-pop tap-scale g-fade-up g-d5" catchtap="onRegister">
+        <text>注册账号</text>
+        <view class="ic-arrow"></view>
+      </view>
+
+      <!-- 去登录 -->
+      <view class="rg-gotologin g-fade-up g-d6">
+        <text>已有账号？</text><text class="rg-login-link" catchtap="onGoLogin">去登录 ›</text>
+      </view>
+
+      <!-- 协议 -->
+      <view class="rg-agree g-fade-up g-d7">
+        <view class="rg-box tap-scale {{agreed ? 'is-on' : ''}}" catchtap="onToggleAgree">
+          <view wx:if="{{agreed}}" class="rg-check"></view>
+        </view>
+        <text class="rg-agree-tx" catchtap="onToggleAgree">我已阅读并同意<text class="rg-link" catchtap="onProtocol">用户协议</text>与<text class="rg-link" catchtap="onProtocol">隐私政策</text>，注册即创建你在家庭点菜的账号。</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <state-toast
+    visible="{{toast.visible}}"
+    type="{{toast.type}}"
+    text="{{toast.text}}"
+    bind:close="onToastClose"
+  ></state-toast>
+</view>

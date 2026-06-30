@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "菜谱库",
+  "navigationStyle": "custom",
+  "onReachBottomDistance": 80,
+  "usingComponents": {
+    "state-empty": "/components/state-empty/index"
+  }
+}

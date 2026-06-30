@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "导入配方",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "nav-bar": "/components/nav-bar/index"
+  }
+}

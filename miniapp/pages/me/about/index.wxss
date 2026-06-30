@@ -1,0 +1,267 @@
+/* 关于页 · 视觉对标 about.html，配色全部走全局 token */
+.about {
+  padding: 0 46rpx 50rpx;
+}
+
+/* —— 品牌区 —— */
+.brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 58rpx 0 54rpx;
+}
+.logo {
+  position: relative;
+  width: 200rpx;
+  height: 200rpx;
+  border-radius: 58rpx;
+  background: var(--ink-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 8rpx 20rpx rgba(60, 40, 20, 0.14), 0 38rpx 84rpx rgba(120, 70, 30, 0.22);
+}
+.logo-deco {
+  position: absolute;
+  right: -50rpx;
+  top: -50rpx;
+  width: 184rpx;
+  height: 184rpx;
+  border-radius: 50%;
+  background: rgba(232, 71, 42, 0.18);
+}
+.logo-mark {
+  position: relative;
+  z-index: 1;
+  color: var(--paper);
+  font-size: 96rpx;
+  font-weight: 900;
+  font-family: var(--serif);
+  line-height: 1;
+}
+.brand-eyebrow {
+  margin-top: 42rpx;
+  letter-spacing: 2rpx;
+}
+.appname {
+  margin-top: 10rpx;
+  font-size: 66rpx;
+  font-weight: 900;
+  letter-spacing: -3rpx;
+  line-height: 1.05;
+}
+.ver {
+  display: inline-block;
+  margin-top: 26rpx;
+  padding: 10rpx 26rpx;
+  border-radius: var(--r-pill);
+  background: var(--paper-2);
+  color: var(--mut-strong);
+  font-size: 23rpx;
+  font-weight: 700;
+  letter-spacing: 1rpx;
+}
+.slogan {
+  max-width: 500rpx;
+  margin-top: 30rpx;
+  color: var(--mut-strong);
+  font-size: 27rpx;
+  line-height: 1.6;
+}
+
+/* —— 数据徽章 —— */
+.stats {
+  display: flex;
+  margin-bottom: 34rpx;
+  border-radius: var(--r-card);
+  overflow: hidden;
+  background: var(--ink-deep);
+  box-shadow: 0 4rpx 12rpx rgba(60, 40, 20, 0.12), 0 34rpx 76rpx rgba(60, 40, 20, 0.22);
+}
+.stats .st {
+  position: relative;
+  flex: 1;
+  padding: 38rpx 14rpx;
+  text-align: center;
+}
+.stats .st + .st::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 24%;
+  bottom: 24%;
+  width: 2rpx;
+  background: rgba(255, 255, 255, 0.12);
+}
+.st-v {
+  color: var(--paper);
+  font-size: 48rpx;
+  font-weight: 900;
+  letter-spacing: -2rpx;
+}
+.st-unit {
+  color: var(--gold);
+}
+.st-l {
+  margin-top: 10rpx;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 20rpx;
+  font-weight: 700;
+  letter-spacing: 1rpx;
+}
+
+/* —— 故事卡 —— */
+.story {
+  position: relative;
+  margin-bottom: 34rpx;
+  padding: 38rpx 38rpx 42rpx;
+}
+.story-qm {
+  position: absolute;
+  top: 28rpx;
+  right: 34rpx;
+  font-family: var(--serif);
+  font-size: 116rpx;
+  line-height: 0.6;
+  color: var(--pop-soft);
+  pointer-events: none;
+}
+.story-h {
+  margin: 8rpx 0 22rpx;
+  color: var(--ink);
+  font-size: 37rpx;
+  font-weight: 900;
+  letter-spacing: -1rpx;
+}
+.story-p {
+  color: var(--mut-strong);
+  font-size: 25rpx;
+  line-height: 1.7;
+}
+.story-p + .story-p {
+  margin-top: 18rpx;
+}
+
+/* —— 团队署名 —— */
+.team {
+  display: flex;
+  align-items: center;
+  gap: 26rpx;
+  margin-bottom: 34rpx;
+  padding: 30rpx 34rpx;
+  border-radius: var(--r-md);
+  background: var(--pop-soft);
+  border: 2rpx solid #f6d6cb;
+}
+.team-badge {
+  flex: none;
+  width: 82rpx;
+  height: 82rpx;
+  border-radius: 26rpx;
+  background: var(--pop);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 12rpx 28rpx rgba(232, 71, 42, 0.32);
+}
+.team-badge-heart {
+  width: 34rpx;
+  height: 34rpx;
+  background: #fff;
+  -webkit-mask: radial-gradient(circle at 30% 35%, #000 99%, transparent 0) 0 0/50% 60% no-repeat,
+    radial-gradient(circle at 70% 35%, #000 99%, transparent 0) 100% 0/50% 60% no-repeat,
+    linear-gradient(#000 0 0) 50% 100%/72% 70% no-repeat;
+  -webkit-mask-composite: source-over;
+  clip-path: polygon(50% 100%, 0 38%, 12% 16%, 35% 16%, 50% 34%, 65% 16%, 88% 16%, 100% 38%);
+}
+.team-tt {
+  flex: 1;
+  min-width: 0;
+}
+.team-h {
+  color: var(--ink);
+  font-size: 27rpx;
+  font-weight: 800;
+}
+.team-s {
+  margin-top: 8rpx;
+  color: var(--mut-strong);
+  font-size: 22rpx;
+  line-height: 1.5;
+}
+
+/* —— 更多分组 —— */
+.lhead {
+  margin: 0 8rpx 22rpx;
+  letter-spacing: 2rpx;
+}
+.list {
+  padding: 8rpx 36rpx;
+}
+.item {
+  display: flex;
+  align-items: center;
+  gap: 28rpx;
+  padding: 32rpx 0;
+  border-bottom: 2rpx solid #efe9df;
+}
+.item:last-child {
+  border-bottom: none;
+}
+.item-ic {
+  flex: none;
+  width: 78rpx;
+  height: 78rpx;
+  border-radius: 26rpx;
+  background: var(--pop-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.item-ic-dot {
+  width: 26rpx;
+  height: 26rpx;
+  border-radius: 8rpx;
+  background: var(--pop);
+}
+.item-t {
+  flex: 1;
+  min-width: 0;
+}
+.item-nm {
+  color: var(--ink);
+  font-size: 30rpx;
+  font-weight: 700;
+  letter-spacing: -0.4rpx;
+}
+.item-ds {
+  margin-top: 6rpx;
+  color: var(--mut-strong);
+  font-size: 23rpx;
+}
+.item-chev {
+  flex: none;
+  width: 18rpx;
+  height: 18rpx;
+  border-top: 4rpx solid var(--mut-2);
+  border-right: 4rpx solid var(--mut-2);
+  transform: rotate(45deg);
+}
+
+/* —— 版权 —— */
+.copy {
+  margin-top: 70rpx;
+  text-align: center;
+}
+.copy-c1 {
+  color: var(--mut-strong);
+  font-size: 23rpx;
+  font-weight: 600;
+  letter-spacing: 1rpx;
+}
+.copy-c2 {
+  margin-top: 12rpx;
+  letter-spacing: 0.5rpx;
+}

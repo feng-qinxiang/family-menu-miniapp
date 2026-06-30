@@ -1,0 +1,74 @@
+/* components/state-empty/index.wxss
+   复用 app.wxss 全局 token（--pop/--paper-2/--mut-strong 等），仅写组件特有样式。
+   对标 artifacts/state-empty.html 的 .ecard 视觉。 */
+
+.state-empty {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 64rpx 48rpx 56rpx;
+}
+
+/* 圆形图标区 */
+.se-illu {
+  width: 208rpx;
+  height: 208rpx;
+  margin: 0 auto 34rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--pop-soft);
+}
+.se-illu--gold,
+.se-illu--search { background: #f6efe1; }
+.se-illu--gray,
+.se-illu--offline { background: var(--paper-2); }
+
+.se-icon {
+  width: 112rpx;
+  height: 112rpx;
+}
+
+/* 文案 */
+.se-title {
+  font-size: 37rpx;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.8rpx;
+  line-height: 1.25;
+}
+.se-desc {
+  margin-top: 16rpx;
+  font-size: 26rpx;
+  color: var(--mut-strong);
+  line-height: 1.5;
+  max-width: 480rpx;
+}
+
+/* CTA 按钮 */
+.se-btn {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 38rpx;
+  min-height: 88rpx;
+  padding: 0 50rpx;
+  border-radius: var(--r-pill);
+  font-size: 28rpx;
+  font-weight: 800;
+  letter-spacing: 0.4rpx;
+}
+.se-btn--pop {
+  background: var(--pop);
+  color: #fff;
+  box-shadow: var(--sh-pop);
+}
+.se-btn--ghost {
+  background: transparent;
+  color: var(--gold-deep);
+  border: 3rpx solid #e7ddc9;
+}

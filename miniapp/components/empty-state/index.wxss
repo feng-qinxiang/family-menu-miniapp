@@ -1,0 +1,113 @@
+.empty-wrap {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 80rpx 36rpx;
+  border: 1rpx dashed #ead3c3;
+  border-radius: 28rpx;
+  background: linear-gradient(180deg, #fffbf6 0%, #fff4ea 100%);
+  text-align: center;
+}
+
+.empty-wrap::before,
+.empty-wrap::after {
+  position: absolute;
+  z-index: 0;
+  border-radius: 50%;
+  content: "";
+  pointer-events: none;
+}
+
+.empty-wrap::before {
+  top: -44rpx;
+  right: -42rpx;
+  width: 142rpx;
+  height: 142rpx;
+  background: rgba(212, 91, 52, 0.08);
+}
+
+.empty-wrap::after {
+  left: -32rpx;
+  bottom: -46rpx;
+  width: 132rpx;
+  height: 132rpx;
+  background: rgba(47, 143, 107, 0.08);
+}
+
+.empty-visual {
+  position: relative;
+  z-index: 1;
+  width: 96rpx;
+  height: 82rpx;
+  margin-bottom: 20rpx;
+}
+
+.empty-bowl {
+  position: absolute;
+  left: 12rpx;
+  right: 12rpx;
+  bottom: 8rpx;
+  height: 36rpx;
+  border-radius: 12rpx 12rpx 36rpx 36rpx;
+  background: linear-gradient(180deg, #d45b34 0%, #b14728 100%);
+  box-shadow: inset 0 6rpx 0 rgba(255, 255, 255, 0.2);
+}
+
+.empty-steam {
+  position: absolute;
+  top: 4rpx;
+  width: 10rpx;
+  height: 34rpx;
+  border-radius: var(--r-pill);
+  background: rgba(184, 135, 32, 0.32);
+}
+
+.empty-steam-a {
+  left: 34rpx;
+  transform: rotate(10deg);
+}
+
+.empty-steam-b {
+  left: 54rpx;
+  top: 0;
+  transform: rotate(-10deg);
+}
+
+.empty-title {
+  position: relative;
+  z-index: 1;
+  color: var(--c-ink);
+  font-size: 30rpx;
+  font-weight: var(--w-bold);
+  line-height: 1.3;
+}
+
+.empty-desc {
+  position: relative;
+  z-index: 1;
+  max-width: 520rpx;
+  margin-top: 12rpx;
+  color: var(--c-text-muted);
+  font-size: 24rpx;
+  line-height: 1.5;
+}
+
+.empty-action {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 168rpx;
+  min-height: 72rpx;
+  margin-top: 28rpx;
+  padding: 0 32rpx;
+  border-radius: var(--r-pill);
+  background: var(--c-primary);
+  color: #ffffff;
+  font-size: 26rpx;
+  font-weight: var(--w-semi);
+}

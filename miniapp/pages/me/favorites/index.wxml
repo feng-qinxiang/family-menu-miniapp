@@ -1,0 +1,94 @@
+<!-- pages/me/favorites/index.wxml · 我的收藏 -->
+<nav-bar title="个人中心" statusBarHeight="{{statusBarHeight}}"></nav-bar>
+
+<scroll-view scroll-y class="fav-scroll" style="padding-top: {{statusBarHeight}}px;">
+  <view class="container">
+
+    <!-- Hero：eyebrow + 镂空撞色标题 + 计数 -->
+    <view class="fav-head g-fade-up">
+      <view class="eyebrow-serif">My Collection</view>
+      <view class="fav-title">
+        <text>我的</text><text class="pop">收藏</text>
+      </view>
+      <view class="fav-count">{{countText}}</view>
+    </view>
+
+    <!-- Tabs：菜谱 / 帖子 -->
+    <view class="fav-tabs g-fade-up g-d1">
+      <view class="fav-tab {{activeTab === 'recipe' ? 'on' : ''}} tap-scale"
+        data-tab="recipe" bindtap="switchTab">
+        菜谱<text class="fav-tab-badge">{{recipeCount}}</text>
+      </view>
+      <view class="fav-tab {{activeTab === 'post' ? 'on' : ''}} tap-scale"
+        data-tab="post" bindtap="switchTab">
+        帖子<text class="fav-tab-badge">{{postCount}}</text>
+      </view>
+    </view>
+
+    <view class="fav-body">
+      <!-- 菜谱 pane：2 列 recipe-card -->
+      <view wx:if="{{activeTab === 'recipe'}}">
+        <view wx:if="{{recipes.length}}" class="fav-grid">
+          <view wx:for="{{recipes}}" wx:key="id"
+            class="fav-grid-cell g-fade-up g-d{{index < 6 ? index + 1 : 6}}">
+            <recipe-card
+              recipe="{{item}}"
+              variant="card"
+              showFav="{{true}}"
+              showAdd="{{false}}"
+              bind:tap="onRecipeTap"
+              bind:fav="onRecipeFav"
+            ></recipe-card>
+          </view>
+        </view>
+        <state-empty wx:elif="{{!loading}}"
+          type="pop"
+          title="还没有收藏"
+          desc="逛逛菜谱，点亮喜欢的那颗心，它们会乖乖待在这里等你"
+          cta="去逛菜谱"
+          ctaStyle="pop"
+          bind:action="goRecipes"
+        ></state-empty>
+      </view>
+
+      <!-- 帖子 pane：list -->
+      <view wx:else>
+        <view wx:if="{{posts.length}}">
+          <view wx:for="{{posts}}" wx:key="id"
+            class="fav-pcard tap-scale g-fade-up g-d{{index < 6 ? index + 1 : 6}}"
+            data-id="{{item.id}}" bindtap="onPostTap">
+            <image class="fav-pthumb" src="{{item.cover}}" mode="aspectFill" />
+            <view class="fav-pmid">
+              <view class="fav-ptag">{{item.tag}}</view>
+              <view class="fav-ptitle clamp-2">{{item.title}}</view>
+              <view class="fav-pby">
+                <view class="fav-pav" style="background: {{item.avatarColor}};">{{item.avatarText}}</view>
+                <text class="fav-pnm ellipsis">{{item.author}}</text>
+                <view class="fav-plk">
+                  <text class="fav-plk-ic">♥</text>{{item.likeCount}}
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+        <state-empty wx:elif="{{!loading}}"
+          type="pop"
+          title="还没有收藏帖子"
+          desc="去邻里厨房逛逛，收藏喜欢的家常分享"
+          cta="去逛社区"
+          ctaStyle="pop"
+          bind:action="goCommunity"
+        ></state-empty>
+      </view>
+    </view>
+
+    <view class="safe-bottom"></view>
+  </view>
+</scroll-view>
+
+<state-toast
+  visible="{{toast.visible}}"
+  type="top"
+  text="{{toast.text}}"
+  bind:close="onToastClose"
+></state-toast>

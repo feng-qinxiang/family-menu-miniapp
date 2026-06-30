@@ -1,0 +1,378 @@
+/* ============================================================
+   pages/pantry · 冰箱库存（对标 pantry-final.html）
+   配色 / 工具类全用 app.wxss 全局 token，本文件不重定义配色。
+   ============================================================ */
+.pantry-page {
+  min-height: 100vh;
+  background: var(--paper);
+}
+
+/* 顶部返回浮层（透明叠在 hero 上）*/
+.nav-float {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 50;
+}
+
+/* ============ Hero ============ */
+.phero {
+  position: relative;
+  height: 858rpx;
+  overflow: hidden;
+}
+.phero-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+.phero-mask {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg,
+    rgba(20, 14, 8, 0.5) 0%,
+    rgba(20, 14, 8, 0) 28%,
+    rgba(20, 14, 8, 0.18) 52%,
+    rgba(20, 14, 8, 0.9) 100%);
+}
+.phero-bignum {
+  position: absolute;
+  top: 162rpx;
+  right: 26rpx;
+  z-index: 2;
+  font-family: var(--serif);
+  font-size: 404rpx;
+  font-weight: 700;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.07);
+  pointer-events: none;
+}
+.phero-copy {
+  position: absolute;
+  left: 46rpx;
+  right: 46rpx;
+  bottom: 58rpx;
+  z-index: 10;
+}
+.phero-tag {
+  display: inline-block;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 23rpx;
+  letter-spacing: 3rpx;
+  font-weight: 700;
+  color: #fff;
+  background: var(--pop);
+  padding: 12rpx 27rpx;
+  border-radius: 8rpx;
+}
+.phero-title {
+  font-size: 116rpx;
+  line-height: 0.9;
+  letter-spacing: -6rpx;
+  margin: 30rpx 0 22rpx;
+}
+.phero-sub {
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 400;
+}
+.phero-stats {
+  display: flex;
+  margin-top: 34rpx;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1rpx solid rgba(255, 255, 255, 0.18);
+  border-radius: 34rpx;
+  overflow: hidden;
+}
+.phstat {
+  flex: 1;
+  padding: 25rpx 27rpx;
+  position: relative;
+}
+.phstat + .phstat::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 27rpx;
+  bottom: 27rpx;
+  width: 1rpx;
+  background: rgba(255, 255, 255, 0.2);
+}
+.phstat-n {
+  font-size: 50rpx;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -2rpx;
+}
+.phstat-n.warn { color: var(--pop); }
+.phstat-c {
+  font-size: 21rpx;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 6rpx;
+  letter-spacing: 1rpx;
+}
+
+/* ============ Sheet 内容层 ============ */
+.psheet {
+  position: relative;
+  margin-top: -50rpx;
+  z-index: 20;
+  background: var(--paper);
+  border-radius: 54rpx 54rpx 0 0;
+  padding: 50rpx 46rpx 0;
+}
+.psheet .shead { margin-top: 8rpx; }
+.psheet .shead:first-child { margin-top: 0; }
+/* ============ 分类 ============ */
+.cat { margin-bottom: 16rpx; }
+.cat-name {
+  display: flex;
+  align-items: center;
+  gap: 17rpx;
+  margin: 38rpx 0 19rpx;
+}
+.cat-ic {
+  width: 58rpx;
+  height: 58rpx;
+  border-radius: 19rpx;
+  background: var(--paper-2);
+  flex: none;
+  position: relative;
+}
+.cat-ic::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 26rpx;
+  height: 26rpx;
+}
+.cat-ic-veg::after { background: var(--pine); border-radius: 16rpx 4rpx 16rpx 16rpx; }
+.cat-ic-meat::after { background: var(--gold-deep); border-radius: 50% 50% 45% 45%; }
+.cat-ic-season::after { background: var(--pop); border-radius: 6rpx 6rpx 10rpx 10rpx; }
+.cat-ic-other::after { background: var(--mut); border-radius: 8rpx; }
+.cat-h3 {
+  font-size: 31rpx;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.6rpx;
+}
+.cat-qty {
+  font-size: 22rpx;
+  color: var(--mut-strong);
+  font-weight: 600;
+}
+
+/* ============ 商品卡 ============ */
+.pcard {
+  background: #fff;
+  border-radius: var(--r-card);
+  padding: 12rpx 35rpx;
+  box-shadow: var(--sh-card);
+  border: var(--bd-card);
+}
+.pitem {
+  display: flex;
+  align-items: center;
+  gap: 25rpx;
+  padding: 27rpx 0;
+  border-bottom: 1rpx solid #efe9df;
+}
+.pitem:last-child { border-bottom: none; }
+.pi-dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  background: var(--mut-2);
+  flex: none;
+}
+.pitem.warn .pi-dot { background: var(--pop); }
+.pi-mid { flex: 1; min-width: 0; }
+.pi-nm {
+  font-size: 31rpx;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.4rpx;
+}
+.pi-ex {
+  font-size: 23rpx;
+  color: var(--mut-strong);
+  margin-top: 8rpx;
+}
+.pi-ex.red { color: var(--pop); font-weight: 700; }
+.pi-qt {
+  font-size: 25rpx;
+  font-weight: 700;
+  color: var(--ink-deep);
+  flex: none;
+}
+.pi-del {
+  width: 77rpx;
+  height: 77rpx;
+  border-radius: 23rpx;
+  background: var(--paper-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+.pi-del-x {
+  width: 24rpx;
+  height: 24rpx;
+  position: relative;
+}
+.pi-del-x::before,
+.pi-del-x::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 11rpx;
+  width: 24rpx;
+  height: 4rpx;
+  border-radius: 2rpx;
+  background: var(--mut);
+}
+.pi-del-x::before { transform: rotate(45deg); }
+.pi-del-x::after { transform: rotate(-45deg); }
+
+/* ============ 添加卡 ============ */
+.addcard {
+  margin-top: 27rpx;
+  background: var(--pop-soft);
+  border: 3rpx dashed rgba(232, 71, 42, 0.35);
+  border-radius: 38rpx;
+  padding: 29rpx 31rpx;
+  display: flex;
+  align-items: center;
+  gap: 25rpx;
+}
+.add-pl {
+  width: 81rpx;
+  height: 81rpx;
+  border-radius: 27rpx;
+  background: var(--pop);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  box-shadow: var(--sh-pop);
+}
+.add-plus {
+  width: 32rpx;
+  height: 32rpx;
+  position: relative;
+}
+.add-plus::before,
+.add-plus::after {
+  content: "";
+  position: absolute;
+  background: #fff;
+  border-radius: 3rpx;
+}
+.add-plus::before { left: 14rpx; top: 0; width: 5rpx; height: 32rpx; }
+.add-plus::after { left: 0; top: 14rpx; width: 32rpx; height: 5rpx; }
+.add-at { flex: 1; }
+.add-t { font-size: 29rpx; font-weight: 800; color: var(--ink); }
+.add-s { font-size: 23rpx; color: var(--mut); margin-top: 4rpx; }
+.add-arrow {
+  width: 18rpx;
+  height: 18rpx;
+  border-right: 5rpx solid var(--gold-deep);
+  border-top: 5rpx solid var(--gold-deep);
+  transform: rotate(45deg);
+  flex: none;
+  transition: transform 0.2s ease;
+}
+.add-arrow.up { transform: rotate(-45deg); }
+/* ============ 添加表单 ============ */
+.add-form {
+  margin-top: 20rpx;
+  background: #fff;
+  border-radius: var(--r-card);
+  border: var(--bd-card);
+  box-shadow: var(--sh-soft);
+  padding: 28rpx;
+}
+.af-row { display: flex; gap: 16rpx; }
+.af-input {
+  box-sizing: border-box;
+  height: 84rpx;
+  padding: 0 26rpx;
+  border-radius: var(--r-md);
+  background: var(--paper-2);
+  font-size: 27rpx;
+  color: var(--ink);
+}
+.af-main { flex: 1; }
+.af-sm { width: 150rpx; }
+.af-date { width: 100%; margin-top: 16rpx; }
+.af-ph { color: var(--mut); }
+.af-submit { margin-top: 24rpx; }
+
+/* ============ 匹配卡 ============ */
+.mcard {
+  background: #fff;
+  border-radius: var(--r-card);
+  overflow: hidden;
+  box-shadow: var(--sh-card);
+  border: var(--bd-card);
+  margin-bottom: 27rpx;
+}
+.mc-top { display: flex; gap: 27rpx; padding: 27rpx; }
+.mc-ph {
+  width: 162rpx;
+  height: 162rpx;
+  border-radius: var(--r-md);
+  flex: none;
+  background: var(--paper-2);
+}
+.mc-mi { flex: 1; min-width: 0; }
+.mc-h4 {
+  font-size: 33rpx;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.6rpx;
+}
+.mc-meta {
+  font-size: 23rpx;
+  color: var(--mut);
+  margin-top: 10rpx;
+}
+.mc-miss {
+  font-size: 23rpx;
+  color: var(--pop);
+  font-weight: 700;
+  margin-top: 13rpx;
+}
+.mc-miss.full { color: var(--pine); }
+.mc-badge { flex: none; text-align: right; }
+.mc-pct {
+  font-size: 40rpx;
+  font-weight: 900;
+  color: var(--ink-deep);
+  letter-spacing: -2rpx;
+}
+.mc-lab {
+  font-size: 20rpx;
+  color: var(--mut);
+  font-weight: 600;
+}
+.mc-bar {
+  height: 10rpx;
+  background: var(--paper-2);
+  margin: 0 27rpx 27rpx;
+  border-radius: 6rpx;
+  overflow: hidden;
+}
+.mc-bar-i {
+  height: 100%;
+  background: var(--pop);
+  border-radius: 6rpx;
+}
+.mc-bar-i.full { background: var(--pine); }

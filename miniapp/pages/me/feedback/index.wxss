@@ -1,0 +1,216 @@
+/* 意见反馈 · 二级页样式 —— 复用全局 token，禁硬编码配色 */
+
+.fb { padding-top: 0; }
+
+/* nav-bar 右侧提交 */
+.nav-submit {
+  font-size: 27rpx;
+  font-weight: 800;
+  color: var(--gold-deep);
+  padding: 8rpx 6rpx;
+}
+
+/* —— Hero —— */
+.fb-head { padding: 16rpx 0 8rpx; }
+.fb-h1 {
+  font-size: 78rpx;
+  line-height: 0.95;
+  letter-spacing: -4rpx;
+  margin-top: 8rpx;
+}
+.fb-desc {
+  margin-top: 18rpx;
+  font-size: 25rpx;
+  line-height: 1.5;
+  color: var(--mut-strong);
+}
+
+/* —— Section —— */
+.fb-sec { margin-top: 50rpx; }
+.fb-label {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 24rpx;
+  font-size: 24rpx;
+  font-weight: 800;
+  letter-spacing: 2rpx;
+  color: var(--ink-deep);
+  text-transform: uppercase;
+}
+.fb-label .star { color: var(--pop); font-size: 26rpx; }
+.fb-label .label-tip {
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--mut-strong);
+}
+
+/* —— 类型 chip —— */
+.fb-chips { display: flex; flex-wrap: wrap; gap: 18rpx; }
+.fb-chips .chip {
+  background: var(--paper-2);
+  color: var(--mut-strong);
+  border: 3rpx solid transparent;
+}
+.fb-chips .chip.on {
+  background: var(--pop-soft);
+  color: var(--pop);
+  border-color: var(--pop);
+}
+
+/* —— 描述 textarea —— */
+.ta-wrap {
+  position: relative;
+  background: #fff;
+  border: var(--bd-card);
+  border-radius: var(--r-card);
+  box-shadow: var(--sh-soft);
+  padding: 30rpx 30rpx 64rpx;
+}
+.ta {
+  width: 100%;
+  height: 240rpx;
+  font-size: 29rpx;
+  line-height: 1.6;
+  color: var(--ink);
+}
+.ta-ph { color: var(--mut); }
+.counter {
+  position: absolute;
+  right: 30rpx;
+  bottom: 24rpx;
+  font-size: 22rpx;
+  font-weight: 600;
+  color: var(--mut);
+}
+
+/* —— 图片上传 —— */
+.uploads { display: flex; flex-wrap: wrap; gap: 22rpx; }
+.up-img {
+  position: relative;
+  width: 162rpx;
+  height: 162rpx;
+  border-radius: var(--r-sm);
+  overflow: hidden;
+  flex: none;
+  box-shadow: var(--sh-soft);
+}
+.up-pic { width: 100%; height: 100%; display: block; }
+.up-img .del {
+  position: absolute;
+  top: 6rpx;
+  right: 6rpx;
+  width: 46rpx;
+  height: 46rpx;
+  border-radius: 50%;
+  background: var(--ink-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.del-x {
+  position: relative;
+  width: 20rpx;
+  height: 20rpx;
+}
+.del-x::before, .del-x::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 9rpx;
+  width: 20rpx;
+  height: 3rpx;
+  border-radius: 2rpx;
+  background: var(--paper);
+}
+.del-x::before { transform: rotate(45deg); }
+.del-x::after { transform: rotate(-45deg); }
+
+.up-add {
+  width: 162rpx;
+  height: 162rpx;
+  border-radius: var(--r-sm);
+  border: 3rpx dashed var(--mut-2);
+  background: var(--paper-2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10rpx;
+  flex: none;
+}
+.up-plus {
+  position: relative;
+  width: 40rpx;
+  height: 40rpx;
+}
+.up-plus::before, .up-plus::after {
+  content: "";
+  position: absolute;
+  background: var(--mut-strong);
+  border-radius: 3rpx;
+}
+.up-plus::before { left: 18rpx; top: 2rpx; width: 4rpx; height: 36rpx; }
+.up-plus::after { left: 2rpx; top: 18rpx; width: 36rpx; height: 4rpx; }
+.up-t { font-size: 21rpx; font-weight: 700; color: var(--mut-strong); }
+
+/* —— 联系方式 —— */
+.input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  height: 104rpx;
+  padding: 0 30rpx;
+  background: #fff;
+  border: var(--bd-card);
+  border-radius: var(--r-md);
+  box-shadow: var(--sh-soft);
+}
+.mail-ic {
+  position: relative;
+  width: 34rpx;
+  height: 26rpx;
+  border: 3rpx solid var(--gold-deep);
+  border-radius: 5rpx;
+  flex: none;
+}
+.mail-ic::after {
+  content: "";
+  position: absolute;
+  left: 2rpx;
+  top: 1rpx;
+  width: 26rpx;
+  height: 16rpx;
+  border-left: 3rpx solid var(--gold-deep);
+  border-right: 3rpx solid var(--gold-deep);
+  transform: skewX(0) rotate(0);
+  border-top: 3rpx solid var(--gold-deep);
+  border-radius: 0 0 8rpx 8rpx;
+}
+.contact-input { flex: 1; font-size: 28rpx; color: var(--ink); }
+.contact-ph { color: var(--mut); }
+
+/* —— 提交 —— */
+.submit-area { padding: 60rpx 0 40rpx; }
+.submit-area .btn-pop {
+  gap: 14rpx;
+  min-height: 104rpx;
+  font-size: 31rpx;
+  letter-spacing: 1rpx;
+}
+.submit-area .btn-pop.is-busy { opacity: 0.7; }
+.send-ic {
+  width: 30rpx;
+  height: 30rpx;
+  background: #fff;
+  flex: none;
+  /* 纸飞机三角 */
+  clip-path: polygon(100% 0, 0 45%, 42% 56%, 55% 100%);
+}
+.hint {
+  margin-top: 26rpx;
+  text-align: center;
+  font-size: 22rpx;
+  color: var(--mut-strong);
+}

@@ -1,0 +1,32 @@
+<!-- components/state-empty · 通用空状态：圆形图标 + 标题 + 描述 + 可选 CTA -->
+<view class="state-empty g-fade-up">
+  <view class="se-illu se-illu--{{type}}">
+    <!-- 无菜谱 / 通用（pop） -->
+    <image wx:if="{{type === 'pop' || type === 'recipes'}}" class="se-icon"
+      src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='58' height='58' viewBox='0 0 64 64' fill='none' stroke='%23e8472a' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cellipse cx='32' cy='40' rx='22' ry='9'/%3E%3Cellipse cx='32' cy='40' rx='11' ry='4.2' stroke-width='2.2' opacity='.55'/%3E%3Cpath d='M16 40c0-2 4-4 16-4s16 2 16 4' opacity='.35'/%3E%3Cpath d='M44 16l-3 9M50 16l-1.5 9' opacity='.7'/%3E%3C/svg%3E"
+      mode="aspectFit" />
+    <!-- 无网络（gray/offline） -->
+    <image wx:elif="{{type === 'gray' || type === 'offline'}}" class="se-icon"
+      src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='58' height='58' viewBox='0 0 64 64' fill='none' stroke='%237a6e5d' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 26c12.5-11 31.5-11 44 0' opacity='.4'/%3E%3Cpath d='M18 34c8-7 20-7 28 0' opacity='.65'/%3E%3Cpath d='M26 42c3.5-3 8.5-3 12 0'/%3E%3Ccircle cx='32' cy='50' r='1.6' fill='%237a6e5d' stroke='none'/%3E%3Cpath d='M50 16L14 52' stroke='%23e8472a' stroke-width='3'/%3E%3C/svg%3E"
+      mode="aspectFit" />
+    <!-- 无搜索结果（gold/search） -->
+    <image wx:elif="{{type === 'gold' || type === 'search'}}" class="se-icon"
+      src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 64 64' fill='none' stroke='%23b08949' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='27' cy='27' r='16'/%3E%3Cpath d='M39 39l13 13'/%3E%3Cpath d='M22 22l10 10' stroke='%23e8472a' stroke-width='2.4'/%3E%3C/svg%3E"
+      mode="aspectFit" />
+    <!-- 兜底 -->
+    <image wx:else class="se-icon"
+      src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 64 64' fill='none' stroke='%23e8472a' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='14' y='18' width='36' height='30' rx='4'/%3E%3Cpath d='M14 28h36' opacity='.5'/%3E%3C/svg%3E"
+      mode="aspectFit" />
+  </view>
+
+  <view class="se-title">{{title}}</view>
+  <view wx:if="{{desc}}" class="se-desc">{{desc}}</view>
+
+  <view wx:if="{{cta}}"
+    class="se-btn {{ctaStyle === 'ghost' ? 'se-btn--ghost' : 'se-btn--pop'}} tap-scale"
+    hover-class="none"
+    bindtap="onAction">{{cta}}</view>
+
+  <!-- 自定义底部内容插槽 -->
+  <slot></slot>
+</view>

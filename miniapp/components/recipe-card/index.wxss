@@ -1,0 +1,138 @@
+/* components/recipe-card/index.wxss
+   复用 app.wxss 全局 token(--pop/--ink/--paper-2 等)与工具类(.tap-scale/.ellipsis)
+   仅写组件特有样式。px→rpx 设计稿 390 宽 ×1.923 */
+
+/* ============ 纵向大卡 .rc-card（对标 home-final .rcard）============ */
+.rc-card {
+  box-sizing: border-box;
+  width: 404rpx;
+  overflow: hidden;
+  border-radius: 42rpx;
+  background: #fff;
+  border: var(--bd-card);
+  box-shadow: 0 4rpx 12rpx rgba(60, 40, 20, 0.06), 0 36rpx 80rpx rgba(120, 70, 30, 0.16);
+}
+
+.rc-ph {
+  position: relative;
+  width: 100%;
+  height: 288rpx;
+  background: var(--paper-2);
+}
+.rc-ph-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.rc-lbl {
+  position: absolute;
+  top: 21rpx;
+  left: 21rpx;
+  padding: 8rpx 18rpx;
+  border-radius: 8rpx;
+  background: rgba(40, 30, 20, 0.55);
+  color: #fff;
+  font-size: 19rpx;
+  font-weight: 800;
+  letter-spacing: 2rpx;
+  line-height: 1.2;
+}
+
+.rc-fav {
+  position: absolute;
+  top: 19rpx;
+  right: 19rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+}
+.rc-fav .rc-heart {
+  color: var(--ink-deep);
+  font-size: 32rpx;
+  line-height: 1;
+}
+.rc-fav.on .rc-heart {
+  color: var(--pop);
+}
+
+.rc-info {
+  padding: 26rpx 28rpx 30rpx;
+}
+.rc-name {
+  color: var(--ink);
+  font-size: 32rpx;
+  font-weight: 800;
+  letter-spacing: -0.6rpx;
+  line-height: 1.25;
+}
+.rc-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24rpx;
+  margin-top: 16rpx;
+}
+.rc-meta text {
+  color: var(--mut-strong);
+  font-size: 23rpx;
+  line-height: 1.3;
+}
+
+/* ============ 横向行卡 .rc-row（对标 home-final .row）============ */
+.rc-row {
+  display: flex;
+  align-items: center;
+  gap: 28rpx;
+  padding: 26rpx 0;
+  border-bottom: 2rpx solid #efe9df;
+}
+.rc-row-thumb {
+  flex: none;
+  width: 146rpx;
+  height: 146rpx;
+  border-radius: 34rpx;
+  background: var(--paper-2);
+}
+.rc-row-mid {
+  flex: 1;
+  min-width: 0;
+}
+.rc-row-title {
+  color: var(--ink);
+  font-size: 32rpx;
+  font-weight: 800;
+  letter-spacing: -0.6rpx;
+  line-height: 1.25;
+}
+.rc-row-sub {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24rpx;
+  margin-top: 10rpx;
+}
+.rc-row-sub-i {
+  color: var(--mut);
+  font-size: 24rpx;
+  line-height: 1.3;
+}
+.rc-row-add {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 27rpx;
+  background: var(--pop);
+  box-shadow: 0 2rpx 4rpx rgba(180, 40, 20, 0.3), 0 16rpx 34rpx rgba(232, 71, 42, 0.4);
+}
+.rc-row-add .rc-plus {
+  color: #fff;
+  font-size: 40rpx;
+  font-weight: 600;
+  line-height: 1;
+}

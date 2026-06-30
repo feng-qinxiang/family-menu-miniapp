@@ -1,0 +1,8 @@
+{
+  "navigationStyle": "custom",
+  "navigationBarTextStyle": "white",
+  "disableScroll": true,
+  "usingComponents": {
+    "state-toast": "/components/state-toast/index"
+  }
+}

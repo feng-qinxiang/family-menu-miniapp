@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>家庭点菜 · 验证码</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-font-smoothing:antialiased; }
+  :root{
+    --paper:#fbf8f3; --paper-2:#f0ebe2;
+    --ink:#2c241b; --ink-deep:#3a2e23;
+    --mut:#9a8e7d; --mut-2:#b3a795; --mut-strong:#7a6e5d;
+    --gold:#f4d9a8; --gold-deep:#b08949;
+    --pop:#e8472a;
+    --pop-soft:#fdece6;
+    --serif:"Georgia","Times New Roman",serif;
+  }
+  body {
+    display:flex; align-items:center; justify-content:center;
+    min-height:100vh; background:#d9d2c7;
+    font-family:-apple-system,"SF Pro Text","Helvetica Neue",Helvetica,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  }
+  .phone {
+    position:relative; width:390px; height:844px;
+    background:var(--paper); border-radius:46px;
+    box-shadow:0 30px 70px rgba(60,45,30,.4), 0 0 0 11px #1b1714, 0 0 0 12px #2c2520;
+    overflow:hidden;
+  }
+  .status {
+    position:absolute; top:0; left:0; right:0; height:50px; z-index:60;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 30px 0 34px; color:var(--ink); font-size:15px; font-weight:600; pointer-events:none;
+  }
+  .status .right { display:flex; align-items:center; gap:7px; }
+  .notch { position:absolute; top:11px; left:50%; transform:translateX(-50%); width:118px; height:33px; background:#1b1714; border-radius:20px; z-index:61; }
+  .scroll { position:absolute; inset:0; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch; }
+  .scroll::-webkit-scrollbar { display:none; }
+  .tapscale { transition:transform .12s ease; }
+  .tapscale:active { transform:scale(.97); }
+
+  .wrap { padding:62px 28px 40px; min-height:844px; display:flex; flex-direction:column; }
+
+  .backbtn { width:46px; height:46px; border-radius:15px; background:var(--ink-deep);
+    display:flex; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(60,40,20,.18), 0 10px 22px rgba(60,40,20,.16); }
+
+  .bignum { position:absolute; top:78px; right:6px; z-index:0; font-family:var(--serif); font-size:200px; font-weight:700; line-height:1; color:rgba(176,137,73,.07); pointer-events:none; }
+
+  .head { margin-top:42px; position:relative; z-index:1; }
+  .eyebrow { font-family:var(--serif); font-style:italic; font-size:13px; letter-spacing:1.5px; color:var(--gold-deep); font-weight:700; }
+  .head h1 { font-size:50px; line-height:.92; font-weight:900; letter-spacing:-2.5px; color:var(--ink); margin-top:10px;
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; }
+  .head h1 .pop { color:var(--pop); }
+  .sent { font-size:14.5px; color:var(--mut-strong); margin-top:18px; line-height:1.5; }
+  .sent b { color:var(--ink); font-weight:800; letter-spacing:.5px; }
+
+  /* otp cells */
+  .otp { display:flex; gap:11px; margin-top:38px; position:relative; z-index:1; }
+  .cell { flex:1; height:64px; border-radius:16px; background:#fff; border:1.5px solid #ece4d6;
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--serif); font-size:30px; font-weight:700; color:var(--ink);
+    box-shadow:0 2px 6px rgba(60,40,20,.05); }
+  .cell.active { border-color:var(--pop); border-width:2px; background:var(--pop-soft); box-shadow:0 2px 6px rgba(232,71,42,.12), 0 10px 24px rgba(232,71,42,.16); }
+  .cell .cur { width:2px; height:30px; background:var(--pop); border-radius:1px; animation:blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity:0; } }
+  .cell.empty { color:var(--mut-2); }
+
+  .resend { display:flex; align-items:center; gap:7px; margin-top:28px; font-size:13.5px; font-weight:700; color:var(--mut-strong); position:relative; z-index:1; }
+  .resend svg { flex:none; }
+  .resend .can { color:var(--pop); }
+
+  .spacer { flex:1; min-height:24px; }
+
+  .submit { width:100%; background:var(--pop); color:#fff; border:none; border-radius:16px; padding:17px; font-size:16.5px; font-weight:800; letter-spacing:.5px;
+    display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 2px 6px rgba(180,40,20,.3), 0 14px 30px rgba(232,71,42,.34); font-family:inherit; }
+
+  .other { text-align:center; margin-top:22px; }
+  .other a { font-size:14px; font-weight:700; color:var(--ink-deep); text-decoration:none; border-bottom:1px solid var(--mut-2); padding:8px 4px; display:inline-block; }
+
+  /* fake keypad hint */
+  .pad { margin-top:30px; display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  .key { height:52px; border-radius:14px; background:var(--paper-2); display:flex; align-items:center; justify-content:center;
+    font-size:23px; font-weight:700; color:var(--ink-deep); font-family:var(--serif); }
+  .key.empty { background:transparent; }
+  .key.del { background:transparent; }
+
+  .home-ind { position:absolute; bottom:9px; left:50%; transform:translateX(-50%); width:134px; height:5px; border-radius:3px; background:#2c241b; opacity:.85; z-index:55; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status">
+    <span>9:41</span>
+    <span class="right">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="#2c241b"/><rect x="5" y="4.5" width="3" height="7.5" rx="1" fill="#2c241b"/><rect x="10" y="2" width="3" height="10" rx="1" fill="#2c241b"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#2c241b" opacity=".35"/></svg>
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><path d="M8.5 2.5C11 2.5 13.2 3.5 14.8 5.1L8.5 11.4 2.2 5.1C3.8 3.5 6 2.5 8.5 2.5Z" fill="#2c241b"/></svg>
+      <svg width="26" height="13" viewBox="0 0 26 13" fill="none"><rect x="1" y="1" width="21" height="11" rx="3" stroke="#2c241b" stroke-width="1.2" opacity=".5"/><rect x="3" y="3" width="16" height="7" rx="1.5" fill="#2c241b"/><rect x="23.5" y="4.5" width="2" height="4" rx="1" fill="#2c241b" opacity=".6"/></svg>
+    </span>
+  </div>
+
+  <div class="scroll">
+    <div class="bignum">06</div>
+    <div class="wrap">
+      <div class="backbtn tapscale">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fbf8f3" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+      </div>
+
+      <div class="head">
+        <div class="eyebrow">短信验证</div>
+        <h1>输入<span class="pop">验证码</span></h1>
+        <p class="sent">已发送至 <b>138****6666</b>，请填写收到的 6 位短信验证码</p>
+      </div>
+
+      <div class="otp">
+        <div class="cell">8</div>
+        <div class="cell">4</div>
+        <div class="cell">2</div>
+        <div class="cell active"><span class="cur"></span></div>
+        <div class="cell empty"></div>
+        <div class="cell empty"></div>
+      </div>
+
+      <div class="resend">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round"/></svg>
+        60s 后可重新获取
+      </div>
+
+      <div class="pad">
+        <div class="key">1</div><div class="key">2</div><div class="key">3</div>
+        <div class="key">4</div><div class="key">5</div><div class="key">6</div>
+        <div class="key">7</div><div class="key">8</div><div class="key">9</div>
+        <div class="key empty"></div>
+        <div class="key">0</div>
+        <div class="key del"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#7a6e5d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 5H8L3 12l5 7h13a1 1 0 001-1V6a1 1 0 00-1-1z"/><path d="M16 9l-5 6M11 9l5 6"/></svg></div>
+      </div>
+
+      <div class="spacer"></div>
+
+      <button class="submit tapscale">验证并登录
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+      <div class="other"><a href="#">换用其他方式登录 ›</a></div>
+    </div>
+  </div>
+
+  <div class="home-ind"></div>
+</div>
+</body>
+</html>

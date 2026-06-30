@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="点菜小程序家庭版 H5 预览页：浏览菜谱、安排今日菜单、生成购物清单、管理家庭成员与社区互动。" />
+  <meta name="theme-color" content="#0f766e" />
+  <meta name="color-scheme" content="light" />
+  <title>点菜小程序-家庭版</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <noscript>
+    <div class="noscript-banner">本页面需要启用 JavaScript 才能加载菜谱与菜单数据。请在浏览器设置中开启 JavaScript 后刷新。</div>
+  </noscript>
+  <div class="shell">
+    <header class="topbar" role="banner">
+      <div>
+        <div class="eyebrow">家庭点菜 · H5 预览</div>
+        <h1>点菜小程序-家庭版</h1>
+        <p id="statusText" role="status" aria-live="polite">正在连接后端...</p>
+      </div>
+      <div class="meta">
+        <span id="userBadge" class="badge">游客</span>
+        <span id="familyBadge" class="badge">家庭 ID -</span>
+        <span id="vipBadge" class="badge">免费版</span>
+      </div>
+    </header>
+
+    <main class="grid" role="main">
+      <section class="panel span-2">
+        <div class="panel-head">
+          <div>
+            <h2>今天做什么</h2>
+            <p>我做过的 / 社区菜谱 / 链接导入 / 随机推荐</p>
+          </div>
+          <div class="tabs" id="sourceTabs"></div>
+        </div>
+        <div class="toolbar">
+          <label class="visually-hidden" for="recipeSearch">搜索菜谱</label>
+          <input id="recipeSearch" type="search" placeholder="搜菜名、菜系、口味" aria-label="搜菜名、菜系、口味" />
+          <button id="randomPickBtn" type="button" class="btn secondary">随机给我一个</button>
+        </div>
+        <div class="toolbar filter-bar">
+          <span class="filter-label">菜系</span>
+          <div id="cuisineTabs" class="tabs"></div>
+        </div>
+        <div id="recipeList" class="cards"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>今日菜单</h2>
+            <p>服务端状态</p>
+          </div>
+          <div class="mini-actions">
+            <button id="reloadMenuBtn" type="button" class="btn ghost">刷新</button>
+          </div>
+        </div>
+        <div id="todayMenu" class="stack"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>购物清单</h2>
+            <p>今日菜单自动生成</p>
+          </div>
+          <div class="mini-actions">
+            <button id="rebuildShoppingBtn" type="button" class="btn ghost">重新生成</button>
+          </div>
+        </div>
+        <div id="shoppingList" class="stack"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>家庭成员</h2>
+            <p>当前家庭的成员和角色</p>
+          </div>
+        </div>
+        <div id="familyMembers" class="stack"></div>
+        <form id="addMemberForm" class="form-row">
+          <label class="visually-hidden" for="memberName">新成员昵称</label>
+          <input id="memberName" type="text" placeholder="输入新成员昵称" aria-label="输入新成员昵称" />
+          <button id="addMemberBtn" type="submit" class="btn primary">添加成员</button>
+        </form>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>社区菜谱</h2>
+            <p>别人怎么做、怎么改、为什么好吃</p>
+          </div>
+        </div>
+        <div id="communityPosts" class="stack"></div>
+        <div id="communityDetail" class="stack" style="margin-top: 16px;"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>社区审核</h2>
+            <p>举报进入待处理队列</p>
+          </div>
+          <div class="mini-actions">
+            <button id="reloadReportsBtn" type="button" class="btn ghost">刷新</button>
+          </div>
+        </div>
+        <div id="communityReports" class="stack"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>导入配方</h2>
+            <p>粘贴链接或正文，先解析，再保存</p>
+          </div>
+          <div class="mini-actions">
+            <button id="sampleImportBtn" type="button" class="btn ghost">示例</button>
+          </div>
+        </div>
+        <label class="visually-hidden" for="importRaw">菜谱链接或正文</label>
+        <textarea id="importRaw" class="textarea" placeholder="粘贴菜谱链接或正文" aria-label="粘贴菜谱链接或正文"></textarea>
+        <div class="toolbar">
+          <button id="previewImportBtn" type="button" class="btn primary">解析配方</button>
+          <button id="saveImportBtn" type="button" class="btn secondary">保存到我的菜谱</button>
+        </div>
+        <div id="importPreview" class="stack"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>我的</h2>
+            <p>VIP / 状态 / 家庭信息</p>
+          </div>
+        </div>
+        <div id="profilePanel" class="stack"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/app.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>做菜记录 · 精致撞色</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-font-smoothing:antialiased; }
+  :root{
+    --paper:#fbf8f3; --paper-2:#f0ebe2;
+    --ink:#2c241b; --ink-deep:#3a2e23;
+    --mut:#9a8e7d; --mut-2:#b3a795;
+    --gold:#f4d9a8; --gold-deep:#b08949;
+    --gold-foil:linear-gradient(135deg,#d4a857,#f3d796,#b8863a);
+    --pop:#e8472a;
+    --pop-soft:#fdece6;
+    --pine:#2f4a3a;
+    --serif:"Georgia","Times New Roman",serif;
+  }
+  body {
+    display:flex; align-items:center; justify-content:center;
+    min-height:100vh; background:#d9d2c7;
+    font-family:-apple-system,"SF Pro Text","Helvetica Neue",Helvetica,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  }
+  .phone {
+    position:relative; width:390px; height:844px;
+    background:var(--paper); border-radius:46px;
+    box-shadow:0 30px 70px rgba(60,45,30,.4), 0 0 0 11px #1b1714, 0 0 0 12px #2c2520;
+    overflow:hidden;
+  }
+  .status {
+    position:absolute; top:0; left:0; right:0; height:50px; z-index:60;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 30px 0 34px; color:#fff; font-size:15px; font-weight:600; pointer-events:none;
+  }
+  .status .right { display:flex; align-items:center; gap:7px; }
+  .notch { position:absolute; top:11px; left:50%; transform:translateX(-50%); width:118px; height:33px; background:#1b1714; border-radius:20px; z-index:61; }
+  .scroll { position:absolute; inset:0; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch; }
+  .scroll::-webkit-scrollbar { display:none; }
+  .tap:active { transform:scale(.97); }
+
+  /* hero — photo */
+  .hero { position:relative; height:452px; background:url('img/beef-broccoli.jpg') center/cover no-repeat; }
+  .hero::before { content:""; position:absolute; inset:0; z-index:1;
+    background:radial-gradient(120% 80% at 50% 0%, rgba(255,180,80,.16), transparent 55%); mix-blend-mode:overlay; }
+  .hero::after { content:""; position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(20,14,8,.5) 0%, rgba(20,14,8,0) 28%, rgba(20,14,8,.18) 52%, rgba(20,14,8,.9) 100%); }
+  .hero-bignum { position:absolute; top:78px; right:14px; z-index:2; font-family:var(--serif); font-size:212px; font-weight:700; line-height:1; color:rgba(255,255,255,.07); pointer-events:none; }
+  .nav { position:absolute; top:58px; left:24px; right:24px; z-index:10; display:flex; align-items:center; justify-content:space-between; }
+  .backbtn { width:42px; height:42px; border-radius:50%; background:rgba(255,255,255,.16); backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,.22); display:flex; align-items:center; justify-content:center; }
+  .nav .nav-title { color:#fff; font-size:16px; font-weight:700; letter-spacing:.5px; text-shadow:0 1px 8px rgba(0,0,0,.35); }
+  .nav .navspace { width:42px; }
+
+  .hero-body { position:absolute; left:24px; right:24px; bottom:26px; z-index:10; color:#fff; }
+  .tag { display:inline-block; font-family:var(--serif); font-style:italic; font-size:12px; letter-spacing:1.5px; font-weight:700;
+    color:#fff; background:var(--pop); padding:6px 14px; border-radius:4px; }
+  .hero-title {
+    font-size:60px; line-height:.9; font-weight:900; letter-spacing:-3px; margin:15px 0 4px;
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    color:transparent; -webkit-text-stroke:1.6px #fff; text-stroke:1.6px #fff;
+  }
+  .hero-title .pop { color:var(--pop); -webkit-text-stroke:0; text-stroke:0; }
+
+  /* achievement stats on hero */
+  .ach { position:relative; z-index:5; display:flex; gap:14px; margin-top:18px; align-items:center;
+    background:rgba(255,255,255,.13); backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,.18); border-radius:18px; padding:14px 16px; }
+  .ach .a { flex:1; }
+  .ach .a .num { font-size:30px; font-weight:900; color:#fff; letter-spacing:-1.5px; line-height:1; font-family:"PingFang SC","Microsoft YaHei",sans-serif; }
+  .ach .a .num .u { font-size:12px; font-weight:600; color:rgba(255,255,255,.6); margin-left:2px; }
+  .ach .a.hl .num { color:var(--pop); }
+  .ach .a .cap { font-size:11px; color:rgba(255,255,255,.7); margin-top:5px; letter-spacing:.4px; }
+  .ach .divider { width:1px; align-self:stretch; background:rgba(255,255,255,.18); }
+
+  /* sheet */
+  .sheet { position:relative; margin-top:-26px; background:var(--paper); border-radius:28px 28px 0 0; padding:24px 0 36px; z-index:20; }
+  .pad { padding:0 24px; }
+
+  /* calendar strip (light, in sheet) */
+  .calwrap { margin:0 24px; background:var(--ink-deep); border-radius:20px; padding:16px 16px 17px; position:relative; overflow:hidden; }
+  .calwrap::after { content:""; position:absolute; right:-30px; top:-30px; width:120px; height:120px; border-radius:50%; background:rgba(232,71,42,.16); }
+  .calwrap .cal-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:13px; position:relative; z-index:1; }
+  .calwrap .cal-top .ct { font-size:13px; font-weight:800; color:#fff; }
+  .calwrap .cal-top .cs { font-family:var(--serif); font-style:italic; font-size:11px; color:var(--gold); }
+  .cal-days { display:flex; justify-content:space-between; position:relative; z-index:1; }
+  .cal-day { display:flex; flex-direction:column; align-items:center; gap:7px; }
+  .cal-day .dw { font-size:10.5px; color:rgba(255,255,255,.65); font-weight:600; }
+  .cal-day .dd { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:12.5px; font-weight:700; color:rgba(255,255,255,.4); background:rgba(255,255,255,.06); }
+  .cal-day.done .dd { background:var(--pop); color:#fff; box-shadow:0 4px 10px rgba(232,71,42,.4); }
+  .cal-day.today .dd { background:#fff; color:var(--ink-deep); }
+  .cal-day.miss .dd { background:transparent; color:rgba(255,255,255,.42); border:1px dashed rgba(255,255,255,.34); }
+  .cal-day.miss:active .dd { background:rgba(232,71,42,.16); border-color:var(--pop); color:#fff; }
+  .cal-day .fix { font-size:8.5px; font-weight:700; color:var(--gold); letter-spacing:.2px; margin-top:-2px; }
+  .cal-day.miss .fix::before { content:"+ "; }
+
+  .chips { display:flex; gap:9px; overflow-x:auto; padding:0 24px 4px; margin-top:22px; }
+  .chips::-webkit-scrollbar { display:none; }
+  .chip { flex:none; font-size:13px; font-weight:600; color:var(--mut); padding:11px 15px; border-radius:30px; background:var(--paper-2); white-space:nowrap; border:1px solid transparent; display:flex; align-items:center; gap:5px; }
+  .chip.on { background:var(--ink-deep); color:var(--paper); border-color:var(--ink-deep); }
+  .chip .av { width:18px; height:18px; border-radius:50%; background:var(--gold-deep); color:#fff; font-size:9px; font-weight:800; display:flex; align-items:center; justify-content:center; }
+  .chip.on .av { background:var(--pop); }
+
+  .shead { display:flex; align-items:flex-end; justify-content:space-between; margin:28px 0 16px; }
+  .shead > div:first-child { position:relative; padding-left:15px; }
+  .shead > div:first-child::before { content:""; position:absolute; left:0; top:3px; bottom:3px; width:4px; border-radius:3px; background:var(--pop); }
+  .shead .eyebrow { font-family:var(--serif); font-style:italic; font-size:12px; letter-spacing:1px; color:var(--gold-deep); font-weight:700; }
+  .shead h2 { font-size:27px; font-weight:900; color:var(--ink); letter-spacing:-1.2px; margin-top:6px;
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; line-height:.96; }
+  .shead h2 .pop { color:var(--pop); }
+  .shead .cnt { font-size:12px; color:#7a6e5d; font-weight:600; padding-bottom:3px; flex:none; }
+
+  /* timeline */
+  .timeline { position:relative; }
+  .month-sep { display:flex; align-items:center; gap:11px; margin:4px 0 16px; }
+  .month-sep:not(:first-child) { margin-top:10px; }
+  .month-sep .mtag { font-family:var(--serif); font-size:14px; font-weight:800; color:var(--ink-deep); letter-spacing:.3px; flex:none; }
+  .month-sep .mtag em { font-style:italic; color:var(--gold-deep); font-size:12px; font-weight:700; margin-left:5px; }
+  .month-sep .mline { flex:1; height:1px; background:linear-gradient(90deg,#e3dccd,transparent); }
+  .month-sep .mcnt { font-size:11px; color:#7a6e5d; font-weight:600; flex:none; }
+  /* load more / list end */
+  .loadmore { display:flex; align-items:center; justify-content:center; gap:8px; margin:6px 0 4px; padding:14px; background:var(--paper-2); border-radius:16px; font-size:13px; font-weight:700; color:var(--ink-deep); }
+  .loadmore .lm-i { width:16px; height:16px; }
+  .loadmore:active { background:#e6ded0; }
+  .listend { display:flex; align-items:center; justify-content:center; gap:12px; margin:18px 0 2px; }
+  .listend .le-line { width:46px; height:1px; background:#ddd5c6; }
+  .listend .le-txt { font-size:11px; color:#7a6e5d; font-weight:600; letter-spacing:.5px; }
+  .tcard { display:flex; gap:14px; background:#fff; border-radius:22px; padding:13px; margin-bottom:14px; box-shadow:0 2px 6px rgba(60,40,20,.06), 0 18px 40px rgba(120,70,30,.13); border:1px solid #f1ece2; }
+  .tcard .thumb { width:84px; height:84px; border-radius:16px; background-size:cover; background-position:center; flex:none; position:relative; }
+  .tcard .thumb .date { position:absolute; bottom:6px; left:6px; font-size:9px; font-weight:800; letter-spacing:.5px; color:#fff; background:rgba(40,30,20,.62); backdrop-filter:blur(4px); padding:3px 7px; border-radius:5px; }
+  .tcard .tbody { flex:1; min-width:0; padding-top:1px; }
+  .tcard .trow1 { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .tcard h4 { font-size:17px; font-weight:800; color:var(--ink); letter-spacing:-.3px; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .tcard .cook { display:flex; align-items:center; gap:6px; margin-top:7px; }
+  .tcard .cook .ca { width:22px; height:22px; border-radius:50%; color:#fff; font-size:10px; font-weight:800; display:flex; align-items:center; justify-content:center; flex:none; }
+  .tcard .cook .cn { font-size:12.5px; color:var(--mut); font-weight:600; }
+  .tcard .cook .cn b { color:var(--ink-deep); font-weight:700; }
+  .stars { display:flex; gap:1px; flex:none; }
+  .note { margin-top:10px; font-size:12.5px; line-height:1.5; color:var(--ink-deep); background:var(--pop-soft); border-radius:11px; padding:8px 11px; position:relative; }
+  .note .who { color:var(--pop); font-weight:800; }
+  .note.plain { background:var(--paper-2); }
+  .note.plain .who { color:var(--gold-deep); }
+
+  .tone-a { background:#c75b39; } .tone-b { background:var(--pine); }
+  .tone-c { background:var(--gold-deep); } .tone-d { background:#6b7b8c; }
+  .tone-e { background:#9a5b8c; }
+
+  .tabbar { position:absolute; bottom:0; left:0; right:0; height:88px; z-index:50; background:rgba(251,248,243,.92); backdrop-filter:blur(18px); border-top:1px solid #ece5d9; display:flex; justify-content:space-around; align-items:flex-start; padding-top:13px; }
+  .tab { display:flex; flex-direction:column; align-items:center; gap:5px; color:var(--mut-2); font-size:10.5px; font-weight:600; }
+  .tab.on { color:var(--pop); }
+  .home-ind { position:absolute; bottom:9px; left:50%; transform:translateX(-50%); width:134px; height:5px; border-radius:3px; background:#2c241b; opacity:.85; z-index:55; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status">
+    <span>9:41</span>
+    <span class="right">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="#fff"/><rect x="5" y="4.5" width="3" height="7.5" rx="1" fill="#fff"/><rect x="10" y="2" width="3" height="10" rx="1" fill="#fff"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#fff" opacity=".4"/></svg>
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><path d="M8.5 2.5C11 2.5 13.2 3.5 14.8 5.1L8.5 11.4 2.2 5.1C3.8 3.5 6 2.5 8.5 2.5Z" fill="#fff"/></svg>
+      <svg width="26" height="13" viewBox="0 0 26 13" fill="none"><rect x="1" y="1" width="21" height="11" rx="3" stroke="#fff" stroke-width="1.2" opacity=".5"/><rect x="3" y="3" width="16" height="7" rx="1.5" fill="#fff"/><rect x="23.5" y="4.5" width="2" height="4" rx="1" fill="#fff" opacity=".6"/></svg>
+    </span>
+  </div>
+
+  <div class="scroll">
+    <div class="hero">
+      <div class="hero-bignum">23</div>
+      <div class="nav">
+        <div class="backbtn tap"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></div>
+        <div class="nav-title">做菜记录</div>
+        <div class="navspace"></div>
+      </div>
+
+      <div class="hero-body">
+        <span class="tag">Cook Log</span>
+        <div class="hero-title">做菜<span class="pop">记录</span></div>
+        <div class="ach">
+          <div class="a hl"><div class="num">23<span class="u">道</span></div><div class="cap">本月做的菜</div></div>
+          <div class="divider"></div>
+          <div class="a"><div class="num">19<span class="u">天</span></div><div class="cap">本月开火</div></div>
+          <div class="divider"></div>
+          <div class="a"><div class="num">18<span class="u">次</span></div><div class="cap">家人好评</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sheet">
+      <div class="calwrap">
+        <div class="cal-top">
+          <div class="ct">本周打卡</div>
+          <div class="cs">5 / 6 days</div>
+        </div>
+        <div class="cal-days">
+          <div class="cal-day done"><span class="dw">一</span><span class="dd">1</span></div>
+          <div class="cal-day done"><span class="dw">二</span><span class="dd">2</span></div>
+          <div class="cal-day done"><span class="dw">三</span><span class="dd">3</span></div>
+          <div class="cal-day miss tap"><span class="dw">四</span><span class="dd">4</span><span class="fix">补记</span></div>
+          <div class="cal-day done"><span class="dw">五</span><span class="dd">5</span></div>
+          <div class="cal-day today"><span class="dw">六</span><span class="dd">6</span></div>
+          <div class="cal-day"><span class="dw">日</span><span class="dd">7</span></div>
+        </div>
+      </div>
+
+      <div class="chips">
+        <div class="chip on">全部</div>
+        <div class="chip"><span class="av">妈</span>妈妈</div>
+        <div class="chip"><span class="av">张</span>小张</div>
+        <div class="chip"><span class="av">爸</span>爸爸</div>
+        <div class="chip">五星好评</div>
+      </div>
+
+      <div class="pad">
+        <div class="shead">
+          <div>
+            <div class="eyebrow">Recently Cooked</div>
+            <h2>最近<span class="pop">上桌</span>的</h2>
+          </div>
+          <span class="cnt">共 23 条</span>
+        </div>
+
+        <div class="timeline">
+
+          <div class="month-sep">
+            <span class="mtag">6月<em>June</em></span>
+            <span class="mline"></span>
+            <span class="mcnt">本月 23 道</span>
+          </div>
+
+          <div class="tcard tap">
+            <div class="thumb" style="background-image:url('img/hongshao-pork.jpg')"><span class="date">06.07 晚</span></div>
+            <div class="tbody">
+              <div class="trow1">
+                <h4>红烧肉</h4>
+                <div class="stars">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="#e8472a"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.6 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/></svg>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="#e8472a"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.6 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/></svg>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="#e8472a"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.6 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/></svg>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="#e8472a"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.6 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/></svg>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="#e8472a"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.6 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/></svg>
+                </div>
+              </div>
+              <div class="cook"><span class="ca tone-a">妈</span><span class="cn"><b>妈妈</b> 掌勺</span></div>
+              <div class="note"><span class="who">爸爸说</span>比上次更入味，肥而不腻，下次还炖久一点。</div>
+            </div>
+          </div>
+
+          <div class="tcard tap">
+            <div class="thumb" style="background-image:url('img/mapo-tofu.jpg')"><span class="date">06.06 晚</span></div>
+            <div class="tbody">
+              <div class="trow1">
+                <h4>麻婆豆腐</h4>
+                <div class="stars">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="#e8472a"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.6 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/></svg>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="#e8472a"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.6 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/></svg>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="#e8472a"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.6 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/></svg>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="#e8472a"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.6 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/></svg>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="#e7e0d4"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.6 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/></svg>
+                </div>
+              </div>
+              <div class="cook"><span class="ca tone-b">张</span><span class="cn"><b>小张</b> 掌勺</span></div>
+              <div class="note"><span class="who">妈妈说</span>有点咸了，豆瓣酱下手重，下次少放半勺盐。</div>
+            </div>
+          </div>
+
+          <div class="tcard tap">
+            <div class="thumb" style="background-image:url('img/tomato-egg.jpg')"><span class="date">06.06 午</span></div>
+            <div class="tbody">
+              <div class="trow1">
+                <h4>番茄炒蛋</h4>
+                <div class="stars">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="#e8472a"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.6 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/></svg>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="#e8472a"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.6 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/></svg>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="#e8472a"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.6 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/></svg>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="#e8472a"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.6 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/></svg>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="#e8472a"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.6 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/></svg>
+                </div>
+              </div>
+              <div class="cook"><span class="ca tone-b">张</span><span class="cn"><b>小张</b> 掌勺</span></div>
+              <div class="note plain"><span class="who">备注</span>放了一勺糖，孩子多吃了半碗饭。</div>
+            </div>
+          </div>
+
+          <div class="tcard tap">
+            <div class="thumb" style="background-image:url('img/long-beans.jpg')"><span class="date">06.05 晚</span></div>
+            <div class="tbody">
+              <div class="trow1">
+                <h4>干煸四季豆</h4>
+                <div class="stars">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="#e8472a"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.6 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/></svg>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="#e8472a"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.6 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/></svg>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="#e8472a"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.6 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/></svg>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="#e7e0d4"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.6 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/></svg>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="#e7e0d4"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.6 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/></svg>
+                </div>
+              </div>
+              <div class="cook"><span class="ca tone-d">爸</span><span class="cn"><b>爸爸</b> 掌勺</span></div>
+              <div class="note plain"><span class="who">备注</span>豆子没煸透，有点生，火再大一点会更好。</div>
+            </div>
+          </div>
+
+          <div class="tcard tap">
+            <div class="thumb" style="background-image:url('img/egg-drop-soup.jpg')"><span class="date">06.05 晚</span></div>
+            <div class="tbody">
+              <div class="trow1">
+                <h4>西红柿蛋汤</h4>
+                <div class="stars">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="#e8472a"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.6 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/></svg>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="#e8472a"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.6 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/></svg>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="#e8472a"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.6 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/></svg>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="#e8472a"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.6 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/></svg>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="#e8472a"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.6 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/></svg>
+                </div>
+              </div>
+              <div class="cook"><span class="ca tone-a">妈</span><span class="cn"><b>妈妈</b> 掌勺</span></div>
+              <div class="note"><span class="who">奶奶说</span>蛋花打得真好看，一人喝了两碗。</div>
+            </div>
+          </div>
+
+          <div class="tcard tap">
+            <div class="thumb" style="background-image:url('img/sichuan-eggplant.jpg')"><span class="date">06.04 晚</span></div>
+            <div class="tbody">
+              <div class="trow1">
+                <h4>鱼香茄子</h4>
+                <div class="stars">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="#e8472a"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.6 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/></svg>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="#e8472a"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.6 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/></svg>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="#e8472a"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.6 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/></svg>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="#e8472a"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.6 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/></svg>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="#e7e0d4"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.6 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/></svg>
+                </div>
+              </div>
+              <div class="cook"><span class="ca tone-b">张</span><span class="cn"><b>小张</b> 掌勺</span></div>
+              <div class="note"><span class="who">妈妈说</span>这次酸甜正好，茄子也没油腻，进步很大。</div>
+            </div>
+          </div>
+
+          <div class="loadmore tap">
+            <svg class="lm-i" viewBox="0 0 24 24" fill="none" stroke="#b08949" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+            <span>展开更早的 17 条</span>
+          </div>
+
+          <div class="listend">
+            <span class="le-line"></span>
+            <span class="le-txt">— 更早的记录 —</span>
+            <span class="le-line"></span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

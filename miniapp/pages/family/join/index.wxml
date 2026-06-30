@@ -1,0 +1,114 @@
+<!-- pages/family/join · 加入家庭：6格邀请码 + 扫码 + 家庭卡预览 + 申请加入 + 创建新家 -->
+<nav-bar title="加入家庭" status-bar-height="{{statusBarHeight}}">
+  <view slot="" class="nav-eyebrow">Join a Family</view>
+</nav-bar>
+
+<view class="container">
+  <!-- Hero -->
+  <view class="head g-fade-up">
+    <view class="eyebrow-serif">Got an invite code?</view>
+    <view class="title-stroke hero-title title-shadow">加入<text class="pop">家庭</text></view>
+    <view class="lead">输入家人分享的 6 位邀请码，或扫描他们的二维码，一起共享菜单和买菜清单。</view>
+  </view>
+
+  <!-- 6 位邀请码 -->
+  <view class="code-label g-fade-up g-d1">
+    <text class="code-label-tx">6 位邀请码</text>
+    <view class="paste tap-scale" catchtap="onPaste">
+      <view class="paste-ic"></view>
+      <text>粘贴</text>
+    </view>
+  </view>
+
+  <view class="codeboxes g-fade-up g-d1" catchtap="onFocusCode">
+    <view
+      wx:for="{{cells}}"
+      wx:key="index"
+      class="cell {{item ? 'on' : ''}} {{focused && index === code.length ? 'cur' : ''}} {{!item ? 'empty' : ''}}"
+    >{{item || ''}}</view>
+  </view>
+  <!-- 隐藏输入，承接键盘输入 -->
+  <input
+    class="code-input"
+    type="text"
+    maxlength="6"
+    value="{{code}}"
+    focus="{{focused}}"
+    confirm-type="done"
+    bindinput="onCodeInput"
+    bindblur="onCodeBlur"
+  />
+
+  <!-- 扫码加入 -->
+  <view class="scanrow g-fade-up g-d2">
+    <view class="scanbtn tap-scale" catchtap="onScan">
+      <view class="scan-ic"></view>
+      <text>扫码加入</text>
+    </view>
+  </view>
+
+  <!-- 分隔 -->
+  <view class="ln-divider g-fade-up g-d3">
+    <view class="ln"></view>
+    <text class="ln-tx">Family Found</text>
+    <view class="ln"></view>
+  </view>
+
+  <!-- 家庭预览卡 -->
+  <view class="previewwrap g-fade-up g-d3" wx:if="{{family}}">
+    <view class="pvlabel">已找到这个家庭</view>
+    <view class="famcard card">
+      <view class="fc-top">
+        <view class="fc-cover">
+          <image class="fc-cover-img" src="/assets/dishes/hongshao-pork.jpg" mode="aspectFill" />
+          <view class="badge"><view class="badge-ic"></view></view>
+        </view>
+        <view class="fc-mid">
+          <view class="fc-name ellipsis">{{family.familyName}}</view>
+          <view class="fc-sub">
+            <view class="home-ic"></view>
+            <text class="ellipsis">{{family.meta}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="fc-divider"></view>
+      <view class="fc-bot">
+        <view class="avatars">
+          <view
+            wx:for="{{family.avatars}}"
+            wx:key="index"
+            class="av"
+            style="background: {{item.color}};"
+          >{{item.text}}</view>
+          <view wx:if="{{family.moreCount > 0}}" class="av more">+{{family.moreCount}}</view>
+        </view>
+        <view class="count">共 <text class="count-b">{{family.memberCount}}</text> 位家庭成员</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 未找到家庭 -->
+  <view class="previewwrap g-fade-up g-d3" wx:else>
+    <state-empty
+      type="search"
+      title="还没有匹配的家庭"
+      desc="补全 6 位邀请码或扫码后，这里会显示家庭信息"
+    />
+  </view>
+
+  <!-- 申请加入 -->
+  <view
+    class="applybtn btn btn-pop btn-block tap-scale {{family ? '' : 'is-disabled'}}"
+    catchtap="onApply"
+  >
+    <text>申请加入</text>
+    <view class="apply-arrow"></view>
+  </view>
+
+  <!-- 创建新家 -->
+  <view class="createnew">
+    <text class="createnew-link tap-scale" catchtap="onCreate">还没有家庭？创建一个新家 ›</text>
+  </view>
+
+  <view class="safe-bottom"></view>
+</view>

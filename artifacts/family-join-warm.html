@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>家庭点菜 · 加入家庭</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-font-smoothing:antialiased; }
+  :root{
+    --paper:#fbf8f3; --paper-2:#f0ebe2;
+    --ink:#2c241b; --ink-deep:#3a2e23;
+    --mut:#9a8e7d; --mut-2:#b3a795; --mut-strong:#7a6e5d;
+    --gold:#f4d9a8; --gold-deep:#b08949;
+    --pop:#e8472a; --pop-soft:#fdece6;
+    --serif:"Georgia","Times New Roman",serif;
+  }
+  body {
+    display:flex; align-items:center; justify-content:center;
+    min-height:100vh; background:#d9d2c7;
+    font-family:-apple-system,"SF Pro Text","Helvetica Neue",Helvetica,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  }
+  .phone {
+    position:relative; width:390px; height:844px;
+    background:var(--paper); border-radius:46px;
+    box-shadow:0 30px 70px rgba(60,45,30,.4), 0 0 0 11px #1b1714, 0 0 0 12px #2c2520;
+    overflow:hidden;
+  }
+  .status {
+    position:absolute; top:0; left:0; right:0; height:50px; z-index:60;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 30px 0 34px; color:var(--ink); font-size:15px; font-weight:600; pointer-events:none;
+  }
+  .status .right { display:flex; align-items:center; gap:7px; }
+  .notch { position:absolute; top:11px; left:50%; transform:translateX(-50%); width:118px; height:33px; background:#1b1714; border-radius:20px; z-index:61; }
+  .scroll { position:absolute; inset:0; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch; }
+  .scroll::-webkit-scrollbar { display:none; }
+  .tapscale { transition:transform .12s ease; }
+  .tapscale:active { transform:scale(.97); }
+
+  .topnav { position:relative; padding:62px 24px 0; display:flex; align-items:center; justify-content:space-between; }
+  .backbtn { width:44px; height:44px; border-radius:50%; background:var(--ink-deep); display:flex; align-items:center; justify-content:center; box-shadow:0 8px 18px rgba(60,40,20,.22); }
+  .navtitle { font-family:var(--serif); font-style:italic; font-size:13px; letter-spacing:1.5px; color:var(--gold-deep); font-weight:700; }
+  .navspace { width:44px; }
+
+  .head { padding:26px 24px 0; }
+  .head .eyebrow { font-family:var(--serif); font-style:italic; font-size:13px; letter-spacing:1.5px; color:var(--gold-deep); font-weight:700; }
+  .head h1 { font-size:48px; line-height:.92; font-weight:900; color:var(--ink); letter-spacing:-2.5px; margin-top:8px;
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; }
+  .head h1 .pop { color:var(--pop); }
+  .head .lead { font-size:14px; color:var(--mut-strong); margin-top:14px; line-height:1.6; }
+
+  /* code input */
+  .codelabel { padding:30px 24px 0; display:flex; align-items:center; justify-content:space-between; }
+  .codelabel label { font-size:11px; letter-spacing:1px; font-weight:800; text-transform:uppercase; color:var(--gold-deep); }
+  .codelabel .paste { font-size:12px; font-weight:700; color:var(--mut-strong); display:flex; align-items:center; gap:5px; }
+  .codeboxes { display:flex; gap:9px; padding:13px 24px 0; }
+  .cell { flex:1; height:62px; background:#fff; border:1.5px solid #ece4d6; border-radius:15px;
+    display:flex; align-items:center; justify-content:center; font-size:26px; font-weight:900; color:var(--ink);
+    box-shadow:0 2px 6px rgba(60,40,20,.05); }
+  .cell.on { border-color:var(--pop); background:#fff; box-shadow:0 2px 6px rgba(232,71,42,.14), 0 8px 20px rgba(232,71,42,.12); }
+  .cell.cur { position:relative; border-color:var(--pop); }
+  .cell.cur::after { content:""; width:2px; height:28px; background:var(--pop); border-radius:1px; animation:blink 1s steps(1) infinite; }
+  .cell.empty { color:var(--mut-2); }
+  @keyframes blink { 50% { opacity:0; } }
+
+  .scanrow { padding:18px 24px 0; }
+  .scanbtn { width:100%; background:#fff; border:1.5px solid #ece4d6; border-radius:15px; padding:14px; font-size:14.5px; font-weight:800; color:var(--ink-deep);
+    display:flex; align-items:center; justify-content:center; gap:9px; box-shadow:0 2px 6px rgba(60,40,20,.05); font-family:inherit; }
+
+  .divider { display:flex; align-items:center; gap:14px; margin:26px 24px 0; }
+  .divider .ln { flex:1; height:1px; background:#e6ddcf; }
+  .divider span { font-family:var(--serif); font-style:italic; font-size:12px; letter-spacing:1px; color:var(--gold-deep); font-weight:700; }
+
+  /* preview family card */
+  .previewwrap { padding:22px 24px 0; }
+  .pvlabel { font-family:var(--serif); font-style:italic; font-size:12px; letter-spacing:1px; color:var(--gold-deep); font-weight:700; margin-bottom:11px; }
+  .famcard { background:#fff; border-radius:24px; padding:20px; box-shadow:0 2px 6px rgba(60,40,20,.06), 0 18px 40px rgba(120,70,30,.16); border:1px solid #f1ece2; }
+  .famcard .fc-top { display:flex; align-items:center; gap:14px; }
+  .famcard .fc-cover { width:60px; height:60px; border-radius:18px; background:url('img/hongshao-pork.jpg') center/cover no-repeat; flex:none; position:relative; box-shadow:0 6px 14px rgba(120,70,30,.22); }
+  .famcard .fc-cover .badge { position:absolute; bottom:-5px; right:-5px; width:24px; height:24px; border-radius:50%; background:var(--pop); border:2.5px solid #fff; display:flex; align-items:center; justify-content:center; }
+  .famcard .fc-mid { flex:1; min-width:0; }
+  .famcard .fc-mid h3 { font-size:21px; font-weight:900; color:var(--ink); letter-spacing:-.6px;
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; }
+  .famcard .fc-mid .sub { font-size:12.5px; color:var(--mut-strong); margin-top:4px; display:flex; align-items:center; gap:5px; }
+  .famcard .fc-divider { height:1px; background:#efe9df; margin:16px 0; }
+  .famcard .fc-bot { display:flex; align-items:center; justify-content:space-between; }
+  .famcard .avatars { display:flex; }
+  .famcard .avatars .av { width:38px; height:38px; border-radius:50%; border:2.5px solid #fff; margin-left:-11px; background-size:cover; background-position:center;
+    box-shadow:0 2px 6px rgba(0,0,0,.12); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:800; color:#fff; }
+  .famcard .avatars .av:first-child { margin-left:0; }
+  .famcard .avatars .more { background:var(--paper-2); color:var(--mut-strong); }
+  .famcard .count { font-size:12.5px; color:var(--mut-strong); font-weight:700; }
+  .famcard .count b { color:var(--ink); }
+
+  .applybtn { margin:24px 24px 0; width:calc(100% - 48px); background:var(--pop); color:#fff; border:none; border-radius:16px; padding:17px; font-size:16.5px; font-weight:800; letter-spacing:.5px;
+    display:flex; align-items:center; justify-content:center; gap:9px; box-shadow:0 2px 6px rgba(180,40,20,.3), 0 14px 30px rgba(232,71,42,.36); font-family:inherit; }
+
+  .createnew { text-align:center; margin:18px 0 40px; }
+  .createnew a { font-size:14px; font-weight:600; color:var(--ink-deep); text-decoration:none; border-bottom:1px solid var(--mut-2); display:inline-block; padding:8px 4px; }
+
+  .home-ind { position:absolute; bottom:9px; left:50%; transform:translateX(-50%); width:134px; height:5px; border-radius:3px; background:#2c241b; opacity:.85; z-index:55; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status">
+    <span>9:41</span>
+    <span class="right">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="#2c241b"/><rect x="5" y="4.5" width="3" height="7.5" rx="1" fill="#2c241b"/><rect x="10" y="2" width="3" height="10" rx="1" fill="#2c241b"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#2c241b" opacity=".4"/></svg>
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><path d="M8.5 2.5C11 2.5 13.2 3.5 14.8 5.1L8.5 11.4 2.2 5.1C3.8 3.5 6 2.5 8.5 2.5Z" fill="#2c241b"/></svg>
+      <svg width="26" height="13" viewBox="0 0 26 13" fill="none"><rect x="1" y="1" width="21" height="11" rx="3" stroke="#2c241b" stroke-width="1.2" opacity=".5"/><rect x="3" y="3" width="16" height="7" rx="1.5" fill="#2c241b"/><rect x="23.5" y="4.5" width="2" height="4" rx="1" fill="#2c241b" opacity=".6"/></svg>
+    </span>
+  </div>
+
+  <div class="scroll">
+    <div class="topnav">
+      <div class="backbtn tapscale"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fbf8f3" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></div>
+      <div class="navtitle">加入一家人</div>
+      <div class="navspace"></div>
+    </div>
+
+    <div class="head">
+      <div class="eyebrow">有邀请码吗</div>
+      <h1>加入<span class="pop">家庭</span></h1>
+      <p class="lead">输入家人分享的 6 位邀请码，或扫描他们的二维码，一起共享菜单和买菜清单。</p>
+    </div>
+
+    <div class="codelabel">
+      <label>6 位邀请码</label>
+      <span class="paste tapscale"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7a6e5d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h2"/></svg>粘贴</span>
+    </div>
+    <div class="codeboxes">
+      <div class="cell on">8</div>
+      <div class="cell on">4</div>
+      <div class="cell on">K</div>
+      <div class="cell cur"></div>
+      <div class="cell empty"></div>
+      <div class="cell empty"></div>
+    </div>
+
+    <div class="scanrow">
+      <button class="scanbtn tapscale">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#3a2e23" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9V6a2 2 0 012-2h3M16 4h3a2 2 0 012 2v3M21 15v3a2 2 0 01-2 2h-3M8 20H5a2 2 0 01-2-2v-3"/><circle cx="12" cy="12" r="3"/></svg>
+        扫码加入
+      </button>
+    </div>
+
+    <div class="divider"><div class="ln"></div><span>找到这一家</span><div class="ln"></div></div>
+
+    <div class="previewwrap">
+      <div class="pvlabel">已找到这个家庭</div>
+      <div class="famcard">
+        <div class="fc-top">
+          <div class="fc-cover">
+            <div class="badge"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+          </div>
+          <div class="fc-mid">
+            <h3>张家厨房</h3>
+            <div class="sub"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7a6e5d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5L12 4l8 6.5"/><path d="M6 9.5V20h12V9.5"/></svg>创建于 2024 年 · 累计 86 道菜</div>
+          </div>
+        </div>
+        <div class="fc-divider"></div>
+        <div class="fc-bot">
+          <div class="avatars">
+            <div class="av" style="background:var(--gold-deep)">妈</div>
+            <div class="av" style="background:#2f4a3a">爸</div>
+            <div class="av" style="background:var(--ink-deep)">奶</div>
+            <div class="av more">+2</div>
+          </div>
+          <div class="count">共 <b>5</b> 位家庭成员</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="applybtn tapscale">
+      申请加入
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+    </button>
+
+    <div class="createnew"><a href="#">还没有家庭？创建一个新家 ›</a></div>
+  </div>
+
+  <div class="home-ind"></div>
+</div>
+</body>
+</html>

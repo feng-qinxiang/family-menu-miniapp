@@ -1,0 +1,109 @@
+<nav-bar title="返回登录"></nav-bar>
+
+<view class="rp-body">
+  <!-- Hero -->
+  <view class="rp-head g-fade-up">
+    <view class="rp-eyebrow">Reset Password</view>
+    <view class="rp-title title-shadow">重置<text class="pop">密码</text></view>
+    <view class="rp-sub">输入注册时的手机号，我们会发送验证码帮你重新设置密码。</view>
+  </view>
+
+  <view class="rp-form">
+    <!-- 手机号 readonly -->
+    <view class="rp-field g-fade-up g-d1">
+      <view class="rp-label">手机号</view>
+      <view class="rp-inp rp-inp--ro">
+        <view class="rp-ic">
+          <view class="rp-ic-phone"></view>
+        </view>
+        <text class="rp-txt">{{phone}}</text>
+      </view>
+    </view>
+
+    <!-- 验证码 -->
+    <view class="rp-field codefield g-fade-up g-d2">
+      <view class="rp-label">验证码</view>
+      <view class="rp-inp {{focusKey === 'code' ? 'focus' : ''}}">
+        <view class="rp-ic"><view class="rp-ic-pulse"></view></view>
+        <input
+          class="rp-txt rp-txt--code"
+          type="number"
+          maxlength="6"
+          placeholder="······"
+          placeholder-class="rp-ph"
+          value="{{code}}"
+          focus="{{focusKey === 'code'}}"
+          bindinput="onCodeInput"
+          bindfocus="onFocus"
+          bindblur="onBlur"
+          data-key="code"
+        />
+        <view
+          class="rp-sendcode {{counting ? 'wait' : ''}} tap-scale"
+          catchtap="onSendCode"
+        >{{counting ? countdown + 's 后重发' : sendLabel}}</view>
+      </view>
+    </view>
+
+    <!-- 新密码 -->
+    <view class="rp-field g-fade-up g-d3">
+      <view class="rp-label">新密码</view>
+      <view class="rp-inp {{focusKey === 'pwd' ? 'focus' : ''}}">
+        <view class="rp-ic"><view class="rp-ic-lock"></view></view>
+        <input
+          class="rp-txt"
+          password="{{!showPwd}}"
+          placeholder="设置新密码"
+          placeholder-class="rp-ph"
+          value="{{pwd}}"
+          bindinput="onPwdInput"
+          bindfocus="onFocus"
+          bindblur="onBlur"
+          data-key="pwd"
+        />
+        <view class="rp-eye tap-scale" catchtap="togglePwd">
+          <view class="rp-eye-dot {{showPwd ? 'on' : ''}}"></view>
+        </view>
+      </view>
+      <view class="rp-hint {{pwdValid ? 'ok' : ''}}">
+        <view class="rp-hint-mark"></view>
+        <text>至少 8 位，含字母和数字</text>
+      </view>
+    </view>
+
+    <!-- 确认新密码 -->
+    <view class="rp-field g-fade-up g-d4">
+      <view class="rp-label">确认新密码</view>
+      <view class="rp-inp {{focusKey === 'pwd2' ? 'focus' : ''}}">
+        <view class="rp-ic"><view class="rp-ic-lock"></view></view>
+        <input
+          class="rp-txt"
+          password="{{!showPwd2}}"
+          placeholder="再次输入新密码"
+          placeholder-class="rp-ph"
+          value="{{pwd2}}"
+          bindinput="onPwd2Input"
+          bindfocus="onFocus"
+          bindblur="onBlur"
+          data-key="pwd2"
+        />
+        <view class="rp-eye tap-scale" catchtap="togglePwd2">
+          <view class="rp-eye-dot {{showPwd2 ? 'on' : ''}}"></view>
+        </view>
+      </view>
+      <view wx:if="{{pwd2}}" class="rp-hint {{pwdMatch ? 'ok' : 'bad'}}">
+        <view class="rp-hint-mark"></view>
+        <text>{{pwdMatch ? '两次密码一致' : '两次输入的密码不一致'}}</text>
+      </view>
+    </view>
+
+    <view class="rp-reset btn btn-pop btn-block tap-scale {{canSubmit ? '' : 'disabled'}}" bindtap="onReset">
+      <view class="rp-reset-ic"></view>
+      <text>重置并登录</text>
+    </view>
+
+    <view class="rp-backlink">
+      <text class="rp-backlink-a tap-scale" bindtap="goLogin">想起密码了？返回登录</text>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,56 @@
+<!-- pages/legal/terms · 用户协议（静态长文 + 序号 serif + 金圆点 + 底部渐变 CTA）-->
+<view class="terms-page">
+  <!-- 固定二级页导航 -->
+  <nav-bar title="用户协议" status-bar-height="{{statusBarHeight}}"></nav-bar>
+
+  <!-- 滚动条款区 -->
+  <scroll-view class="terms-scroll" scroll-y enhanced show-scrollbar="{{false}}" style="top: {{statusBarHeight}}px;">
+    <view class="terms-pad">
+      <!-- Hero -->
+      <view class="hero g-fade-up">
+        <text class="eyebrow-serif">Terms of Service</text>
+        <view class="hero-title title-stroke title-shadow">家庭点菜<text class="pop">用户</text>协议</view>
+        <view class="effdate">
+          <view class="effdate-ico"></view>
+          <text>生效日期 {{effective.date}} · 版本 {{effective.version}}</text>
+        </view>
+      </view>
+
+      <view class="hr g-fade-up g-d1"></view>
+
+      <!-- 引言 -->
+      <text class="lead g-fade-up g-d1">欢迎使用「家庭点菜」。在使用本小程序前，请你仔细阅读并充分理解以下条款。当你点击「我已阅读」或开始使用本服务，即表示你已同意本协议的全部内容。</text>
+
+      <!-- 条款列表 -->
+      <view
+        wx:for="{{clauses}}"
+        wx:key="no"
+        class="clause g-fade-up g-d2"
+      >
+        <view class="clause-head">
+          <text class="clause-no">{{item.no}}</text>
+          <text class="clause-tx">{{item.title}}</text>
+        </view>
+        <block wx:for="{{item.blocks}}" wx:for-item="b" wx:key="text">
+          <text wx:if="{{b.type === 'p'}}" class="clause-p">{{b.text}}</text>
+          <view wx:elif="{{b.type === 'li'}}" class="clause-li">
+            <view class="clause-dot"></view>
+            <text class="clause-li-tx">{{b.text}}</text>
+          </view>
+        </block>
+      </view>
+
+      <view class="footnote">如对本协议有任何疑问，
+        <text class="footnote-br">可在「我的 — 帮助与反馈」中与我们联系。</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 底部渐变 + CTA -->
+  <view class="ctawrap safe-bottom">
+    <view class="cta tap-scale" hover-class="cta--hover" hover-stay-time="60" catchtap="onAgree">
+      <view class="cta-check"></view>
+      <text>我已阅读并同意</text>
+    </view>
+  </view>
+</view>

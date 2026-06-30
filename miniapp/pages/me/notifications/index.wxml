@@ -1,0 +1,109 @@
+<!-- pages/me/notifications · 消息中心（二级页） -->
+<view class="notif-page">
+  <nav-bar title="消息" show-back="{{true}}">
+    <view class="nb-readall tap-scale" catchtap="onReadAll">
+      <view class="nb-check"></view>
+      <text>全部已读</text>
+    </view>
+  </nav-bar>
+
+  <scroll-view scroll-y class="notif-scroll" enhanced show-scrollbar="{{false}}">
+    <!-- Hero 标题 -->
+    <view class="hero g-fade-up">
+      <text class="hero-eyebrow">Notifications</text>
+      <view class="hero-h2 title-stroke title-shadow">家里的<text class="pop">动静</text></view>
+      <view class="hero-unread">你有 <text class="unread-num">{{unreadCount}}</text> 条未读消息</view>
+    </view>
+
+    <!-- Tab chips -->
+    <scroll-view scroll-x class="tabs hscroll" enhanced show-scrollbar="{{false}}">
+      <view class="tabs-inner">
+        <view
+          wx:for="{{tabs}}"
+          wx:key="key"
+          class="chip tap-scale {{activeTab === item.key ? 'on' : ''}}"
+          data-key="{{item.key}}"
+          catchtap="onTabChange"
+        >
+          <text>{{item.label}}</text>
+          <view wx:if="{{item.unread > 0}}" class="dot tab-dot"></view>
+        </view>
+      </view>
+    </scroll-view>
+
+    <!-- 列表 -->
+    <view class="list">
+      <block wx:for="{{groups}}" wx:key="label" wx:for-item="group">
+        <view wx:if="{{group.items.length > 0}}" class="day-block">
+          <view class="daylbl">{{group.label}}</view>
+
+          <view
+            wx:for="{{group.items}}"
+            wx:key="id"
+            wx:for-item="n"
+            class="ncard tap-scale g-fade-up {{n.unread ? 'unread' : ''}}"
+            data-id="{{n.id}}"
+            catchtap="onCardTap"
+          >
+            <!-- icon / 头像 / 菜图 -->
+            <view class="ic ic-{{n.kind}}">
+              <image
+                wx:if="{{n.avatar}}"
+                class="ic-img"
+                src="{{n.avatar}}"
+                mode="aspectFill"
+              />
+              <view wx:else class="ic-svg ic-{{n.icon}}"></view>
+            </view>
+
+            <view class="nmid">
+              <view class="nt">
+                <text class="nt-h3 ellipsis">{{n.title}}</text>
+                <text class="nt-time">{{n.time}}</text>
+              </view>
+              <view class="nt-body">
+                <text wx:for="{{n.body}}" wx:key="index" wx:for-item="seg" class="seg seg-{{seg.t}}">{{seg.v}}</text>
+              </view>
+
+              <view wx:if="{{n.thumb || n.action}}" class="nfoot">
+                <image
+                  wx:if="{{n.thumb}}"
+                  class="thumb-dish"
+                  src="{{n.thumb}}"
+                  mode="aspectFill"
+                />
+                <view wx:else class="nfoot-spacer"></view>
+                <view
+                  wx:if="{{n.action}}"
+                  class="nbtn tap-scale {{n.action.ghost ? 'ghost' : ''}}"
+                  data-id="{{n.id}}"
+                  catchtap="onAction"
+                >
+                  <text>{{n.action.label}}</text>
+                  <view class="nbtn-arrow {{n.action.ghost ? 'arrow-ink' : ''}}"></view>
+                </view>
+              </view>
+            </view>
+
+            <view wx:if="{{n.unread}}" class="reddot"></view>
+          </view>
+        </view>
+      </block>
+
+      <state-empty
+        wx:if="{{!loading && visibleCount === 0}}"
+        title="暂无消息"
+        desc="这里会显示家庭、社区与系统的动态"
+      />
+    </view>
+
+    <view class="safe-bottom"></view>
+  </scroll-view>
+
+  <state-toast
+    visible="{{toast.visible}}"
+    type="{{toast.type}}"
+    text="{{toast.text}}"
+    bind:close="onToastClose"
+  />
+</view>

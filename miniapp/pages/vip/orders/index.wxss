@@ -1,0 +1,239 @@
+/* pages/vip/orders · 我的订单 —— 全程使用 app.wxss 新 token，零硬编码配色 */
+.page {
+  box-sizing: border-box;
+  min-height: 100vh;
+  background: var(--paper);
+  padding: 0 46rpx 40rpx;
+}
+
+/* ===== Hero 标题 ===== */
+.head {
+  padding: 34rpx 0 12rpx;
+}
+.head .hero-ttl {
+  margin-top: 12rpx;
+  font-size: 76rpx;
+  line-height: 0.94;
+  letter-spacing: -4rpx;
+  font-weight: 900;
+}
+.head .lead {
+  margin-top: 22rpx;
+  font-size: 25rpx;
+  line-height: 1.5;
+  color: var(--mut-strong);
+}
+
+/* ===== 统计条暗卡 ===== */
+.strip {
+  margin: 38rpx 0 8rpx;
+  padding: 34rpx 38rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.strip .strip-e {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 21rpx;
+  letter-spacing: 2rpx;
+  font-weight: 700;
+  color: var(--gold);
+}
+.strip .strip-n {
+  margin-top: 8rpx;
+  font-size: 42rpx;
+  font-weight: 900;
+  letter-spacing: -1rpx;
+}
+.strip .strip-r {
+  text-align: right;
+}
+.strip .strip-v {
+  font-size: 42rpx;
+  font-weight: 900;
+  letter-spacing: -1rpx;
+}
+.strip .strip-v .strip-u {
+  margin-left: 2rpx;
+  font-size: 23rpx;
+  font-weight: 600;
+  color: rgba(251, 248, 243, 0.6);
+}
+.strip .strip-c {
+  margin-top: 4rpx;
+  font-size: 21rpx;
+  color: rgba(251, 248, 243, 0.6);
+}
+
+/* ===== 订单卡列表 ===== */
+.list {
+  padding-top: 34rpx;
+}
+.ocard {
+  position: relative;
+  overflow: hidden;
+  padding: 34rpx 34rpx 30rpx;
+  margin-bottom: 30rpx;
+}
+
+/* 状态 badge */
+.badge {
+  position: absolute;
+  top: 30rpx;
+  right: 30rpx;
+  display: flex;
+  align-items: center;
+  gap: 9rpx;
+  padding: 9rpx 21rpx;
+  border-radius: var(--r-pill);
+  font-size: 20rpx;
+  font-weight: 800;
+  letter-spacing: 1rpx;
+}
+.badge .badge-dot {
+  width: 11rpx;
+  height: 11rpx;
+  border-radius: 50%;
+}
+.badge--live {
+  color: var(--pine);
+  background: rgba(47, 74, 58, 0.1);
+}
+.badge--live .badge-dot {
+  background: var(--pine);
+  box-shadow: 0 0 0 5rpx rgba(47, 74, 58, 0.16);
+}
+.badge--warn {
+  color: var(--pop);
+  background: var(--pop-soft);
+}
+.badge--warn .badge-dot {
+  background: var(--pop);
+}
+.badge--gray {
+  color: var(--mut-strong);
+  background: var(--paper-2);
+}
+.badge--gray .badge-dot {
+  background: var(--mut);
+}
+
+/* 产品行 */
+.ocard-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 26rpx;
+}
+.ocard-ic {
+  flex: none;
+  width: 104rpx;
+  height: 104rpx;
+  border-radius: var(--r-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--pop-soft);
+}
+.ocard-ic--gold {
+  background: var(--gold);
+}
+.ocard-ic-img {
+  width: 50rpx;
+  height: 50rpx;
+}
+.ocard-mid {
+  flex: 1;
+  min-width: 0;
+  padding-top: 4rpx;
+}
+.ocard-name {
+  font-size: 33rpx;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.6rpx;
+}
+.ocard-tag {
+  margin-top: 8rpx;
+  font-size: 22rpx;
+  color: var(--mut-strong);
+}
+.ocard-price {
+  flex: none;
+  text-align: right;
+  padding-top: 4rpx;
+}
+.ocard-amt {
+  font-size: 40rpx;
+  font-weight: 900;
+  color: var(--pop);
+  letter-spacing: -1rpx;
+}
+.ocard-amt .ocard-y {
+  font-size: 25rpx;
+  font-weight: 700;
+}
+
+/* 日期分栏 */
+.dates {
+  display: flex;
+  margin-top: 30rpx;
+  padding-top: 28rpx;
+  border-top: 2rpx dashed #e8e0d2;
+}
+.dcol {
+  flex: 1;
+}
+.dcol + .dcol {
+  padding-left: 30rpx;
+  border-left: 2rpx solid #efe9df;
+}
+.dlab {
+  font-size: 20rpx;
+  letter-spacing: 1.4rpx;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+}
+.dval {
+  margin-top: 10rpx;
+  font-size: 27rpx;
+  font-weight: 800;
+  color: var(--ink);
+}
+.dval--muted {
+  color: var(--mut-strong);
+}
+
+/* 订单号 + 续费 */
+.oid {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 26rpx;
+}
+.oid-no {
+  flex: 1;
+  min-width: 0;
+  font-size: 21rpx;
+  color: var(--mut);
+}
+.oid-re {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 5rpx;
+  padding-left: 18rpx;
+  font-size: 23rpx;
+  font-weight: 800;
+  color: var(--pop);
+}
+.oid-arr {
+  width: 25rpx;
+  height: 25rpx;
+}
+
+/* ===== 空态 ===== */
+.empty-wrap {
+  padding-top: 40rpx;
+}

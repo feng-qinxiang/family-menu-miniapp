@@ -1,0 +1,166 @@
+<wxs src="../../utils/cuisine.wxs" module="cuisine" />
+<view class="recipes-mag">
+  <!-- ===== HERO ===== -->
+  <view class="rx-hero g-fade-in">
+    <image wx:if="{{heroRecipe.cover}}" class="rx-hero-img" src="{{heroRecipe.cover}}" mode="aspectFill" />
+    <image wx:else class="rx-hero-img" src="/assets/dishes/kungpao-chicken.jpg" mode="aspectFill" />
+    <view class="rx-hero-shade"></view>
+    <view class="rx-hero-bignum">全</view>
+
+    <view class="rx-hero-top g-fade-down g-d1">
+      <view class="rx-greet">
+        <view class="rx-hi">Recipe Library</view>
+        <view class="rx-name">挑一道，今晚就点它</view>
+      </view>
+      <view class="rx-create tap-scale" bindtap="goCreate">
+        <text class="rx-create-plus">+</text>新建菜谱
+      </view>
+    </view>
+
+    <view class="rx-hero-body g-fade-up g-d2">
+      <view class="rx-tag">Recipes</view>
+      <view class="rx-hero-title title-stroke">家里能点的<text class="pop">菜</text></view>
+      <view class="rx-hero-sub">{{recipes.length || 0}} 道家常菜，按口味、菜系、忌口随心挑</view>
+      <view class="rx-hero-meta">
+        <view class="rx-m">{{filteredRecipes.length}} 道可点</view>
+        <view class="rx-m">快手到大菜</view>
+        <view class="rx-m">川 · 粤 · 家常</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ===== SHEET ===== -->
+  <view class="rx-sheet">
+    <!-- 搜索 -->
+    <view class="rx-search g-fade-up g-d1 {{searchFocused ? 'focus' : ''}}">
+      <view class="rx-search-ico"></view>
+      <input class="rx-search-input" placeholder="搜菜名、菜系、口味" placeholder-class="rx-search-ph"
+        value="{{searchText}}" bindinput="onSearchInput" bindfocus="onSearchFocus" bindblur="onSearchBlur" />
+    </view>
+
+    <!-- 来源 chips -->
+    <scroll-view scroll-x class="rx-chips" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="rx-chips-inner">
+        <view wx:for="{{sourceTabs}}" wx:key="key"
+          class="chip rx-chip {{activeSource === item.key ? 'on' : ''}}"
+          data-source="{{item.key}}" bindtap="selectSource">
+          <view class="rx-sdot rx-sdot--{{item.key}}"></view>
+          {{item.label}}
+        </view>
+      </view>
+    </scroll-view>
+
+    <!-- 菜系 chips -->
+    <scroll-view scroll-x class="rx-cuisine" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="rx-cuisine-inner">
+        <view class="rx-cchip {{!advFilter.cuisine ? 'on' : ''}}" data-val="" bindtap="setFilterCuisine">全部</view>
+        <view wx:for="{{cuisineList}}" wx:key="*this"
+          class="rx-cchip {{advFilter.cuisine === item ? 'on' : ''}}"
+          data-val="{{item}}" bindtap="setFilterCuisine">{{item}}</view>
+      </view>
+    </scroll-view>
+
+    <!-- 细筛栏 -->
+    <view class="rx-diet tap-scale" bindtap="toggleAdvFilter">
+      <view class="rx-diet-ico"></view>
+      <text class="rx-diet-label">点菜条件</text>
+      <text class="rx-diet-val">{{showAdvFilter ? '正在筛耗时和人份' : '快手 · 多人餐可继续细筛'}}</text>
+      <text class="rx-diet-toggle">{{showAdvFilter ? '收起' : '细筛'}}</text>
+    </view>
+
+    <view class="rx-quickfilters" wx:if="{{showAdvFilter}}">
+      <view class="rx-qf-row">
+        <text class="rx-qf-label">耗时</text>
+        <view class="rx-qf-chips">
+          <view class="rx-qf-chip {{advFilter.maxTime === 0 ? 'on' : ''}}" data-val="0" bindtap="setFilterTime">不限</view>
+          <view class="rx-qf-chip {{advFilter.maxTime === 15 ? 'on' : ''}}" data-val="15" bindtap="setFilterTime">15分钟</view>
+          <view class="rx-qf-chip {{advFilter.maxTime === 30 ? 'on' : ''}}" data-val="30" bindtap="setFilterTime">30分钟</view>
+          <view class="rx-qf-chip {{advFilter.maxTime === 60 ? 'on' : ''}}" data-val="60" bindtap="setFilterTime">60分钟</view>
+        </view>
+      </view>
+      <view class="rx-qf-row">
+        <text class="rx-qf-label">人份</text>
+        <view class="rx-qf-chips">
+          <view class="rx-qf-chip {{advFilter.minServings === 0 ? 'on' : ''}}" data-val="0" bindtap="setFilterServings">不限</view>
+          <view class="rx-qf-chip {{advFilter.minServings === 2 ? 'on' : ''}}" data-val="2" bindtap="setFilterServings">2人+</view>
+          <view class="rx-qf-chip {{advFilter.minServings === 4 ? 'on' : ''}}" data-val="4" bindtap="setFilterServings">4人+</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 骨架 -->
+    <view wx:if="{{loading}}" class="rx-grid">
+      <view class="rx-skel" wx:for="{{skeletonCards}}" wx:key="*this">
+        <view class="rx-skel-cover shimmer"></view>
+        <view class="rx-skel-line strong shimmer"></view>
+        <view class="rx-skel-line shimmer"></view>
+      </view>
+    </view>
+
+    <!-- 结果标题 -->
+    <view class="shead rx-shead" wx:if="{{!loading && displayedRecipes.length}}">
+      <view class="shead-main">
+        <view class="shead-bar"></view>
+        <text class="eyebrow">Ready to Order</text>
+        <view class="shead-title"><text class="pop">{{filteredRecipes.length}}</text> 道可点</view>
+      </view>
+      <text class="seeall">右下角直接加入</text>
+    </view>
+
+    <!-- 点到 -->
+    <view class="rx-meal" wx:if="{{!loading && displayedRecipes.length}}">
+      <text class="rx-meal-label">点到</text>
+      <view class="rx-meal-opts">
+        <view wx:for="{{mealOptions}}" wx:key="key"
+          class="rx-meal-chip {{activeMealType === item.key ? 'on' : ''}}"
+          data-meal="{{item.key}}" bindtap="selectMeal">{{item.label}}</view>
+      </view>
+    </view>
+
+    <!-- 菜卡网格 -->
+    <view class="rx-grid" wx:if="{{!loading && displayedRecipes.length}}">
+      <view class="rx-card g-fade-up g-d{{index % 5 + 1}} tap-scale {{item.selected ? 'on' : ''}}"
+        wx:for="{{displayedRecipes}}" wx:key="id" data-id="{{item.id}}" bindtap="goDetail">
+        <view class="rx-card-cover">
+          <image class="rx-card-img" src="{{item.cover}}" mode="aspectFill" binderror="onGridImgError" data-index="{{index}}" />
+          <view class="rx-card-lbl">{{item.cuisine || '家常'}}</view>
+          <view class="rx-card-badge {{item.selected ? 'fav' : ''}}">{{item.sourceLabel}}</view>
+        </view>
+        <view class="rx-card-info">
+          <view class="rx-card-name">{{item.title}}</view>
+          <view class="rx-card-meta">{{item.cuisine || '家常'}} · {{item.timeCost || '?'}}分钟 · {{item.servings || '?'}}人</view>
+        </view>
+        <view class="rx-card-add {{item.selected ? 'picked' : ''}}" catchtap="addRecipeToToday" data-id="{{item.id}}">
+          <text>{{item.selected ? '✓' : '+'}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 上拉加载 -->
+    <view wx:if="{{!loading && hasMore}}" class="rx-loadmore" bindtap="loadMore">
+      <view class="rx-loadmore-chev"></view>
+      上拉加载更多 · 还有 {{remainCount}} 道
+    </view>
+
+    <!-- 空状态 -->
+    <view wx:if="{{!loading && !filteredRecipes.length}}">
+      <state-empty type="search" title="没有符合条件的菜谱" desc="换个来源或菜系，再试试" cta="清空筛选" bindaction="clearFilter">
+        <view class="rx-empty-extra tap-scale" bindtap="goCreate">去新建一道</view>
+      </state-empty>
+    </view>
+  </view>
+
+  <!-- ===== 餐盘 tray ===== -->
+  <view class="rx-tray" wx:if="{{!loading}}">
+    <view class="rx-tray-badge" bindtap="goMenu">{{menuTray.count}}</view>
+    <view class="rx-tray-copy" bindtap="goMenu">
+      <view class="rx-tray-t">今日餐盘</view>
+      <view class="rx-tray-s">{{menuTray.names}}</view>
+    </view>
+    <view class="rx-tray-mini tap-scale" wx:if="{{menuTray.shoppingCount}}" catchtap="goShopping">买 {{menuTray.shoppingCount}}</view>
+    <view class="rx-tray-go tap-scale" catchtap="goMenu">
+      去点单
+      <view class="rx-tray-arrow"></view>
+    </view>
+  </view>
+</view>

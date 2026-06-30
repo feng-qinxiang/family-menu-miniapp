@@ -1,0 +1,159 @@
+/* 设置页 · 视觉对标 settings.html，配色/字体全部走 app.wxss 全局 token */
+.settings {
+  padding: 0 46rpx 50rpx;
+}
+
+/* —— Hero —— */
+.set-hero {
+  padding: 24rpx 0 12rpx;
+}
+.set-hero-title {
+  margin-top: 8rpx;
+  font-size: 96rpx;
+  font-weight: 900;
+  letter-spacing: -3rpx;
+  line-height: 1;
+  color: var(--ink);
+}
+
+/* —— 分组 —— */
+.set-group {
+  margin-top: 12rpx;
+}
+.set-gtitle {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 23rpx;
+  letter-spacing: 1rpx;
+  color: var(--gold-deep);
+  font-weight: 700;
+  margin: 46rpx 8rpx 21rpx;
+}
+
+/* 卡片复用全局 .card，仅覆盖 padding/圆角以贴合分组列表 */
+.set-card {
+  padding: 0;
+  border-radius: 38rpx;
+  overflow: hidden;
+}
+
+/* —— 列表项 —— */
+.set-item {
+  display: flex;
+  align-items: center;
+  gap: 26rpx;
+  padding: 29rpx 32rpx;
+  border-bottom: 2rpx solid #f1ece2;
+}
+.set-item:last-child {
+  border-bottom: none;
+}
+
+.set-ic {
+  width: 70rpx;
+  height: 70rpx;
+  border-radius: 21rpx;
+  background: var(--paper-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  color: var(--ink-deep);
+}
+.set-glyph {
+  font-size: 34rpx;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.set-mid {
+  flex: 1;
+  min-width: 0;
+}
+.set-name {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.4rpx;
+}
+.set-desc {
+  margin-top: 4rpx;
+  font-size: 22rpx;
+  color: var(--mut-strong);
+  line-height: 1.4;
+}
+
+.set-val {
+  flex: none;
+  font-size: 25rpx;
+  font-weight: 600;
+  color: var(--mut-strong);
+}
+
+/* 右箭头雪佛龙：用边框旋转模拟 */
+.set-chev {
+  flex: none;
+  width: 16rpx;
+  height: 16rpx;
+  border-right: 4rpx solid #c9bda9;
+  border-top: 4rpx solid #c9bda9;
+  border-radius: 2rpx;
+  transform: rotate(45deg);
+}
+
+/* —— 开关 —— */
+.set-sw {
+  position: relative;
+  width: 92rpx;
+  height: 56rpx;
+  border-radius: var(--r-pill);
+  background: #e2dacd;
+  flex: none;
+  transition: background 0.2s ease;
+}
+.set-sw.on {
+  background: var(--pop);
+}
+.set-sw-knob {
+  position: absolute;
+  top: 5rpx;
+  left: 5rpx;
+  width: 46rpx;
+  height: 46rpx;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.2);
+  transition: left 0.2s ease;
+}
+.set-sw.on .set-sw-knob {
+  left: 41rpx;
+}
+
+/* —— 退出登录 红卡 —— */
+.set-logout {
+  margin-top: 50rpx;
+}
+.set-logout-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32rpx;
+  border-radius: 38rpx;
+}
+.set-logout-txt {
+  font-size: 31rpx;
+  font-weight: 800;
+  color: var(--pop);
+  letter-spacing: 0.6rpx;
+}
+
+/* —— 版本号 —— */
+.set-ver {
+  text-align: center;
+  font-size: 23rpx;
+  color: var(--mut-strong);
+  margin-top: 36rpx;
+}
+.set-ver-num {
+  font-family: var(--serif);
+}

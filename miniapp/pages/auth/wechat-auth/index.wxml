@@ -1,0 +1,109 @@
+<!-- pages/auth/wechat-auth · 微信授权(底部 sheet 弹层 · 背景登录页虚化) -->
+<view class="wa">
+  <!-- ===== 背景:登录页(虚化变暗) ===== -->
+  <view class="wa-bg">
+    <view class="wa-hero">
+      <image class="wa-hero-img" src="/assets/dishes/chicken-congee.jpg" mode="aspectFill"></image>
+      <view class="wa-hero-mask"></view>
+    </view>
+
+    <view class="wa-brandbar" style="top: {{statusBarHeight + 12}}px;">
+      <view class="wa-logo">
+        <view class="ic-home"></view>
+      </view>
+      <view class="wa-brand-tx">
+        <text class="wa-brand-en">FAMILY MENU</text>
+        <text class="wa-brand-cn">家庭点菜</text>
+      </view>
+    </view>
+
+    <view class="wa-hero-body">
+      <text class="wa-hero-tag">Welcome</text>
+      <view class="wa-hero-title title-stroke">今天吃什么</view>
+    </view>
+
+    <view class="wa-bg-sheet">
+      <view class="wa-bg-wx btn-wx">微信一键登录</view>
+    </view>
+  </view>
+
+  <!-- ===== 遮罩 ===== -->
+  <view class="wa-mask {{sheetIn ? 'is-in' : ''}}" catchtap="onDeny"></view>
+
+  <!-- ===== 授权 sheet(底部弹出) ===== -->
+  <view class="wa-sheet {{sheetIn ? 'is-in' : ''}}" catchtap="noop">
+    <view class="wa-grab"></view>
+
+    <!-- 顶部:logo + 标题 + 微信徽标 -->
+    <view class="wa-top">
+      <view class="wa-alogo">
+        <view class="ic-home"></view>
+      </view>
+      <view class="wa-at-tx">
+        <text class="wa-eyebrow">Family Menu</text>
+        <text class="wa-h1">申请获取你的头像、昵称</text>
+      </view>
+      <view class="wa-wxbadge">
+        <view class="ic-wx-mini"></view>
+        <text>微信</text>
+      </view>
+    </view>
+
+    <text class="wa-desc">「家庭点菜」想使用你的微信<text class="wa-desc-b">头像和昵称</text>，方便家人在共享菜单里认出你。授权后你可随时修改。</text>
+
+    <!-- 头像 -->
+    <text class="wa-label">头像</text>
+    <view class="wa-ava-row tap-scale" catchtap="onChooseAvatar">
+      <view class="wa-ava">
+        <image class="wa-ava-img" src="{{avatarUrl}}" mode="aspectFill"></image>
+        <view class="wa-ava-cam">
+          <view class="ic-cam"></view>
+        </view>
+      </view>
+      <view class="wa-ava-tx">
+        <text class="wa-ava-h4">使用微信头像</text>
+        <text class="wa-ava-p">点击可从相册更换</text>
+      </view>
+    </view>
+
+    <!-- 昵称 -->
+    <text class="wa-label">昵称</text>
+    <view class="wa-field">
+      <view class="wa-inp {{nicknameFocus ? 'is-focus' : ''}}">
+        <view class="ic-user"></view>
+        <input
+          class="wa-input"
+          type="nickname"
+          placeholder="请输入昵称"
+          placeholder-class="wa-ph"
+          value="{{nickname}}"
+          bindinput="onNicknameInput"
+          bindfocus="onNicknameFocus"
+          bindblur="onNicknameBlur"
+        />
+        <view wx:if="{{wxFilled}}" class="wa-wxfill">
+          <view class="ic-wx-mini"></view>
+          <text>已填入</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 操作 -->
+    <view class="wa-allow tap-scale" catchtap="onAllow">允许</view>
+    <view class="wa-deny tap-scale" catchtap="onDeny">拒绝</view>
+
+    <view class="wa-foot">
+      <view class="ic-lock"></view>
+      <text class="wa-foot-tx">授权信息已加密，仅用于<text class="wa-foot-link">家庭共享</text></text>
+    </view>
+
+    <view class="wa-home-ind"></view>
+  </view>
+
+  <state-toast
+    visible="{{toast.visible}}"
+    type="{{toast.type}}"
+    text="{{toast.text}}"
+    bind:close="onToastClose"
+  ></state-toast>
+</view>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>家庭点菜 · 手机号登录</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-font-smoothing:antialiased; }
+  :root{
+    --paper:#fbf8f3; --paper-2:#f0ebe2;
+    --ink:#2c241b; --ink-deep:#3a2e23;
+    --mut:#9a8e7d; --mut-2:#b3a795; --mut-strong:#7a6e5d;
+    --gold:#f4d9a8; --gold-deep:#b08949;
+    --pop:#e8472a; --pop-soft:#fdece6;
+    --wx:#07c160;
+    --serif:"Georgia","Times New Roman",serif;
+  }
+  body {
+    display:flex; align-items:center; justify-content:center;
+    min-height:100vh; background:#d9d2c7;
+    font-family:-apple-system,"SF Pro Text","Helvetica Neue",Helvetica,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  }
+  .phone {
+    position:relative; width:390px; height:844px;
+    background:var(--paper); border-radius:46px;
+    box-shadow:0 30px 70px rgba(60,45,30,.4), 0 0 0 11px #1b1714, 0 0 0 12px #2c2520;
+    overflow:hidden;
+  }
+  .status {
+    position:absolute; top:0; left:0; right:0; height:50px; z-index:60;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 30px 0 34px; color:var(--ink); font-size:15px; font-weight:600; pointer-events:none;
+  }
+  .status .right { display:flex; align-items:center; gap:7px; }
+  .notch { position:absolute; top:11px; left:50%; transform:translateX(-50%); width:118px; height:33px; background:#1b1714; border-radius:20px; z-index:61; }
+  .scroll { position:absolute; inset:0; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch; }
+  .scroll::-webkit-scrollbar { display:none; }
+  .tapscale { transition:transform .12s ease; }
+  .tapscale:active { transform:scale(.97); }
+
+  /* top nav */
+  .topnav { position:relative; z-index:30; padding:60px 24px 0; display:flex; align-items:center; justify-content:space-between; }
+  .backbtn { width:44px; height:44px; border-radius:14px; background:var(--ink-deep); display:flex; align-items:center; justify-content:center; box-shadow:0 8px 18px rgba(60,40,20,.22); }
+  .helplink { font-family:var(--serif); font-style:italic; font-size:13px; font-weight:700; color:var(--gold-deep); }
+
+  .wrap { padding:24px 28px 40px; }
+  .eyebrow { font-family:var(--serif); font-style:italic; font-size:13px; letter-spacing:1.5px; color:var(--gold-deep); font-weight:700; }
+  .htitle { font-size:50px; line-height:.92; font-weight:900; letter-spacing:-2.5px; margin:10px 0 14px;
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    color:transparent; -webkit-text-stroke:1.6px var(--ink-deep); text-stroke:1.6px var(--ink-deep); }
+  .htitle .pop { color:var(--pop); -webkit-text-stroke:0; text-stroke:0; }
+  .sub { font-size:14px; color:var(--mut-strong); line-height:1.55; margin-bottom:30px; }
+
+  .field { margin-bottom:18px; }
+  .field label { display:block; font-size:11px; letter-spacing:1px; font-weight:800; text-transform:uppercase; color:var(--gold-deep); margin-bottom:9px; }
+  .inp { display:flex; align-items:center; gap:12px; background:#fff; border:1.5px solid #ece4d6; border-radius:14px; padding:15px 16px;
+    box-shadow:0 2px 6px rgba(60,40,20,.05); }
+  .inp.focus { border-color:var(--pop); box-shadow:0 2px 10px rgba(232,71,42,.15); }
+  .inp svg { flex:none; }
+  .inp .pre { font-size:16px; font-weight:800; color:var(--ink); padding-right:12px; border-right:1.5px solid #ece4d6; }
+  .inp .txt { font-size:16px; font-weight:700; color:var(--ink); }
+  .inp .ph { color:var(--mut-2); font-weight:600; }
+  .inp .cur { width:2px; height:20px; background:var(--pop); margin-left:-6px; border-radius:1px; animation:blink 1s step-end infinite; }
+  @keyframes blink { 50% { opacity:0; } }
+  .inp .grow { flex:1; }
+  .codebtn { flex:none; font-size:13px; font-weight:800; color:var(--pop); padding:8px 12px; border-radius:10px; background:var(--pop-soft); border:none; font-family:inherit; }
+  .codebtn.wait { color:var(--mut-strong); background:var(--paper-2); }
+
+  .loginbtn { width:100%; margin-top:8px; background:var(--pop); color:#fff; border:none; border-radius:16px; padding:17px; font-size:16.5px; font-weight:800; letter-spacing:.5px;
+    display:flex; align-items:center; justify-content:center; gap:9px; box-shadow:0 2px 6px rgba(180,40,20,.3), 0 14px 30px rgba(232,71,42,.36); font-family:inherit; }
+
+  .agree { display:flex; align-items:flex-start; gap:9px; margin-top:20px; padding:0 2px; }
+  .agree .box { width:40px; height:40px; flex:none; display:flex; align-items:center; justify-content:center; margin:-11px 0 0 -11px; }
+  .agree .box::before { content:""; width:18px; height:18px; border-radius:6px; border:1.5px solid #d8d0c2; background:transparent; }
+  .agree .tx { font-size:11.5px; color:var(--mut-strong); line-height:1.6; }
+  .agree .tx a { color:var(--gold-deep); font-weight:700; text-decoration:none; }
+
+  .divider { display:flex; align-items:center; gap:14px; margin:34px 0 22px; }
+  .divider .ln { flex:1; height:1px; background:#e6ddcf; }
+  .divider span { font-family:var(--serif); font-style:italic; font-size:12px; letter-spacing:1px; color:var(--gold-deep); font-weight:700; }
+
+  .btn-wx { width:100%; background:var(--wx); color:#fff; border:none; border-radius:16px; padding:16px; font-size:16px; font-weight:800; letter-spacing:.5px;
+    display:flex; align-items:center; justify-content:center; gap:10px; box-shadow:0 2px 6px rgba(7,140,70,.3), 0 14px 30px rgba(7,193,96,.3); font-family:inherit; }
+  .reg { text-align:center; margin-top:22px; }
+  .reg a { font-size:14px; font-weight:600; color:var(--ink-deep); text-decoration:none; }
+  .reg a .pop { color:var(--pop); font-weight:800; border-bottom:1.5px solid var(--pop); padding-bottom:2px; }
+
+  .home-ind { position:absolute; bottom:9px; left:50%; transform:translateX(-50%); width:134px; height:5px; border-radius:3px; background:#2c241b; opacity:.85; z-index:55; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status">
+    <span>9:41</span>
+    <span class="right">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="#2c241b"/><rect x="5" y="4.5" width="3" height="7.5" rx="1" fill="#2c241b"/><rect x="10" y="2" width="3" height="10" rx="1" fill="#2c241b"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#2c241b" opacity=".35"/></svg>
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><path d="M8.5 2.5C11 2.5 13.2 3.5 14.8 5.1L8.5 11.4 2.2 5.1C3.8 3.5 6 2.5 8.5 2.5Z" fill="#2c241b"/></svg>
+      <svg width="26" height="13" viewBox="0 0 26 13" fill="none"><rect x="1" y="1" width="21" height="11" rx="3" stroke="#2c241b" stroke-width="1.2" opacity=".5"/><rect x="3" y="3" width="16" height="7" rx="1.5" fill="#2c241b"/><rect x="23.5" y="4.5" width="2" height="4" rx="1" fill="#2c241b" opacity=".6"/></svg>
+    </span>
+  </div>
+
+  <div class="scroll">
+    <div class="topnav">
+      <div class="backbtn tapscale">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fbf8f3" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+      </div>
+      <span class="helplink">需要帮助？</span>
+    </div>
+
+    <div class="wrap">
+      <div class="eyebrow">手机号登录</div>
+      <div class="htitle">手机号<span class="pop">登录</span></div>
+      <p class="sub">输入手机号获取验证码，一步登录你的家庭饭桌。</p>
+
+      <div class="field">
+        <label>手机号码</label>
+        <div class="inp focus">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#e8472a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg>
+          <span class="pre">+86</span>
+          <span class="txt">138 8888 6666</span><span class="cur"></span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>短信验证码</label>
+        <div class="inp">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#b3a795" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 7l9 6 9-6"/></svg>
+          <span class="txt ph grow">请输入验证码</span>
+          <button class="codebtn tapscale">获取验证码</button>
+        </div>
+      </div>
+
+      <button class="loginbtn tapscale">登录
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+
+      <div class="agree">
+        <div class="box tapscale"></div>
+        <div class="tx">我已阅读并同意 <a href="#">用户协议</a> 与 <a href="#">隐私政策</a>，验证码仅用于登录验证你的身份。</div>
+      </div>
+
+      <div class="divider"><div class="ln"></div><span>或用以下方式</span><div class="ln"></div></div>
+
+      <button class="btn-wx tapscale">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M9.2 3C5 3 1.6 5.9 1.6 9.5c0 2 1.1 3.8 2.9 5l-.7 2.2 2.6-1.3c.9.2 1.8.4 2.8.4h.5a5.6 5.6 0 01-.3-1.8c0-3.4 3.2-6.1 7.1-6.1h.5C16.8 5.2 13.4 3 9.2 3zM6.6 8.2a1 1 0 110-2 1 1 0 010 2zm5.2 0a1 1 0 110-2 1 1 0 010 2z"/><path d="M22.4 14c0-2.9-2.8-5.2-6.2-5.2S10 11.1 10 14s2.8 5.2 6.2 5.2c.7 0 1.4-.1 2.1-.3l1.9 1-.5-1.7c1.6-1 2.7-2.5 2.7-4.2zm-8.2-.9a.8.8 0 110-1.6.8.8 0 010 1.6zm4 0a.8.8 0 110-1.6.8.8 0 010 1.6z"/></svg>
+        微信登录
+      </button>
+
+      <div class="reg"><a href="#">还没有账号？<span class="pop">注册新账号</span></a></div>
+    </div>
+  </div>
+
+  <div class="home-ind"></div>
+</div>
+</body>
+</html>

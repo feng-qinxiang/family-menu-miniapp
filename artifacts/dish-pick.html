@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>家庭点菜 · 今日餐盘</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-font-smoothing:antialiased; }
+  :root{
+    --paper:#fbf8f3; --paper-2:#f0ebe2;
+    --ink:#2c241b; --ink-deep:#3a2e23;
+    --mut:#9a8e7d; --mut-2:#b3a795; --mut-strong:#7a6e5d;
+    --gold:#f4d9a8; --gold-deep:#b08949;
+    --pop:#e8472a; --pop-soft:#fdece6;
+    --pine:#2f4a3a;
+    --serif:"Georgia","Times New Roman",serif;
+  }
+  body { display:flex; align-items:center; justify-content:center; min-height:100vh; background:#d9d2c7;
+    font-family:-apple-system,"SF Pro Text","Helvetica Neue",Helvetica,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; }
+  .phone { position:relative; width:390px; height:844px; background:var(--paper); border-radius:46px;
+    box-shadow:0 30px 70px rgba(60,45,30,.4), 0 0 0 11px #1b1714, 0 0 0 12px #2c2520; overflow:hidden; }
+  .status { position:absolute; top:0; left:0; right:0; height:50px; z-index:60; display:flex; align-items:center; justify-content:space-between;
+    padding:0 30px 0 34px; color:#fff; font-size:15px; font-weight:600; pointer-events:none; }
+  .status .right { display:flex; align-items:center; gap:7px; }
+  .notch { position:absolute; top:11px; left:50%; transform:translateX(-50%); width:118px; height:33px; background:#1b1714; border-radius:20px; z-index:61; }
+  .scroll { position:absolute; inset:0; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch; }
+  .scroll::-webkit-scrollbar { display:none; }
+  .navbtn:active, .seg .opt:active, .row:active, .step b:active, .addmore:active, .gobar:active, .rm:active { transform:scale(.97); }
+
+  /* hero (深色大图，与 shopping/menu 同语言) */
+  .hero { position:relative; height:300px; background:url('img/hongshao-pork.jpg') center/cover no-repeat; }
+  .hero::before { content:""; position:absolute; inset:0; z-index:1;
+    background:radial-gradient(120% 80% at 50% 0%, rgba(255,180,80,.16), transparent 55%); mix-blend-mode:overlay; }
+  .hero::after { content:""; position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(20,14,8,.5) 0%, rgba(20,14,8,0) 26%, rgba(20,14,8,.2) 52%, rgba(20,14,8,.92) 100%); }
+  .hero-bignum { position:absolute; top:60px; right:14px; z-index:2; font-family:var(--serif); font-size:170px; font-weight:700; line-height:1; color:rgba(255,255,255,.08); pointer-events:none; }
+  .hero-top { position:absolute; top:58px; left:24px; right:24px; z-index:10; display:flex; align-items:center; justify-content:space-between; }
+  .navbtn { width:42px; height:42px; border-radius:50%; background:rgba(255,255,255,.16); backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,.22);
+    display:flex; align-items:center; justify-content:center; }
+  .hero-top .title { font-size:12px; font-weight:700; letter-spacing:2.5px; color:#fff; opacity:.85; text-transform:uppercase; }
+  .hero-body { position:absolute; left:24px; right:24px; bottom:26px; z-index:10; color:#fff; }
+  .tag { display:inline-block; font-family:var(--serif); font-style:italic; font-size:12px; letter-spacing:1.5px; font-weight:700;
+    color:#fff; background:var(--pop); padding:6px 14px; border-radius:4px; }
+  .hero-title { font-size:52px; line-height:.9; font-weight:900; letter-spacing:-3px; margin:14px 0 10px;
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; color:transparent; -webkit-text-stroke:1.6px #fff; text-stroke:1.6px #fff; }
+  .hero-title .pop { color:var(--pop); -webkit-text-stroke:0; text-stroke:0; }
+  .hero-sub { font-size:14px; font-weight:600; color:rgba(255,255,255,.85); }
+  .hero-sub b { color:var(--pop); font-weight:900; }
+  /* sheet */
+  .sheet { position:relative; margin-top:-24px; background:var(--paper); border-radius:28px 28px 0 0; padding:24px 0 150px; z-index:20; }
+  .pad { padding:0 24px; }
+
+  /* 餐次分段 seg */
+  .seg { display:flex; gap:8px; background:var(--paper-2); padding:5px; border-radius:15px; margin:0 24px 4px; }
+  .seg .opt { flex:1; text-align:center; font-size:13.5px; font-weight:800; color:var(--mut); padding:11px 0; border-radius:11px; }
+  .seg .opt.on { background:var(--ink-deep); color:var(--paper); box-shadow:0 4px 10px rgba(60,40,20,.18); }
+  .seg .opt .n { font-size:11px; font-weight:700; opacity:.7; margin-left:3px; }
+
+  /* section head */
+  .shead { display:flex; align-items:center; margin:26px 24px 14px; }
+  .shead .ttl { position:relative; padding-left:15px; }
+  .shead .ttl::before { content:""; position:absolute; left:0; top:3px; bottom:3px; width:4px; border-radius:3px; background:var(--pop); }
+  .shead .eyebrow { font-family:var(--serif); font-style:italic; font-size:12px; letter-spacing:1px; color:var(--gold-deep); font-weight:700; }
+  .shead h2 { font-size:23px; font-weight:900; color:var(--ink); letter-spacing:-1px; margin-top:3px;
+    font-family:"PingFang SC","Microsoft YaHei",sans-serif; line-height:.96; }
+  .shead h2 .pop { color:var(--pop); }
+  .shead .cnt { margin-left:auto; font-size:11.5px; font-weight:800; color:var(--mut); background:var(--paper-2); padding:5px 12px; border-radius:30px; }
+
+  /* 行+份量条 合成一张卡 */
+  .dish { margin:0 24px 12px; background:#fff; border-radius:18px; border:1px solid #f1ece2;
+    box-shadow:0 2px 6px rgba(60,40,20,.06), 0 18px 40px rgba(120,70,30,.14); overflow:hidden; }
+  .row { display:flex; align-items:center; gap:13px; padding:12px 13px 11px; }
+  .row .thumb { width:58px; height:58px; border-radius:13px; background-size:cover; background-position:center; flex:none; }
+  .row .mid { flex:1; min-width:0; }
+  .row .mid h4 { font-size:16px; font-weight:800; color:var(--ink); letter-spacing:-.3px; }
+  .row .mid .meta { font-size:11.5px; color:var(--mut-strong); margin-top:5px; font-weight:600; display:flex; align-items:center; gap:6px; }
+  .row .mid .cz { color:var(--gold-deep); font-weight:800; }
+  .row .mid .dot { width:3px; height:3px; border-radius:50%; background:var(--mut-2); flex:none; }
+  .row .rm { width:30px; height:30px; border-radius:10px; flex:none; display:flex; align-items:center; justify-content:center; color:var(--mut-2); background:var(--paper); }
+
+  /* 份量步进 */
+  .step { display:flex; align-items:center; gap:12px; flex:none; }
+  .step b { width:30px; height:30px; border-radius:10px; background:var(--paper-2); display:flex; align-items:center; justify-content:center; color:var(--ink-deep); }
+  .step .v { font-size:15px; font-weight:900; color:var(--ink); min-width:42px; text-align:center; }
+  .step .v .u { font-size:11px; font-weight:700; color:var(--mut); margin-left:1px; }
+
+  /* 份量条（行下沿） */
+  .rowfoot { display:flex; align-items:center; justify-content:space-between; padding:11px 14px; background:var(--paper); border-top:1px dashed #e6ddcf; }
+  .rowfoot .pl { font-size:11.5px; font-weight:700; color:var(--mut-strong); display:flex; align-items:center; gap:6px; }
+  .rowfoot .pl svg { color:var(--gold-deep); }
+
+  /* 撞车提醒 */
+  .warn { display:flex; align-items:flex-start; gap:10px; margin:2px 24px 0; padding:13px 15px; background:var(--pop-soft); border-radius:16px; border:1px solid #f6d6cb; }
+  .warn .ic { flex:none; margin-top:1px; }
+  .warn .wt { font-size:12.5px; line-height:1.55; color:#9a3a22; font-weight:600; }
+  .warn .wt b { font-weight:900; }
+
+  /* 加菜入口 */
+  .addmore { display:flex; align-items:center; justify-content:center; gap:8px; margin:18px 24px 0; padding:15px; border:1.5px dashed #d8cebd; border-radius:18px;
+    font-size:14px; font-weight:800; color:var(--ink-deep); background:#fff; }
+  .addmore .ic { width:26px; height:26px; border-radius:9px; background:var(--pop); display:flex; align-items:center; justify-content:center; color:#fff; }
+
+  /* 吸底 CTA */
+  .gobar { position:absolute; left:16px; right:16px; bottom:24px; z-index:52; display:flex; align-items:center; gap:13px;
+    background:var(--ink-deep); border-radius:20px; padding:13px 15px; color:var(--paper); box-shadow:0 14px 34px rgba(40,28,18,.42); }
+  .gobar .badge { width:46px; height:46px; border-radius:14px; background:var(--pop); display:flex; flex-direction:column; align-items:center; justify-content:center;
+    flex:none; box-shadow:0 6px 14px rgba(232,71,42,.42); }
+  .gobar .badge .bn { font-size:18px; font-weight:900; color:#fff; line-height:1; }
+  .gobar .badge .bl { font-size:8px; font-weight:700; color:rgba(255,255,255,.85); margin-top:1px; }
+  .gobar .copy { flex:1; min-width:0; }
+  .gobar .copy .t { font-size:14.5px; font-weight:800; }
+  .gobar .copy .s { font-size:11.5px; color:rgba(255,255,255,.6); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .gobar .go { flex:none; background:var(--pop); color:#fff; font-size:14px; font-weight:800; padding:12px 17px; border-radius:30px; display:flex; align-items:center; gap:5px; }
+  .home-ind { position:absolute; bottom:9px; left:50%; transform:translateX(-50%); width:134px; height:5px; border-radius:3px; background:#2c241b; opacity:.85; z-index:55; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status">
+    <span>9:41</span>
+    <span class="right">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="#fff"/><rect x="5" y="4.5" width="3" height="7.5" rx="1" fill="#fff"/><rect x="10" y="2" width="3" height="10" rx="1" fill="#fff"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#fff" opacity=".4"/></svg>
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><path d="M8.5 2.5C11 2.5 13.2 3.5 14.8 5.1L8.5 11.4 2.2 5.1C3.8 3.5 6 2.5 8.5 2.5Z" fill="#fff"/></svg>
+      <svg width="26" height="13" viewBox="0 0 26 13" fill="none"><rect x="1" y="1" width="21" height="11" rx="3" stroke="#fff" stroke-width="1.2" opacity=".5"/><rect x="3" y="3" width="16" height="7" rx="1.5" fill="#fff"/><rect x="23.5" y="4.5" width="2" height="4" rx="1" fill="#fff" opacity=".6"/></svg>
+    </span>
+  </div>
+
+  <div class="scroll">
+    <div class="hero">
+      <div class="hero-bignum">5</div>
+      <div class="hero-top">
+        <a class="navbtn" href="recipes-final.html"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></a>
+        <div class="title">Today's Plate</div>
+        <div class="navbtn"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3"/></svg></div>
+      </div>
+      <div class="hero-body">
+        <span class="tag">Confirm Order</span>
+        <div class="hero-title">今日<span class="pop">餐盘</span></div>
+        <div class="hero-sub">选好了 <b>5 道</b>，调下份量就开点</div>
+      </div>
+    </div>
+
+    <div class="sheet">
+      <div class="seg">
+        <div class="opt on">晚餐<span class="n">3</span></div>
+        <div class="opt">午餐<span class="n">2</span></div>
+        <div class="opt">明日预订<span class="n">0</span></div>
+      </div>
+
+      <div class="shead">
+        <div class="ttl">
+          <div class="eyebrow">Dinner Tonight</div>
+          <h2>晚餐<span class="pop">这几道</span></h2>
+        </div>
+        <span class="cnt">3 道 · 4 人份</span>
+      </div>
+
+      <div class="dish">
+        <div class="row">
+          <div class="thumb" style="background-image:url('img/mapo-tofu.jpg')"></div>
+          <div class="mid">
+            <h4>麻婆豆腐</h4>
+            <div class="meta"><span class="cz">川菜</span><span class="dot"></span><span>35 分钟</span><span class="dot"></span><span>做过 3 次</span></div>
+          </div>
+          <div class="rm"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></div>
+        </div>
+        <div class="rowfoot">
+          <span class="pl"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3"/><path d="M3 21c0-3.3 2.7-6 6-6s6 2.7 6 6M16 3.5a3 3 0 010 7M21 21c0-2.4-1.4-4.5-3.5-5.4"/></svg>做几人份</span>
+          <div class="step">
+            <b><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12h14"/></svg></b>
+            <span class="v">4<span class="u">人</span></span>
+            <b><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></b>
+          </div>
+        </div>
+      </div>
+
+      <div class="dish">
+        <div class="row">
+          <div class="thumb" style="background-image:url('img/tomato-egg.jpg')"></div>
+          <div class="mid">
+            <h4>番茄炒蛋</h4>
+            <div class="meta"><span class="cz">家常</span><span class="dot"></span><span>15 分钟</span><span class="dot"></span><span>做过 12 次</span></div>
+          </div>
+          <div class="rm"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></div>
+        </div>
+        <div class="rowfoot">
+          <span class="pl"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3"/><path d="M3 21c0-3.3 2.7-6 6-6s6 2.7 6 6M16 3.5a3 3 0 010 7M21 21c0-2.4-1.4-4.5-3.5-5.4"/></svg>做几人份</span>
+          <div class="step">
+            <b><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12h14"/></svg></b>
+            <span class="v">4<span class="u">人</span></span>
+            <b><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></b>
+          </div>
+        </div>
+      </div>
+
+      <div class="dish">
+        <div class="row">
+          <div class="thumb" style="background-image:url('img/egg-drop-soup.jpg')"></div>
+          <div class="mid">
+            <h4>蛋花汤</h4>
+            <div class="meta"><span class="cz">家常</span><span class="dot"></span><span>10 分钟</span><span class="dot"></span><span>清淡</span></div>
+          </div>
+          <div class="rm"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></div>
+        </div>
+        <div class="rowfoot">
+          <span class="pl"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3"/><path d="M3 21c0-3.3 2.7-6 6-6s6 2.7 6 6M16 3.5a3 3 0 010 7M21 21c0-2.4-1.4-4.5-3.5-5.4"/></svg>做几人份</span>
+          <div class="step">
+            <b><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12h14"/></svg></b>
+            <span class="v">4<span class="u">人</span></span>
+            <b><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></b>
+          </div>
+        </div>
+      </div>
+
+      <div class="warn">
+        <span class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#e8472a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.3 3.9 2 18a2 2 0 0 0 1.7 3h16.6a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></span>
+        <div class="wt"><b>奶奶不吃辣</b>，麻婆豆腐偏麻辣，要不要换成<b>麻婆豆腐(微辣版)</b>，或加一道清淡的？</div>
+      </div>
+
+      <a class="addmore" href="recipes-final.html" style="text-decoration:none;">
+        <span class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+        再去菜谱库添几道
+      </a>
+
+    </div>
+  </div>
+
+  <a class="gobar" href="menu-final.html" style="text-decoration:none;">
+    <div class="badge"><div class="bn">5</div><div class="bl">道菜</div></div>
+    <div class="copy">
+      <div class="t">确认点这 5 道</div>
+      <div class="s">下单后自动算好买菜清单</div>
+    </div>
+    <div class="go">下单 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></div>
+  </a>
+  <div class="home-ind"></div>
+</div>
+</body>
+</html>

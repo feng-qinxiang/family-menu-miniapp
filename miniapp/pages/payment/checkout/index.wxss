@@ -1,0 +1,262 @@
+/* payment/checkout · 微信支付收银台
+   设计稿 pay-wechat.html：白底 + 系统 sans（非品牌 serif）。
+   实质复用全局 token：--wx 微信绿 / --pop 优惠红 / --ink 主文字 /
+   --mut 次要 / --paper-2 分隔线 / --serif eyebrow / --r-md 圆角。 */
+
+.pay-page {
+  position: relative;
+  min-height: 100vh;
+  background: #fff;
+  color: var(--ink);
+  font-family: var(--sans);
+}
+
+/* nav-bar 之下的滚动区 */
+.pay-scroll {
+  box-sizing: border-box;
+  height: 100vh;
+  background: #fff;
+}
+
+/* —— 商户信息 —— */
+.merchant {
+  text-align: center;
+  padding: 52rpx 0 42rpx;
+}
+.mlogo {
+  width: 116rpx;
+  height: 116rpx;
+  border-radius: 30rpx;
+  margin: 0 auto 24rpx;
+  overflow: hidden;
+  background: var(--wx);
+  box-shadow: 0 16rpx 38rpx rgba(7, 193, 96, 0.32);
+}
+.mlogo-img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.mname {
+  font-size: 31rpx;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: 0.4rpx;
+}
+.msub {
+  margin-top: 10rpx;
+  font-size: 25rpx;
+  color: var(--mut);
+}
+
+/* —— 金额：119rpx 黑 —— */
+.amount {
+  text-align: center;
+  padding: 0 0 56rpx;
+}
+.amount .sym {
+  font-size: 56rpx;
+  font-weight: 600;
+  color: var(--ink);
+  vertical-align: 26rpx;
+  margin-right: 4rpx;
+}
+.amount .big {
+  font-size: 119rpx;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -4rpx;
+}
+
+/* —— 明细行 —— */
+.rows {
+  margin: 0 40rpx;
+  border-top: 2rpx solid var(--paper-2);
+}
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32rpx 8rpx;
+  border-bottom: 2rpx solid var(--paper-2);
+}
+.row .lbl {
+  font-size: 29rpx;
+  color: var(--ink);
+}
+.row .val {
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+  font-size: 29rpx;
+  color: var(--ink);
+  font-weight: 500;
+  max-width: 60%;
+}
+.row .val-name {
+  max-width: 380rpx;
+}
+.row .sub {
+  font-size: 25rpx;
+  color: var(--mut);
+  font-weight: 400;
+}
+/* 右向箭头（纯 CSS） */
+.arrow {
+  width: 14rpx;
+  height: 14rpx;
+  border-top: 3rpx solid var(--mut-2);
+  border-right: 3rpx solid var(--mut-2);
+  transform: rotate(45deg);
+  flex: none;
+}
+
+/* 实付 */
+.val-pay {
+  color: var(--ink);
+  font-weight: 700;
+}
+.val-origin {
+  font-size: 25rpx;
+  color: var(--mut);
+  text-decoration: line-through;
+  margin-left: 12rpx;
+  font-weight: 400;
+}
+
+/* —— 支付方式：微信零钱（选中） —— */
+.paymethod .pm-left {
+  display: flex;
+  align-items: center;
+  gap: 22rpx;
+}
+.pm-icon {
+  width: 58rpx;
+  height: 58rpx;
+  border-radius: var(--r-sm);
+  background: var(--wx);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+.pm-icon-glyph {
+  color: #fff;
+  font-size: 30rpx;
+  font-weight: 700;
+}
+.pm-name {
+  font-size: 29rpx;
+  color: var(--ink);
+}
+.pm-bal {
+  font-size: 23rpx;
+  color: var(--mut);
+  margin-top: 4rpx;
+}
+/* 选中勾（微信绿圆） */
+.pm-check {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  background: var(--wx);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+.pm-check-tick {
+  width: 18rpx;
+  height: 10rpx;
+  border-left: 4rpx solid #fff;
+  border-bottom: 4rpx solid #fff;
+  transform: rotate(-45deg);
+  margin-top: -4rpx;
+}
+
+/* 优惠红字（撞色 token） */
+.disc {
+  font-size: 25rpx;
+  color: var(--pop);
+  font-weight: 500;
+}
+
+/* —— 支付按钮（微信绿） —— */
+.payarea {
+  margin: 64rpx 40rpx 0;
+}
+.btn-pay {
+  width: 100%;
+  background: var(--wx);
+  color: #fff;
+  border: none;
+  border-radius: var(--r-sm);
+  padding: 28rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  letter-spacing: 1rpx;
+  line-height: 1.2;
+  box-shadow: 0 16rpx 42rpx rgba(7, 193, 96, 0.32);
+}
+.btn-pay::after { border: none; }
+.btn-pay.is-paying { opacity: 0.7; }
+
+/* —— 安全提示 —— */
+.seccard {
+  margin: 50rpx 40rpx 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14rpx;
+}
+.seccard text {
+  font-size: 23rpx;
+  color: var(--mut-2);
+}
+/* 盾形（CSS 近似） */
+.sec-shield {
+  width: 26rpx;
+  height: 30rpx;
+  background: var(--mut-2);
+  flex: none;
+  -webkit-mask: radial-gradient(circle at 50% 130%, transparent 38%, #000 39%);
+  border-radius: 6rpx 6rpx 0 0;
+}
+
+/* —— 指纹占位 —— */
+.biometric {
+  margin: 58rpx 40rpx 34rpx;
+  text-align: center;
+}
+.biometric .ring {
+  width: 118rpx;
+  height: 118rpx;
+  border-radius: 50%;
+  margin: 0 auto 24rpx;
+  border: 3rpx solid var(--paper-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.biometric .ring-dot {
+  width: 54rpx;
+  height: 54rpx;
+  border-radius: 50%;
+  border: 3rpx solid var(--wx);
+  box-sizing: border-box;
+}
+.biometric .bm-txt {
+  font-size: 26rpx;
+  color: var(--mut);
+}
+.biometric .bm-alt {
+  font-size: 26rpx;
+  color: var(--wx);
+  font-weight: 500;
+  margin-top: 26rpx;
+}
+
+.pay-spacer {
+  height: 48rpx;
+}
+

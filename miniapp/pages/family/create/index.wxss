@@ -1,0 +1,416 @@
+/* pages/family/create · 创建家庭（配色全部走 app.wxss 新 token）*/
+.fc-page {
+  min-height: 100vh;
+  background: var(--paper);
+}
+.fc-scroll {
+  height: 100vh;
+}
+
+/* ===== Hero 大图（288px → 554rpx）===== */
+.fc-hero {
+  position: relative;
+  height: 554rpx;
+  overflow: hidden;
+}
+.fc-hero-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.fc-hero-mask {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(20, 14, 8, 0.55) 0%,
+    rgba(20, 14, 8, 0.1) 34%,
+    rgba(20, 14, 8, 0.35) 64%,
+    rgba(20, 14, 8, 0.92) 100%
+  );
+}
+.fc-hero-bignum {
+  position: absolute;
+  top: 80rpx;
+  right: 12rpx;
+  font-family: var(--serif);
+  font-size: 366rpx;
+  font-weight: 700;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.07);
+  pointer-events: none;
+}
+.fc-hero-body {
+  position: absolute;
+  left: 46rpx;
+  right: 46rpx;
+  bottom: 86rpx;
+  z-index: 10;
+  color: #fff;
+}
+.fc-tag {
+  display: inline-block;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 23rpx;
+  letter-spacing: 3rpx;
+  font-weight: 700;
+  color: #fff;
+  background: var(--pop);
+  padding: 11rpx 27rpx;
+  border-radius: var(--r-xs);
+}
+.fc-hero-title {
+  margin-top: 28rpx;
+  font-size: 96rpx;
+  line-height: 0.9;
+  letter-spacing: -4rpx;
+}
+
+/* ===== Sheet ===== */
+.fc-sheet {
+  position: relative;
+  margin-top: -50rpx;
+  background: var(--paper);
+  border-radius: 54rpx 54rpx 0 0;
+  padding: 0 46rpx 60rpx;
+  z-index: 20;
+}
+
+/* ===== 头像上传 ===== */
+.fc-ava-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: -84rpx;
+  position: relative;
+  z-index: 30;
+}
+.fc-ava {
+  position: relative;
+  width: 200rpx;
+  height: 200rpx;
+  border-radius: 62rpx;
+  background: #fff;
+  border: 5rpx dashed #d9cdb8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 13rpx;
+  box-shadow: var(--sh-card);
+  overflow: hidden;
+}
+.fc-ava.has {
+  border-style: solid;
+  border-color: var(--pop);
+}
+.fc-ava-img {
+  width: 100%;
+  height: 100%;
+}
+.fc-ava-cam {
+  width: 73rpx;
+  height: 73rpx;
+  border-radius: 50%;
+  background: var(--pop-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.fc-ava-ct {
+  font-size: 21rpx;
+  font-weight: 700;
+  color: var(--mut-strong);
+  letter-spacing: 1rpx;
+}
+.fc-ava-badge {
+  position: absolute;
+  right: -8rpx;
+  bottom: -8rpx;
+  width: 62rpx;
+  height: 62rpx;
+  border-radius: 50%;
+  background: var(--pop);
+  border: 6rpx solid var(--paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--sh-pop);
+}
+.fc-ava-hint {
+  margin-top: 23rpx;
+  font-size: 23rpx;
+  color: var(--mut-strong);
+  font-weight: 500;
+}
+
+/* ===== 表单 ===== */
+.fc-form {
+  margin-top: 50rpx;
+}
+.fc-field {
+  margin-bottom: 35rpx;
+}
+.fc-label {
+  font-size: 21rpx;
+  letter-spacing: 2rpx;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+  margin-bottom: 17rpx;
+}
+.fc-opt {
+  font-size: 21rpx;
+  font-weight: 600;
+  color: var(--mut);
+  text-transform: none;
+  letter-spacing: 0;
+}
+.fc-inp {
+  display: flex;
+  align-items: center;
+  gap: 21rpx;
+  background: #fff;
+  border: 3rpx solid #ece4d6;
+  border-radius: var(--r-sm);
+  padding: 29rpx 31rpx;
+}
+.fc-inp.focus {
+  border-color: var(--pop);
+  box-shadow: 0 0 0 6rpx rgba(232, 71, 42, 0.08);
+}
+.fc-input {
+  flex: 1;
+  font-size: 31rpx;
+  font-weight: 700;
+  color: var(--ink);
+}
+.fc-inp-txt {
+  flex: 1;
+  font-size: 31rpx;
+  font-weight: 700;
+  color: var(--ink);
+}
+.fc-ph {
+  color: var(--mut-2);
+  font-weight: 600;
+}
+.fc-chev {
+  margin-left: auto;
+  width: 18rpx;
+  height: 18rpx;
+  border-top: 4rpx solid var(--mut-2);
+  border-right: 4rpx solid var(--mut-2);
+  transform: rotate(45deg);
+}
+
+/* ===== 创建按钮 ===== */
+.fc-createbtn {
+  margin-top: 16rpx;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 17rpx;
+  background: var(--pop);
+  color: #fff;
+  border-radius: var(--r-sm);
+  padding: 33rpx;
+  font-size: 32rpx;
+  font-weight: 800;
+  letter-spacing: 1rpx;
+  box-shadow: var(--sh-pop);
+}
+
+/* ===== Tip 卡片 ===== */
+.fc-tipcard {
+  display: flex;
+  align-items: flex-start;
+  gap: 21rpx;
+  margin-top: 38rpx;
+  background: var(--pop-soft);
+  border-radius: var(--r-sm);
+  padding: 27rpx 29rpx;
+}
+.fc-tip-tx {
+  font-size: 24rpx;
+  color: var(--ink-deep);
+  line-height: 1.55;
+  font-weight: 500;
+}
+.fc-tip-b {
+  color: var(--pop);
+  font-weight: 800;
+}
+
+/* ===== 加入链接 ===== */
+.fc-joinlink {
+  text-align: center;
+  margin-top: 50rpx;
+}
+.fc-join-small {
+  font-size: 25rpx;
+  color: var(--mut-strong);
+}
+.fc-join-a {
+  display: inline-block;
+  font-size: 27rpx;
+  font-weight: 800;
+  color: var(--ink-deep);
+  border-bottom: 4rpx solid var(--gold);
+  padding-bottom: 4rpx;
+  margin-left: 10rpx;
+}
+
+/* ===== 纯 CSS 图标 ===== */
+.fc-ic {
+  flex: none;
+  box-sizing: border-box;
+}
+/* 相机：圆角矩形 + 圆心 */
+.fc-ic-cam {
+  position: relative;
+  width: 38rpx;
+  height: 30rpx;
+  border: 4rpx solid var(--pop);
+  border-radius: 8rpx;
+}
+.fc-ic-cam::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 14rpx;
+  height: 14rpx;
+  border: 4rpx solid var(--pop);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+.fc-ic-cam::after {
+  content: "";
+  position: absolute;
+  top: -8rpx;
+  left: 9rpx;
+  width: 14rpx;
+  height: 7rpx;
+  background: var(--pop);
+  border-radius: 4rpx 4rpx 0 0;
+}
+/* 加号（白） */
+.fc-ic-plus {
+  position: relative;
+  width: 26rpx;
+  height: 26rpx;
+}
+.fc-ic-plus::before,
+.fc-ic-plus::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  background: #fff;
+  border-radius: 2rpx;
+  transform: translate(-50%, -50%);
+}
+.fc-ic-plus::before { width: 24rpx; height: 5rpx; }
+.fc-ic-plus::after { width: 5rpx; height: 24rpx; }
+/* 房子 */
+.fc-ic-home {
+  position: relative;
+  width: 34rpx;
+  height: 30rpx;
+}
+.fc-ic-home::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 22rpx;
+  height: 22rpx;
+  border: 4rpx solid var(--pop);
+  border-bottom: none;
+  border-radius: 4rpx 4rpx 0 0;
+  transform: translateX(-50%);
+  margin-top: 8rpx;
+}
+.fc-ic-home::after {
+  content: "";
+  position: absolute;
+  top: 2rpx;
+  left: 50%;
+  width: 24rpx;
+  height: 24rpx;
+  border-left: 4rpx solid var(--pop);
+  border-top: 4rpx solid var(--pop);
+  transform: translateX(-50%) rotate(45deg);
+  border-radius: 4rpx 0 0 0;
+}
+/* 定位针 */
+.fc-ic-pin {
+  position: relative;
+  width: 30rpx;
+  height: 32rpx;
+}
+.fc-ic-pin::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 24rpx;
+  height: 24rpx;
+  border: 4rpx solid var(--mut-2);
+  border-radius: 50% 50% 50% 0;
+  transform: translateX(-50%) rotate(-45deg);
+}
+.fc-ic-pin::after {
+  content: "";
+  position: absolute;
+  top: 9rpx;
+  left: 50%;
+  width: 8rpx;
+  height: 8rpx;
+  border-radius: 50%;
+  background: var(--mut-2);
+  transform: translateX(-50%);
+}
+/* 箭头（白） */
+.fc-ic-arrow {
+  width: 16rpx;
+  height: 16rpx;
+  border-top: 5rpx solid #fff;
+  border-right: 5rpx solid #fff;
+  transform: rotate(45deg);
+}
+/* 灯泡 */
+.fc-ic-bulb {
+  position: relative;
+  width: 30rpx;
+  height: 34rpx;
+  margin-top: 2rpx;
+}
+.fc-ic-bulb::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 24rpx;
+  height: 24rpx;
+  border: 4rpx solid var(--pop);
+  border-radius: 50%;
+  transform: translateX(-50%);
+}
+.fc-ic-bulb::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 14rpx;
+  height: 8rpx;
+  border: 4rpx solid var(--pop);
+  border-top: none;
+  border-radius: 0 0 4rpx 4rpx;
+  transform: translateX(-50%);
+}

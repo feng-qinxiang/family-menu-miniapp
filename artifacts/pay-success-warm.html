@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>开通成功 · 家庭点菜</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-font-smoothing:antialiased; }
+  :root{ --paper:#fbf8f3; --paper-2:#f0ebe2; --ink:#2c241b; --ink-deep:#3a2e23;
+    --mut:#9a8e7d; --mut-strong:#7a6e5d; --gold:#f4d9a8; --gold-deep:#b08949;
+    --pop:#e8472a; --pop-soft:#fdece6; --serif:"Georgia","Times New Roman",serif; }
+  body { display:flex; align-items:center; justify-content:center; min-height:100vh; background:#d9d2c7;
+    font-family:-apple-system,"SF Pro Text","PingFang SC","Microsoft YaHei",sans-serif; }
+  .phone { position:relative; width:390px; height:844px; background:var(--paper); border-radius:46px;
+    box-shadow:0 30px 70px rgba(60,45,30,.4), 0 0 0 11px #1b1714, 0 0 0 12px #2c2520; overflow:hidden; }
+  .status { position:absolute; top:0; left:0; right:0; height:50px; z-index:60; display:flex; align-items:center; justify-content:space-between; padding:0 30px 0 34px; color:var(--ink); font-size:15px; font-weight:600; }
+  .status .right { display:flex; align-items:center; gap:7px; }
+  .notch { position:absolute; top:11px; left:50%; transform:translateX(-50%); width:118px; height:33px; background:#1b1714; border-radius:20px; z-index:61; }
+
+  .wrap { position:absolute; inset:0; padding:88px 30px 34px; display:flex; flex-direction:column; align-items:center; }
+  /* 成功徽章 */
+  .badge { width:88px; height:88px; border-radius:50%; background:var(--gold-deep);
+    display:flex; align-items:center; justify-content:center; box-shadow:0 14px 36px rgba(184,134,58,.4); position:relative; }
+  .badge::after { content:""; position:absolute; inset:-9px; border-radius:50%; border:2px solid rgba(212,168,87,.3); }
+  .eyebrow { font-family:var(--serif); font-style:italic; font-size:13px; letter-spacing:1px; color:var(--gold-deep); font-weight:700; margin-top:22px; }
+  .title { font-size:34px; font-weight:900; color:var(--ink); letter-spacing:-1.5px; margin-top:6px; }
+  .title .pop { color:var(--pop); }
+  .sub { font-size:13.5px; color:var(--mut-strong); margin-top:10px; text-align:center; line-height:1.55; max-width:280px; }
+
+  /* 权益清单 */
+  .perks { width:100%; background:#fff; border-radius:22px; padding:6px 20px; margin-top:20px;
+    box-shadow:0 2px 6px rgba(60,40,20,.06), 0 18px 40px rgba(120,70,30,.14); }
+  .perk { display:flex; align-items:center; gap:13px; padding:12px 0; border-bottom:1px solid #f1ece2; }
+  .perk:last-child { border-bottom:none; }
+  .perk .ck { width:26px; height:26px; border-radius:50%; background:var(--pop-soft); display:flex; align-items:center; justify-content:center; flex:none; }
+  .perk .tx { font-size:15px; font-weight:600; color:var(--ink); }
+
+  /* 订单信息 */
+  .order { width:100%; background:#fff; border-radius:18px; padding:4px 18px; margin-top:14px;
+    box-shadow:0 2px 6px rgba(60,40,20,.05), 0 12px 28px rgba(120,70,30,.1); }
+  .order .orow { display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid #f4efe6; font-size:13px; }
+  .order .orow:last-child { border-bottom:none; }
+  .order .ol { color:var(--mut-strong); font-weight:600; }
+  .order .ov { color:var(--ink); font-weight:700; }
+  .order .ov.pay { color:var(--pop); }
+
+  .vip-tag { display:inline-flex; align-items:center; gap:6px; margin-top:16px; background:var(--ink-deep); color:var(--gold); font-size:12px; font-weight:700; letter-spacing:1px; padding:7px 15px; border-radius:30px; font-family:var(--serif); font-style:italic; }
+
+  .actions { width:100%; margin-top:auto; }
+  .btn-main { width:100%; height:54px; border-radius:16px; background:var(--pop); color:#fff; font-size:16px; font-weight:800;
+    display:flex; align-items:center; justify-content:center; box-shadow:0 8px 22px rgba(232,71,42,.4); }
+  .btn-main:active { transform:scale(.97); }
+  .btn-link { display:block; text-align:center; margin-top:18px; font-size:14px; color:var(--mut-strong); font-weight:600; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status">
+    <span>9:41</span>
+    <span class="right">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="#2c241b"/><rect x="5" y="4.5" width="3" height="7.5" rx="1" fill="#2c241b"/><rect x="10" y="2" width="3" height="10" rx="1" fill="#2c241b"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#2c241b" opacity=".4"/></svg>
+      <svg width="26" height="13" viewBox="0 0 26 13" fill="none"><rect x="1" y="1" width="21" height="11" rx="3" stroke="#2c241b" stroke-width="1.2" opacity=".5"/><rect x="3" y="3" width="16" height="7" rx="1.5" fill="#2c241b"/><rect x="23.5" y="4.5" width="2" height="4" rx="1" fill="#2c241b" opacity=".6"/></svg>
+    </span>
+  </div>
+
+  <div class="wrap">
+    <div class="badge">
+      <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+    </div>
+    <div class="eyebrow">欢迎加入 · 全家一桌</div>
+    <div class="title">开通<span class="pop">成功</span></div>
+    <div class="sub">家庭云同步已生效，现在全家的菜谱、菜单和购物清单都会实时同步啦。</div>
+
+    <div class="vip-tag">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#f4d9a8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6 4.5 2.3 7.1L12 16.6 5.7 21l2.3-7.1-6-4.5h7.6z"/></svg>
+      家庭云同步 · 年卡
+    </div>
+
+    <div class="perks">
+      <div class="perk"><span class="ck"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e8472a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></span><span class="tx">最多 8 位家人共享</span></div>
+      <div class="perk"><span class="ck"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e8472a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></span><span class="tx">无限收藏菜谱</span></div>
+      <div class="perk"><span class="ck"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e8472a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></span><span class="tx">一键生成买菜清单</span></div>
+      <div class="perk"><span class="ck"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e8472a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></span><span class="tx">智能口味推荐</span></div>
+    </div>
+
+    <div class="order">
+      <div class="orow"><span class="ol">订单号</span><span class="ov">FM20260606093341</span></div>
+      <div class="orow"><span class="ol">实付金额</span><span class="ov pay">¥66.00</span></div>
+      <div class="orow"><span class="ol">有效期至</span><span class="ov">2027.06.06</span></div>
+    </div>
+
+    <div class="actions">
+      <div class="btn-main">开始使用</div>
+      <a class="btn-link">查看订单详情</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!-- 意见反馈 · 二级页：类型多选 + 描述(500计数) + 图片上传(≤3) + 联系方式 + 提交占位 -->
+<nav-bar title="意见反馈" show-back="{{true}}" status-bar-height="{{statusBarHeight}}">
+  <view class="nav-submit tap-scale" catchtap="onSubmit">提交</view>
+</nav-bar>
+
+<view class="container fb">
+  <!-- Hero -->
+  <view class="fb-head g-fade-up">
+    <view class="eyebrow-serif">We're listening</view>
+    <view class="fb-h1 title-stroke title-shadow">意见<text class="pop">反馈</text></view>
+    <view class="fb-desc">你的每一条想法，都让这桌饭更合口味。</view>
+  </view>
+
+  <!-- 反馈类型 -->
+  <view class="fb-sec g-fade-up g-d1">
+    <view class="fb-label"><text class="star">*</text>反馈类型</view>
+    <view class="fb-chips">
+      <view
+        wx:for="{{types}}"
+        wx:key="key"
+        class="chip {{selectedTypes[item.key] ? 'on' : ''}} tap-scale"
+        data-key="{{item.key}}"
+        catchtap="onToggleType"
+      >{{item.label}}</view>
+    </view>
+  </view>
+
+  <!-- 详细描述 -->
+  <view class="fb-sec g-fade-up g-d2">
+    <view class="fb-label"><text class="star">*</text>详细描述</view>
+    <view class="ta-wrap">
+      <textarea
+        class="ta"
+        placeholder="说说你的想法...&#10;比如想要的新功能、用着不顺手的地方、菜谱建议等。"
+        placeholder-class="ta-ph"
+        maxlength="500"
+        value="{{content}}"
+        bindinput="onContentInput"
+      ></textarea>
+      <text class="counter">{{contentLen}} / 500</text>
+    </view>
+  </view>
+
+  <!-- 上传图片 -->
+  <view class="fb-sec g-fade-up g-d3">
+    <view class="fb-label">上传图片 <text class="label-tip">（选填 · 最多 3 张）</text></view>
+    <view class="uploads">
+      <view class="up-img" wx:for="{{images}}" wx:key="*this">
+        <image class="up-pic" src="{{item}}" mode="aspectFill"></image>
+        <view class="del tap-scale" data-index="{{index}}" catchtap="onRemoveImage">
+          <view class="del-x"></view>
+        </view>
+      </view>
+      <view wx:if="{{images.length < 3}}" class="up-add tap-scale" catchtap="onChooseImage">
+        <view class="up-plus"></view>
+        <text class="up-t">{{images.length}}/3</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 联系方式 -->
+  <view class="fb-sec g-fade-up g-d4">
+    <view class="fb-label">联系方式 <text class="label-tip">（选填）</text></view>
+    <view class="input-wrap">
+      <view class="mail-ic"></view>
+      <input
+        class="contact-input"
+        type="text"
+        placeholder="手机号或微信，方便我们回复你"
+        placeholder-class="contact-ph"
+        value="{{contact}}"
+        bindinput="onContactInput"
+      />
+    </view>
+  </view>
+
+  <!-- 提交 -->
+  <view class="submit-area g-fade-up g-d5 safe-bottom">
+    <view class="btn btn-pop btn-block tap-scale {{submitting ? 'is-busy' : ''}}" catchtap="onSubmit">
+      <view class="send-ic"></view>
+      <text>{{submitting ? '提交中...' : '提交反馈'}}</text>
+    </view>
+    <view class="hint">通常 1–2 个工作日内回复</view>
+  </view>
+</view>
+
+<state-toast
+  visible="{{toast.visible}}"
+  type="{{toast.type}}"
+  text="{{toast.text}}"
+  duration="2000"
+  bindclose="onToastClose"
+></state-toast>

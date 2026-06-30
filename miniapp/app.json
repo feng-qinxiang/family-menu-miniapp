@@ -1,0 +1,81 @@
+{
+  "pages": [
+    "pages/home/index",
+    "pages/recipes/index",
+    "pages/menu/index",
+    "pages/me/index",
+    "pages/shopping/index",
+    "pages/community/index",
+    "pages/import/index",
+    "pages/recipe-detail/index",
+    "pages/recipe-edit/index",
+    "pages/vip/index",
+    "pages/weekly-menu/index",
+    "pages/pantry/index",
+    "pages/recipes/search/index",
+    "pages/cook-mode/index",
+    "pages/cook-log/index",
+    "pages/community/post-detail/index",
+    "pages/community/audit/index",
+    "pages/auth/login/index",
+    "pages/auth/login-phone/index",
+    "pages/auth/verify-otp/index",
+    "pages/auth/register/index",
+    "pages/auth/reset-password/index",
+    "pages/auth/wechat-auth/index",
+    "pages/family/create/index",
+    "pages/family/join/index",
+    "pages/family/members/index",
+    "pages/family/invite/index",
+    "pages/vip/upgrade/index",
+    "pages/vip/orders/index",
+    "pages/payment/checkout/index",
+    "pages/payment/success/index",
+    "pages/me/favorites/index",
+    "pages/me/profile-edit/index",
+    "pages/me/settings/index",
+    "pages/me/notifications/index",
+    "pages/me/preference-profile/index",
+    "pages/me/feedback/index",
+    "pages/me/help-faq/index",
+    "pages/me/about/index",
+    "pages/legal/terms/index",
+    "pages/legal/privacy/index",
+    "pages/launch/splash/index",
+    "pages/launch/onboarding/index"
+  ],
+  "window": {
+    "navigationBarTitleText": "家庭点菜",
+    "navigationBarBackgroundColor": "#fbf8f3",
+    "navigationBarTextStyle": "black",
+    "backgroundTextStyle": "light",
+    "backgroundColor": "#fbf8f3"
+  },
+  "tabBar": {
+    "custom": true,
+    "color": "#857a68",
+    "selectedColor": "#e8472a",
+    "backgroundColor": "#fbf8f3",
+    "list": [
+      {
+        "pagePath": "pages/home/index",
+        "text": "点菜"
+      },
+      {
+        "pagePath": "pages/menu/index",
+        "text": "菜单"
+      },
+      {
+        "pagePath": "pages/recipes/index",
+        "text": "菜谱"
+      },
+      {
+        "pagePath": "pages/me/index",
+        "text": "我的"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

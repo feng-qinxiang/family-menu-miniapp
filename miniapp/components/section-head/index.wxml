@@ -1,0 +1,24 @@
+<!-- components/section-head/index.wxml -->
+<view class="shead sh-comp">
+  <view class="shead-main">
+    <view class="shead-bar"></view>
+    <text wx:if="{{eyebrow}}" class="eyebrow">{{eyebrow}}</text>
+    <view class="shead-title">
+      <text wx:if="{{title}}">{{title}}</text>
+      <text wx:if="{{popPart}}" class="pop">{{popPart}}</text>
+      <text wx:if="{{titleTail}}">{{titleTail}}</text>
+    </view>
+  </view>
+
+  <view
+    wx:if="{{more || hint}}"
+    class="seeall {{more ? 'tap-scale' : ''}}"
+    bindtap="onMore"
+  >
+    <text wx:if="{{hint}}">{{hint}}</text>
+    <view wx:if="{{more}}" class="seeall-arrow">
+      <view class="arrow-line al1"></view>
+      <view class="arrow-line al2"></view>
+    </view>
+  </view>
+</view>

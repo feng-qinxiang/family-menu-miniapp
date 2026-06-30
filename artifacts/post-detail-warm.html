@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>帖子详情 · 邻里厨房</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-font-smoothing:antialiased; }
+  :root{
+    --paper:#fbf8f3; --paper-2:#f0ebe2;
+    --ink:#2c241b; --ink-deep:#3a2e23;
+    --mut:#9a8e7d; --mut-strong:#7a6e5d;
+    --gold:#f4d9a8; --gold-deep:#b08949;
+    --pop:#e8472a; --pop-soft:#fdece6;
+    --serif:"Georgia","Times New Roman",serif;
+  }
+  body { display:flex; align-items:center; justify-content:center; min-height:100vh; background:#d9d2c7;
+    font-family:-apple-system,"SF Pro Text","Helvetica Neue",Helvetica,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; }
+  .phone { position:relative; width:390px; height:844px; background:var(--paper); border-radius:46px;
+    box-shadow:0 30px 70px rgba(60,45,30,.4), 0 0 0 11px #1b1714, 0 0 0 12px #2c2520; overflow:hidden; }
+  .status { position:absolute; top:0; left:0; right:0; height:50px; z-index:60; display:flex; align-items:center; justify-content:space-between;
+    padding:0 30px 0 34px; color:var(--ink); font-size:15px; font-weight:600; pointer-events:none; }
+  .status .right { display:flex; align-items:center; gap:7px; }
+  .notch { position:absolute; top:11px; left:50%; transform:translateX(-50%); width:118px; height:33px; background:#1b1714; border-radius:20px; z-index:61; }
+  .scroll { position:absolute; inset:0; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch; }
+  .scroll::-webkit-scrollbar { display:none; }
+
+  /* nav */
+  .nav { position:absolute; top:0; left:0; right:0; z-index:40; height:96px; display:flex; align-items:flex-end;
+    justify-content:space-between; padding:0 20px 12px; background:linear-gradient(180deg,var(--paper) 60%,rgba(251,248,243,.85)); }
+  .navbtn { width:42px; height:42px; border-radius:50%; background:var(--ink-deep); display:flex; align-items:center; justify-content:center;
+    box-shadow:0 2px 6px rgba(60,40,20,.18), 0 10px 22px rgba(120,70,30,.16); }
+  .nav .ttl { font-size:16px; font-weight:800; color:var(--ink); letter-spacing:-.3px; }
+
+  .body { padding:104px 22px 130px; }
+
+  /* author */
+  .author { display:flex; align-items:center; gap:12px; }
+  .ava { width:48px; height:48px; border-radius:50%; flex:none; background:var(--gold-deep);
+    display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-weight:700; font-size:20px; color:#fff;
+    box-shadow:0 2px 6px rgba(60,40,20,.12); }
+  .ava.lin { background:var(--pop); }
+  .ava.lan { background:var(--pine); }
+  .ava.zhao { background:var(--mut-strong); }
+  .ava.sm { width:38px; height:38px; font-size:16px; }
+  .author .acol { flex:1; min-width:0; }
+  .author .aname { font-size:16px; font-weight:800; color:var(--ink); letter-spacing:-.2px; }
+  .author .atime { font-size:12px; color:var(--mut-strong); margin-top:3px; }
+  .followbtn { font-size:12.5px; font-weight:800; color:var(--pop); border:1.5px solid var(--pop); padding:7px 15px; border-radius:30px; flex:none; }
+
+  .eyebrow { font-family:var(--serif); font-style:italic; font-size:12px; letter-spacing:1px; color:var(--gold-deep); font-weight:700; margin-top:22px; }
+  .post-title { font-size:27px; font-weight:900; color:var(--ink); letter-spacing:-1px; line-height:1.08; margin-top:8px;
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; }
+  .post-title .pop { color:var(--pop); }
+  .post-text { font-size:14.5px; line-height:1.75; color:var(--ink-deep); margin-top:14px; }
+  .post-text p { margin-bottom:12px; }
+  .post-text b { font-weight:800; color:var(--ink); }
+
+  .dish-img { width:100%; height:240px; border-radius:22px; object-fit:cover; margin-top:18px; display:block;
+    box-shadow:0 2px 6px rgba(60,40,20,.06), 0 18px 40px rgba(120,70,30,.14); }
+  .imgcap { font-family:var(--serif); font-style:italic; font-size:12px; color:var(--mut-strong); text-align:center; margin-top:9px; }
+
+  .ptags { display:flex; gap:8px; flex-wrap:wrap; margin-top:16px; }
+  .ptag { font-size:12px; font-weight:700; color:var(--gold-deep); background:var(--paper-2); padding:6px 12px; border-radius:30px; }
+
+  /* recipe card */
+  .recipe-card { display:flex; align-items:center; gap:14px; background:#fff; border-radius:20px; padding:13px; margin-top:20px;
+    box-shadow:0 2px 6px rgba(60,40,20,.06), 0 18px 40px rgba(120,70,30,.14); border:1px solid #f1ece2; }
+  .recipe-card .rc-img { width:72px; height:72px; border-radius:16px; object-fit:cover; flex:none; }
+  .recipe-card .rc-mid { flex:1; min-width:0; }
+  .recipe-card .rc-kick { font-family:var(--serif); font-style:italic; font-size:11px; color:var(--gold-deep); font-weight:700; }
+  .recipe-card .rc-name { font-size:17px; font-weight:800; color:var(--ink); letter-spacing:-.3px; margin-top:3px; }
+  .recipe-card .rc-meta { font-size:12px; color:var(--mut-strong); margin-top:5px; }
+  .recipe-card .rc-go { width:40px; height:40px; border-radius:14px; background:var(--ink-deep); flex:none; display:flex; align-items:center; justify-content:center; }
+
+  /* like / fav bar */
+  .react-bar { display:flex; align-items:center; gap:10px; margin-top:22px; padding-bottom:22px; border-bottom:1px solid #efe9df; }
+  .react { display:flex; align-items:center; gap:7px; font-size:13.5px; font-weight:700; padding:10px 16px; border-radius:30px; background:var(--paper-2); color:var(--mut-strong); }
+  .react.liked { background:var(--pop-soft); color:var(--pop); }
+  .react .n { font-weight:800; }
+
+  /* comments */
+  .csec { margin-top:24px; }
+  .cs-head { display:flex; align-items:baseline; gap:8px; }
+  .cs-head h3 { font-size:19px; font-weight:900; color:var(--ink); letter-spacing:-.4px; }
+  .cs-head .cnt { font-size:13px; font-weight:700; color:var(--mut-strong); }
+  .cmt { display:flex; gap:11px; padding:16px 0; border-bottom:1px solid #efe9df; }
+  .cmt:last-child { border-bottom:none; }
+  .cmt .ccol { flex:1; min-width:0; }
+  .cmt .crow { display:flex; align-items:center; justify-content:space-between; }
+  .cmt .cname { font-size:13.5px; font-weight:800; color:var(--ink); }
+  .cmt .ctime { font-size:11px; color:var(--mut); }
+  .cmt .ctext { font-size:13.5px; line-height:1.6; color:var(--ink-deep); margin-top:5px; }
+  .cmt .clike { display:flex; align-items:center; gap:5px; font-size:12px; font-weight:700; color:var(--mut-strong); margin-top:8px; }
+  .cmt .clike.on { color:var(--pop); }
+
+  /* bottom input */
+  .inputbar { position:absolute; bottom:0; left:0; right:0; z-index:50; padding:12px 18px 24px;
+    background:rgba(251,248,243,.94); backdrop-filter:blur(18px); border-top:1px solid #ece5d9; display:flex; align-items:center; gap:11px; }
+  .inputbar .field { flex:1; height:44px; border-radius:24px; background:var(--paper-2); border:1px solid #e6dfd2;
+    display:flex; align-items:center; padding:0 18px; font-size:13.5px; color:var(--mut); }
+  .inputbar .send { width:44px; height:44px; border-radius:50%; background:var(--pop); flex:none; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 1px 2px rgba(180,40,20,.3), 0 8px 18px rgba(232,71,42,.4); }
+  .home-ind { position:absolute; bottom:9px; left:50%; transform:translateX(-50%); width:134px; height:5px; border-radius:3px; background:#2c241b; opacity:.18; z-index:55; }
+  .navbtn:active, .react:active, .send:active, .followbtn:active, .recipe-card:active, .clike:active { transform:scale(.97); }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status">
+    <span>9:41</span>
+    <span class="right">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="#2c241b"/><rect x="5" y="4.5" width="3" height="7.5" rx="1" fill="#2c241b"/><rect x="10" y="2" width="3" height="10" rx="1" fill="#2c241b"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#2c241b" opacity=".35"/></svg>
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><path d="M8.5 2.5C11 2.5 13.2 3.5 14.8 5.1L8.5 11.4 2.2 5.1C3.8 3.5 6 2.5 8.5 2.5Z" fill="#2c241b"/></svg>
+      <svg width="26" height="13" viewBox="0 0 26 13" fill="none"><rect x="1" y="1" width="21" height="11" rx="3" stroke="#2c241b" stroke-width="1.2" opacity=".5"/><rect x="3" y="3" width="16" height="7" rx="1.5" fill="#2c241b"/><rect x="23.5" y="4.5" width="2" height="4" rx="1" fill="#2c241b" opacity=".6"/></svg>
+    </span>
+  </div>
+
+  <div class="nav">
+    <div class="navbtn"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fbf8f3" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></div>
+    <div class="ttl">帖子详情</div>
+    <div class="navbtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fbf8f3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="2.4"/><circle cx="6" cy="12" r="2.4"/><circle cx="18" cy="19" r="2.4"/><path d="M8 11l8-4.5M8 13l8 4.5"/></svg></div>
+  </div>
+
+  <div class="scroll">
+    <div class="body">
+      <div class="author">
+        <div class="ava lin">林</div>
+        <div class="acol">
+          <div class="aname">林晓妈妈</div>
+          <div class="atime">川菜爱好者 · 2 小时前</div>
+        </div>
+        <div class="followbtn">+ 关注</div>
+      </div>
+
+      <div class="eyebrow">周末下厨房</div>
+      <div class="post-title">周末给娃做的<span class="pop">糖醋鸡</span></div>
+
+      <div class="post-text">
+        <p>这周末试了下糖醋鸡，本来还担心娃不爱吃，结果端上桌不到十分钟就<b>全家光盘</b>了，连平时挑食的小宝都多扒了半碗饭。</p>
+        <p>说下我的做法：鸡腿肉切块，用一点盐和料酒抓匀腌十分钟，裹薄薄一层生粉，下锅中火炸到金黄捞出。糖醋汁我用的是<b>三勺糖、两勺醋、一勺生抽、半勺番茄酱</b>，加点清水调开。</p>
+        <p>锅里留底油，倒汁烧开收浓，鸡块回锅翻匀挂汁就好。最后撒白芝麻，酸甜挂汁、外酥里嫩，比外卖香多了。给娃做强烈推荐！</p>
+      </div>
+
+      <img class="dish-img" src="img/sweet-sour-chicken.jpg" alt="糖醋鸡">
+      <div class="imgcap">— 出锅那一刻，香气直接拉满 —</div>
+
+      <div class="ptags">
+        <span class="ptag">#糖醋鸡</span>
+        <span class="ptag">#娃爱吃</span>
+        <span class="ptag">#全家光盘</span>
+        <span class="ptag">#快手家常</span>
+      </div>
+
+      <div class="recipe-card">
+        <img class="rc-img" src="img/sweet-sour-chicken.jpg" alt="糖醋鸡">
+        <div class="rc-mid">
+          <div class="rc-kick">关联菜谱</div>
+          <div class="rc-name">家常糖醋鸡</div>
+          <div class="rc-meta">川菜 · 30 分钟 · 3 人份</div>
+        </div>
+        <div class="rc-go"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fbf8f3" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></div>
+      </div>
+
+      <div class="react-bar">
+        <div class="react liked"><svg width="17" height="17" viewBox="0 0 24 24" fill="#e8472a" stroke="#e8472a" stroke-width="2"><path d="M12 20s-7-4.4-7-9.5A3.8 3.8 0 0112 8a3.8 3.8 0 017 2.5C19 15.6 12 20 12 20z"/></svg><span class="n">128</span></div>
+        <div class="react"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h12a1 1 0 011 1v15l-7-4-7 4V5a1 1 0 011-1z"/></svg><span class="n">收藏 46</span></div>
+        <div class="react" style="margin-left:auto"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 01-12 7.7L3 21l1.8-6A8.5 8.5 0 1121 11.5z"/></svg><span class="n">32</span></div>
+      </div>
+
+      <div class="csec">
+        <div class="cs-head"><h3>评论</h3><span class="cnt">32 条</span></div>
+
+        <div class="cmt">
+          <div class="ava lan sm">蓝</div>
+          <div class="ccol">
+            <div class="crow"><span class="cname">蓝色海岸</span><span class="ctime">1 小时前</span></div>
+            <div class="ctext">看着就香！请问番茄酱可以不放吗，家里没有了，怕颜色不好看。</div>
+            <div class="clike on"><svg width="13" height="13" viewBox="0 0 24 24" fill="#e8472a" stroke="#e8472a" stroke-width="2"><path d="M12 20s-7-4.4-7-9.5A3.8 3.8 0 0112 8a3.8 3.8 0 017 2.5C19 15.6 12 20 12 20z"/></svg>12</div>
+          </div>
+        </div>
+
+        <div class="cmt">
+          <div class="ava zhao sm">赵</div>
+          <div class="ccol">
+            <div class="crow"><span class="cname">赵小厨</span><span class="ctime">52 分钟前</span></div>
+            <div class="ctext">不放番茄酱也行，多加一点点醋和糖，最后那勺糖色炒出来颜色也很亮的，亲测可以。</div>
+            <div class="clike"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20s-7-4.4-7-9.5A3.8 3.8 0 0112 8a3.8 3.8 0 017 2.5C19 15.6 12 20 12 20z"/></svg>8</div>
+          </div>
+        </div>
+
+        <div class="cmt">
+          <div class="ava sm" style="background:var(--gold-deep)">周</div>
+          <div class="ccol">
+            <div class="crow"><span class="cname">周末下厨房</span><span class="ctime">38 分钟前</span></div>
+            <div class="ctext">收藏了周末就做！我家娃也挑食，希望能复刻你这个光盘效果哈哈。</div>
+            <div class="clike"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20s-7-4.4-7-9.5A3.8 3.8 0 0112 8a3.8 3.8 0 017 2.5C19 15.6 12 20 12 20z"/></svg>5</div>
+          </div>
+        </div>
+
+        <div class="cmt">
+          <div class="ava sm" style="background:var(--pine)">陈</div>
+          <div class="ccol">
+            <div class="crow"><span class="cname">陈记小馆</span><span class="ctime">20 分钟前</span></div>
+            <div class="ctext">生粉裹薄一点真的是关键，裹厚了一炸就发硬。楼主这个比例我抄走了，谢谢分享！</div>
+            <div class="clike"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20s-7-4.4-7-9.5A3.8 3.8 0 0112 8a3.8 3.8 0 017 2.5C19 15.6 12 20 12 20z"/></svg>3</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="inputbar">
+    <div class="field">写下你的评论…</div>
+    <div class="send"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg></div>
+  </div>
+  <div class="home-ind"></div>
+</div>
+</body>
+</html>

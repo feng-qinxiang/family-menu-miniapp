@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>家庭点菜 · 家庭厨房</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-font-smoothing:antialiased; }
+  :root{
+    --paper:#fbf8f3; --paper-2:#f0ebe2;
+    --ink:#2c241b; --ink-deep:#3a2e23;
+    --mut:#9a8e7d; --mut-2:#b3a795;
+    --gold:#f4d9a8; --gold-deep:#b08949;
+    --pop:#e8472a; --pop-soft:#fdece6;
+    --pine:#2f4a3a;
+    --serif:"Georgia","Times New Roman",serif;
+  }
+  body {
+    display:flex; align-items:center; justify-content:center;
+    min-height:100vh; background:#d9d2c7;
+    font-family:-apple-system,"SF Pro Text","Helvetica Neue",Helvetica,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  }
+  .phone {
+    position:relative; width:390px; height:844px;
+    background:var(--paper); border-radius:46px;
+    box-shadow:0 30px 70px rgba(60,45,30,.4), 0 0 0 11px #1b1714, 0 0 0 12px #2c2520;
+    overflow:hidden;
+  }
+  .status {
+    position:absolute; top:0; left:0; right:0; height:50px; z-index:60;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 30px 0 34px; color:#fff; font-size:15px; font-weight:600; pointer-events:none;
+  }
+  .status .right { display:flex; align-items:center; gap:7px; }
+  .notch { position:absolute; top:11px; left:50%; transform:translateX(-50%); width:118px; height:33px; background:#1b1714; border-radius:20px; z-index:61; }
+  .scroll { position:absolute; inset:0; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch; }
+  .scroll::-webkit-scrollbar { display:none; }
+  .tap:active { transform:scale(.97); }
+  .pad { padding:0 24px; }
+
+  /* hero (首页同款范式) */
+  .hero { position:relative; height:458px; background:url('img/hongshao-pork.jpg') center/cover no-repeat; }
+  .hero::before { content:""; position:absolute; inset:0; z-index:1;
+    background:radial-gradient(120% 80% at 50% 0%, rgba(255,180,80,.16), transparent 55%); mix-blend-mode:overlay; }
+  .hero::after { content:""; position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(20,14,8,.5) 0%, rgba(20,14,8,0) 28%, rgba(20,14,8,.18) 52%, rgba(20,14,8,.9) 100%); }
+  .hero-bignum { position:absolute; top:78px; right:14px; z-index:2; font-family:var(--serif); font-size:220px; font-weight:700; line-height:1; color:rgba(255,255,255,.07); pointer-events:none; }
+  .hero-top { position:absolute; top:58px; left:24px; right:24px; z-index:10; display:flex; align-items:flex-start; justify-content:space-between; }
+  .hero-top .hi { font-size:12px; letter-spacing:2.5px; text-transform:uppercase; opacity:.85; font-weight:700; color:#fff; }
+  .hero-top .hi-cn { font-size:14px; font-weight:600; margin-top:4px; color:rgba(255,255,255,.9); }
+  .iconbtn { width:42px; height:42px; border-radius:50%; background:rgba(255,255,255,.16); backdrop-filter:blur(8px);
+    display:flex; align-items:center; justify-content:center; border:1px solid rgba(255,255,255,.22); }
+  .hero-body { position:absolute; left:24px; right:24px; bottom:30px; z-index:10; color:#fff; }
+  .tag { display:inline-block; font-family:var(--serif); font-style:italic; font-size:12px; letter-spacing:1.5px; font-weight:700;
+    color:#fff; background:var(--pop); padding:6px 14px; border-radius:4px; }
+  .hero-title {
+    font-size:62px; line-height:.9; font-weight:900; letter-spacing:-3px; margin:15px 0 10px;
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    color:transparent; -webkit-text-stroke:1.6px #fff; text-stroke:1.6px #fff;
+  }
+  .hero-title .pop { color:var(--pop); -webkit-text-stroke:0; text-stroke:0; }
+  .hero-sub { font-size:13.5px; color:rgba(255,255,255,.85); font-weight:400; }
+  .hero-fam { display:flex; align-items:center; margin-top:18px; }
+  .hero-fam .ava { width:46px; height:46px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:800; color:#fff; border:2px solid rgba(255,255,255,.85); margin-left:-12px; box-shadow:0 4px 12px rgba(0,0,0,.35); }
+  .hero-fam .ava:first-child { margin-left:0; }
+  .fa-a { background:linear-gradient(135deg,#d4a857,#b8863a); color:var(--ink-deep); }
+  .fa-b { background:#c9763e; } .fa-c { background:var(--pine); } .fa-d { background:#8a6cae; }
+  .hero-fam .fam-lbl { margin-left:14px; font-size:12.5px; color:rgba(255,255,255,.85); }
+  .hero-fam .fam-lbl b { color:#fff; font-weight:800; font-size:15px; }
+  .hero-fam .manage { margin-left:auto; font-size:12.5px; font-weight:800; color:var(--ink-deep); background:var(--gold); padding:9px 15px; border-radius:30px; display:flex; align-items:center; gap:5px; }
+
+  /* 奶油 sheet 叠在 hero 上 */
+  .sheet { position:relative; margin-top:-26px; background:var(--paper); border-radius:28px 28px 0 0; padding:24px 0 30px; z-index:20; }
+
+  /* stats */
+  .stats { display:flex; gap:12px; padding:0 24px; }
+  .stat { flex:1; background:#fff; border-radius:20px; padding:16px 14px; border:1px solid #f1ece2; box-shadow:0 2px 6px rgba(60,40,20,.06), 0 14px 30px rgba(120,70,30,.1); }
+  .stat .snum { font-size:34px; font-weight:900; color:var(--ink); letter-spacing:-2px; line-height:1; font-family:"PingFang SC","Microsoft YaHei",sans-serif; }
+  .stat .snum.pop { color:var(--pop); }
+  .stat .scap { font-size:11px; color:var(--mut); margin-top:7px; font-weight:600; white-space:nowrap; }
+  .stat .scap-en { font-family:var(--serif); font-style:italic; font-size:10px; color:var(--gold-deep); letter-spacing:.5px; }
+  .stat .sbadge { display:inline-flex; align-items:center; gap:3px; margin-top:8px; font-size:9.5px; font-weight:800; padding:3px 7px; border-radius:20px; letter-spacing:.2px; }
+  .stat .sbadge.up { color:var(--pine); background:#eaf1ec; }
+  .stat .sbadge.fire { color:var(--pop); background:var(--pop-soft); }
+
+  /* VIP banner */
+  .vipban { display:flex; align-items:center; gap:13px; margin:18px 24px 0; padding:15px 16px; border-radius:20px;
+    background:linear-gradient(120deg,#3a2e23 0%,#5a4326 55%,#b08949 130%); box-shadow:0 2px 6px rgba(60,40,20,.06), 0 18px 40px rgba(120,70,30,.22); }
+  .vipban .vip-ic { width:42px; height:42px; border-radius:13px; flex:none; display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(135deg,var(--gold),var(--gold-deep)); color:var(--ink-deep); box-shadow:0 4px 12px rgba(0,0,0,.25); }
+  .vipban .vip-mid { flex:1; min-width:0; }
+  .vipban .vip-mid .vt { font-size:14.5px; font-weight:800; color:#fff; letter-spacing:-.2px; }
+  .vipban .vip-mid .vt b { color:var(--gold); font-weight:800; }
+  .vipban .vip-mid .vs { font-size:11px; color:rgba(255,255,255,.7); margin-top:3px; }
+  .vipban .vip-go { flex:none; display:flex; align-items:center; gap:3px; font-size:11.5px; font-weight:800; color:var(--ink-deep);
+    background:var(--gold); padding:8px 13px; border-radius:30px; }
+
+  /* section head */
+  .shead { display:flex; align-items:flex-end; justify-content:space-between; margin:30px 0 16px; }
+  .shead > div:first-child { position:relative; padding-left:15px; }
+  .shead > div:first-child::before { content:""; position:absolute; left:0; top:3px; bottom:3px; width:4px; border-radius:3px; background:var(--pop); }
+  .shead .eyebrow { font-family:var(--serif); font-style:italic; font-size:12px; letter-spacing:1px; color:var(--gold-deep); font-weight:700; }
+  .shead h2 { font-size:27px; font-weight:900; color:var(--ink); letter-spacing:-1.5px; margin-top:5px; font-family:"PingFang SC","Microsoft YaHei",sans-serif; line-height:.96; }
+  .shead h2 .pop { color:var(--pop); }
+  .seeall { font-size:13px; color:var(--gold-deep); font-weight:700; display:flex; align-items:center; gap:3px; flex:none; padding-bottom:3px; }
+
+  /* history rows */
+  .card { background:#fff; border-radius:22px; padding:6px 18px; border:1px solid #f1ece2; box-shadow:0 2px 6px rgba(60,40,20,.06), 0 18px 40px rgba(120,70,30,.12); }
+  .hrow { display:flex; align-items:center; gap:14px; padding:13px 0; border-bottom:1px solid #efe9df; }
+  .hrow:last-child { border-bottom:none; }
+  .hrow .thumb { width:62px; height:62px; border-radius:16px; background-size:cover; background-position:center; flex:none; }
+  .hrow .hmid { flex:1; min-width:0; }
+  .hrow .hmid h4 { font-size:16px; font-weight:800; color:var(--ink); letter-spacing:-.3px; }
+  .hrow .hmid .hsub { font-size:12px; color:var(--mut); margin-top:5px; }
+  .hrow .stars { display:flex; gap:2px; flex:none; }
+
+  /* tool list */
+  .tools { display:flex; flex-direction:column; }
+  .trow { display:flex; align-items:center; gap:15px; padding:15px 0; border-bottom:1px solid #efe9df; }
+  .trow:last-child { border-bottom:none; }
+  .ticon { width:42px; height:42px; border-radius:14px; display:flex; align-items:center; justify-content:center; flex:none; }
+  .ti-1 { background:var(--pop-soft); color:var(--pop); } .ti-2 { background:#eaf1ec; color:var(--pine); }
+  .ti-3 { background:#f6ecd9; color:var(--gold-deep); } .ti-4 { background:#ece8f3; color:#7a5fa0; }
+  .ti-5 { background:#e7eef3; color:#3f7fa6; }
+  .tmid { flex:1; min-width:0; }
+  .tmid .tname { font-size:15.5px; font-weight:700; color:var(--ink); }
+  .tmid .tdesc { font-size:11.5px; color:#7d7160; margin-top:2px; }
+  .tvip { font-size:9.5px; font-weight:800; letter-spacing:.5px; color:var(--ink-deep); background:var(--gold); padding:3px 8px; border-radius:5px; margin-left:6px; }
+  .tarrow { color:var(--mut-2); flex:none; }
+
+  /* taste pref */
+  .pref { margin-top:14px; }
+  .pref .prow { margin-bottom:15px; }
+  .pref .prow:last-child { margin-bottom:0; }
+  .pref .ptop { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+  .pref .ptop .pl { font-size:14px; font-weight:700; color:var(--ink); }
+  .pref .ptop .pl .pop { color:var(--pop); }
+  .pref .ptop .pr { font-size:12px; font-weight:700; color:var(--mut); }
+  .pbar { height:9px; border-radius:6px; background:var(--paper-2); overflow:hidden; }
+  .pbar > i { display:block; height:100%; border-radius:6px; background:linear-gradient(90deg,#f4a23a,var(--pop)); }
+  .pbar.alt > i { background:linear-gradient(90deg,#5b8a6e,var(--pine)); }
+
+  /* tabbar */
+  .tabbar { position:absolute; bottom:0; left:0; right:0; height:88px; z-index:50; background:rgba(251,248,243,.92); backdrop-filter:blur(18px); border-top:1px solid #ece5d9; display:flex; justify-content:space-around; align-items:flex-start; padding-top:13px; }
+  .tab { display:flex; flex-direction:column; align-items:center; gap:5px; color:#857a68; font-size:10.5px; font-weight:600; }
+  .tab.on { color:var(--pop); }
+  .home-ind { position:absolute; bottom:9px; left:50%; transform:translateX(-50%); width:134px; height:5px; border-radius:3px; background:#2c241b; opacity:.85; z-index:55; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status">
+    <span>9:41</span>
+    <span class="right">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="#fff"/><rect x="5" y="4.5" width="3" height="7.5" rx="1" fill="#fff"/><rect x="10" y="2" width="3" height="10" rx="1" fill="#fff"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#fff" opacity=".4"/></svg>
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><path d="M8.5 2.5C11 2.5 13.2 3.5 14.8 5.1L8.5 11.4 2.2 5.1C3.8 3.5 6 2.5 8.5 2.5Z" fill="#fff"/></svg>
+      <svg width="26" height="13" viewBox="0 0 26 13" fill="none"><rect x="1" y="1" width="21" height="11" rx="3" stroke="#fff" stroke-width="1.2" opacity=".5"/><rect x="3" y="3" width="16" height="7" rx="1.5" fill="#fff"/><rect x="23.5" y="4.5" width="2" height="4" rx="1" fill="#fff" opacity=".6"/></svg>
+    </span>
+  </div>
+
+  <div class="scroll">
+    <!-- HERO (首页同款:真实菜图+镂空撞色标题+红底eyebrow+超大数字+成员头像) -->
+    <div class="hero">
+      <div class="hero-bignum">23</div>
+      <div class="hero-top">
+        <div>
+          <div class="hi">My Kitchen</div>
+          <div class="hi-cn">本月一起做了 23 道菜</div>
+        </div>
+        <div class="iconbtn tap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="3.2"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8" stroke-linecap="round"/></svg></div>
+      </div>
+      <div class="hero-body">
+        <span class="tag">My Kitchen</span>
+        <div class="hero-title">小张的<span class="pop">家</span></div>
+        <div class="hero-sub">一家人围着一张桌子吃饭</div>
+        <div class="hero-fam">
+          <div class="ava fa-a">张</div>
+          <div class="ava fa-b">妈</div>
+          <div class="ava fa-c">爸</div>
+          <div class="ava fa-d">奶</div>
+          <div class="fam-lbl"><b>4</b> 位成员</div>
+          <div class="manage tap"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>管理</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sheet">
+    <!-- VIP banner -->
+    <div class="vipban tap">
+      <div class="vip-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l4.5 3L12 4l4.5 7L21 8l-1.6 11H4.6L3 8z"/></svg></div>
+      <div class="vip-mid">
+        <div class="vt">开通<b>家庭云同步</b></div>
+        <div class="vs">菜谱与做菜记录全家共享，多设备实时同步</div>
+      </div>
+      <div class="vip-go">开通 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></div>
+    </div>
+    <!-- 数据卡 -->
+    <div class="stats">
+      <div class="stat tap"><div class="snum pop">23</div><div class="scap">本月做的菜</div><div class="scap-en">Dishes</div><div class="sbadge up"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l7-7 7 7M12 5v15"/></svg>较上月 +3</div></div>
+      <div class="stat tap"><div class="snum">18</div><div class="scap">收藏菜谱</div><div class="scap-en">Saved</div><div class="sbadge up"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l7-7 7 7M12 5v15"/></svg>新增5</div></div>
+      <div class="stat tap"><div class="snum">12</div><div class="scap">连续做饭(天)</div><div class="scap-en">Streak</div><div class="sbadge fire"><svg width="9" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 1c.5 3.5-1.5 5.5-3.2 7.3C8.5 10.2 7 12 7 14.8 7 19 10.1 22 13.5 22S20 19 20 14.8c0-3-1.7-5.3-3-7-.3 1.3-1 2.2-2 2.7.8-2.6.3-6.5-1.5-9.5z"/></svg>连续中</div></div>
+    </div>
+
+    <div class="pad">
+      <!-- 最近上桌 -->
+      <div class="shead">
+        <div>
+          <div class="eyebrow">Recently Cooked</div>
+          <h2>最近<span class="pop">上桌</span></h2>
+        </div>
+        <span class="seeall tap">全部 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></span>
+      </div>
+      <div class="card">
+        <div class="hrow tap">
+          <div class="thumb" style="background-image:url('img/hongshao-pork.jpg')"></div>
+          <div class="hmid"><h4>红烧肉</h4><div class="hsub">昨天晚饭 · 爸爸掌勺</div></div>
+          <div class="stars">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#e8472a"><path d="M12 2l2.9 6.3 6.8.7-5.1 4.6 1.5 6.7L12 17.8 5.9 20.3l1.5-6.7L2.3 9l6.8-.7z"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#e8472a"><path d="M12 2l2.9 6.3 6.8.7-5.1 4.6 1.5 6.7L12 17.8 5.9 20.3l1.5-6.7L2.3 9l6.8-.7z"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#e8472a"><path d="M12 2l2.9 6.3 6.8.7-5.1 4.6 1.5 6.7L12 17.8 5.9 20.3l1.5-6.7L2.3 9l6.8-.7z"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#e8472a"><path d="M12 2l2.9 6.3 6.8.7-5.1 4.6 1.5 6.7L12 17.8 5.9 20.3l1.5-6.7L2.3 9l6.8-.7z"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#e8472a"><path d="M12 2l2.9 6.3 6.8.7-5.1 4.6 1.5 6.7L12 17.8 5.9 20.3l1.5-6.7L2.3 9l6.8-.7z"/></svg>
+          </div>
+        </div>
+        <div class="hrow tap">
+          <div class="thumb" style="background-image:url('img/tomato-egg.jpg')"></div>
+          <div class="hmid"><h4>番茄炒蛋</h4><div class="hsub">前天午饭 · 妈妈做的</div></div>
+          <div class="stars">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#e8472a"><path d="M12 2l2.9 6.3 6.8.7-5.1 4.6 1.5 6.7L12 17.8 5.9 20.3l1.5-6.7L2.3 9l6.8-.7z"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#e8472a"><path d="M12 2l2.9 6.3 6.8.7-5.1 4.6 1.5 6.7L12 17.8 5.9 20.3l1.5-6.7L2.3 9l6.8-.7z"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#e8472a"><path d="M12 2l2.9 6.3 6.8.7-5.1 4.6 1.5 6.7L12 17.8 5.9 20.3l1.5-6.7L2.3 9l6.8-.7z"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#e8472a"><path d="M12 2l2.9 6.3 6.8.7-5.1 4.6 1.5 6.7L12 17.8 5.9 20.3l1.5-6.7L2.3 9l6.8-.7z"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d8cdbb" stroke-width="2"><path d="M12 4l2.4 5.2 5.6.6-4.2 3.8 1.2 5.5L12 16l-5 3.4 1.2-5.5L4 10.1l5.6-.6z"/></svg>
+          </div>
+        </div>
+        <div class="hrow tap">
+          <div class="thumb" style="background-image:url('img/long-beans.jpg')"></div>
+          <div class="hmid"><h4>蒜蓉空心菜</h4><div class="hsub">周三晚饭 · 奶奶爱吃</div></div>
+          <div class="stars">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#e8472a"><path d="M12 2l2.9 6.3 6.8.7-5.1 4.6 1.5 6.7L12 17.8 5.9 20.3l1.5-6.7L2.3 9l6.8-.7z"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#e8472a"><path d="M12 2l2.9 6.3 6.8.7-5.1 4.6 1.5 6.7L12 17.8 5.9 20.3l1.5-6.7L2.3 9l6.8-.7z"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#e8472a"><path d="M12 2l2.9 6.3 6.8.7-5.1 4.6 1.5 6.7L12 17.8 5.9 20.3l1.5-6.7L2.3 9l6.8-.7z"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#e8472a"><path d="M12 2l2.9 6.3 6.8.7-5.1 4.6 1.5 6.7L12 17.8 5.9 20.3l1.5-6.7L2.3 9l6.8-.7z"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d8cdbb" stroke-width="2"><path d="M12 4l2.4 5.2 5.6.6-4.2 3.8 1.2 5.5L12 16l-5 3.4 1.2-5.5L4 10.1l5.6-.6z"/></svg>
+          </div>
+        </div>
+        <div class="hrow tap" style="justify-content:center; gap:5px; color:var(--gold-deep); font-size:13px; font-weight:800;">查看全部记录 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></div>
+      </div>
+
+      <!-- 厨房工具 -->
+      <div class="shead">
+        <div>
+          <div class="eyebrow">Kitchen Tools</div>
+          <h2>厨房<span class="pop">工具</span></h2>
+        </div>
+      </div>
+      <div class="card">
+        <div class="tools">
+          <div class="trow tap">
+            <div class="ticon ti-1"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="3"/><path d="M3 9h18M8 2.5v4M16 2.5v4"/></svg></div>
+            <div class="tmid"><div class="tname">周菜单计划</div><div class="tdesc">一周吃什么提前排好</div></div>
+            <div class="tarrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></div>
+          </div>
+          <div class="trow tap">
+            <div class="ticon ti-2"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2.5" width="14" height="19" rx="2.5"/><path d="M5 11h14M10 5.5v3M10 14v3"/></svg></div>
+            <div class="tmid"><div class="tname">冰箱库存</div><div class="tdesc">家里还剩哪些食材</div></div>
+            <div class="tarrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></div>
+          </div>
+          <div class="trow tap">
+            <div class="ticon ti-3"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h11a2 2 0 012 2v14l-7-3-6 3V4z"/></svg></div>
+            <div class="tmid"><div class="tname">我的菜谱</div><div class="tdesc">收藏与自建的拿手菜</div></div>
+            <div class="tarrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></div>
+          </div>
+          <div class="trow tap">
+            <div class="ticon ti-4"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10a6 6 0 00-11.5-2.3A4.5 4.5 0 007 20h10.5a4 4 0 00.5-7.9z"/><path d="M12 15V9M9.5 11.5L12 9l2.5 2.5"/></svg></div>
+            <div class="tmid"><div class="tname">云同步 <span class="tvip">VIP</span></div><div class="tdesc">菜谱与记录多设备同步</div></div>
+            <div class="tarrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></div>
+          </div>
+          <div class="trow tap">
+            <div class="ticon ti-5"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4"/></svg></div>
+            <div class="tmid"><div class="tname">设置</div><div class="tdesc">通知、口味偏好、关于</div></div>
+            <div class="tarrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 口味偏好 -->
+      <div class="shead">
+        <div>
+          <div class="eyebrow">Taste Profile</div>
+          <h2>本月<span class="pop">口味</span></h2>
+        </div>
+      </div>
+      <div class="card" style="padding:20px 18px;">
+        <div class="pref">
+          <div class="prow">
+            <div class="ptop"><div class="pl">偏爱<span class="pop">川菜</span></div><div class="pr">做了 9 次</div></div>
+            <div class="pbar"><i style="width:78%"></i></div>
+          </div>
+          <div class="prow">
+            <div class="ptop"><div class="pl">下饭重口</div><div class="pr">偏好高</div></div>
+            <div class="pbar"><i style="width:65%"></i></div>
+          </div>
+          <div class="prow">
+            <div class="ptop"><div class="pl">清淡少油</div><div class="pr">奶奶在意</div></div>
+            <div class="pbar alt"><i style="width:42%"></i></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="height:90px"></div>
+    </div>
+  </div>
+
+  <div class="tabbar">
+    <div class="tab"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5L12 4l8 6.5"/><path d="M6 9.5V20h12V9.5"/></svg>首页</div>
+    <div class="tab"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h11a2 2 0 012 2v14l-7-3-6 3V4z"/></svg>菜谱</div>
+    <div class="tab"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg>菜单</div>
+    <div class="tab on"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6"/></svg>我的</div>
+  </div>
+  <div class="home-ind"></div>
+</div>
+</body>
+</html>

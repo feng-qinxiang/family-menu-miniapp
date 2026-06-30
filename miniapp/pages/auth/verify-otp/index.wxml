@@ -1,0 +1,69 @@
+<!-- pages/auth/verify-otp · 短信验证码 6 格输入（开发环境显示调试码） -->
+<nav-bar title="验证码" show-back="{{true}}" status-bar-height="{{statusBarHeight}}"></nav-bar>
+
+<view class="otp-page">
+  <!-- 背景大字 -->
+  <text class="bignum">06</text>
+
+  <view class="wrap">
+    <!-- 标题区 -->
+    <view class="head g-fade-up g-d1">
+      <view class="eyebrow-serif">Verify Code</view>
+      <view class="title-stroke title-stroke--ink hero-title">输入<text class="pop">验证码</text></view>
+      <view class="sent">已发送至 <text class="sent-phone">{{maskedPhone}}</text>，请填写收到的 6 位短信验证码</view>
+    </view>
+
+    <!-- 6 格 otp（view 模拟 + 隐藏 input 聚焦） -->
+    <view class="otp g-fade-up g-d2" bindtap="focusInput">
+      <view
+        wx:for="{{cells}}"
+        wx:key="index"
+        class="cell tap-scale {{index === code.length && focused ? 'active' : ''}} {{item === '' ? 'empty' : ''}}"
+      >
+        <block wx:if="{{item !== ''}}">{{item}}</block>
+        <view wx:elif="{{index === code.length && focused}}" class="cur"></view>
+      </view>
+    </view>
+
+    <!-- 隐藏聚焦 input -->
+    <input
+      class="hidden-input"
+      type="number"
+      maxlength="6"
+      focus="{{focused}}"
+      value="{{code}}"
+      bindinput="onInput"
+      bindfocus="onFocus"
+      bindblur="onBlur"
+    />
+
+    <!-- 倒计时 / 重发 -->
+    <view class="resend tap-scale {{countdown <= 0 ? 'resend--can' : ''}}" bindtap="onResend">
+      <view class="resend-dot"></view>
+      <text wx:if="{{countdown > 0}}">{{countdown}}s 后可重新获取</text>
+      <text wx:else class="can">重新获取验证码</text>
+    </view>
+
+    <view class="spacer"></view>
+
+    <!-- 验证按钮 -->
+    <view
+      class="btn btn-pop btn-block tap-scale submit g-fade-up g-d3 {{code.length === 6 && !submitting ? '' : 'submit--disabled'}}"
+      bindtap="onSubmit"
+    >
+      <text>{{submitting ? '验证中…' : '验证并登录'}}</text>
+      <view wx:if="{{!submitting}}" class="submit-arrow"></view>
+    </view>
+
+    <view class="other tap-scale" bindtap="onOther">
+      <text>换用其他方式登录 ›</text>
+    </view>
+  </view>
+</view>
+
+<state-toast
+  visible="{{toast.visible}}"
+  type="{{toast.type}}"
+  text="{{toast.text}}"
+  bindclose="onToastClose"
+></state-toast>
