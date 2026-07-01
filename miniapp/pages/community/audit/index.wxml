@@ -13,7 +13,7 @@
   </view>
 
   <!-- Tab 切换 -->
-  <view class="tabs g-fade-up g-d1">
+  <view wx:if="{{!noPermission}}" class="tabs g-fade-up g-d1">
     <view
       class="chip tap-scale {{activeTab === 'PENDING' ? 'on' : ''}}"
       data-tab="PENDING"
@@ -26,8 +26,16 @@
     >已处理 · {{reviewed.length}}</view>
   </view>
 
+  <!-- 无权限态：非管理员访问 -->
+  <state-empty
+    wx:if="{{noPermission}}"
+    type="gray"
+    title="需要管理员权限"
+    desc="审核队列仅对社区管理员开放"
+  ></state-empty>
+
   <!-- 加载占位 -->
-  <view wx:if="{{loading}}" class="empty-state">
+  <view wx:elif="{{loading}}" class="empty-state">
     <view class="empty-text">正在加载举报队列…</view>
   </view>
 

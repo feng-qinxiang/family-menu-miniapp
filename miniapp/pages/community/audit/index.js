@@ -1,5 +1,6 @@
 // pages/community/audit · 社区举报审核队列（二级页）
 const {
+  getCurrentUser,
   getCommunityReports,
   reviewCommunityReport
 } = require('../../../utils/api');
@@ -37,7 +38,9 @@ Page({
     toastVisible: false,
     toastText: '',
     // 暂存待确认的操作
-    _pendingAction: null
+    _pendingAction: null,
+    // 权限：非管理员显示无权限态
+    noPermission: false
   },
 
   onLoad() {
@@ -52,6 +55,21 @@ Page({
       sbh = 0;
     }
     this.setData({ statusBarHeight: sbh });
+    this.guardAndLoad();
+  },
+
+  // 先校验管理员身份，非管理员直接显示无权限态，不打无谓的 403
+  async guardAndLoad() {
+    let user = null;
+    try {
+      user = await getCurrentUser();
+    } catch (e) {
+      user = null;
+    }
+    if (!user || !user.admin) {
+      this.setData({ loading: false, noPermission: true });
+      return;
+    }
     this.loadReports();
   },
 
