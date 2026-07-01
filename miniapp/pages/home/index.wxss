@@ -582,18 +582,22 @@
   border: 2rpx solid #e6dfd1;
 }
 .fp-wish-empty {
-  padding: 20rpx 4rpx 8rpx;
+  padding: 18rpx 4rpx 10rpx;
   font-size: 25rpx;
+  line-height: 1.6;
   color: var(--mut);
 }
 .fp-wish-confirm {
   margin-top: 22rpx;
-  height: 88rpx;
+  min-height: 88rpx;
+  padding: 12rpx 24rpx;
   border-radius: var(--r-pill);
   background: var(--ink-deep);
   color: #fff;
   font-size: 28rpx;
   font-weight: 800;
+  line-height: 1.4;
+  text-align: center;
   display: flex; align-items: center; justify-content: center;
   box-shadow: var(--sh-card);
 }
