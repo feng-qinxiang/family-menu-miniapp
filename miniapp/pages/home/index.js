@@ -254,34 +254,57 @@ Page({
     }
     const list = this.data.wishes;
     if (!list || !list.length) {
-      wx.showToast({ title: '许愿池还是空的', icon: 'none' });
+      wx.showToast({ title: '先从下面挑菜或点「我想吃」', icon: 'none' });
       return;
     }
-    wx.showLoading({ title: '确认中', mask: true });
-    let added = 0;
-    for (const w of list) {
-      // 许愿条目里如果有 recipeId 就入今日菜单，否则跳过（纯文本许愿等后续菜谱匹配能力）
-      if (w.recipeId) {
-        try {
-          await addTodayMenuRecipe(w.recipeId, this.data.currentSlot);
-          added++;
-        } catch (err) { /* ignore single failure */ }
-      }
+    // 区分：带 recipeId 的可直接入菜单；纯文本许愿无法匹配菜谱
+    const withRecipe = list.filter(w => w.recipeId);
+    const textOnly = list.filter(w => !w.recipeId);
+
+    if (!withRecipe.length) {
+      // 全是纯文本许愿，无法加入菜单，保留许愿池不清空
+      wx.showModal({
+        title: '还差一步',
+        content: '许愿池里都是「想吃什么」的心愿，去菜谱里挑到对应的菜、点 + 加入，就能凑成今晚的菜单啦。',
+        confirmText: '去挑菜',
+        cancelText: '知道了',
+        success: (res) => {
+          if (res.confirm) wx.switchTab({ url: '/pages/recipes/index' });
+        }
+      });
+      return;
     }
-    // 清空许愿池：先删本地，再异步删服务端（逐条，忽略单条失败）
+
+    wx.showLoading({ title: '加入菜单中', mask: true });
+    let added = 0;
+    const addedIds = [];
+    for (const w of withRecipe) {
+      try {
+        await addTodayMenuRecipe(w.recipeId, this.data.currentSlot);
+        added++;
+        addedIds.push(w.id);
+      } catch (err) { /* ignore single failure */ }
+    }
+    // 只清掉成功加入菜单的许愿，纯文本许愿保留在池中
     const all = loadWishes();
     const key = `${this.data.todayKey}:${this.data.currentSlot}`;
-    const toDelete = (all[key] || []).map(w => w.id);
-    delete all[key];
+    const remaining = (all[key] || []).filter(w => !addedIds.includes(w.id));
+    all[key] = remaining;
     saveWishes(all);
     wx.hideLoading();
-    this.setData({ wishes: [] });
-    toDelete.forEach(id => removeWishApi(id).catch(() => {}));
+    this.setData({ wishes: remaining });
+    addedIds.forEach(id => removeWishApi(id).catch(() => {}));
     await this.refreshLight();
     wx.showToast({
-      title: added ? `已加入${added}道` : '已清空许愿池',
+      title: added ? `已加入 ${added} 道菜` : '加入失败，请重试',
       icon: added ? 'success' : 'none'
     });
+    if (added && textOnly.length) {
+      // 提醒还有纯文本心愿未处理
+      setTimeout(() => {
+        wx.showToast({ title: `还有 ${textOnly.length} 条心愿待挑菜`, icon: 'none' });
+      }, 1600);
+    }
   },
 
   async loadAll() {

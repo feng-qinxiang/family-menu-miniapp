@@ -73,8 +73,8 @@
       还没人许愿，从下面挑菜或自己加一条
     </view>
 
-    <view class="fp-wish-confirm tap-scale {{canConfirm ? '' : 'disabled'}}" bindtap="confirmMenu">
-      {{canConfirm ? '做饭人确认 → 加入菜单' : '等做饭人确认'}}
+    <view class="fp-wish-confirm tap-scale {{!canConfirm ? 'disabled' : (wishes.length ? '' : 'hint')}}" bindtap="confirmMenu">
+      {{!canConfirm ? '等做饭人确认' : (wishes.length ? '做饭人确认 → 加入菜单' : '先许个愿，再一键加入菜单')}}
     </view>
   </view>
 
@@ -178,7 +178,7 @@
         <view class="mh-mc-eyebrow">今天这一桌</view>
         <view class="mh-mc-title">今日菜单</view>
         <view class="mh-mc-names ellipsis">
-          <text wx:for="{{todayMenu}}" wx:key="recipeId">{{item.recipe.title}}{{index < todayMenu.length - 1 ? ' · ' : ''}}</text>
+          <text wx:for="{{todayMenu}}" wx:key="recipeId">{{item.recipe.title || '一道菜'}}{{index < todayMenu.length - 1 ? ' · ' : ''}}</text>
         </view>
         <view class="mh-mc-pile">
           <image
