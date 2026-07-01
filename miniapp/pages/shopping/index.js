@@ -78,13 +78,19 @@ Page({
   },
 
   async loadShoppingList() {
-    const [shoppingList, todayMenu, pantryItems] = await Promise.all([
-      getShoppingList(),
-      getTodayMenu(),
-      getPantryItems()
-    ]);
-    this.applyShoppingList(shoppingList, { todayMenu, pantryItems, loading: false });
-    this.setPantryView(pantryItems);
+    try {
+      const [shoppingList, todayMenu, pantryItems] = await Promise.all([
+        getShoppingList(),
+        getTodayMenu(),
+        getPantryItems()
+      ]);
+      this.applyShoppingList(shoppingList, { todayMenu, pantryItems, loading: false });
+      this.setPantryView(pantryItems);
+    } catch (err) {
+      console.error('shopping load failed', err);
+      this.setData({ loading: false });
+      wx.showToast({ title: '加载失败，请下拉重试', icon: 'none' });
+    }
   },
 
   setPantryView(pantryItems) {
@@ -145,24 +151,32 @@ Page({
   },
 
   async refreshList() {
-    const [shoppingList, todayMenu, pantryItems] = await Promise.all([
-      rebuildShoppingList(),
-      getTodayMenu(),
-      getPantryItems()
-    ]);
-    this.applyShoppingList(shoppingList, { todayMenu, pantryItems });
-    wx.showToast({ title: '已按菜单整理', icon: 'success' });
+    try {
+      const [shoppingList, todayMenu, pantryItems] = await Promise.all([
+        rebuildShoppingList(),
+        getTodayMenu(),
+        getPantryItems()
+      ]);
+      this.applyShoppingList(shoppingList, { todayMenu, pantryItems });
+      wx.showToast({ title: '已按菜单整理', icon: 'success' });
+    } catch (err) {
+      wx.showToast({ title: '整理失败，请重试', icon: 'none' });
+    }
   },
 
   async toggleItem(event) {
     const { id, purchased } = event.currentTarget.dataset;
     const currentPurchased = purchased === true || purchased === 'true';
-    const [shoppingList, todayMenu, pantryItems] = await Promise.all([
-      toggleShoppingPurchased(id, !currentPurchased),
-      getTodayMenu(),
-      getPantryItems()
-    ]);
-    this.applyShoppingList(shoppingList, { todayMenu, pantryItems });
+    try {
+      const [shoppingList, todayMenu, pantryItems] = await Promise.all([
+        toggleShoppingPurchased(id, !currentPurchased),
+        getTodayMenu(),
+        getPantryItems()
+      ]);
+      this.applyShoppingList(shoppingList, { todayMenu, pantryItems });
+    } catch (err) {
+      wx.showToast({ title: '操作失败，请重试', icon: 'none' });
+    }
   },
 
   onNewItemInput(e) {
@@ -186,11 +200,17 @@ Page({
       wx.showToast({ title: '请输入食材名', icon: 'none' });
       return;
     }
-    const result = await addShoppingItem({
-      ingredientName,
-      amount: payload.amount || '',
-      unit: payload.unit || ''
-    });
+    let result;
+    try {
+      result = await addShoppingItem({
+        ingredientName,
+        amount: payload.amount || '',
+        unit: payload.unit || ''
+      });
+    } catch (err) {
+      wx.showToast({ title: '添加失败，请重试', icon: 'none' });
+      return;
+    }
     if (result) {
       const [todayMenu, pantryItems] = await Promise.all([getTodayMenu(), getPantryItems()]);
       const nextState = this.buildShoppingState(result, { todayMenu, pantryItems });
@@ -209,7 +229,13 @@ Page({
 
   async deleteItem(event) {
     const { id } = event.currentTarget.dataset;
-    const result = await deleteShoppingItem(id);
+    let result;
+    try {
+      result = await deleteShoppingItem(id);
+    } catch (err) {
+      wx.showToast({ title: '删除失败，请重试', icon: 'none' });
+      return;
+    }
     if (result) {
       const [todayMenu, pantryItems] = await Promise.all([getTodayMenu(), getPantryItems()]);
       this.applyShoppingList(result, { todayMenu, pantryItems });
@@ -220,10 +246,12 @@ Page({
 
   applyShoppingList(shoppingList, extraState) {
     const context = extraState || {};
-    this.setData({
-      ...this.buildShoppingState(shoppingList, context),
-      ...context
-    });
+    const patch = this.buildShoppingState(shoppingList, context);
+    // 仅把 loading 透传进 data，todayMenu/pantryItems 只用于 enrich，不写入 page data
+    if (Object.prototype.hasOwnProperty.call(context, 'loading')) {
+      patch.loading = context.loading;
+    }
+    this.setData(patch);
   },
 
   buildShoppingState(shoppingList, context) {

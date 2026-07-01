@@ -2,10 +2,8 @@ const {
   addCommunityComment,
   createCommunityPost,
   getCommunityComments,
-  getCommunityReports,
   getCommunityPosts,
   reportCommunityPost,
-  reviewCommunityReport,
   toggleCommunityFavorite
 } = require('../../utils/api');
 
@@ -38,7 +36,6 @@ Page({
     commentDraft: '',
     reportReasons,
     activeReportReason: '内容不实',
-    reports: [],
     showPostForm: false,
     postForm: { title: '', content: '', tagsText: '' },
     hotTopics: HOT_TOPICS
@@ -71,7 +68,6 @@ Page({
     if (selectedPostId) {
       await this.loadComments(selectedPostId);
     }
-    await this.loadReports();
   },
 
   buildCommunitySummary(posts) {
@@ -123,7 +119,7 @@ Page({
     if (!id) {
       return;
     }
-    wx.navigateTo({ url: `/pages/community/post-detail/index?id=${id}` });
+    wx.navigateTo({ url: `/pages/community/post-detail/index?postId=${id}` });
   },
 
   // 关联菜谱 → 菜谱详情
@@ -190,27 +186,12 @@ Page({
     if (!postId) {
       return;
     }
-    await reportCommunityPost(postId, { reason: this.data.activeReportReason });
-    await this.loadReports();
-    wx.showToast({ title: '已提交举报', icon: 'none' });
-  },
-
-  async loadReports() {
-    const reports = await getCommunityReports('PENDING') || [];
-    this.setData({ reports });
-  },
-
-  async reviewReport(event) {
-    const { id, status } = event.currentTarget.dataset;
-    if (!id) {
-      return;
+    try {
+      await reportCommunityPost(postId, { reason: this.data.activeReportReason });
+      wx.showToast({ title: '已提交举报', icon: 'none' });
+    } catch (err) {
+      wx.showToast({ title: '举报失败，请重试', icon: 'none' });
     }
-    await reviewCommunityReport(id, {
-      status: status || 'REVIEWED',
-      note: status === 'IGNORED' ? '已忽略重复举报' : '已完成人工处理'
-    });
-    await this.loadReports();
-    wx.showToast({ title: status === 'IGNORED' ? '已忽略' : '已处理', icon: 'none' });
   },
 
   togglePostForm() {

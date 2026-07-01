@@ -154,18 +154,17 @@ Page({
     this.markRead(id);
     const type = n && n.action ? n.action.type : '';
 
-    const routes = {
-      menu: '/pages/menu/index',
+    // menu 是 tabBar 页，必须用 switchTab；其余为普通页，用 navigateTo
+    const tabRoutes = { menu: '/pages/menu/index' };
+    const navRoutes = {
       shopping: '/pages/shopping/index',
       community: '/pages/community/index'
     };
 
-    const url = routes[type];
-    if (url) {
-      wx.navigateTo({
-        url,
-        fail: () => wx.switchTab({ url, fail: () => this.showToast('目标页面暂不可达') })
-      });
+    if (tabRoutes[type]) {
+      wx.switchTab({ url: tabRoutes[type], fail: () => this.showToast('目标页面暂不可达') });
+    } else if (navRoutes[type]) {
+      wx.navigateTo({ url: navRoutes[type], fail: () => this.showToast('目标页面暂不可达') });
     } else {
       this.showToast('暂无可跳转的内容');
     }

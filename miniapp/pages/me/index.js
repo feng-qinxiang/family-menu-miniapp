@@ -77,6 +77,7 @@ Page({
     cookHistory: [],
     prefBars: [],
     favoriteCuisine: '',
+    appVersion: 'v1.0.0',
     loading: true
   },
 

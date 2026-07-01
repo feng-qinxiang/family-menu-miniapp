@@ -23,10 +23,6 @@ Component({
     },
   },
 
-  data: {
-    statusBarHeight: 0,
-  },
-
   lifetimes: {
     attached() {
       // 若页面未传 statusBarHeight，则从系统信息读取，保证刘海屏适配

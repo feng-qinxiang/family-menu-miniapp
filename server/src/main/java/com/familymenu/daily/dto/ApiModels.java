@@ -490,4 +490,24 @@ public final class ApiModels {
             long size
     ) {
     }
+
+    // ===== 许愿池（家庭共享，按日期+餐次分槽）=====
+    public record WishItem(
+            String id,
+            String text,
+            String by,
+            Long recipeId,
+            String date,
+            String slot,
+            long at
+    ) {
+    }
+
+    public record AddWishRequest(
+            @NotBlank String date,
+            @NotBlank String slot,
+            @NotBlank String text,
+            Long recipeId
+    ) {
+    }
 }

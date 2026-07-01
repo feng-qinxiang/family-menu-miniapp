@@ -301,3 +301,17 @@ ALTER TABLE user_account DROP COLUMN plan_name;
 -- T3: 成员忌口标签（JSON 数组），创建/编辑成员可写，菜单推荐与今日菜单过滤读取。
 -- 不使用 IF NOT EXISTS（部分 MySQL 版本不支持），依赖 continue-on-error 兜底旧部署列已存在的情况。
 ALTER TABLE family_member ADD COLUMN avoid_tags_json TEXT DEFAULT NULL COMMENT '忌口标签JSON数组';
+
+-- 许愿池：家庭共享，按日期+餐次分槽（见 家庭点菜-核心方案 §5）。
+CREATE TABLE IF NOT EXISTS family_wish (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    family_id BIGINT NOT NULL,
+    user_id BIGINT NOT NULL,
+    wish_date DATE NOT NULL,
+    slot VARCHAR(16) NOT NULL DEFAULT 'dinner',
+    text VARCHAR(128) NOT NULL,
+    recipe_id BIGINT NULL,
+    author_name VARCHAR(64) NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_wish_family_date_slot (family_id, wish_date, slot, id)
+);

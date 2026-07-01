@@ -1,4 +1,4 @@
-const { getCookHistory } = require('../../../utils/api');
+const { getCookHistory } = require('../../utils/api');
 
 // 本地菜图兜底（稳定 hash 映射，与 recipe-card 一致）
 const FALLBACK_DISHES = [

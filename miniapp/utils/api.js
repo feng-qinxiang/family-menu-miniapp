@@ -102,20 +102,22 @@ async function rawRequest(path, options) {
         if (retry.res && config.silent !== true) {
           showServerError(retry.res.statusCode, extractErrorMessage(retry.res.data));
         }
-        console.warn('[api] retry failed', path, retry.res && retry.res.statusCode);
+        if (config.silent !== true) {
+          console.warn('[api] retry failed', path, retry.res && retry.res.statusCode);
+        }
         return { ok: false, status: retry.res ? retry.res.statusCode : 0, data: retry.res ? retry.res.data : null };
       }
     }
     if (config.silent !== true) {
       showServerError(res.statusCode, extractErrorMessage(res.data));
+      console.warn('[api] request failed', path, res.statusCode, res.data);
     }
-    console.warn('[api] request failed', path, res.statusCode, res.data);
     return { ok: false, status: res.statusCode, data: res.data };
   }
   if (config.silent !== true) {
     wx.showToast({ title: '网络无法连接', icon: 'none' });
+    console.warn('[api] request error', path, first.err);
   }
-  console.warn('[api] request error', path, first.err);
   return { ok: false, status: 0, data: null };
 }
 
@@ -187,6 +189,7 @@ function reportCommunityPost(postId, payload) {
 
 function getCommunityReports(status) {
   return request(`/api/community/reports?status=${encodeURIComponent(status || 'PENDING')}`, {
+    silent: true,
     fallback: () => []
   });
 }
@@ -460,9 +463,16 @@ function getPantryMatch() {
 // ===== Payment =====
 
 function createPaymentOrder(planId) {
+  // 后端 CreateOrderRequest 需要 planCode 字段；响应用 outTradeNo 作为订单号
   return requestStrict('/api/payment/orders', {
     method: 'POST',
-    data: { planId }
+    data: { planCode: planId }
+  }).then((resp) => {
+    if (resp && resp.outTradeNo && resp.orderId == null) {
+      // 兼容前端页面读取 orderId 的写法
+      return { ...resp, orderId: resp.outTradeNo };
+    }
+    return resp;
   });
 }
 
@@ -470,18 +480,33 @@ function prepayOrder(orderId) {
   return requestStrict(`/api/payment/orders/${encodeURIComponent(orderId)}/prepay`, {
     method: 'POST',
     data: {}
+  }).then((resp) => {
+    // 后端 PrepayResponse.packageValue → 映射到 wx.requestPayment 的 package 字段
+    if (resp && resp.packageValue && !resp.package) {
+      return { ...resp, package: resp.packageValue };
+    }
+    return resp;
   });
 }
 
 function mockPayOrder(orderId) {
+  // 后端 MockPayRequest 需要 outTradeNo 字段
   return requestStrict('/api/payment/mock-pay', {
     method: 'POST',
-    data: { orderId }
+    data: { outTradeNo: orderId }
   });
 }
 
 function getPaymentOrders() {
-  return request('/api/payment/orders', { fallback: () => [] });
+  // 后端 OrderView 用 outTradeNo；规范化补 orderId/amountFen 便于页面读取
+  return request('/api/payment/orders', { fallback: () => [] }).then((list) => {
+    if (!Array.isArray(list)) return [];
+    return list.map((o) => ({
+      ...o,
+      orderId: o.orderId != null ? o.orderId : o.outTradeNo,
+      amountFen: o.amountFen != null ? o.amountFen : o.amount_fen
+    }));
+  });
 }
 
 function submitFeedback(payload) {
