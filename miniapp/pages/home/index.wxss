@@ -524,7 +524,9 @@
 }
 
 .fp-wish {
-  margin: 16rpx 46rpx 0;
+  position: relative;
+  z-index: 21;
+  margin: 16rpx 46rpx 24rpx;
   background: #fff;
   border: var(--bd-card);
   border-radius: var(--r-card);
