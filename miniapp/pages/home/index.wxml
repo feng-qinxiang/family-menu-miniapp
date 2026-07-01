@@ -69,12 +69,13 @@
         <view class="fp-wish-del tap-scale" catchtap="removeWish" data-id="{{item.id}}">×</view>
       </view>
     </view>
-    <view class="fp-wish-empty" wx:else>
-      还没人许愿，从下面挑菜或自己加一条
-    </view>
 
-    <view class="fp-wish-confirm tap-scale {{!canConfirm ? 'disabled' : (wishes.length ? '' : 'hint')}}" bindtap="confirmMenu">
-      {{!canConfirm ? '等做饭人确认' : (wishes.length ? '做饭人确认 → 加入菜单' : '先许个愿，再一键加入菜单')}}
+    <!-- 有心愿：显示确认入菜单按钮；空态：单个可点虚线 CTA 直接许愿，避免文案冗余与死按钮 -->
+    <view
+      class="fp-wish-confirm tap-scale {{!canConfirm ? 'disabled' : (wishes.length ? '' : 'hint')}}"
+      bindtap="{{wishes.length ? 'confirmMenu' : 'addWish'}}"
+    >
+      {{!canConfirm ? '等做饭人确认' : (wishes.length ? '做饭人确认 → 加入菜单' : '＋ 先许个愿，家人一起点今晚的菜')}}
     </view>
   </view>
 

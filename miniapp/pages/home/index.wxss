@@ -581,12 +581,6 @@
   font-size: 30rpx; color: var(--mut);
   border: 2rpx solid #e6dfd1;
 }
-.fp-wish-empty {
-  padding: 18rpx 4rpx 10rpx;
-  font-size: 25rpx;
-  line-height: 1.6;
-  color: var(--mut);
-}
 .fp-wish-confirm {
   margin-top: 22rpx;
   min-height: 88rpx;
