@@ -455,3 +455,37 @@
   font-weight: 800;
   box-shadow: var(--sh-card);
 }
+
+/* 加载失败态 */
+.m-load-error {
+  margin: 40rpx 0;
+  padding: 56rpx 40rpx;
+  border-radius: var(--r-lg, 28rpx);
+  background: var(--card, #fff);
+  box-shadow: var(--sh-card);
+  text-align: center;
+}
+.m-load-error-title {
+  font-size: 32rpx;
+  font-weight: 800;
+  color: var(--ink-deep, #1a1a1a);
+}
+.m-load-error-desc {
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  color: var(--mut-strong, #999);
+  word-break: break-all;
+}
+.m-load-error-btn {
+  margin: 32rpx auto 0;
+  width: 240rpx;
+  height: 76rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-pill, 999rpx);
+  background: var(--ink-deep, #1a1a1a);
+  color: #fff;
+  font-size: 26rpx;
+  font-weight: 700;
+}

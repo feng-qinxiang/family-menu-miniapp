@@ -602,4 +602,12 @@
   color: #fff;
   box-shadow: none;
 }
+/* 空态引导：许愿池为空时，弱化为虚线引导框，避免误导点击 */
+.fp-wish-confirm.hint {
+  background: var(--paper-2);
+  color: var(--mut-strong);
+  box-shadow: none;
+  border: 2rpx dashed #d8ccb8;
+  font-weight: 700;
+}
 

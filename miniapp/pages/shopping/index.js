@@ -77,6 +77,14 @@ Page({
     this.loadShoppingList();
   },
 
+  async onPullDownRefresh() {
+    try {
+      await this.loadShoppingList();
+    } finally {
+      wx.stopPullDownRefresh();
+    }
+  },
+
   async loadShoppingList() {
     try {
       const [shoppingList, todayMenu, pantryItems] = await Promise.all([

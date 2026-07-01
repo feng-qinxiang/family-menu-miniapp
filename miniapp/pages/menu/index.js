@@ -78,7 +78,8 @@ Page({
     shoppingPercent: 0,
     pantryReadyCount: 0,
     weeklyDays: [],
-    loading: true
+    loading: true,
+    loadError: ''
   },
 
   onShow() {
@@ -89,6 +90,7 @@ Page({
   },
 
   async loadData() {
+    this.setData({ loadError: '' });
     try {
       const [todayMenu, shoppingList, weeklyMenu, pantry] = await Promise.all([
         getTodayMenu(),
@@ -230,6 +232,11 @@ Page({
   },
 
   // ====== §3 / §7 新增 ======
+  retryLoad() {
+    this.setData({ loading: true });
+    this.loadData();
+  },
+
   switchView(e) {
     const { view } = e.currentTarget.dataset;
     if (!view || view === this.data.view) return;

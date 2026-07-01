@@ -26,6 +26,13 @@
     </view>
 
     <block wx:if="{{view === 'today'}}">
+    <!-- 加载失败态 -->
+    <view class="m-load-error" wx:if="{{loadError}}">
+      <view class="m-load-error-title">菜单没加载出来</view>
+      <view class="m-load-error-desc">{{loadError}}</view>
+      <view class="m-load-error-btn tap-scale" bindtap="retryLoad">重新加载</view>
+    </view>
+    <block wx:elif="{{true}}">
     <!-- 统计卡 -->
     <view class="m-stat-card g-fade-up g-d1">
       <view class="m-stat-row">
@@ -120,6 +127,7 @@
       actionText="去点菜"
       bind:action="goAddRecipe"
     />
+    </block>
     </block>
 
     <!-- 本周视图 -->

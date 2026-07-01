@@ -159,9 +159,10 @@ Page({
   selectSource(event) {
     const { source } = event.currentTarget.dataset;
     if (source === this.data.activeSource) return;
+    const prevSource = this.data.activeSource;
     this.setData({ activeSource: source });
-    // 收藏源需要重新拉接口
-    if (source === 'favorites' || this.data.activeSource === 'favorites') {
+    // 收藏源需要重新拉接口（进入或离开收藏都要重载）
+    if (source === 'favorites' || prevSource === 'favorites') {
       this.loadRecipes();
     } else {
       this.applyFilter();
@@ -185,7 +186,10 @@ Page({
     const keyword = this.data.searchText.trim().toLowerCase();
     const { cuisine, maxTime, minServings } = this.data.advFilter;
     const filteredRecipes = (this.data.recipes || []).filter((recipe) => {
-      const sourceMatch = this.data.activeSource === 'all' || recipe.sourceType === this.data.activeSource;
+      // 收藏源：列表本身已是收藏结果，不再按 sourceType 过滤
+      const sourceMatch = this.data.activeSource === 'all'
+        || this.data.activeSource === 'favorites'
+        || recipe.sourceType === this.data.activeSource;
       if (!sourceMatch) return false;
       if (keyword) {
         const searchTarget = [
