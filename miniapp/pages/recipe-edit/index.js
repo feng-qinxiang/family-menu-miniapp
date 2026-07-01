@@ -60,7 +60,13 @@ Page({
   },
 
   async loadRecipe(id) {
-    const recipe = await getRecipeDetail(id);
+    let recipe;
+    try {
+      recipe = await getRecipeDetail(id);
+    } catch (err) {
+      wx.showToast({ title: '菜谱加载失败', icon: 'none' });
+      return;
+    }
     if (!recipe) return;
     const steps = (recipe.steps && recipe.steps.length)
       ? recipe.steps.map((s) => typeof s === 'string' ? { text: s, image: '' } : { text: s.text || '', image: s.image || '' })
@@ -283,14 +289,26 @@ Page({
     };
 
     if (isEdit) {
-      const updated = await updateRecipe(recipeId, payload);
+      let updated;
+      try {
+        updated = await updateRecipe(recipeId, payload);
+      } catch (err) {
+        wx.showToast({ title: '保存失败，请重试', icon: 'none' });
+        return;
+      }
       if (!updated) {
         wx.showToast({ title: '保存失败', icon: 'none' });
         return;
       }
       wx.showToast({ title: '已保存', icon: 'success' });
     } else {
-      const created = await saveRecipe(payload);
+      let created;
+      try {
+        created = await saveRecipe(payload);
+      } catch (err) {
+        wx.showToast({ title: '创建失败，请重试', icon: 'none' });
+        return;
+      }
       if (!created) {
         wx.showToast({ title: '创建失败', icon: 'none' });
         return;
