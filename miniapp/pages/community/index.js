@@ -56,7 +56,18 @@ Page({
   },
 
   async loadPosts() {
-    const posts = this.normalizePosts(await getCommunityPosts() || []);
+    let posts = [];
+    try {
+      posts = this.normalizePosts(await getCommunityPosts() || []);
+    } catch (err) {
+      console.error('community loadPosts failed', err);
+      wx.showToast({ title: '社区加载失败', icon: 'none' });
+      this.setData({
+        posts: [],
+        communitySummary: { postCount: 0, commentCount: 0, favoriteCount: 0 }
+      });
+      return;
+    }
     const selectedPostId = this.data.selectedPostId || (posts[0] ? posts[0].id : '');
     const selectedPost = posts.find((post) => String(post.id) === String(selectedPostId)) || null;
     this.setData({
@@ -99,7 +110,13 @@ Page({
       this.setData({ comments: [], selectedPost: null });
       return;
     }
-    const comments = await getCommunityComments(postId) || [];
+    let comments = [];
+    try {
+      comments = await getCommunityComments(postId) || [];
+    } catch (err) {
+      console.error('community loadComments failed', err);
+      comments = [];
+    }
     const selectedPost = this.data.posts.find((post) => String(post.id) === String(postId)) || null;
     this.setData({
       selectedPostId: postId,
@@ -133,7 +150,13 @@ Page({
 
   async toggleFavorite(event) {
     const { id } = event.currentTarget.dataset;
-    const updated = await toggleCommunityFavorite(id);
+    let updated;
+    try {
+      updated = await toggleCommunityFavorite(id);
+    } catch (err) {
+      wx.showToast({ title: '操作失败，请重试', icon: 'none' });
+      return;
+    }
     if (!updated) {
       return;
     }
@@ -167,7 +190,12 @@ Page({
       wx.showToast({ title: '先写评论内容', icon: 'none' });
       return;
     }
-    await addCommunityComment(this.data.selectedPostId, { content });
+    try {
+      await addCommunityComment(this.data.selectedPostId, { content });
+    } catch (err) {
+      wx.showToast({ title: '评论失败，请重试', icon: 'none' });
+      return;
+    }
     this.setData({ commentDraft: '' });
     await this.loadPosts();
     wx.showToast({ title: '评论已发布', icon: 'success' });
@@ -217,7 +245,12 @@ Page({
       return;
     }
     const tags = tagsText.split(/[,，]/).map((s) => s.trim()).filter(Boolean);
-    await createCommunityPost({ title: title.trim(), content: content.trim(), tags });
+    try {
+      await createCommunityPost({ title: title.trim(), content: content.trim(), tags });
+    } catch (err) {
+      wx.showToast({ title: '发布失败，请重试', icon: 'none' });
+      return;
+    }
     this.setData({ showPostForm: false, postForm: { title: '', content: '', tagsText: '' } });
     await this.loadPosts();
     wx.showToast({ title: '发布成功', icon: 'success' });

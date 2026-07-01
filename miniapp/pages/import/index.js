@@ -113,8 +113,16 @@ Page({
       this.setData({ preview: localResult });
       return;
     }
-    const preview = await previewImport(rawText);
-    this.setData({ preview });
+    try {
+      const preview = await previewImport(rawText);
+      if (!preview) {
+        wx.showToast({ title: '没能解析出内容，换个格式试试', icon: 'none' });
+        return;
+      }
+      this.setData({ preview });
+    } catch (err) {
+      wx.showToast({ title: '解析失败，请重试', icon: 'none' });
+    }
   },
 
   onPreviewTitleInput(e) {
@@ -171,20 +179,27 @@ Page({
       return;
     }
     this.setData({ saving: true });
-    const recipe = await saveRecipe({
-      title: preview.title,
-      sourceType: 'imported',
-      sourceUrl: preview.sourceUrl || '',
-      cuisine: preview.detectedCuisine,
-      difficulty: preview.difficulty || 'medium',
-      coverImage: preview.coverImage || '',
-      tasteTags: ['导入', preview.isXhs ? '小红书' : '手动录入'],
-      timeCost: preview.timeCost || 15,
-      servings: preview.servings || 2,
-      steps: preview.steps || [],
-      ingredients: preview.ingredients || [],
-      summary: `从${preview.isXhs ? '小红书' : '文本'}导入`
-    });
+    let recipe;
+    try {
+      recipe = await saveRecipe({
+        title: preview.title,
+        sourceType: 'imported',
+        sourceUrl: preview.sourceUrl || '',
+        cuisine: preview.detectedCuisine,
+        difficulty: preview.difficulty || 'medium',
+        coverImage: preview.coverImage || '',
+        tasteTags: ['导入', preview.isXhs ? '小红书' : '手动录入'],
+        timeCost: preview.timeCost || 15,
+        servings: preview.servings || 2,
+        steps: preview.steps || [],
+        ingredients: preview.ingredients || [],
+        summary: `从${preview.isXhs ? '小红书' : '文本'}导入`
+      });
+    } catch (err) {
+      this.setData({ saving: false });
+      wx.showToast({ title: '保存失败，请重试', icon: 'none' });
+      return;
+    }
     wx.setStorageSync('last_imported_recipe', recipe);
     this.setData({ saving: false });
     wx.showToast({ title: '已保存', icon: 'success' });
