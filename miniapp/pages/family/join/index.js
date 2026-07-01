@@ -14,7 +14,7 @@ Page({
     submitting: false,
   },
 
-  onLoad() {
+  onLoad(options) {
     try {
       if (typeof wx.getWindowInfo === 'function') {
         this.setData({ statusBarHeight: wx.getWindowInfo().statusBarHeight || 0 });
@@ -23,6 +23,11 @@ Page({
       }
     } catch (e) {
       this.setData({ statusBarHeight: 0 });
+    }
+    // 从邀请分享链接进入时自动回填邀请码并预览
+    const shareCode = options && options.code ? options.code : '';
+    if (shareCode) {
+      this.applyCode(shareCode);
     }
   },
 
