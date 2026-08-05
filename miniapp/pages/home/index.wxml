@@ -265,10 +265,13 @@
     </view>
 
     <!-- 全空兜底 -->
-    <view wx:if="{{!visibleRecipes.length && !sideRecipes.length && !loading}}" class="empty-state">
-      <view class="empty-text">还没有菜谱</view>
-      <view class="btn btn-pop mh-empty-btn tap-scale" bindtap="goRecipes">去添加菜谱</view>
-    </view>
+    <state-empty
+      wx:if="{{!visibleRecipes.length && !sideRecipes.length && !loading}}"
+      type="pop"
+      title="还没有菜谱"
+      cta="去添加菜谱"
+      bind:action="goRecipes"
+    />
 
     <view class="safe-bottom"></view>
   </view>

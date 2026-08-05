@@ -142,7 +142,7 @@
   color: var(--pop);
 }
 .tcl-md {
-  font-size: 31rpx;
+  font-size: 32rpx;
   padding: 17rpx 29rpx;
   background: var(--ink-deep);
   color: var(--paper);
@@ -184,7 +184,7 @@
 }
 .mid { flex: 1; min-width: 0; }
 .mid-h {
-  font-size: 31rpx;
+  font-size: 32rpx;
   font-weight: 800;
   color: var(--ink);
   letter-spacing: -0.5rpx;

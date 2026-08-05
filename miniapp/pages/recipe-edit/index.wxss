@@ -137,7 +137,7 @@ page { background: var(--paper); }
   border: 2rpx solid var(--paper-2);
   border-radius: 26rpx;
   padding: 26rpx 28rpx;
-  font-size: 30rpx;
+  font-size: 28rpx;
   color: var(--ink);
   font-weight: 600;
   box-shadow: var(--sh-soft);
@@ -227,7 +227,7 @@ page { background: var(--paper); }
   align-items: center;
   justify-content: center;
 }
-.rc-del-x { color: var(--pop); font-size: 34rpx; line-height: 1; font-weight: 600; }
+.rc-del-x { color: var(--pop); font-size: 36rpx; line-height: 1; font-weight: 600; }
 
 /* 步骤行 */
 .rc-steprow {
@@ -301,7 +301,7 @@ page { background: var(--paper); }
   font-weight: 700;
   color: var(--gold-deep);
 }
-.rc-addrow-plus { font-size: 34rpx; line-height: 1; }
+.rc-addrow-plus { font-size: 36rpx; line-height: 1; }
 
 /* 固定底部 */
 .rc-footbar {
@@ -318,7 +318,7 @@ page { background: var(--paper); }
   border-radius: var(--r-chip);
   background: var(--pop);
   color: var(--c-surface);
-  font-size: 31rpx;
+  font-size: 32rpx;
   font-weight: 800;
   display: flex;
   align-items: center;
@@ -326,4 +326,4 @@ page { background: var(--paper); }
   gap: 14rpx;
   box-shadow: var(--sh-pop);
 }
-.rc-savebtn-check { font-size: 30rpx; }
+.rc-savebtn-check { font-size: 32rpx; }

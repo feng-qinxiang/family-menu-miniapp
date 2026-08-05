@@ -98,7 +98,7 @@
   margin-top: 30rpx;
   font-family: var(--serif);
   font-style: italic;
-  font-size: 31rpx;
+  font-size: 32rpx;
   letter-spacing: 2rpx;
   color: var(--mut-strong);
   font-weight: 400;

@@ -20,8 +20,8 @@
   padding: 16rpx 38rpx 12rpx;
 }
 .nbtn {
-  width: 84rpx;
-  height: 84rpx;
+  width: 88rpx;
+  height: 88rpx;
   border-radius: 50%;
   flex: none;
   display: flex;
@@ -44,7 +44,7 @@
   text-align: center;
 }
 .dishbar .dn {
-  font-size: 34rpx;
+  font-size: 36rpx;
   font-weight: 900;
   color: var(--c-border-light);
   letter-spacing: -1rpx;
@@ -398,7 +398,7 @@
 .btn.prev {
   flex: none;
   width: 220rpx;
-  font-size: 30rpx;
+  font-size: 29rpx;
   color: var(--c-border-light);
   background: var(--ink);
   border: 2rpx solid rgba(255, 255, 255, 0.1);

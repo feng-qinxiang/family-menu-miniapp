@@ -40,7 +40,7 @@
   font-weight: 800;
   box-shadow: var(--sh-pop);
 }
-.nav-post-plus { font-size: 30rpx; font-weight: 900; line-height: 1; }
+.nav-post-plus { font-size: 32rpx; font-weight: 900; line-height: 1; }
 
 .community-scroll {
   height: 100vh;
@@ -50,7 +50,7 @@
 /* ===================== Hero ===================== */
 .hero {
   position: relative;
-  height: 840rpx;
+  height: 862rpx;
   overflow: hidden;
 }
 .hero-bg { position: absolute; inset: 0; width: 100%; height: 100%; }
@@ -165,7 +165,7 @@
 }
 .pstats-heart::before { content: "\2665"; color: var(--pop); font-size: 24rpx; line-height: 1; }
 .ptime { font-size: 22rpx; color: var(--mut-2); flex: none; }
-.ptitle { font-size: 34rpx; font-weight: 900; color: var(--ink); letter-spacing: -1rpx; margin: 26rpx 0 13rpx; line-height: 1.25; }
+.ptitle { font-size: 36rpx; font-weight: 900; color: var(--ink); letter-spacing: -1rpx; margin: 26rpx 0 13rpx; line-height: 1.25; }
 .pcontent { font-size: 26rpx; color: var(--mut-strong); line-height: 1.6; }
 .pphoto { display: block; width: 100%; height: 322rpx; border-radius: var(--r-chip); margin-top: var(--r-md); }
 
@@ -248,7 +248,7 @@
 .topics { margin: 46rpx 46rpx 0; }
 .thead { display: flex; align-items: center; gap: 14rpx; margin-bottom: 26rpx; }
 .thead .tk { font-family: var(--serif); font-style: italic; font-size: var(--fs-cap); letter-spacing: 1rpx; color: var(--gold-deep); font-weight: 700; }
-.thead .th-title { font-size: 33rpx; font-weight: 900; color: var(--ink); letter-spacing: -1rpx; }
+.thead .th-title { font-size: 32rpx; font-weight: 900; color: var(--ink); letter-spacing: -1rpx; }
 .tchips { display: flex; flex-wrap: wrap; gap: 18rpx; }
 .tchip {
   display: flex;
@@ -347,9 +347,9 @@
   margin-top: 28rpx;
   padding: 14rpx 44rpx;
   border-radius: 999rpx;
-  background: #e8472a;
+  background: var(--pop);
   color: #fff;
-  font-size: 27rpx;
+  font-size: 28rpx;
   font-weight: 600;
 }
 /* 举报弹层 */
@@ -362,15 +362,15 @@
 .rp-reason {
   padding: 12rpx 30rpx;
   border-radius: 999rpx;
-  background: #f3eee5;
-  color: #6a6152;
+  background: var(--paper-2);
+  color: var(--mut-strong);
   font-size: 26rpx;
   border: 1rpx solid transparent;
 }
 .rp-reason--on {
-  background: #fdeeea;
-  color: #e8472a;
-  border-color: #e8472a;
+  background: var(--pop-soft);
+  color: var(--pop);
+  border-color: var(--pop);
   font-weight: 600;
 }
 .rp-desc {

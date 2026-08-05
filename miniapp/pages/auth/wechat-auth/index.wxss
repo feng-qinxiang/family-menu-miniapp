@@ -20,7 +20,7 @@
   left: 0;
   right: 0;
   top: 0;
-  height: 870rpx;
+  height: 862rpx;
 }
 .wa-hero-img {
   width: 100%;
@@ -305,7 +305,7 @@
 .wa-input {
   flex: 1;
   min-width: 0;
-  font-size: 31rpx;
+  font-size: 32rpx;
   font-weight: 700;
   color: var(--ink);
 }

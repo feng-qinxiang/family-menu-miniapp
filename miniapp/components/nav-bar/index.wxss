@@ -43,7 +43,7 @@
   transform: translate(-50%, -50%);
   max-width: 56%;
   text-align: center;
-  font-size: 34rpx;
+  font-size: 36rpx;
   font-weight: 800;
   color: var(--ink);
   letter-spacing: -1rpx;

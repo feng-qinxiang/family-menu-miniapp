@@ -341,7 +341,7 @@
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.5);
   color: var(--c-surface);
-  font-size: 30rpx;
+  font-size: 28rpx;
   line-height: 40rpx;
   text-align: center;
 }
@@ -496,7 +496,7 @@
 .recent:last-child { border-bottom: none; }
 .r-thumb { width: 112rpx; height: 112rpx; border-radius: 26rpx; flex: none; }
 .r-mid { flex: 1; min-width: 0; }
-.r-title { font-size: 30rpx; font-weight: 800; color: var(--ink); letter-spacing: -0.5rpx; }
+.r-title { font-size: 32rpx; font-weight: 800; color: var(--ink); letter-spacing: -0.5rpx; }
 .r-sub { font-size: 22rpx; color: var(--mut); margin-top: 8rpx; }
 .r-state {
   font-size: var(--fs-mini);

@@ -141,7 +141,7 @@
 }
 .ps-ov-pay {
   color: var(--pop);
-  font-size: 30rpx;
+  font-size: 28rpx;
 }
 
 /* —— 操作区 —— */
@@ -151,7 +151,7 @@
 }
 .ps-actions .btn-pop {
   height: 104rpx;
-  font-size: 31rpx;
+  font-size: 32rpx;
 }
 .ps-link {
   display: block;

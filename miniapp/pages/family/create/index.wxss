@@ -183,13 +183,13 @@
 }
 .fc-input {
   flex: 1;
-  font-size: 31rpx;
+  font-size: 32rpx;
   font-weight: 700;
   color: var(--ink);
 }
 .fc-inp-txt {
   flex: 1;
-  font-size: 31rpx;
+  font-size: 32rpx;
   font-weight: 700;
   color: var(--ink);
 }

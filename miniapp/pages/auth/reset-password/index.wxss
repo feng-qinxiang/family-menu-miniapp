@@ -81,13 +81,13 @@
 
 .rp-txt {
   flex: 1;
-  font-size: 31rpx;
+  font-size: 32rpx;
   font-weight: 700;
   color: var(--ink);
 }
 .rp-txt--code {
   letter-spacing: 10rpx;
-  font-size: 34rpx;
+  font-size: 36rpx;
   font-weight: 800;
 }
 .rp-ph {

@@ -98,13 +98,13 @@
   flex: none;
   width: 46rpx;
   font-family: var(--serif);
-  font-size: 34rpx;
+  font-size: 36rpx;
   font-weight: 700;
   color: var(--gold-deep);
 }
 .q-title {
   flex: 1;
-  font-size: 30rpx;
+  font-size: 28rpx;
   font-weight: 800;
   color: var(--ink);
   letter-spacing: -0.5rpx;
@@ -191,7 +191,7 @@
 }
 .nr-txt {
   margin-top: 20rpx;
-  font-size: 30rpx;
+  font-size: 28rpx;
   font-weight: 800;
   color: var(--ink);
 }

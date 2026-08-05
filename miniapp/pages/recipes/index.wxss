@@ -12,7 +12,7 @@
 /* ===== HERO ===== */
 .rx-hero {
   position: relative;
-  height: 858rpx;
+  height: 862rpx;
   overflow: hidden;
 }
 .rx-hero-img { position: absolute; inset: 0; width: 100%; height: 100%; }
@@ -30,14 +30,14 @@
   display: flex; align-items: center; justify-content: space-between;
 }
 .rx-hi { font-size: var(--fs-cap); letter-spacing: 4rpx; text-transform: uppercase; opacity: .85; font-weight: 700; color: var(--c-surface); }
-.rx-name { font-size: 33rpx; font-weight: 600; margin-top: 6rpx; color: var(--c-surface); }
+.rx-name { font-size: 32rpx; font-weight: 600; margin-top: 6rpx; color: var(--c-surface); }
 .rx-create {
   flex: none; display: flex; align-items: center; gap: 8rpx;
   background: var(--pop); color: var(--c-surface); font-size: var(--fs-sub); font-weight: 800;
   padding: 18rpx 28rpx; border-radius: var(--r-pill);
   box-shadow: 0 2rpx 4rpx rgba(180,40,20,.3), var(--sh-pop);
 }
-.rx-create-plus { font-size: 30rpx; font-weight: 700; line-height: 1; }
+.rx-create-plus { font-size: 32rpx; font-weight: 700; line-height: 1; }
 .rx-hero-body { position: absolute; left: 46rpx; right: 46rpx; bottom: 58rpx; z-index: 10; color: var(--c-surface); }
 .rx-tag {
   display: inline-block; font-family: var(--serif); font-style: italic;
@@ -152,7 +152,7 @@
 }
 .rx-card-badge.fav { background: var(--pop); box-shadow: var(--sh-pop); }
 .rx-card-info { padding: 24rpx 25rpx 28rpx; }
-.rx-card-name { font-size: 31rpx; font-weight: 800; color: var(--ink); letter-spacing: -.8rpx; }
+.rx-card-name { font-size: 32rpx; font-weight: 800; color: var(--ink); letter-spacing: -.8rpx; }
 .rx-card-meta { font-size: 22rpx; color: var(--mut-strong); margin-top: 12rpx; font-weight: 600; }
 .rx-card-add {
   position: absolute; right: 21rpx; bottom: 21rpx;
@@ -193,7 +193,7 @@
 .rx-tray-badge {
   flex: none; width: 80rpx; height: 80rpx; border-radius: 26rpx; background: var(--pop);
   display: flex; align-items: center; justify-content: center;
-  font-size: 34rpx; font-weight: 900; color: var(--c-surface); box-shadow: var(--sh-pop);
+  font-size: 36rpx; font-weight: 900; color: var(--c-surface); box-shadow: var(--sh-pop);
 }
 .rx-tray-copy { flex: 1; min-width: 0; }
 .rx-tray-t { font-size: var(--fs-cap); font-weight: 800; }

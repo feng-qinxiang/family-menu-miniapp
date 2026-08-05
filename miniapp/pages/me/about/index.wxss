@@ -232,7 +232,7 @@
 }
 .item-nm {
   color: var(--ink);
-  font-size: 30rpx;
+  font-size: 28rpx;
   font-weight: 700;
   letter-spacing: -0.4rpx;
 }

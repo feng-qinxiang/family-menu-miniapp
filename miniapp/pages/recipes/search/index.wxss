@@ -22,8 +22,8 @@
   padding: 15rpx 38rpx 27rpx;
 }
 .backbtn {
-  width: 77rpx;
-  height: 77rpx;
+  width: 88rpx;
+  height: 88rpx;
   border-radius: 50%;
   background: var(--ink-deep);
   flex: none;
@@ -223,7 +223,7 @@
   justify-content: center;
 }
 .gc-heart {
-  font-size: 30rpx;
+  font-size: 28rpx;
   line-height: 1;
   color: var(--ink-deep);
 }
@@ -231,7 +231,7 @@
 
 .gc-info { padding: 23rpx 25rpx 27rpx; }
 .gc-name {
-  font-size: 31rpx;
+  font-size: 32rpx;
   font-weight: 800;
   color: var(--ink);
   letter-spacing: -0.6rpx;

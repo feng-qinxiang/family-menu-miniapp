@@ -19,7 +19,7 @@
 /* ============ Hero ============ */
 .phero {
   position: relative;
-  height: 858rpx;
+  height: 862rpx;
   overflow: hidden;
 }
 .phero-img {
@@ -158,7 +158,7 @@
 .cat-ic-season::after { background: var(--pop); border-radius: 6rpx 6rpx 10rpx 10rpx; }
 .cat-ic-other::after { background: var(--mut); border-radius: var(--r-xs); }
 .cat-h3 {
-  font-size: 31rpx;
+  font-size: 32rpx;
   font-weight: 800;
   color: var(--ink);
   letter-spacing: -0.6rpx;
@@ -195,7 +195,7 @@
 .pitem.warn .pi-dot { background: var(--pop); }
 .pi-mid { flex: 1; min-width: 0; }
 .pi-nm {
-  font-size: 31rpx;
+  font-size: 32rpx;
   font-weight: 800;
   color: var(--ink);
   letter-spacing: -0.4rpx;
@@ -334,7 +334,7 @@
 }
 .mc-mi { flex: 1; min-width: 0; }
 .mc-h4 {
-  font-size: 33rpx;
+  font-size: 32rpx;
   font-weight: 800;
   color: var(--ink);
   letter-spacing: -0.6rpx;

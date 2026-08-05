@@ -196,7 +196,7 @@
 .submit-area .btn-pop {
   gap: 14rpx;
   min-height: 104rpx;
-  font-size: 31rpx;
+  font-size: 32rpx;
   letter-spacing: 1rpx;
 }
 .submit-area .btn-pop.is-busy { opacity: 0.7; }

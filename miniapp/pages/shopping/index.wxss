@@ -20,7 +20,7 @@
 /* ============ HERO ============ */
 .mkt-hero {
   position: relative;
-  height: 858rpx;
+  height: 862rpx;
   overflow: hidden;
 }
 .mkt-hero-img {
@@ -202,7 +202,7 @@
 .mkt-gdot.meat { background: var(--pop); }
 .mkt-gdot.spice { background: var(--gold-deep); }
 .mkt-gdot.other { background: var(--mut); }
-.mkt-gname { font-size: 34rpx; font-weight: 900; color: var(--ink); letter-spacing: -1rpx; }
+.mkt-gname { font-size: 36rpx; font-weight: 900; color: var(--ink); letter-spacing: -1rpx; }
 .mkt-gen { font-family: var(--serif); font-style: italic; font-size: var(--fs-cap); color: var(--mut); font-weight: 700; }
 .mkt-gcount {
   margin-left: auto;
@@ -237,7 +237,7 @@
   justify-content: center;
 }
 .mkt-imid { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-.mkt-imid .nm { font-size: 33rpx; font-weight: 800; color: var(--ink); letter-spacing: -1rpx; }
+.mkt-imid .nm { font-size: 32rpx; font-weight: 800; color: var(--ink); letter-spacing: -1rpx; }
 .mkt-imid .amt { font-size: var(--fs-sub); font-weight: 700; color: var(--pop); margin-top: 6rpx; }
 .mkt-tags { display: flex; flex-wrap: wrap; gap: 10rpx; margin-top: 14rpx; }
 .mkt-imid .src {
@@ -448,7 +448,7 @@
   display: flex; align-items: center; justify-content: center;
   border-radius: 50%;
   background: var(--paper-2);
-  font-size: 30rpx; color: var(--mut);
+  font-size: 28rpx; color: var(--mut);
   border: 2rpx solid var(--c-border);
 }
 .sp-pantry-empty { padding: 40rpx 0; }

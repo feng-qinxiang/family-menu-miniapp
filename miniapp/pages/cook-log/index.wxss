@@ -23,7 +23,7 @@
 /* ===== Hero ===== */
 .hero {
   position: relative;
-  height: 870rpx;
+  height: 862rpx;
   overflow: hidden;
 }
 .hero-img {
@@ -306,7 +306,7 @@
   gap: 16rpx;
 }
 .tcard .th4 {
-  font-size: 33rpx;
+  font-size: 32rpx;
   font-weight: 800;
   color: var(--ink);
   letter-spacing: -0.6rpx;

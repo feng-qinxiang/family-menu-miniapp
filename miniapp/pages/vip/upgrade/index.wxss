@@ -165,7 +165,7 @@
 }
 .vu-plan.on .vu-pprice { color: var(--pop); }
 .vu-yuan {
-  font-size: 33rpx;
+  font-size: 32rpx;
   font-weight: 800;
   vertical-align: top;
   margin-right: 2rpx;
@@ -316,7 +316,7 @@
   letter-spacing: -2rpx;
   line-height: 1.05;
 }
-.vu-big .vu-yuan { font-size: 31rpx; }
+.vu-big .vu-yuan { font-size: 32rpx; }
 .vu-paybtn {
   flex: 1;
   min-height: 104rpx;

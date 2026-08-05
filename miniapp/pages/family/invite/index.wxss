@@ -145,7 +145,7 @@
 .fi-wxbtn {
   margin-top: 50rpx;
   gap: 17rpx;
-  font-size: 31rpx;
+  font-size: 32rpx;
   font-weight: 800;
   border-radius: 35rpx;
   box-shadow: 0 20rpx 46rpx rgba(7, 193, 96, 0.32);

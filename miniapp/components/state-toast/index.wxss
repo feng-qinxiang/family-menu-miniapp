@@ -57,7 +57,7 @@
 
 .st-tx { flex: 1; min-width: 0; }
 .st-h5 {
-  font-size: 30rpx;
+  font-size: 28rpx;
   font-weight: 800;
   color: var(--ink);
   letter-spacing: -0.4rpx;
@@ -125,7 +125,7 @@
 }
 .st-ring .st-check-lg { margin-top: -8rpx; }
 .st-center-tx {
-  font-size: 30rpx;
+  font-size: 28rpx;
   font-weight: 700;
   color: var(--c-surface);
   letter-spacing: 1rpx;

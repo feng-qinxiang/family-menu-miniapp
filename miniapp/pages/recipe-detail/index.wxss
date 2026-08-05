@@ -14,7 +14,7 @@
 /* ===== Hero 大图 ===== */
 .rd-hero {
   position: relative;
-  height: 826rpx;
+  height: 862rpx;
   overflow: hidden;
 }
 .rd-hero-img {
@@ -49,8 +49,8 @@
   gap: 18rpx;
 }
 .rd-cbtn {
-  width: 80rpx;
-  height: 80rpx;
+  width: 88rpx;
+  height: 88rpx;
   border-radius: 50%;
   background: rgba(58, 46, 35, 0.55);
   border: 2rpx solid rgba(255, 255, 255, 0.18);
@@ -197,7 +197,7 @@
 }
 .rd-iname { flex: 1; }
 .rd-iname-h {
-  font-size: 30rpx;
+  font-size: 28rpx;
   font-weight: 800;
   color: var(--ink);
   letter-spacing: -0.4rpx;
@@ -258,7 +258,7 @@
   border-radius: 21rpx;
   background: var(--ink-deep);
   color: var(--gold);
-  font-size: 33rpx;
+  font-size: 32rpx;
   font-weight: 700;
   flex: none;
   display: flex;
@@ -309,7 +309,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 30rpx;
+  font-size: 28rpx;
   font-weight: 900;
   color: var(--c-surface);
   font-family: var(--serif);
@@ -350,7 +350,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 30rpx;
+  font-size: 28rpx;
   font-weight: 900;
   color: var(--c-surface);
   font-family: var(--serif);

@@ -38,7 +38,7 @@
   display: block;
 }
 .mname {
-  font-size: 31rpx;
+  font-size: 32rpx;
   font-weight: 600;
   color: var(--ink);
   letter-spacing: 0.4rpx;
@@ -142,7 +142,7 @@
 }
 .pm-icon-glyph {
   color: var(--c-surface);
-  font-size: 30rpx;
+  font-size: 28rpx;
   font-weight: 700;
 }
 .pm-name {

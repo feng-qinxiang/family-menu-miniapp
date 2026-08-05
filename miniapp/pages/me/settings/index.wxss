@@ -61,7 +61,7 @@
   color: var(--ink-deep);
 }
 .set-glyph {
-  font-size: 34rpx;
+  font-size: 36rpx;
   font-weight: 800;
   line-height: 1;
 }
@@ -71,7 +71,7 @@
   min-width: 0;
 }
 .set-name {
-  font-size: 30rpx;
+  font-size: 28rpx;
   font-weight: 700;
   color: var(--ink);
   letter-spacing: -0.4rpx;
@@ -141,7 +141,7 @@
   border-radius: 38rpx;
 }
 .set-logout-txt {
-  font-size: 31rpx;
+  font-size: 32rpx;
   font-weight: 800;
   color: var(--pop);
   letter-spacing: 0.6rpx;

@@ -75,7 +75,7 @@
   display: block;
   margin-top: 34rpx;
   max-width: 580rpx;
-  font-size: 30rpx;
+  font-size: 28rpx;
   line-height: 1.6;
   font-weight: 500;
   color: var(--mut-strong);
@@ -148,7 +148,7 @@
 }
 .ob-bname {
   color: var(--c-surface);
-  font-size: 30rpx;
+  font-size: 32rpx;
   font-weight: 800;
   letter-spacing: -0.5rpx;
   line-height: 1.2;

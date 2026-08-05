@@ -120,11 +120,12 @@
       </view>
     </block>
 
-    <empty-state
+    <state-empty
       wx:elif="{{!loading}}"
+      type="pop"
       title="餐桌还没有菜"
       desc="从首页随机一道，或者去菜谱库挑几道常做菜。"
-      actionText="去点菜"
+      cta="去点菜"
       bind:action="goAddRecipe"
     />
     </block>
@@ -152,11 +153,12 @@
         </view>
       </view>
     </view>
-    <empty-state
+    <state-empty
       wx:elif="{{!loading}}"
+      type="gold"
       title="本周还没排"
       desc="一键按家庭偏好生成 7 天计划"
-      actionText="生成本周菜单"
+      cta="生成本周菜单"
       bind:action="genWeekly"
     />
     </block>

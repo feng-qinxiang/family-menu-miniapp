@@ -43,7 +43,7 @@
 .fav-tab {
   position: relative;
   padding-bottom: 24rpx;
-  font-size: 31rpx;
+  font-size: 32rpx;
   font-weight: 800;
   letter-spacing: -0.4rpx;
   color: var(--mut-strong);
@@ -118,7 +118,7 @@
 }
 .fav-ptitle {
   margin-top: 6rpx;
-  font-size: 31rpx;
+  font-size: 32rpx;
   font-weight: 800;
   line-height: 1.25;
   letter-spacing: -0.6rpx;
@@ -168,13 +168,13 @@
   width: 100%;
   height: 260rpx;
   border-radius: var(--r-card);
-  background: #f0ebe2;
+  background: var(--paper-2);
 }
 .fav-skel-line {
   margin-top: 14rpx;
   height: 24rpx;
   border-radius: 12rpx;
-  background: #f0ebe2;
+  background: var(--paper-2);
   width: 80%;
 }
 .fav-skel-line.strong { width: 60%; }
@@ -182,5 +182,5 @@
 .fav-pcard-skel {
   height: 180rpx;
   border-radius: var(--r-card);
-  background: #f0ebe2;
+  background: var(--paper-2);
 }

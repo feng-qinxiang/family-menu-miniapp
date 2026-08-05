@@ -12,7 +12,7 @@
 /* ============ Hero ============ */
 .hero {
   position: relative;
-  height: 869rpx;
+  height: 862rpx;
   overflow: hidden;
 }
 .hero-img {
@@ -113,7 +113,7 @@
 }
 .hero-title .br { display: block; height: 0; }
 .slogan {
-  font-size: 31rpx;
+  font-size: 32rpx;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.9);
   letter-spacing: 1rpx;
@@ -157,7 +157,7 @@
   border: 3rpx solid var(--paper-2);
   border-radius: 35rpx;
   padding: 31rpx;
-  font-size: 31rpx;
+  font-size: 32rpx;
   font-weight: 800;
   display: flex;
   align-items: center;
@@ -165,7 +165,7 @@
   gap: 19rpx;
   box-shadow: var(--sh-soft);
 }
-.phone-glyph { font-size: 30rpx; color: var(--ink-deep); }
+.phone-glyph { font-size: 32rpx; color: var(--ink-deep); }
 
 /* 注册 / 忘记密码 */
 .authlinks {

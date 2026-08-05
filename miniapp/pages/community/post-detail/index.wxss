@@ -31,7 +31,7 @@
   color: var(--c-surface);
   box-shadow: 0 4rpx 12rpx rgba(60, 40, 20, 0.12);
 }
-.ava-sm { width: 72rpx; height: 72rpx; font-size: 30rpx; }
+.ava-sm { width: 72rpx; height: 72rpx; font-size: 32rpx; }
 .ava-lin { background: linear-gradient(135deg, var(--pop), var(--orange)); }
 .ava-lan { background: linear-gradient(135deg, var(--pine), var(--cat-green)); }
 .ava-zhao { background: linear-gradient(135deg, var(--cat-purple-deep), var(--cat-purple-light)); }
@@ -139,7 +139,7 @@
 }
 .rc-name {
   margin-top: 6rpx;
-  font-size: 33rpx;
+  font-size: 32rpx;
   font-weight: 800;
   color: var(--ink);
   letter-spacing: -0.6rpx;

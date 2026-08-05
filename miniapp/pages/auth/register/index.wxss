@@ -108,7 +108,7 @@
 .rg-input {
   flex: none;
   width: auto;
-  font-size: 30rpx;
+  font-size: 28rpx;
   font-weight: 700;
   color: var(--ink);
 }
