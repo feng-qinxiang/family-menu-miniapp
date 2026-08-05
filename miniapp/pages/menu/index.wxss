@@ -3,7 +3,16 @@
    配色/工具类来自 app.wxss，本页只写专属布局，禁止重定义 token
    ============================================================ */
 .menu-page {
-  padding: 0 0 186rpx;
+  padding: 0 0 80rpx;
+}
+
+/* 二级页顶部返回（透明叠在 hero 上） */
+.nav-float {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 50;
 }
 
 /* ============ HERO ============ */

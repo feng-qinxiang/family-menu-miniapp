@@ -154,9 +154,10 @@ Page({
     this.markRead(id);
     const type = n && n.action ? n.action.type : '';
 
-    // menu 是 tabBar 页，必须用 switchTab；其余为普通页，用 navigateTo
-    const tabRoutes = { menu: '/pages/menu/index' };
+    // 冰箱/菜谱/今日是 tabBar 页，用 switchTab；其余为普通页，用 navigateTo
+    const tabRoutes = { pantry: '/pages/pantry/index' };
     const navRoutes = {
+      menu: '/pages/menu/index',
       shopping: '/pages/shopping/index',
       community: '/pages/community/index'
     };

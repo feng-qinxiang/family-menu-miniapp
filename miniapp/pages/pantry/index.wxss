@@ -124,7 +124,7 @@
   z-index: 20;
   background: var(--paper);
   border-radius: 54rpx 54rpx 0 0;
-  padding: 50rpx 46rpx 0;
+  padding: 50rpx 46rpx calc(env(safe-area-inset-bottom) + 160rpx);
 }
 .psheet .shead { margin-top: 8rpx; }
 .psheet .shead:first-child { margin-top: 0; }

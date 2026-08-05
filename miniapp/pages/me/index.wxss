@@ -269,6 +269,7 @@
   font-size: 32rpx;
   font-weight: 800;
 }
+.ti-0 { background: var(--pop-soft); color: var(--pop); }
 .ti-1 { background: var(--pop-soft); color: var(--pop); }
 .ti-2 { background: var(--c-accent-soft); color: var(--pine); }
 .ti-3 { background: var(--c-gold-soft); color: var(--gold-deep); }

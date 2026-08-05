@@ -1,7 +1,9 @@
 {
   "navigationBarTitleText": "菜单",
+  "navigationStyle": "custom",
   "enablePullDownRefresh": true,
   "usingComponents": {
+    "nav-bar": "/components/nav-bar/index",
     "state-empty": "/components/state-empty/index"
   }
 }

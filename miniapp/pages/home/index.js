@@ -500,7 +500,7 @@ Page({
   },
 
   goMenu() {
-    wx.switchTab({ url: '/pages/menu/index' });
+    wx.navigateTo({ url: '/pages/menu/index' });
   },
 
   goRecipes() {
@@ -529,7 +529,7 @@ Page({
   },
 
   goByPantry() {
-    wx.navigateTo({ url: '/pages/pantry/index' });
+    wx.switchTab({ url: '/pages/pantry/index' });
   },
 
   onHeroImgError() {

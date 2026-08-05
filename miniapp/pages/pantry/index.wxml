@@ -1,7 +1,7 @@
 <view class="pantry-page">
-  <!-- 二级页顶部返回（透明叠在 hero 上）-->
+  <!-- 顶部状态栏占位（tab 页无返回键）-->
   <view class="nav-float">
-    <nav-bar title="" show-back="{{true}}" status-bar-height="{{statusBarHeight}}" />
+    <nav-bar title="" show-back="{{false}}" status-bar-height="{{statusBarHeight}}" />
   </view>
 
   <!-- Hero · 真实菜图 + 撞色镂空标题 + 三宫格统计 -->

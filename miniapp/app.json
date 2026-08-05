@@ -59,15 +59,15 @@
     "list": [
       {
         "pagePath": "pages/home/index",
-        "text": "点菜"
-      },
-      {
-        "pagePath": "pages/menu/index",
-        "text": "菜单"
+        "text": "今日"
       },
       {
         "pagePath": "pages/recipes/index",
         "text": "菜谱"
+      },
+      {
+        "pagePath": "pages/pantry/index",
+        "text": "冰箱"
       },
       {
         "pagePath": "pages/me/index",

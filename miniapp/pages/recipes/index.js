@@ -254,7 +254,7 @@ Page({
     const { id } = e.currentTarget.dataset;
     if (!id) return;
     if (this.data.todayDishIds.includes(String(id))) {
-      wx.switchTab({ url: '/pages/menu/index' });
+      wx.navigateTo({ url: '/pages/menu/index' });
       return;
     }
     try {
@@ -268,7 +268,7 @@ Page({
   },
 
   goMenu() {
-    wx.switchTab({ url: '/pages/menu/index' });
+    wx.navigateTo({ url: '/pages/menu/index' });
   },
 
   goShopping() {

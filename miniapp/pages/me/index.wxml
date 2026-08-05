@@ -88,6 +88,11 @@
     <view class="g-fade-up g-d3">
       <section-head eyebrow="Kitchen Tools" title="厨房" popPart="工具" />
       <view class="card mag-tools">
+        <view class="mag-trow tap-scale" bindtap="goMenu">
+          <view class="mag-ticon ti-0">桌</view>
+          <view class="mag-tmid"><view class="mag-tname">今日菜单</view><view class="mag-tdesc">今天这桌吃点什么</view></view>
+          <view class="mag-tarrow">›</view>
+        </view>
         <view class="mag-trow tap-scale" bindtap="goWeekly">
           <view class="mag-ticon ti-1">周</view>
           <view class="mag-tmid"><view class="mag-tname">周菜单计划</view><view class="mag-tdesc">一周吃什么提前排好</view></view>

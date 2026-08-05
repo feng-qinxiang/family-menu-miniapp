@@ -216,7 +216,7 @@ Page({
   },
 
   goPantry() {
-    wx.navigateTo({ url: '/pages/pantry/index' });
+    wx.switchTab({ url: '/pages/pantry/index' });
   },
 
   goAddRecipe() {

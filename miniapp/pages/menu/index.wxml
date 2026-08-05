@@ -1,4 +1,9 @@
 <view class="container menu-page">
+  <!-- 二级页顶部返回（透明叠在 hero 上）-->
+  <view class="nav-float">
+    <nav-bar title="" show-back="{{true}}" status-bar-height="{{statusBarHeight}}" />
+  </view>
+
   <!-- HERO 今日餐桌 -->
   <view class="m-hero g-fade-up">
     <image class="m-hero-img" src="{{heroImage}}" mode="aspectFill" />

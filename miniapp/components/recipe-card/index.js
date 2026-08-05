@@ -57,8 +57,8 @@ Component({
     _buildView(recipe) {
       const r = recipe || {};
 
-      // 封面：优先后端 coverImage，无则按 id/title 稳定兜底本地图
-      let cover = r.coverImage;
+      // 封面：优先后端 coverImage，兼容 cover/dishImg 别名，无则按 id/title 稳定兜底本地图
+      let cover = r.coverImage || r.cover || r.dishImg;
       if (!cover) {
         const seed = String(r.id || r.title || '');
         let sum = 0;
