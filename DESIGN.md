@@ -30,6 +30,19 @@
 
 ## 变更历史
 
+### 2026-08-06 - UI 优化五阶段交付（计划书 v2.0）
+
+**变更内容**:
+1. P0 设计纪律收敛：色值 token 化（页面硬编码 57→豁免级）、字号标尺 12 级（新增 --fs-lg/--fs-btn/hero 三档）、照片 hero 统一 862rpx、返回键统一 88rpx、空态收敛到 state-empty（删除 empty-state 组件）
+2. P1 组件与导航：TabBar 改 warm 定稿四 tab「今日/菜谱/冰箱/我的」，menu 降级二级页、pantry 升级 tab 页；闲置 SVG 清零；recipe-card 组件封面兼容多字段
+3. P2 设计稿缺口：全站英文 eyebrow 中文化（品牌名保留）、home hero 镂空描边标题+暖光层、家庭成员忌口筛选闭环（后端 avoid_tags_json + 成员编辑 + recipes 自动过滤）、state-sheet/state-loading 组件、tap-scale 弹性回弹、me 数字滚动
+4. P3 体验健壮性：失败/空态全站解耦（5 页错误态+重试）、community 加载态、弹窗滚动锁、--mut 对比度收敛 AA、大字模式开关（6 主页面）
+5. P4 深色模式（theme.json darkmode + token 主题化）、UI 设计规范文档
+
+**影响范围**: miniapp 全部页面/组件、custom-tab-bar、theme.json、server（FamilyService/FamilyController/ApiModels/schema.sql）
+
+**决策依据**: 用户确认导航按 warm 定稿；忌口按「成员配置 + recipes 自动过滤」MVP；pay-wechat/state-imgview 走原生兜底。
+
 ### 2026-05-13 - 产品化闭环与去模板化
 
 **变更内容**:

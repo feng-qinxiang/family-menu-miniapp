@@ -300,3 +300,25 @@
 - 弹窗无滚动锁：home wish-modal、wechat-auth sheet、community pf-sheet、state-dialog（待查）。
 - 设计稿 50 屏 vs 小程序 43 页：5 屏未落地（pay-wechat、share-card、state-loading、state-sheet、state-imgview）。
 - 铁律违规：settings 符号图标、vip/upgrade `✨`、family/members 与 wechat-auth 菜图头像、menu/me 系统导航栏盖 hero、TabBar 文案「点菜」vs「首页」矛盾。
+
+---
+
+## 八、执行状态（2026-08-06）
+
+> 计划已按 P0→P4 全部执行完毕并分阶段提交（commit 见 git log）。
+
+| 阶段 | 状态 | 完成内容 | 偏差与说明 |
+|------|------|----------|-----------|
+| 前置基线 | 完成 | UI 落地 + 支付闭环 3 个提交 | — |
+| P0 设计纪律 | 完成 | 色值 token 化（含 root-portal 变量副本方案）、字号标尺 12 级、hero/返回键/按钮规格统一、空态收敛 state-empty | `.shead` 13 页组件化与 `.badge` 三处合并**跳过**：样式已在 app.wxss 全局收敛，页面样式隔离下无实际冲突，组件化纯属结构搬家，收益低于风险 |
+| P1 组件与导航 | 完成 | TabBar 四 tab 重构（今日/菜谱/冰箱/我的）、menu 转二级页、pantry 转 tab 页、SVG 零闲置、recipe-card 字段兼容 | home/recipes 卡片保持手写：横滑紧凑卡与「selected/创建卡」是独立视觉变体，强行组件化回归风险高，列为低优先级 |
+| P2 设计稿缺口 | 完成 | 文案中文化、home hero 镂空+暖光、忌口筛选闭环（schema+接口+成员编辑+recipes 过滤）、state-sheet/state-loading、tap-scale 弹性、me 数字滚动 | 滚动浮现（IntersectionObserver）**降级**：页面入场动画 + g-d 阶梯已覆盖主要感知，收益边际；share-card 默认走 onShareAppMessage，pay-wechat/state-imgview 原生兜底（已定决策） |
+| P3 体验健壮性 | 完成 | 失败/空态解耦 5 页 + community 加载态、menu 定时器清理、home 死 Map 删除、许愿离线提示、弹窗滚动锁、--mut AA 收敛、feedback 触达区、大字模式开关 | 大字模式**已知局限**：仅 var() 引用字号放大（6 主页面），静态 rpx 字号不缩放；全站缩放需字号 token 化二期 |
+| P4 深色模式与文档 | 完成 | theme.json darkmode + token 主题化（含 TabBar）、docs/UI设计规范.md、DESIGN.md 变更历史 | 真机深色截图与 43 页截图回归**未执行**（需微信开发者工具环境）；`probe-mcp.mjs` 回归流程已写入规范文档 |
+
+### 残余风险（下阶段建议）
+
+1. **真机验收**：4 tab 跳转、忌口编辑、深色模式、大字模式需开发者工具/真机过一遍（本会话为静态验证 + 编译验证）。
+2. **大字模式二期**：字号 token 化后全站 calc 缩放。
+3. **滚动浮现**：如产品需要，按规范文档第九节用 IntersectionObserver 落地。
+4. **cook-mode 失败静默**：详情加载失败仍为静默空态（未列入本次 5 页清单，P3 收尾时遗漏，建议补）。

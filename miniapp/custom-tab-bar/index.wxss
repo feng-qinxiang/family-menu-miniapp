@@ -9,8 +9,8 @@
   height: 96rpx;
   padding: 8rpx 10rpx calc(env(safe-area-inset-bottom) + 24rpx);
   box-sizing: content-box;
-  border-top: 1rpx solid rgba(236, 229, 217, 0.96);
-  background: rgba(251, 248, 243, 0.96);
+  border-top: 1rpx solid var(--themeLine, rgba(236, 229, 217, 0.96));
+  background: var(--themePaper, rgba(251, 248, 243, 0.96));
   backdrop-filter: blur(18px);
   box-shadow: 0 -6rpx 24rpx rgba(60, 40, 20, 0.08);
 }

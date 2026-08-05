@@ -4,19 +4,19 @@
    兼容层：旧 --c-* 变量重映射到新配色，保证未重做页面不崩。
    ============================================================ */
 page {
-  /* —— 新 token：配色 —— */
-  --paper: #fbf8f3;
-  --paper-2: #f0ebe2;
-  --ink: #2c241b;
-  --ink-deep: #3a2e23;
-  --mut: #7a6e5d;           /* 次要文字（AA 4.5:1，2026-08 P3 对比度收敛） */
-  --mut-2: #b3a795;
+  /* —— 新 token：配色（由 theme.json 注入，自动跟随系统深浅色；fallback 为浅色）—— */
+  --paper: var(--themePaper, #fbf8f3);
+  --paper-2: var(--themePaper2, #f0ebe2);
+  --ink: var(--themeInk, #2c241b);
+  --ink-deep: var(--themeInkDeep, #3a2e23);
+  --mut: var(--themeMut, #7a6e5d);
+  --mut-2: var(--themeMut2, #b3a795);
   --mut-strong: #6b5f50;    /* 强调次要文字（比 --mut 更深一档） */
-  --gold: #f4d9a8;
-  --gold-deep: #b08949;
-  --pop: #e8472a;
-  --pop-soft: #fdece6;
-  --pine: #2f4a3a;
+  --gold: var(--themeGold, #f4d9a8);
+  --gold-deep: var(--themeGoldDeep, #b08949);
+  --pop: var(--themePop, #e8472a);
+  --pop-soft: var(--themePopSoft, #fdece6);
+  --pine: var(--themePine, #2f4a3a);
   --wx: #07c160;
 
   /* —— 新 token：字体 —— */
@@ -55,7 +55,7 @@ page {
   --sh-card: 0 4rpx 12rpx rgba(60, 40, 20, 0.06), 0 36rpx 80rpx rgba(120, 70, 30, 0.16);
   --sh-soft: 0 4rpx 12rpx rgba(60, 40, 20, 0.06);
   --sh-pop: 0 16rpx 36rpx rgba(232, 71, 42, 0.4);
-  --bd-card: 2rpx solid #f1ece2;
+  --bd-card: 2rpx solid var(--themeBorderLight, #f1ece2);
 
   /* —— 扩展 token：语义色（UI 审计收敛，页面勿再写死 hex）—— */
   --pop-deep: #b3381f;        /* 深番茄红：警示文字、番茄渐变深端 */
@@ -63,10 +63,10 @@ page {
   --orange: #f0853f;          /* 暖橙：--pop 的渐变伙伴 */
   --success: #3a9d5d;
   --success-light: #7fd29a;
-  --cook-bg: #1a1410;         /* 烹饪模式沉浸底色 */
-  --line: #e8e0d0;            /* 浅分隔线 */
-  --line-deep: #d5c9b8;       /* 深分隔线/描边 */
-  --skeleton: #efe4d7;        /* 骨架屏统一底色（全站一致） */
+  --cook-bg: var(--themeCookBg, #1a1410);   /* 烹饪模式沉浸底色 */
+  --line: var(--themeLine, #e8e0d0);          /* 浅分隔线 */
+  --line-deep: var(--themeLineDeep, #d5c9b8); /* 深分隔线/描边 */
+  --skeleton: var(--themeSkeleton, #efe4d7);  /* 骨架屏统一底色（全站一致） */
   --surface-pressed: #efe9df; /* 按压态底色 */
   --banner-grad-a: #fff7ec;   /* 引导条渐变浅端 */
   --banner-grad-b: #ffe9d9;   /* 引导条渐变深端 */
@@ -102,7 +102,7 @@ page {
   --c-text-muted: #9a8e7d;
   --c-bg: #fbf8f3;
   --c-bg-warm: #f0ebe2;
-  --c-surface: #ffffff;
+  --c-surface: var(--themeSurface, #ffffff);
   --c-surface-soft: #fbf8f3;
   --c-border: #e6dccb;
   --c-border-light: #f1ece2;
@@ -261,7 +261,7 @@ page.font-lg, .font-lg {
   box-sizing: border-box;
   padding: 28rpx;
   border-radius: var(--r-card);
-  background: #fff;
+  background: var(--c-surface);
   border: var(--bd-card);
   box-shadow: var(--sh-card);
 }
@@ -311,7 +311,7 @@ page.font-lg, .font-lg {
   box-shadow: var(--sh-pop);
 }
 .btn-dark { background: var(--ink-deep); color: var(--paper); }
-.btn-ghost { background: #fff; color: var(--ink); border: var(--bd-card); }
+.btn-ghost { background: var(--c-surface); color: var(--ink); border: var(--bd-card); }
 .btn-wx { background: var(--wx); color: #fff; }
 .btn-block { width: 100%; }
 
@@ -388,11 +388,11 @@ page.font-lg, .font-lg {
 .divider { height: 2rpx; margin: 24rpx 0; background: #f1ece2; }
 .row { display: flex; align-items: center; justify-content: space-between; }
 .primary-btn { box-sizing: border-box; display: flex; align-items: center; justify-content: center; min-height: 88rpx; border-radius: var(--r-card); background: var(--pop); color: #fff; font-size: var(--fs-btn); font-weight: 800; box-shadow: var(--sh-pop); }
-.ghost-btn { box-sizing: border-box; display: flex; align-items: center; justify-content: center; min-height: 88rpx; border-radius: var(--r-card); background: #fff; color: var(--ink); border: var(--bd-card); font-size: var(--fs-btn); font-weight: 700; }
+.ghost-btn { box-sizing: border-box; display: flex; align-items: center; justify-content: center; min-height: 88rpx; border-radius: var(--r-card); background: var(--c-surface); color: var(--ink); border: var(--bd-card); font-size: var(--fs-btn); font-weight: 700; }
 .accent-btn { box-sizing: border-box; display: flex; align-items: center; justify-content: center; min-height: 88rpx; border-radius: var(--r-card); background: var(--pine); color: #fff; font-size: var(--fs-btn); font-weight: 700; }
 .primary-btn::after, .ghost-btn::after, .accent-btn::after { border: none; }
 .primary-btn:active, .ghost-btn:active, .accent-btn:active { transform: scale(0.98); }
-.textarea { box-sizing: border-box; width: 100%; min-height: 220rpx; padding: 24rpx; border: var(--bd-card); border-radius: var(--r-card); background: #fff; color: var(--ink); font-size: 28rpx; line-height: 1.5; }
+.textarea { box-sizing: border-box; width: 100%; min-height: 220rpx; padding: 24rpx; border: var(--bd-card); border-radius: var(--r-card); background: var(--c-surface); color: var(--ink); font-size: 28rpx; line-height: 1.5; }
 .empty-state { display: flex; flex-direction: column; align-items: center; padding: 96rpx 28rpx; color: var(--mut); text-align: center; }
 .empty-text { margin-top: 16rpx; color: var(--mut); font-size: 26rpx; }
 .skeleton { overflow: hidden; border-radius: var(--r-card); background: var(--skeleton); }

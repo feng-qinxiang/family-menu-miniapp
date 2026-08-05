@@ -76,6 +76,8 @@
     ]
   },
   "style": "v2",
+  "darkmode": true,
+  "themeLocation": "theme.json",
   "sitemapLocation": "sitemap.json",
   "lazyCodeLoading": "requiredComponents"
 }

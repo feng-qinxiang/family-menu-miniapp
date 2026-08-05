@@ -1,0 +1,40 @@
+{
+  "light": {
+    "themePaper": "#fbf8f3",
+    "themePaper2": "#f0ebe2",
+    "themeInk": "#2c241b",
+    "themeInkDeep": "#3a2e23",
+    "themeMut": "#7a6e5d",
+    "themeMut2": "#b3a795",
+    "themeSurface": "#ffffff",
+    "themeLine": "#e8e0d0",
+    "themeLineDeep": "#d5c9b8",
+    "themeSkeleton": "#efe4d7",
+    "themeCookBg": "#1a1410",
+    "themeBorderLight": "#f1ece2",
+    "themePop": "#e8472a",
+    "themePopSoft": "#fdece6",
+    "themeGold": "#f4d9a8",
+    "themeGoldDeep": "#b08949",
+    "themePine": "#2f4a3a"
+  },
+  "dark": {
+    "themePaper": "#1b1713",
+    "themePaper2": "#26201a",
+    "themeInk": "#efe8dc",
+    "themeInkDeep": "#e0d5c4",
+    "themeMut": "#b5a896",
+    "themeMut2": "#8a7f6e",
+    "themeSurface": "#241e18",
+    "themeLine": "#3a3228",
+    "themeLineDeep": "#4a4034",
+    "themeSkeleton": "#2c251e",
+    "themeCookBg": "#0f0c0a",
+    "themeBorderLight": "#3a3228",
+    "themePop": "#ff6a4d",
+    "themePopSoft": "#3a2218",
+    "themeGold": "#8a6a3a",
+    "themeGoldDeep": "#c9a35c",
+    "themePine": "#4e6b58"
+  }
+}
