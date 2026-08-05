@@ -48,7 +48,7 @@
 .ov-eyebrow {
   font-family: var(--serif);
   font-style: italic;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   letter-spacing: 1rpx;
   color: var(--gold);
   font-weight: 700;
@@ -63,12 +63,12 @@
 .ov-n {
   font-size: 54rpx;
   font-weight: 900;
-  color: #fff;
+  color: var(--c-surface);
   letter-spacing: -2rpx;
   line-height: 1.05;
 }
 .ov-n.red { color: var(--pop); }
-.ov-u { font-size: 25rpx; font-weight: 700; margin-left: 4rpx; }
+.ov-u { font-size: var(--fs-sub); font-weight: 700; margin-left: 4rpx; }
 .ov-c {
   font-size: 22rpx;
   color: rgba(255, 255, 255, 0.78);
@@ -95,20 +95,20 @@
 }
 .bar-nm { font-size: 28rpx; font-weight: 800; color: var(--ink); }
 .bar-pc {
-  font-size: 27rpx;
+  font-size: var(--fs-cap);
   font-weight: 900;
   color: var(--ink-deep);
   font-family: var(--serif);
 }
 .bar-track {
   height: 27rpx;
-  border-radius: 16rpx;
+  border-radius: var(--r-sm);
   background: var(--paper-2);
   overflow: hidden;
 }
 .bar-fill {
   height: 100%;
-  border-radius: 16rpx;
+  border-radius: var(--r-sm);
   transition: width 0.6s var(--g-power3-out);
 }
 
@@ -132,7 +132,7 @@
   font-size: 48rpx;
   padding: 25rpx 38rpx;
   background: var(--pop);
-  color: #fff;
+  color: var(--c-surface);
   box-shadow: var(--sh-pop);
 }
 .tcl-lg {
@@ -148,7 +148,7 @@
   color: var(--paper);
 }
 .tcl-sm {
-  font-size: 27rpx;
+  font-size: var(--fs-cap);
   padding: 15rpx 25rpx;
   background: var(--paper-2);
   color: var(--mut-strong);
@@ -160,7 +160,7 @@
   align-items: center;
   gap: 26rpx;
   padding: 25rpx 0;
-  border-bottom: 2rpx solid #efe9df;
+  border-bottom: 2rpx solid var(--paper-2);
 }
 .trow:last-child { border-bottom: none; padding-bottom: 0; }
 .trow:first-child { padding-top: 0; }
@@ -178,7 +178,7 @@
 .tmb {
   width: 112rpx;
   height: 112rpx;
-  border-radius: 30rpx;
+  border-radius: var(--r-chip);
   flex: none;
   background: var(--paper-2);
 }
@@ -189,7 +189,7 @@
   color: var(--ink);
   letter-spacing: -0.5rpx;
 }
-.mid-sb { font-size: 23rpx; color: var(--mut-strong); margin-top: 8rpx; }
+.mid-sb { font-size: var(--fs-cap); color: var(--mut-strong); margin-top: 8rpx; }
 .cnt { flex: none; text-align: right; }
 .cnt-v {
   font-size: 38rpx;
@@ -198,7 +198,7 @@
   font-family: var(--serif);
   line-height: 1;
 }
-.cnt-u { font-size: 21rpx; color: var(--mut-strong); font-weight: 600; margin-top: 4rpx; }
+.cnt-u { font-size: var(--fs-mini); color: var(--mut-strong); font-weight: 600; margin-top: 4rpx; }
 
 /* ===== 提示卡 ===== */
 .note {
@@ -214,7 +214,7 @@
   width: 58rpx;
   height: 58rpx;
   border-radius: 50%;
-  background: linear-gradient(135deg, #d4a857, var(--gold), var(--gold-deep));
+  background: linear-gradient(135deg, var(--cat-gold), var(--gold), var(--gold-deep));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -228,7 +228,7 @@
   clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
 }
 .note-p {
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   color: var(--mut-strong);
   line-height: 1.6;
   font-weight: 500;

@@ -62,13 +62,13 @@
   display: inline-block;
   font-family: var(--serif);
   font-style: italic;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   letter-spacing: 3rpx;
   font-weight: 700;
-  color: #fff;
+  color: var(--c-surface);
   background: var(--pop);
   padding: 12rpx 27rpx;
-  border-radius: 8rpx;
+  border-radius: var(--r-xs);
 }
 .phero-title {
   font-size: 116rpx;
@@ -106,12 +106,12 @@
 .phstat-n {
   font-size: 50rpx;
   font-weight: 900;
-  color: #fff;
+  color: var(--c-surface);
   letter-spacing: -2rpx;
 }
 .phstat-n.warn { color: var(--pop); }
 .phstat-c {
-  font-size: 21rpx;
+  font-size: var(--fs-mini);
   color: rgba(255, 255, 255, 0.7);
   margin-top: 6rpx;
   letter-spacing: 1rpx;
@@ -153,10 +153,10 @@
   width: 26rpx;
   height: 26rpx;
 }
-.cat-ic-veg::after { background: var(--pine); border-radius: 16rpx 4rpx 16rpx 16rpx; }
+.cat-ic-veg::after { background: var(--pine); border-radius: var(--r-sm) 4rpx var(--r-sm) var(--r-sm); }
 .cat-ic-meat::after { background: var(--gold-deep); border-radius: 50% 50% 45% 45%; }
 .cat-ic-season::after { background: var(--pop); border-radius: 6rpx 6rpx 10rpx 10rpx; }
-.cat-ic-other::after { background: var(--mut); border-radius: 8rpx; }
+.cat-ic-other::after { background: var(--mut); border-radius: var(--r-xs); }
 .cat-h3 {
   font-size: 31rpx;
   font-weight: 800;
@@ -171,7 +171,7 @@
 
 /* ============ 商品卡 ============ */
 .pcard {
-  background: #fff;
+  background: var(--c-surface);
   border-radius: var(--r-card);
   padding: 12rpx 35rpx;
   box-shadow: var(--sh-card);
@@ -182,7 +182,7 @@
   align-items: center;
   gap: 25rpx;
   padding: 27rpx 0;
-  border-bottom: 1rpx solid #efe9df;
+  border-bottom: 1rpx solid var(--paper-2);
 }
 .pitem:last-child { border-bottom: none; }
 .pi-dot {
@@ -201,13 +201,13 @@
   letter-spacing: -0.4rpx;
 }
 .pi-ex {
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   color: var(--mut-strong);
   margin-top: 8rpx;
 }
 .pi-ex.red { color: var(--pop); font-weight: 700; }
 .pi-qt {
-  font-size: 25rpx;
+  font-size: var(--fs-sub);
   font-weight: 700;
   color: var(--ink-deep);
   flex: none;
@@ -272,14 +272,14 @@
 .add-plus::after {
   content: "";
   position: absolute;
-  background: #fff;
+  background: var(--c-surface);
   border-radius: 3rpx;
 }
 .add-plus::before { left: 14rpx; top: 0; width: 5rpx; height: 32rpx; }
 .add-plus::after { left: 0; top: 14rpx; width: 32rpx; height: 5rpx; }
 .add-at { flex: 1; }
 .add-t { font-size: 29rpx; font-weight: 800; color: var(--ink); }
-.add-s { font-size: 23rpx; color: var(--mut); margin-top: 4rpx; }
+.add-s { font-size: var(--fs-cap); color: var(--mut); margin-top: 4rpx; }
 .add-arrow {
   width: 18rpx;
   height: 18rpx;
@@ -293,7 +293,7 @@
 /* ============ 添加表单 ============ */
 .add-form {
   margin-top: 20rpx;
-  background: #fff;
+  background: var(--c-surface);
   border-radius: var(--r-card);
   border: var(--bd-card);
   box-shadow: var(--sh-soft);
@@ -306,7 +306,7 @@
   padding: 0 26rpx;
   border-radius: var(--r-md);
   background: var(--paper-2);
-  font-size: 27rpx;
+  font-size: var(--fs-cap);
   color: var(--ink);
 }
 .af-main { flex: 1; }
@@ -317,7 +317,7 @@
 
 /* ============ 匹配卡 ============ */
 .mcard {
-  background: #fff;
+  background: var(--c-surface);
   border-radius: var(--r-card);
   overflow: hidden;
   box-shadow: var(--sh-card);
@@ -340,12 +340,12 @@
   letter-spacing: -0.6rpx;
 }
 .mc-meta {
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   color: var(--mut);
   margin-top: 10rpx;
 }
 .mc-miss {
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   color: var(--pop);
   font-weight: 700;
   margin-top: 13rpx;

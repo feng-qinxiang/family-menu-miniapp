@@ -1,8 +1,37 @@
 <wxs src="../../utils/cuisine.wxs" module="cuisine" />
 <view class="mag-home">
 
+  <!-- ============ SKELETON (loading) ============ -->
+  <view class="mh-skel" wx:if="{{loading}}">
+    <view class="mh-skel-hero shimmer"></view>
+    <view class="mh-skel-slots">
+      <view class="mh-skel-chip shimmer"></view>
+      <view class="mh-skel-chip shimmer"></view>
+      <view class="mh-skel-chip shimmer"></view>
+    </view>
+    <view class="mh-skel-cards">
+      <view class="mh-skel-card" wx:for="{{[1,2,3]}}" wx:key="*this">
+        <view class="mh-skel-cover shimmer"></view>
+        <view class="mh-skel-line strong shimmer"></view>
+        <view class="mh-skel-line shimmer"></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ============ LOAD ERROR ============ -->
+  <view class="mh-load-error" wx:elif="{{loadError}}">
+    <view class="mh-load-error-bowl">
+      <view class="mh-load-error-steam mh-steam-a"></view>
+      <view class="mh-load-error-steam mh-steam-b"></view>
+      <view class="mh-load-error-circle"></view>
+    </view>
+    <view class="mh-load-error-title">首页没加载出来</view>
+    <view class="mh-load-error-desc">网络开小差了，检查后再试一次</view>
+    <view class="mh-load-error-btn tap-scale" bindtap="loadAll">重新加载</view>
+  </view>
+
   <!-- ============ HERO ============ -->
-  <view class="mh-hero g-fade-in" wx:if="{{heroRecipe}}" data-id="{{heroRecipe.id}}" bindtap="goDetail">
+  <view class="mh-hero g-fade-in" wx:elif="{{heroRecipe}}" data-id="{{heroRecipe.id}}" bindtap="goDetail">
     <image class="mh-hero-img" src="{{heroRecipe.dishImg}}" mode="aspectFill" binderror="onHeroImgError" />
     <view class="mh-hero-shade"></view>
     <text class="mh-hero-bignum">01</text>
@@ -35,8 +64,24 @@
         <view class="mh-m">{{heroRecipe.cuisine || '家常'}}<block wx:if="{{heroRecipe.tasteTags[0]}}"> · {{heroRecipe.tasteTags[0]}}</block></view>
       </view>
       <view class="mh-hero-acts">
-        <view class="mh-hero-add tap-scale" catchtap="addToToday" data-id="{{heroRecipe.id}}">许愿一下</view>
+        <view class="mh-hero-add tap-scale" catchtap="addToToday" data-id="{{heroRecipe.id}}">加到菜单</view>
         <view class="mh-hero-shuffle tap-scale" catchtap="shuffleHero">换一道</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- Hero 空态：紧凑杂志风，文字驱动 -->
+  <view class="mh-hero mh-hero--empty g-fade-in" wx:else>
+    <view class="mh-empty-body g-fade-up">
+      <view class="mh-greet">
+        <view class="mh-hi">{{greeting}}</view>
+        <view class="mh-name">{{currentUser.nickname || '朋友'}}，今晚想吃点啥</view>
+      </view>
+      <text class="mh-empty-eyebrow">First Dish</text>
+      <view class="mh-empty-headline">从第一道菜<text class="pop">开始</text></view>
+      <view class="mh-empty-sub">录入拿手菜、导入收藏链接，或逛逛社区找灵感</view>
+      <view class="mh-empty-acts">
+        <view class="mh-empty-go tap-scale" bindtap="goRecipes">添加菜谱 ›</view>
       </view>
     </view>
   </view>
@@ -228,3 +273,32 @@
     <view class="safe-bottom"></view>
   </view>
 </view>
+
+<!-- ============ 自定义许愿弹窗（root-portal 保证脱离页面层级） ============ -->
+<root-portal wx:if="{{showWishModal}}">
+  <view class="wish-backdrop" catchtap="closeWishModal"></view>
+  <view class="wish-modal" catchtap="">
+    <view class="wish-modal-hd">
+      <text class="wish-modal-emoji serif">味</text>
+      <view class="wish-modal-title">今晚想吃什么？</view>
+      <view class="wish-modal-sub">写下来，家人都能看到</view>
+    </view>
+    <view class="wish-modal-bd">
+      <input
+        class="wish-modal-input"
+        placeholder="番茄炒蛋、红烧排骨…"
+        placeholder-class="wish-ph"
+        value="{{wishInput}}"
+        bindinput="onWishInput"
+        bindconfirm="confirmWish"
+        focus="{{showWishModal}}"
+        maxlength="30"
+        confirm-type="done"
+      />
+    </view>
+    <view class="wish-modal-ft">
+      <view class="wish-btn-cancel tap-scale" catchtap="closeWishModal">算了</view>
+      <view class="wish-btn-ok tap-scale {{wishInput ? '' : 'off'}}" catchtap="confirmWish">许愿 ✦</view>
+    </view>
+  </view>
+</root-portal>

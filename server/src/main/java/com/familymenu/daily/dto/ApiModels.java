@@ -122,7 +122,8 @@ public final class ApiModels {
     }
 
     public record CommunityReportRequest(
-            @NotBlank String reason
+            @NotBlank String reason,
+            String description
     ) {
     }
 
@@ -133,18 +134,19 @@ public final class ApiModels {
     }
 
     public record CommunityReportItem(
-            Long reportId,
-            Long postId,
-            String postTitle,
-            String reporter,
-            String reason,
-            String status,
-            String reviewer,
-            String note,
-            String createdAt,
-            String resolvedAt
-    ) {
-    }
+              Long reportId,
+              Long postId,
+              String postTitle,
+              String reporter,
+              String reason,
+              String description,
+              String status,
+              String reviewer,
+              String note,
+              String createdAt,
+              String resolvedAt
+      ) {
+      }
 
     public record FamilyMemberItem(
             Long userId,

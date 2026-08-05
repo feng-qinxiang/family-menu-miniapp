@@ -56,7 +56,7 @@
   font-family: var(--serif);
   font-size: 26rpx;
   font-weight: 700;
-  color: #fff;
+  color: var(--c-surface);
   background: var(--pop);
   box-shadow: var(--sh-pop);
   width: 58rpx;
@@ -186,7 +186,7 @@
   height: 26rpx;
   border: 4rpx solid var(--pop);
   border-bottom: none;
-  border-radius: 16rpx 16rpx 0 0;
+  border-radius: var(--r-sm) var(--r-sm) 0 0;
   box-sizing: border-box;
 }
 .ic-bell::after {
@@ -209,7 +209,7 @@
 .ft-eb {
   font-family: var(--serif);
   font-style: italic;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   color: var(--gold-deep);
   font-weight: 700;
 }
@@ -222,7 +222,7 @@
 .ft-mail {
   display: inline-block;
   margin-top: 14rpx;
-  color: #fff;
+  color: var(--c-surface);
   font-weight: 800;
-  font-size: 27rpx;
+  font-size: var(--fs-cap);
 }

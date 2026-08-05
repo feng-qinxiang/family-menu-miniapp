@@ -18,7 +18,7 @@
 .sd-dialog {
   width: 100%;
   max-width: 620rpx;
-  background: #fff;
+  background: var(--c-surface);
   border-radius: 40rpx;
   overflow: hidden;
   box-shadow: 0 40rpx 100rpx rgba(30, 18, 8, 0.4), 0 8rpx 24rpx rgba(30, 18, 8, 0.2);
@@ -53,7 +53,7 @@
 }
 .sd-ic--danger { background: var(--pop-soft); }
 .sd-ic--danger::after { border: 3rpx solid rgba(232, 71, 42, 0.18); }
-.sd-ic--warn { background: #fdf3e2; }
+.sd-ic--warn { background: var(--pop-soft); }
 .sd-ic--warn::after { border: 3rpx solid rgba(176, 137, 73, 0.2); }
 .sd-ic-glyph { font-size: 70rpx; font-weight: 900; line-height: 1; }
 .sd-ic--danger .sd-ic-glyph { color: var(--pop); }
@@ -89,11 +89,11 @@
 .sd-btn--ghost { background: var(--paper-2); color: var(--ink-deep); }
 .sd-btn--danger {
   background: var(--pop);
-  color: #fff;
+  color: var(--c-surface);
   box-shadow: 0 4rpx 8rpx rgba(180, 40, 20, 0.3), 0 20rpx 44rpx rgba(232, 71, 42, 0.4);
 }
 .sd-btn--warn {
   background: var(--gold-deep);
-  color: #fff;
+  color: var(--c-surface);
   box-shadow: 0 4rpx 8rpx rgba(140, 100, 40, 0.3), 0 20rpx 44rpx rgba(176, 137, 73, 0.4);
 }

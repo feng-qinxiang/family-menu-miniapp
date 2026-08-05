@@ -95,8 +95,8 @@
               <view class="rm-cuisine">
                 <input class="rm-cuisine-in" value="{{preview.detectedCuisine}}" bindinput="onPreviewCuisineInput" placeholder="菜系" />
               </view>
-              <text class="rm-pill">⏱ {{preview.timeCost}} 分钟</text>
-              <text class="rm-pill">👤 {{preview.servings}} 人份</text>
+              <text class="rm-pill">约 {{preview.timeCost}} 分钟</text>
+              <text class="rm-pill">{{preview.servings}} 人份</text>
             </view>
           </view>
         </view>

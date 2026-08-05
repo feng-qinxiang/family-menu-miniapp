@@ -4,7 +4,7 @@
 
 /* nav-bar 右侧提交 */
 .nav-submit {
-  font-size: 27rpx;
+  font-size: var(--fs-cap);
   font-weight: 800;
   color: var(--gold-deep);
   padding: 8rpx 6rpx;
@@ -20,7 +20,7 @@
 }
 .fb-desc {
   margin-top: 18rpx;
-  font-size: 25rpx;
+  font-size: var(--fs-sub);
   line-height: 1.5;
   color: var(--mut-strong);
 }
@@ -62,7 +62,7 @@
 /* —— 描述 textarea —— */
 .ta-wrap {
   position: relative;
-  background: #fff;
+  background: var(--c-surface);
   border: var(--bd-card);
   border-radius: var(--r-card);
   box-shadow: var(--sh-soft);
@@ -153,7 +153,7 @@
 }
 .up-plus::before { left: 18rpx; top: 2rpx; width: 4rpx; height: 36rpx; }
 .up-plus::after { left: 2rpx; top: 18rpx; width: 36rpx; height: 4rpx; }
-.up-t { font-size: 21rpx; font-weight: 700; color: var(--mut-strong); }
+.up-t { font-size: var(--fs-mini); font-weight: 700; color: var(--mut-strong); }
 
 /* —— 联系方式 —— */
 .input-wrap {
@@ -162,7 +162,7 @@
   gap: 20rpx;
   height: 104rpx;
   padding: 0 30rpx;
-  background: #fff;
+  background: var(--c-surface);
   border: var(--bd-card);
   border-radius: var(--r-md);
   box-shadow: var(--sh-soft);
@@ -186,7 +186,7 @@
   border-right: 3rpx solid var(--gold-deep);
   transform: skewX(0) rotate(0);
   border-top: 3rpx solid var(--gold-deep);
-  border-radius: 0 0 8rpx 8rpx;
+  border-radius: 0 0 var(--r-xs) var(--r-xs);
 }
 .contact-input { flex: 1; font-size: 28rpx; color: var(--ink); }
 .contact-ph { color: var(--mut); }
@@ -203,7 +203,7 @@
 .send-ic {
   width: 30rpx;
   height: 30rpx;
-  background: #fff;
+  background: var(--c-surface);
   flex: none;
   /* 纸飞机三角 */
   clip-path: polygon(100% 0, 0 45%, 42% 56%, 55% 100%);

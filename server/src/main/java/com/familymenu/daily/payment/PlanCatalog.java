@@ -41,6 +41,22 @@ public final class PlanCatalog {
         return plan;
     }
 
+    /** 兼容历史调用：接受 code 或中文展示名（如 "家庭月卡"），均解析为套餐；无法解析抛 400。 */
+    public static Plan requireCodeOrDisplayName(String value) {
+        if (value == null || value.isBlank()) {
+            return require("annual");
+        }
+        String trimmed = value.trim();
+        Plan byCode = PLANS.get(trimmed);
+        if (byCode != null) {
+            return byCode;
+        }
+        return PLANS.values().stream()
+                .filter(p -> p.displayName().equals(trimmed))
+                .findFirst()
+                .orElseGet(() -> require(trimmed));
+    }
+
     /** 展示名兜底：已知 code 返回中文名，未知/空返回原值，供历史会员记录显示。 */
     public static String displayName(String planCode) {
         if (planCode == null || planCode.isBlank()) {

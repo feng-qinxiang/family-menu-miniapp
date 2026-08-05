@@ -1,5 +1,6 @@
 {
   "navigationBarTitleText": "菜单",
+  "enablePullDownRefresh": true,
   "usingComponents": {
     "empty-state": "/components/empty-state/index"
   }

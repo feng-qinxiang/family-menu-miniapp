@@ -44,10 +44,15 @@
           </view>
         </view>
 
-        <!-- 空态 -->
-        <view wx:if="{{!posts.length}}" class="empty-state">
-          <view class="empty-text">还没有人发帖，来做第一个分享的人吧</view>
-        </view>
+          <!-- 失败态 -->
+          <view wx:if="{{loadError}}" class="empty-state">
+            <view class="empty-text">社区加载失败，检查网络后再试试</view>
+            <view class="empty-retry tap-scale" bindtap="loadPosts">重新加载</view>
+          </view>
+          <!-- 空态 -->
+          <view wx:elif="{{!posts.length}}" class="empty-state">
+            <view class="empty-text">还没有人发帖，来做第一个分享的人吧</view>
+          </view>
 
         <!-- 帖子流 -->
         <view class="post-list">
@@ -108,9 +113,9 @@
                 <view class="pa-ico ico-chat"></view>评论
               </view>
               <view class="pa-spacer"></view>
-              <view class="pa-report" catchtap="reportPost" data-id="{{item.id}}">
-                <view class="pa-ico ico-warn"></view>举报
-              </view>
+              <view class="pa-report" catchtap="openReportSheet" data-id="{{item.id}}">
+                  <view class="pa-ico ico-warn"></view>举报
+                </view>
             </view>
           </view>
         </view>
@@ -138,7 +143,7 @@
         <view class="feed-end"><text>没有更多了</text></view>
       </view>
 
-      <view class="safe-bottom" style="height: 40rpx;"></view>
+      <view class="safe-bottom"></view>
     </view>
   </scroll-view>
 
@@ -179,6 +184,34 @@
     <view class="pf-actions">
       <view class="btn btn-ghost pf-cancel tap-scale" catchtap="togglePostForm">取消</view>
       <view class="btn btn-pop pf-submit tap-scale" catchtap="submitPost">发布</view>
+    </view>
+    <view class="safe-bottom"></view>
+  </view>
+
+  <!-- ============ 举报弹层 ============ -->
+  <view class="pf-mask" wx:if="{{showReportSheet}}" catchtap="closeReportSheet"></view>
+  <view class="pf-sheet {{showReportSheet ? 'pf-sheet--on' : ''}}" wx:if="{{showReportSheet}}" catchtap="noop">
+    <view class="pf-grip"></view>
+    <view class="pf-head">举报这条帖子</view>
+    <view class="rp-reasons">
+      <view
+        wx:for="{{reportReasons}}"
+        wx:key="*this"
+        class="rp-reason tap-scale {{activeReportReason === item ? 'rp-reason--on' : ''}}"
+        catchtap="setReportReason"
+        data-reason="{{item}}"
+      >{{item}}</view>
+    </view>
+    <textarea
+      class="pf-textarea rp-desc"
+      placeholder="补充说明（选填）：比如内容哪里不实、疑似搬运来源…"
+      placeholder-class="pf-ph"
+      value="{{reportDesc}}"
+      bindinput="onReportDescInput"
+    />
+    <view class="pf-actions">
+      <view class="btn btn-ghost pf-cancel tap-scale" catchtap="closeReportSheet">取消</view>
+      <view class="btn btn-pop pf-submit tap-scale" catchtap="submitReport">提交举报</view>
     </view>
     <view class="safe-bottom"></view>
   </view>

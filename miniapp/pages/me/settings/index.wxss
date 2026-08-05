@@ -23,7 +23,7 @@
 .set-gtitle {
   font-family: var(--serif);
   font-style: italic;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   letter-spacing: 1rpx;
   color: var(--gold-deep);
   font-weight: 700;
@@ -43,7 +43,7 @@
   align-items: center;
   gap: 26rpx;
   padding: 29rpx 32rpx;
-  border-bottom: 2rpx solid #f1ece2;
+  border-bottom: 2rpx solid var(--c-border-light);
 }
 .set-item:last-child {
   border-bottom: none;
@@ -85,7 +85,7 @@
 
 .set-val {
   flex: none;
-  font-size: 25rpx;
+  font-size: var(--fs-sub);
   font-weight: 600;
   color: var(--mut-strong);
 }
@@ -95,8 +95,8 @@
   flex: none;
   width: 16rpx;
   height: 16rpx;
-  border-right: 4rpx solid #c9bda9;
-  border-top: 4rpx solid #c9bda9;
+  border-right: 4rpx solid var(--line-deep);
+  border-top: 4rpx solid var(--line-deep);
   border-radius: 2rpx;
   transform: rotate(45deg);
 }
@@ -107,7 +107,7 @@
   width: 92rpx;
   height: 56rpx;
   border-radius: var(--r-pill);
-  background: #e2dacd;
+  background: var(--c-border);
   flex: none;
   transition: background 0.2s ease;
 }
@@ -121,7 +121,7 @@
   width: 46rpx;
   height: 46rpx;
   border-radius: 50%;
-  background: #fff;
+  background: var(--c-surface);
   box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.2);
   transition: left 0.2s ease;
 }
@@ -150,7 +150,7 @@
 /* —— 版本号 —— */
 .set-ver {
   text-align: center;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   color: var(--mut-strong);
   margin-top: 36rpx;
 }

@@ -8,22 +8,8 @@ const {
   addCookHistory,
   removeTodayMenuRecipe
 } = require('../../utils/api');
-
-const mealTypeLabels = {
-  breakfast: '早餐',
-  lunch: '午餐',
-  dinner: '晚餐',
-  snack: '加餐'
-};
-
-const mealOrder = ['breakfast', 'lunch', 'dinner', 'snack'];
-
-const LOCAL_DISHES = [
-  'beef-broccoli', 'chicken-congee', 'egg-drop-soup', 'fried-rice',
-  'hongshao-pork', 'hot-sour-soup', 'kungpao-chicken', 'lo-mein',
-  'long-beans', 'mapo-tofu', 'orange-chicken', 'shrimp-peas',
-  'sichuan-eggplant', 'sweet-sour-chicken', 'tomato-egg', 'wontons'
-];
+const { mealTypeLabels, mealOrder } = require('../../utils/constants');
+const { fallbackDishImg, LOCAL_DISHES } = require('../../utils/image');
 
 function buildToday() {
   const d = new Date();
@@ -83,10 +69,16 @@ Page({
   },
 
   onShow() {
-    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
-      this.getTabBar().setData({ selected: 1 });
+    // 跨天刷新日期文案（todayLabel 在 data 初始化时只算一次）
+    const label = buildToday();
+    if (label !== this.data.todayLabel) {
+      this.setData({ todayLabel: label });
     }
     this.loadData();
+  },
+
+  onPullDownRefresh() {
+    Promise.resolve(this.loadData()).catch(() => {}).then(() => setTimeout(() => wx.stopPullDownRefresh(), 300));
   },
 
   async loadData() {
@@ -296,5 +288,13 @@ Page({
       wx.hideLoading();
       wx.showToast({ title: '生成失败', icon: 'none' });
     }
-  }
+  },
+
+  onShareAppMessage() {
+    const n = (this.data.items && this.data.items.length) || 0;
+    return {
+      title: n > 0 ? '今天家里吃这些（' + n + ' 道）' : '今天的菜单，来看看吗',
+      path: '/pages/menu/index'
+    };
+  },
 });

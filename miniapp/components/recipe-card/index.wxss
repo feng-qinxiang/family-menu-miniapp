@@ -7,10 +7,10 @@
   box-sizing: border-box;
   width: 404rpx;
   overflow: hidden;
-  border-radius: 42rpx;
-  background: #fff;
+  border-radius: var(--r-card);
+  background: var(--c-surface);
   border: var(--bd-card);
-  box-shadow: 0 4rpx 12rpx rgba(60, 40, 20, 0.06), 0 36rpx 80rpx rgba(120, 70, 30, 0.16);
+  box-shadow: var(--sh-card);
 }
 
 .rc-ph {
@@ -30,10 +30,10 @@
   top: 21rpx;
   left: 21rpx;
   padding: 8rpx 18rpx;
-  border-radius: 8rpx;
+  border-radius: var(--r-xs);
   background: rgba(40, 30, 20, 0.55);
-  color: #fff;
-  font-size: 19rpx;
+  color: var(--c-surface);
+  font-size: var(--fs-tiny);
   font-weight: 800;
   letter-spacing: 2rpx;
   line-height: 1.2;
@@ -78,7 +78,7 @@
 }
 .rc-meta text {
   color: var(--mut-strong);
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   line-height: 1.3;
 }
 
@@ -88,7 +88,7 @@
   align-items: center;
   gap: 28rpx;
   padding: 26rpx 0;
-  border-bottom: 2rpx solid #efe9df;
+  border-bottom: 2rpx solid var(--paper-2);
 }
 .rc-row-thumb {
   flex: none;
@@ -131,7 +131,7 @@
   box-shadow: 0 2rpx 4rpx rgba(180, 40, 20, 0.3), 0 16rpx 34rpx rgba(232, 71, 42, 0.4);
 }
 .rc-row-add .rc-plus {
-  color: #fff;
+  color: var(--c-surface);
   font-size: 40rpx;
   font-weight: 600;
   line-height: 1;

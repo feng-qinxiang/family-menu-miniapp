@@ -22,8 +22,8 @@ Page({
       { feat: '去除广告', free: false, vip: true }
     ],
     plans: [
-      { key: 'monthly', name: '月卡', price: '¥9.9', per: '每月，随时可停', recommend: false },
-      { key: 'yearly', name: '年卡', price: '¥68', unit: '/年', per: '折合每月 ¥5.7', save: '省 43%', recommend: true }
+      { key: 'monthly', name: '月卡', price: '¥19.9', per: '每月，随时可停', recommend: false },
+      { key: 'yearly', name: '年卡', price: '¥99', unit: '/年', per: '折合每月 ¥8.3', save: '省 83%', recommend: true }
     ],
     familyAvatars: [
       { initial: '张', tone: '#e8472a' },
@@ -62,9 +62,9 @@ Page({
   async activateVip() {
     if (this.data.activating) return;
     this.setData({ activating: true });
-    const planName = this.data.selectedPlan === 'monthly' ? '家庭月卡' : '家庭年卡';
+    const planCode = this.data.selectedPlan === 'monthly' ? 'monthly' : 'annual';
     try {
-      const status = await activateVip(planName);
+      const status = await activateVip(planCode);
       this.applyStatus(status);
       const app = getApp();
       if (app && app.globalData) {

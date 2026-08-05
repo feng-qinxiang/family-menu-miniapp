@@ -4,9 +4,9 @@
   display: flex;
   align-items: center;
   gap: 18rpx;
-  background: linear-gradient(135deg, #fff7e5 0%, #fff0df 48%, #ffe4d3 100%);
-  border: 1rpx solid #f1d7ab;
-  border-radius: 24rpx;
+  background: linear-gradient(135deg, var(--pop-soft) 0%, var(--c-gold-soft) 48%, var(--c-gold-soft) 100%);
+  border: 1rpx solid var(--gold);
+  border-radius: var(--r-md);
   padding: 22rpx;
   margin-bottom: 18rpx;
   box-shadow: var(--sh-gold);
@@ -34,9 +34,9 @@
   justify-content: center;
   width: 78rpx;
   height: 78rpx;
-  border-radius: 24rpx;
-  background: #8d6517;
-  color: #fff8e6;
+  border-radius: var(--r-md);
+  background: var(--c-gold-dark);
+  color: var(--pop-soft);
   font-size: 24rpx;
   font-weight: var(--w-bold);
   box-shadow: 0 10rpx 24rpx rgba(141, 101, 23, 0.2);
@@ -56,7 +56,7 @@
   border-radius: var(--r-pill);
   background: rgba(255, 255, 255, 0.68);
   color: var(--c-gold-dark);
-  font-size: 19rpx;
+  font-size: var(--fs-tiny);
   font-weight: var(--w-semi);
 }
 
@@ -75,7 +75,7 @@
 .notice-action {
   display: inline-flex;
   font-size: 22rpx;
-  color: #ffffff;
+  color: var(--c-surface);
   margin-top: 12rpx;
   padding: 8rpx 18rpx;
   border-radius: var(--r-pill);

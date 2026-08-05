@@ -6,14 +6,8 @@ Page({
   data: {
     phone: '',
     code: '',
-    pwd: '',
-    pwd2: '',
     phoneFocus: false,
     codeFocus: false,
-    pwdFocus: false,
-    pwd2Focus: false,
-    pwdShow: false,
-    pwd2Show: false,
     agreed: false,
     counting: false,
     countdown: 60,
@@ -46,22 +40,12 @@ Page({
   // —— 输入 ——
   onPhoneInput(e) { this.setData({ phone: e.detail.value }); },
   onCodeInput(e) { this.setData({ code: e.detail.value }); },
-  onPwdInput(e) { this.setData({ pwd: e.detail.value }); },
-  onPwd2Input(e) { this.setData({ pwd2: e.detail.value }); },
 
   // —— 焦点 ——
   onPhoneFocus() { this.setData({ phoneFocus: true }); },
   onPhoneBlur() { this.setData({ phoneFocus: false }); },
   onCodeFocus() { this.setData({ codeFocus: true }); },
   onCodeBlur() { this.setData({ codeFocus: false }); },
-  onPwdFocus() { this.setData({ pwdFocus: true }); },
-  onPwdBlur() { this.setData({ pwdFocus: false }); },
-  onPwd2Focus() { this.setData({ pwd2Focus: true }); },
-  onPwd2Blur() { this.setData({ pwd2Focus: false }); },
-
-  // —— 眼睛切换 ——
-  onTogglePwd() { this.setData({ pwdShow: !this.data.pwdShow }); },
-  onTogglePwd2() { this.setData({ pwd2Show: !this.data.pwd2Show }); },
 
   // —— 协议 ——
   onToggleAgree() { this.setData({ agreed: !this.data.agreed }); },
@@ -100,23 +84,15 @@ Page({
       });
   },
 
-  // —— 注册：手机验证码即注册登录（后端为无密码体系，密码仅前端体验）——
+  // —— 注册：手机验证码即注册登录（后端为无密码体系）——
   onRegister() {
-    const { phone, code, pwd, pwd2, agreed } = this.data;
+    const { phone, code, agreed } = this.data;
     if (!/^1\d{10}$/.test((phone || '').trim())) {
       this._toast('请输入正确的手机号', 'error');
       return;
     }
     if (!/^\d{6}$/.test((code || '').trim())) {
       this._toast('请输入 6 位验证码', 'error');
-      return;
-    }
-    if (!pwd || pwd.length < 6) {
-      this._toast('密码至少 6 位', 'error');
-      return;
-    }
-    if (pwd !== pwd2) {
-      this._toast('两次输入的密码不一致', 'error');
       return;
     }
     if (!agreed) {

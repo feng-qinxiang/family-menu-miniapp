@@ -23,6 +23,16 @@ page {
   --serif: Georgia, "Times New Roman", serif;
   --sans: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
 
+  /* —— 新 token：字号标尺（8 级，页面统一引用，勿写死数值）—— */
+  --fs-hero: 64rpx;   /* Hero 大标题 */
+  --fs-h1: 50rpx;     /* 页面主标题（对齐 .page-title / .shead-title） */
+  --fs-h2: 36rpx;     /* 区块标题（对齐 .section-title） */
+  --fs-body: 28rpx;   /* 正文基准 */
+  --fs-sub: 25rpx;    /* 次要说明 */
+  --fs-cap: 23rpx;    /* 辅助/标签 */
+  --fs-mini: 21rpx;   /* 角标/统计 */
+  --fs-tiny: 19rpx;   /* 极弱提示（尽量不用） */
+
   /* —— 新 token：圆角 —— */
   --r-xs: 8rpx;
   --r-sm: 16rpx;
@@ -37,6 +47,29 @@ page {
   --sh-soft: 0 4rpx 12rpx rgba(60, 40, 20, 0.06);
   --sh-pop: 0 16rpx 36rpx rgba(232, 71, 42, 0.4);
   --bd-card: 2rpx solid #f1ece2;
+
+  /* —— 扩展 token：语义色（UI 审计收敛，页面勿再写死 hex）—— */
+  --pop-deep: #b3381f;        /* 深番茄红：警示文字、番茄渐变深端 */
+  --pop-mist: #f6cfc4;        /* 浅红描边 */
+  --orange: #f0853f;          /* 暖橙：--pop 的渐变伙伴 */
+  --success: #3a9d5d;
+  --success-light: #7fd29a;
+  --cook-bg: #1a1410;         /* 烹饪模式沉浸底色 */
+  --line: #e8e0d0;            /* 浅分隔线 */
+  --line-deep: #d5c9b8;       /* 深分隔线/描边 */
+
+  /* —— 扩展 token：分类色板（头像/标签等装饰色）—— */
+  --cat-brown: #c9763e;
+  --cat-gold: #d4a857;
+  --cat-brown-deep: #5a4326;
+  --cat-green: #577a5f;
+  --cat-green-light: #7aa888;
+  --cat-slate: #6b7b8c;
+  --cat-purple: #8a6cae;
+  --cat-purple-deep: #5a4a8a;
+  --cat-purple-light: #9a7fc4;
+  --cat-plum: #9a5b8c;
+  --cat-plum-deep: #7a5fa0;
 
   /* —— 兼容层：旧 --c-* 重映射到新配色（未重做页面继续可用且自动套新色）—— */
   --c-primary: #e8472a;
@@ -161,7 +194,7 @@ page {
 .shead .eyebrow {
   font-family: var(--serif);
   font-style: italic;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   letter-spacing: 1rpx;
   color: var(--gold-deep);
   font-weight: 700;
@@ -177,7 +210,7 @@ page {
 }
 .shead .shead-title .pop { color: var(--pop); }
 .shead .seeall {
-  font-size: 25rpx;
+  font-size: var(--fs-sub);
   color: var(--gold-deep);
   font-weight: 700;
   flex: none;
@@ -188,7 +221,7 @@ page {
 .eyebrow-serif {
   font-family: var(--serif);
   font-style: italic;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   color: var(--gold-deep);
   font-weight: 700;
 }
@@ -308,7 +341,7 @@ page {
 
 /* ============ 兼容：现有页面在用的通用类 ============ */
 .page-title { color: var(--ink); font-size: 50rpx; font-weight: 900; line-height: 1.1; letter-spacing: -2rpx; }
-.page-subtitle { margin-top: 10rpx; color: var(--mut-strong); font-size: 25rpx; line-height: 1.5; }
+.page-subtitle { margin-top: 10rpx; color: var(--mut-strong); font-size: var(--fs-sub); line-height: 1.5; }
 .section-title { color: var(--ink); font-size: 36rpx; font-weight: 800; line-height: 1.2; }
 .section-desc { margin-top: 6rpx; color: var(--mut); font-size: 24rpx; line-height: 1.45; }
 .section { margin-top: 48rpx; }

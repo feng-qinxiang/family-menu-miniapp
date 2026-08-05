@@ -49,7 +49,7 @@
 }
 
 .eyebrow-lg {
-  font-size: 25rpx;
+  font-size: var(--fs-sub);
   letter-spacing: 3rpx;
   margin-bottom: 56rpx;
 }
@@ -64,7 +64,7 @@
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background: linear-gradient(135deg, #fff, var(--gold));
+  background: linear-gradient(135deg, var(--c-surface), var(--gold));
   box-shadow: var(--sh-soft), 0 36rpx 80rpx rgba(120, 70, 30, 0.16);
   border: 2rpx solid var(--paper-2);
 }

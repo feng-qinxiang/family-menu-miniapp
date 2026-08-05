@@ -1,23 +1,17 @@
 // pages/auth/reset-password · 验证码找回并重新登录
-// 后端为无密码体系：此页通过手机验证码完成重新登录，密码字段仅作前端体验保留
+// 后端为无密码体系：此页通过手机验证码完成重新登录，无密码字段
 const api = require('../../../utils/api');
 
 Page({
   data: {
     phone: '138 8888 6666', // 注册手机号，readonly 展示
     code: '',
-    pwd: '',
-    pwd2: '',
-    showPwd: false,
-    showPwd2: false,
     focusKey: '',
     // 验证码倒计时
     counting: false,
     countdown: 60,
     sendLabel: '发送验证码',
     // 校验态
-    pwdValid: false,
-    pwdMatch: false,
     canSubmit: false,
   },
 
@@ -61,32 +55,7 @@ Page({
 
   onCodeInput(e) {
     const code = (e.detail.value || '').replace(/\D/g, '').slice(0, 6);
-    this.setData({ code }, this._refreshValid);
-  },
-
-  onPwdInput(e) {
-    this.setData({ pwd: e.detail.value || '' }, this._refreshValid);
-  },
-
-  onPwd2Input(e) {
-    this.setData({ pwd2: e.detail.value || '' }, this._refreshValid);
-  },
-
-  togglePwd() {
-    this.setData({ showPwd: !this.data.showPwd });
-  },
-
-  togglePwd2() {
-    this.setData({ showPwd2: !this.data.showPwd2 });
-  },
-
-  _refreshValid() {
-    const { pwd, pwd2, code } = this.data;
-    // 至少 8 位，含字母和数字
-    const pwdValid = pwd.length >= 8 && /[a-zA-Z]/.test(pwd) && /\d/.test(pwd);
-    const pwdMatch = !!pwd2 && pwd === pwd2;
-    const canSubmit = code.length === 6 && pwdValid && pwdMatch;
-    this.setData({ pwdValid, pwdMatch, canSubmit });
+    this.setData({ code, canSubmit: code.length === 6 });
   },
 
   // 下发验证码：调用后端真实 OTP 接口
@@ -121,18 +90,10 @@ Page({
   },
 
   onReset() {
-    const { code, pwdValid, pwdMatch } = this.data;
+    const { code } = this.data;
     const rawPhone = (this.data.phone || '').replace(/\D/g, '');
     if (code.length !== 6) {
       wx.showToast({ title: '请输入 6 位验证码', icon: 'none' });
-      return;
-    }
-    if (!pwdValid) {
-      wx.showToast({ title: '密码至少 8 位且含字母数字', icon: 'none' });
-      return;
-    }
-    if (!pwdMatch) {
-      wx.showToast({ title: '两次密码不一致', icon: 'none' });
       return;
     }
     // 后端为无密码体系：验证码校验通过即重新登录

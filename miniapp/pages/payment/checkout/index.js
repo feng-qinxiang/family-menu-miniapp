@@ -4,17 +4,20 @@
 const api = require('../../../utils/api');
 
 const PLAN_MAP = {
-  yearly:  { planId: 'annual',  planName: '家庭年卡',  priceFull: '68.00', priceFen: 6800 },
-  monthly: { planId: 'monthly', planName: '家庭月卡', priceFull: '9.90',  priceFen: 990  },
+  yearly:  { planId: 'annual',  planName: '家庭年卡',  priceFull: '99.00', priceFen: 9900 },
+  monthly: { planId: 'monthly', planName: '家庭月卡', priceFull: '19.90',  priceFen: 1990  },
 };
 
 Page({
   data: {
     merchantName: '家庭点菜',
-    planKey: 'yearly',
-    planName: '家庭云同步年卡',
-    planId: 'annual',
-    payAmount: '68.00',
+    coverImage: 'kungpao-chicken.jpg',
+    productName: '家庭云同步年卡',
+    payAmount: '99.00',
+    originAmount: '138.00',
+    payMethod: { name: '微信支付', balance: '0.00' },
+    bankText: '未绑定银行卡',
+    couponText: '暂无可用优惠',
     paying: false,
     orderId: null,
     toast: { visible: false, type: 'center', text: '' }
@@ -28,6 +31,7 @@ Page({
       planId: plan.planId,
       planName: plan.planName,
       payAmount: plan.priceFull,
+      originAmount: (plan.original || plan.priceFull),
     };
     // 允许 upgrade 页传入 planName/amount 覆盖
     if (query && query.planName) patch.planName = decodeURIComponent(query.planName);
@@ -36,6 +40,19 @@ Page({
       if (!isNaN(amt) && amt > 0) patch.payAmount = Number(amt).toFixed(2);
     }
     this.setData(patch);
+  },
+
+  onProductTap() {
+    this.showToast('当前套餐：' + this.data.productName);
+  },
+  onPayMethodTap() {
+    this.showToast('当前为微信支付演示通道');
+  },
+  onBankTap() {
+    this.showToast('未绑定银行卡');
+  },
+  onCouponTap() {
+    this.showToast('暂无可用优惠');
   },
 
   async onPay() {

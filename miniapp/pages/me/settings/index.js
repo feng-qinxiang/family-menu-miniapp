@@ -133,12 +133,16 @@ Page({
     }
   },
 
-  // 清除缓存
+  // 清除缓存：只清业务缓存，保留游客身份锚点（device_id）与登录态，避免"数据全丢"
   _clearCache() {
     try {
+      const deviceId = wx.getStorageSync('device_id');
+      const token = wx.getStorageSync('auth_token');
       if (typeof wx.clearStorageSync === 'function') {
         wx.clearStorageSync();
       }
+      if (deviceId) wx.setStorageSync('device_id', deviceId);
+      if (token) wx.setStorageSync('auth_token', token);
     } catch (e) {
       // 忽略清理失败
     }
@@ -176,13 +180,15 @@ Page({
   onLogoutCancel() {
     this.setData({ logoutVisible: false });
   },
-  // 确认退出：清 storage → 跳登录页
+  // 确认退出：清登录态但保留游客身份锚点 device_id，避免下次进入变成全新游客账号
   onLogoutConfirm() {
     this.setData({ logoutVisible: false });
     try {
+      const deviceId = wx.getStorageSync('device_id');
       if (typeof wx.clearStorageSync === 'function') {
         wx.clearStorageSync();
       }
+      if (deviceId) wx.setStorageSync('device_id', deviceId);
     } catch (e) {
       // 忽略清理失败
     }

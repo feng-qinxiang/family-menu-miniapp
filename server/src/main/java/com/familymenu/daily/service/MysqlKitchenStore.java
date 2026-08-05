@@ -85,7 +85,7 @@ public class MysqlKitchenStore {
     }
 
     public HomeDashboard dashboard(long userId, long familyId) {
-        List<RecipeCard> all = listRecipes("all");
+        List<RecipeCard> all = listRecipes("all", userId, familyId);
         List<RecipeCard> owned = new ArrayList<>();
         List<RecipeCard> community = new ArrayList<>();
         List<RecipeCard> imported = new ArrayList<>();
@@ -152,12 +152,15 @@ public class MysqlKitchenStore {
         return result;
     }
 
-    public List<RecipeCard> listRecipes(String source) {
+    // 菜谱可见范围统一约定（多处 SQL 保持同步）：
+    // 社区菜谱 + 本家庭菜谱 + 种子演示数据（family_id=1，data.sql 内置，供所有新家庭演示引用）+ 本人创建
+    public List<RecipeCard> listRecipes(String source, long userId, long familyId) {
         String normalized = Optional.ofNullable(source).orElse("owned").trim().toLowerCase(Locale.ROOT);
         String sql = """
                 SELECT id, title, source_type, source_url, cuisine, taste_tags_json, time_cost, servings, rating, summary, cover_image
                 FROM recipe
                 WHERE status = 'ACTIVE' AND (? = 'all' OR source_type = ?)
+                          AND (source_type = 'community' OR family_id = ? OR family_id = 1 OR family_id IS NULL OR owner_user_id = ?)
                 ORDER BY rating DESC, id DESC
                 """;
         return jdbcTemplate.query(sql, (rs, rowNum) -> new RecipeCard(
@@ -172,7 +175,7 @@ public class MysqlKitchenStore {
                 rs.getString("source_url"),
                 rs.getString("summary"),
                 rs.getString("cover_image")
-        ), normalized, normalized);
+        ), normalized, normalized, familyId, userId);
     }
 
     @Transactional
@@ -431,48 +434,54 @@ public class MysqlKitchenStore {
 
     @Transactional
     public void reportCommunityPost(long postId, long userId, CommunityReportRequest request) {
-        ensureCommunityPostExists(postId);
-        String reason = request == null || request.reason() == null ? "" : request.reason().trim();
-        if (reason.isBlank()) {
-            reason = "内容不实";
-        }
-        jdbcTemplate.update("""
-                        INSERT INTO community_post_report(post_id, user_id, reason, status)
-                        VALUES (?, ?, ?, 'PENDING')
-                        """,
-                postId,
-                userId,
-                reason
-        );
-    }
+          ensureCommunityPostExists(postId);
+          String reason = request == null || request.reason() == null ? "" : request.reason().trim();
+          if (reason.isBlank()) {
+              reason = "内容不实";
+          }
+          String description = request == null || request.description() == null ? null : request.description().trim();
+          if (description != null && description.isBlank()) {
+              description = null;
+          }
+          jdbcTemplate.update("""
+                          INSERT INTO community_post_report(post_id, user_id, reason, description, status)
+                          VALUES (?, ?, ?, ?, 'PENDING')
+                          """,
+                  postId,
+                  userId,
+                  reason,
+                  description
+          );
+      }
 
     public List<CommunityReportItem> communityReports(String status) {
         String normalized = normalizeReportStatus(status);
         return jdbcTemplate.query("""
                         SELECT rpt.id, rpt.post_id, p.title AS post_title, reporter.nickname AS reporter,
-                               rpt.reason, rpt.status, reviewer.nickname AS reviewer, rpt.review_note,
-                               DATE_FORMAT(rpt.created_at, '%Y-%m-%d %H:%i') AS created_at,
-                               DATE_FORMAT(rpt.resolved_at, '%Y-%m-%d %H:%i') AS resolved_at
-                        FROM community_post_report rpt
-                        JOIN community_post p ON p.id = rpt.post_id
-                        JOIN user_account reporter ON reporter.id = rpt.user_id
-                        LEFT JOIN user_account reviewer ON reviewer.id = rpt.reviewer_user_id
-                        WHERE (? = 'ALL' OR rpt.status = ?)
-                        ORDER BY rpt.id DESC
-                        LIMIT 50
-                        """,
-                (rs, rowNum) -> new CommunityReportItem(
-                        rs.getLong("id"),
-                        rs.getLong("post_id"),
-                        rs.getString("post_title"),
-                        rs.getString("reporter"),
-                        rs.getString("reason"),
-                        rs.getString("status"),
-                        rs.getString("reviewer"),
-                        rs.getString("review_note"),
-                        rs.getString("created_at"),
-                        rs.getString("resolved_at")
-                ),
+                                 rpt.reason, rpt.description, rpt.status, reviewer.nickname AS reviewer, rpt.review_note,
+                                 DATE_FORMAT(rpt.created_at, '%Y-%m-%d %H:%i') AS created_at,
+                                 DATE_FORMAT(rpt.resolved_at, '%Y-%m-%d %H:%i') AS resolved_at
+                          FROM community_post_report rpt
+                          JOIN community_post p ON p.id = rpt.post_id
+                          JOIN user_account reporter ON reporter.id = rpt.user_id
+                          LEFT JOIN user_account reviewer ON reviewer.id = rpt.reviewer_user_id
+                          WHERE (? = 'ALL' OR rpt.status = ?)
+                          ORDER BY rpt.id DESC
+                          LIMIT 50
+                          """,
+                  (rs, rowNum) -> new CommunityReportItem(
+                          rs.getLong("id"),
+                          rs.getLong("post_id"),
+                          rs.getString("post_title"),
+                          rs.getString("reporter"),
+                          rs.getString("reason"),
+                          rs.getString("description"),
+                          rs.getString("status"),
+                          rs.getString("reviewer"),
+                          rs.getString("review_note"),
+                          rs.getString("created_at"),
+                          rs.getString("resolved_at")
+                  ),
                 normalized,
                 normalized
         );
@@ -501,9 +510,10 @@ public class MysqlKitchenStore {
                 note,
                 reportId
         );
-        if ("REJECTED".equals(status) || "REMOVED".equals(status)) {
+        // 前端审核语义：REVIEWED = 确认违规 → 帖子下架；REJECTED = 举报不成立 → 帖子保留
+        if ("REVIEWED".equals(status) || "REMOVED".equals(status)) {
             jdbcTemplate.update("UPDATE community_post SET audit_status = 'REMOVED' WHERE id = ?", postId);
-        } else if ("APPROVED".equals(status) || "REVIEWED".equals(status)) {
+        } else {
             jdbcTemplate.update("UPDATE community_post SET audit_status = 'APPROVED' WHERE id = ?", postId);
         }
         return findCommunityReport(reportId);
@@ -515,42 +525,44 @@ public class MysqlKitchenStore {
 
     @Transactional
     public VipStatus activateVip(long userId, String planName) {
-        // 过渡期入口：将传入值按套餐 code 解析（未知 code 回退年卡），按后端权威时长叠加开通。
-        // 金额与时长一律以 PlanCatalog 为准（见 ADR-0006）；正式支付流由 payment 包接管。
-        String code = planName == null || planName.isBlank() ? "annual" : planName.trim();
-        com.familymenu.daily.payment.PlanCatalog.Plan plan;
-        try {
-            plan = com.familymenu.daily.payment.PlanCatalog.require(code);
-        } catch (RuntimeException ex) {
-            plan = com.familymenu.daily.payment.PlanCatalog.require("annual");
-        }
+        // 过渡期入口：接受 planCode 或中文展示名，按后端权威套餐时长叠加开通（未知值抛 400，不再静默回退年卡）。
+        String value = planName == null ? "" : planName.trim();
+        com.familymenu.daily.payment.PlanCatalog.Plan plan =
+                com.familymenu.daily.payment.PlanCatalog.requireCodeOrDisplayName(value);
         membershipService.grant(userId, plan.code(), plan.durationDays());
         return vipStatus(userId);
     }
 
-    public RecipeDetail getRecipeDetail(long recipeId) {
-        return jdbcTemplate.queryForObject("""
+    public RecipeDetail getRecipeDetail(long recipeId, long userId, long familyId) {
+        return jdbcTemplate.query("""
                         SELECT id, title, source_type, source_url, cuisine, taste_tags_json,
                                time_cost, servings, rating, summary,
                                DATE_FORMAT(created_at, '%Y-%m-%d %H:%i') AS created_at
                         FROM recipe WHERE id = ? AND status = 'ACTIVE'
+                  AND (source_type = 'community' OR family_id = ? OR family_id = 1 OR family_id IS NULL OR owner_user_id = ?)
                         """,
-                (rs, rowNum) -> new RecipeDetail(
-                        rs.getLong("id"),
-                        rs.getString("title"),
-                        rs.getString("source_type"),
-                        rs.getString("source_url"),
-                        rs.getString("cuisine"),
-                        readStringList(rs.getString("taste_tags_json")),
-                        rs.getInt("time_cost"),
-                        rs.getInt("servings"),
-                        rs.getDouble("rating"),
-                        rs.getString("summary"),
-                        loadSteps(recipeId),
-                        loadIngredients(recipeId),
-                        rs.getString("created_at")
-                ),
-                recipeId
+                rs -> {
+                    if (!rs.next()) {
+                        throw new org.springframework.web.server.ResponseStatusException(
+                                org.springframework.http.HttpStatus.NOT_FOUND, "recipe not found");
+                    }
+                    return new RecipeDetail(
+                            rs.getLong("id"),
+                            rs.getString("title"),
+                            rs.getString("source_type"),
+                            rs.getString("source_url"),
+                            rs.getString("cuisine"),
+                            readStringList(rs.getString("taste_tags_json")),
+                            rs.getInt("time_cost"),
+                            rs.getInt("servings"),
+                            rs.getDouble("rating"),
+                            rs.getString("summary"),
+                            loadSteps(recipeId),
+                            loadIngredients(recipeId),
+                            rs.getString("created_at")
+                    );
+                },
+                recipeId, familyId, userId
         );
     }
 
@@ -614,16 +626,17 @@ public class MysqlKitchenStore {
             jdbcTemplate.update("DELETE FROM recipe_ingredient WHERE recipe_id = ?", recipeId);
             saveIngredients(recipeId, request.ingredients());
         }
-        return getRecipeDetail(recipeId);
+        return getRecipeDetail(recipeId, actorUserId, actorFamilyId);
     }
 
-    public List<RecipeCard> filterRecipes(String source, String cuisine, Integer maxTime, Integer minServings, String tag) {
+    public List<RecipeCard> filterRecipes(String source, String cuisine, Integer maxTime, Integer minServings, String tag,
+                                          long userId, long familyId) {
         StringBuilder sql = new StringBuilder("""
                 SELECT id, title, source_type, source_url, cuisine, taste_tags_json, time_cost, servings, rating, summary, cover_image
                 FROM recipe
-                WHERE status = 'ACTIVE'
+                WHERE status = 'ACTIVE' AND (source_type = 'community' OR family_id = ? OR family_id = 1 OR family_id IS NULL OR owner_user_id = ?)
                 """);
-        List<Object> params = new ArrayList<>();
+        List<Object> params = new ArrayList<>(List.of(familyId, userId));
         String normalizedSource = normalizeSourceType(source);
         if (!"all".equals(normalizedSource)) {
             sql.append(" AND source_type = ?");
@@ -667,7 +680,7 @@ public class MysqlKitchenStore {
             throw new IllegalArgumentException("recipeId required");
         }
         Boolean accessible = jdbcTemplate.query(
-                "SELECT 1 FROM recipe WHERE id = ? AND status = 'ACTIVE' AND (owner_user_id = ? OR family_id = ? OR source_type = 'community')",
+                "SELECT 1 FROM recipe WHERE id = ? AND status = 'ACTIVE' AND (owner_user_id = ? OR family_id = ? OR family_id = 1 OR source_type = 'community')",
                 rs -> rs.next() ? Boolean.TRUE : null,
                 request.recipeId(), userId, familyId
         );
@@ -906,27 +919,28 @@ public class MysqlKitchenStore {
     private CommunityReportItem findCommunityReport(long reportId) {
         return jdbcTemplate.queryForObject("""
                         SELECT rpt.id, rpt.post_id, p.title AS post_title, reporter.nickname AS reporter,
-                               rpt.reason, rpt.status, reviewer.nickname AS reviewer, rpt.review_note,
-                               DATE_FORMAT(rpt.created_at, '%Y-%m-%d %H:%i') AS created_at,
-                               DATE_FORMAT(rpt.resolved_at, '%Y-%m-%d %H:%i') AS resolved_at
-                        FROM community_post_report rpt
-                        JOIN community_post p ON p.id = rpt.post_id
-                        JOIN user_account reporter ON reporter.id = rpt.user_id
-                        LEFT JOIN user_account reviewer ON reviewer.id = rpt.reviewer_user_id
-                        WHERE rpt.id = ?
-                        """,
-                (rs, rowNum) -> new CommunityReportItem(
-                        rs.getLong("id"),
-                        rs.getLong("post_id"),
-                        rs.getString("post_title"),
-                        rs.getString("reporter"),
-                        rs.getString("reason"),
-                        rs.getString("status"),
-                        rs.getString("reviewer"),
-                        rs.getString("review_note"),
-                        rs.getString("created_at"),
-                        rs.getString("resolved_at")
-                ),
+                                 rpt.reason, rpt.description, rpt.status, reviewer.nickname AS reviewer, rpt.review_note,
+                                 DATE_FORMAT(rpt.created_at, '%Y-%m-%d %H:%i') AS created_at,
+                                 DATE_FORMAT(rpt.resolved_at, '%Y-%m-%d %H:%i') AS resolved_at
+                          FROM community_post_report rpt
+                          JOIN community_post p ON p.id = rpt.post_id
+                          JOIN user_account reporter ON reporter.id = rpt.user_id
+                          LEFT JOIN user_account reviewer ON reviewer.id = rpt.reviewer_user_id
+                          WHERE rpt.id = ?
+                          """,
+                  (rs, rowNum) -> new CommunityReportItem(
+                          rs.getLong("id"),
+                          rs.getLong("post_id"),
+                          rs.getString("post_title"),
+                          rs.getString("reporter"),
+                          rs.getString("reason"),
+                          rs.getString("description"),
+                          rs.getString("status"),
+                          rs.getString("reviewer"),
+                          rs.getString("review_note"),
+                          rs.getString("created_at"),
+                          rs.getString("resolved_at")
+                  ),
                 reportId
         );
     }

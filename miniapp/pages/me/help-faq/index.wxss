@@ -23,7 +23,7 @@
   align-items: center;
   gap: 22rpx;
   padding: 28rpx 34rpx;
-  background: #fff;
+  background: var(--c-surface);
   border: var(--bd-card);
   border-radius: var(--r-md);
   box-shadow: var(--sh-card);
@@ -82,7 +82,7 @@
   gap: 22rpx;
 }
 .item {
-  background: #fff;
+  background: var(--c-surface);
   border: var(--bd-card);
   border-radius: var(--r-md);
   overflow: hidden;
@@ -135,8 +135,8 @@
   background: var(--pop);
 }
 .item.open .caret-arrow {
-  border-right-color: #fff;
-  border-bottom-color: #fff;
+  border-right-color: var(--c-surface);
+  border-bottom-color: var(--c-surface);
 }
 
 /* 展开区 max-height 过渡 */
@@ -152,7 +152,7 @@
 }
 .a-lead {
   display: block;
-  font-size: 27rpx;
+  font-size: var(--fs-cap);
   line-height: 1.7;
   color: var(--mut-strong);
 }
@@ -172,7 +172,7 @@
 }
 .step-txt {
   flex: 1;
-  font-size: 27rpx;
+  font-size: var(--fs-cap);
   line-height: 1.6;
   color: var(--mut-strong);
 }
@@ -187,6 +187,7 @@
 }
 .nr-emoji {
   font-size: 72rpx;
+  color: var(--mut);
 }
 .nr-txt {
   margin-top: 20rpx;
@@ -196,7 +197,7 @@
 }
 .nr-sub {
   margin-top: 10rpx;
-  font-size: 25rpx;
+  font-size: var(--fs-sub);
   color: var(--mut);
 }
 
@@ -211,7 +212,7 @@
 .eyebrow2 {
   font-family: var(--serif);
   font-style: italic;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   letter-spacing: 1rpx;
   color: var(--gold);
   font-weight: 700;
@@ -238,7 +239,7 @@
 .cs-icon {
   width: 32rpx;
   height: 30rpx;
-  border: 4rpx solid #fff;
+  border: 4rpx solid var(--c-surface);
   border-radius: 12rpx 12rpx 12rpx 4rpx;
   box-sizing: border-box;
 }

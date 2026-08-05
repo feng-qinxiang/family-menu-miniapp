@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,6 +22,8 @@ import java.util.UUID;
 public class FamilyService {
 
     private static final TypeReference<List<String>> STRING_LIST = new TypeReference<>() {};
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+    private static final String INVITE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // 去除易混淆字符
 
     private final JdbcTemplate jdbcTemplate;
     private final ObjectMapper objectMapper;
@@ -168,11 +171,19 @@ public class FamilyService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "cannot remove yourself");
         }
         requireFamilyOwner(familyId, requesterUserId);
-        jdbcTemplate.update("""
+        int affected = jdbcTemplate.update("""
                 UPDATE family_member
                 SET member_status = 'REMOVED'
-                WHERE family_id = ? AND user_id = ? AND member_role <> 'owner'
+                WHERE family_id = ? AND user_id = ? AND member_role <> 'owner' AND member_status = 'ACTIVE'
                 """, familyId, targetUserId);
+        if (affected > 0) {
+            // 被移除者若恰好停留在该家庭，立即清除其归属，防止旧 token 继续读写家庭数据
+            jdbcTemplate.update("""
+                    UPDATE user_account
+                    SET current_family_id = NULL
+                    WHERE id = ? AND current_family_id = ?
+                    """, targetUserId, familyId);
+        }
     }
 
     public String inviteCode(long familyId) {
@@ -220,15 +231,36 @@ public class FamilyService {
         if (inviteCode == null || inviteCode.isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invite code required");
         }
-        try {
-            return Long.parseLong(inviteCode.trim().toUpperCase(), 36);
-        } catch (NumberFormatException ex) {
+        String code = inviteCode.trim().toUpperCase();
+        Long familyId = jdbcTemplate.query(
+                "SELECT id FROM family WHERE invite_token = ? LIMIT 1",
+                rs -> rs.next() ? rs.getLong("id") : null, code);
+        if (familyId == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid invite code");
         }
+        return familyId;
     }
 
     private String toInviteCode(long familyId) {
-        return Long.toString(familyId, 36).toUpperCase();
+        // 先查已有 token
+        String existing = jdbcTemplate.query(
+                "SELECT invite_token FROM family WHERE id = ?",
+                rs -> rs.next() ? rs.getString("invite_token") : null, familyId);
+        if (existing != null && !existing.isBlank()) {
+            return existing;
+        }
+        // 生成 8 位随机码并持久化
+        String token = generateInviteToken();
+        jdbcTemplate.update("UPDATE family SET invite_token = ? WHERE id = ?", token, familyId);
+        return token;
+    }
+
+    private String generateInviteToken() {
+        StringBuilder sb = new StringBuilder(8);
+        for (int i = 0; i < 8; i++) {
+            sb.append(INVITE_CHARS.charAt(SECURE_RANDOM.nextInt(INVITE_CHARS.length())));
+        }
+        return sb.toString();
     }
 
     private List<FamilyMemberItem> loadMembers(long familyId) {

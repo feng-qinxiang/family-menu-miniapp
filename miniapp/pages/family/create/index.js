@@ -1,5 +1,6 @@
 // pages/family/create · 创建家庭
 const { createFamily } = require('../../../utils/api');
+const { uploadFile } = require('../../../utils/upload');
 
 Page({
   data: {
@@ -61,7 +62,7 @@ Page({
     });
   },
 
-  onCreate() {
+  async onCreate() {
     const name = (this.data.familyName || '').trim();
     if (!name) {
       wx.showToast({ title: '请先填写家庭名称', icon: 'none' });
@@ -70,9 +71,14 @@ Page({
     if (this.data.submitting) return;
     this.setData({ submitting: true });
     wx.showLoading({ title: '创建中...', mask: true });
+    // 本地临时路径会过期，先上传拿真实 URL 再提交
+    let avatarUrl = '';
+    if (this.data.avatar) {
+      avatarUrl = await uploadFile(this.data.avatar).catch(() => '');
+    }
     createFamily({
       name,
-      avatarUrl: this.data.avatar || '',
+      avatarUrl: avatarUrl || '',
       region: this.data.regionText || ''
     })
       .then(() => {

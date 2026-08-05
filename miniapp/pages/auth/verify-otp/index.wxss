@@ -64,8 +64,8 @@
   flex: 1;
   height: 124rpx;
   border-radius: var(--r-sm);
-  background: #fff;
-  border: 3rpx solid #ece4d6;
+  background: var(--c-surface);
+  border: 3rpx solid var(--paper-2);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -105,7 +105,7 @@
   align-items: center;
   gap: 14rpx;
   margin-top: 54rpx;
-  font-size: 27rpx;
+  font-size: var(--fs-cap);
   font-weight: 700;
   color: var(--mut-strong);
 }
@@ -135,8 +135,8 @@
 .submit-arrow {
   width: 18rpx;
   height: 18rpx;
-  border-top: 5rpx solid #fff;
-  border-right: 5rpx solid #fff;
+  border-top: 5rpx solid var(--c-surface);
+  border-right: 5rpx solid var(--c-surface);
   transform: rotate(45deg);
 }
 

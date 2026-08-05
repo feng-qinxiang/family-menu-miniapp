@@ -50,6 +50,10 @@ Page({
     this.loadPantry();
   },
 
+  onPullDownRefresh() {
+    Promise.resolve(this.loadPantry()).catch(() => {}).then(() => setTimeout(() => wx.stopPullDownRefresh(), 300));
+  },
+
   async loadPantry() {
     let pantryItems = [];
     let weeklyMenu = null;

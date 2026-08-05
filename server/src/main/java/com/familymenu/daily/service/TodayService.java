@@ -52,6 +52,17 @@ public class TodayService {
         if (request == null || request.recipeId() == null) {
             return loadMenuView(menuId, familyId);
         }
+        // 只允许加入本家庭可见的菜谱（community / 本家庭 / 种子演示数据），防跨家庭串菜
+        Boolean visible = jdbcTemplate.query(
+                "SELECT 1 FROM recipe WHERE id = ? AND status = 'ACTIVE' " +
+                        "AND (source_type = 'community' OR family_id = ? OR family_id = 1 OR family_id IS NULL)",
+                rs -> rs.next() ? Boolean.TRUE : null,
+                request.recipeId(), familyId
+        );
+        if (!Boolean.TRUE.equals(visible)) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.NOT_FOUND, "recipe not found");
+        }
         String mealType = normalizeMealType(request.mealType());
         jdbcTemplate.update("DELETE FROM daily_menu_item WHERE daily_menu_id = ? AND recipe_id = ?", menuId, request.recipeId());
         jdbcTemplate.update(

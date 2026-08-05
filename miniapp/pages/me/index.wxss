@@ -47,7 +47,7 @@
   z-index: 3;
 }
 .mag-hi-en {
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   letter-spacing: 4rpx;
   text-transform: uppercase;
   font-weight: 700;
@@ -55,7 +55,7 @@
 }
 .mag-hi-cn {
   margin-top: 8rpx;
-  font-size: 27rpx;
+  font-size: var(--fs-cap);
   font-weight: 600;
   color: rgba(255, 255, 255, 0.92);
 }
@@ -70,20 +70,20 @@
   display: inline-block;
   font-family: var(--serif);
   font-style: italic;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   letter-spacing: 2rpx;
   font-weight: 700;
-  color: #fff;
+  color: var(--c-surface);
   background: var(--pop);
   padding: 10rpx 26rpx;
-  border-radius: 8rpx;
+  border-radius: var(--r-xs);
 }
 .mag-hero-title {
   margin: 26rpx 0 16rpx;
   font-size: 116rpx;
   line-height: 0.92;
   letter-spacing: -5rpx;
-  -webkit-text-stroke: 3rpx #fff;
+  -webkit-text-stroke: 3rpx var(--c-surface);
 }
 .mag-hero-sub {
   font-size: 26rpx;
@@ -104,22 +104,22 @@
   justify-content: center;
   font-size: 31rpx;
   font-weight: 800;
-  color: #fff;
+  color: var(--c-surface);
   border: 4rpx solid rgba(255, 255, 255, 0.85);
   box-shadow: 0 8rpx 22rpx rgba(0, 0, 0, 0.35);
 }
 .mag-ava:first-child { margin-left: 0; }
-.mavt-a { background: linear-gradient(135deg, #d4a857, #b8863a); color: var(--ink-deep); }
-.mavt-b { background: #c9763e; }
+.mavt-a { background: linear-gradient(135deg, var(--cat-gold), var(--gold-deep)); color: var(--ink-deep); }
+.mavt-b { background: var(--cat-brown); }
 .mavt-c { background: var(--pine); }
-.mavt-d { background: #8a6cae; }
-.mavt-e { background: #3f7fa6; }
+.mavt-d { background: var(--cat-purple); }
+.mavt-e { background: var(--c-info); }
 .mag-fam-lbl {
   margin-left: 26rpx;
   font-size: 24rpx;
   color: rgba(255, 255, 255, 0.85);
 }
-.mag-fam-lbl .b { color: #fff; font-weight: 800; font-size: 29rpx; }
+.mag-fam-lbl .b { color: var(--c-surface); font-weight: 800; font-size: 29rpx; }
 .mag-manage {
   margin-left: auto;
   font-size: 24rpx;
@@ -147,7 +147,7 @@
   gap: 24rpx;
   padding: 28rpx 30rpx;
   border-radius: var(--r-card);
-  background: linear-gradient(120deg, #3a2e23 0%, #5a4326 55%, #b08949 130%);
+  background: linear-gradient(120deg, var(--ink-deep) 0%, var(--cat-brown-deep) 55%, var(--gold-deep) 130%);
   box-shadow: var(--sh-soft), 0 34rpx 76rpx rgba(120, 70, 30, 0.22);
 }
 .mag-vip-ic {
@@ -157,19 +157,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 24rpx;
+  border-radius: var(--r-md);
   font-size: 38rpx;
   background: linear-gradient(135deg, var(--gold), var(--gold-deep));
   color: var(--ink-deep);
   box-shadow: 0 8rpx 22rpx rgba(0, 0, 0, 0.25);
 }
 .mag-vip-mid { flex: 1; min-width: 0; }
-.mag-vip-t { font-size: 28rpx; font-weight: 800; color: #fff; }
+.mag-vip-t { font-size: 28rpx; font-weight: 800; color: var(--c-surface); }
 .mag-vip-t .hl { color: var(--gold); }
-.mag-vip-s { margin-top: 6rpx; font-size: 21rpx; color: rgba(255, 255, 255, 0.7); }
+.mag-vip-s { margin-top: 6rpx; font-size: var(--fs-mini); color: rgba(255, 255, 255, 0.7); }
 .mag-vip-go {
   flex: none;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   font-weight: 800;
   color: var(--ink-deep);
   background: var(--gold);
@@ -185,7 +185,7 @@
 }
 .mag-stat {
   flex: 1;
-  background: #fff;
+  background: var(--c-surface);
   border-radius: var(--r-md);
   padding: 30rpx 26rpx;
   border: var(--bd-card);
@@ -201,7 +201,7 @@
 .mag-snum.pop { color: var(--pop); }
 .mag-scap {
   margin-top: 14rpx;
-  font-size: 21rpx;
+  font-size: var(--fs-mini);
   font-weight: 600;
   color: var(--mut);
   white-space: nowrap;
@@ -210,7 +210,7 @@
   margin-top: 4rpx;
   font-family: var(--serif);
   font-style: italic;
-  font-size: 19rpx;
+  font-size: var(--fs-tiny);
   letter-spacing: 1rpx;
   color: var(--gold-deep);
 }
@@ -222,20 +222,20 @@
   align-items: center;
   gap: 26rpx;
   padding: 25rpx 0;
-  border-bottom: 2rpx solid #efe9df;
+  border-bottom: 2rpx solid var(--paper-2);
 }
 .mag-thumb {
   width: 120rpx;
   height: 120rpx;
-  border-radius: 30rpx;
+  border-radius: var(--r-chip);
   flex: none;
   background: var(--paper-2);
 }
 .mag-hmid { flex: 1; min-width: 0; }
 .mag-hname { font-size: 31rpx; font-weight: 800; color: var(--ink); letter-spacing: -0.5rpx; }
-.mag-hsub { margin-top: 9rpx; font-size: 23rpx; color: var(--mut); }
+.mag-hsub { margin-top: 9rpx; font-size: var(--fs-cap); color: var(--mut); }
 .mag-stars { display: flex; gap: 4rpx; flex: none; }
-.mag-star { font-size: 27rpx; color: #d8cdbb; }
+.mag-star { font-size: var(--fs-cap); color: var(--line-deep); }
 .mag-star.on { color: var(--pop); }
 .mag-hmore {
   display: flex;
@@ -243,7 +243,7 @@
   justify-content: center;
   gap: 8rpx;
   padding: 27rpx 0;
-  font-size: 25rpx;
+  font-size: var(--fs-sub);
   font-weight: 800;
   color: var(--gold-deep);
 }
@@ -255,7 +255,7 @@
   align-items: center;
   gap: 28rpx;
   padding: 28rpx 0;
-  border-bottom: 2rpx solid #efe9df;
+  border-bottom: 2rpx solid var(--paper-2);
 }
 .mag-trow:last-child { border-bottom: none; }
 .mag-ticon {
@@ -270,10 +270,10 @@
   font-weight: 800;
 }
 .ti-1 { background: var(--pop-soft); color: var(--pop); }
-.ti-2 { background: #eaf1ec; color: var(--pine); }
-.ti-3 { background: #f6ecd9; color: var(--gold-deep); }
-.ti-4 { background: #ece8f3; color: #7a5fa0; }
-.ti-5 { background: #e7eef3; color: #3f7fa6; }
+.ti-2 { background: var(--c-accent-soft); color: var(--pine); }
+.ti-3 { background: var(--c-gold-soft); color: var(--gold-deep); }
+.ti-4 { background: var(--c-accent-soft); color: var(--cat-plum-deep); }
+.ti-5 { background: var(--c-success-soft); color: var(--c-info); }
 .mag-tmid { flex: 1; min-width: 0; }
 .mag-tname { font-size: 30rpx; font-weight: 700; color: var(--ink); }
 .mag-tvip {
@@ -283,7 +283,7 @@
   color: var(--ink-deep);
   background: var(--gold);
   padding: 4rpx 14rpx;
-  border-radius: 8rpx;
+  border-radius: var(--r-xs);
   margin-left: 10rpx;
 }
 .mag-tdesc { margin-top: 6rpx; font-size: 22rpx; color: var(--mut-strong); }
@@ -299,9 +299,9 @@
   justify-content: space-between;
   margin-bottom: 16rpx;
 }
-.mag-pl { font-size: 27rpx; font-weight: 700; color: var(--ink); }
+.mag-pl { font-size: var(--fs-cap); font-weight: 700; color: var(--ink); }
 .mag-pl .pop { color: var(--pop); }
-.mag-pr { font-size: 23rpx; font-weight: 700; color: var(--mut); }
+.mag-pr { font-size: var(--fs-cap); font-weight: 700; color: var(--mut); }
 .mag-pbar {
   height: 18rpx;
   border-radius: 12rpx;
@@ -311,15 +311,15 @@
 .mag-pbar-i {
   height: 100%;
   border-radius: 12rpx;
-  background: linear-gradient(90deg, #f4a23a, var(--pop));
+  background: linear-gradient(90deg, var(--orange), var(--pop));
 }
 .mag-pbar.alt .mag-pbar-i {
-  background: linear-gradient(90deg, #5b8a6e, var(--pine));
+  background: linear-gradient(90deg, var(--cat-green), var(--pine));
 }
 
 /* ---------- 偏好画像 & 家庭成员 图标色 ---------- */
-.ti-pref { background: #fce9e9; color: #c94040; }
-.ti-fam  { background: #e9f3fc; color: #2e6da4; }
+.ti-pref { background: var(--pop-soft); color: var(--pop-deep); }
+.ti-fam  { background: var(--c-info-soft); color: var(--c-info); }
 
 /* ---------- 设置分组 ---------- */
 .mag-settings { padding: 0 34rpx; }
@@ -341,3 +341,30 @@
   color: var(--mut-2);
   padding: 40rpx 0 60rpx;
 }
+/* 游客绑定手机引导条 */
+.mag-phone {
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+  margin: 24rpx 28rpx 0;
+  padding: 22rpx 28rpx;
+  border-radius: var(--r-card);
+  background: linear-gradient(135deg, #fff7ec, #ffe9d9);
+  border: 1rpx solid #f5dcbf;
+}
+.mag-phone-ic {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  background: #e8472a;
+  color: #fff;
+  font-size: 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.mag-phone-mid { flex: 1; min-width: 0; }
+.mag-phone-t { font-size: 28rpx; font-weight: 600; color: #4a4234; }
+.mag-phone-s { margin-top: 6rpx; font-size: 23rpx; color: #a2988a; }
+.mag-phone-go { font-size: 26rpx; color: #e8472a; font-weight: 600; flex-shrink: 0; }

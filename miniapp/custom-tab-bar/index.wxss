@@ -25,7 +25,7 @@
   align-items: center;
   justify-content: center;
   gap: 6rpx;
-  color: #857a68;
+  color: var(--mut-strong);
   transition: transform 0.18s ease;
 }
 
@@ -38,9 +38,49 @@
   top: 0;
   width: 36rpx;
   height: 5rpx;
-  border-radius: 0 0 999rpx 999rpx;
+  border-radius: 0 0 var(--r-pill) var(--r-pill);
   background: var(--pop);
   content: "";
+  animation: tab-indicator-in 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes tab-indicator-in {
+  from { transform: scaleX(0.3); opacity: 0; }
+  to { transform: scaleX(1); opacity: 1; }
+}
+
+.tab-icon-wrap {
+  position: relative;
+}
+
+.tab-item.active .tab-icon {
+  animation: tab-icon-pop 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes tab-icon-pop {
+  0% { transform: scale(0.82); }
+  60% { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+
+.tab-badge {
+  position: absolute;
+  top: -8rpx;
+  left: 50%;
+  min-width: 30rpx;
+  height: 30rpx;
+  padding: 0 8rpx;
+  box-sizing: border-box;
+  border: 2rpx solid var(--paper);
+  border-radius: var(--r-pill);
+  background: var(--pop);
+  box-shadow: 0 2rpx 8rpx rgba(224, 49, 34, 0.35);
+  color: var(--c-surface);
+  font-size: 18rpx;
+  font-weight: 700;
+  line-height: 26rpx;
+  text-align: center;
+  transform: translateX(6rpx);
 }
 
 .tab-icon {
@@ -51,7 +91,7 @@
 .tab-text {
   max-width: 100%;
   overflow: hidden;
-  font-size: 20rpx;
+  font-size: var(--fs-mini);
   font-weight: 600;
   line-height: 1.2;
   text-overflow: ellipsis;

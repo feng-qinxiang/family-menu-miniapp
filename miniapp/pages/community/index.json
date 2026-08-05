@@ -1,6 +1,7 @@
 {
   "navigationStyle": "custom",
   "navigationBarTitleText": "邻里厨房",
+  "enablePullDownRefresh": true,
   "usingComponents": {
     "nav-bar": "/components/nav-bar/index",
     "ad-banner": "/components/ad-banner/index"

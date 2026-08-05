@@ -8,6 +8,7 @@
   >
     <view class="tab-icon-wrap">
       <image class="tab-icon" src="{{selected === index ? item.activeIcon : item.icon}}" mode="aspectFit" />
+      <view wx:if="{{item.pagePath === '/pages/menu/index' && badge > 0}}" class="tab-badge">{{badge > 99 ? '99+' : badge}}</view>
     </view>
     <view class="tab-text">{{item.text}}</view>
   </view>

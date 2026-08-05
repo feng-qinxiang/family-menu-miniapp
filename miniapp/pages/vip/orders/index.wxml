@@ -9,8 +9,25 @@
     <view class="lead">家庭云同步年卡的开通与续费记录都在这儿。</view>
   </view>
 
+  <!-- 加载骨架 -->
+  <view wx:if="{{loading}}" class="list">
+    <view class="ocard card" wx:for="{{[1,2,3]}}" wx:key="*this">
+      <view class="ocard-top">
+        <view class="ocard-ic">
+          <view class="order-skel-ic shimmer"></view>
+        </view>
+        <view class="ocard-mid">
+          <view class="order-skel-line shimmer"></view>
+          <view class="order-skel-line short shimmer"></view>
+        </view>
+        <view class="order-skel-amt shimmer"></view>
+      </view>
+      <view class="order-skel-dates shimmer"></view>
+    </view>
+  </view>
+
   <!-- 统计条暗卡 -->
-  <view wx:if="{{orders.length}}" class="card-dark strip g-fade-up g-d1">
+  <view wx:elif="{{orders.length}}" class="card-dark strip g-fade-up g-d1">
     <view class="deco-circle"></view>
     <view class="strip-l">
       <view class="strip-e">Total Spent</view>

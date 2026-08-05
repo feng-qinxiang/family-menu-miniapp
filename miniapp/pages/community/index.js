@@ -27,15 +27,20 @@ const HOT_TOPICS = [
 
 Page({
   data: {
-    statusBarHeight: 0,
+      statusBarHeight: 0,
     posts: [],
+    loadError: false,
     communitySummary: { postCount: 0, commentCount: 0, favoriteCount: 0 },
     selectedPostId: '',
     selectedPost: null,
     comments: [],
     commentDraft: '',
+    commentSubmitting: false,
     reportReasons,
     activeReportReason: '内容不实',
+    showReportSheet: false,
+    reportTargetId: '',
+    reportDesc: '',
     showPostForm: false,
     postForm: { title: '', content: '', tagsText: '' },
     hotTopics: HOT_TOPICS
@@ -52,8 +57,12 @@ Page({
   },
 
   onShow() {
-    this.loadPosts();
-  },
+      this.loadPosts();
+    },
+
+    onPullDownRefresh() {
+      Promise.resolve(this.loadPosts()).catch(() => {}).then(() => setTimeout(() => wx.stopPullDownRefresh(), 300));
+    },
 
   async loadPosts() {
     let posts = [];
@@ -63,6 +72,7 @@ Page({
       console.error('community loadPosts failed', err);
       wx.showToast({ title: '社区加载失败', icon: 'none' });
       this.setData({
+        loadError: true,
         posts: [],
         communitySummary: { postCount: 0, commentCount: 0, favoriteCount: 0 }
       });
@@ -71,6 +81,7 @@ Page({
     const selectedPostId = this.data.selectedPostId || (posts[0] ? posts[0].id : '');
     const selectedPost = posts.find((post) => String(post.id) === String(selectedPostId)) || null;
     this.setData({
+      loadError: false,
       posts,
       communitySummary: this.buildCommunitySummary(posts),
       selectedPostId,
@@ -181,6 +192,7 @@ Page({
   },
 
   async submitComment() {
+    if (this.data.commentSubmitting) return;
     const content = (this.data.commentDraft || '').trim();
     if (!this.data.selectedPostId) {
       wx.showToast({ title: '先选一条帖子', icon: 'none' });
@@ -190,13 +202,15 @@ Page({
       wx.showToast({ title: '先写评论内容', icon: 'none' });
       return;
     }
+    this.setData({ commentSubmitting: true });
     try {
       await addCommunityComment(this.data.selectedPostId, { content });
     } catch (err) {
+      this.setData({ commentSubmitting: false });
       wx.showToast({ title: '评论失败，请重试', icon: 'none' });
       return;
     }
-    this.setData({ commentDraft: '' });
+    this.setData({ commentDraft: '', commentSubmitting: false });
     await this.loadPosts();
     wx.showToast({ title: '评论已发布', icon: 'success' });
   },
@@ -208,15 +222,35 @@ Page({
     });
   },
 
-  async reportPost(event) {
+  openReportSheet(event) {
     const { id } = event.currentTarget.dataset;
     const postId = id || this.data.selectedPostId;
     if (!postId) {
       return;
     }
+    this.setData({ reportTargetId: postId, showReportSheet: true });
+  },
+
+  closeReportSheet() {
+    this.setData({ showReportSheet: false });
+  },
+
+  onReportDescInput(event) {
+    this.setData({ reportDesc: event.detail.value || '' });
+  },
+
+  async submitReport() {
+    const postId = this.data.reportTargetId;
+    if (!postId) {
+      return;
+    }
     try {
-      await reportCommunityPost(postId, { reason: this.data.activeReportReason });
-      wx.showToast({ title: '已提交举报', icon: 'none' });
+      await reportCommunityPost(postId, {
+        reason: this.data.activeReportReason,
+        description: (this.data.reportDesc || '').trim()
+      });
+      this.setData({ showReportSheet: false, reportDesc: '' });
+      wx.showToast({ title: '已提交举报，感谢反馈', icon: 'none' });
     } catch (err) {
       wx.showToast({ title: '举报失败，请重试', icon: 'none' });
     }

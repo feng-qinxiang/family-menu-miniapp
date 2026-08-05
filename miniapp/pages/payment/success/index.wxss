@@ -29,7 +29,7 @@
   border: 4rpx solid rgba(176, 137, 73, 0.3);
 }
 .ps-badge-check {
-  color: #fff;
+  color: var(--c-surface);
   font-size: 92rpx;
   font-weight: 900;
   line-height: 1;
@@ -157,7 +157,7 @@
   display: block;
   margin-top: 34rpx;
   text-align: center;
-  font-size: 27rpx;
+  font-size: var(--fs-cap);
   font-weight: 600;
   color: var(--mut-strong);
 }

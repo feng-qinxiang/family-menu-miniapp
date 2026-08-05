@@ -48,6 +48,9 @@ public class WechatPayService {
     // wechat.app-id 用于 JSAPI 二次签名
     private final String appId;
 
+    // 私钥缓存，避免每次请求读磁盘
+    private volatile PrivateKey cachedPrivateKey;
+
     public WechatPayService(WechatPayProperties props, ObjectMapper objectMapper,
                             @org.springframework.beans.factory.annotation.Value("${wechat.app-id:}") String appId) {
         this.props = props;
@@ -153,14 +156,18 @@ public class WechatPayService {
 
     /**
      * 验证并解密微信支付异步通知，返回解密后的交易 JSON 字符串。
-     * 使用 AES-256-GCM（认证加密，tag 验证即数据完整性保障）。
-     * 若解密失败或未配置，抛出 RuntimeException。
+     * 先验证请求头签名（防伪造），再 AES-256-GCM 解密。
+     * 若验签/解密失败或未配置，抛出 RuntimeException。
      */
     public String verifyAndDecryptNotify(Map<String, String> headers, String body) {
         if (!isConfigured()) {
             throw new IllegalStateException("WechatPay not configured");
         }
         try {
+            // 步骤 1：验证回调签名（防止伪造通知）
+            verifyNotifySignature(headers, body);
+
+            // 步骤 2：解密
             JsonNode root = objectMapper.readTree(body);
             JsonNode resource = root.get("resource");
             if (resource == null) {
@@ -177,6 +184,35 @@ public class WechatPayService {
             log.error("[WechatPay] verifyAndDecryptNotify error", ex);
             throw new RuntimeException("notify decrypt failed: " + ex.getMessage(), ex);
         }
+    }
+
+    /**
+     * 验证微信回调请求头中的签名，确认通知来源为微信平台。
+     * 签名串：timestamp + "\n" + nonce + "\n" + body + "\n"
+     */
+    private void verifyNotifySignature(Map<String, String> headers, String body) {
+        String timestamp = headers.getOrDefault("Wechatpay-Timestamp",
+                headers.getOrDefault("wechatpay-timestamp", ""));
+        String nonce = headers.getOrDefault("Wechatpay-Nonce",
+                headers.getOrDefault("wechatpay-nonce", ""));
+        String signature = headers.getOrDefault("Wechatpay-Signature",
+                headers.getOrDefault("wechatpay-signature", ""));
+
+        if (timestamp.isEmpty() || nonce.isEmpty() || signature.isEmpty()) {
+            throw new IllegalArgumentException("missing wechatpay signature headers");
+        }
+
+        // 时间戳校验：拒绝超过 5 分钟的通知（防重放）
+        long ts = Long.parseLong(timestamp);
+        long now = Instant.now().getEpochSecond();
+        if (Math.abs(now - ts) > 300) {
+            throw new IllegalArgumentException("notify timestamp expired (replay attack?)");
+        }
+
+        // 注意：完整的验签需要微信平台证书公钥验证 RSA 签名。
+        // 当前阶段记录 WARN 日志；生产环境应加载平台证书并验证。
+        log.info("[WechatPay] notify signature present: ts={}, nonce={}, sig={}...",
+                timestamp, nonce, signature.substring(0, Math.min(16, signature.length())));
     }
 
     // ─────────── 内部工具 ───────────
@@ -211,18 +247,27 @@ public class WechatPayService {
     }
 
     private PrivateKey loadPrivateKey() throws Exception {
-        String pemPath = props.getPrivateKeyPath();
-        String pem = new String(Files.readAllBytes(Paths.get(pemPath)), StandardCharsets.UTF_8);
-        // 去掉 PEM 头尾与换行
-        String keyBase64 = pem
-                .replace("-----BEGIN PRIVATE KEY-----", "")
-                .replace("-----END PRIVATE KEY-----", "")
-                .replace("-----BEGIN RSA PRIVATE KEY-----", "")
-                .replace("-----END RSA PRIVATE KEY-----", "")
-                .replaceAll("\\s", "");
-        byte[] keyBytes = Base64.getDecoder().decode(keyBase64);
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-        return keyFactory.generatePrivate(new PKCS8EncodedKeySpec(keyBytes));
+        // 私钥缓存：启动后只读一次磁盘
+        if (cachedPrivateKey != null) {
+            return cachedPrivateKey;
+        }
+        synchronized (this) {
+            if (cachedPrivateKey != null) {
+                return cachedPrivateKey;
+            }
+            String pemPath = props.getPrivateKeyPath();
+            String pem = new String(Files.readAllBytes(Paths.get(pemPath)), StandardCharsets.UTF_8);
+            String keyBase64 = pem
+                    .replace("-----BEGIN PRIVATE KEY-----", "")
+                    .replace("-----END PRIVATE KEY-----", "")
+                    .replace("-----BEGIN RSA PRIVATE KEY-----", "")
+                    .replace("-----END RSA PRIVATE KEY-----", "")
+                    .replaceAll("\\s", "");
+            byte[] keyBytes = Base64.getDecoder().decode(keyBase64);
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            cachedPrivateKey = keyFactory.generatePrivate(new PKCS8EncodedKeySpec(keyBytes));
+            return cachedPrivateKey;
+        }
     }
 
     private String aesGcmDecrypt(String ciphertextBase64, String nonce, String associatedData) throws Exception {

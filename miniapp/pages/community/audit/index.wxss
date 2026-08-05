@@ -24,9 +24,9 @@
   height: 58rpx;
   padding: 0 18rpx;
   margin-top: 18rpx;
-  border-radius: 30rpx;
+  border-radius: var(--r-chip);
   background: var(--pop);
-  color: #fff;
+  color: var(--c-surface);
   font-size: 28rpx;
   font-weight: 800;
   display: flex;
@@ -47,7 +47,7 @@
 .done-sep {
   font-family: var(--serif);
   font-style: italic;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   letter-spacing: 1rpx;
   color: var(--gold-deep);
   font-weight: 700;
@@ -93,7 +93,7 @@
   display: inline-flex;
   align-items: center;
   margin-top: 24rpx;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   font-weight: 800;
   letter-spacing: 0.4rpx;
   color: var(--pop);
@@ -111,7 +111,7 @@
   margin-top: 24rpx;
 }
 .rc-meta .m {
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   color: var(--mut-strong);
   font-weight: 600;
 }
@@ -126,7 +126,7 @@
   flex: 1;
   height: 92rpx;
   border-radius: var(--r-md);
-  font-size: 27rpx;
+  font-size: var(--fs-cap);
   font-weight: 800;
   display: flex;
   align-items: center;
@@ -134,7 +134,7 @@
 }
 .act-del {
   background: var(--pop);
-  color: #fff;
+  color: var(--c-surface);
   box-shadow: var(--sh-pop);
 }
 .act-ignore {
@@ -146,8 +146,8 @@
 .resolved-bar {
   margin-top: 26rpx;
   padding: 24rpx 0 4rpx;
-  border-top: 2rpx solid #efe9df;
-  font-size: 25rpx;
+  border-top: 2rpx solid var(--paper-2);
+  font-size: var(--fs-sub);
   font-weight: 800;
 }
 .resolved-bar.del { color: var(--pop); }

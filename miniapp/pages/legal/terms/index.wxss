@@ -74,7 +74,7 @@
 .lead {
   display: block;
   margin-top: 32rpx;
-  font-size: 27rpx;
+  font-size: var(--fs-cap);
   line-height: 1.75;
   color: var(--mut-strong);
 }
@@ -157,7 +157,7 @@
   height: 104rpx;
   border-radius: var(--r-pill);
   background: var(--pop);
-  color: #fff;
+  color: var(--c-surface);
   font-size: 31rpx;
   font-weight: 800;
   letter-spacing: 1rpx;
@@ -171,8 +171,8 @@
   width: 26rpx;
   height: 14rpx;
   margin-top: -6rpx;
-  border-left: 5rpx solid #fff;
-  border-bottom: 5rpx solid #fff;
+  border-left: 5rpx solid var(--c-surface);
+  border-bottom: 5rpx solid var(--c-surface);
   transform: rotate(-45deg);
   border-radius: 2rpx;
 }

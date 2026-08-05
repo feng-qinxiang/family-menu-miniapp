@@ -67,6 +67,13 @@ Page({
     });
   },
 
+  onInviteFamily() {
+    wx.navigateTo({
+      url: '/pages/vip/upgrade/index',
+      fail: () => this.setData({ toastVisible: true, toastText: '请在"我的→会员"开启共享' }),
+    });
+  },
+
   onToastClose() {
     this.setData({ toastVisible: false });
   },

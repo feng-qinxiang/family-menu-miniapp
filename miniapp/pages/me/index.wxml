@@ -20,7 +20,7 @@
       <view class="mag-fam">
         <view class="mag-ava {{item.tone}}" wx:for="{{familyProfile.members}}" wx:key="userId">{{item.initial}}</view>
         <view class="mag-fam-lbl"><text class="b">{{memberCount}}</text> 位成员</view>
-        <view class="mag-manage tap-scale" bindtap="addMember">＋ 管理</view>
+        <view class="mag-manage tap-scale" bindtap="goMemberManage">＋ 管理</view>
       </view>
     </view>
   </view>
@@ -35,6 +35,16 @@
         <view class="mag-vip-s">{{vipStatus.vip ? (vipStatus.planName || '全家共享 · 多设备实时同步') : '菜谱与做菜记录全家共享，多设备实时同步'}}</view>
       </view>
       <view class="mag-vip-go">{{vipStatus.vip ? '查看' : '开通'}} ›</view>
+    </view>
+
+    <!-- 游客引导：未绑定手机号 -->
+    <view class="mag-phone tap-scale" wx:if="{{currentUser && !currentUser.phoneBound}}" bindtap="goPhoneBind">
+      <view class="mag-phone-ic">☏</view>
+      <view class="mag-phone-mid">
+        <view class="mag-phone-t">绑定手机号，换设备不丢数据</view>
+        <view class="mag-phone-s">菜谱、菜单、做菜记录云端保存</view>
+      </view>
+      <view class="mag-phone-go">去绑定 ›</view>
     </view>
 
     <!-- 数据卡 -->

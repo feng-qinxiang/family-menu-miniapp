@@ -1,6 +1,7 @@
 package com.familymenu.daily.controller;
 
 import com.familymenu.daily.auth.CurrentUser;
+import com.familymenu.daily.auth.RequiresAuth;
 import com.familymenu.daily.dto.ApiModels.UploadResult;
 import com.familymenu.daily.dto.AuthModels.AuthUser;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +25,8 @@ import java.util.UUID;
 @RequestMapping("/api")
 public class UploadController {
 
+    private static final long MAX_FILE_SIZE = 5 * 1024 * 1024L; // 5MB
+
     private final JdbcTemplate jdbcTemplate;
     private final Path uploadDir;
 
@@ -34,10 +37,14 @@ public class UploadController {
     }
 
     @PostMapping("/upload")
-    public UploadResult upload(@CurrentUser(orGuest = true) AuthUser user,
+    @RequiresAuth
+    public UploadResult upload(@CurrentUser AuthUser user,
                                @RequestParam("file") MultipartFile file) {
         if (file == null || file.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "file required");
+        }
+        if (file.getSize() > MAX_FILE_SIZE) {
+            throw new ResponseStatusException(HttpStatus.PAYLOAD_TOO_LARGE, "文件不能超过 5MB");
         }
         String original = file.getOriginalFilename() == null ? "upload.bin" : file.getOriginalFilename();
         String ext = safeExtension(original);

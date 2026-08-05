@@ -49,7 +49,7 @@
   padding: 0 31rpx;
   background: var(--paper-2);
   border-radius: var(--r-chip);
-  border: 3rpx solid #e6ddcd;
+  border: 3rpx solid var(--c-border);
 }
 .sbox-ic {
   position: relative;
@@ -92,7 +92,7 @@
   width: 38rpx;
   height: 38rpx;
   border-radius: 50%;
-  background: #c9bda9;
+  background: var(--line-deep);
   flex: none;
   display: flex;
   align-items: center;
@@ -154,7 +154,7 @@
 
 .rcount {
   margin: 27rpx 0 27rpx;
-  font-size: 25rpx;
+  font-size: var(--fs-sub);
   font-weight: 600;
   color: var(--mut-strong);
 }
@@ -171,7 +171,7 @@
 .sortrow .hscroll-inner { gap: 17rpx; }
 .sortrow .chip {
   padding: 14rpx 29rpx;
-  font-size: 25rpx;
+  font-size: var(--fs-sub);
 }
 
 /* ============ 2 列网格 ============ */
@@ -182,7 +182,7 @@
   padding-bottom: 50rpx;
 }
 .gcard {
-  background: #fff;
+  background: var(--c-surface);
   border-radius: var(--r-card);
   overflow: hidden;
   border: var(--bd-card);
@@ -202,13 +202,13 @@
   position: absolute;
   top: 17rpx;
   left: 17rpx;
-  font-size: 19rpx;
+  font-size: var(--fs-tiny);
   letter-spacing: 2rpx;
   font-weight: 800;
-  color: #fff;
+  color: var(--c-surface);
   background: var(--tag-glass-bg, rgba(40, 30, 20, 0.55));
   padding: 8rpx 15rpx;
-  border-radius: 8rpx;
+  border-radius: var(--r-xs);
 }
 .gc-fav {
   position: absolute;

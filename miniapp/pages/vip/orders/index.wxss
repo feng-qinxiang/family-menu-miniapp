@@ -19,7 +19,7 @@
 }
 .head .lead {
   margin-top: 22rpx;
-  font-size: 25rpx;
+  font-size: var(--fs-sub);
   line-height: 1.5;
   color: var(--mut-strong);
 }
@@ -35,7 +35,7 @@
 .strip .strip-e {
   font-family: var(--serif);
   font-style: italic;
-  font-size: 21rpx;
+  font-size: var(--fs-mini);
   letter-spacing: 2rpx;
   font-weight: 700;
   color: var(--gold);
@@ -56,13 +56,13 @@
 }
 .strip .strip-v .strip-u {
   margin-left: 2rpx;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   font-weight: 600;
   color: rgba(251, 248, 243, 0.6);
 }
 .strip .strip-c {
   margin-top: 4rpx;
-  font-size: 21rpx;
+  font-size: var(--fs-mini);
   color: rgba(251, 248, 243, 0.6);
 }
 
@@ -170,7 +170,7 @@
   letter-spacing: -1rpx;
 }
 .ocard-amt .ocard-y {
-  font-size: 25rpx;
+  font-size: var(--fs-sub);
   font-weight: 700;
 }
 
@@ -179,14 +179,14 @@
   display: flex;
   margin-top: 30rpx;
   padding-top: 28rpx;
-  border-top: 2rpx dashed #e8e0d2;
+  border-top: 2rpx dashed var(--c-border);
 }
 .dcol {
   flex: 1;
 }
 .dcol + .dcol {
   padding-left: 30rpx;
-  border-left: 2rpx solid #efe9df;
+  border-left: 2rpx solid var(--paper-2);
 }
 .dlab {
   font-size: 20rpx;
@@ -197,7 +197,7 @@
 }
 .dval {
   margin-top: 10rpx;
-  font-size: 27rpx;
+  font-size: var(--fs-cap);
   font-weight: 800;
   color: var(--ink);
 }
@@ -215,7 +215,7 @@
 .oid-no {
   flex: 1;
   min-width: 0;
-  font-size: 21rpx;
+  font-size: var(--fs-mini);
   color: var(--mut);
 }
 .oid-re {
@@ -224,7 +224,7 @@
   align-items: center;
   gap: 5rpx;
   padding-left: 18rpx;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   font-weight: 800;
   color: var(--pop);
 }
@@ -236,4 +236,32 @@
 /* ===== 空态 ===== */
 .empty-wrap {
   padding-top: 40rpx;
+}
+/* 加载骨架 */
+.order-skel-ic {
+  width: 76rpx;
+  height: 76rpx;
+  border-radius: 22rpx;
+  background: #f0ebe2;
+}
+.order-skel-line {
+  width: 200rpx;
+  height: 28rpx;
+  border-radius: 12rpx;
+  background: #f0ebe2;
+  margin-bottom: 14rpx;
+}
+.order-skel-line.short { width: 130rpx; margin-bottom: 0; }
+.order-skel-amt {
+  width: 90rpx;
+  height: 34rpx;
+  border-radius: 12rpx;
+  background: #f0ebe2;
+}
+.order-skel-dates {
+  margin-top: 24rpx;
+  height: 40rpx;
+  border-radius: 12rpx;
+  background: #f0ebe2;
+  width: 70%;
 }

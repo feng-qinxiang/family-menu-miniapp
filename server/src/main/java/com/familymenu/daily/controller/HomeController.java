@@ -50,8 +50,9 @@ public class HomeController {
     }
 
     @GetMapping("/recipes")
-    public List<RecipeCard> recipes(@RequestParam(defaultValue = "owned") String source) {
-        return store.listRecipes(source);
+    public List<RecipeCard> recipes(@RequestParam(defaultValue = "owned") String source,
+                                    @CurrentUser(orGuest = true) AuthUser user) {
+        return store.listRecipes(source, user.userId(), user.familyId());
     }
 
     @PostMapping("/recipes")
@@ -139,8 +140,9 @@ public class HomeController {
     }
 
     @GetMapping("/recipes/{recipeId}")
-    public RecipeDetail recipeDetail(@PathVariable long recipeId) {
-        return store.getRecipeDetail(recipeId);
+    public RecipeDetail recipeDetail(@PathVariable long recipeId,
+                                     @CurrentUser(orGuest = true) AuthUser user) {
+        return store.getRecipeDetail(recipeId, user.userId(), user.familyId());
     }
 
     @PutMapping("/recipes/{recipeId}")
@@ -156,8 +158,9 @@ public class HomeController {
                                           @RequestParam(required = false) String cuisine,
                                           @RequestParam(required = false) Integer maxTime,
                                           @RequestParam(required = false) Integer minServings,
-                                          @RequestParam(required = false) String tag) {
-        return store.filterRecipes(source, cuisine, maxTime, minServings, tag);
+                                          @RequestParam(required = false) String tag,
+                                          @CurrentUser(orGuest = true) AuthUser user) {
+        return store.filterRecipes(source, cuisine, maxTime, minServings, tag, user.userId(), user.familyId());
     }
 
     @PostMapping("/cook-history")

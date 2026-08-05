@@ -40,16 +40,16 @@
   left: 46rpx;
   right: 46rpx;
   bottom: 80rpx;
-  color: #fff;
+  color: var(--c-surface);
 }
 .rg-tag {
   display: inline-block;
   font-family: var(--serif);
   font-style: italic;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   letter-spacing: 3rpx;
   font-weight: 700;
-  color: #fff;
+  color: var(--c-surface);
   background: var(--pop);
   padding: 11rpx 27rpx;
   border-radius: var(--r-xs);
@@ -59,7 +59,7 @@
   font-size: 96rpx;
   line-height: 0.9;
   letter-spacing: -5rpx;
-  -webkit-text-stroke: 3rpx #fff;
+  -webkit-text-stroke: 3rpx var(--c-surface);
 }
 .rg-slogan {
   display: block;
@@ -83,7 +83,7 @@
 .rg-field { margin-bottom: 30rpx; }
 .rg-label {
   display: block;
-  font-size: 21rpx;
+  font-size: var(--fs-mini);
   letter-spacing: 2rpx;
   font-weight: 800;
   text-transform: uppercase;
@@ -95,8 +95,8 @@
   align-items: center;
   gap: 21rpx;
   padding: 27rpx 30rpx;
-  background: #fff;
-  border: 3rpx solid #ece4d6;
+  background: var(--c-surface);
+  border: 3rpx solid var(--paper-2);
   border-radius: var(--r-sm);
   box-shadow: var(--sh-soft);
 }
@@ -229,19 +229,19 @@
 /* 验证码按钮 */
 .rg-codebtn {
   flex: none;
-  font-size: 25rpx;
+  font-size: var(--fs-sub);
   font-weight: 800;
   color: var(--pop);
   padding: 14rpx 24rpx;
   border-radius: var(--r-xs);
   background: var(--pop-soft);
-  border: 2rpx solid #f6cfc4;
+  border: 2rpx solid var(--pop-mist);
   white-space: nowrap;
 }
 .rg-codebtn.is-wait {
   color: var(--mut-strong);
   background: var(--paper-2);
-  border-color: #e6ddcf;
+  border-color: var(--c-border);
 }
 
 /* —— 注册按钮 —— */
@@ -261,8 +261,8 @@
 .ic-arrow {
   width: 16rpx;
   height: 16rpx;
-  border-top: 5rpx solid #fff;
-  border-right: 5rpx solid #fff;
+  border-top: 5rpx solid var(--c-surface);
+  border-right: 5rpx solid var(--c-surface);
   transform: rotate(45deg);
 }
 
@@ -294,7 +294,7 @@
   height: 38rpx;
   margin-top: 2rpx;
   border-radius: var(--r-xs);
-  border: 3rpx solid #d8d0c2;
+  border: 3rpx solid var(--line-deep);
   background: transparent;
   display: flex;
   align-items: center;
@@ -307,8 +307,8 @@
 .rg-check {
   width: 16rpx;
   height: 9rpx;
-  border-left: 4rpx solid #fff;
-  border-bottom: 4rpx solid #fff;
+  border-left: 4rpx solid var(--c-surface);
+  border-bottom: 4rpx solid var(--c-surface);
   transform: rotate(-45deg) translateY(-2rpx);
 }
 .rg-agree-tx {

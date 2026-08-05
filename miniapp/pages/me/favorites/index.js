@@ -114,7 +114,7 @@ Page({
     const id = e.detail && e.detail.id;
     if (!id) return;
     wx.navigateTo({
-      url: '/pages/recipe-detail/index?recipeId=' + id,
+      url: '/pages/recipe-detail/index?id=' + id,
       fail: () => this._toast('详情暂未开放')
     });
   },

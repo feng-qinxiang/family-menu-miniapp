@@ -60,9 +60,9 @@
   display: block;
   font-family: var(--serif);
   font-style: italic;
-  font-size: 21rpx;
+  font-size: var(--fs-mini);
   letter-spacing: 3rpx;
-  color: #fff;
+  color: var(--c-surface);
   opacity: 0.85;
 }
 .wa-brand-cn {
@@ -70,7 +70,7 @@
   font-size: 29rpx;
   font-weight: 800;
   letter-spacing: -0.6rpx;
-  color: #fff;
+  color: var(--c-surface);
   margin-top: 2rpx;
 }
 .wa-hero-body {
@@ -84,20 +84,20 @@
   display: inline-block;
   font-family: var(--serif);
   font-style: italic;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   letter-spacing: 3rpx;
   font-weight: 700;
-  color: #fff;
+  color: var(--c-surface);
   background: var(--pop);
   padding: 12rpx 27rpx;
-  border-radius: 8rpx;
+  border-radius: var(--r-xs);
 }
 .wa-hero-title {
   font-size: 104rpx;
   line-height: 0.9;
   letter-spacing: -6rpx;
   margin-top: 30rpx;
-  -webkit-text-stroke: 3rpx #fff;
+  -webkit-text-stroke: 3rpx var(--c-surface);
 }
 .wa-bg-sheet {
   position: absolute;
@@ -140,7 +140,7 @@
   bottom: 0;
   z-index: 40;
   box-sizing: border-box;
-  background: #fff;
+  background: var(--c-surface);
   border-radius: 50rpx 50rpx 0 0;
   padding: 46rpx 46rpx 40rpx;
   box-shadow: 0 -16rpx 80rpx rgba(40, 25, 12, 0.28);
@@ -165,7 +165,7 @@
   gap: 25rpx;
   padding-bottom: 35rpx;
   margin-bottom: 38rpx;
-  border-bottom: 2rpx solid #f0eadf;
+  border-bottom: 2rpx solid var(--paper-2);
 }
 .wa-alogo {
   width: 100rpx;
@@ -186,7 +186,7 @@
   display: block;
   font-family: var(--serif);
   font-style: italic;
-  font-size: 21rpx;
+  font-size: var(--fs-mini);
   letter-spacing: 2rpx;
   color: var(--gold-deep);
   font-weight: 700;
@@ -203,13 +203,13 @@
   display: flex;
   align-items: center;
   gap: 10rpx;
-  background: #eafaf0;
+  background: var(--c-success-soft);
   padding: 12rpx 21rpx;
   border-radius: 58rpx;
   flex: none;
 }
 .wa-wxbadge text {
-  font-size: 21rpx;
+  font-size: var(--fs-mini);
   font-weight: 800;
   color: var(--wx);
 }
@@ -228,7 +228,7 @@
 
 .wa-label {
   display: block;
-  font-size: 21rpx;
+  font-size: var(--fs-mini);
   letter-spacing: 2rpx;
   font-weight: 800;
   text-transform: uppercase;
@@ -249,8 +249,8 @@
   border-radius: 50%;
   flex: none;
   position: relative;
-  border: 4rpx solid #fff;
-  box-shadow: 0 8rpx 23rpx rgba(60, 40, 20, 0.18), 0 0 0 2rpx #efe9df;
+  border: 4rpx solid var(--c-surface);
+  box-shadow: 0 8rpx 23rpx rgba(60, 40, 20, 0.18), 0 0 0 2rpx var(--paper-2);
 }
 .wa-ava-img {
   width: 100%;
@@ -266,7 +266,7 @@
   height: 46rpx;
   border-radius: 50%;
   background: var(--ink-deep);
-  border: 4rpx solid #fff;
+  border: 4rpx solid var(--c-surface);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -279,7 +279,7 @@
 }
 .wa-ava-p {
   display: block;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   color: var(--mut);
   margin-top: 6rpx;
 }
@@ -293,14 +293,14 @@
   align-items: center;
   gap: 21rpx;
   background: var(--paper);
-  border: 3rpx solid #ece4d6;
+  border: 3rpx solid var(--paper-2);
   border-radius: 27rpx;
   padding: 27rpx 31rpx;
   transition: border-color 0.18s ease, background 0.18s ease;
 }
 .wa-inp.is-focus {
   border-color: var(--pop);
-  background: #fff;
+  background: var(--c-surface);
 }
 .wa-input {
   flex: 1;
@@ -329,7 +329,7 @@
   width: 100%;
   box-sizing: border-box;
   background: var(--pop);
-  color: #fff;
+  color: var(--c-surface);
   border-radius: 31rpx;
   padding: 33rpx;
   font-size: 32rpx;
@@ -356,7 +356,7 @@
   margin-top: 16rpx;
 }
 .wa-foot-tx {
-  font-size: 21rpx;
+  font-size: var(--fs-mini);
   color: var(--mut);
 }
 .wa-foot-link {
@@ -386,7 +386,7 @@
   top: 0;
   width: 30rpx;
   height: 30rpx;
-  border: 4rpx solid #fff;
+  border: 4rpx solid var(--c-surface);
   border-radius: 6rpx 6rpx 4rpx 4rpx;
   transform: translateX(-50%) translateY(8rpx);
 }
@@ -397,8 +397,8 @@
   top: -2rpx;
   width: 26rpx;
   height: 26rpx;
-  border-top: 4rpx solid #fff;
-  border-left: 4rpx solid #fff;
+  border-top: 4rpx solid var(--c-surface);
+  border-left: 4rpx solid var(--c-surface);
   transform: translateX(-50%) rotate(45deg);
   border-radius: 6rpx 0 0 0;
 }
@@ -417,7 +417,7 @@
   width: 5rpx;
   height: 5rpx;
   border-radius: 50%;
-  background: #fff;
+  background: var(--c-surface);
   top: 9rpx;
 }
 .ic-wx-mini::before { left: 7rpx; }
@@ -426,7 +426,7 @@
 .ic-cam {
   width: 24rpx;
   height: 18rpx;
-  border: 3rpx solid #fff;
+  border: 3rpx solid var(--c-surface);
   border-radius: 5rpx;
   position: relative;
 }
@@ -437,7 +437,7 @@
   top: 50%;
   width: 8rpx;
   height: 8rpx;
-  border: 3rpx solid #fff;
+  border: 3rpx solid var(--c-surface);
   border-radius: 50%;
   transform: translate(-50%, -50%);
 }
@@ -498,7 +498,7 @@
   height: 11rpx;
   border: 3rpx solid var(--mut);
   border-bottom: none;
-  border-radius: 8rpx 8rpx 0 0;
+  border-radius: var(--r-xs) var(--r-xs) 0 0;
   transform: translateX(-50%);
   box-sizing: border-box;
 }

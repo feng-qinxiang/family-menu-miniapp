@@ -64,15 +64,15 @@
   box-shadow: var(--sh-pop);
 }
 .brandbar .logo-glyph {
-  color: #fff;
+  color: var(--c-surface);
   font-size: 38rpx;
   font-weight: 900;
 }
-.brandbar .bt { color: #fff; display: flex; flex-direction: column; }
+.brandbar .bt { color: var(--c-surface); display: flex; flex-direction: column; }
 .brandbar .bt .en {
   font-family: var(--serif);
   font-style: italic;
-  font-size: 21rpx;
+  font-size: var(--fs-mini);
   letter-spacing: 3rpx;
   opacity: 0.85;
 }
@@ -90,26 +90,26 @@
   right: 46rpx;
   bottom: 130rpx;
   z-index: 10;
-  color: #fff;
+  color: var(--c-surface);
 }
 .hero-body .tag {
   display: inline-block;
   font-family: var(--serif);
   font-style: italic;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   letter-spacing: 3rpx;
   font-weight: 700;
-  color: #fff;
+  color: var(--c-surface);
   background: var(--pop);
   padding: 11rpx 27rpx;
-  border-radius: 8rpx;
+  border-radius: var(--r-xs);
 }
 .hero-title {
   font-size: 104rpx;
   line-height: 0.9;
   letter-spacing: -6rpx;
   margin: 30rpx 0 26rpx;
-  -webkit-text-stroke: 3rpx #fff;
+  -webkit-text-stroke: 3rpx var(--c-surface);
 }
 .hero-title .br { display: block; height: 0; }
 .slogan {
@@ -152,9 +152,9 @@
   width: 100%;
   margin-top: 27rpx;
   box-sizing: border-box;
-  background: #fff;
+  background: var(--c-surface);
   color: var(--ink-deep);
-  border: 3rpx solid #ece4d6;
+  border: 3rpx solid var(--paper-2);
   border-radius: 35rpx;
   padding: 31rpx;
   font-size: 31rpx;
@@ -180,13 +180,13 @@
   color: var(--ink-deep);
   padding: 15rpx 31rpx;
 }
-.authlinks .sep { width: 2rpx; height: 25rpx; background: #d8cebd; }
+.authlinks .sep { width: 2rpx; height: 25rpx; background: var(--line-deep); }
 
 /* 游客 */
 .guest { text-align: center; margin-top: 15rpx; }
 .guest-link {
   display: inline-block;
-  font-size: 27rpx;
+  font-size: var(--fs-cap);
   font-weight: 600;
   color: var(--mut);
   padding: 19rpx 8rpx;
@@ -199,11 +199,11 @@
   gap: 27rpx;
   margin: 50rpx 0 38rpx;
 }
-.divider-deco .ln { flex: 1; height: 2rpx; background: #e6ddcf; }
+.divider-deco .ln { flex: 1; height: 2rpx; background: var(--c-border); }
 .divider-deco .dt {
   font-family: var(--serif);
   font-style: italic;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   letter-spacing: 2rpx;
   color: var(--gold-deep);
   font-weight: 700;
@@ -231,7 +231,7 @@
   letter-spacing: -0.6rpx;
 }
 .trust .ttx .ts {
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   color: var(--mut);
   margin-top: 4rpx;
 }
@@ -250,7 +250,7 @@
   flex: none;
   margin-top: 2rpx;
   border-radius: 12rpx;
-  border: 3rpx solid #d8d0c2;
+  border: 3rpx solid var(--line-deep);
   background: transparent;
   display: flex;
   align-items: center;
@@ -260,7 +260,7 @@
   background: var(--pop);
   border-color: var(--pop);
 }
-.agree .box .check { color: #fff; font-size: 24rpx; font-weight: 900; }
+.agree .box .check { color: var(--c-surface); font-size: 24rpx; font-weight: 900; }
 .agree .tx {
   font-size: 22rpx;
   color: var(--mut-strong);

@@ -51,27 +51,27 @@
   align-items: center;
   justify-content: center;
 }
-.vip-back-ico { color: #fff; font-size: 44rpx; line-height: 1; }
-.vip-navtitle { color: #fff; font-size: 30rpx; font-weight: 700; }
+.vip-back-ico { color: var(--c-surface); font-size: 44rpx; line-height: 1; }
+.vip-navtitle { color: var(--c-surface); font-size: 30rpx; font-weight: 700; }
 .vip-hero-body {
   position: absolute;
   left: 36rpx;
   right: 36rpx;
   bottom: 56rpx;
   z-index: 10;
-  color: #fff;
+  color: var(--c-surface);
 }
 .vip-tag {
   display: inline-block;
   font-family: var(--serif);
   font-style: italic;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   font-weight: 700;
   letter-spacing: 2rpx;
-  color: #fff;
+  color: var(--c-surface);
   background: var(--pop);
   padding: 8rpx 20rpx;
-  border-radius: 8rpx;
+  border-radius: var(--r-xs);
 }
 .vip-hero-title {
   font-size: 96rpx;
@@ -91,12 +91,12 @@
   margin-top: 26rpx;
 }
 .vip-m {
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   font-weight: 600;
-  color: #fff;
+  color: var(--c-surface);
   background: rgba(255, 255, 255, 0.16);
   padding: 12rpx 22rpx;
-  border-radius: 999rpx;
+  border-radius: var(--r-pill);
 }
 
 /* ===== SHEET ===== */
@@ -119,7 +119,7 @@
   box-sizing: border-box;
   width: calc((100% - 20rpx) / 2);
   padding: 28rpx 24rpx;
-  background: #fff;
+  background: var(--c-surface);
   border: var(--bd-card);
   border-radius: var(--r-card);
   box-shadow: var(--sh-soft);
@@ -145,7 +145,7 @@
 
 /* ===== 版本对比 ===== */
 .vip-cmp {
-  background: #fff;
+  background: var(--c-surface);
   border: var(--bd-card);
   border-radius: var(--r-card);
   overflow: hidden;
@@ -154,32 +154,32 @@
 .vip-crow {
   display: flex;
   align-items: center;
-  border-bottom: 1rpx solid #f1ece2;
+  border-bottom: 1rpx solid var(--c-border-light);
 }
 .vip-crow:last-child { border-bottom: none; }
 .vip-chead { background: var(--paper-2); }
 .vip-lab, .vip-feat {
   flex: 1.4;
   padding: 24rpx 26rpx;
-  font-size: 25rpx;
+  font-size: var(--fs-sub);
   font-weight: 700;
   color: var(--ink);
 }
-.vip-chead .vip-lab { color: var(--mut-strong); font-size: 23rpx; }
+.vip-chead .vip-lab { color: var(--mut-strong); font-size: var(--fs-cap); }
 .vip-col, .vip-cell {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24rpx 0;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   font-weight: 700;
   color: var(--mut-strong);
 }
 .vip-col-on { color: var(--pop); }
 .vip-tick { color: var(--mut-2); font-size: 30rpx; font-weight: 900; }
 .vip-tick.on { color: var(--pop); }
-.vip-cross { color: #c4b8a6; font-size: 26rpx; }
+.vip-cross { color: var(--line-deep); font-size: 26rpx; }
 .vip-cell-txt { font-size: 22rpx; font-weight: 700; color: var(--mut); }
 
 /* ===== 套餐 ===== */
@@ -191,8 +191,8 @@
   position: relative;
   flex: 1;
   padding: 32rpx 24rpx 28rpx;
-  background: #fff;
-  border: 3rpx solid #f1ece2;
+  background: var(--c-surface);
+  border: 3rpx solid var(--c-border-light);
   border-radius: var(--r-card);
   overflow: hidden;
 }
@@ -205,7 +205,7 @@
   top: 0;
   right: 0;
   background: var(--pop);
-  color: #fff;
+  color: var(--c-surface);
   font-size: 20rpx;
   font-weight: 800;
   padding: 6rpx 18rpx;
@@ -226,9 +226,9 @@
   font-size: 20rpx;
   font-weight: 800;
   color: var(--pine);
-  background: #e7efe9;
+  background: var(--c-accent-soft);
   padding: 5rpx 14rpx;
-  border-radius: 999rpx;
+  border-radius: var(--r-pill);
 }
 .vip-radio {
   position: absolute;
@@ -237,13 +237,13 @@
   width: 40rpx;
   height: 40rpx;
   border-radius: 50%;
-  border: 3rpx solid #e0d6c6;
+  border: 3rpx solid var(--c-border);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .vip-radio.on { background: var(--pop); border-color: var(--pop); }
-.vip-radio-tick { color: #fff; font-size: 24rpx; font-weight: 900; }
+.vip-radio-tick { color: var(--c-surface); font-size: 24rpx; font-weight: 900; }
 
 /* ===== 成员 ===== */
 .vip-members {
@@ -251,7 +251,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 28rpx;
-  background: #fff;
+  background: var(--c-surface);
   border: var(--bd-card);
   border-radius: var(--r-card);
   box-shadow: var(--sh-soft);
@@ -262,8 +262,8 @@
   height: 76rpx;
   margin-left: -18rpx;
   border-radius: 22rpx;
-  border: 3rpx solid #fff;
-  color: #fff;
+  border: 3rpx solid var(--c-surface);
+  color: var(--c-surface);
   font-size: 28rpx;
   font-weight: 800;
   display: flex;

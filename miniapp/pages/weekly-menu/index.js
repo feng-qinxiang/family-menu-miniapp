@@ -201,5 +201,11 @@ Page({
 
   onAddTap() {
     wx.switchTab({ url: '/pages/recipes/index' });
-  }
+  },
+  onShareAppMessage() {
+    return {
+      title: '本周家庭菜单',
+      path: '/pages/weekly-menu/index'
+    };
+  },
 });

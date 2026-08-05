@@ -66,26 +66,26 @@
   right: 46rpx;
   bottom: 88rpx;
   z-index: 2;
-  color: #fff;
+  color: var(--c-surface);
 }
 .rd-tag {
   display: inline-block;
   font-family: var(--serif);
   font-style: italic;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   letter-spacing: 2rpx;
   font-weight: 700;
-  color: #fff;
+  color: var(--c-surface);
   background: var(--pop);
   padding: 10rpx 26rpx;
-  border-radius: 8rpx;
+  border-radius: var(--r-xs);
 }
 .rd-hero-title {
   font-size: 116rpx;
   line-height: 0.92;
   letter-spacing: -6rpx;
   margin: 28rpx 0 26rpx;
-  -webkit-text-stroke: 3rpx #fff;
+  -webkit-text-stroke: 3rpx var(--c-surface);
 }
 .rd-hero-meta {
   display: flex;
@@ -96,12 +96,12 @@
 .rd-m {
   display: inline-flex;
   align-items: center;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   font-weight: 600;
-  color: #fff;
+  color: var(--c-surface);
   background: rgba(255, 255, 255, 0.16);
   padding: 13rpx 24rpx;
-  border-radius: 30rpx;
+  border-radius: var(--r-chip);
 }
 .rd-m-solid { background: var(--pop); }
 
@@ -110,7 +110,7 @@
   display: inline-flex;
   align-items: center;
   background: rgba(255, 255, 255, 0.16);
-  border-radius: 30rpx;
+  border-radius: var(--r-chip);
   padding: 6rpx;
 }
 .rd-sbtn {
@@ -127,7 +127,7 @@
   position: relative;
   width: 24rpx;
   height: 5rpx;
-  background: #fff;
+  background: var(--c-surface);
   border-radius: 3rpx;
 }
 .rd-sbtn-plus::after {
@@ -138,13 +138,13 @@
   transform: translate(-50%, -50%);
   width: 5rpx;
   height: 24rpx;
-  background: #fff;
+  background: var(--c-surface);
   border-radius: 3rpx;
 }
 .rd-sval {
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   font-weight: 700;
-  color: #fff;
+  color: var(--c-surface);
   min-width: 96rpx;
   text-align: center;
 }
@@ -174,7 +174,7 @@
   align-items: center;
   gap: 24rpx;
   padding: 24rpx 0;
-  border-bottom: 2rpx solid #efe9df;
+  border-bottom: 2rpx solid var(--paper-2);
 }
 .rd-ing:last-child { border-bottom: none; }
 .rd-dot {
@@ -188,7 +188,7 @@
 .rd-icw {
   width: 80rpx;
   height: 80rpx;
-  border-radius: 24rpx;
+  border-radius: var(--r-md);
   background: var(--paper-2);
   flex: none;
   display: flex;
@@ -209,7 +209,7 @@
 }
 .rd-note.miss { color: var(--pop); font-weight: 600; }
 .rd-amt {
-  font-size: 27rpx;
+  font-size: var(--fs-cap);
   font-weight: 800;
   color: var(--ink-deep);
   flex: none;
@@ -226,7 +226,7 @@
   min-height: 92rpx;
   border-radius: 28rpx;
   background: var(--pop);
-  color: #fff;
+  color: var(--c-surface);
   font-size: 28rpx;
   font-weight: 800;
   box-shadow: var(--sh-pop);
@@ -249,7 +249,7 @@
   display: flex;
   gap: 28rpx;
   padding: 30rpx 0;
-  border-bottom: 2rpx solid #efe9df;
+  border-bottom: 2rpx solid var(--paper-2);
 }
 .rd-step:last-child { border-bottom: none; }
 .rd-sno {
@@ -267,7 +267,7 @@
 }
 .rd-sno.hot {
   background: var(--pop);
-  color: #fff;
+  color: var(--c-surface);
   box-shadow: 0 12rpx 28rpx rgba(232, 71, 42, 0.35);
 }
 .rd-stx { flex: 1; padding-top: 6rpx; }
@@ -291,7 +291,7 @@
   color: var(--gold-deep);
   background: var(--paper-2);
   padding: 10rpx 20rpx;
-  border-radius: 30rpx;
+  border-radius: var(--r-chip);
 }
 
 /* —— 评价 —— */
@@ -299,7 +299,7 @@
   display: flex;
   gap: 25rpx;
   padding: 28rpx 0;
-  border-bottom: 2rpx solid #efe9df;
+  border-bottom: 2rpx solid var(--paper-2);
 }
 .rd-av {
   width: 80rpx;
@@ -311,7 +311,7 @@
   justify-content: center;
   font-size: 30rpx;
   font-weight: 900;
-  color: #fff;
+  color: var(--c-surface);
   font-family: var(--serif);
 }
 .rd-rc { flex: 1; }
@@ -321,16 +321,16 @@
   justify-content: space-between;
 }
 .rd-who { font-size: 28rpx; font-weight: 800; color: var(--ink); }
-.rd-when { font-size: 21rpx; color: var(--mut); }
+.rd-when { font-size: var(--fs-mini); color: var(--mut); }
 .rd-stars { display: flex; gap: 4rpx; margin: 8rpx 0 12rpx; }
 .rd-star {
   width: 24rpx;
   height: 24rpx;
-  background: #e6dccb;
+  background: var(--c-border);
   clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
 }
 .rd-star.on { background: var(--pop); }
-.rd-cm { font-size: 25rpx; line-height: 1.5; color: var(--mut); }
+.rd-cm { font-size: var(--fs-sub); line-height: 1.5; color: var(--mut); }
 
 /* 写评价入口 */
 .rd-rev-entry {
@@ -338,7 +338,7 @@
   align-items: center;
   gap: 21rpx;
   padding: 28rpx 0 8rpx;
-  border-top: 2rpx solid #efe9df;
+  border-top: 2rpx solid var(--paper-2);
   margin-top: 6rpx;
 }
 .rd-rev-entry.no-top { border-top: none; margin-top: 0; padding-top: 8rpx; }
@@ -352,7 +352,7 @@
   justify-content: center;
   font-size: 30rpx;
   font-weight: 900;
-  color: #fff;
+  color: var(--c-surface);
   font-family: var(--serif);
   background: var(--pop);
 }
@@ -362,9 +362,9 @@
   line-height: 84rpx;
   border-radius: 26rpx;
   background: var(--paper-2);
-  border: 2rpx solid #e6dccb;
+  border: 2rpx solid var(--c-border);
   padding: 0 28rpx;
-  font-size: 25rpx;
+  font-size: var(--fs-sub);
   color: var(--mut-strong);
   font-weight: 600;
 }
@@ -375,7 +375,7 @@
   border-radius: 26rpx;
   background: var(--ink-deep);
   color: var(--gold);
-  font-size: 25rpx;
+  font-size: var(--fs-sub);
   font-weight: 800;
   display: flex;
   align-items: center;
@@ -392,13 +392,13 @@
   gap: 16rpx;
   padding: 24rpx 30rpx;
   background: rgba(251, 248, 243, 0.94);
-  border-top: 2rpx solid #ece5d9;
+  border-top: 2rpx solid var(--paper-2);
 }
 .rd-ghost-btn {
   flex: none;
   width: 156rpx;
   height: 104rpx;
-  border-radius: 30rpx;
+  border-radius: var(--r-chip);
   background: var(--paper-2);
   color: var(--ink-deep);
   font-size: 24rpx;
@@ -408,14 +408,14 @@
   align-items: center;
   justify-content: center;
   gap: 6rpx;
-  border: 2rpx solid #e6dccb;
+  border: 2rpx solid var(--c-border);
 }
 .rd-primary-btn {
   flex: 1;
   height: 104rpx;
-  border-radius: 30rpx;
+  border-radius: var(--r-chip);
   background: var(--pop);
-  color: #fff;
+  color: var(--c-surface);
   font-size: 28rpx;
   font-weight: 900;
   letter-spacing: 1rpx;
@@ -429,7 +429,7 @@
   flex: none;
   width: 130rpx;
   height: 104rpx;
-  border-radius: 30rpx;
+  border-radius: var(--r-chip);
   background: var(--ink-deep);
   color: var(--gold);
   font-size: 24rpx;
@@ -450,7 +450,7 @@
 .rd-ic-plus::before, .rd-ic-plus::after {
   content: ""; position: absolute; left: 50%; top: 50%; background: currentColor; border-radius: 3rpx;
 }
-.rd-ic-plus { color: #fff; }
+.rd-ic-plus { color: var(--c-surface); }
 .rd-ic-plus::before { width: 30rpx; height: 5rpx; transform: translate(-50%, -50%); }
 .rd-ic-plus::after { width: 5rpx; height: 30rpx; transform: translate(-50%, -50%); }
 /* 对勾 */
@@ -472,7 +472,7 @@
 .rd-ic-box {
   width: 34rpx; height: 34rpx;
   border: 3rpx solid var(--gold-deep);
-  border-radius: 8rpx;
+  border-radius: var(--r-xs);
 }
 .rd-ic-box::after {
   content: ""; position: absolute; left: 7rpx; right: 7rpx; top: 50%;
@@ -481,12 +481,12 @@
 /* 购物车（nav-bar 右上 + 卡内）*/
 .rd-ic-cart, .rd-ic-cart2 {
   width: 34rpx; height: 30rpx;
-  border: 3rpx solid #fff;
-  border-top: none; border-radius: 0 0 8rpx 8rpx;
+  border: 3rpx solid var(--c-surface);
+  border-top: none; border-radius: 0 0 var(--r-xs) var(--r-xs);
 }
 .rd-ic-cart::before, .rd-ic-cart2::before {
   content: ""; position: absolute; left: -2rpx; top: -16rpx; width: 16rpx; height: 18rpx;
-  border-left: 3rpx solid #fff; border-top: 3rpx solid #fff; transform: skewX(-12deg); border-radius: 4rpx 0 0 0;
+  border-left: 3rpx solid var(--c-surface); border-top: 3rpx solid var(--c-surface); transform: skewX(-12deg); border-radius: 4rpx 0 0 0;
 }
 /* 星形 tip */
 .rd-ic-star {
@@ -497,11 +497,11 @@
 /* ===== 加载骨架 ===== */
 .rd-hero-skel {
   height: 560rpx;
-  background: linear-gradient(135deg, #efe4d7, #f4ece1);
+  background: linear-gradient(135deg, var(--paper-2), var(--c-border-light));
 }
 .rd-skel-row { display: flex; align-items: center; gap: 24rpx; padding: 24rpx 0; }
-.rd-skel-dot { width: 80rpx; height: 80rpx; border-radius: 24rpx; flex: none; }
-.rd-skel-line { flex: 1; height: 32rpx; border-radius: 16rpx; }
+.rd-skel-dot { width: 80rpx; height: 80rpx; border-radius: var(--r-md); flex: none; }
+.rd-skel-line { flex: 1; height: 32rpx; border-radius: var(--r-sm); }
 
 /* ===== 空态 ===== */
 .rd-empty-page { padding-top: 0; }

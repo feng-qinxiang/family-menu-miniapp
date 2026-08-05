@@ -59,52 +59,8 @@
       </view>
       <text class="rg-hint">验证码将发送至上方手机号，60 秒内有效。</text>
 
-      <!-- 设置密码 -->
-      <view class="rg-field g-fade-up g-d3">
-        <text class="rg-label">设置密码</text>
-        <view class="rg-inp {{pwdFocus ? 'is-focus' : ''}}">
-          <view class="rg-ic"><view class="ic-lock"></view></view>
-          <input
-            class="rg-input grow"
-            password="{{!pwdShow}}"
-            maxlength="20"
-            placeholder="6-20 位密码"
-            placeholder-class="rg-ph"
-            value="{{pwd}}"
-            bindinput="onPwdInput"
-            bindfocus="onPwdFocus"
-            bindblur="onPwdBlur"
-          />
-          <view class="rg-eye tap-scale" catchtap="onTogglePwd">
-            <view class="ic-eye {{pwdShow ? '' : 'off'}}"></view>
-          </view>
-        </view>
-      </view>
-
-      <!-- 确认密码 -->
-      <view class="rg-field g-fade-up g-d4">
-        <text class="rg-label">确认密码</text>
-        <view class="rg-inp {{pwd2Focus ? 'is-focus' : ''}}">
-          <view class="rg-ic"><view class="ic-lock"></view></view>
-          <input
-            class="rg-input grow"
-            password="{{!pwd2Show}}"
-            maxlength="20"
-            placeholder="再次输入密码"
-            placeholder-class="rg-ph"
-            value="{{pwd2}}"
-            bindinput="onPwd2Input"
-            bindfocus="onPwd2Focus"
-            bindblur="onPwd2Blur"
-          />
-          <view class="rg-eye tap-scale" catchtap="onTogglePwd2">
-            <view class="ic-eye {{pwd2Show ? '' : 'off'}}"></view>
-          </view>
-        </view>
-      </view>
-
       <!-- 注册按钮 -->
-      <view class="rg-createbtn btn-pop tap-scale g-fade-up g-d5" catchtap="onRegister">
+      <view class="rg-createbtn btn-pop tap-scale g-fade-up g-d3" catchtap="onRegister">
         <text>注册账号</text>
         <view class="ic-arrow"></view>
       </view>

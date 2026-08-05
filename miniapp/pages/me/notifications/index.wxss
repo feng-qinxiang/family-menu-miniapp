@@ -35,7 +35,7 @@
 .hero-eyebrow {
   font-family: var(--serif);
   font-style: italic;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   letter-spacing: 2rpx;
   color: var(--gold-deep);
   font-weight: 700;
@@ -58,7 +58,7 @@
 }
 .hero-unread {
   margin-top: 18rpx;
-  font-size: 25rpx;
+  font-size: var(--fs-sub);
   font-weight: 600;
   color: var(--mut-strong);
 }
@@ -94,7 +94,7 @@
 .daylbl {
   font-family: var(--serif);
   font-style: italic;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   letter-spacing: 2rpx;
   color: var(--gold-deep);
   font-weight: 700;
@@ -105,7 +105,7 @@
   position: relative;
   display: flex;
   gap: 26rpx;
-  background: #fff;
+  background: var(--c-surface);
   border-radius: var(--r-card);
   padding: 28rpx 30rpx;
   margin-bottom: 24rpx;
@@ -113,7 +113,7 @@
   box-shadow: var(--sh-card);
 }
 .ncard.unread {
-  background: linear-gradient(180deg, var(--pop-soft) 0%, #fff 38%);
+  background: linear-gradient(180deg, var(--pop-soft) 0%, var(--c-surface) 38%);
 }
 .ncard.unread::before {
   content: "";
@@ -138,7 +138,7 @@
   overflow: hidden;
 }
 .ic-fam { background: var(--pop-soft); }
-.ic-com { background: #eef3ee; }
+.ic-com { background: var(--c-success-soft); }
 .ic-sys { background: var(--gold); }
 .ic-img { width: 88rpx; height: 88rpx; border-radius: var(--r-md); }
 
@@ -185,7 +185,7 @@
 .ic-bell {
   position: relative;
   width: 34rpx; height: 34rpx;
-  border-radius: 50% 50% 8rpx 8rpx;
+  border-radius: 50% 50% var(--r-xs) var(--r-xs);
   border: 4rpx solid var(--gold-deep);
   border-bottom: none;
 }
@@ -245,14 +245,14 @@
   min-width: 0;
 }
 .nt-time {
-  font-size: 21rpx;
+  font-size: var(--fs-mini);
   font-weight: 600;
   color: var(--mut);
   flex: none;
 }
 .nt-body {
   margin-top: 10rpx;
-  font-size: 25rpx;
+  font-size: var(--fs-sub);
   line-height: 1.5;
   color: var(--mut-strong);
 }
@@ -280,9 +280,9 @@
   flex: none;
   padding: 13rpx 28rpx;
   border-radius: var(--r-pill);
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   font-weight: 800;
-  color: #fff;
+  color: var(--c-surface);
   background: var(--pop);
   box-shadow: var(--sh-pop);
 }
@@ -294,8 +294,8 @@
 .nbtn-arrow {
   width: 13rpx;
   height: 13rpx;
-  border-top: 4rpx solid #fff;
-  border-right: 4rpx solid #fff;
+  border-top: 4rpx solid var(--c-surface);
+  border-right: 4rpx solid var(--c-surface);
   transform: rotate(45deg);
 }
 .nbtn-arrow.arrow-ink {

@@ -90,7 +90,7 @@
 }
 .ob-dot {
   width: 16rpx; height: 16rpx;
-  border-radius: 999rpx;
+  border-radius: var(--r-pill);
   background: var(--paper-2);
   transition: width 0.3s var(--g-power3-out), background 0.3s;
 }
@@ -142,12 +142,12 @@
   box-shadow: var(--sh-pop);
 }
 .ob-logo-ico {
-  color: #fff;
+  color: var(--c-surface);
   font-size: 38rpx;
   font-weight: 900;
 }
 .ob-bname {
-  color: #fff;
+  color: var(--c-surface);
   font-size: 30rpx;
   font-weight: 800;
   letter-spacing: -0.5rpx;
@@ -158,7 +158,7 @@
   font-family: var(--serif);
   font-style: italic;
   font-weight: 600;
-  font-size: 19rpx;
+  font-size: var(--fs-tiny);
   letter-spacing: 3rpx;
   opacity: 0.82;
   margin-top: 2rpx;

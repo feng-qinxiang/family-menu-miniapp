@@ -28,7 +28,14 @@
     <view class="fav-body">
       <!-- 菜谱 pane：2 列 recipe-card -->
       <view wx:if="{{activeTab === 'recipe'}}">
-        <view wx:if="{{recipes.length}}" class="fav-grid">
+        <view wx:if="{{loading}}" class="fav-grid">
+          <view class="fav-grid-cell" wx:for="{{[1,2,3,4]}}" wx:key="*this">
+            <view class="fav-skel-cover shimmer"></view>
+            <view class="fav-skel-line strong shimmer"></view>
+            <view class="fav-skel-line shimmer"></view>
+          </view>
+        </view>
+        <view wx:elif="{{recipes.length}}" class="fav-grid">
           <view wx:for="{{recipes}}" wx:key="id"
             class="fav-grid-cell g-fade-up g-d{{index < 6 ? index + 1 : 6}}">
             <recipe-card
@@ -53,7 +60,10 @@
 
       <!-- 帖子 pane：list -->
       <view wx:else>
-        <view wx:if="{{posts.length}}">
+        <view wx:if="{{loading}}" class="fav-pane-skel">
+          <view class="fav-pcard-skel shimmer" wx:for="{{[1,2,3]}}" wx:key="*this"></view>
+        </view>
+        <view wx:elif="{{posts.length}}">
           <view wx:for="{{posts}}" wx:key="id"
             class="fav-pcard tap-scale g-fade-up g-d{{index < 6 ? index + 1 : 6}}"
             data-id="{{item.id}}" bindtap="onPostTap">

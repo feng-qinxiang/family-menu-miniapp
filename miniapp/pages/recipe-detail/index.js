@@ -63,8 +63,9 @@ Page({
       sbh = 0;
     }
     this.setData({ statusBarHeight: sbh });
-    if (options.id) {
-      this.loadRecipe(options.id);
+    const recipeId = options.id || options.recipeId;
+    if (recipeId) {
+      this.loadRecipe(recipeId);
     } else {
       this.setData({ loading: false });
     }
@@ -271,5 +272,13 @@ Page({
         }
       }
     });
-  }
+  },
+
+  onShareAppMessage() {
+    const r = this.data.recipe || {};
+    return {
+      title: r.title ? '分享一道菜：' + r.title : '一道好菜，分享给你',
+      path: '/pages/recipe-detail/index?id=' + (this.data.recipeId || '')
+    };
+  },
 });

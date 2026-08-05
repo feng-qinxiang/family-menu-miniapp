@@ -44,6 +44,10 @@ public class AuthService {
     private final boolean devOtpEnabled;
     private final boolean wechatConfigured;
     private final ConcurrentHashMap<String, AuthUser> guestCache = new ConcurrentHashMap<>();
+    // ponytail: 内存态验证码试错限流（failCount, lockUntilEpochMillis）；重启清零可接受，升级路径为落库
+    private final ConcurrentHashMap<String, long[]> phoneOtpAttempts = new ConcurrentHashMap<>();
+    private static final int OTP_MAX_FAILURES = 5;
+    private static final long OTP_LOCK_MILLIS = 15 * 60 * 1000L;
 
     public AuthService(JdbcTemplate jdbcTemplate,
                        com.familymenu.daily.payment.MembershipService membershipService,
@@ -91,6 +95,15 @@ public class AuthService {
     @Transactional
     public OtpChallenge requestPhoneOtp(OtpRequest request) {
         String phone = normalizePhone(request == null ? null : request.phone());
+
+        // 速率限制：同一手机号 1 小时内最多 5 次
+        Integer recentCount = jdbcTemplate.queryForObject(
+                "SELECT COUNT(1) FROM phone_otp WHERE phone = ? AND created_at > DATE_SUB(NOW(), INTERVAL 1 HOUR)",
+                Integer.class, phone);
+        if (recentCount != null && recentCount >= 5) {
+            throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "发送过于频繁，请稍后再试");
+        }
+
         String code = devOtpEnabled ? "246810" : String.format("%06d", ThreadLocalRandom.current().nextInt(0, 1_000_000));
         jdbcTemplate.update("UPDATE phone_otp SET consumed_at = NOW() WHERE phone = ? AND consumed_at IS NULL", phone);
         jdbcTemplate.update(
@@ -111,6 +124,10 @@ public class AuthService {
         if (code == null || !code.matches("\\d{6}")) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid otp code");
         }
+        long[] attempt = phoneOtpAttempts.get(phone);
+        if (attempt != null && attempt[1] > System.currentTimeMillis()) {
+            throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "验证码错误次数过多，请 15 分钟后再试");
+        }
         Long otpId = jdbcTemplate.query("""
                 SELECT id
                 FROM phone_otp
@@ -119,8 +136,16 @@ public class AuthService {
                 LIMIT 1
                 """, rs -> rs.next() ? rs.getLong("id") : null, phone, buildOtpHash(phone, code));
         if (otpId == null) {
+            long[] entry = phoneOtpAttempts.computeIfAbsent(phone, k -> new long[2]);
+            entry[0]++;
+            if (entry[0] >= OTP_MAX_FAILURES) {
+                entry[1] = System.currentTimeMillis() + OTP_LOCK_MILLIS;
+                entry[0] = 0;
+                throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "验证码错误次数过多，已锁定 15 分钟");
+            }
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "otp code expired or invalid");
         }
+        phoneOtpAttempts.remove(phone);
         jdbcTemplate.update("UPDATE phone_otp SET consumed_at = NOW() WHERE id = ?", otpId);
         String nickname = isBlank(request.nickname()) ? "手机用户" + phone.substring(phone.length() - 4) : request.nickname().trim();
         String avatarUrl = request.avatarUrl() == null ? "" : request.avatarUrl().trim();
@@ -132,7 +157,7 @@ public class AuthService {
             return Optional.empty();
         }
         String sql = """
-                SELECT u.id, u.nickname, u.avatar_url, u.is_admin, s.expires_at
+                SELECT u.id, u.nickname, u.avatar_url, u.is_admin, u.phone_number, s.expires_at
                 FROM user_session s
                 JOIN user_account u ON u.id = s.user_id
                 WHERE s.token = ? AND s.expires_at > NOW()
@@ -157,7 +182,8 @@ public class AuthService {
                     rs.getString("avatar_url"),
                     coverage.vip(),
                     com.familymenu.daily.payment.PlanCatalog.displayName(coverage.planCode()),
-                    rs.getBoolean("is_admin")
+                    rs.getBoolean("is_admin"),
+                    rs.getString("phone_number") != null && !rs.getString("phone_number").isBlank()
             ));
         }, token.trim());
     }
@@ -215,6 +241,18 @@ public class AuthService {
     }
 
     private LoginResponse loginByPhone(String phone, String nickname, String avatarUrl) {
+        // 优先认领已绑定该手机号的既有账号（编辑资料绑定或 addMember 占位账号），避免"验证码登录变新号、数据全丢"
+        Long existingUserId = jdbcTemplate.query(
+                "SELECT id FROM user_account WHERE phone_number = ? ORDER BY id LIMIT 1",
+                rs -> rs.next() ? rs.getLong("id") : null, phone);
+        if (existingUserId != null) {
+            long userId = existingUserId;
+            long familyId = findOrCreateDefaultFamily(userId);
+            String token = createSession(userId, "phone");
+            AuthUser user = loadUser(userId, familyId);
+            ensureDemoDataForFamily(userId, familyId);
+            return new LoginResponse(token, user);
+        }
         String openid = "phone-" + sha256Hex(phone).substring(0, 32);
         upsertPhoneUser(openid, phone, nickname, avatarUrl);
         long userId = findUserId(openid);
@@ -284,7 +322,7 @@ public class AuthService {
         com.familymenu.daily.payment.MembershipService.Coverage coverage =
                 membershipService.resolveCoverage(userId);
         return jdbcTemplate.queryForObject("""
-                        SELECT id, nickname, avatar_url, is_admin
+                        SELECT id, nickname, avatar_url, is_admin, phone_number
                         FROM user_account
                         WHERE id = ?
                         """,
@@ -295,7 +333,8 @@ public class AuthService {
                         rs.getString("avatar_url"),
                         coverage.vip(),
                         com.familymenu.daily.payment.PlanCatalog.displayName(coverage.planCode()),
-                        rs.getBoolean("is_admin")
+                        rs.getBoolean("is_admin"),
+                        rs.getString("phone_number") != null && !rs.getString("phone_number").isBlank()
                 ),
                 userId
         );
@@ -342,7 +381,7 @@ public class AuthService {
         Long currentFamilyId = jdbcTemplate.query("""
                 SELECT f.id
                 FROM user_account u
-                JOIN family_member m ON m.family_id = u.current_family_id AND m.user_id = u.id
+                JOIN family_member m ON m.family_id = u.current_family_id AND m.user_id = u.id AND m.member_status = 'ACTIVE'
                 JOIN family f ON f.id = m.family_id
                 WHERE u.id = ?
                 LIMIT 1
@@ -353,7 +392,7 @@ public class AuthService {
         Long familyId = jdbcTemplate.query("""
                 SELECT f.id
                 FROM family f
-                JOIN family_member m ON m.family_id = f.id
+                JOIN family_member m ON m.family_id = f.id AND m.member_status = 'ACTIVE'
                 WHERE m.user_id = ?
                 ORDER BY f.id
                 LIMIT 1
@@ -396,6 +435,14 @@ public class AuthService {
         if (familyId <= 0) {
             return;
         }
+        // ponytail: 用 daily_menu 的固定 ID 做存在性检测，已播种则跳过全部 INSERT
+        long base = familyId * 1000L;
+        Boolean seeded = jdbcTemplate.query(
+                "SELECT COUNT(1) > 0 FROM daily_menu WHERE id = ?",
+                rs -> rs.next() && rs.getBoolean(1), base + 1);
+        if (Boolean.TRUE.equals(seeded)) {
+            return;
+        }
         Long tomato = findRecipeIdByTitle("番茄炒蛋");
         Long soup = findRecipeIdByTitle("紫菜蛋花汤");
         Long beef = findRecipeIdByTitle("牛肉炒西兰花");
@@ -403,7 +450,6 @@ public class AuthService {
         if (tomato == null || soup == null || beef == null || friedRice == null) {
             return;
         }
-        long base = familyId * 1000L;
         jdbcTemplate.update("INSERT IGNORE INTO daily_menu(id, family_id, menu_date, status) VALUES (?, ?, CURRENT_DATE, 'READY')", base + 1, familyId);
         jdbcTemplate.update("INSERT IGNORE INTO daily_menu_item(id, daily_menu_id, recipe_id, meal_type) VALUES (?, ?, ?, 'lunch')", base + 11, base + 1, tomato);
         jdbcTemplate.update("INSERT IGNORE INTO daily_menu_item(id, daily_menu_id, recipe_id, meal_type) VALUES (?, ?, ?, 'lunch')", base + 12, base + 1, soup);
@@ -488,12 +534,12 @@ public class AuthService {
     }
 
     private void persistWechatProfile(String openid, String sessionKey, String unionid) {
-        if (sessionKey == null && unionid == null) {
+        // 安全修复：session_key 不落盘（微信官方禁止持久化），仅保存 unionid
+        if (unionid == null) {
             return;
         }
         jdbcTemplate.update(
-                "UPDATE user_account SET session_key = COALESCE(?, session_key), unionid = COALESCE(?, unionid) WHERE openid = ?",
-                sessionKey,
+                "UPDATE user_account SET unionid = COALESCE(?, unionid) WHERE openid = ?",
                 unionid,
                 openid
         );

@@ -27,7 +27,7 @@
 .vu-eyebrow {
   font-family: var(--serif);
   font-style: italic;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   letter-spacing: 2rpx;
   color: var(--gold-deep);
   font-weight: 700;
@@ -40,7 +40,7 @@
   margin-top: 12rpx;
 }
 .vu-lead-p {
-  font-size: 25rpx;
+  font-size: var(--fs-sub);
   color: var(--mut-strong);
   margin-top: 18rpx;
   line-height: 1.5;
@@ -70,12 +70,12 @@
   left: 35rpx;
   top: 50%;
   transform: translateY(-50%);
-  color: #fff;
+  color: var(--c-surface);
 }
 .vu-hero-et {
   font-family: var(--serif);
   font-style: italic;
-  font-size: 21rpx;
+  font-size: var(--fs-mini);
   letter-spacing: 3rpx;
   color: var(--gold);
   font-weight: 700;
@@ -87,7 +87,7 @@
   margin-top: 8rpx;
 }
 .vu-hero-hs {
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   color: rgba(255, 255, 255, 0.82);
   margin-top: 10rpx;
 }
@@ -104,8 +104,8 @@
   flex: 1;
   position: relative;
   box-sizing: border-box;
-  background: #fff;
-  border: 4rpx solid #ece4d6;
+  background: var(--c-surface);
+  border: 4rpx solid var(--paper-2);
   border-radius: var(--r-card);
   padding: 38rpx 31rpx 35rpx;
   box-shadow: var(--sh-soft);
@@ -123,7 +123,7 @@
   font-size: 20rpx;
   letter-spacing: 1rpx;
   font-weight: 700;
-  color: #fff;
+  color: var(--c-surface);
   background: var(--pop);
   padding: 8rpx 21rpx;
   border-radius: var(--r-pill);
@@ -136,13 +136,13 @@
   width: 42rpx;
   height: 42rpx;
   border-radius: 50%;
-  border: 4rpx solid #ddd4c4;
+  border: 4rpx solid var(--c-border);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 24rpx;
   font-weight: 900;
-  color: #fff;
+  color: var(--c-surface);
 }
 .vu-plan.on .vu-tick {
   background: var(--pop);
@@ -150,7 +150,7 @@
 }
 .vu-ptop { padding-left: 58rpx; }
 .vu-pname {
-  font-size: 27rpx;
+  font-size: var(--fs-cap);
   font-weight: 800;
   color: var(--ink);
   letter-spacing: -1rpx;
@@ -171,7 +171,7 @@
   margin-right: 2rpx;
 }
 .vu-per {
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   font-weight: 600;
   color: var(--mut);
   letter-spacing: 0;
@@ -193,14 +193,14 @@
   align-items: center;
   justify-content: space-between;
   padding: 17rpx 0;
-  font-size: 27rpx;
+  font-size: var(--fs-cap);
 }
 .vu-k { color: var(--mut-strong); font-weight: 600; }
 .vu-v { color: var(--ink); font-weight: 700; }
 .vu-drow.disc .vu-v { color: var(--pop); font-weight: 800; }
 .vu-dline {
   height: 2rpx;
-  background: #efe9df;
+  background: var(--paper-2);
   margin: 12rpx 0;
 }
 .vu-drow.total {
@@ -227,7 +227,7 @@
   display: flex;
   align-items: center;
   gap: 12rpx;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   font-weight: 700;
   color: var(--pop);
 }
@@ -243,7 +243,7 @@
   align-items: center;
   gap: 25rpx;
   padding: 27rpx 0;
-  border-bottom: 2rpx solid #efe9df;
+  border-bottom: 2rpx solid var(--paper-2);
 }
 .vu-bene:last-child { border-bottom: none; }
 .vu-bi {
@@ -255,7 +255,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 36rpx;
+  font-size: var(--fs-h2);
+  font-weight: 800;
+  color: var(--pop);
 }
 .vu-bm { flex: 1; min-width: 0; }
 .vu-bh {
@@ -281,7 +283,7 @@
   justify-content: center;
   font-size: 24rpx;
   font-weight: 900;
-  color: #fff;
+  color: var(--c-surface);
   box-shadow: 0 12rpx 27rpx rgba(232, 71, 42, 0.32);
 }
 
@@ -295,7 +297,7 @@
   box-sizing: border-box;
   background: rgba(251, 248, 243, 0.94);
   backdrop-filter: blur(18rpx);
-  border-top: 2rpx solid #ece5d9;
+  border-top: 2rpx solid var(--paper-2);
   padding: 27rpx 46rpx;
   display: flex;
   align-items: center;
@@ -303,7 +305,7 @@
 }
 .vu-amt { flex: none; }
 .vu-cap {
-  font-size: 21rpx;
+  font-size: var(--fs-mini);
   color: var(--mut-strong);
   font-weight: 600;
 }
@@ -326,4 +328,4 @@
   border-radius: var(--r-md);
 }
 .vu-paybtn.loading { opacity: 0.7; }
-.vu-wxic { font-size: 36rpx; }
+.vu-wxic { font-size: var(--fs-h2); font-weight: 700; }

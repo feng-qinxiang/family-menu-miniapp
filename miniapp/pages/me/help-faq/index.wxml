@@ -58,7 +58,7 @@
 
   <!-- 搜索无结果 -->
   <view wx:else class="no-result">
-    <text class="nr-emoji">🍳</text>
+    <text class="nr-emoji serif">?</text>
     <text class="nr-txt">没找到「{{keyword}}」相关的问题</text>
     <text class="nr-sub">换个关键词，或直接联系客服小厨</text>
   </view>

@@ -6,7 +6,7 @@
 
 /* nav-bar 右侧保存文字 */
 .pe-navsave {
-  font-size: 27rpx;
+  font-size: var(--fs-cap);
   font-weight: 800;
   color: var(--gold-deep);
   letter-spacing: 1rpx;
@@ -29,7 +29,7 @@
 .pe-eyebrow {
   font-family: var(--serif);
   font-style: italic;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   letter-spacing: 2rpx;
   color: var(--gold-deep);
   font-weight: 700;
@@ -45,11 +45,11 @@
   height: 208rpx;
   border-radius: 50%;
   background: var(--pop);
-  border: 6rpx solid #fff;
+  border: 6rpx solid var(--c-surface);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: var(--c-surface);
   font-size: 88rpx;
   font-weight: 900;
   letter-spacing: 2rpx;
@@ -59,7 +59,7 @@
   width: 208rpx;
   height: 208rpx;
   border-radius: 50%;
-  border: 6rpx solid #fff;
+  border: 6rpx solid var(--c-surface);
   display: block;
   box-sizing: border-box;
   box-shadow: var(--sh-card);
@@ -82,7 +82,7 @@
 .pe-cam-icon {
   width: 30rpx;
   height: 24rpx;
-  border: 4rpx solid #fff;
+  border: 4rpx solid var(--c-surface);
   border-radius: 6rpx;
   position: relative;
 }
@@ -95,11 +95,11 @@
   width: 12rpx;
   height: 12rpx;
   border-radius: 50%;
-  border: 3rpx solid #fff;
+  border: 3rpx solid var(--c-surface);
 }
 .pe-avatar-hint {
   margin-top: 24rpx;
-  font-size: 25rpx;
+  font-size: var(--fs-sub);
   font-weight: 700;
   color: var(--mut-strong);
 }
@@ -110,7 +110,7 @@
   margin: 36rpx 0 16rpx;
   font-family: var(--serif);
   font-style: italic;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   letter-spacing: 1rpx;
   color: var(--gold-deep);
   font-weight: 700;
@@ -127,7 +127,7 @@
   align-items: center;
   gap: 24rpx;
   padding: 30rpx 30rpx;
-  border-bottom: 2rpx solid #f1ece2;
+  border-bottom: 2rpx solid var(--c-border-light);
 }
 .pe-group .pe-frow:last-child {
   border-bottom: none;
@@ -145,7 +145,7 @@
 .pe-ic-dot {
   width: 26rpx;
   height: 26rpx;
-  border-radius: 8rpx;
+  border-radius: var(--r-xs);
   background: var(--gold-deep);
   opacity: 0.85;
 }
@@ -250,8 +250,8 @@
 .pe-save-check {
   width: 28rpx;
   height: 16rpx;
-  border-left: 5rpx solid #fff;
-  border-bottom: 5rpx solid #fff;
+  border-left: 5rpx solid var(--c-surface);
+  border-bottom: 5rpx solid var(--c-surface);
   transform: rotate(-45deg);
   margin-top: -6rpx;
 }

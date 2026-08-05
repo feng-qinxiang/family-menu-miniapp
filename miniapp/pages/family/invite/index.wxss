@@ -11,7 +11,7 @@
 .fi-eyebrow {
   font-family: var(--serif);
   font-style: italic;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   letter-spacing: 2rpx;
   color: var(--gold-deep);
   font-weight: 700;
@@ -38,7 +38,7 @@
   z-index: 2;
   font-family: var(--serif);
   font-style: italic;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   letter-spacing: 2rpx;
   color: var(--gold);
   font-weight: 700;
@@ -113,7 +113,7 @@
   margin: 42rpx auto 0;
   width: 330rpx;
   height: 330rpx;
-  background: #fff;
+  background: var(--c-surface);
   border-radius: 38rpx;
   padding: 27rpx;
   box-sizing: border-box;
@@ -154,8 +154,8 @@
 .fi-ic-wx {
   width: 38rpx;
   height: 32rpx;
-  border-radius: 50% 50% 50% 8rpx;
-  background: #fff;
+  border-radius: 50% 50% 50% var(--r-xs);
+  background: var(--c-surface);
   position: relative;
 }
 .fi-ic-wx::after {
@@ -165,8 +165,8 @@
   bottom: -10rpx;
   width: 30rpx;
   height: 26rpx;
-  border-radius: 50% 50% 8rpx 50%;
-  background: #fff;
+  border-radius: 50% 50% var(--r-xs) 50%;
+  background: var(--c-surface);
   box-shadow: 0 0 0 4rpx var(--wx);
 }
 
@@ -181,7 +181,7 @@
   gap: 17rpx;
   padding: 29rpx 0;
   border-radius: 35rpx;
-  background: #fff;
+  background: var(--c-surface);
   color: var(--ink);
   font-size: 29rpx;
   font-weight: 700;

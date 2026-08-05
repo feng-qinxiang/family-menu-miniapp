@@ -47,7 +47,8 @@ Page({
       { name: '儿童友好', active: false },
       { name: '宴客', active: false },
       { name: '低脂', active: false }
-    ]
+    ],
+    saving: false
   },
 
   onLoad(options) {
@@ -257,20 +258,26 @@ Page({
   },
 
   async submit() {
+    if (this.data.saving) return;
+    this.setData({ saving: true });
     const { form, isEdit, recipeId } = this.data;
     if (!form.title.trim()) {
+      this.setData({ saving: false });
       wx.showToast({ title: '请输入菜名', icon: 'none' });
       return;
     }
     if (!form.cuisine.trim()) {
+      this.setData({ saving: false });
       wx.showToast({ title: '请输入菜系', icon: 'none' });
       return;
     }
     if (!form.ingredients.filter((i) => i.name.trim()).length) {
+      this.setData({ saving: false });
       wx.showToast({ title: '至少添加一种食材', icon: 'none' });
       return;
     }
     if (!form.steps.filter((s) => s.text.trim()).length) {
+      this.setData({ saving: false });
       wx.showToast({ title: '至少添加一个步骤', icon: 'none' });
       return;
     }
@@ -283,8 +290,8 @@ Page({
       coverImage: form.coverImage || '',
       tasteTags: form.tasteTags.filter(Boolean),
       summary: form.summary.trim(),
-      ingredients: form.ingredients.filter((i) => i.name.trim()),
-      steps: form.steps.filter((s) => s.text.trim()),
+        ingredients: form.ingredients.filter((i) => i.name.trim()),
+        steps: form.steps.filter((s) => s.text.trim()).map((s) => s.text.trim()),
       sourceType: 'owned'
     };
 
@@ -293,10 +300,12 @@ Page({
       try {
         updated = await updateRecipe(recipeId, payload);
       } catch (err) {
+        this.setData({ saving: false });
         wx.showToast({ title: '保存失败，请重试', icon: 'none' });
         return;
       }
       if (!updated) {
+        this.setData({ saving: false });
         wx.showToast({ title: '保存失败', icon: 'none' });
         return;
       }
@@ -306,15 +315,18 @@ Page({
       try {
         created = await saveRecipe(payload);
       } catch (err) {
+        this.setData({ saving: false });
         wx.showToast({ title: '创建失败，请重试', icon: 'none' });
         return;
       }
       if (!created) {
+        this.setData({ saving: false });
         wx.showToast({ title: '创建失败', icon: 'none' });
         return;
       }
       wx.showToast({ title: '已创建', icon: 'success' });
     }
+    this.setData({ saving: false });
     setTimeout(() => wx.navigateBack(), 600);
   }
 });

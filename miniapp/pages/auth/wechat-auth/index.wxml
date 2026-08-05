@@ -1,5 +1,5 @@
 <!-- pages/auth/wechat-auth · 微信授权(底部 sheet 弹层 · 背景登录页虚化) -->
-<view class="wa">
+<view class="wa g-fade-in">
   <!-- ===== 背景:登录页(虚化变暗) ===== -->
   <view class="wa-bg">
     <view class="wa-hero">

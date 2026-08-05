@@ -1,8 +1,8 @@
 const { getVipStatus, activateVip } = require('../../../utils/api');
 
 const PLAN_MAP = {
-  yearly: { planName: '家庭年卡', price: '68', priceFull: '68.00', original: '118.00', discount: '50.00', off: '5.8' },
-  monthly: { planName: '家庭月卡', price: '9.9', priceFull: '9.90', original: '', discount: '', off: '' }
+  yearly: { planCode: 'annual', planName: '家庭年卡', price: '99', priceFull: '99.00', original: '138.00', discount: '39.00', off: '7.2' },
+  monthly: { planCode: 'monthly', planName: '家庭月卡', price: '19.9', priceFull: '19.90', original: '', discount: '', off: '' }
 };
 
 Page({
@@ -13,10 +13,10 @@ Page({
     selectedPlan: 'yearly',
     plan: PLAN_MAP.yearly,
     benefits: [
-      { icon: '👨‍👩‍👧‍👦', title: '最多 8 位家人共享', desc: '邀请全家加入，菜单清单实时同步' },
-      { icon: '📖', title: '无限收藏菜谱', desc: '家庭菜谱库不限数量，随时回看' },
-      { icon: '🛒', title: '一键生成买菜清单', desc: '按菜单自动合并食材，去重算量' },
-      { icon: '✨', title: '智能口味推荐', desc: '记住全家偏好，每天推荐合口味的菜' }
+      { icon: '家', title: '最多 8 位家人共享', desc: '邀请全家加入，菜单清单实时同步' },
+      { icon: '藏', title: '无限收藏菜谱', desc: '家庭菜谱库不限数量，随时回看' },
+      { icon: '买', title: '一键生成买菜清单', desc: '按菜单自动合并食材，去重算量' },
+      { icon: '荐', title: '智能口味推荐', desc: '记住全家偏好，每天推荐合口味的菜' }
     ],
     activating: false
   },
@@ -88,7 +88,7 @@ Page({
 
   async demoActivate() {
     try {
-      const status = await activateVip(this.data.plan.planName);
+      const status = await activateVip(this.data.plan.planCode);
       const safe = status || {};
       const app = getApp();
       if (app && app.globalData) {

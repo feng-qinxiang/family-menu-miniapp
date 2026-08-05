@@ -22,15 +22,15 @@
   padding: 16rpx 28rpx;
   border-radius: var(--r-pill);
   background: var(--pop);
-  color: #fff;
-  font-size: 25rpx;
+  color: var(--c-surface);
+  font-size: var(--fs-sub);
   font-weight: 800;
   box-shadow: var(--sh-pop);
 }
 .wm-refresh-ic {
   width: 26rpx;
   height: 26rpx;
-  border: 4rpx solid #fff;
+  border: 4rpx solid var(--c-surface);
   border-top-color: transparent;
   border-radius: 50%;
   position: relative;
@@ -42,7 +42,7 @@
   right: -3rpx;
   border-left: 8rpx solid transparent;
   border-right: 8rpx solid transparent;
-  border-bottom: 9rpx solid #fff;
+  border-bottom: 9rpx solid var(--c-surface);
   transform: rotate(40deg);
 }
 
@@ -81,26 +81,26 @@
   right: 46rpx;
   bottom: 50rpx;
   z-index: 10;
-  color: #fff;
+  color: var(--c-surface);
 }
 .wm-tag {
   display: inline-block;
   font-family: var(--serif);
   font-style: italic;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   letter-spacing: 3rpx;
   font-weight: 700;
-  color: #fff;
+  color: var(--c-surface);
   background: var(--pop);
   padding: 10rpx 26rpx;
-  border-radius: 8rpx;
+  border-radius: var(--r-xs);
 }
 .wm-title {
   font-size: 116rpx;
   line-height: 0.9;
   letter-spacing: -6rpx;
   margin: 26rpx 0 18rpx;
-  -webkit-text-stroke: 3rpx #fff;
+  -webkit-text-stroke: 3rpx var(--c-surface);
 }
 .wm-sub {
   font-size: 26rpx;
@@ -134,7 +134,7 @@
   display: block;
   font-size: 24rpx;
   font-weight: 800;
-  color: #fff;
+  color: var(--c-surface);
 }
 .wm-wb-dot {
   width: 10rpx;
@@ -144,7 +144,7 @@
   margin: 10rpx auto 0;
 }
 .wm-wb-dot.empty { background: rgba(255, 255, 255, 0.3); }
-.wm-wb.today .wm-wb-dot { background: #fff; }
+.wm-wb.today .wm-wb-dot { background: var(--c-surface); }
 
 /* 内容 sheet */
 .wm-sheet {
@@ -163,7 +163,7 @@
 }
 .wm-scell {
   flex: 1;
-  background: #fff;
+  background: var(--c-surface);
   border-radius: 34rpx;
   padding: 28rpx 26rpx;
   box-shadow: var(--sh-soft), 0 26rpx 58rpx rgba(120, 70, 30, 0.12);
@@ -178,7 +178,7 @@
 }
 .wm-num.pop { color: var(--pop); }
 .wm-num .u {
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   font-weight: 700;
   color: var(--mut);
   margin-left: 4rpx;
@@ -191,8 +191,8 @@
 }
 /* 日卡 */
 .wm-daycard {
-  background: #fff;
-  border-radius: 42rpx;
+  background: var(--c-surface);
+  border-radius: var(--r-card);
   padding: 30rpx 32rpx 16rpx;
   margin-bottom: 26rpx;
   box-shadow: var(--sh-soft), 0 30rpx 70rpx rgba(120, 70, 30, 0.13);
@@ -207,7 +207,7 @@
   align-items: center;
   justify-content: space-between;
   padding-bottom: 24rpx;
-  border-bottom: 2rpx solid #efe9df;
+  border-bottom: 2rpx solid var(--paper-2);
 }
 .wm-dl {
   display: flex;
@@ -226,16 +226,16 @@
   font-weight: 600;
 }
 .wm-todaytag {
-  font-size: 19rpx;
+  font-size: var(--fs-tiny);
   font-weight: 800;
   letter-spacing: 2rpx;
-  color: #fff;
+  color: var(--c-surface);
   background: var(--pop);
   padding: 6rpx 16rpx;
   border-radius: var(--r-pill);
 }
 .wm-dcount {
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   font-weight: 700;
   color: var(--gold-deep);
 }
@@ -247,7 +247,7 @@
   align-items: center;
   gap: 24rpx;
   padding: 22rpx 0;
-  border-bottom: 2rpx solid #f4efe6;
+  border-bottom: 2rpx solid var(--c-border-light);
 }
 .wm-dish:last-child { border-bottom: none; }
 .wm-slot {
@@ -276,7 +276,7 @@
   letter-spacing: -1rpx;
 }
 .wm-dmeta {
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   color: var(--mut-strong);
   margin-top: 6rpx;
 }

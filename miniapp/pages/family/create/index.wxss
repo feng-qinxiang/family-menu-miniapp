@@ -47,16 +47,16 @@
   right: 46rpx;
   bottom: 86rpx;
   z-index: 10;
-  color: #fff;
+  color: var(--c-surface);
 }
 .fc-tag {
   display: inline-block;
   font-family: var(--serif);
   font-style: italic;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   letter-spacing: 3rpx;
   font-weight: 700;
-  color: #fff;
+  color: var(--c-surface);
   background: var(--pop);
   padding: 11rpx 27rpx;
   border-radius: var(--r-xs);
@@ -92,8 +92,8 @@
   width: 200rpx;
   height: 200rpx;
   border-radius: 62rpx;
-  background: #fff;
-  border: 5rpx dashed #d9cdb8;
+  background: var(--c-surface);
+  border: 5rpx dashed var(--line-deep);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -120,7 +120,7 @@
   justify-content: center;
 }
 .fc-ava-ct {
-  font-size: 21rpx;
+  font-size: var(--fs-mini);
   font-weight: 700;
   color: var(--mut-strong);
   letter-spacing: 1rpx;
@@ -141,7 +141,7 @@
 }
 .fc-ava-hint {
   margin-top: 23rpx;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   color: var(--mut-strong);
   font-weight: 500;
 }
@@ -154,7 +154,7 @@
   margin-bottom: 35rpx;
 }
 .fc-label {
-  font-size: 21rpx;
+  font-size: var(--fs-mini);
   letter-spacing: 2rpx;
   font-weight: 800;
   text-transform: uppercase;
@@ -162,7 +162,7 @@
   margin-bottom: 17rpx;
 }
 .fc-opt {
-  font-size: 21rpx;
+  font-size: var(--fs-mini);
   font-weight: 600;
   color: var(--mut);
   text-transform: none;
@@ -172,8 +172,8 @@
   display: flex;
   align-items: center;
   gap: 21rpx;
-  background: #fff;
-  border: 3rpx solid #ece4d6;
+  background: var(--c-surface);
+  border: 3rpx solid var(--paper-2);
   border-radius: var(--r-sm);
   padding: 29rpx 31rpx;
 }
@@ -216,7 +216,7 @@
   justify-content: center;
   gap: 17rpx;
   background: var(--pop);
-  color: #fff;
+  color: var(--c-surface);
   border-radius: var(--r-sm);
   padding: 33rpx;
   font-size: 32rpx;
@@ -252,12 +252,12 @@
   margin-top: 50rpx;
 }
 .fc-join-small {
-  font-size: 25rpx;
+  font-size: var(--fs-sub);
   color: var(--mut-strong);
 }
 .fc-join-a {
   display: inline-block;
-  font-size: 27rpx;
+  font-size: var(--fs-cap);
   font-weight: 800;
   color: var(--ink-deep);
   border-bottom: 4rpx solid var(--gold);
@@ -276,7 +276,7 @@
   width: 38rpx;
   height: 30rpx;
   border: 4rpx solid var(--pop);
-  border-radius: 8rpx;
+  border-radius: var(--r-xs);
 }
 .fc-ic-cam::before {
   content: "";
@@ -311,7 +311,7 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  background: #fff;
+  background: var(--c-surface);
   border-radius: 2rpx;
   transform: translate(-50%, -50%);
 }
@@ -380,8 +380,8 @@
 .fc-ic-arrow {
   width: 16rpx;
   height: 16rpx;
-  border-top: 5rpx solid #fff;
-  border-right: 5rpx solid #fff;
+  border-top: 5rpx solid var(--c-surface);
+  border-right: 5rpx solid var(--c-surface);
   transform: rotate(45deg);
 }
 /* 灯泡 */

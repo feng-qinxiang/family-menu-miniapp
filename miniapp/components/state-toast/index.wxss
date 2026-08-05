@@ -20,22 +20,22 @@
   right: 36rpx;
   gap: 22rpx;
   padding: 28rpx 32rpx;
-  background: #fff;
+  background: var(--c-surface);
   border-radius: 36rpx;
-  border: 2rpx solid #f1ece2;
+  border: 2rpx solid var(--c-border-light);
   box-shadow: 0 4rpx 12rpx rgba(60, 40, 20, 0.08), 0 36rpx 80rpx rgba(120, 70, 30, 0.22);
 }
 .st-ic {
   width: 76rpx;
   height: 76rpx;
-  border-radius: 24rpx;
+  border-radius: var(--r-md);
   flex: none;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .st-ic-ok {
-  background: #3a9d5d;
+  background: var(--success);
   box-shadow: 0 12rpx 28rpx rgba(58, 157, 93, 0.4);
 }
 
@@ -43,16 +43,16 @@
 .st-check {
   width: 30rpx;
   height: 16rpx;
-  border-left: 6rpx solid #fff;
-  border-bottom: 6rpx solid #fff;
+  border-left: 6rpx solid var(--c-surface);
+  border-bottom: 6rpx solid var(--c-surface);
   transform: rotate(-45deg);
   margin-top: -6rpx;
 }
 .st-check-lg {
   width: 38rpx;
   height: 20rpx;
-  border-left: 7rpx solid #7fd29a;
-  border-bottom: 7rpx solid #7fd29a;
+  border-left: 7rpx solid var(--success-light);
+  border-bottom: 7rpx solid var(--success-light);
 }
 
 .st-tx { flex: 1; min-width: 0; }
@@ -127,7 +127,7 @@
 .st-center-tx {
   font-size: 30rpx;
   font-weight: 700;
-  color: #fff;
+  color: var(--c-surface);
   letter-spacing: 1rpx;
 }
 
@@ -148,28 +148,28 @@
   height: 48rpx;
   flex: none;
   border-radius: 50%;
-  border: 4rpx solid #fff;
+  border: 4rpx solid var(--c-surface);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: var(--c-surface);
   font-size: 32rpx;
   font-weight: 900;
   line-height: 1;
 }
 .st-err-tx {
-  font-size: 27rpx;
+  font-size: var(--fs-cap);
   font-weight: 700;
-  color: #fff;
+  color: var(--c-surface);
   letter-spacing: 0.4rpx;
   white-space: nowrap;
 }
 .st-retry {
   margin-left: 8rpx;
   flex: none;
-  font-size: 25rpx;
+  font-size: var(--fs-sub);
   font-weight: 800;
-  color: #fff;
+  color: var(--c-surface);
   padding: 10rpx 24rpx;
   border-radius: var(--r-pill);
   background: rgba(255, 255, 255, 0.22);
@@ -220,7 +220,7 @@
 }
 .st-undo {
   flex: none;
-  font-size: 25rpx;
+  font-size: var(--fs-sub);
   font-weight: 800;
   color: var(--gold);
   padding: 12rpx 26rpx;

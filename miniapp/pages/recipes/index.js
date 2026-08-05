@@ -1,43 +1,9 @@
 const { addTodayMenuRecipe, getMyFavorites, getRecipes, getShoppingList, getTodayMenu } = require('../../utils/api');
-
-const sourceTabs = [
-  { key: 'all',       label: '全部' },
-  { key: 'owned',     label: '家庭菜谱' },
-  { key: 'favorites', label: '收藏' },
-  { key: 'community', label: '社区' },
-  { key: 'imported',  label: '导入' }
-];
-
-const sourceLabels = {
-  owned: '家里常做',
-  community: '邻里分享',
-  imported: '外部收藏',
-  link: '链接导入',
-  text: '文本导入'
-};
-
-const cuisineList = ['家常', '川菜', '粤菜', '湘菜', '鲁菜', '西餐', '日料'];
-
-const FALLBACK_DISHES = [
-  'beef-broccoli', 'chicken-congee', 'egg-drop-soup', 'fried-rice',
-  'hongshao-pork', 'hot-sour-soup', 'kungpao-chicken', 'lo-mein',
-  'long-beans', 'mapo-tofu', 'orange-chicken', 'shrimp-peas',
-  'sichuan-eggplant', 'sweet-sour-chicken', 'tomato-egg', 'wontons'
-];
-
-function fallbackCover(recipe) {
-  const seed = String((recipe && (recipe.id || recipe.title)) || '');
-  let sum = 0;
-  for (let i = 0; i < seed.length; i++) sum += seed.charCodeAt(i);
-  return '/assets/dishes/' + FALLBACK_DISHES[sum % FALLBACK_DISHES.length] + '.jpg';
-}
+const { recipeSourceLabels, cuisineList, mealOptions, sourceTabs } = require('../../utils/constants');
+const { fallbackDishImg, onImgError } = require('../../utils/image');
+const { debounce } = require('../../utils/debounce');
 
 const PAGE_SIZE = 6;
-
-const mealOptions = [
-  { key: 'lunch', label: '午餐' },
-  { key: 'dinner', label: '晚餐' }
-];
 
 Page({
   data: {
@@ -63,16 +29,15 @@ Page({
     advFilter: { cuisine: '', maxTime: 0, minServings: 0 }
   },
 
-  onLoad() {
-    this.loadRecipes();
-  },
+  onLoad() {},
 
   onShow() {
-    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
-      this.getTabBar().setData({ selected: 2 });
-    }
-    this.loadRecipes();
-  },
+      this.loadRecipes();
+    },
+
+    onPullDownRefresh() {
+      Promise.resolve(this.loadRecipes()).catch(() => {}).then(() => setTimeout(() => wx.stopPullDownRefresh(), 300));
+    },
 
   async loadRecipes() {
     this.setData({ loading: true });
@@ -107,8 +72,8 @@ Page({
       selected: ids.includes(id),
       tasteTags: Array.isArray(recipe.tasteTags) ? recipe.tasteTags : [],
       summary: recipe.summary || '',
-      cover: recipe.coverImage || fallbackCover(recipe),
-      sourceLabel: sourceLabels[recipe.sourceType] || '自家菜谱'
+      cover: recipe.coverImage || fallbackDishImg(recipe.id || recipe.title),
+      sourceLabel: recipeSourceLabels[recipe.sourceType] || '自家菜谱'
     };
   },
 
@@ -171,8 +136,12 @@ Page({
 
   onSearchInput(event) {
     this.setData({ searchText: event.detail.value || '' });
-    this.applyFilter();
+    this._debouncedFilter();
   },
+
+  _debouncedFilter: debounce(function () {
+    this.applyFilter();
+  }, 300),
 
   onSearchFocus() {
     this.setData({ searchFocused: true });
@@ -313,6 +282,15 @@ Page({
   onGridImgError(e) {
     const idx = e.currentTarget.dataset.index;
     if (idx === undefined) return;
-    this.setData({ [`displayedRecipes[${idx}].cover`]: fallbackCover(this.data.displayedRecipes[idx]) });
-  }
+    const item = this.data.displayedRecipes[idx];
+    if (item) {
+      this.setData({ [`displayedRecipes[${idx}].cover`]: fallbackDishImg(item.id || item.title) });
+    }
+  },
+  onShareAppMessage() {
+    return {
+      title: '家里的菜谱库，快来看看',
+      path: '/pages/recipes/index'
+    };
+  },
 });

@@ -60,16 +60,16 @@
   right: 46rpx;
   bottom: 50rpx;
   z-index: 10;
-  color: #fff;
+  color: var(--c-surface);
 }
 .hero-tag {
   display: inline-block;
   font-family: var(--serif);
   font-style: italic;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   letter-spacing: 3rpx;
   font-weight: 700;
-  color: #fff;
+  color: var(--c-surface);
   background: var(--pop);
   padding: 11rpx 27rpx;
   border-radius: var(--r-xs);
@@ -79,7 +79,7 @@
   line-height: 0.9;
   letter-spacing: -6rpx;
   margin: 28rpx 0 8rpx;
-  -webkit-text-stroke: 3rpx #fff;
+  -webkit-text-stroke: 3rpx var(--c-surface);
 }
 
 /* 成就玻璃条 */
@@ -97,19 +97,19 @@
 .ach .num {
   font-size: 58rpx;
   font-weight: 900;
-  color: #fff;
+  color: var(--c-surface);
   letter-spacing: -3rpx;
   line-height: 1;
 }
 .ach .num .u {
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   font-weight: 600;
   color: rgba(255, 255, 255, 0.6);
   margin-left: 4rpx;
 }
 .ach .a.hl .num { color: var(--pop); }
 .ach .cap {
-  font-size: 21rpx;
+  font-size: var(--fs-mini);
   color: rgba(255, 255, 255, 0.7);
   margin-top: 10rpx;
   letter-spacing: 0.8rpx;
@@ -144,11 +144,11 @@
   position: relative;
   z-index: 1;
 }
-.cal-top .ct { font-size: 25rpx; font-weight: 800; color: #fff; }
+.cal-top .ct { font-size: var(--fs-sub); font-weight: 800; color: var(--c-surface); }
 .cal-top .cs {
   font-family: var(--serif);
   font-style: italic;
-  font-size: 21rpx;
+  font-size: var(--fs-mini);
   color: var(--gold);
 }
 .cal-days {
@@ -182,11 +182,11 @@
 }
 .cal-day.done .dd {
   background: var(--pop);
-  color: #fff;
+  color: var(--c-surface);
   box-shadow: 0 8rpx 20rpx rgba(232, 71, 42, 0.4);
 }
 .cal-day.today .dd {
-  background: #fff;
+  background: var(--c-surface);
   color: var(--ink-deep);
 }
 .cal-day.miss .dd {
@@ -197,7 +197,7 @@
 .cal-day.miss:active .dd {
   background: rgba(232, 71, 42, 0.16);
   border-color: var(--pop);
-  color: #fff;
+  color: var(--c-surface);
 }
 .cal-day .fix {
   font-size: 17rpx;
@@ -217,7 +217,7 @@
   width: 36rpx;
   height: 36rpx;
   border-radius: 50%;
-  color: #fff;
+  color: var(--c-surface);
   font-size: 18rpx;
   font-weight: 800;
   display: flex;
@@ -241,7 +241,7 @@
 .month-sep:not(:first-child) { margin-top: 22rpx; }
 .month-sep .mtag {
   font-family: var(--serif);
-  font-size: 27rpx;
+  font-size: var(--fs-cap);
   font-weight: 800;
   color: var(--ink-deep);
   letter-spacing: 0.6rpx;
@@ -250,17 +250,17 @@
 .month-sep .mtag .men {
   font-style: italic;
   color: var(--gold-deep);
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   font-weight: 700;
   margin-left: 10rpx;
 }
 .month-sep .mline {
   flex: 1;
   height: 2rpx;
-  background: linear-gradient(90deg, #e3dccd, transparent);
+  background: linear-gradient(90deg, var(--c-border), transparent);
 }
 .month-sep .mcnt {
-  font-size: 21rpx;
+  font-size: var(--fs-mini);
   color: var(--mut-strong);
   font-weight: 600;
   flex: none;
@@ -270,8 +270,8 @@
 .tcard {
   display: flex;
   gap: 26rpx;
-  background: #fff;
-  border-radius: 42rpx;
+  background: var(--c-surface);
+  border-radius: var(--r-card);
   padding: 25rpx;
   margin-bottom: 26rpx;
   box-shadow: var(--sh-card);
@@ -280,7 +280,7 @@
 .tcard .thumb {
   width: 162rpx;
   height: 162rpx;
-  border-radius: 30rpx;
+  border-radius: var(--r-chip);
   flex: none;
   position: relative;
   overflow: hidden;
@@ -293,7 +293,7 @@
   font-size: 18rpx;
   font-weight: 800;
   letter-spacing: 1rpx;
-  color: #fff;
+  color: var(--c-surface);
   background: rgba(40, 30, 20, 0.62);
   padding: 5rpx 13rpx;
   border-radius: 10rpx;
@@ -322,7 +322,7 @@
   clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
 }
 .star-on { background: var(--pop); }
-.star-off { background: #e7e0d4; }
+.star-off { background: var(--c-border); }
 
 /* 厨师 + 备注 */
 .cook { display: flex; align-items: center; gap: 12rpx; margin-top: 14rpx; }
@@ -330,7 +330,7 @@
   width: 42rpx;
   height: 42rpx;
   border-radius: 50%;
-  color: #fff;
+  color: var(--c-surface);
   font-size: 20rpx;
   font-weight: 800;
   display: flex;
@@ -355,11 +355,11 @@
 .note.plain .who { color: var(--gold-deep); }
 
 /* 厨师色调（与设计稿一致，限定本页局部头像底色） */
-.tone-a { background: #c75b39; }
+.tone-a { background: var(--pop-deep); }
 .tone-b { background: var(--pine); }
 .tone-c { background: var(--gold-deep); }
-.tone-d { background: #6b7b8c; }
-.tone-e { background: #9a5b8c; }
+.tone-d { background: var(--cat-slate); }
+.tone-e { background: var(--cat-plum); }
 
 /* 展开更早 */
 .loadmore {
@@ -371,11 +371,11 @@
   padding: 26rpx;
   background: var(--paper-2);
   border-radius: var(--r-sm);
-  font-size: 25rpx;
+  font-size: var(--fs-sub);
   font-weight: 700;
   color: var(--ink-deep);
 }
-.loadmore:active { background: #e6ded0; }
+.loadmore:active { background: var(--c-border); }
 .loadmore .lm-i {
   width: 30rpx;
   height: 30rpx;
@@ -393,9 +393,9 @@
   gap: 22rpx;
   margin: 34rpx 0 4rpx;
 }
-.listend .le-line { width: 88rpx; height: 2rpx; background: #ddd5c6; }
+.listend .le-line { width: 88rpx; height: 2rpx; background: var(--c-border); }
 .listend .le-txt {
-  font-size: 21rpx;
+  font-size: var(--fs-mini);
   color: var(--mut-strong);
   font-weight: 600;
   letter-spacing: 1rpx;

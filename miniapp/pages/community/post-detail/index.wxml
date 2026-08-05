@@ -81,7 +81,7 @@
           <text class="n">收藏 {{post.favoriteCount}}</text>
         </view>
         <view class="react react-end">
-          <text class="ricon">💬</text>
+          <text class="ricon">❝</text>
           <text class="n">{{post.commentCount}}</text>
         </view>
       </view>

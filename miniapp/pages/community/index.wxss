@@ -22,10 +22,10 @@
   border: 2rpx solid rgba(255, 255, 255, 0.24);
 }
 .community-page .navbar-back-icon {
-  border-left-color: #fff;
-  border-bottom-color: #fff;
+  border-left-color: var(--c-surface);
+  border-bottom-color: var(--c-surface);
 }
-.community-page .navbar-title { color: #fff; }
+.community-page .navbar-title { color: var(--c-surface); }
 
 /* 顶部右侧发帖小钮 */
 .nav-post-btn {
@@ -35,7 +35,7 @@
   padding: 12rpx 26rpx;
   border-radius: var(--r-pill);
   background: var(--pop);
-  color: #fff;
+  color: var(--c-surface);
   font-size: 26rpx;
   font-weight: 800;
   box-shadow: var(--sh-pop);
@@ -80,26 +80,26 @@
   left: 46rpx;
   right: 46rpx;
   bottom: 58rpx;
-  color: #fff;
+  color: var(--c-surface);
 }
 .hero-tag {
   display: inline-block;
   font-family: var(--serif);
   font-style: italic;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   letter-spacing: 3rpx;
   font-weight: 700;
-  color: #fff;
+  color: var(--c-surface);
   background: var(--pop);
   padding: 10rpx 26rpx;
-  border-radius: 8rpx;
+  border-radius: var(--r-xs);
 }
 .hero-title {
   font-size: 116rpx;
   line-height: 0.9;
   letter-spacing: -6rpx;
   margin: 28rpx 0 22rpx;
-  -webkit-text-stroke: 3rpx #fff;
+  -webkit-text-stroke: 3rpx var(--c-surface);
 }
 .hero-sub {
   font-size: 26rpx;
@@ -112,11 +112,11 @@
   flex: 1;
   background: rgba(255, 255, 255, 0.14);
   border: 2rpx solid rgba(255, 255, 255, 0.2);
-  border-radius: 30rpx;
+  border-radius: var(--r-chip);
   padding: 22rpx 26rpx;
 }
-.cstat-num { font-size: 46rpx; font-weight: 900; letter-spacing: -2rpx; color: #fff; }
-.cstat-lab { font-size: 21rpx; color: rgba(255, 255, 255, 0.7); letter-spacing: 1rpx; margin-top: 4rpx; }
+.cstat-num { font-size: 46rpx; font-weight: 900; letter-spacing: -2rpx; color: var(--c-surface); }
+.cstat-lab { font-size: var(--fs-mini); color: rgba(255, 255, 255, 0.7); letter-spacing: 1rpx; margin-top: 4rpx; }
 
 /* ===================== Sheet ===================== */
 .sheet {
@@ -132,8 +132,8 @@
 /* ===================== 帖子卡 ===================== */
 .post-list { display: block; }
 .pcard {
-  background: #fff;
-  border-radius: 42rpx;
+  background: var(--c-surface);
+  border-radius: var(--r-card);
   padding: 34rpx 34rpx 30rpx;
   margin-bottom: 34rpx;
   box-shadow: var(--sh-card);
@@ -150,7 +150,7 @@
   justify-content: center;
   font-size: 36rpx;
   font-weight: 900;
-  color: #fff;
+  color: var(--c-surface);
   font-family: var(--serif);
 }
 .pmeta { flex: 1; min-width: 0; }
@@ -167,7 +167,7 @@
 .ptime { font-size: 22rpx; color: var(--mut-2); flex: none; }
 .ptitle { font-size: 34rpx; font-weight: 900; color: var(--ink); letter-spacing: -1rpx; margin: 26rpx 0 13rpx; line-height: 1.25; }
 .pcontent { font-size: 26rpx; color: var(--mut-strong); line-height: 1.6; }
-.pphoto { display: block; width: 100%; height: 322rpx; border-radius: 30rpx; margin-top: 24rpx; }
+.pphoto { display: block; width: 100%; height: 322rpx; border-radius: var(--r-chip); margin-top: var(--r-md); }
 
 /* 关联菜谱 */
 .precipe {
@@ -178,7 +178,7 @@
   padding: 20rpx;
   background: var(--paper);
   border-radius: 28rpx;
-  border: 2rpx solid #efe9df;
+  border: 2rpx solid var(--paper-2);
 }
 .precipe .rthumb { width: 104rpx; height: 104rpx; border-radius: 22rpx; flex: none; }
 .precipe .rmid { flex: 1; min-width: 0; }
@@ -198,8 +198,8 @@
 .rgo-arrow {
   width: 16rpx;
   height: 16rpx;
-  border-top: 4rpx solid #fff;
-  border-right: 4rpx solid #fff;
+  border-top: 4rpx solid var(--c-surface);
+  border-right: 4rpx solid var(--c-surface);
   transform: rotate(45deg) translate(-2rpx, 2rpx);
 }
 
@@ -221,7 +221,7 @@
   gap: 16rpx;
   margin-top: 28rpx;
   padding-top: 26rpx;
-  border-top: 2rpx solid #efe9df;
+  border-top: 2rpx solid var(--paper-2);
 }
 .pa-btn {
   display: flex;
@@ -247,25 +247,25 @@
 /* ===================== 热门话题 ===================== */
 .topics { margin: 46rpx 46rpx 0; }
 .thead { display: flex; align-items: center; gap: 14rpx; margin-bottom: 26rpx; }
-.thead .tk { font-family: var(--serif); font-style: italic; font-size: 23rpx; letter-spacing: 1rpx; color: var(--gold-deep); font-weight: 700; }
+.thead .tk { font-family: var(--serif); font-style: italic; font-size: var(--fs-cap); letter-spacing: 1rpx; color: var(--gold-deep); font-weight: 700; }
 .thead .th-title { font-size: 33rpx; font-weight: 900; color: var(--ink); letter-spacing: -1rpx; }
 .tchips { display: flex; flex-wrap: wrap; gap: 18rpx; }
 .tchip {
   display: flex;
   align-items: center;
   gap: 12rpx;
-  background: #fff;
+  background: var(--c-surface);
   border: var(--bd-card);
   border-radius: var(--r-pill);
   padding: 16rpx 28rpx;
   box-shadow: var(--sh-soft);
 }
-.tchip .tt { font-size: 25rpx; font-weight: 800; color: var(--ink); letter-spacing: -0.4rpx; }
+.tchip .tt { font-size: var(--fs-sub); font-weight: 800; color: var(--ink); letter-spacing: -0.4rpx; }
 .tchip .th { font-size: 20rpx; font-weight: 700; color: var(--pop); background: var(--pop-soft); padding: 4rpx 14rpx; border-radius: 20rpx; }
 
 /* ===================== 流末 ===================== */
 .feed-end { display: flex; align-items: center; justify-content: center; gap: 22rpx; margin: 40rpx 0 8rpx; }
-.feed-end::before, .feed-end::after { content: ""; height: 2rpx; width: 88rpx; background: #e3dacb; }
+.feed-end::before, .feed-end::after { content: ""; height: 2rpx; width: 88rpx; background: var(--c-border); }
 .feed-end text { font-size: 22rpx; color: var(--mut-strong); letter-spacing: 2rpx; font-weight: 600; }
 
 /* ===================== 发帖 FAB ===================== */
@@ -284,7 +284,7 @@
   box-shadow: 0 20rpx 46rpx rgba(232, 71, 42, 0.45), 0 4rpx 12rpx rgba(60, 40, 20, 0.18);
 }
 .fab-plus { position: relative; width: 44rpx; height: 44rpx; }
-.fab-plus::before, .fab-plus::after { content: ""; position: absolute; background: #fff; border-radius: 4rpx; }
+.fab-plus::before, .fab-plus::after { content: ""; position: absolute; background: var(--c-surface); border-radius: 4rpx; }
 .fab-plus::before { left: 50%; top: 4rpx; bottom: 4rpx; width: 6rpx; transform: translateX(-50%); }
 .fab-plus::after { top: 50%; left: 4rpx; right: 4rpx; height: 6rpx; transform: translateY(-50%); }
 
@@ -309,7 +309,7 @@
   transition: transform 0.32s var(--g-power3-out);
 }
 .pf-sheet--on { transform: translateY(0); }
-.pf-grip { width: 76rpx; height: 8rpx; border-radius: 4rpx; background: #ddd3c4; margin: 0 auto 22rpx; }
+.pf-grip { width: 76rpx; height: var(--r-xs); border-radius: 4rpx; background: var(--c-border); margin: 0 auto 22rpx; }
 .pf-head { font-size: 36rpx; font-weight: 900; color: var(--ink); letter-spacing: -1rpx; margin-bottom: 24rpx; }
 .pf-input {
   box-sizing: border-box;
@@ -319,7 +319,7 @@
   margin-bottom: 20rpx;
   border: var(--bd-card);
   border-radius: var(--r-card);
-  background: #fff;
+  background: var(--c-surface);
   color: var(--ink);
   font-size: 28rpx;
 }
@@ -331,7 +331,7 @@
   margin-bottom: 20rpx;
   border: var(--bd-card);
   border-radius: var(--r-card);
-  background: #fff;
+  background: var(--c-surface);
   color: var(--ink);
   font-size: 28rpx;
   line-height: 1.5;
@@ -340,3 +340,41 @@
 .pf-actions { display: flex; gap: 20rpx; margin-top: 8rpx; }
 .pf-cancel { flex: 1; }
 .pf-submit { flex: 2; }
+
+.safe-bottom { height: 40rpx; }
+.empty-retry {
+  display: inline-flex;
+  margin-top: 28rpx;
+  padding: 14rpx 44rpx;
+  border-radius: 999rpx;
+  background: #e8472a;
+  color: #fff;
+  font-size: 27rpx;
+  font-weight: 600;
+}
+/* 举报弹层 */
+.rp-reasons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  padding: 8rpx 40rpx 4rpx;
+}
+.rp-reason {
+  padding: 12rpx 30rpx;
+  border-radius: 999rpx;
+  background: #f3eee5;
+  color: #6a6152;
+  font-size: 26rpx;
+  border: 1rpx solid transparent;
+}
+.rp-reason--on {
+  background: #fdeeea;
+  color: #e8472a;
+  border-color: #e8472a;
+  font-weight: 600;
+}
+.rp-desc {
+  margin: 20rpx 40rpx 0;
+  height: 150rpx;
+  box-sizing: border-box;
+}

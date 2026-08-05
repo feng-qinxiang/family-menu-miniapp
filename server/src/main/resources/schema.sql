@@ -198,6 +198,7 @@ CREATE TABLE IF NOT EXISTS community_post_report (
     post_id BIGINT NOT NULL,
     user_id BIGINT NOT NULL,
     reason VARCHAR(128) NOT NULL,
+    description VARCHAR(500) NULL,
     status VARCHAR(16) NOT NULL DEFAULT 'PENDING',
     reviewer_user_id BIGINT NULL,
     review_note VARCHAR(255) NULL,
@@ -302,6 +303,9 @@ ALTER TABLE user_account DROP COLUMN plan_name;
 -- 不使用 IF NOT EXISTS（部分 MySQL 版本不支持），依赖 continue-on-error 兜底旧部署列已存在的情况。
 ALTER TABLE family_member ADD COLUMN avoid_tags_json TEXT DEFAULT NULL COMMENT '忌口标签JSON数组';
 
+-- 安全修复：邀请码随机化，family 表增加 invite_token 列（替代 base36(id) 可枚举方案）。
+ALTER TABLE family ADD COLUMN invite_token VARCHAR(32) NULL UNIQUE;
+
 -- 许愿池：家庭共享，按日期+餐次分槽（见 家庭点菜-核心方案 §5）。
 CREATE TABLE IF NOT EXISTS family_wish (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
@@ -315,3 +319,6 @@ CREATE TABLE IF NOT EXISTS family_wish (
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_wish_family_date_slot (family_id, wish_date, slot, id)
 );
+
+-- 迁移：举报补充描述（列已存在时启动会报错，被 continue-on-error 吞掉，无副作用）
+ALTER TABLE community_post_report ADD COLUMN description VARCHAR(500) NULL;

@@ -6,8 +6,8 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: #1a1410;
-  color: #f3ece1;
+  background: var(--cook-bg);
+  color: var(--c-border-light);
 }
 
 /* ============ 顶部栏 ============ */
@@ -46,14 +46,14 @@
 .dishbar .dn {
   font-size: 34rpx;
   font-weight: 900;
-  color: #f3ece1;
+  color: var(--c-border-light);
   letter-spacing: -1rpx;
   font-family: var(--sans);
 }
 .dishbar .prog {
   font-family: var(--serif);
   font-style: italic;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   color: var(--gold-deep);
   font-weight: 700;
   margin-top: 4rpx;
@@ -79,7 +79,7 @@
   width: 100%;
   height: 4rpx;
   border-radius: 4rpx;
-  background: #f3ece1;
+  background: var(--c-border-light);
 }
 .ic-x::before { transform: translateY(-50%) rotate(45deg); }
 .ic-x::after { transform: translateY(-50%) rotate(-45deg); }
@@ -89,8 +89,8 @@
   border: 4rpx solid var(--pop);
 }
 .ic-clock { width: 34rpx; height: 34rpx; }
-.ic-clock-sm { width: 22rpx; height: 22rpx; border-width: 3rpx; border-color: #fff; }
-.nbtn.keep.on .ic-clock { border-color: #fff; }
+.ic-clock-sm { width: 22rpx; height: 22rpx; border-width: 3rpx; border-color: var(--c-surface); }
+.nbtn.keep.on .ic-clock { border-color: var(--c-surface); }
 .ic-clock::after, .ic-clock-sm::after {
   content: "";
   position: absolute;
@@ -101,8 +101,8 @@
   background: var(--pop);
   transform-origin: bottom center;
 }
-.nbtn.keep.on .ic-clock::after { background: #fff; }
-.ic-clock-sm::after { background: #fff; height: 30%; }
+.nbtn.keep.on .ic-clock::after { background: var(--c-surface); }
+.ic-clock-sm::after { background: var(--c-surface); height: 30%; }
 
 /* ============ 加载/空态 ============ */
 .loading {
@@ -124,7 +124,7 @@
 @keyframes cookspin { to { transform: rotate(360deg); } }
 .loading-tx {
   font-size: 26rpx;
-  color: #a89a86;
+  color: var(--mut-2);
   font-family: var(--serif);
   font-style: italic;
 }
@@ -203,15 +203,15 @@
 .stepimg .small .e {
   font-family: var(--serif);
   font-style: italic;
-  font-size: 21rpx;
+  font-size: var(--fs-mini);
   color: var(--gold);
   font-weight: 700;
   letter-spacing: 1rpx;
 }
 .stepimg .small .t {
-  font-size: 27rpx;
+  font-size: var(--fs-cap);
   font-weight: 800;
-  color: #fff;
+  color: var(--c-surface);
   margin-top: 6rpx;
 }
 .stepimg .timetag {
@@ -222,9 +222,9 @@
   display: flex;
   align-items: center;
   gap: 10rpx;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   font-weight: 700;
-  color: #fff;
+  color: var(--c-surface);
   background: rgba(232, 71, 42, 0.85);
   padding: 12rpx 22rpx;
   border-radius: var(--r-pill);
@@ -239,7 +239,7 @@
 .stepeyebrow {
   font-family: var(--serif);
   font-style: italic;
-  font-size: 25rpx;
+  font-size: var(--fs-sub);
   color: var(--gold-deep);
   font-weight: 700;
   letter-spacing: 1rpx;
@@ -248,7 +248,7 @@
   font-size: 44rpx;
   line-height: 1.45;
   font-weight: 800;
-  color: #f3ece1;
+  color: var(--c-border-light);
   letter-spacing: -0.5rpx;
   margin-top: 16rpx;
   font-family: var(--sans);
@@ -265,10 +265,10 @@
   display: flex;
   align-items: center;
   gap: 14rpx;
-  font-size: 25rpx;
+  font-size: var(--fs-sub);
   font-weight: 600;
-  color: #f3ece1;
-  background: #2a2018;
+  color: var(--c-border-light);
+  background: var(--ink);
   border: 2rpx solid rgba(255, 255, 255, 0.1);
   padding: 16rpx 26rpx;
   border-radius: var(--r-pill);
@@ -284,7 +284,7 @@
 /* 计时卡 */
 .timer {
   margin-top: 38rpx;
-  background: #221a13;
+  background: var(--ink);
   border: 2rpx solid rgba(255, 255, 255, 0.1);
   border-radius: 38rpx;
   padding: 34rpx 38rpx;
@@ -293,16 +293,16 @@
   justify-content: space-between;
 }
 .timer .tl .cap {
-  font-size: 21rpx;
+  font-size: var(--fs-mini);
   letter-spacing: 3rpx;
-  color: #a89a86;
+  color: var(--mut-2);
   font-weight: 700;
 }
 .timer .tl .num {
   font-family: var(--serif);
   font-size: 88rpx;
   font-weight: 700;
-  color: #f3ece1;
+  color: var(--c-border-light);
   line-height: 1;
   margin-top: 8rpx;
   letter-spacing: 2rpx;
@@ -360,7 +360,7 @@
   width: 32rpx;
   height: 32rpx;
   border-radius: 50%;
-  border: 4rpx solid #c8bba8;
+  border: 4rpx solid var(--line-deep);
   border-top-color: transparent;
   position: relative;
 }
@@ -371,7 +371,7 @@
   right: -2rpx;
   border-style: solid;
   border-width: 6rpx 0 0 8rpx;
-  border-color: transparent transparent transparent #c8bba8;
+  border-color: transparent transparent transparent var(--line-deep);
 }
 
 .scroll-pad { height: 24rpx; }
@@ -382,7 +382,7 @@
   display: flex;
   gap: 22rpx;
   padding: 24rpx 46rpx calc(env(safe-area-inset-bottom) + 28rpx);
-  background: linear-gradient(180deg, rgba(26, 20, 16, 0), #1a1410 30%);
+  background: linear-gradient(180deg, rgba(26, 20, 16, 0), var(--cook-bg) 30%);
 }
 .btn {
   box-sizing: border-box;
@@ -399,8 +399,8 @@
   flex: none;
   width: 220rpx;
   font-size: 30rpx;
-  color: #f3ece1;
-  background: #2a2018;
+  color: var(--c-border-light);
+  background: var(--ink);
   border: 2rpx solid rgba(255, 255, 255, 0.1);
 }
 .btn.prev.disabled {
@@ -410,7 +410,7 @@
   flex: 1;
   min-width: 0;
   font-size: 32rpx;
-  color: #fff;
+  color: var(--c-surface);
   background: var(--pop);
   box-shadow: 0 2rpx 4rpx rgba(180, 40, 20, 0.3), 0 12rpx 26rpx rgba(232, 71, 42, 0.4);
 }
@@ -430,9 +430,9 @@
 }
 .ic-arrow-l {
   transform: rotate(-135deg);
-  color: #f3ece1;
+  color: var(--c-border-light);
 }
 .ic-arrow-r {
   transform: rotate(45deg);
-  color: #fff;
+  color: var(--c-surface);
 }

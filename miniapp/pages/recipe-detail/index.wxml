@@ -1,7 +1,7 @@
 <wxs src="../../utils/cuisine.wxs" module="cuisine" />
 
 <!-- ============ 正常态 ============ -->
-<view class="rd-page" wx:if="{{recipe}}">
+<view class="rd-page g-fade-in" wx:if="{{recipe}}">
   <scroll-view class="rd-scroll" scroll-y enhanced show-scrollbar="{{false}}">
 
     <!-- ===== Hero 大图 ===== -->

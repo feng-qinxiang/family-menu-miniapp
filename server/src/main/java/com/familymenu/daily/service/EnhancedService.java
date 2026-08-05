@@ -35,6 +35,8 @@ public class EnhancedService {
     private final JdbcTemplate jdbcTemplate;
     private final MysqlKitchenStore kitchenStore;
     private final ObjectMapper objectMapper;
+    // ponytail: 周菜单按 (familyId, 周一) 缓存一份，本周内 GET/POST 结果稳定；重启丢失为已知上限，升级路径为落库 weekly_menu 表
+    private final Map<Long, WeeklyMenuView> weeklyMenuCache = new HashMap<>();
 
     public EnhancedService(JdbcTemplate jdbcTemplate, MysqlKitchenStore kitchenStore, ObjectMapper objectMapper) {
         this.jdbcTemplate = jdbcTemplate;
@@ -44,8 +46,24 @@ public class EnhancedService {
 
     // ========== Weekly Menu ==========
 
-    public WeeklyMenuView generateWeeklyMenu(long familyId) {
-        List<RecipeCard> allRecipes = kitchenStore.listRecipes("all");
+    public WeeklyMenuView generateWeeklyMenu(long familyId, long userId) {
+        synchronized (weeklyMenuCache) {
+            WeeklyMenuView cached = weeklyMenuCache.get(familyId);
+            if (cached != null && cached.weekStart().equals(mondayOfThisWeek())) {
+                return cached;
+            }
+            WeeklyMenuView generated = doGenerateWeeklyMenu(familyId, userId);
+            weeklyMenuCache.put(familyId, generated);
+            return generated;
+        }
+    }
+
+    private String mondayOfThisWeek() {
+        return LocalDate.now().with(DayOfWeek.MONDAY).format(DATE_FMT);
+    }
+
+    private WeeklyMenuView doGenerateWeeklyMenu(long familyId, long userId) {
+        List<RecipeCard> allRecipes = kitchenStore.listRecipes("all", userId, familyId);
         LocalDate monday = LocalDate.now().with(DayOfWeek.MONDAY);
         if (allRecipes.isEmpty()) {
             return new WeeklyMenuView(monday.format(DATE_FMT),
@@ -214,7 +232,7 @@ public class EnhancedService {
         jdbcTemplate.update("DELETE FROM pantry_item WHERE id = ? AND family_id = ?", itemId, familyId);
     }
 
-    public List<PantryMatchResult> matchRecipesWithPantry(long familyId) {
+    public List<PantryMatchResult> matchRecipesWithPantry(long familyId, long userId) {
         List<PantryItem> pantry = listPantry(familyId);
         if (pantry.isEmpty()) {
             return List.of();
@@ -227,7 +245,7 @@ public class EnhancedService {
             return List.of();
         }
 
-        List<RecipeCard> recipes = kitchenStore.listRecipes("all");
+        List<RecipeCard> recipes = kitchenStore.listRecipes("all", userId, familyId);
         if (recipes.isEmpty()) {
             return List.of();
         }

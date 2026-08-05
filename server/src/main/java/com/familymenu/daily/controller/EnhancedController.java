@@ -27,12 +27,12 @@ public class EnhancedController {
     @PostMapping("/weekly-menu/generate")
     @RequiresAuth
     public WeeklyMenuView generateWeeklyMenu(@CurrentUser AuthUser user) {
-        return enhancedService.generateWeeklyMenu(user.familyId());
+        return enhancedService.generateWeeklyMenu(user.familyId(), user.userId());
     }
 
     @GetMapping("/weekly-menu/current")
     public WeeklyMenuView currentWeeklyMenu(@CurrentUser(orGuest = true) AuthUser user) {
-        return enhancedService.generateWeeklyMenu(user.familyId());
+        return enhancedService.generateWeeklyMenu(user.familyId(), user.userId());
     }
 
     @GetMapping("/preference/profile")
@@ -60,6 +60,6 @@ public class EnhancedController {
 
     @GetMapping("/pantry/match")
     public List<PantryMatchResult> pantryMatch(@CurrentUser(orGuest = true) AuthUser user) {
-        return enhancedService.matchRecipesWithPantry(user.familyId());
+        return enhancedService.matchRecipesWithPantry(user.familyId(), user.userId());
     }
 }

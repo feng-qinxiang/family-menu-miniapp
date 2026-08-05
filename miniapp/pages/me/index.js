@@ -1,5 +1,4 @@
 const {
-  addFamilyMember,
   getCookHistory,
   getCurrentUser,
   getDashboard,
@@ -9,15 +8,9 @@ const {
   getVipStatus
 } = require('../../utils/api');
 
-const memberTones = ['mavt-a', 'mavt-b', 'mavt-c', 'mavt-d', 'mavt-e'];
+const { fallbackDishImg, LOCAL_DISHES } = require('../../utils/image');
 
-// 本地菜图（接口清单 16 张）；用标题关键字兜底匹配，无后端 coverImage 时使用
-const LOCAL_DISHES = [
-  'beef-broccoli', 'chicken-congee', 'egg-drop-soup', 'fried-rice',
-  'hongshao-pork', 'hot-sour-soup', 'kungpao-chicken', 'lo-mein',
-  'long-beans', 'mapo-tofu', 'orange-chicken', 'shrimp-peas',
-  'sichuan-eggplant', 'sweet-sour-chicken', 'tomato-egg', 'wontons'
-];
+const memberTones = ['mavt-a', 'mavt-b', 'mavt-c', 'mavt-d', 'mavt-e'];
 const TITLE_DISH_MAP = [
   { kw: ['红烧肉', '红烧'], img: 'hongshao-pork' },
   { kw: ['番茄', '西红柿', '炒蛋'], img: 'tomato-egg' },
@@ -69,7 +62,6 @@ Page({
     familyProfile: { familyId: 1, familyName: '', members: [] },
     memberCount: 0,
     profileInitial: '',
-    newMemberNickname: '',
     todayMenuCount: 0,
     monthCookCount: 0,
     savedCount: 0,
@@ -82,9 +74,6 @@ Page({
   },
 
   onShow() {
-    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
-      this.getTabBar().setData({ selected: 3 });
-    }
     this.loadProfile();
   },
 
@@ -170,32 +159,12 @@ Page({
     }
   },
 
-  onMemberInput(event) {
-    this.setData({ newMemberNickname: event.detail.value || '' });
-  },
-
-  async addMember() {
-    const nickname = (this.data.newMemberNickname || '').trim();
-    if (!nickname) {
-      wx.showToast({ title: '先输入成员名', icon: 'none' });
-      return;
-    }
-    try {
-      await addFamilyMember({ nickname, role: 'member' });
-    } catch (err) {
-      console.error('addMember failed', err);
-      wx.showToast({
-        title: (err && err.message) ? err.message : '添加失败',
-        icon: 'none'
-      });
-      return;
-    }
-    this.setData({ newMemberNickname: '' });
-    await this.loadProfile();
-    wx.showToast({ title: '已添加', icon: 'success' });
+  goMemberManage() {
+    wx.navigateTo({ url: '/pages/family/members/index' });
   },
 
   goVip() { wx.navigateTo({ url: '/pages/vip/index' }); },
+    goPhoneBind() { wx.navigateTo({ url: '/pages/auth/login-phone/index' }); },
   goWeekly() { wx.navigateTo({ url: '/pages/weekly-menu/index' }); },
   goPantry() { wx.navigateTo({ url: '/pages/pantry/index' }); },
   goShopping() { wx.navigateTo({ url: '/pages/shopping/index' }); },
@@ -209,5 +178,11 @@ Page({
   goAbout() { wx.navigateTo({ url: '/pages/me/about/index' }); },
   goPrivacy() { wx.navigateTo({ url: '/pages/legal/privacy/index' }); },
   goTerms() { wx.navigateTo({ url: '/pages/legal/terms/index' }); },
-  goFamilyMembers() { wx.navigateTo({ url: '/pages/family/members/index' }); }
+  goFamilyMembers() { wx.navigateTo({ url: '/pages/family/members/index' }); },
+  onShareAppMessage() {
+    return {
+      title: '家庭点菜 · 全家一起用',
+      path: '/pages/me/index'
+    };
+  },
 });

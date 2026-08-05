@@ -42,7 +42,8 @@ public final class AuthModels {
             String avatarUrl,
             boolean vip,
             String planName,
-            boolean admin
+            boolean admin,
+            boolean phoneBound
     ) {
     }
 

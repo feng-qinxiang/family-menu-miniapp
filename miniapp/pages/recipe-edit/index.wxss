@@ -2,7 +2,7 @@
 page { background: var(--paper); }
 
 .rc-save {
-  font-size: 27rpx;
+  font-size: var(--fs-cap);
   font-weight: 800;
   color: var(--pop);
 }
@@ -30,7 +30,7 @@ page { background: var(--paper); }
   border-radius: 22rpx;
   padding: 22rpx 26rpx;
   font-size: 24rpx;
-  color: #b8442a;
+  color: var(--pop-deep);
   font-weight: 600;
 }
 .rc-tip-ic {
@@ -51,7 +51,7 @@ page { background: var(--paper); }
   margin-top: 42rpx;
   height: 326rpx;
   border-radius: 38rpx;
-  border: 4rpx dashed #d8cbb8;
+  border: 4rpx dashed var(--line-deep);
   background: var(--paper-2);
   display: flex;
   flex-direction: column;
@@ -67,7 +67,7 @@ page { background: var(--paper); }
   box-shadow: 0 8rpx 20rpx rgba(120, 70, 30, 0.12);
 }
 .rc-cover-emoji { width: 100%; height: 100%; }
-.rc-cover-t { font-size: 27rpx; font-weight: 600; color: var(--mut-strong); }
+.rc-cover-t { font-size: var(--fs-cap); font-weight: 600; color: var(--mut-strong); }
 .rc-cover-s { font-size: 22rpx; color: var(--mut); }
 
 .rc-cover-preview {
@@ -86,7 +86,7 @@ page { background: var(--paper); }
   height: 56rpx;
   border-radius: 50%;
   background: rgba(40, 30, 20, 0.55);
-  color: #fff;
+  color: var(--c-surface);
   font-size: 36rpx;
   line-height: 52rpx;
   text-align: center;
@@ -97,7 +97,7 @@ page { background: var(--paper); }
 .rc-eyebrow {
   font-family: var(--serif);
   font-style: italic;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   letter-spacing: 1rpx;
   color: var(--gold-deep);
   font-weight: 700;
@@ -133,8 +133,8 @@ page { background: var(--paper); }
 .rc-input {
   width: 100%;
   box-sizing: border-box;
-  background: #fff;
-  border: 2rpx solid #ece5d9;
+  background: var(--c-surface);
+  border: 2rpx solid var(--paper-2);
   border-radius: 26rpx;
   padding: 26rpx 28rpx;
   font-size: 30rpx;
@@ -146,8 +146,8 @@ page { background: var(--paper); }
   width: 100%;
   box-sizing: border-box;
   min-height: 150rpx;
-  background: #fff;
-  border: 2rpx solid #ece5d9;
+  background: var(--c-surface);
+  border: 2rpx solid var(--paper-2);
   border-radius: 26rpx;
   padding: 24rpx 28rpx;
   font-size: 28rpx;
@@ -165,8 +165,8 @@ page { background: var(--paper); }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #fff;
-  border: 2rpx solid #ece5d9;
+  background: var(--c-surface);
+  border: 2rpx solid var(--paper-2);
   border-radius: 26rpx;
   padding: 12rpx 18rpx;
 }
@@ -189,8 +189,8 @@ page { background: var(--paper); }
   display: flex;
   align-items: center;
   gap: 14rpx;
-  background: #fff;
-  border: 2rpx solid #ece5d9;
+  background: var(--c-surface);
+  border: 2rpx solid var(--paper-2);
   border-radius: 26rpx;
   padding: 16rpx 20rpx;
   margin-bottom: 18rpx;
@@ -231,8 +231,8 @@ page { background: var(--paper); }
 
 /* 步骤行 */
 .rc-steprow {
-  background: #fff;
-  border: 2rpx solid #ece5d9;
+  background: var(--c-surface);
+  border: 2rpx solid var(--paper-2);
   border-radius: 26rpx;
   padding: 20rpx;
   margin-bottom: 18rpx;
@@ -245,7 +245,7 @@ page { background: var(--paper); }
   height: 46rpx;
   border-radius: 13rpx;
   background: var(--pop);
-  color: #fff;
+  color: var(--c-surface);
   font-size: 24rpx;
   font-weight: 800;
   display: flex;
@@ -269,11 +269,11 @@ page { background: var(--paper); }
   font-weight: 700;
   color: var(--gold-deep);
   background: var(--paper-2);
-  border-radius: 16rpx;
+  border-radius: var(--r-sm);
   padding: 14rpx 26rpx;
 }
 .rc-step-img-wrap { position: relative; width: 160rpx; height: 160rpx; }
-.rc-step-img-pic { width: 100%; height: 100%; border-radius: 16rpx; }
+.rc-step-img-pic { width: 100%; height: 100%; border-radius: var(--r-sm); }
 .rc-step-img-del {
   position: absolute;
   top: -12rpx;
@@ -282,7 +282,7 @@ page { background: var(--paper); }
   height: 44rpx;
   border-radius: 50%;
   background: rgba(40, 30, 20, 0.6);
-  color: #fff;
+  color: var(--c-surface);
   font-size: 28rpx;
   line-height: 40rpx;
   text-align: center;
@@ -294,10 +294,10 @@ page { background: var(--paper); }
   align-items: center;
   justify-content: center;
   gap: 12rpx;
-  border: 3rpx dashed #d8cbb8;
+  border: 3rpx dashed var(--line-deep);
   border-radius: 26rpx;
   padding: 26rpx;
-  font-size: 27rpx;
+  font-size: var(--fs-cap);
   font-weight: 700;
   color: var(--gold-deep);
 }
@@ -315,9 +315,9 @@ page { background: var(--paper); }
 .rc-savebtn {
   width: 100%;
   height: 100rpx;
-  border-radius: 30rpx;
+  border-radius: var(--r-chip);
   background: var(--pop);
-  color: #fff;
+  color: var(--c-surface);
   font-size: 31rpx;
   font-weight: 800;
   display: flex;

@@ -29,7 +29,7 @@ public class MembershipService {
     public record Coverage(boolean vip, String planCode, LocalDateTime expiresAt) {
     }
 
-    // 本人（任意 share_scope）或 当前家庭内 share_scope=FAMILY 的 ACTIVE 成员，全部取未过期者。
+    // 本人（任意 share_scope）或 当前所属家庭内 share_scope=FAMILY 的 ACTIVE 成员，全部取未过期者。
     private static final String COVERAGE_CONDITION = """
             m.expires_at > NOW() AND (
                 m.payer_user_id = ?
@@ -39,8 +39,7 @@ public class MembershipService {
                         SELECT fm2.user_id FROM family_member fm2
                         WHERE fm2.member_status = 'ACTIVE'
                           AND fm2.family_id IN (
-                              SELECT fm1.family_id FROM family_member fm1
-                              WHERE fm1.user_id = ? AND fm1.member_status = 'ACTIVE'
+                              SELECT ua.current_family_id FROM user_account ua WHERE ua.id = ?
                           )
                     )
                 )

@@ -23,7 +23,7 @@
   background: var(--pop-soft);
 }
 .se-illu--gold,
-.se-illu--search { background: #f6efe1; }
+.se-illu--search { background: var(--c-border-light); }
 .se-illu--gray,
 .se-illu--offline { background: var(--paper-2); }
 
@@ -64,11 +64,11 @@
 }
 .se-btn--pop {
   background: var(--pop);
-  color: #fff;
+  color: var(--c-surface);
   box-shadow: var(--sh-pop);
 }
 .se-btn--ghost {
   background: transparent;
   color: var(--gold-deep);
-  border: 3rpx solid #e7ddc9;
+  border: 3rpx solid var(--c-border);
 }

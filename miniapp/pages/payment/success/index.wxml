@@ -47,6 +47,7 @@
   <!-- 操作区 -->
   <view class="ps-actions g-fade-up g-d6">
     <view class="btn btn-pop btn-block tap-scale" catchtap="onStart">开始使用</view>
+    <view class="ps-link tap-scale" catchtap="onInviteFamily">邀请家人共享会员 ›</view>
     <view class="ps-link tap-scale" catchtap="onViewOrder">查看订单详情</view>
   </view>
 </view>

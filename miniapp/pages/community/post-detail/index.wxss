@@ -28,15 +28,15 @@
   font-family: var(--serif);
   font-weight: 700;
   font-size: 38rpx;
-  color: #fff;
+  color: var(--c-surface);
   box-shadow: 0 4rpx 12rpx rgba(60, 40, 20, 0.12);
 }
 .ava-sm { width: 72rpx; height: 72rpx; font-size: 30rpx; }
-.ava-lin { background: linear-gradient(135deg, #e8472a, #f08a52); }
-.ava-lan { background: linear-gradient(135deg, #2f4a3a, #577a5f); }
-.ava-zhao { background: linear-gradient(135deg, #5a4a8a, #9a7fc4); }
-.ava-gold { background: linear-gradient(135deg, #b08949, #f4d9a8); }
-.ava-pine { background: linear-gradient(135deg, #2f4a3a, #7aa888); }
+.ava-lin { background: linear-gradient(135deg, var(--pop), var(--orange)); }
+.ava-lan { background: linear-gradient(135deg, var(--pine), var(--cat-green)); }
+.ava-zhao { background: linear-gradient(135deg, var(--cat-purple-deep), var(--cat-purple-light)); }
+.ava-gold { background: linear-gradient(135deg, var(--gold-deep), var(--gold)); }
+.ava-pine { background: linear-gradient(135deg, var(--pine), var(--cat-green-light)); }
 
 /* ===== 作者块 ===== */
 .author {
@@ -53,7 +53,7 @@
 }
 .atime {
   margin-top: 6rpx;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   color: var(--mut-strong);
 }
 
@@ -81,7 +81,7 @@
 .dish-img {
   width: 100%;
   height: 460rpx;
-  border-radius: 42rpx;
+  border-radius: var(--r-card);
   margin-top: 34rpx;
   display: block;
   box-shadow: var(--sh-card);
@@ -91,7 +91,7 @@
   text-align: center;
   font-family: var(--serif);
   font-style: italic;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   color: var(--mut-strong);
 }
 
@@ -103,7 +103,7 @@
   margin-top: 30rpx;
 }
 .ptag {
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   font-weight: 700;
   color: var(--gold-deep);
   background: var(--paper-2);
@@ -116,7 +116,7 @@
   display: flex;
   align-items: center;
   gap: 26rpx;
-  background: #fff;
+  background: var(--c-surface);
   border-radius: var(--r-card);
   padding: 24rpx;
   margin-top: 38rpx;
@@ -126,14 +126,14 @@
 .rc-img {
   width: 138rpx;
   height: 138rpx;
-  border-radius: 30rpx;
+  border-radius: var(--r-chip);
   flex: none;
 }
 .rc-mid { flex: 1; min-width: 0; }
 .rc-kick {
   font-family: var(--serif);
   font-style: italic;
-  font-size: 21rpx;
+  font-size: var(--fs-mini);
   color: var(--gold-deep);
   font-weight: 700;
 }
@@ -146,7 +146,7 @@
 }
 .rc-meta {
   margin-top: 10rpx;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   color: var(--mut-strong);
 }
 .rc-go {
@@ -175,7 +175,7 @@
   gap: 18rpx;
   margin-top: 42rpx;
   padding-bottom: 42rpx;
-  border-bottom: 2rpx solid #efe9df;
+  border-bottom: 2rpx solid var(--paper-2);
 }
 .react {
   display: flex;
@@ -185,7 +185,7 @@
   border-radius: var(--r-pill);
   background: var(--paper-2);
   color: var(--mut-strong);
-  font-size: 25rpx;
+  font-size: var(--fs-sub);
   font-weight: 700;
 }
 .react .ricon { font-size: 28rpx; line-height: 1; }
@@ -208,7 +208,7 @@
   letter-spacing: -0.8rpx;
 }
 .cnt {
-  font-size: 25rpx;
+  font-size: var(--fs-sub);
   font-weight: 700;
   color: var(--mut-strong);
 }
@@ -217,7 +217,7 @@
   display: flex;
   gap: 22rpx;
   padding: 30rpx 0;
-  border-bottom: 2rpx solid #efe9df;
+  border-bottom: 2rpx solid var(--paper-2);
 }
 .cmt:last-child { border-bottom: none; }
 .ccol { flex: 1; min-width: 0; }
@@ -235,7 +235,7 @@
   min-width: 0;
 }
 .ctime {
-  font-size: 21rpx;
+  font-size: var(--fs-mini);
   color: var(--mut);
   flex: none;
 }
@@ -254,7 +254,7 @@
   gap: 22rpx;
   padding: 22rpx 34rpx;
   background: rgba(251, 248, 243, 0.96);
-  border-top: 2rpx solid #ece5d9;
+  border-top: 2rpx solid var(--paper-2);
 }
 .field {
   flex: 1;
@@ -262,7 +262,7 @@
   height: 84rpx;
   border-radius: var(--r-pill);
   background: var(--paper-2);
-  border: 2rpx solid #e6dfd2;
+  border: 2rpx solid var(--c-border);
   padding: 0 34rpx;
   font-size: 26rpx;
   color: var(--ink);
@@ -284,8 +284,8 @@
 .send-icon {
   width: 18rpx;
   height: 18rpx;
-  border-top: 5rpx solid #fff;
-  border-right: 5rpx solid #fff;
+  border-top: 5rpx solid var(--c-surface);
+  border-right: 5rpx solid var(--c-surface);
   transform: translateX(-2rpx) rotate(45deg);
   border-radius: 2rpx;
 }
@@ -295,7 +295,7 @@
 .sk-line {
   height: 34rpx;
   border-radius: 12rpx;
-  background: #efe4d7;
+  background: var(--paper-2);
   margin-bottom: 22rpx;
 }
 .sk-w60 { width: 60%; }

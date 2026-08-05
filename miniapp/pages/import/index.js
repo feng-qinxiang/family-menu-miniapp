@@ -114,12 +114,17 @@ Page({
       return;
     }
     try {
-      const preview = await previewImport(rawText);
-      if (!preview) {
-        wx.showToast({ title: '没能解析出内容，换个格式试试', icon: 'none' });
-        return;
-      }
-      this.setData({ preview });
+        const preview = await previewImport(rawText);
+        if (!preview) {
+          wx.showToast({ title: '没能解析出内容，换个格式试试', icon: 'none' });
+          return;
+        }
+        this.setData({
+          preview: {
+            ...preview,
+            steps: (preview.steps || []).map((s) => (typeof s === 'string' ? { text: s, image: '' } : s))
+          }
+        });
     } catch (err) {
       wx.showToast({ title: '解析失败，请重试', icon: 'none' });
     }
@@ -173,6 +178,7 @@ Page({
   },
 
   async saveImport() {
+    if (this.data.saving) return;
     const preview = this.data.preview;
     if (!preview) {
       wx.showToast({ title: '先解析一次', icon: 'none' });
@@ -191,7 +197,7 @@ Page({
         tasteTags: ['导入', preview.isXhs ? '小红书' : '手动录入'],
         timeCost: preview.timeCost || 15,
         servings: preview.servings || 2,
-        steps: preview.steps || [],
+        steps: (preview.steps || []).map((s) => (typeof s === 'string' ? s : (s.text || '').trim())).filter(Boolean),
         ingredients: preview.ingredients || [],
         summary: `从${preview.isXhs ? '小红书' : '文本'}导入`
       });

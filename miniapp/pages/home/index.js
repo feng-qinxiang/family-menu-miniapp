@@ -10,27 +10,19 @@ const {
   addWish,
   removeWish: removeWishApi
 } = require('../../utils/api');
-
-const sourceLabels = {
-  owned: '自建',
-  community: '社区',
-  imported: '导入'
-};
-
-const mealTypeLabels = {
-  breakfast: '早餐',
-  lunch: '午餐',
-  dinner: '晚餐',
-  snack: '加餐'
-};
-
-// 餐次槽（与 家庭点菜-核心方案.md §5 对齐）
-const SLOTS = [
-  { key: 'breakfast', label: '早' },
-  { key: 'lunch', label: '午' },
-  { key: 'dinner', label: '晚' }
-];
+const { sourceLabels, mealTypeLabels, SLOTS, cuisinePinyin } = require('../../utils/constants');
+const { fallbackDishImg, onImgError } = require('../../utils/image');
 const WISH_STORAGE_KEY = 'family_wishes_v1';
+const CACHE_KEY_MENU = 'home_cache_todayMenu';
+const CACHE_KEY_SHOPPING = 'home_cache_shoppingPending';
+
+// ponytail: simple stale-while-revalidate — show cached data instantly, overwrite on network success
+function readCache(key) {
+  try { return wx.getStorageSync(key); } catch (e) { return null; }
+}
+function writeCache(key, val) {
+  try { wx.setStorageSync(key, val); } catch (e) { /* best-effort */ }
+}
 
 function todayDateKey() {
   const d = new Date();
@@ -51,34 +43,7 @@ function saveWishes(map) {
   try { wx.setStorageSync(WISH_STORAGE_KEY, map); } catch (err) {}
 }
 
-const cuisinePinyin = {
-  '川菜': 'chuancai',
-  '粤菜': 'yuecai',
-  '家常': 'jiachang',
-  '湘菜': 'xiangcai',
-  '鲁菜': 'lucai',
-  '西餐': 'xican',
-  '日料': 'riliao'
-};
-
 const memberTones = ['tone-a', 'tone-b', 'tone-c', 'tone-d', 'tone-e'];
-
-// 本地菜图兜底池（接口清单 16 张），按 recipe 稳定映射，禁止用作 background-image
-const LOCAL_DISHES = [
-  'mapo-tofu', 'tomato-egg', 'hongshao-pork', 'kungpao-chicken', 'long-beans',
-  'shrimp-peas', 'egg-drop-soup', 'hot-sour-soup', 'fried-rice', 'lo-mein',
-  'beef-broccoli', 'chicken-congee', 'orange-chicken', 'sichuan-eggplant',
-  'sweet-sour-chicken', 'wontons'
-];
-
-function fallbackDishImg(seed) {
-  let h = 0;
-  const s = String(seed || '');
-  for (let i = 0; i < s.length; i++) {
-    h = (h * 31 + s.charCodeAt(i)) >>> 0;
-  }
-  return `/assets/dishes/${LOCAL_DISHES[h % LOCAL_DISHES.length]}.jpg`;
-}
 
 function getCuisineClass(cuisine) {
   return cuisinePinyin[cuisine] || '';
@@ -136,15 +101,19 @@ Page({
   onLoad() {
     this._inited = false;
     const todayKey = todayDateKey();
-    this.setData({ todayKey });
+    // 离线缓存：先用上次数据渲染，网络回来后覆盖
+    const cachedMenu = readCache(CACHE_KEY_MENU);
+    const cachedPending = readCache(CACHE_KEY_SHOPPING);
+    this.setData({
+      todayKey,
+      todayMenu: Array.isArray(cachedMenu) ? cachedMenu : [],
+      shoppingPending: typeof cachedPending === 'number' ? cachedPending : 0
+    });
     this.refreshWishes();
     this.loadAll();
   },
 
   onShow() {
-    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
-      this.getTabBar().setData({ selected: 0 });
-    }
     // 跨日刷新（用户隔夜回来）
     const todayKey = todayDateKey();
     if (todayKey !== this.data.todayKey) {
@@ -156,18 +125,28 @@ Page({
     }
   },
 
+  onPullDownRefresh() {
+    const done = () => setTimeout(() => wx.stopPullDownRefresh(), 300);
+    Promise.all([this.loadAll(), this.refreshWishes()]).catch(() => {}).then(done);
+  },
+
   // ============ 餐次 / 许愿池 ============
   async refreshWishes() {
     const date = this.data.todayKey || todayDateKey();
     const slot = this.data.currentSlot;
+    const reqSeq = (this._wishSeq || 0) + 1;
+    this._wishSeq = reqSeq;
     try {
       const list = await getWishes(date, slot);
+      // 快速切餐次时，旧响应晚到直接丢弃，避免覆盖新 slot 数据
+      if (this._wishSeq !== reqSeq) return;
       // 同步写本地缓存供离线读
       const all = loadWishes();
       all[`${date}:${slot}`] = Array.isArray(list) ? list : [];
       saveWishes(all);
       this.setData({ wishes: all[`${date}:${slot}`] });
     } catch (err) {
+      if (this._wishSeq !== reqSeq) return;
       // 降级：用本地缓存
       const all = loadWishes();
       this.setData({ wishes: Array.isArray(all[`${date}:${slot}`]) ? all[`${date}:${slot}`] : [] });
@@ -186,22 +165,24 @@ Page({
   },
 
   addWish() {
+    this.setData({ showWishModal: true, wishInput: '' });
+  },
+  onWishInput(e) {
+    this.setData({ wishInput: e.detail.value });
+  },
+  closeWishModal() {
+    this.setData({ showWishModal: false });
+  },
+  confirmWish() {
+    const text = (this.data.wishInput || '').trim();
+    if (!text) return;
     const me = this.data.currentUser || {};
-    wx.showModal({
-      title: '我想吃',
-      editable: true,
-      placeholderText: '比如：番茄炒蛋',
-      success: (res) => {
-        if (!res.confirm) return;
-        const text = (res.content || '').trim();
-        if (!text) return;
-        this.persistWish({
-          id: `w-${Date.now()}`,
-          text,
-          by: me.nickname || '我',
-          at: Date.now()
-        });
-      }
+    this.setData({ showWishModal: false, wishInput: '' });
+    this.persistWish({
+      id: `w-${Date.now()}`,
+      text,
+      by: me.nickname || '我',
+      at: Date.now()
     });
   },
 
@@ -341,6 +322,10 @@ Page({
       const cuisineTiles = this.buildCuisineTiles(allRecipes);
       const cookCandidates = this.buildCookCandidates(user, family);
 
+      // 写缓存供离线兜底
+      writeCache(CACHE_KEY_MENU, normalizedItems);
+      writeCache(CACHE_KEY_SHOPPING, shoppingPending);
+
       this.setData({
         loading: false,
         loadError: '',
@@ -355,6 +340,10 @@ Page({
         allRecipes,
         cuisineTiles
       });
+
+      // 写入离线缓存
+      writeCache(CACHE_KEY_MENU, normalizedItems);
+      writeCache(CACHE_KEY_SHOPPING, shoppingPending);
 
       this.applyFilters('all', allRecipes);
       this._inited = true;
@@ -373,15 +362,16 @@ Page({
       const [todayMenu, shopping] = await Promise.all([getTodayMenu(), getShoppingList()]);
       const items = todayMenu && Array.isArray(todayMenu.items) ? todayMenu.items : [];
       const shoppingItems = shopping && Array.isArray(shopping.items) ? shopping.items : [];
-      this.setData({
-        todayMenu: items.map(item => ({
-          ...item,
-          mealTypeLabel: mealTypeLabels[item.mealType] || '晚餐',
-          dishImg: (item.recipe && item.recipe.coverImage)
-            || fallbackDishImg(item.recipeId || (item.recipe && item.recipe.title))
-        })),
-        shoppingPending: shoppingItems.filter(i => !i.purchased).length
-      });
+      const normalizedItems = items.map(item => ({
+        ...item,
+        mealTypeLabel: mealTypeLabels[item.mealType] || '晚餐',
+        dishImg: (item.recipe && item.recipe.coverImage)
+          || fallbackDishImg(item.recipeId || (item.recipe && item.recipe.title))
+      }));
+      const shoppingPending = shoppingItems.filter(i => !i.purchased).length;
+      this.setData({ todayMenu: normalizedItems, shoppingPending });
+      writeCache(CACHE_KEY_MENU, normalizedItems);
+      writeCache(CACHE_KEY_SHOPPING, shoppingPending);
     } catch (err) {
       console.warn('home refreshLight failed', err);
     }
@@ -492,19 +482,15 @@ Page({
   async addToToday(e) {
     const id = e.currentTarget.dataset.id;
     if (!id) return;
-    // 找到 recipe 元数据，写入许愿池（§4：默认动作=许愿）
-    const recipe = this.data.allRecipes.find(r => String(r.id) === String(id))
-      || (this.data.heroRecipe && String(this.data.heroRecipe.id) === String(id) ? this.data.heroRecipe : null);
-    const title = recipe ? recipe.title : '一道菜';
-    const me = this.data.currentUser || {};
-    this.persistWish({
-      id: `w-${Date.now()}-${id}`,
-      recipeId: id,
-      text: title,
-      by: me.nickname || '我',
-      at: Date.now()
-    });
-    wx.showToast({ title: '已许愿', icon: 'success' });
+    const slot = this.data.currentSlot || 'dinner';
+    const slotLabel = mealTypeLabels[slot] || '晚餐';
+    try {
+      await addTodayMenuRecipe(id, slot);
+      wx.showToast({ title: `已加入今日${slotLabel}`, icon: 'success' });
+      if (this._inited) this.refreshLight();
+    } catch (err) {
+      wx.showToast({ title: '加入失败，请重试', icon: 'none' });
+    }
   },
 
   goDetail(e) {
@@ -566,5 +552,11 @@ Page({
     if (typeof idx === 'number' && item) {
       this.setData({ [`sideRecipes[${idx}].dishImg`]: fallbackDishImg(item.id || item.title) });
     }
-  }
+  },
+  onShareAppMessage() {
+    return {
+      title: '家庭点菜 · 今天吃什么一起定',
+      path: '/pages/home/index'
+    };
+  },
 });

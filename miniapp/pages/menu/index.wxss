@@ -49,7 +49,7 @@
   justify-content: space-between;
 }
 .m-hero-date {
-  font-size: 25rpx;
+  font-size: var(--fs-sub);
   color: rgba(255, 255, 255, 0.78);
   font-weight: 600;
   letter-spacing: 0.5rpx;
@@ -66,42 +66,42 @@
   height: 96rpx;
   border-radius: 32rpx;
   background: var(--pop);
-  color: #fff;
+  color: var(--c-surface);
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: var(--sh-pop);
 }
 .m-plus { font-size: 52rpx; font-weight: 300; line-height: 1; }
-.m-hd-add-label { font-size: 21rpx; font-weight: 700; color: rgba(255, 255, 255, 0.85); }
+.m-hd-add-label { font-size: var(--fs-mini); font-weight: 700; color: rgba(255, 255, 255, 0.85); }
 .m-hero-body {
   position: absolute;
   left: 46rpx;
   right: 46rpx;
   bottom: 92rpx;
   z-index: 10;
-  color: #fff;
+  color: var(--c-surface);
 }
 .m-hero-tag {
   display: inline-block;
   font-family: var(--serif);
   font-style: italic;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   letter-spacing: 3rpx;
   font-weight: 700;
-  color: #fff;
+  color: var(--c-surface);
   background: var(--pop);
   padding: 11rpx 27rpx;
-  border-radius: 8rpx;
+  border-radius: var(--r-xs);
 }
 .m-hero-title {
   font-size: 120rpx;
   line-height: 0.9;
   letter-spacing: -6rpx;
   margin: 30rpx 0 22rpx;
-  -webkit-text-stroke: 3rpx #fff;
+  -webkit-text-stroke: 3rpx var(--c-surface);
 }
-.m-hero-sub { font-size: 27rpx; color: rgba(255, 255, 255, 0.85); font-weight: 500; }
+.m-hero-sub { font-size: var(--fs-cap); color: rgba(255, 255, 255, 0.85); font-weight: 500; }
 
 /* ============ SHEET 上推白底 ============ */
 .m-sheet {
@@ -115,8 +115,8 @@
 
 /* ============ 统计卡 ============ */
 .m-stat-card {
-  background: #fff;
-  border-radius: 42rpx;
+  background: var(--c-surface);
+  border-radius: var(--r-card);
   padding: 38rpx 16rpx 34rpx;
   box-shadow: var(--sh-card);
   border: var(--bd-card);
@@ -130,7 +130,7 @@
   top: 12rpx;
   bottom: 34rpx;
   width: 2rpx;
-  background: #efe9df;
+  background: var(--paper-2);
 }
 .m-stat-num {
   font-size: 72rpx;
@@ -139,12 +139,12 @@
   letter-spacing: -4rpx;
   line-height: 1;
 }
-.m-stat-u { font-size: 27rpx; font-weight: 700; color: var(--mut); margin-left: 4rpx; letter-spacing: 0; }
+.m-stat-u { font-size: var(--fs-cap); font-weight: 700; color: var(--mut); margin-left: 4rpx; letter-spacing: 0; }
 .m-stat-label { font-size: 22rpx; color: var(--mut-strong); font-weight: 600; margin-top: 16rpx; }
 .m-shop-progress {
   margin: 34rpx 26rpx 0;
   padding-top: 30rpx;
-  border-top: 2rpx solid #efe9df;
+  border-top: 2rpx solid var(--paper-2);
 }
 .m-shop-head {
   display: flex;
@@ -173,7 +173,7 @@
 .m-quick-row { display: flex; gap: 22rpx; margin-top: 30rpx; }
 .m-quick-card {
   flex: 1;
-  background: #fff;
+  background: var(--c-surface);
   border-radius: 34rpx;
   padding: 28rpx 18rpx 26rpx;
   box-shadow: var(--sh-soft), 0 24rpx 50rpx rgba(120, 70, 30, 0.1);
@@ -209,7 +209,7 @@
 .m-ic-cal {
   width: 36rpx; height: 34rpx;
   border: 3rpx solid var(--pop);
-  border-radius: 8rpx;
+  border-radius: var(--r-xs);
   position: relative; box-sizing: border-box;
 }
 .m-ic-cal::before {
@@ -224,7 +224,7 @@
 .m-ic-fridge {
   width: 30rpx; height: 40rpx;
   border: 3rpx solid var(--pop);
-  border-radius: 8rpx;
+  border-radius: var(--r-xs);
   position: relative; box-sizing: border-box;
 }
 .m-ic-fridge::before {
@@ -246,7 +246,7 @@
   display: inline-flex;
   align-items: center;
   gap: 14rpx;
-  font-size: 25rpx;
+  font-size: var(--fs-sub);
   font-weight: 800;
   color: var(--ink-deep);
   margin: 34rpx 0 18rpx;
@@ -259,19 +259,19 @@
   border-radius: 50%;
   background: var(--pop);
 }
-.m-meal-label .n { color: var(--mut); font-weight: 600; font-size: 23rpx; }
+.m-meal-label .n { color: var(--mut); font-weight: 600; font-size: var(--fs-cap); }
 .m-row {
   display: flex;
   align-items: center;
   gap: 26rpx;
   padding: 25rpx 0;
-  border-bottom: 2rpx solid #efe9df;
+  border-bottom: 2rpx solid var(--paper-2);
 }
 .m-row:last-child { border-bottom: none; }
 .m-thumb {
   width: 122rpx;
   height: 122rpx;
-  border-radius: 30rpx;
+  border-radius: var(--r-chip);
   flex: none;
   box-shadow: 0 8rpx 22rpx rgba(120, 70, 30, 0.16);
   background: var(--paper-2);
@@ -287,7 +287,7 @@
   text-overflow: ellipsis;
 }
 .m-rsub {
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   color: var(--mut);
   margin-top: 10rpx;
   display: flex;
@@ -301,8 +301,8 @@
   font-weight: 700;
   color: var(--mut);
   flex: none;
-  border: 2rpx solid #e3dccf;
-  border-radius: 30rpx;
+  border: 2rpx solid var(--c-border);
+  border-radius: var(--r-chip);
   padding: 16rpx 26rpx;
   background: var(--paper);
 }
@@ -324,7 +324,7 @@
 .m-week-eyebrow {
   font-family: var(--serif);
   font-style: italic;
-  font-size: 23rpx;
+  font-size: var(--fs-cap);
   letter-spacing: 1rpx;
   color: var(--gold);
   font-weight: 700;
@@ -348,11 +348,11 @@
 }
 .m-wk-item:last-child { border-bottom: none; }
 .m-wk-day { width: 92rpx; flex: none; }
-.m-wk-day .d1 { font-size: 29rpx; font-weight: 900; color: #fff; }
+.m-wk-day .d1 { font-size: 29rpx; font-weight: 900; color: var(--c-surface); }
 .m-wk-day .d2 { font-size: 20rpx; color: rgba(255, 255, 255, 0.5); font-weight: 600; margin-top: 4rpx; }
 .m-wk-recipe {
   flex: 1;
-  font-size: 27rpx;
+  font-size: var(--fs-cap);
   color: rgba(255, 255, 255, 0.88);
   font-weight: 600;
   min-width: 0;
@@ -366,7 +366,7 @@
   font-weight: 700;
   color: var(--gold);
   background: rgba(244, 217, 168, 0.13);
-  border-radius: 30rpx;
+  border-radius: var(--r-chip);
   padding: 8rpx 21rpx;
 }
 
@@ -385,14 +385,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 27rpx;
+  font-size: var(--fs-cap);
   font-weight: 700;
   color: var(--mut-strong);
   border-radius: var(--r-pill);
 }
 .mn-seg-item.on {
   background: var(--ink-deep);
-  color: #fff;
+  color: var(--c-surface);
 }
 
 /* 菜条操作区 */
@@ -415,13 +415,13 @@
 }
 .m-act-cook {
   background: var(--pop);
-  color: #fff;
+  color: var(--c-surface);
   box-shadow: var(--sh-pop);
 }
 .m-act-done {
   background: var(--paper-2);
   color: var(--ink);
-  border: 2rpx solid #e6dfd1;
+  border: 2rpx solid var(--c-border);
 }
 
 /* 底部固定行动条 */
@@ -435,7 +435,7 @@
   justify-content: space-between;
   padding: 20rpx 46rpx 28rpx;
   background: var(--paper);
-  border-top: 2rpx solid #efe9df;
+  border-top: 2rpx solid var(--paper-2);
   z-index: 100;
 }
 .m-fab-tip {
@@ -450,7 +450,7 @@
   align-items: center;
   border-radius: var(--r-pill);
   background: var(--ink-deep);
-  color: #fff;
+  color: var(--c-surface);
   font-size: 28rpx;
   font-weight: 800;
   box-shadow: var(--sh-card);
@@ -461,19 +461,19 @@
   margin: 40rpx 0;
   padding: 56rpx 40rpx;
   border-radius: var(--r-lg, 28rpx);
-  background: var(--card, #fff);
+  background: var(--c-surface);
   box-shadow: var(--sh-card);
   text-align: center;
 }
 .m-load-error-title {
   font-size: 32rpx;
   font-weight: 800;
-  color: var(--ink-deep, #1a1a1a);
+  color: var(--ink-deep);
 }
 .m-load-error-desc {
   margin-top: 12rpx;
   font-size: 24rpx;
-  color: var(--mut-strong, #999);
+  color: var(--mut-strong);
   word-break: break-all;
 }
 .m-load-error-btn {
@@ -483,9 +483,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--r-pill, 999rpx);
-  background: var(--ink-deep, #1a1a1a);
-  color: #fff;
+  border-radius: var(--r-pill);
+  background: var(--ink-deep);
+  color: var(--c-surface);
   font-size: 26rpx;
   font-weight: 700;
 }
