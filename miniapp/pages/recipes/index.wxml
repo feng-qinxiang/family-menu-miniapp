@@ -1,5 +1,5 @@
 <wxs src="../../utils/cuisine.wxs" module="cuisine" />
-<view class="recipes-mag">
+<view class="recipes-mag {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <!-- ===== HERO ===== -->
   <view class="rx-hero g-fade-in">
     <image wx:if="{{heroRecipe.cover}}" class="rx-hero-img" src="{{heroRecipe.cover}}" mode="aspectFill" />
@@ -152,8 +152,13 @@
       上拉加载更多 · 还有 {{remainCount}} 道
     </view>
 
+    <!-- 加载失败态 -->
+    <view wx:if="{{loadError}}">
+      <state-empty type="offline" title="菜谱没加载出来" desc="网络开小差了，检查后再试" cta="重新加载" bindaction="retryLoad" />
+    </view>
+
     <!-- 空状态 -->
-    <view wx:if="{{!loading && !filteredRecipes.length}}">
+    <view wx:elif="{{!loading && !filteredRecipes.length}}">
       <state-empty type="search" title="没有符合条件的菜谱" desc="换个来源或菜系，再试试" cta="清空筛选" bindaction="clearFilter">
         <view class="rx-empty-extra tap-scale" bindtap="goCreate">去新建一道</view>
       </state-empty>

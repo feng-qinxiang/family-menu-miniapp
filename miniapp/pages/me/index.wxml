@@ -1,4 +1,4 @@
-<view class="container me-mag">
+<view class="container me-mag {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <!-- HERO：真实菜图 + 镂空撞色标题 + 家庭成员头像 stack -->
   <view class="mag-hero g-fade-up">
     <image class="mag-hero-img" src="/assets/dishes/hongshao-pork.jpg" mode="aspectFill" />
@@ -50,17 +50,17 @@
     <!-- 数据卡 -->
     <view class="mag-stats g-fade-up g-d1">
       <view class="mag-stat tap-scale" bindtap="goRecipes">
-        <view class="mag-snum pop">{{savedCount}}</view>
+        <view class="mag-snum pop {{loading ? 'shimmer num-skel' : ''}}">{{savedCount}}</view>
         <view class="mag-scap">收藏菜谱</view>
         <view class="mag-scap-en">已收藏</view>
       </view>
       <view class="mag-stat tap-scale">
-        <view class="mag-snum">{{monthCookCount}}</view>
+        <view class="mag-snum {{loading ? 'shimmer num-skel' : ''}}">{{monthCookCount}}</view>
         <view class="mag-scap">本月做菜</view>
         <view class="mag-scap-en">道菜</view>
       </view>
       <view class="mag-stat tap-scale">
-        <view class="mag-snum">{{memberCount}}</view>
+        <view class="mag-snum {{loading ? 'shimmer num-skel' : ''}}">{{memberCount}}</view>
         <view class="mag-scap">家庭成员</view>
         <view class="mag-scap-en">位家人</view>
       </view>

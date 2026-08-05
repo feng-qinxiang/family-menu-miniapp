@@ -99,10 +99,10 @@
 .up-pic { width: 100%; height: 100%; display: block; }
 .up-img .del {
   position: absolute;
-  top: 6rpx;
-  right: 6rpx;
-  width: 46rpx;
-  height: 46rpx;
+  top: 4rpx;
+  right: 4rpx;
+  width: 56rpx;
+  height: 56rpx;
   border-radius: 50%;
   background: var(--ink-deep);
   display: flex;

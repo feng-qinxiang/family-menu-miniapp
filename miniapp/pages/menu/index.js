@@ -69,6 +69,9 @@ Page({
   },
 
   onShow() {
+    let fontScale = 'normal';
+    try { fontScale = wx.getStorageSync('font_scale') || 'normal'; } catch (e) { fontScale = 'normal'; }
+    if (fontScale !== this.data.fontScale) this.setData({ fontScale });
     // 跨天刷新日期文案（todayLabel 在 data 初始化时只算一次）
     const label = buildToday();
     if (label !== this.data.todayLabel) {
@@ -82,7 +85,7 @@ Page({
   },
 
   async loadData() {
-    this.setData({ loadError: '' });
+    this.setData({ loading: true, loadError: '' });
     try {
       const [todayMenu, shoppingList, weeklyMenu, pantry] = await Promise.all([
         getTodayMenu(),
@@ -270,10 +273,18 @@ Page({
       await rebuildShoppingList();
       wx.hideLoading();
       wx.showToast({ title: '已生成', icon: 'success' });
-      setTimeout(() => wx.navigateTo({ url: '/pages/shopping/index' }), 400);
+      if (this._navTimer) clearTimeout(this._navTimer);
+      this._navTimer = setTimeout(() => wx.navigateTo({ url: '/pages/shopping/index' }), 400);
     } catch (err) {
       wx.hideLoading();
       wx.showToast({ title: '生成失败', icon: 'none' });
+    }
+  },
+
+  onUnload() {
+    if (this._navTimer) {
+      clearTimeout(this._navTimer);
+      this._navTimer = null;
     }
   },
 

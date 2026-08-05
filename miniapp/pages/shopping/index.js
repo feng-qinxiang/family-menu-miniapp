@@ -70,10 +70,14 @@ Page({
     ],
     newItem: { ingredientName: '', amount: '', unit: '' },
     skeletonRows: [1, 2, 3],
-    loading: true
+    loading: true,
+    loadError: false
   },
 
   onShow() {
+    let fontScale = 'normal';
+    try { fontScale = wx.getStorageSync('font_scale') || 'normal'; } catch (e) { fontScale = 'normal'; }
+    if (fontScale !== this.data.fontScale) this.setData({ fontScale });
     this.loadShoppingList();
   },
 
@@ -86,6 +90,7 @@ Page({
   },
 
   async loadShoppingList() {
+    this.setData({ loadError: false });
     try {
       const [shoppingList, todayMenu, pantryItems] = await Promise.all([
         getShoppingList(),
@@ -96,9 +101,14 @@ Page({
       this.setPantryView(pantryItems);
     } catch (err) {
       console.error('shopping load failed', err);
-      this.setData({ loading: false });
-      wx.showToast({ title: '加载失败，请下拉重试', icon: 'none' });
+      this.setData({ loading: false, loadError: true });
+      wx.showToast({ title: '加载失败', icon: 'none' });
     }
+  },
+
+  retryLoad() {
+    this.setData({ loading: true, loadError: false });
+    this.loadShoppingList();
   },
 
   setPantryView(pantryItems) {

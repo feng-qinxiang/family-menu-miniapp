@@ -28,7 +28,7 @@
   </view>
 
   <!-- ===== 遮罩 ===== -->
-  <view class="wa-mask {{sheetIn ? 'is-in' : ''}}" catchtap="onDeny"></view>
+  <view class="wa-mask {{sheetIn ? 'is-in' : ''}}" catchtap="onDeny" catchtouchmove="noop"></view>
 
   <!-- ===== 授权 sheet(底部弹出) ===== -->
   <view class="wa-sheet {{sheetIn ? 'is-in' : ''}}" catchtap="noop">

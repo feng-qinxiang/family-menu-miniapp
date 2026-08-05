@@ -47,6 +47,7 @@ Page({
     mealOptions,
     activeMealType: 'dinner',
     loading: true,
+    loadError: false,
     searchFocused: false,
     skeletonCards: [1, 2, 3, 4],
     showAdvFilter: false,
@@ -57,7 +58,11 @@ Page({
     avoidHiddenCount: 0
   },
 
-  onLoad() {},
+  onLoad() {
+    let fontScale = 'normal';
+    try { fontScale = wx.getStorageSync('font_scale') || 'normal'; } catch (e) { fontScale = 'normal'; }
+    this.setData({ fontScale });
+  },
 
   onShow() {
       this.loadRecipes();
@@ -99,8 +104,13 @@ Page({
       this.applyFilter();
     } catch (err) {
       wx.showToast({ title: '加载菜谱失败', icon: 'none' });
-      this.setData({ recipes: [], filteredRecipes: [], loading: false });
+      this.setData({ recipes: [], filteredRecipes: [], loading: false, loadError: true });
     }
+  },
+
+  retryLoad() {
+    this.setData({ loading: true, loadError: false });
+    this.loadRecipes();
   },
 
   normalizeRecipe(recipe, selectedIds) {

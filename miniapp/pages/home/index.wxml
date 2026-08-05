@@ -1,5 +1,5 @@
 <wxs src="../../utils/cuisine.wxs" module="cuisine" />
-<view class="mag-home">
+<view class="mag-home {{fontScale === 'lg' ? 'font-lg' : ''}}">
 
   <!-- ============ SKELETON (loading) ============ -->
   <view class="mh-skel" wx:if="{{loading}}">
@@ -280,7 +280,7 @@
 
 <!-- ============ 自定义许愿弹窗（root-portal 保证脱离页面层级） ============ -->
 <root-portal wx:if="{{showWishModal}}">
-  <view class="wish-backdrop" catchtap="closeWishModal"></view>
+  <view class="wish-backdrop" catchtap="closeWishModal" catchtouchmove="noopScroll"></view>
   <view class="wish-modal" catchtap="">
     <view class="wish-modal-hd">
       <text class="wish-modal-emoji serif">味</text>

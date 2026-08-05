@@ -43,6 +43,7 @@ Page({
       this.applyStatus(status);
     } catch (err) {
       console.error('vip status load failed', err);
+      wx.showToast({ title: '会员状态加载失败，当前为演示数据', icon: 'none' });
     }
   },
 

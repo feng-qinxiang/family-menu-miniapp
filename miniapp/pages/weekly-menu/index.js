@@ -69,7 +69,8 @@ Page({
       blankCount: 0
     },
     activeIndex: -1,
-    loading: true
+    loading: true,
+    loadError: false
   },
 
   onLoad() {
@@ -87,12 +88,18 @@ Page({
   },
 
   async loadData() {
+    this.setData({ loadError: false });
     try {
       const weeklyMenu = this.normalizeWeeklyMenu(await getWeeklyMenu());
       this.applyMenu(weeklyMenu);
     } catch (e) {
-      this.setData({ loading: false });
+      this.setData({ loading: false, loadError: true });
     }
+  },
+
+  retryLoad() {
+    this.setData({ loading: true, loadError: false });
+    this.loadData();
   },
 
   async regenerate() {

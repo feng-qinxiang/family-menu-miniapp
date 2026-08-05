@@ -51,6 +51,39 @@ Page({
     this.setData({ statusBarHeight: sbh, year: new Date().getFullYear() });
     this._refreshCacheSize();
     this._loadAccount();
+    this._loadFontScale();
+  },
+
+  // 读取大字模式开关并回填设置项展示
+  _loadFontScale() {
+    let scale = 'normal';
+    try {
+      scale = wx.getStorageSync('font_scale') || 'normal';
+    } catch (e) {
+      scale = 'normal';
+    }
+    const app = getApp();
+    if (app) app.globalData.fontScale = scale;
+    const list = this.data.generalList.map((it) =>
+      it.key === 'font' ? { ...it, value: scale === 'lg' ? '大' : '标准' } : it
+    );
+    this.setData({ fontScale: scale, generalList: list });
+  },
+
+  _toggleFontScale() {
+    const next = this.data.fontScale === 'lg' ? 'normal' : 'lg';
+    const app = getApp();
+    if (app) app.globalData.fontScale = next;
+    try {
+      wx.setStorageSync('font_scale', next);
+    } catch (e) {
+      // 存储失败不影响本次会话内生效
+    }
+    const list = this.data.generalList.map((it) =>
+      it.key === 'font' ? { ...it, value: next === 'lg' ? '大' : '标准' } : it
+    );
+    this.setData({ fontScale: next, generalList: list });
+    this._toast(next === 'lg' ? '已开启大字模式' : '已恢复标准字号');
   },
 
   // 拉取当前用户，回填手机号/微信绑定状态（失败保留默认）
@@ -129,7 +162,7 @@ Page({
     if (key === 'cache') {
       this._clearCache();
     } else if (key === 'font') {
-      this._toast('字体大小调整即将支持');
+      this._toggleFontScale();
     }
   },
 

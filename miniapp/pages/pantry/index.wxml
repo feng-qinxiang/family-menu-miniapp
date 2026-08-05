@@ -1,4 +1,4 @@
-<view class="pantry-page">
+<view class="pantry-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <!-- 顶部状态栏占位（tab 页无返回键）-->
   <view class="nav-float">
     <nav-bar title="" show-back="{{false}}" status-bar-height="{{statusBarHeight}}" />
@@ -42,9 +42,19 @@
       <text class="seeall">共 {{pantrySummary.count}} 项</text>
     </view>
 
+    <!-- 加载失败态 -->
+    <state-empty
+      wx:if="{{loadError}}"
+      type="offline"
+      title="冰箱没打开"
+      desc="网络开小差了，检查后再试"
+      cta="重新加载"
+      bind:action="retryLoad"
+    />
+
     <!-- 空态 -->
     <state-empty
-      wx:if="{{loaded && !categories.length}}"
+      wx:elif="{{loaded && !categories.length}}"
       type="pop"
       title="冰箱还空着"
       desc="把家里有的食材记进来，点菜时就能先看能做什么"

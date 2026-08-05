@@ -91,7 +91,16 @@
       </block>
 
       <state-empty
-        wx:if="{{!loading && visibleCount === 0}}"
+        wx:if="{{loadError}}"
+        type="offline"
+        title="消息没加载出来"
+        desc="网络开小差了，检查后再试"
+        cta="重新加载"
+        bind:action="retryLoad"
+      />
+
+      <state-empty
+        wx:elif="{{!loading && visibleCount === 0}}"
         title="暂无消息"
         desc="这里会显示家庭、社区与系统的动态"
       />

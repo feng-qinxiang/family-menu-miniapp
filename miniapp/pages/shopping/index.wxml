@@ -1,5 +1,5 @@
 <!-- 买菜清单 · 精致美食杂志撞色风（设计稿 shopping-final.html）-->
-<view class="mkt-page">
+<view class="mkt-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <!-- 二级页导航：透明覆盖在 hero 上 -->
   <view class="mkt-nav">
     <nav-bar title="" show-back="{{true}}"></nav-bar>
@@ -67,8 +67,13 @@
     </view>
 
     <block wx:if="{{!loading}}">
+      <!-- 加载失败态 -->
+      <view wx:if="{{loadError}}" class="mkt-pad">
+        <state-empty type="offline" title="清单没加载出来" desc="网络开小差了，检查后再试" cta="重新加载" bind:action="retryLoad" />
+      </view>
+
       <!-- 空态 -->
-      <view class="mkt-pad" wx:if="{{!shoppingList.items.length}}">
+      <view wx:elif="{{!shoppingList.items.length}}" class="mkt-pad">
         <state-empty title="今天不用买" desc="今晚的菜都在库存里，歇一歇吧"></state-empty>
       </view>
 

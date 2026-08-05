@@ -33,7 +33,8 @@ Page({
     newItem: { ingredientName: '', amount: '', unit: '', expiresAt: '' },
     showAddForm: false,
     showMatch: false,
-    loaded: false
+    loaded: false,
+    loadError: false
   },
 
   onLoad() {
@@ -43,7 +44,9 @@ Page({
     } catch (e) {
       sbh = 0;
     }
-    this.setData({ statusBarHeight: sbh });
+    let fontScale = 'normal';
+    try { fontScale = wx.getStorageSync('font_scale') || 'normal'; } catch (e) { fontScale = 'normal'; }
+    this.setData({ statusBarHeight: sbh, fontScale });
   },
 
   onShow() {
@@ -54,13 +57,25 @@ Page({
     Promise.resolve(this.loadPantry()).catch(() => {}).then(() => setTimeout(() => wx.stopPullDownRefresh(), 300));
   },
 
+  retryLoad() {
+    this.setData({ loadError: false, loaded: false });
+    this.loadPantry();
+  },
+
   async loadPantry() {
     let pantryItems = [];
     let weeklyMenu = null;
+    let failed = false;
     try {
       [pantryItems, weeklyMenu] = await Promise.all([getPantryItems(), getWeeklyMenu()]);
     } catch (e) {
       pantryItems = [];
+      failed = true;
+    }
+    if (failed) {
+      this.setData({ loaded: true, loadError: true });
+      wx.showToast({ title: '冰箱数据加载失败', icon: 'none' });
+      return;
     }
     const enriched = this.enrichPantryItems(pantryItems || [], weeklyMenu);
     const categories = this.groupByCategory(enriched);
@@ -71,7 +86,8 @@ Page({
         expiringCount: enriched.filter((it) => it.expiringSoon).length,
         categoryCount: categories.length
       },
-      loaded: true
+      loaded: true,
+      loadError: false
     });
     // 库存变化后自动刷新匹配
     this.matchRecipes(true);

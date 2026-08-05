@@ -198,6 +198,14 @@
   letter-spacing: -3rpx;
   line-height: 1;
 }
+.mag-snum.num-skel {
+  width: 84rpx;
+  height: 48rpx;
+  border-radius: 14rpx;
+  background: var(--skeleton);
+  margin: 0 auto;
+  color: transparent;
+}
 .mag-snum.pop { color: var(--pop); }
 .mag-scap {
   margin-top: 14rpx;

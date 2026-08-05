@@ -47,7 +47,8 @@ Page({
     unreadCount: 0,
     visibleCount: 0,
     groups: [],
-    toast: { visible: false, type: 'top', text: '' }
+    toast: { visible: false, type: 'top', text: '' },
+    loadError: false
   },
 
   onLoad() {
@@ -59,11 +60,16 @@ Page({
       .then((res) => {
         const items = res && Array.isArray(res.items) ? res.items : [];
         const all = items.map(adapt);
-        this.setData({ all, loading: false }, () => this.recompute());
+        this.setData({ all, loading: false, loadError: false }, () => this.recompute());
       })
       .catch(() => {
-        this.setData({ all: [], loading: false }, () => this.recompute());
+        this.setData({ all: [], loading: false, loadError: true }, () => this.recompute());
       });
+  },
+
+  retryLoad() {
+    this.setData({ loading: true, loadError: false });
+    this.loadData();
   },
 
   // 根据当前 tab 计算分组、未读数、tab 角标

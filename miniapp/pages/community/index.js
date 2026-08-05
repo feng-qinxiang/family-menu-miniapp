@@ -29,6 +29,7 @@ Page({
   data: {
       statusBarHeight: 0,
     posts: [],
+    loading: true,
     loadError: false,
     communitySummary: { postCount: 0, commentCount: 0, favoriteCount: 0 },
     selectedPostId: '',
@@ -65,6 +66,7 @@ Page({
     },
 
   async loadPosts() {
+    this.setData({ loading: true, loadError: false });
     let posts = [];
     try {
       posts = this.normalizePosts(await getCommunityPosts() || []);
@@ -73,6 +75,7 @@ Page({
       wx.showToast({ title: '社区加载失败', icon: 'none' });
       this.setData({
         loadError: true,
+        loading: false,
         posts: [],
         communitySummary: { postCount: 0, commentCount: 0, favoriteCount: 0 }
       });
@@ -82,6 +85,7 @@ Page({
     const selectedPost = posts.find((post) => String(post.id) === String(selectedPostId)) || null;
     this.setData({
       loadError: false,
+      loading: false,
       posts,
       communitySummary: this.buildCommunitySummary(posts),
       selectedPostId,

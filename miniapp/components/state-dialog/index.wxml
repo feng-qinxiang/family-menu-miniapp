@@ -2,6 +2,7 @@
 <view
   class="sd-mask {{visible ? 'sd-mask--show' : ''}}"
   catchtap="onCancel"
+  catchtouchmove="noop"
   wx:if="{{showWrap}}"
 >
   <view class="sd-dialog {{visible ? 'sd-dialog--in' : 'sd-dialog--out'}}" catchtap="noop">

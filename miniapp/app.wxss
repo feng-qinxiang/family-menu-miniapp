@@ -9,9 +9,9 @@ page {
   --paper-2: #f0ebe2;
   --ink: #2c241b;
   --ink-deep: #3a2e23;
-  --mut: #9a8e7d;
+  --mut: #7a6e5d;           /* 次要文字（AA 4.5:1，2026-08 P3 对比度收敛） */
   --mut-2: #b3a795;
-  --mut-strong: #7a6e5d;
+  --mut-strong: #6b5f50;    /* 强调次要文字（比 --mut 更深一档） */
   --gold: #f4d9a8;
   --gold-deep: #b08949;
   --pop: #e8472a;
@@ -150,6 +150,22 @@ page {
   line-height: 1.55;
   font-family: var(--sans);
   -webkit-font-smoothing: antialiased;
+}
+
+/* ============ 大字模式（设置页开关，主页面根节点挂 .font-lg）============ */
+/* 覆盖字号 token：用 var() 引用的文字按档位放大；页面静态 rpx 不受影响（已知局限）。 */
+page.font-lg, .font-lg {
+  --fs-hero-xl: 128rpx;
+  --fs-hero-lg: 100rpx;
+  --fs-hero-sm: 76rpx;
+  --fs-h1: 56rpx;
+  --fs-h2: 40rpx;
+  --fs-lg: 36rpx;
+  --fs-body: 31rpx;
+  --fs-btn: 32rpx;
+  --fs-sub: 28rpx;
+  --fs-cap: 25rpx;
+  --fs-mini: 23rpx;
 }
 
 /* ============ 通用容器 / 安全区 ============ */

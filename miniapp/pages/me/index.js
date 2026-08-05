@@ -74,6 +74,9 @@ Page({
   },
 
   onShow() {
+    let fontScale = 'normal';
+    try { fontScale = wx.getStorageSync('font_scale') || 'normal'; } catch (e) { fontScale = 'normal'; }
+    if (fontScale !== this.data.fontScale) this.setData({ fontScale });
     this.loadProfile();
   },
 

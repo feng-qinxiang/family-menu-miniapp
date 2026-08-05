@@ -44,8 +44,12 @@
           </view>
         </view>
 
+          <!-- 加载态 -->
+          <view wx:if="{{loading}}" class="empty-state">
+            <view class="empty-text">正在加载社区动态…</view>
+          </view>
           <!-- 失败态 -->
-          <view wx:if="{{loadError}}" class="empty-state">
+          <view wx:elif="{{loadError}}" class="empty-state">
             <view class="empty-text">社区加载失败，检查网络后再试试</view>
             <view class="empty-retry tap-scale" bindtap="loadPosts">重新加载</view>
           </view>

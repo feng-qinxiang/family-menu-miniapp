@@ -94,12 +94,14 @@ Page({
     cuisineTiles: [],
 
     allRecipes: [],
-    matchedRatioMap: new Map(),
     loadError: ''
   },
 
   onLoad() {
     this._inited = false;
+    let fontScale = 'normal';
+    try { fontScale = wx.getStorageSync('font_scale') || 'normal'; } catch (e) { fontScale = 'normal'; }
+    this.setData({ fontScale });
     const todayKey = todayDateKey();
     // 离线缓存：先用上次数据渲染，网络回来后覆盖
     const cachedMenu = readCache(CACHE_KEY_MENU);
@@ -173,6 +175,9 @@ Page({
   closeWishModal() {
     this.setData({ showWishModal: false });
   },
+
+  // 弹窗滚动穿透锁
+  noopScroll() {},
   confirmWish() {
     const text = (this.data.wishInput || '').trim();
     if (!text) return;
@@ -207,7 +212,8 @@ Page({
         this.setData({ wishes: updated });
       }
     } catch (err) {
-      // 保留本地乐观结果，不回滚
+      // 离线兜底：保留本地乐观结果，提示用户稍后同步
+      wx.showToast({ title: '已记在本机，联网后自动同步', icon: 'none' });
     }
   },
 
@@ -224,7 +230,8 @@ Page({
     try {
       await removeWishApi(id);
     } catch (err) {
-      // 本地已删，服务端失败静默处理
+      // 离线兜底：本地已删，提示用户稍后同步
+      wx.showToast({ title: '已在本机移除，联网后同步', icon: 'none' });
     }
   },
 

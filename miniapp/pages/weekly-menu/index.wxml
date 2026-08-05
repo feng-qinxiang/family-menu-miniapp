@@ -128,7 +128,16 @@
       </view>
     </view>
 
-    <view wx:if="{{!loading && !weeklyMenu.days.length}}" class="empty-state">
+    <state-empty
+      wx:if="{{loadError}}"
+      type="offline"
+      title="本周菜单没加载出来"
+      desc="网络开小差了，检查后再试"
+      cta="重新加载"
+      bind:action="retryLoad"
+    />
+
+    <view wx:elif="{{!loading && !weeklyMenu.days.length}}" class="empty-state">
       <view class="empty-text">本周还没排菜，点右上角重新排</view>
     </view>
 
