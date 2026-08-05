@@ -1,4 +1,4 @@
-const { getFamilyProfile, getFamilyInviteCode, removeFamilyMember } = require('../../../utils/api');
+const { getFamilyProfile, getFamilyInviteCode, removeFamilyMember, updateMemberAvoidTags } = require('../../../utils/api');
 
 // 身份 → 展示文案 / badge 样式
 const ROLE_MAP = {
@@ -6,6 +6,9 @@ const ROLE_MAP = {
   admin: { label: '管理员', badge: 'admin' },
   member: { label: '成员', badge: 'member' }
 };
+
+// 忌口标签池（菜谱筛选与成员编辑共用）
+const AVOID_OPTIONS = ['辣', '香菜', '猪肉', '牛肉', '羊肉', '海鲜', '花生', '鸡蛋'];
 
 // 文字头像配色循环（复用 token 配色，见 wxss .mavt-*）
 const AVT_TONES = ['pine', 'gold', 'inkdeep', 'pop'];
@@ -22,6 +25,11 @@ Page({
     // 移除确认弹窗
     removeDialogVisible: false,
     pendingRemove: null,
+    // 忌口编辑弹层
+    avoidSheetVisible: false,
+    editingMember: null,
+    avoidDraft: [],
+    avoidOptions: AVOID_OPTIONS,
     // toast
     toastVisible: false,
     toastText: ''
@@ -73,6 +81,7 @@ Page({
       const roleInfo = ROLE_MAP[role] || ROLE_MAP.member;
       const nickname = m.nickname || '家庭成员';
       const isSelf = ownerId != null && m.userId === ownerId;
+      const avoidTags = Array.isArray(m.avoidTags) ? m.avoidTags.filter(Boolean) : [];
       return {
         userId: m.userId,
         nickname,
@@ -80,7 +89,8 @@ Page({
         roleLabel: roleInfo.label,
         roleBadge: roleInfo.badge,
         tone: AVT_TONES[idx % AVT_TONES.length],
-        sub: isSelf ? '家庭创建者' : '已加入这个家',
+        sub: avoidTags.length ? '忌口：' + avoidTags.join('、') : (isSelf ? '家庭创建者' : '已加入这个家'),
+        avoidTags,
         isSelf,
         removable: !isSelf
       };
@@ -109,6 +119,54 @@ Page({
       success: () => this.showToast('邀请码已复制'),
       fail: () => this.showToast('复制失败，请重试')
     });
+  },
+
+  // 点击成员行 → 打开忌口编辑
+  onMemberTap(e) {
+    const userId = e.currentTarget.dataset.id;
+    const member = this.data.members.find((m) => m.userId === userId);
+    if (!member) return;
+    this.setData({
+      editingMember: member,
+      avoidDraft: (member.avoidTags || []).slice(),
+      avoidSheetVisible: true
+    });
+  },
+
+  toggleAvoidTag(e) {
+    const tag = e.currentTarget.dataset.tag;
+    if (!tag) return;
+    const draft = this.data.avoidDraft.slice();
+    const idx = draft.indexOf(tag);
+    if (idx >= 0) draft.splice(idx, 1);
+    else draft.push(tag);
+    this.setData({ avoidDraft: draft });
+  },
+
+  closeAvoidSheet() {
+    this.setData({ avoidSheetVisible: false, editingMember: null });
+  },
+
+  saveAvoid() {
+    const member = this.data.editingMember;
+    this.setData({ avoidSheetVisible: false });
+    if (!member) return;
+    const avoidTags = this.data.avoidDraft.slice();
+    updateMemberAvoidTags(member.userId, avoidTags)
+      .then((updated) => {
+        const tags = updated && Array.isArray(updated.avoidTags) ? updated.avoidTags : avoidTags;
+        const members = this.data.members.map((m) =>
+          m.userId === member.userId
+            ? { ...m, avoidTags: tags, sub: tags.length ? '忌口：' + tags.join('、') : (m.isSelf ? '家庭创建者' : '已加入这个家') }
+            : m
+        );
+        this.setData({ members, editingMember: null });
+        this.showToast(tags.length ? '忌口已保存，点菜时会避开' : '已清除忌口');
+      })
+      .catch(() => {
+        this.setData({ editingMember: null });
+        this.showToast('保存失败，请稍后再试');
+      });
   },
 
   // 点击移除 → 打开确认弹窗

@@ -58,6 +58,7 @@ CREATE TABLE IF NOT EXISTS family_member (
     user_id BIGINT NOT NULL,
     member_role VARCHAR(32) NOT NULL DEFAULT 'member',
     member_status VARCHAR(16) NOT NULL DEFAULT 'ACTIVE',
+    avoid_tags_json TEXT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     UNIQUE KEY uk_family_user (family_id, user_id),

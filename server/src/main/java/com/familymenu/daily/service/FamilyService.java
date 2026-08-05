@@ -153,9 +153,42 @@ public class FamilyService {
         return "admin".equals(role) ? "admin" : "member";
     }
 
+    /**
+     * 更新成员忌口标签。允许成员改自己，或家庭 owner 改任意成员；普通成员不可改他人。
+     */
+    @Transactional
+    public FamilyMemberItem updateMemberAvoidTags(long familyId, long requesterUserId, long targetUserId, List<String> avoidTags) {
+        if (requesterUserId != targetUserId) {
+            requireFamilyOwner(familyId, requesterUserId);
+        }
+        List<String> tags = avoidTags == null
+                ? List.of()
+                : avoidTags.stream().map(String::trim).filter(t -> !t.isBlank()).distinct().toList();
+        String json = writeStringList(tags);
+        int affected = jdbcTemplate.update(
+                "UPDATE family_member SET avoid_tags_json = ? WHERE family_id = ? AND user_id = ? AND member_status = 'ACTIVE'",
+                json, familyId, targetUserId);
+        if (affected == 0) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "member not found");
+        }
+        return jdbcTemplate.query("""
+                        SELECT u.id, u.nickname, u.avatar_url, m.member_role, m.member_status, m.avoid_tags_json
+                        FROM family_member m
+                        JOIN user_account u ON u.id = m.user_id
+                        WHERE m.family_id = ? AND m.user_id = ? AND m.member_status = 'ACTIVE'
+                        """,
+                rs -> rs.next() ? new FamilyMemberItem(
+                        rs.getLong("id"),
+                        rs.getString("nickname"),
+                        rs.getString("avatar_url"),
+                        rs.getString("member_role"),
+                        rs.getString("member_status"),
+                        readStringList(rs.getString("avoid_tags_json"))) : null,
+                familyId, targetUserId);
+    }
+
     /** 校验 requesterUserId 是该家庭的 owner，否则 403。供加成员、移除成员等管理操作复用。 */
-    private void requireFamilyOwner(long familyId, long requesterUserId) {
-        Boolean owner = jdbcTemplate.query("""
+    private void requireFamilyOwner(long familyId, long requesterUserId) {        Boolean owner = jdbcTemplate.query("""
                 SELECT COUNT(1) > 0
                 FROM family
                 WHERE id = ? AND owner_user_id = ?

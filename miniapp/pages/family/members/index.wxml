@@ -48,7 +48,9 @@
       <view
         wx:for="{{members}}"
         wx:key="userId"
-        class="mrow"
+        class="mrow tap-scale"
+        data-id="{{item.userId}}"
+        bindtap="onMemberTap"
       >
         <view class="mavt mavt-{{item.tone}}">{{item.initial}}</view>
         <view class="mmid">
@@ -87,6 +89,24 @@
       邀请新成员
     </view>
   </view>
+
+  <!-- 忌口编辑弹层 -->
+  <state-sheet visible="{{avoidSheetVisible}}" title="{{editingMember ? editingMember.nickname + ' 的忌口' : ''}}" bind:close="closeAvoidSheet">
+    <view class="avoid-desc">选中的菜谱会在点菜页自动避开</view>
+    <view class="avoid-opts">
+      <view
+        wx:for="{{avoidOptions}}"
+        wx:key="*this"
+        class="avoid-chip tap-scale {{avoidDraft.indexOf(item) >= 0 ? 'on' : ''}}"
+        data-tag="{{item}}"
+        catchtap="toggleAvoidTag"
+      >{{item}}</view>
+    </view>
+    <view class="avoid-actions">
+      <view class="btn btn-ghost avoid-cancel tap-scale" catchtap="closeAvoidSheet">取消</view>
+      <view class="btn btn-pop avoid-save tap-scale" catchtap="saveAvoid">保存</view>
+    </view>
+  </state-sheet>
 
   <!-- 移除确认弹窗 -->
   <state-dialog

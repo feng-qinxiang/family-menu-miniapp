@@ -71,6 +71,52 @@
   padding: 28rpx 32rpx; border: var(--bd-card); box-shadow: var(--sh-card);
   transition: box-shadow .2s var(--ease-out);
 }
+
+/* ===== 忌口过滤提示条 ===== */
+.rx-dietbar {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin: 24rpx 46rpx 0;
+  padding: 20rpx 28rpx;
+  border-radius: var(--r-md);
+  background: var(--pop-soft);
+  border: 2rpx solid var(--pop-mist);
+}
+.rx-dietbar-ic {
+  flex: none;
+  width: 26rpx;
+  height: 26rpx;
+  border-radius: 50%;
+  background: var(--pop);
+  position: relative;
+}
+.rx-dietbar-ic::after {
+  content: "";
+  position: absolute;
+  left: 7rpx;
+  top: 5rpx;
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  border: 3rpx solid var(--c-surface);
+  box-sizing: border-box;
+}
+.rx-dietbar-t {
+  flex: 1;
+  min-width: 0;
+  color: var(--pop-deep);
+  font-size: var(--fs-sub);
+  font-weight: 600;
+  line-height: 1.4;
+}
+.rx-dietbar-x {
+  flex: none;
+  padding: 8rpx 0 8rpx 16rpx;
+  color: var(--pop);
+  font-size: var(--fs-cap);
+  font-weight: 700;
+}
 .rx-search.focus { box-shadow: 0 0 0 4rpx var(--pop-soft), var(--sh-card); }
 .rx-search-ico {
   flex: none; width: 36rpx; height: 36rpx;

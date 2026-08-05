@@ -1,9 +1,33 @@
-const { addTodayMenuRecipe, getMyFavorites, getRecipes, getShoppingList, getTodayMenu } = require('../../utils/api');
+const { addTodayMenuRecipe, getMyFavorites, getRecipes, getShoppingList, getTodayMenu, getFamilyProfile } = require('../../utils/api');
 const { recipeSourceLabels, cuisineList, mealOptions, sourceTabs } = require('../../utils/constants');
 const { fallbackDishImg, onImgError } = require('../../utils/image');
 const { debounce } = require('../../utils/debounce');
 
 const PAGE_SIZE = 6;
+
+// 忌口标签 → 关键词（匹配菜名/菜系/口味标签；MVP 级映射，后续可由数据驱动）
+const AVOID_KEYWORDS = {
+  '辣': ['辣', '麻婆', '水煮', '川菜', '香辣', '麻辣'],
+  '香菜': ['香菜', '芫荽'],
+  '猪肉': ['猪', '红烧肉', '回锅肉', '小炒肉', '肉末', '排骨', '五花'],
+  '牛肉': ['牛'],
+  '羊肉': ['羊'],
+  '海鲜': ['虾', '鱼', '蟹', '贝', '海鲜', '鱿鱼', '蚝'],
+  '花生': ['花生', '宫保'],
+  '鸡蛋': ['蛋']
+};
+
+function matchesAvoid(recipe, avoidTags) {
+  if (!avoidTags || !avoidTags.length) return false;
+  const title = String(recipe.title || '');
+  const tags = (recipe.tasteTags || []).map(String);
+  const cuisine = String(recipe.cuisine || '');
+  const hay = [title, cuisine].concat(tags).join(' ');
+  return avoidTags.some((tag) => {
+    const kws = AVOID_KEYWORDS[tag] || [tag];
+    return kws.some((kw) => hay.includes(kw));
+  });
+}
 
 Page({
   data: {
@@ -26,7 +50,11 @@ Page({
     searchFocused: false,
     skeletonCards: [1, 2, 3, 4],
     showAdvFilter: false,
-    advFilter: { cuisine: '', maxTime: 0, minServings: 0 }
+    advFilter: { cuisine: '', maxTime: 0, minServings: 0 },
+    // 家庭忌口过滤（自动生效，可临时关闭）
+    avoidTags: [],
+    avoidActive: true,
+    avoidHiddenCount: 0
   },
 
   onLoad() {},
@@ -43,18 +71,29 @@ Page({
     this.setData({ loading: true });
     try {
       const source = this.data.activeSource;
-      const [recipes, favorites, todayMenu, shoppingList] = await Promise.all([
+      const [recipes, favorites, todayMenu, shoppingList, familyProfile] = await Promise.all([
         source === 'favorites' ? getMyFavorites() : getRecipes('all'),
         source !== 'favorites' ? Promise.resolve([]) : Promise.resolve([]),
         getTodayMenu(),
-        getShoppingList()
+        getShoppingList(),
+        getFamilyProfile()
       ]);
       const tray = this.buildMenuTray(todayMenu, shoppingList);
       const raw = Array.isArray(recipes) ? recipes : [];
+      // 汇总家庭成员忌口（去重）
+      const memberAvoids = Array.isArray(familyProfile && familyProfile.members)
+        ? familyProfile.members
+            .map((m) => (Array.isArray(m.avoidTags) ? m.avoidTags : []))
+            .reduce((acc, tags) => acc.concat(tags), [])
+            .filter(Boolean)
+        : [];
+      const avoidTags = Array.from(new Set(memberAvoids));
       this.setData({
         recipes: raw.map((recipe) => this.normalizeRecipe(recipe, tray.ids)),
         todayDishIds: tray.ids,
         menuTray: { count: tray.count, names: tray.names, shoppingCount: tray.shoppingCount },
+        avoidTags,
+        avoidTagsText: avoidTags.join('、'),
         loading: false
       });
       this.applyFilter();
@@ -154,7 +193,13 @@ Page({
   applyFilter() {
     const keyword = this.data.searchText.trim().toLowerCase();
     const { cuisine, maxTime, minServings } = this.data.advFilter;
-    const filteredRecipes = (this.data.recipes || []).filter((recipe) => {
+    // 忌口过滤：仅在开启时生效（家庭成员在 家庭成员 页配置）
+    const avoidTags = this.data.avoidActive ? (this.data.avoidTags || []) : [];
+    const avoidFiltered = avoidTags.length
+      ? (this.data.recipes || []).filter((recipe) => !matchesAvoid(recipe, avoidTags))
+      : (this.data.recipes || []);
+    const avoidHiddenCount = (this.data.recipes || []).length - avoidFiltered.length;
+    const filteredRecipes = avoidFiltered.filter((recipe) => {
       // 收藏源：列表本身已是收藏结果，不再按 sourceType 过滤
       const sourceMatch = this.data.activeSource === 'all'
         || this.data.activeSource === 'favorites'
@@ -184,8 +229,14 @@ Page({
       heroRecipe: hero,
       displayedRecipes: displayed,
       hasMore: filteredRecipes.length > displayed.length,
-      remainCount: filteredRecipes.length - displayed.length
+      remainCount: filteredRecipes.length - displayed.length,
+      avoidHiddenCount
     });
+  },
+
+  // 临时关闭/恢复忌口过滤
+  toggleAvoidFilter() {
+    this.setData({ avoidActive: !this.data.avoidActive }, () => this.applyFilter());
   },
 
   loadMore() {

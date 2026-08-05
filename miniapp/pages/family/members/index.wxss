@@ -284,6 +284,42 @@
   height: 200rpx;
 }
 
+/* ===== 忌口编辑弹层 ===== */
+.avoid-desc {
+  padding: 8rpx 8rpx 24rpx;
+  color: var(--mut-strong);
+  font-size: var(--fs-sub);
+  text-align: center;
+}
+.avoid-opts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18rpx;
+  justify-content: center;
+  padding: 8rpx 0 8rpx;
+}
+.avoid-chip {
+  padding: 18rpx 40rpx;
+  border-radius: var(--r-pill);
+  background: var(--paper-2);
+  color: var(--mut-strong);
+  font-size: var(--fs-body);
+  font-weight: 700;
+  border: 2rpx solid transparent;
+}
+.avoid-chip.on {
+  background: var(--pop-soft);
+  color: var(--pop);
+  border-color: var(--pop);
+}
+.avoid-actions {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 32rpx;
+}
+.avoid-cancel { flex: 1; }
+.avoid-save { flex: 1.6; }
+
 /* —— 底部邀请按钮 —— */
 .mem-footer {
   position: fixed;

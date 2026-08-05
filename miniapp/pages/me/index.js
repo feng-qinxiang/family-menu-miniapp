@@ -77,6 +77,39 @@ Page({
     this.loadProfile();
   },
 
+  onHide() {
+    if (this._countUpFrame) {
+      cancelAnimationFrame(this._countUpFrame);
+      this._countUpFrame = null;
+    }
+  },
+
+  // 统计数字滚动动画：0 → target，600ms cubic-out
+  countUp(key, target) {
+    if (this._countUpFrame) {
+      cancelAnimationFrame(this._countUpFrame);
+      this._countUpFrame = null;
+    }
+    const targetNum = Number(target) || 0;
+    if (targetNum <= 0) {
+      this.setData({ [key]: 0 });
+      return;
+    }
+    const startTime = Date.now();
+    const duration = 600;
+    const tick = () => {
+      const p = Math.min(1, (Date.now() - startTime) / duration);
+      const eased = 1 - Math.pow(1 - p, 3);
+      this.setData({ [key]: Math.round(targetNum * eased) });
+      if (p < 1) {
+        this._countUpFrame = requestAnimationFrame(tick);
+      } else {
+        this._countUpFrame = null;
+      }
+    };
+    this._countUpFrame = requestAnimationFrame(tick);
+  },
+
   async loadProfile() {
     try {
       const [currentUser, vipStatus, familyProfile, todayMenu, cookHistory, preference, dashboard] = await Promise.all([
@@ -152,6 +185,8 @@ Page({
         favoriteCuisine,
         loading: false
       });
+      // 统计数字滚动（600ms 缓出）
+      this.countUp('monthCookCount', monthCookCount);
     } catch (err) {
       console.error('me loadProfile failed', err);
       this.setData({ loading: false });

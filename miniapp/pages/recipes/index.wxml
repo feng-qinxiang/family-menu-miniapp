@@ -38,6 +38,16 @@
         value="{{searchText}}" bindinput="onSearchInput" bindfocus="onSearchFocus" bindblur="onSearchBlur" />
     </view>
 
+    <!-- 忌口过滤提示条 -->
+    <view wx:if="{{avoidTags.length}}" class="rx-dietbar g-fade-up g-d1">
+      <view class="rx-dietbar-ic"></view>
+      <view class="rx-dietbar-t">
+        已按家人忌口过滤：{{avoidTagsText}}
+        <text wx:if="{{avoidHiddenCount}}">（隐藏 {{avoidHiddenCount}} 道）</text>
+      </view>
+      <view class="rx-dietbar-x tap-scale" catchtap="toggleAvoidFilter">{{avoidActive ? '临时显示全部' : '恢复过滤'}}</view>
+    </view>
+
     <!-- 来源 chips -->
     <scroll-view scroll-x class="rx-chips" enhanced="{{true}}" show-scrollbar="{{false}}">
       <view class="rx-chips-inner">

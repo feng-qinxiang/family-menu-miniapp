@@ -248,6 +248,13 @@ function removeFamilyMember(userId) {
   });
 }
 
+function updateMemberAvoidTags(userId, avoidTags) {
+  return requestStrict(`/api/family/members/${encodeURIComponent(userId)}/avoid`, {
+    method: 'PUT',
+    data: { avoidTags: avoidTags || [] }
+  });
+}
+
 function previewImport(rawText) {
   return requestStrict('/api/import/preview', {
     method: 'POST',
@@ -578,6 +585,7 @@ module.exports = {
   joinFamily,
   addFamilyMember,
   removeFamilyMember,
+  updateMemberAvoidTags,
   updateProfile,
   guestLogin,
   requestPhoneOtp,

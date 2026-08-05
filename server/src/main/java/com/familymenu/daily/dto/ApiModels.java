@@ -174,6 +174,11 @@ public final class ApiModels {
     ) {
     }
 
+    public record UpdateMemberAvoidRequest(
+            List<String> avoidTags
+    ) {
+    }
+
     public record CreateFamilyRequest(
             @NotBlank String name,
             String avatarUrl,

@@ -327,7 +327,13 @@ page {
 .hscroll-inner { display: inline-flex; gap: 18rpx; padding: 4rpx 0; }
 
 /* ============ 点按反馈 ============ */
-.tap-scale:active { transform: scale(0.97); transition: transform 0.12s ease; }
+.tap-scale {
+  transition: transform 0.18s var(--g-back-out);
+}
+.tap-scale:active {
+  transform: scale(0.95);
+  transition-duration: 0.08s;
+}
 
 /* ============ 标签 chip（小）============ */
 .tag {
