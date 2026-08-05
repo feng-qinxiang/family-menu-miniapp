@@ -29,7 +29,7 @@
   </view>
 
   <!-- FAQ 列表 -->
-  <view class="seclbl">Frequently Asked</view>
+  <view class="seclbl">常见问题</view>
 
   <view wx:if="{{visibleList.length > 0}}" class="faq">
     <view

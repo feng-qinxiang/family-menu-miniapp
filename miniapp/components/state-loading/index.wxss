@@ -1,0 +1,37 @@
+/* components/state-loading */
+.sl-root {
+  position: fixed;
+  inset: 0;
+  z-index: 9995;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(251, 248, 243, 0.82);
+  backdrop-filter: blur(6px);
+}
+.sl-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48rpx 64rpx;
+  border-radius: var(--r-card);
+  background: var(--c-surface);
+  box-shadow: var(--sh-card);
+}
+.sl-spinner {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  border: 6rpx solid var(--paper-2);
+  border-top-color: var(--pop);
+  animation: sl-spin 0.8s linear infinite;
+}
+.sl-text {
+  margin-top: 24rpx;
+  color: var(--mut-strong);
+  font-size: var(--fs-sub);
+  font-weight: 600;
+}
+@keyframes sl-spin {
+  to { transform: rotate(360deg); }
+}

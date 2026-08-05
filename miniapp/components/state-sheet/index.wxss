@@ -1,0 +1,45 @@
+/* components/state-sheet · 复用全局 token，仅写组件特有样式 */
+.ss-root {
+  position: fixed;
+  inset: 0;
+  z-index: 9990;
+}
+.ss-mask {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 14, 8, 0.55);
+}
+.ss-sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  box-sizing: border-box;
+  padding: 20rpx 40rpx 0;
+  background: var(--paper);
+  border-radius: var(--r-sheet) var(--r-sheet) 0 0;
+  box-shadow: 0 -20rpx 80rpx rgba(60, 40, 20, 0.18);
+  max-height: 80vh;
+  overflow-y: auto;
+}
+.ss-bar {
+  width: 72rpx;
+  height: 8rpx;
+  margin: 0 auto 8rpx;
+  border-radius: var(--r-pill);
+  background: var(--line-deep);
+}
+.ss-title {
+  padding: 20rpx 0 8rpx;
+  color: var(--ink);
+  font-size: var(--fs-h2);
+  font-weight: 800;
+  letter-spacing: -1rpx;
+  text-align: center;
+}
+.ss-body {
+  padding-bottom: 24rpx;
+}
+.ss-safe {
+  height: env(safe-area-inset-bottom);
+}

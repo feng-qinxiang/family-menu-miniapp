@@ -13,7 +13,7 @@
       <text class="hero-bignum serif">{{bigNum}}</text>
 
       <view class="hero-body g-fade-up">
-        <text class="hero-tag">Cook Log</text>
+        <text class="hero-tag">做菜记录</text>
         <view class="hero-title title-stroke">做菜<text class="pop">记录</text></view>
 
         <view class="ach g-fade-up g-d2">
@@ -81,7 +81,7 @@
         <view class="shead">
           <view class="shead-main">
             <view class="shead-bar"></view>
-            <view class="eyebrow">Recently Cooked</view>
+            <view class="eyebrow">最近上桌</view>
             <view class="shead-title">最近<text class="pop">上桌</text>的</view>
           </view>
           <text class="seeall">共 {{totalCount}} 条</text>

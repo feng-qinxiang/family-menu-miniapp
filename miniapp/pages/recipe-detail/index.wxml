@@ -48,7 +48,7 @@
       <view class="shead">
         <view class="shead-main">
           <view class="shead-bar"></view>
-          <view class="eyebrow">Ingredients</view>
+          <view class="eyebrow">食材清单</view>
           <view class="shead-title">食材<text class="pop">清单</text></view>
         </view>
         <text class="seeall" wx:if="{{recipe.totalCount}}">家里有 {{recipe.haveCount}}/{{recipe.totalCount}}</text>
@@ -82,7 +82,7 @@
       <view class="shead">
         <view class="shead-main">
           <view class="shead-bar"></view>
-          <view class="eyebrow">Steps</view>
+          <view class="eyebrow">做法步骤</view>
           <view class="shead-title">做法<text class="pop">步骤</text></view>
         </view>
         <text class="seeall">按顺序出菜</text>
@@ -108,7 +108,7 @@
       <view class="shead">
         <view class="shead-main">
           <view class="shead-bar"></view>
-          <view class="eyebrow">Family Notes</view>
+          <view class="eyebrow">家人评价</view>
           <view class="shead-title">家人<text class="pop">评价</text></view>
         </view>
         <text class="seeall" wx:if="{{recipe.cookCount}}">做过 {{recipe.cookCount}} 次</text>

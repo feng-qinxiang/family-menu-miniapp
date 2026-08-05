@@ -7,13 +7,13 @@
 
     <view class="mag-hero-top">
       <view>
-        <view class="mag-hi-en">My Kitchen</view>
+        <view class="mag-hi-en">我的厨房</view>
         <view class="mag-hi-cn">本月一起做了 {{monthCookCount}} 道菜</view>
       </view>
     </view>
 
     <view class="mag-hero-body">
-      <view class="mag-hero-tag">My Kitchen</view>
+      <view class="mag-hero-tag">我的厨房</view>
       <view class="mag-hero-title title-stroke">{{familyProfile.familyName || '我的家'}}<text class="pop">·</text></view>
       <view class="mag-hero-sub">一家人围着一张桌子吃饭</view>
 
@@ -52,17 +52,17 @@
       <view class="mag-stat tap-scale" bindtap="goRecipes">
         <view class="mag-snum pop">{{savedCount}}</view>
         <view class="mag-scap">收藏菜谱</view>
-        <view class="mag-scap-en">Saved</view>
+        <view class="mag-scap-en">已收藏</view>
       </view>
       <view class="mag-stat tap-scale">
         <view class="mag-snum">{{monthCookCount}}</view>
         <view class="mag-scap">本月做菜</view>
-        <view class="mag-scap-en">Dishes</view>
+        <view class="mag-scap-en">道菜</view>
       </view>
       <view class="mag-stat tap-scale">
         <view class="mag-snum">{{memberCount}}</view>
         <view class="mag-scap">家庭成员</view>
-        <view class="mag-scap-en">Members</view>
+        <view class="mag-scap-en">位家人</view>
       </view>
     </view>
 

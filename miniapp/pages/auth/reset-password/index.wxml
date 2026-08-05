@@ -3,7 +3,7 @@
 <view class="rp-body">
   <!-- Hero -->
     <view class="rp-head g-fade-up">
-    <view class="rp-eyebrow">Reset Password</view>
+    <view class="rp-eyebrow">重置密码</view>
     <view class="rp-title title-shadow">找回<text class="pop">账号</text></view>
     <view class="rp-sub">输入注册时的手机号，验证后即可重新登录。</view>
   </view>

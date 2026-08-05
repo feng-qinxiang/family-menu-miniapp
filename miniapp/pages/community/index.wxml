@@ -13,7 +13,7 @@
       <view class="hero-mask"></view>
       <text class="hero-bignum">C</text>
       <view class="hero-body g-fade-up">
-        <text class="hero-tag">Community</text>
+        <text class="hero-tag">左邻右舍</text>
         <view class="hero-title title-stroke">邻里<text class="pop">厨房</text></view>
         <view class="hero-sub">看看别人家今晚上桌什么，也把自己的拿手做法留下来。</view>
         <view class="cstats">
@@ -39,7 +39,7 @@
         <view class="shead">
           <view class="shead-main">
             <view class="shead-bar"></view>
-            <view class="eyebrow">Today on the Table</view>
+            <view class="eyebrow">今日餐桌</view>
             <view class="shead-title">邻居们<text class="pop">在做</text>啥</view>
           </view>
         </view>
@@ -88,7 +88,7 @@
             >
               <image class="rthumb" src="{{item.recipeThumb}}" mode="aspectFill" />
               <view class="rmid">
-                <view class="rk">Linked Recipe</view>
+                <view class="rk">关联菜谱</view>
                 <view class="rn ellipsis">{{item.recipe.title}}</view>
                 <view class="rm">{{item.recipe.cuisine}} · {{item.recipe.timeCost}} 分钟 · {{item.recipe.servings}} 人份</view>
               </view>
@@ -127,7 +127,7 @@
       <!-- 热门话题 -->
       <view class="topics">
         <view class="thead">
-          <text class="tk">Trending</text>
+          <text class="tk">热门话题</text>
           <text class="th-title">热门话题</text>
         </view>
         <view class="tchips">
@@ -153,10 +153,7 @@
   </view>
 
   <!-- ===== 发帖弹层 ===== -->
-  <view class="pf-mask" wx:if="{{showPostForm}}" catchtap="togglePostForm"></view>
-  <view class="pf-sheet {{showPostForm ? 'pf-sheet--on' : ''}}" wx:if="{{showPostForm}}" catchtap="noop">
-    <view class="pf-grip"></view>
-    <view class="pf-head">分享今天的菜</view>
+  <state-sheet visible="{{showPostForm}}" title="分享今天的菜" bind:close="togglePostForm">
     <input
       class="pf-input"
       placeholder="给帖子起个标题"
@@ -185,14 +182,10 @@
       <view class="btn btn-ghost pf-cancel tap-scale" catchtap="togglePostForm">取消</view>
       <view class="btn btn-pop pf-submit tap-scale" catchtap="submitPost">发布</view>
     </view>
-    <view class="safe-bottom"></view>
-  </view>
+  </state-sheet>
 
   <!-- ============ 举报弹层 ============ -->
-  <view class="pf-mask" wx:if="{{showReportSheet}}" catchtap="closeReportSheet"></view>
-  <view class="pf-sheet {{showReportSheet ? 'pf-sheet--on' : ''}}" wx:if="{{showReportSheet}}" catchtap="noop">
-    <view class="pf-grip"></view>
-    <view class="pf-head">举报这条帖子</view>
+  <state-sheet visible="{{showReportSheet}}" title="举报这条帖子" bind:close="closeReportSheet">
     <view class="rp-reasons">
       <view
         wx:for="{{reportReasons}}"
@@ -213,6 +206,5 @@
       <view class="btn btn-ghost pf-cancel tap-scale" catchtap="closeReportSheet">取消</view>
       <view class="btn btn-pop pf-submit tap-scale" catchtap="submitReport">提交举报</view>
     </view>
-    <view class="safe-bottom"></view>
-  </view>
+  </state-sheet>
 </view>

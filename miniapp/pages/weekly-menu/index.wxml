@@ -16,7 +16,7 @@
     <text class="wm-bignum">7</text>
 
     <view class="wm-hero-body">
-      <text class="wm-tag">This Week</text>
+      <text class="wm-tag">本周计划</text>
       <view class="wm-title title-stroke">本周<text class="pop">吃啥</text></view>
       <view class="wm-sub">{{heroSub}}</view>
 
@@ -58,7 +58,7 @@
     <view class="shead">
       <view class="shead-main">
         <view class="shead-bar"></view>
-        <view class="eyebrow">Day by Day</view>
+        <view class="eyebrow">逐日安排</view>
         <view class="shead-title">七天<text class="pop">餐桌</text></view>
       </view>
     </view>

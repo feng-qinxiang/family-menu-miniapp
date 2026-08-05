@@ -28,7 +28,7 @@
     </view>
 
     <view class="app-name g-fade-up g-d3">家庭<text class="pop">点菜</text></view>
-    <view class="slogan g-fade-up g-d4">Today's Family Menu</view>
+    <view class="slogan g-fade-up g-d4">今日家庭菜单</view>
     <view class="rule g-fade-up g-d5"></view>
   </view>
 

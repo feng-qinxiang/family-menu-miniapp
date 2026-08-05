@@ -1,0 +1,10 @@
+<!-- components/state-sheet · 底部弹层 -->
+<view wx:if="{{visible}}" class="ss-root">
+  <view class="ss-mask" catchtap="onClose" catchtouchmove="noop"></view>
+  <view class="ss-sheet g-fade-up" catchtouchmove="noop">
+    <view wx:if="{{showBar}}" class="ss-bar"></view>
+    <view wx:if="{{title}}" class="ss-title">{{title}}</view>
+    <view class="ss-body"><slot></slot></view>
+    <view class="ss-safe"></view>
+  </view>
+</view>

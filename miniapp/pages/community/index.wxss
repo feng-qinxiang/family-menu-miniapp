@@ -288,29 +288,7 @@
 .fab-plus::before { left: 50%; top: 4rpx; bottom: 4rpx; width: 6rpx; transform: translateX(-50%); }
 .fab-plus::after { top: 50%; left: 4rpx; right: 4rpx; height: 6rpx; transform: translateY(-50%); }
 
-/* ===================== 发帖弹层 ===================== */
-.pf-mask {
-  position: fixed;
-  inset: 0;
-  background: rgba(20, 14, 8, 0.5);
-  z-index: 80;
-}
-.pf-sheet {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 81;
-  background: var(--paper);
-  border-radius: 44rpx 44rpx 0 0;
-  padding: 24rpx 46rpx 28rpx;
-  box-shadow: 0 -20rpx 50rpx rgba(60, 40, 20, 0.22);
-  transform: translateY(100%);
-  transition: transform 0.32s var(--g-power3-out);
-}
-.pf-sheet--on { transform: translateY(0); }
-.pf-grip { width: 76rpx; height: var(--r-xs); border-radius: 4rpx; background: var(--c-border); margin: 0 auto 22rpx; }
-.pf-head { font-size: 36rpx; font-weight: 900; color: var(--ink); letter-spacing: -1rpx; margin-bottom: 24rpx; }
+/* ===================== 发帖弹层（容器由 state-sheet 组件提供，页面只留表单样式） ===================== */
 .pf-input {
   box-sizing: border-box;
   width: 100%;

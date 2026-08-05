@@ -11,7 +11,7 @@
       <view class="vip-navtitle">会员中心</view>
     </view>
     <view class="vip-hero-body g-fade-up">
-      <text class="vip-tag">Family Sync</text>
+      <text class="vip-tag">家庭云同步</text>
       <view class="vip-hero-title title-stroke">家庭云<text class="pop">同步</text></view>
       <view class="vip-hero-sub">菜谱、菜单、买菜清单全家实时共享，谁改了哪样大家都看得到。</view>
       <view class="vip-hero-meta">
@@ -28,7 +28,7 @@
     <view class="shead">
       <view class="shead-main">
         <view class="shead-bar"></view>
-        <view class="eyebrow">What You Get</view>
+        <view class="eyebrow">权益一览</view>
         <view class="shead-title">开通后<text class="pop">解锁</text>这些</view>
       </view>
     </view>
@@ -44,7 +44,7 @@
     <view class="shead">
       <view class="shead-main">
         <view class="shead-bar"></view>
-        <view class="eyebrow">Free vs Sync</view>
+        <view class="eyebrow">版本对比</view>
         <view class="shead-title">两个版本<text class="pop">对比</text></view>
       </view>
     </view>
@@ -72,7 +72,7 @@
     <view class="shead">
       <view class="shead-main">
         <view class="shead-bar"></view>
-        <view class="eyebrow">Choose a Plan</view>
+        <view class="eyebrow">选择套餐</view>
         <view class="shead-title">选个<text class="pop">合适</text>的</view>
       </view>
     </view>
@@ -99,7 +99,7 @@
     <view class="shead">
       <view class="shead-main">
         <view class="shead-bar"></view>
-        <view class="eyebrow">Your Family</view>
+        <view class="eyebrow">家里人</view>
         <view class="shead-title">家里<text class="pop">这几口</text></view>
       </view>
     </view>

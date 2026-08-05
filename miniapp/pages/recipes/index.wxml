@@ -9,7 +9,7 @@
 
     <view class="rx-hero-top g-fade-down g-d1">
       <view class="rx-greet">
-        <view class="rx-hi">Recipe Library</view>
+        <view class="rx-hi">家常菜谱库</view>
         <view class="rx-name">挑一道，今晚就点它</view>
       </view>
       <view class="rx-create tap-scale" bindtap="goCreate">
@@ -18,7 +18,7 @@
     </view>
 
     <view class="rx-hero-body g-fade-up g-d2">
-      <view class="rx-tag">Recipes</view>
+      <view class="rx-tag">菜谱精选</view>
       <view class="rx-hero-title title-stroke">家里能点的<text class="pop">菜</text></view>
       <view class="rx-hero-sub">{{recipes.length || 0}} 道家常菜，按口味、菜系、忌口随心挑</view>
       <view class="rx-hero-meta">
@@ -101,7 +101,7 @@
     <view class="shead rx-shead" wx:if="{{!loading && displayedRecipes.length}}">
       <view class="shead-main">
         <view class="shead-bar"></view>
-        <text class="eyebrow">Ready to Order</text>
+        <text class="eyebrow">点到即做</text>
         <view class="shead-title"><text class="pop">{{filteredRecipes.length}}</text> 道可点</view>
       </view>
       <text class="seeall">右下角直接加入</text>

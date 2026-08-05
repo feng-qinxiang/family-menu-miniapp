@@ -17,7 +17,7 @@
       </view>
     </view>
     <view class="m-hero-body">
-      <text class="m-hero-tag">Tonight's Table</text>
+      <text class="m-hero-tag">今日餐桌</text>
       <view class="m-hero-title title-stroke">今日<text class="pop">餐桌</text></view>
       <view class="m-hero-sub">{{totalCount ? '已排 ' + totalCount + ' 道菜，准备开饭' : '餐桌还空着，先去点菜'}}</view>
     </view>
@@ -89,7 +89,7 @@
       <view class="shead">
         <view class="shead-main">
           <view class="shead-bar"></view>
-          <view class="eyebrow">Plating</view>
+          <view class="eyebrow">今日摆盘</view>
           <view class="shead-title">餐次<text class="pop">摆盘</text></view>
         </view>
         <text class="seeall">{{totalCount}} 道菜</text>
@@ -142,7 +142,7 @@
       <view class="deco-circle"></view>
       <view class="m-week-head">
         <view>
-          <view class="m-week-eyebrow">The Week Ahead</view>
+          <view class="m-week-eyebrow">本周前瞻</view>
           <view class="m-week-title">未来几天<text class="pop">吃什么</text></view>
         </view>
         <text class="m-week-link" bindtap="genWeekly">重排 ›</text>

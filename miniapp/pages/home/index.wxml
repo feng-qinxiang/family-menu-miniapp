@@ -34,6 +34,7 @@
   <view class="mh-hero g-fade-in" wx:elif="{{heroRecipe}}" data-id="{{heroRecipe.id}}" bindtap="goDetail">
     <image class="mh-hero-img" src="{{heroRecipe.dishImg}}" mode="aspectFill" binderror="onHeroImgError" />
     <view class="mh-hero-shade"></view>
+    <view class="mh-hero-glow"></view>
     <text class="mh-hero-bignum">01</text>
 
     <view class="mh-hero-top safe-top">
@@ -54,7 +55,7 @@
 
     <view class="mh-hero-body g-fade-up g-d2">
       <text class="mh-pill-tag">今晚主打</text>
-      <view class="mh-hero-title">
+      <view class="mh-hero-title title-stroke">
         {{heroRecipe.title}}
       </view>
       <view class="mh-hero-sub">{{heroRecipe.summary || '今晚就安排它上桌'}}</view>
@@ -77,7 +78,7 @@
         <view class="mh-hi">{{greeting}}</view>
         <view class="mh-name">{{currentUser.nickname || '朋友'}}，今晚想吃点啥</view>
       </view>
-      <text class="mh-empty-eyebrow">First Dish</text>
+      <text class="mh-empty-eyebrow">第一道菜</text>
       <view class="mh-empty-headline">从第一道菜<text class="pop">开始</text></view>
       <view class="mh-empty-sub">录入拿手菜、导入收藏链接，或逛逛社区找灵感</view>
       <view class="mh-empty-acts">

@@ -4,7 +4,7 @@
 <view class="container settings">
   <!-- Hero eyebrow + 镂空标题 -->
   <view class="set-hero g-fade-up">
-    <view class="eyebrow-serif">Preferences</view>
+    <view class="eyebrow-serif">偏好设置</view>
     <view class="set-hero-title title-stroke title-shadow">设<text class="pop">置</text></view>
   </view>
 
@@ -19,7 +19,7 @@
         data-key="{{item.key}}"
         bindtap="onAccountTap"
       >
-        <view class="set-ic"><text class="set-glyph">{{item.icon === 'phone' ? '☎' : item.icon === 'lock' ? '⛨' : '✦'}}</text></view>
+        <view class="set-ic"><text class="set-glyph">{{item.icon === 'phone' ? '手' : '微'}}</text></view>
         <view class="set-mid"><view class="set-name">{{item.name}}</view></view>
         <text wx:if="{{item.value}}" class="set-val">{{item.value}}</text>
         <view class="set-chev"></view>
@@ -29,14 +29,14 @@
 
   <!-- 通知 -->
   <view class="set-group g-fade-up g-d2">
-    <view class="set-gtitle">Notifications</view>
+    <view class="set-gtitle">消息通知</view>
     <view class="card set-card">
       <view
         class="set-item"
         wx:for="{{notifyList}}"
         wx:key="key"
       >
-        <view class="set-ic"><text class="set-glyph">{{item.icon === 'bell' ? '♪' : item.icon === 'chat' ? '✉' : '✈'}}</text></view>
+        <view class="set-ic"><text class="set-glyph">{{item.icon === 'bell' ? '铃' : item.icon === 'chat' ? '评' : '推'}}</text></view>
         <view class="set-mid">
           <view class="set-name">{{item.name}}</view>
           <view wx:if="{{item.desc}}" class="set-desc">{{item.desc}}</view>
@@ -54,7 +54,7 @@
 
   <!-- 通用 -->
   <view class="set-group g-fade-up g-d3">
-    <view class="set-gtitle">General</view>
+    <view class="set-gtitle">通用</view>
     <view class="card set-card">
       <view
         class="set-item tap-scale"
@@ -73,7 +73,7 @@
 
   <!-- 关于 -->
   <view class="set-group g-fade-up g-d4">
-    <view class="set-gtitle">About</view>
+    <view class="set-gtitle">关于</view>
     <view class="card set-card">
       <view
         class="set-item tap-scale"
@@ -82,7 +82,7 @@
         data-key="{{item.key}}"
         bindtap="onAboutTap"
       >
-        <view class="set-ic"><text class="set-glyph">{{item.icon === 'doc' ? '▤' : item.icon === 'shield' ? '⛨' : item.icon === 'info' ? 'i' : '✎'}}</text></view>
+        <view class="set-ic"><text class="set-glyph">{{item.icon === 'doc' ? '约' : item.icon === 'shield' ? '隐' : item.icon === 'info' ? '关' : '馈'}}</text></view>
         <view class="set-mid"><view class="set-name">{{item.name}}</view></view>
         <text wx:if="{{item.value}}" class="set-val">{{item.value}}</text>
         <view class="set-chev"></view>

@@ -55,7 +55,7 @@
 
     <!-- 步骤文本滚动区 -->
     <scroll-view class="stepwrap" scroll-y scroll-with-animation scroll-top="{{0}}">
-      <view class="stepeyebrow">Now Cooking</view>
+      <view class="stepeyebrow">正在烹饪</view>
       <view class="steptext">{{steps[current].text}}</view>
 
       <!-- 食材 tags -->

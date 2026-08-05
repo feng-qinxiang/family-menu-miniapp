@@ -151,6 +151,23 @@
   color: var(--c-surface);
   text-shadow: 0 4rpx 24rpx rgba(20, 14, 8, 0.55);
 }
+/* title-stroke 镂空描边（iOS text-stroke / Android text-shadow 兜底），
+   同时保留底部投影保证可读性 */
+.mh-hero-title.title-stroke {
+  text-shadow: 0 0 1rpx #fff, 2rpx 0 1rpx #fff, -2rpx 0 1rpx #fff, 0 2rpx 1rpx #fff, 0 -2rpx 1rpx #fff, 2rpx 2rpx 1rpx #fff, -2rpx -2rpx 1rpx #fff, 0 8rpx 28rpx rgba(20, 14, 8, 0.5);
+}
+
+/* 暖光叠层：底部暖金 radial 提亮，对标 home-final.html */
+.mh-hero-glow {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 55%;
+  background: radial-gradient(120% 100% at 50% 100%, rgba(255, 176, 84, 0.3) 0%, rgba(255, 176, 84, 0) 60%);
+  pointer-events: none;
+  z-index: 1;
+}
 .mh-hero-sub {
   font-size: var(--fs-cap);
   color: rgba(255, 255, 255, 0.85);

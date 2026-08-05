@@ -19,7 +19,7 @@
       </view>
 
       <view class="hero-body">
-        <text class="tag g-fade-up g-d2">Welcome</text>
+        <text class="tag g-fade-up g-d2">欢迎回家</text>
         <view class="hero-title title-stroke g-fade-up g-d3">今天吃什么<text class="br"></text>一家人<text class="pop">说了算</text></view>
         <view class="slogan g-fade-up g-d4">一家人的饭桌，<text class="pop">一家人</text>做主</view>
       </view>
@@ -49,7 +49,7 @@
 
       <view class="divider-deco">
         <view class="ln"></view>
-        <text class="dt">Why Family Menu</text>
+        <text class="dt">为什么选择家庭菜单</text>
         <view class="ln"></view>
       </view>
 

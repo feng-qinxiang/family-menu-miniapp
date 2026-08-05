@@ -8,7 +8,7 @@
     <view class="terms-pad">
       <!-- Hero -->
       <view class="hero g-fade-up">
-        <text class="eyebrow-serif">Terms of Service</text>
+        <text class="eyebrow-serif">服务条款</text>
         <view class="hero-title title-stroke title-shadow">家庭点菜<text class="pop">用户</text>协议</view>
         <view class="effdate">
           <view class="effdate-ico"></view>

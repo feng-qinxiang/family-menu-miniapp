@@ -4,7 +4,7 @@
 <view class="container fi-page">
   <!-- HERO 标题 -->
   <view class="fi-hero g-fade-up">
-    <view class="fi-eyebrow">Join the Family</view>
+    <view class="fi-eyebrow">加入家庭</view>
     <view class="fi-title">把<text class="t-pop">餐桌</text>分享给家人</view>
   </view>
 
@@ -12,7 +12,7 @@
   <view class="card-dark fi-invite g-fade-up g-d1">
     <view class="deco-circle"></view>
 
-    <view class="fi-iv-cap">Family Invite Code</view>
+    <view class="fi-iv-cap">家庭邀请码</view>
 
     <!-- 6 位 code 分组 -->
     <view class="fi-code">

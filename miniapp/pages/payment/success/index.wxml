@@ -8,7 +8,7 @@
     <text class="ps-badge-check">✓</text>
   </view>
 
-  <view class="ps-eyebrow eyebrow-serif g-fade-up g-d2">Welcome to Family Sync</view>
+  <view class="ps-eyebrow eyebrow-serif g-fade-up g-d2">家庭云同步</view>
   <view class="ps-title title-stroke title-shadow g-fade-up g-d2">
     开通<text class="pop">成功</text>
   </view>

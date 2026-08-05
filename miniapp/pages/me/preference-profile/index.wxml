@@ -49,7 +49,7 @@
     <view class="shead">
       <view class="shead-main">
         <view class="shead-bar"></view>
-        <view class="eyebrow">Cuisine Breakdown</view>
+        <view class="eyebrow">菜系分布</view>
         <view class="shead-title">菜系<text class="pop">分布</text></view>
       </view>
     </view>
@@ -70,7 +70,7 @@
     <view class="shead">
       <view class="shead-main">
         <view class="shead-bar"></view>
-        <view class="eyebrow">Flavor Cloud</view>
+        <view class="eyebrow">口味标签</view>
         <view class="shead-title">口味<text class="pop">标签</text></view>
       </view>
     </view>

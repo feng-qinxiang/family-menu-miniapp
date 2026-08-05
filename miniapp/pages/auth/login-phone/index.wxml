@@ -6,7 +6,7 @@
 
   <view class="lp-body">
     <view class="lp-hero g-fade-up">
-      <text class="lp-eyebrow">Sign In With Phone</text>
+      <text class="lp-eyebrow">手机号登录</text>
       <view class="lp-title title-stroke">手机号<text class="pop">登录</text></view>
       <text class="lp-sub">输入手机号获取验证码，一步登录你的家庭饭桌。</text>
     </view>
@@ -77,7 +77,7 @@
     <!-- 分隔 -->
     <view class="lp-divider g-fade-up g-d5">
       <view class="lp-ln"></view>
-      <text class="lp-or">Or Continue With</text>
+      <text class="lp-or">或使用其他方式</text>
       <view class="lp-ln"></view>
     </view>
 

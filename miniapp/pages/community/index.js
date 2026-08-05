@@ -260,9 +260,6 @@ Page({
     this.setData({ showPostForm: !this.data.showPostForm });
   },
 
-  // 阻止弹层内部点击穿透到遮罩
-  noop() {},
-
   onPostInput(e) {
     const { field } = e.currentTarget.dataset;
     this.setData({ [`postForm.${field}`]: e.detail.value });

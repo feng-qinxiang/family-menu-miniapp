@@ -5,7 +5,7 @@
   <view class="mem-scroll">
     <!-- Hero 标题 -->
     <view class="mem-head g-fade-up">
-      <text class="mem-eyebrow">Family Members</text>
+      <text class="mem-eyebrow">家庭成员</text>
       <view class="mem-h1">家庭<text class="t-pop">成员</text></view>
     </view>
 
@@ -14,10 +14,10 @@
       <view class="deco-circle"></view>
       <view class="fam-top">
         <view class="fam-emoji">
-          <image class="fam-emoji-img" src="/assets/dishes/hongshao-pork.jpg" mode="aspectFill" />
+          <text class="fam-emoji-t">家</text>
         </view>
         <view class="fam-name-wrap">
-          <text class="fam-feyebrow">Our Kitchen</text>
+          <text class="fam-feyebrow">我们的厨房</text>
           <view class="fam-name ellipsis">{{familyName}}</view>
         </view>
       </view>
@@ -37,7 +37,7 @@
     <view class="shead">
       <view class="shead-main">
         <view class="shead-bar"></view>
-        <text class="eyebrow">Who's Cooking</text>
+        <text class="eyebrow">谁在掌勺</text>
         <view class="shead-title">成员列表</view>
       </view>
       <text class="seeall">{{memberCount}} 位成员</text>

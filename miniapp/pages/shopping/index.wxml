@@ -10,11 +10,11 @@
     <image class="mkt-hero-img" src="/assets/dishes/long-beans.jpg" mode="aspectFill" />
     <view class="mkt-hero-mask"></view>
     <text class="mkt-hero-bignum">{{summary.totalCount}}</text>
-    <text class="mkt-hero-eyebrow">Shopping List</text>
+    <text class="mkt-hero-eyebrow">买菜清单</text>
 
     <view class="mkt-hero-body">
       <view class="mkt-hero-left">
-        <text class="mkt-tag">Today's Basket</text>
+        <text class="mkt-tag">今日菜篮</text>
         <view class="mkt-hero-title title-stroke">今天<text class="pop">买菜</text></view>
         <view class="mkt-hero-sub">{{summary.statusText}}，已买 <text class="b">{{summary.purchasedCount}}/{{summary.totalCount}}</text> 样</view>
       </view>
@@ -100,7 +100,7 @@
         <view class="mkt-shead">
           <view class="mkt-shead-main">
             <view class="shead-bar"></view>
-            <text class="eyebrow">In The Basket</text>
+            <text class="eyebrow">已入篮</text>
             <view class="mkt-shead-title">已入篮 <text class="pop">{{purchasedItems.length}}</text></view>
           </view>
         </view>
@@ -123,7 +123,7 @@
         <view class="mkt-shead">
           <view class="mkt-shead-main">
             <view class="shead-bar"></view>
-            <text class="eyebrow">Add Your Own</text>
+            <text class="eyebrow">临时加购</text>
             <view class="mkt-shead-title">临时<text class="pop">加购</text></view>
           </view>
         </view>

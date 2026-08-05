@@ -33,7 +33,7 @@
       </view>
 
       <!-- 标题 -->
-      <view class="eyebrow-serif eyebrow-mt g-fade-up g-d1">Home Cooking</view>
+      <view class="eyebrow-serif eyebrow-mt g-fade-up g-d1">家常味道</view>
       <view class="post-title title-stroke title-shadow g-fade-up g-d1">{{post.title}}</view>
 
       <!-- 正文段落 -->

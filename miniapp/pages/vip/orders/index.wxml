@@ -4,7 +4,7 @@
 <scroll-view scroll-y class="page" style="padding-top: {{statusBarHeight + 44}}px;">
   <!-- Hero 标题 -->
   <view class="head g-fade-up">
-    <view class="eyebrow-serif">My Subscriptions</view>
+    <view class="eyebrow-serif">我的订阅</view>
     <view class="hero-ttl title-stroke title-shadow">开通<text class="pop">记录</text></view>
     <view class="lead">家庭云同步年卡的开通与续费记录都在这儿。</view>
   </view>
@@ -30,7 +30,7 @@
   <view wx:elif="{{orders.length}}" class="card-dark strip g-fade-up g-d1">
     <view class="deco-circle"></view>
     <view class="strip-l">
-      <view class="strip-e">Total Spent</view>
+      <view class="strip-e">累计支出</view>
       <view class="strip-n">已开通 {{totalCount}} 次</view>
     </view>
     <view class="strip-r">

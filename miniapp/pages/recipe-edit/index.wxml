@@ -27,7 +27,7 @@
 
   <!-- Basics -->
   <view class="rc-sec g-fade-up g-d2">
-    <view class="rc-eyebrow">Basics</view>
+    <view class="rc-eyebrow">基本信息</view>
     <view class="rc-sec-h2">基本信息</view>
 
     <view class="rc-field">
@@ -101,7 +101,7 @@
 
   <!-- Ingredients -->
   <view class="rc-sec g-fade-up g-d3">
-    <view class="rc-eyebrow">Ingredients</view>
+    <view class="rc-eyebrow">食材清单</view>
     <view class="rc-sec-h2">用到的食材</view>
     <view class="rc-list">
       <view class="rc-listrow" wx:for="{{form.ingredients}}" wx:key="index">
@@ -120,7 +120,7 @@
 
   <!-- Steps -->
   <view class="rc-sec g-fade-up g-d4">
-    <view class="rc-eyebrow">Steps</view>
+    <view class="rc-eyebrow">做法步骤</view>
     <view class="rc-sec-h2">做法步骤</view>
     <view class="rc-list">
       <view class="rc-steprow" wx:for="{{form.steps}}" wx:key="index">

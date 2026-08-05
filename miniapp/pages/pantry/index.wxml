@@ -10,7 +10,7 @@
     <view class="phero-mask"></view>
     <view class="phero-bignum">{{pantrySummary.count}}</view>
     <view class="phero-copy">
-      <text class="phero-tag">My Pantry</text>
+      <text class="phero-tag">我的冰箱</text>
       <view class="title-stroke title-shadow phero-title">冰箱<text class="pop">库存</text></view>
       <view class="phero-sub">家里现在有什么，点菜前先看一眼</view>
       <view class="phero-stats">
@@ -36,7 +36,7 @@
     <view class="shead">
       <view class="shead-main">
         <view class="shead-bar"></view>
-        <view class="eyebrow">In Stock</view>
+        <view class="eyebrow">在库食材</view>
         <view class="shead-title">现在<text class="pop">有的</text></view>
       </view>
       <text class="seeall">共 {{pantrySummary.count}} 项</text>
@@ -102,7 +102,7 @@
     <view class="shead" wx:if="{{showMatch && matchResults.length}}">
       <view class="shead-main">
         <view class="shead-bar"></view>
-        <view class="eyebrow">Cook Now</view>
+        <view class="eyebrow">现在能做</view>
         <view class="shead-title">现在就<text class="pop">能做</text></view>
       </view>
       <text class="seeall">按库存匹配</text>

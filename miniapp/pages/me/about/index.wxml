@@ -8,7 +8,7 @@
       <view class="logo-deco"></view>
       <text class="logo-mark">家</text>
     </view>
-    <view class="eyebrow-serif brand-eyebrow">Cook Together</view>
+    <view class="eyebrow-serif brand-eyebrow">一起下厨</view>
     <view class="appname title">家庭<text class="t-pop">点菜</text></view>
     <view class="ver">{{version}}</view>
     <view class="slogan">{{slogan}}</view>
@@ -25,7 +25,7 @@
   <!-- 故事卡 -->
   <view class="story card g-fade-up g-d2">
     <view class="story-qm">”</view>
-    <view class="eyebrow-serif">Why We Built It</view>
+    <view class="eyebrow-serif">为什么做它</view>
     <view class="story-h">为了少问一句<text class="t-pop">“今晚吃啥”</text></view>
     <view class="story-p" wx:for="{{story}}" wx:key="*this">{{item}}</view>
   </view>
@@ -42,7 +42,7 @@
   </view>
 
   <!-- 更多分组 -->
-  <view class="lhead eyebrow-serif g-fade-up g-d4">More</view>
+  <view class="lhead eyebrow-serif g-fade-up g-d4">更多</view>
   <view class="list card g-fade-up g-d4">
     <view
       class="item tap-scale"
@@ -63,7 +63,7 @@
   <!-- 版权 -->
   <view class="copy g-fade-up g-d5">
     <view class="copy-c1">© {{year}} 家庭点菜</view>
-    <view class="copy-c2 eyebrow-serif">Made with care for every family table</view>
+    <view class="copy-c2 eyebrow-serif">用心做好每一顿家宴</view>
   </view>
 
   <view class="safe-bottom"></view>

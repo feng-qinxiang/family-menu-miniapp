@@ -10,7 +10,7 @@
     <view class="imp-hero-mask"></view>
     <text class="imp-hero-bignum">+</text>
     <view class="imp-hero-body g-fade-up">
-      <text class="imp-tag">Import</text>
+      <text class="imp-tag">一键导入</text>
       <view class="imp-hero-title title-stroke">导入<text class="pop">配方</text></view>
       <view class="imp-hero-sub">从小红书、下厨房复制文案，自动拆成菜名、食材和步骤。</view>
     </view>
@@ -48,7 +48,7 @@
       <view class="shead g-fade-up g-d2">
         <view class="shead-main">
           <view class="shead-bar"></view>
-          <view class="eyebrow">Paste Here</view>
+          <view class="eyebrow">粘贴文案</view>
           <view class="shead-title">粘贴<text class="pop">菜谱</text>文案</view>
         </view>
         <view class="sample tap-scale" bindtap="sampleText">填入示例 +</view>
@@ -103,7 +103,7 @@
 
         <!-- 难度 -->
         <view class="res-block">
-          <view class="blabel">难度选择 <text class="en">Level</text></view>
+          <view class="blabel">难度选择</view>
           <view class="diff-row">
             <view
               wx:for="{{difficultyOptions}}"
@@ -117,7 +117,7 @@
 
         <!-- 食材 -->
         <view class="res-block">
-          <view class="blabel">食材清单 <text class="en">Ingredients</text></view>
+          <view class="blabel">食材清单 <text class="en">食材清单</text></view>
           <view wx:if="{{!preview.ingredients.length}}" class="res-empty">未识别到食材，可手动补充</view>
           <view class="ing-grid">
             <view class="ing" wx:for="{{preview.ingredients}}" wx:key="name">
@@ -129,7 +129,7 @@
 
         <!-- 步骤 -->
         <view class="res-block">
-          <view class="blabel">做法步骤 <text class="en">Steps</text></view>
+          <view class="blabel">做法步骤 <text class="en">做法步骤</text></view>
           <view wx:if="{{!preview.steps.length}}" class="res-empty">未识别到步骤，可手动补充</view>
           <view class="step" wx:for="{{preview.steps}}" wx:key="index">
             <view class="sno">{{index + 1}}</view>
@@ -168,7 +168,7 @@
         <view class="shead">
           <view class="shead-main">
             <view class="shead-bar"></view>
-            <view class="eyebrow">Recent Imports</view>
+            <view class="eyebrow">最近导入</view>
             <view class="shead-title">最近<text class="pop">导入</text></view>
           </view>
         </view>

@@ -34,7 +34,7 @@
     <view class="pad">
       <!-- 结果标题 -->
       <view class="rhead g-fade-up">
-        <text class="eyebrow-serif">Results</text>
+        <text class="eyebrow-serif">搜索结果</text>
       </view>
       <view class="rtitle g-fade-up g-d1">
         <text class="rtitle-t">找到「</text><text class="rtitle-kw pop">{{keyword || '全部'}}</text><text class="rtitle-t">」</text>

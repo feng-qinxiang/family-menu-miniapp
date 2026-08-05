@@ -18,7 +18,7 @@
     </view>
 
     <view class="wa-hero-body">
-      <text class="wa-hero-tag">Welcome</text>
+      <text class="wa-hero-tag">欢迎回家</text>
       <view class="wa-hero-title title-stroke">今天吃什么</view>
     </view>
 
@@ -40,7 +40,7 @@
         <view class="ic-home"></view>
       </view>
       <view class="wa-at-tx">
-        <text class="wa-eyebrow">Family Menu</text>
+        <text class="wa-eyebrow">家庭菜单</text>
         <text class="wa-h1">申请获取你的头像、昵称</text>
       </view>
       <view class="wa-wxbadge">

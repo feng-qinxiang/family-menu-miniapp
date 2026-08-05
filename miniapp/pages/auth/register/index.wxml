@@ -9,7 +9,7 @@
       <view class="rg-hero-mask"></view>
       <text class="rg-bignum">02</text>
       <view class="rg-hero-body g-fade-up">
-        <text class="rg-tag">Sign Up</text>
+        <text class="rg-tag">注册账号</text>
         <view class="rg-hero-title title-stroke">注册<text class="pop">账号</text></view>
         <text class="rg-slogan">手机号注册，开启一家人的味蕾日记</text>
       </view>
