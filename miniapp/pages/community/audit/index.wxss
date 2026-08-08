@@ -13,7 +13,7 @@
 }
 .hero-tt { flex: 1; min-width: 0; }
 .hero-h1 {
-  font-size: 64rpx;
+  font-size: var(--fs-hero-sm);
   line-height: 0.96;
   letter-spacing: -3rpx;
   margin-top: 8rpx;

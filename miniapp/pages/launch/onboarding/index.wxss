@@ -67,7 +67,7 @@
 }
 .ob-line {
   display: block;
-  font-size: 120rpx;
+  font-size: var(--fs-hero-xl);
   line-height: 1.04;
 }
 .ob-line .pop { color: var(--pop); }

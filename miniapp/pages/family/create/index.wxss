@@ -63,7 +63,7 @@
 }
 .fc-hero-title {
   margin-top: 28rpx;
-  font-size: 96rpx;
+  font-size: var(--fs-hero-lg);
   line-height: 0.9;
   letter-spacing: -4rpx;
 }

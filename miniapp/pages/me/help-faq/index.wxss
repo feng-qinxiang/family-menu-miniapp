@@ -9,7 +9,7 @@
 }
 .hero-h {
   margin-top: 10rpx;
-  font-size: 84rpx;
+  font-size: var(--fs-hero-lg);
   line-height: 0.92;
   letter-spacing: -4rpx;
 }

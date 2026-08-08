@@ -47,6 +47,7 @@ Page({
   data: {
     statusBarHeight: 0,
     loading: true,
+    loadError: false,
     recipeId: '',
     recipe: null,
     dishName: '',
@@ -96,18 +97,24 @@ Page({
   },
 
   async loadDetail(recipeId) {
-    this.setData({ loading: true });
+    this.setData({ loading: true, loadError: false });
     let recipe = null;
+    let failed = false;
     try {
       if (recipeId) {
         recipe = await api.getRecipeDetail(recipeId);
+      } else {
+        failed = true;   // 无 recipeId：入口缺参，等同失败
       }
     } catch (e) {
       recipe = null;
+      failed = true;
     }
 
-    if (!recipe) {
-      this.setData({ loading: false, recipe: null, steps: [] });
+    if (failed || !recipe) {
+      // failed（网络错误/缺参）→ loadError 显示可重试失败态；
+      // 非 failed 且 recipe 为空（真没步骤）→ 沿用下方空数据守护
+      this.setData({ loading: false, recipe: null, steps: [], total: 0, loadError: failed });
       return;
     }
 
@@ -250,6 +257,11 @@ Page({
     } else {
       wx.switchTab({ url: '/pages/home/index', fail() {} });
     }
+  },
+
+  // 失败重试
+  retryLoad() {
+    this.loadDetail(this.data.recipeId);
   },
 
   // 完成 → 跳做菜记录

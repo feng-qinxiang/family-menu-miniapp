@@ -34,6 +34,7 @@ Page({
     showAddForm: false,
     showMatch: false,
     loaded: false,
+    loading: true,
     loadError: false
   },
 
@@ -63,6 +64,7 @@ Page({
   },
 
   async loadPantry() {
+    this.setData({ loading: true, loadError: false });
     let pantryItems = [];
     let weeklyMenu = null;
     let failed = false;
@@ -73,7 +75,7 @@ Page({
       failed = true;
     }
     if (failed) {
-      this.setData({ loaded: true, loadError: true });
+      this.setData({ loaded: true, loading: false, loadError: true });
       wx.showToast({ title: '冰箱数据加载失败', icon: 'none' });
       return;
     }
@@ -87,6 +89,7 @@ Page({
         categoryCount: categories.length
       },
       loaded: true,
+      loading: false,
       loadError: false
     });
     // 库存变化后自动刷新匹配

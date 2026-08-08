@@ -74,7 +74,7 @@
   border-radius: var(--r-xs);
 }
 .vip-hero-title {
-  font-size: 96rpx;
+  font-size: var(--fs-hero-lg);
   line-height: 0.95;
   letter-spacing: -4rpx;
   margin: 22rpx 0 16rpx;

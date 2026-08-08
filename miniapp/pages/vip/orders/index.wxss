@@ -12,7 +12,7 @@
 }
 .head .hero-ttl {
   margin-top: 12rpx;
-  font-size: 76rpx;
+  font-size: var(--fs-hero-lg);
   line-height: 0.94;
   letter-spacing: -4rpx;
   font-weight: 900;

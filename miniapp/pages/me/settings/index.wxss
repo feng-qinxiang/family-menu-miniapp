@@ -9,7 +9,7 @@
 }
 .set-hero-title {
   margin-top: 8rpx;
-  font-size: 96rpx;
+  font-size: var(--fs-hero-lg);
   font-weight: 900;
   letter-spacing: -3rpx;
   line-height: 1;
@@ -33,7 +33,7 @@
 /* 卡片复用全局 .card，仅覆盖 padding/圆角以贴合分组列表 */
 .set-card {
   padding: 0;
-  border-radius: 38rpx;
+  border-radius: var(--r-card);
   overflow: hidden;
 }
 
@@ -52,7 +52,7 @@
 .set-ic {
   width: 70rpx;
   height: 70rpx;
-  border-radius: 21rpx;
+  border-radius: var(--r-md);
   background: var(--paper-2);
   display: flex;
   align-items: center;
@@ -138,7 +138,7 @@
   align-items: center;
   justify-content: center;
   padding: 32rpx;
-  border-radius: 38rpx;
+  border-radius: var(--r-card);
 }
 .set-logout-txt {
   font-size: 32rpx;

@@ -26,7 +26,7 @@
 }
 .mem-h1 {
   margin-top: 10rpx;
-  font-size: 77rpx;
+  font-size: var(--fs-hero-lg);
   font-weight: 900;
   color: var(--ink);
   letter-spacing: -4rpx;

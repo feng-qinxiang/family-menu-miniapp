@@ -1,4 +1,5 @@
 <view class="pantry-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
+  <state-loading visible="{{loading}}" text="冰箱开门中…" />
   <!-- 顶部状态栏占位（tab 页无返回键）-->
   <view class="nav-float">
     <nav-bar title="" show-back="{{false}}" status-bar-height="{{statusBarHeight}}" />

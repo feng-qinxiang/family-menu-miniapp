@@ -17,3 +17,7 @@ Thumbs.db
 !.env.example
 /project.private.config.json
 /ui-preview.html
+/.zcode/
+/artifacts/ui-baseline/
+/artifacts/_probe_shot.png
+/artifacts/_ui_home_after*.png

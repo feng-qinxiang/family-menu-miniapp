@@ -1,3 +1,4 @@
 {
-  "navigationBarTitleText": "VIP 会员"
+  "navigationBarTitleText": "VIP 会员",
+  "navigationStyle": "custom"
 }

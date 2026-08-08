@@ -56,7 +56,7 @@
   width: 26rpx;
   height: 26rpx;
   border: 4rpx solid var(--mut-strong);
-  border-radius: 6rpx;
+  border-radius: var(--r-xs);
   box-sizing: border-box;
 }
 
@@ -130,7 +130,7 @@
   width: 36rpx;
   height: 36rpx;
   border: 4rpx solid var(--ink-deep);
-  border-radius: 10rpx;
+  border-radius: var(--r-xs);
   position: relative;
   box-sizing: border-box;
 }

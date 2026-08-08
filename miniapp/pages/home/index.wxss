@@ -10,7 +10,7 @@
 /* ============ HERO ============ */
 .mh-hero {
   position: relative;
-  height: 862rpx;
+  height: 760rpx;
   overflow: hidden;
 }
 .mh-hero-img {
@@ -23,10 +23,10 @@
   position: absolute;
   inset: 0;
   background: linear-gradient(180deg,
-    rgba(20, 14, 8, 0.5) 0%,
+    rgba(20, 14, 8, 0.55) 0%,
     rgba(20, 14, 8, 0) 28%,
     rgba(20, 14, 8, 0.18) 52%,
-    rgba(20, 14, 8, 0.9) 100%);
+    rgba(20, 14, 8, 0.94) 100%);
 }
 .mh-hero-bignum {
   position: absolute;
@@ -77,10 +77,10 @@
 }
 .mh-bell-dot {
   position: absolute;
-  top: 14rpx;
-  right: 16rpx;
-  width: 18rpx;
-  height: 18rpx;
+  top: 12rpx;
+  right: 14rpx;
+  width: 22rpx;
+  height: 22rpx;
   border-radius: 50%;
   background: var(--pop);
   border: 3rpx solid var(--c-surface);
@@ -128,7 +128,7 @@
   position: absolute;
   left: 46rpx;
   right: 46rpx;
-  bottom: 84rpx;
+  bottom: 74rpx;
   z-index: 10;
   color: var(--c-surface);
 }
@@ -141,6 +141,8 @@
   background: var(--pop);
   padding: 10rpx 26rpx;
   border-radius: var(--r-pill);
+  border: 2rpx solid rgba(255, 255, 255, 0.65);   /* 白描边：红 pill 叠红汤/暖色菜图时保持辨识度 */
+  box-shadow: 0 4rpx 12rpx rgba(20, 14, 8, 0.3);
 }
 .mh-hero-title {
   font-size: 96rpx;
@@ -150,12 +152,19 @@
   margin: 26rpx 0 18rpx;
   color: var(--c-surface);
   text-shadow: 0 4rpx 24rpx rgba(20, 14, 8, 0.55);
+  white-space: nowrap;   /* 长菜名不换行，靠分档缩字号（t6/t7/t9/t11）兜住 */
 }
-/* title-stroke 镂空描边（iOS text-stroke / Android text-shadow 兜底），
-   同时保留底部投影保证可读性 */
+/* title-stroke 镂空描边：原生 text-stroke 锐利无毛边，text-shadow 只留底部投影保证暗部可读。
+   老内核不识别 -webkit-text-stroke 时退化为白字 + hero shade，可读性仍达标 */
 .mh-hero-title.title-stroke {
-  text-shadow: 0 0 1rpx #fff, 2rpx 0 1rpx #fff, -2rpx 0 1rpx #fff, 0 2rpx 1rpx #fff, 0 -2rpx 1rpx #fff, 2rpx 2rpx 1rpx #fff, -2rpx -2rpx 1rpx #fff, 0 8rpx 28rpx rgba(20, 14, 8, 0.5);
+  -webkit-text-stroke: 1.5rpx rgba(255, 255, 255, 0.85);
+  text-shadow: 0 8rpx 28rpx rgba(20, 14, 8, 0.5);
 }
+/* 长菜名分档缩字号（titleClass 由 dish-logic.decorateHero 输出） */
+.mh-hero-title.t6 { font-size: 84rpx; }
+.mh-hero-title.t7 { font-size: 72rpx; }
+.mh-hero-title.t9 { font-size: 60rpx; }
+.mh-hero-title.t11 { font-size: 56rpx; }
 
 /* 暖光叠层：底部暖金 radial 提亮，对标 home-final.html */
 .mh-hero-glow {
@@ -176,26 +185,31 @@
 .mh-hero-meta {
   display: flex;
   gap: 16rpx;
-  margin-top: 28rpx;
+  margin-top: 22rpx;
   flex-wrap: wrap;
 }
 .mh-m {
   display: inline-flex;
   align-items: center;
   font-size: var(--fs-cap);
-  font-weight: 600;
-  color: var(--c-surface);
-  background: rgba(255, 255, 255, 0.16);
-  padding: 12rpx 24rpx;
-  border-radius: var(--r-pill);
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.72);
+}
+.mh-m + .mh-m::before {
+  content: "·";
+  margin-right: 16rpx;
+  opacity: 0.6;
 }
 .mh-hero-acts {
   display: flex;
+  flex-direction: row;
+  align-items: center;
   gap: 18rpx;
-  margin-top: 30rpx;
+  margin-top: 26rpx;
 }
 .mh-hero-add {
   flex: 1;
+  min-width: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -207,19 +221,40 @@
   font-weight: 800;
   box-shadow: var(--sh-pop);
 }
+/* 换一道：圆形毛玻璃次按钮，与主按钮并排（决策动作同级，不再埋在文字链里） */
 .mh-hero-shuffle {
   flex: none;
+  width: 88rpx;
+  height: 88rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 88rpx;
-  padding: 0 36rpx;
-  border-radius: var(--r-pill);
-  background: rgba(255, 255, 255, 0.18);
-  border: 2rpx solid rgba(255, 255, 255, 0.3);
-  color: var(--c-surface);
-  font-size: var(--fs-cap);
-  font-weight: 700;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.16);
+  border: 2rpx solid rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(8rpx);
+}
+.mh-ico-shuffle {
+  position: relative;
+  width: 40rpx;
+  height: 40rpx;
+  border: 4rpx solid var(--c-surface);
+  border-left-color: transparent;
+  border-radius: 50%;
+  transform: rotate(-45deg);
+}
+/* 圆环缺口处的箭头 */
+.mh-ico-shuffle::after {
+  content: "";
+  position: absolute;
+  top: -4rpx;
+  left: 50%;
+  transform: translateX(-50%) rotate(-45deg);
+  width: 0;
+  height: 0;
+  border-left: 9rpx solid transparent;
+  border-right: 9rpx solid transparent;
+  border-bottom: 14rpx solid var(--c-surface);
 }
 /* ============ SHEET ============ */
 .mh-sheet {
@@ -227,7 +262,7 @@
   margin-top: -50rpx;
   background: var(--paper);
   border-radius: 54rpx 54rpx 0 0;
-  padding: 50rpx 0 186rpx;
+  padding: 44rpx 0 186rpx;
   z-index: 20;
 }
 .mh-pad { padding: 0 46rpx; }
@@ -280,7 +315,7 @@
   width: 72rpx;
   height: 72rpx;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.92);
+  background: var(--pop-soft);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -307,7 +342,7 @@
   width: 250rpx;
   border-radius: var(--r-card);
   background: var(--paper-2);
-  border: 2rpx dashed var(--line-deep);
+  border: none;   /* 实底与旁边菜卡同层级，不再用虚线 */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -390,7 +425,7 @@
   width: 100%; height: 5rpx;
 }
 .mh-ico-plus-dark { width: 28rpx; height: 28rpx; }
-.mh-ico-plus-dark::before, .mh-ico-plus-dark::after { background: var(--ink-deep); }
+.mh-ico-plus-dark::before, .mh-ico-plus-dark::after { background: var(--pop); }
 
 /* 金色箭头 / hero 箭头 */
 .mh-ico-arrow-gold {
@@ -412,6 +447,19 @@
   letter-spacing: 1rpx;
   color: var(--gold);
   font-weight: 700;
+}
+/* 当前餐次小标签：跟随 slotbar 联动显示 */
+.mh-mc-slot {
+  display: inline-block;
+  margin-left: 10rpx;
+  padding: 4rpx 16rpx;
+  font-size: var(--fs-mini);
+  font-weight: 700;
+  letter-spacing: 1rpx;
+  color: var(--gold);
+  border: 2rpx solid rgba(244, 217, 168, 0.45);
+  border-radius: var(--r-pill);
+  vertical-align: middle;
 }
 .mh-mc-title {
   position: relative;
@@ -528,10 +576,11 @@
 }
 .fp-slot-week {
   flex: none;
-  padding: 0 28rpx;
+  padding: 0 20rpx;
   color: var(--gold-deep);
   background: transparent;
-  border-style: dashed;
+  border: none;   /* 跳转入口弱化为金色文字链，与前三个时段选择器区分语义 */
+  font-weight: 700;
 }
 
 .fp-wish {
@@ -762,7 +811,7 @@
 .mh-skel { padding: 0 28rpx; }
 .mh-skel-hero {
   width: 100%;
-  height: 862rpx;
+  height: 760rpx;
   border-radius: 0 0 var(--r-card) var(--r-card);
   background: var(--paper-2);
 }

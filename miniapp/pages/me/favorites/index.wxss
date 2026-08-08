@@ -16,7 +16,7 @@
 .fav-title {
   margin-top: 8rpx;
   font-family: var(--sans);
-  font-size: 80rpx;
+  font-size: var(--fs-hero-lg);
   font-weight: 900;
   line-height: 0.95;
   letter-spacing: -4rpx;

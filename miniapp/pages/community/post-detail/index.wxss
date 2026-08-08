@@ -61,7 +61,7 @@
 .eyebrow-mt { margin-top: 42rpx; display: block; }
 .post-title {
   margin-top: 14rpx;
-  font-size: 52rpx;
+  font-size: var(--fs-h1);
   line-height: 1.08;
   letter-spacing: -2rpx;
   /* title-stroke/title-shadow 已提供描边白字 */

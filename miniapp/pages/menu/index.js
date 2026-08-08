@@ -302,10 +302,21 @@ Page({
   },
 
   onShareAppMessage() {
-    const n = (this.data.items && this.data.items.length) || 0;
+    const n = (this.data.todayMenu && this.data.todayMenu.length) || 0;
     return {
       title: n > 0 ? '今天家里吃这些（' + n + ' 道）' : '今天的菜单，来看看吗',
       path: '/pages/menu/index'
     };
+  },
+
+  // 图片加载失败兜底：coverImage 失效时用本地占位图（home 页同款策略）
+  onHeroImgError() {
+    this.setData({ heroImage: fallbackDishImg('hot-sour-soup') });
+  },
+
+  onImgError(e) {
+    const { group, dish, seed } = e.currentTarget.dataset;
+    if (typeof group !== 'number' || typeof dish !== 'number') return;
+    this.setData({ [`mealGroups[${group}].items[${dish}].dishImage`]: fallbackDishImg(seed) });
   },
 });

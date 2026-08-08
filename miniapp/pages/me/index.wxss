@@ -80,7 +80,7 @@
 }
 .mag-hero-title {
   margin: 26rpx 0 16rpx;
-  font-size: 116rpx;
+  font-size: var(--fs-hero-xl);
   line-height: 0.92;
   letter-spacing: -5rpx;
   -webkit-text-stroke: 3rpx var(--c-surface);
@@ -205,6 +205,29 @@
   background: var(--skeleton);
   margin: 0 auto;
   color: transparent;
+}
+/* 列表骨架（最近上桌 / 口味偏好加载态） */
+.mag-skel-thumb {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: var(--r-md);
+  background: var(--skeleton);
+  flex: none;
+}
+.mag-skel-line {
+  height: 26rpx;
+  border-radius: 12rpx;
+  background: var(--skeleton);
+  margin-top: 14rpx;
+  width: 70%;
+}
+.mag-skel-line.strong { height: 30rpx; width: 45%; margin-top: 0; }
+.mag-skel-bar {
+  height: 22rpx;
+  border-radius: 11rpx;
+  background: var(--skeleton);
+  margin-top: 16rpx;
+  width: 100%;
 }
 .mag-snum.pop { color: var(--pop); }
 .mag-scap {

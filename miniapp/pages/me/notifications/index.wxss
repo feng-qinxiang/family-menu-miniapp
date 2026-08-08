@@ -43,7 +43,7 @@
 .hero-h2 {
   display: block;
   margin-top: 10rpx;
-  font-size: 64rpx;
+  font-size: var(--fs-hero-sm);
   letter-spacing: -3rpx;
   line-height: 0.96;
 }

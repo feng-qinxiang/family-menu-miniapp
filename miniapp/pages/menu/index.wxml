@@ -6,7 +6,7 @@
 
   <!-- HERO 今日餐桌 -->
   <view class="m-hero g-fade-up">
-    <image class="m-hero-img" src="{{heroImage}}" mode="aspectFill" />
+    <image class="m-hero-img" src="{{heroImage}}" mode="aspectFill" data-target="hero" binderror="onHeroImgError" />
     <view class="m-hero-mask"></view>
     <view class="m-hero-bignum">{{totalCount || 0}}</view>
     <view class="m-hero-top">
@@ -51,7 +51,7 @@
         </view>
         <view class="m-stat-cell">
           <view class="m-stat-num">{{totalServings || '?'}}<text class="m-stat-u">人</text></view>
-          <view class="m-stat-label">适合人数</view>
+          <view class="m-stat-label">最多人份</view>
         </view>
       </view>
       <view class="m-shop-progress" wx:if="{{shoppingTotal}}">
@@ -95,17 +95,26 @@
         <text class="seeall">{{totalCount}} 道菜</text>
       </view>
 
-      <view class="m-meal-block" wx:for="{{mealGroups}}" wx:for-item="group" wx:key="meal">
+      <view class="m-meal-block" wx:for="{{mealGroups}}" wx:for-item="group" wx:for-index="gIdx" wx:key="meal">
         <view class="m-meal-label">{{group.label}} <text class="n">{{group.items.length}} 道</text></view>
         <view
-          class="m-row tap-scale g-fade-up g-d{{index % 5 + 1}}"
+          class="m-row tap-scale g-fade-up g-d{{dishIndex % 5 + 1}}"
           wx:for="{{group.items}}"
           wx:for-item="dish"
+          wx:for-index="dishIndex"
           wx:key="recipeId"
           data-id="{{dish.recipeId}}"
           bindtap="goDetail"
         >
-          <image class="m-thumb" src="{{dish.dishImage}}" mode="aspectFill" />
+          <image
+            class="m-thumb"
+            src="{{dish.dishImage}}"
+            mode="aspectFill"
+            data-group="{{gIdx}}"
+            data-dish="{{dishIndex}}"
+            data-seed="{{dish.recipeId || (dish.recipe && dish.recipe.title)}}"
+            binderror="onImgError"
+          />
           <view class="m-rmid">
             <view class="m-rname">{{dish.recipe.title}}</view>
             <view class="m-rsub">

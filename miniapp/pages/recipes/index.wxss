@@ -45,7 +45,7 @@
   color: var(--c-surface); background: var(--pop); padding: 10rpx 26rpx; border-radius: var(--r-xs);
 }
 .rx-hero-title {
-  font-size: 115rpx; line-height: .9; letter-spacing: -6rpx;
+  font-size: var(--fs-hero-xl); line-height: .9; letter-spacing: -6rpx;
   margin: 30rpx 0 22rpx; -webkit-text-stroke: 3rpx var(--c-surface);
 }
 .rx-hero-sub { font-size: var(--fs-cap); color: rgba(255,255,255,.85); font-weight: 400; }

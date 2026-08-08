@@ -12,6 +12,7 @@ const {
 } = require('../../utils/api');
 const { sourceLabels, mealTypeLabels, SLOTS, cuisinePinyin } = require('../../utils/constants');
 const { fallbackDishImg, onImgError } = require('../../utils/image');
+const { decorateHero, filterBySlot } = require('../../utils/dish-logic');
 const WISH_STORAGE_KEY = 'family_wishes_v1';
 const CACHE_KEY_MENU = 'home_cache_todayMenu';
 const CACHE_KEY_SHOPPING = 'home_cache_shoppingPending';
@@ -90,10 +91,12 @@ Page({
     sideRecipes: [],
     visibleRecipes: [],
     todayMenu: [],
+    slotMenu: [],          // 当前餐次 (currentSlot) 的菜单项，随 slotbar 联动
     shoppingPending: 0,
     cuisineTiles: [],
 
     allRecipes: [],
+    isEmpty: false,        // 菜谱全空（sideRecipes 与 visibleRecipes 均空），用于空态文案收敛
     loadError: ''
   },
 
@@ -159,7 +162,14 @@ Page({
     const { slot } = e.currentTarget.dataset;
     if (!slot || slot === this.data.currentSlot) return;
     this.setData({ currentSlot: slot });
+    this.updateSlotMenu();
     this.refreshWishes();
+  },
+
+  // 当前餐次菜单：todayMenu 按 currentSlot 过滤（mealType 缺失默认归 dinner，见 dish-logic.js）
+  updateSlotMenu() {
+    const slotMenu = filterBySlot(this.data.todayMenu, this.data.currentSlot);
+    this.setData({ slotMenu });
   },
 
   goWeek() {
@@ -347,6 +357,7 @@ Page({
         allRecipes,
         cuisineTiles
       });
+      this.updateSlotMenu();
 
       // 写入离线缓存
       writeCache(CACHE_KEY_MENU, normalizedItems);
@@ -377,6 +388,7 @@ Page({
       }));
       const shoppingPending = shoppingItems.filter(i => !i.purchased).length;
       this.setData({ todayMenu: normalizedItems, shoppingPending });
+      this.updateSlotMenu();
       writeCache(CACHE_KEY_MENU, normalizedItems);
       writeCache(CACHE_KEY_SHOPPING, shoppingPending);
     } catch (err) {
@@ -464,9 +476,10 @@ Page({
 
     this.setData({
       activeCuisine: cuisine,
-      heroRecipe: hero,
+      heroRecipe: hero ? { ...hero, titleClass: decorateHero(hero.title) } : null,
       sideRecipes: sides,
-      visibleRecipes: visible
+      visibleRecipes: visible,
+      isEmpty: !sides.length && !visible.length
     });
   },
 
@@ -526,11 +539,15 @@ Page({
       return;
     }
     const shuffled = shuffle(fast);
+    const hero = shuffled[0] || null;
+    const sides = shuffled.slice(1, 3);
+    const visible = shuffled.slice(3, 11);
     this.setData({
       activeCuisine: 'all',
-      heroRecipe: shuffled[0],
-      sideRecipes: shuffled.slice(1, 3),
-      visibleRecipes: shuffled.slice(3, 11)
+      heroRecipe: hero ? { ...hero, titleClass: decorateHero(hero.title) } : null,
+      sideRecipes: sides,
+      visibleRecipes: visible,
+      isEmpty: !sides.length && !visible.length
     });
     wx.pageScrollTo({ scrollTop: 0, duration: 300 });
   },

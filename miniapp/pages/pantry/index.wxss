@@ -71,7 +71,7 @@
   border-radius: var(--r-xs);
 }
 .phero-title {
-  font-size: 116rpx;
+  font-size: var(--fs-hero-xl);
   line-height: 0.9;
   letter-spacing: -6rpx;
   margin: 30rpx 0 22rpx;

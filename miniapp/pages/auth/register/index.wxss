@@ -56,7 +56,7 @@
 }
 .rg-hero-title {
   margin: 26rpx 0 22rpx;
-  font-size: 96rpx;
+  font-size: var(--fs-hero-lg);
   line-height: 0.9;
   letter-spacing: -5rpx;
   -webkit-text-stroke: 3rpx var(--c-surface);

@@ -93,7 +93,7 @@
   border-radius: var(--r-xs);
 }
 .wa-hero-title {
-  font-size: 104rpx;
+  font-size: var(--fs-hero-lg);
   line-height: 0.9;
   letter-spacing: -6rpx;
   margin-top: 30rpx;

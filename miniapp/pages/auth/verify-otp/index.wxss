@@ -36,7 +36,7 @@
 .head { margin-top: 36rpx; }
 .hero-title {
   margin-top: 18rpx;
-  font-size: 96rpx;
+  font-size: var(--fs-hero-lg);
   line-height: 0.92;
   letter-spacing: -4rpx;
 }

@@ -83,6 +83,19 @@
         <view class="mag-hmore tap-scale" bindtap="goRecipes">查看全部记录 ›</view>
       </view>
     </view>
+    <!-- 最近上桌：加载骨架 -->
+    <view class="g-fade-up g-d2" wx:elif="{{loading}}">
+      <section-head eyebrow="Recently Cooked" title="最近" popPart="上桌" />
+      <view class="card mag-history">
+        <view class="mag-hrow" wx:for="{{[1,2]}}" wx:key="*this">
+          <view class="mag-skel-thumb shimmer"></view>
+          <view class="mag-hmid">
+            <view class="mag-skel-line strong shimmer"></view>
+            <view class="mag-skel-line shimmer"></view>
+          </view>
+        </view>
+      </view>
+    </view>
 
     <!-- 厨房工具 -->
     <view class="g-fade-up g-d3">
@@ -131,6 +144,16 @@
             <view class="mag-pr">{{item.right}}</view>
           </view>
           <view class="mag-pbar {{item.alt ? 'alt' : ''}}"><view class="mag-pbar-i" style="width:{{item.pct}}%"></view></view>
+        </view>
+      </view>
+    </view>
+    <!-- 口味偏好：加载骨架 -->
+    <view class="g-fade-up g-d4" wx:elif="{{loading}}">
+      <section-head eyebrow="Taste Profile" title="本月" popPart="口味" />
+      <view class="card mag-pref">
+        <view class="mag-prow" wx:for="{{[1,2,3]}}" wx:key="*this">
+          <view class="mag-skel-line strong shimmer" style="width: 40%;"></view>
+          <view class="mag-skel-bar shimmer"></view>
         </view>
       </view>
     </view>

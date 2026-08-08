@@ -109,7 +109,7 @@
   width: 24rpx;
   height: 38rpx;
   border: 4rpx solid var(--gold-deep);
-  border-radius: 7rpx;
+  border-radius: var(--r-xs);
 }
 .rp-ic-lock {
   position: relative;
@@ -117,7 +117,7 @@
   height: 22rpx;
   margin-top: 12rpx;
   background: var(--gold-deep);
-  border-radius: 5rpx;
+  border-radius: var(--r-xs);
 }
 .rp-ic-lock::before {
   content: "";
@@ -144,7 +144,7 @@
 .rp-sendcode {
   flex: none;
   padding: 14rpx 26rpx;
-  border-radius: 18rpx;
+  border-radius: var(--r-sm);
   font-size: var(--fs-sub);
   font-weight: 800;
   white-space: nowrap;

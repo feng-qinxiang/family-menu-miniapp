@@ -62,7 +62,6 @@ Page({
     familyProfile: { familyId: 1, familyName: '', members: [] },
     memberCount: 0,
     profileInitial: '',
-    todayMenuCount: 0,
     monthCookCount: 0,
     savedCount: 0,
     streakDays: 0,
@@ -132,7 +131,6 @@ Page({
         tone: memberTones[i % memberTones.length]
       }));
 
-      const menuCount = todayMenu && Array.isArray(todayMenu.items) ? todayMenu.items.length : 0;
       const history = Array.isArray(cookHistory) ? cookHistory : [];
       const enrichedHistory = history.slice(0, 3).map((h, i) => ({
         ...h,
@@ -179,7 +177,6 @@ Page({
         },
         memberCount: members.length,
         profileInitial: ((currentUser && currentUser.nickname) || '家').slice(0, 1),
-        todayMenuCount: menuCount,
         monthCookCount,
         savedCount,
         streakDays: (preference && preference.streakDays) || enrichedHistory.length,
