@@ -1,0 +1,267 @@
+<!-- pages/showcase · Awwwards 风格概念页（家庭点菜） -->
+<view class="sc-page">
+
+  <!-- 背景光斑 canvas -->
+  <canvas type="2d" id="fx" class="sc-fx"></canvas>
+  <!-- 噪点层 -->
+  <view class="sc-grain"></view>
+
+  <!-- 顶部导航 -->
+  <view class="sc-head">
+    <view class="sc-head-left">
+      <view class="sc-back tap-scale" bindtap="goBack">
+        <image class="ic ic-24" src="/assets/icons/lucide/arrow-left.svg" mode="aspectFit" />
+      </view>
+      <view class="sc-brand">
+        <view class="sc-brand-mark">家</view>
+        <view class="sc-brand-name">FAMILY MENU<text class="sc-brand-sub">家庭点菜系统</text></view>
+      </view>
+    </view>
+    <view class="sc-head-cta tap-scale" bindtap="goMenu">开饭<image class="ic ic-16" src="/assets/icons/lucide/utensils.svg" mode="aspectFit" /></view>
+  </view>
+
+  <scroll-view class="sc-scroll" scroll-y enhanced show-scrollbar="{{false}}" scroll-top="{{st}}" bindscroll="onScroll">
+
+    <!-- ============ HERO ============ -->
+    <view class="sc-hero">
+      <view class="sc-kicker">FAMILY MENU · 家庭点菜系统</view>
+      <view class="sc-hero-title">
+        <view class="sc-hero-line">今晚<text class="sc-outline">吃</text></view>
+        <view class="sc-hero-line">什么<text class="sc-q">？</text></view>
+      </view>
+      <view class="sc-hero-meta">
+        <view class="sc-hero-sub">一家人围桌而坐，是每日<text class="sc-b">最要紧</text>的事。点菜、备菜、上桌，把这一顿饭安排得明明白白。</view>
+        <view class="sc-hero-actions">
+          <view class="sc-btn-primary tap-scale" bindtap="goMenu">开饭了<image class="ic ic-18" src="/assets/icons/lucide/utensils.svg" mode="aspectFit" /></view>
+          <view class="sc-btn-ghost tap-scale" bindtap="goWeekly">本周菜谱<image class="ic ic-16" src="/assets/icons/lucide/calendar-days.svg" mode="aspectFit" /></view>
+        </view>
+      </view>
+      <view class="sc-stats">
+        <view class="sc-stat">
+          <view class="sc-stat-n"><image class="ic ic-22" src="/assets/icons/lucide/chef-hat.svg" mode="aspectFit" /><text class="sc-num" data-count="11">{{nums[0]}}</text></view>
+          <view class="sc-stat-c">道拿手菜谱</view>
+        </view>
+        <view class="sc-stat">
+          <view class="sc-stat-n"><image class="ic ic-22" src="/assets/icons/lucide/users.svg" mode="aspectFit" /><text class="sc-num" data-count="4">{{nums[1]}}</text></view>
+          <view class="sc-stat-c">位家庭成员</view>
+        </view>
+        <view class="sc-stat">
+          <view class="sc-stat-n"><image class="ic ic-22" src="/assets/icons/lucide/sparkles.svg" mode="aspectFit" /><text class="sc-num" data-count="98">{{nums[2]}}</text><text class="sc-pct">%</text></view>
+          <view class="sc-stat-c">忌口自动避开</view>
+        </view>
+        <view class="sc-stat">
+          <view class="sc-stat-n"><image class="ic ic-22" src="/assets/icons/lucide/flame.svg" mode="aspectFit" /><text class="sc-num" data-count="0">{{nums[3]}}</text></view>
+          <view class="sc-stat-c">次饭菜浪费</view>
+        </view>
+      </view>
+      <view class="sc-scroll-hint"><view class="sc-wheel"></view>SCROLL</view>
+    </view>
+
+    <!-- ============ MARQUEE ============ -->
+    <view class="sc-marquee">
+      <view class="sc-marquee-track">
+        <view class="sc-marquee-item">今晚吃什么 <image class="ic ic-14" src="/assets/icons/lucide/star.svg" mode="aspectFit" /> 一家人吃饭是正事 <image class="ic ic-14" src="/assets/icons/lucide/star.svg" mode="aspectFit" /> <text class="sc-mg-ghost">FAMILY MENU</text> <image class="ic ic-14" src="/assets/icons/lucide/star.svg" mode="aspectFit" /> 11 道菜谱 <image class="ic ic-14" src="/assets/icons/lucide/star.svg" mode="aspectFit" /> 4 位成员 <image class="ic ic-14" src="/assets/icons/lucide/star.svg" mode="aspectFit" /></view>
+        <view class="sc-marquee-item">今晚吃什么 <image class="ic ic-14" src="/assets/icons/lucide/star.svg" mode="aspectFit" /> 一家人吃饭是正事 <image class="ic ic-14" src="/assets/icons/lucide/star.svg" mode="aspectFit" /> <text class="sc-mg-ghost">FAMILY MENU</text> <image class="ic ic-14" src="/assets/icons/lucide/star.svg" mode="aspectFit" /> 11 道菜谱 <image class="ic ic-14" src="/assets/icons/lucide/star.svg" mode="aspectFit" /> 4 位成员 <image class="ic ic-14" src="/assets/icons/lucide/star.svg" mode="aspectFit" /></view>
+      </view>
+    </view>
+
+    <!-- ============ 今日餐桌（浅色） ============ -->
+    <view class="sc-sec sc-today" id="sc-today">
+      <view class="sc-sec-head">
+        <view class="sc-sec-head-l">
+          <view class="sc-sec-idx g-reveal {{ins[0] ? 'in' : ''}}">01 · 今日餐桌</view>
+          <view class="sc-sec-title g-reveal d1 {{ins[1] ? 'in' : ''}}">今天的饭<text class="sc-break"></text><text class="sc-ghost">吃什么</text><text class="sc-tomato">？</text></view>
+        </view>
+        <view class="sc-sec-desc g-reveal d2 {{ins[2] ? 'in' : ''}}">每天自动排出一桌菜：荤素搭配、口味轮换，避开每位家人的忌口。到点开饭，不费脑子。</view>
+      </view>
+      <view class="sc-today-grid">
+        <view class="sc-today-list g-reveal {{ins[3] ? 'in' : ''}}">
+          <view class="sc-trow">
+            <view class="sc-trow-idx">A·1</view>
+            <view class="sc-trow-ic"><image class="ic ic-24 dark" src="/assets/icons/lucide/flame.svg" mode="aspectFit" /></view>
+            <view class="sc-trow-mid"><view class="sc-trow-n">番茄牛腩煲</view><view class="sc-trow-s">主菜 · 炖 90 分钟 · 3 人份</view></view>
+            <view class="sc-trow-tag">今晚</view>
+          </view>
+          <view class="sc-trow">
+            <view class="sc-trow-idx">B·2</view>
+            <view class="sc-trow-ic"><image class="ic ic-24 dark" src="/assets/icons/lucide/leaf.svg" mode="aspectFit" /></view>
+            <view class="sc-trow-mid"><view class="sc-trow-n">清炒时蔬</view><view class="sc-trow-s">素菜 · 5 分钟 · 2 人份</view></view>
+            <view class="sc-trow-tag">爽口</view>
+          </view>
+          <view class="sc-trow">
+            <view class="sc-trow-idx">C·3</view>
+            <view class="sc-trow-ic"><image class="ic ic-24 dark" src="/assets/icons/lucide/egg-fried.svg" mode="aspectFit" /></view>
+            <view class="sc-trow-mid"><view class="sc-trow-n">紫菜蛋花汤</view><view class="sc-trow-s">汤品 · 10 分钟 · 3 人份</view></view>
+            <view class="sc-trow-tag">清淡</view>
+          </view>
+        </view>
+        <view class="sc-plate-wrap g-reveal d2 {{ins[4] ? 'in' : ''}}">
+          <view class="sc-plate">
+            <view class="sc-plate-orb"></view>
+            <view class="sc-plate-chip pc-a"><image class="ic ic-16" src="/assets/icons/lucide/clock.svg" mode="aspectFit" />19:00 开饭</view>
+            <view class="sc-plate-chip pc-b"><image class="ic ic-16" src="/assets/icons/lucide/check.svg" mode="aspectFit" />已避开忌口</view>
+            <view class="sc-plate-chip pc-c"><image class="ic ic-16" src="/assets/icons/lucide/chef-hat.svg" mode="aspectFit" />3 菜 1 汤</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- ============ 菜谱库（深色） ============ -->
+    <view class="sc-sec sc-recipes" id="sc-recipes">
+      <view class="sc-sec-head">
+        <view class="sc-sec-head-l">
+          <view class="sc-sec-idx g-reveal {{ins[5] ? 'in' : ''}}">02 · 菜谱库</view>
+          <view class="sc-sec-title g-reveal d1 {{ins[6] ? 'in' : ''}}">家传味道<text class="sc-break"></text><text class="sc-ghost">按图索骥</text></view>
+        </view>
+        <view class="sc-sec-desc g-reveal d2 {{ins[7] ? 'in' : ''}}">每道菜都有做法、火候与照片。不会做？照着步骤来，翻车率接近于零。</view>
+      </view>
+      <view class="sc-rgrid">
+        <view class="sc-r-card g-reveal {{ins[8] ? 'in' : ''}}" hover-class="none" bindtap="goMenu">
+          <view class="sc-r-num">01</view>
+          <view class="sc-r-ic"><image class="ic ic-24" src="/assets/icons/lucide/flame.svg" mode="aspectFit" /></view>
+          <view class="sc-r-fill"></view>
+          <view class="sc-r-tag">拿手菜</view>
+          <view class="sc-r-name">红烧肉</view>
+          <view class="sc-r-meta"><image class="ic ic-13" src="/assets/icons/lucide/clock.svg" mode="aspectFit" />2.5 小时<text class="sc-dot"></text><image class="ic ic-13" src="/assets/icons/lucide/flame.svg" mode="aspectFit" />中火</view>
+          <view class="sc-r-go"><image class="ic ic-18" src="/assets/icons/lucide/arrow-right.svg" mode="aspectFit" /></view>
+        </view>
+        <view class="sc-r-card g2 g-reveal d1 {{ins[9] ? 'in' : ''}}" hover-class="none" bindtap="goMenu">
+          <view class="sc-r-num">02</view>
+          <view class="sc-r-ic"><image class="ic ic-24" src="/assets/icons/lucide/leaf.svg" mode="aspectFit" /></view>
+          <view class="sc-r-fill"></view>
+          <view class="sc-r-tag">素食</view>
+          <view class="sc-r-name">麻婆豆腐</view>
+          <view class="sc-r-meta"><image class="ic ic-13" src="/assets/icons/lucide/clock.svg" mode="aspectFit" />25 分钟<text class="sc-dot"></text><image class="ic ic-13" src="/assets/icons/lucide/flame.svg" mode="aspectFit" />猛火</view>
+          <view class="sc-r-go"><image class="ic ic-18" src="/assets/icons/lucide/arrow-right.svg" mode="aspectFit" /></view>
+        </view>
+        <view class="sc-r-card big g-reveal d2 {{ins[10] ? 'in' : ''}}" hover-class="none" bindtap="goMenu">
+          <view class="sc-r-num">03</view>
+          <view class="sc-r-ic"><image class="ic ic-24" src="/assets/icons/lucide/chef-hat.svg" mode="aspectFit" /></view>
+          <view class="sc-r-fill"></view>
+          <view class="sc-r-tag">全家最爱 · 每周必点</view>
+          <view class="sc-r-name">番茄牛腩煲</view>
+          <view class="sc-r-meta"><image class="ic ic-13" src="/assets/icons/lucide/clock.svg" mode="aspectFit" />90 分钟<text class="sc-dot"></text><image class="ic ic-13" src="/assets/icons/lucide/users.svg" mode="aspectFit" />3 人份</view>
+          <view class="sc-r-go"><image class="ic ic-18" src="/assets/icons/lucide/arrow-right.svg" mode="aspectFit" /></view>
+        </view>
+        <view class="sc-r-card g3 g-reveal d1 {{ins[11] ? 'in' : ''}}" hover-class="none" bindtap="goMenu">
+          <view class="sc-r-num">04</view>
+          <view class="sc-r-ic"><image class="ic ic-24" src="/assets/icons/lucide/egg-fried.svg" mode="aspectFit" /></view>
+          <view class="sc-r-fill"></view>
+          <view class="sc-r-tag">快手菜</view>
+          <view class="sc-r-name">西红柿炒蛋</view>
+          <view class="sc-r-meta"><image class="ic ic-13" src="/assets/icons/lucide/clock.svg" mode="aspectFit" />10 分钟<text class="sc-dot"></text><image class="ic ic-13" src="/assets/icons/lucide/flame.svg" mode="aspectFit" />中火</view>
+          <view class="sc-r-go"><image class="ic ic-18" src="/assets/icons/lucide/arrow-right.svg" mode="aspectFit" /></view>
+        </view>
+        <view class="sc-r-card g4 g-reveal d2 {{ins[12] ? 'in' : ''}}" hover-class="none" bindtap="goMenu">
+          <view class="sc-r-num">05</view>
+          <view class="sc-r-ic"><image class="ic ic-24" src="/assets/icons/lucide/fish.svg" mode="aspectFit" /></view>
+          <view class="sc-r-fill"></view>
+          <view class="sc-r-tag">海鲜</view>
+          <view class="sc-r-name">清蒸鲈鱼</view>
+          <view class="sc-r-meta"><image class="ic ic-13" src="/assets/icons/lucide/clock.svg" mode="aspectFit" />20 分钟<text class="sc-dot"></text><image class="ic ic-13" src="/assets/icons/lucide/flame.svg" mode="aspectFit" />大火</view>
+          <view class="sc-r-go"><image class="ic ic-18" src="/assets/icons/lucide/arrow-right.svg" mode="aspectFit" /></view>
+        </view>
+      </view>
+    </view>
+
+    <!-- ============ 冰箱（浅色） ============ -->
+    <view class="sc-sec sc-pantry" id="sc-pantry">
+      <view class="sc-sec-head">
+        <view class="sc-sec-head-l">
+          <view class="sc-sec-idx g-reveal {{ins[13] ? 'in' : ''}}">03 · 冰箱库存</view>
+          <view class="sc-sec-title g-reveal d1 {{ins[14] ? 'in' : ''}}">冰箱里<text class="sc-break"></text><text class="sc-ghost">还剩什么</text></view>
+        </view>
+        <view class="sc-sec-desc g-reveal d2 {{ins[15] ? 'in' : ''}}">食材临期自动提醒，缺什么买菜清单里补上。冰箱不再有被遗忘的角落。</view>
+      </view>
+      <view class="sc-pantry-grid">
+        <view class="sc-prows g-reveal {{ins[16] ? 'in' : ''}}">
+          <view class="sc-p-row">
+            <view class="sc-p-head"><view class="sc-p-name"><image class="ic ic-16 dark" src="/assets/icons/lucide/check.svg" mode="aspectFit" />新鲜在库</view><view class="sc-p-val"><text class="sc-num" data-count="23">{{nums[4]}}</text><text class="sc-pv-u">类</text></view></view>
+            <view class="sc-p-bar"><view class="sc-p-fill" style="width:{{barA}}%"></view></view>
+          </view>
+          <view class="sc-p-row">
+            <view class="sc-p-head"><view class="sc-p-name"><image class="ic ic-16 dark" src="/assets/icons/lucide/alert-triangle.svg" mode="aspectFit" />即将临期</view><view class="sc-p-val"><text class="sc-num" data-count="4">{{nums[5]}}</text><text class="sc-pv-u">类</text></view></view>
+            <view class="sc-p-bar warn"><view class="sc-p-fill" style="width:{{barB}}%"></view></view>
+          </view>
+          <view class="sc-p-row">
+            <view class="sc-p-head"><view class="sc-p-name"><image class="ic ic-16 dark" src="/assets/icons/lucide/shopping-basket.svg" mode="aspectFit" />需要补货</view><view class="sc-p-val"><text class="sc-num" data-count="3">{{nums[6]}}</text><text class="sc-pv-u">项</text></view></view>
+            <view class="sc-p-bar alt"><view class="sc-p-fill" style="width:{{barC}}%"></view></view>
+          </view>
+        </view>
+        <view class="sc-fridge-wrap g-reveal d1 {{ins[17] ? 'in' : ''}}">
+          <view class="sc-fridge">
+            <view class="sc-fridge-shelf" style="top:44%"></view>
+            <view class="sc-fridge-shelf" style="top:76%"></view>
+            <view class="sc-fi fi-1"><image class="ic ic-22" src="/assets/icons/lucide/egg.svg" mode="aspectFit" /></view>
+            <view class="sc-fi fi-2"><image class="ic ic-22" src="/assets/icons/lucide/carrot.svg" mode="aspectFit" /></view>
+            <view class="sc-fi fi-3"><image class="ic ic-22" src="/assets/icons/lucide/milk.svg" mode="aspectFit" /></view>
+            <view class="sc-fi fi-4"><image class="ic ic-22" src="/assets/icons/lucide/apple.svg" mode="aspectFit" /></view>
+            <view class="sc-fi fi-5"><image class="ic ic-22" src="/assets/icons/lucide/beef.svg" mode="aspectFit" /></view>
+            <view class="sc-fi fi-6"><image class="ic ic-22" src="/assets/icons/lucide/wheat.svg" mode="aspectFit" /></view>
+            <view class="sc-fridge-tag"><image class="ic ic-13" src="/assets/icons/lucide/bell.svg" mode="aspectFit" />4 类食材明天到期</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- ============ 家庭成员（深色） ============ -->
+    <view class="sc-sec sc-taste" id="sc-taste">
+      <view class="sc-sec-head">
+        <view class="sc-sec-head-l">
+          <view class="sc-sec-idx g-reveal {{ins[18] ? 'in' : ''}}">04 · 家庭成员</view>
+          <view class="sc-sec-title g-reveal d1 {{ins[19] ? 'in' : ''}}">每个人的<text class="sc-break"></text><text class="sc-ghost">口味画像</text></view>
+        </view>
+        <view class="sc-sec-desc g-reveal d2 {{ins[20] ? 'in' : ''}}">爸爸不吃香菜，大宝不能吃花生。系统记住每个人的忌口，点菜时自动绕开。</view>
+      </view>
+      <view class="sc-taste-grid">
+        <view class="sc-member g-reveal {{ins[21] ? 'in' : ''}}" hover-class="sc-member-hover" bindtap="goMe">
+          <view class="sc-m-av"><image class="ic ic-22" src="/assets/icons/lucide/user.svg" mode="aspectFit" /></view>
+          <view class="sc-m-role">爸爸 · 掌勺人</view>
+          <view class="sc-m-name">老周</view>
+          <view class="sc-m-bio">无辣不欢，最擅红烧。做饭不看菜谱，全凭手感。</view>
+          <view class="sc-m-tags"><text class="sc-mtag on">不吃香菜</text><text class="sc-mtag">偏爱浓油赤酱</text></view>
+        </view>
+        <view class="sc-member g-reveal d1 {{ins[22] ? 'in' : ''}}" hover-class="sc-member-hover" bindtap="goMe">
+          <view class="sc-m-av av2"><image class="ic ic-22" src="/assets/icons/lucide/user.svg" mode="aspectFit" /></view>
+          <view class="sc-m-role">妈妈 · 营养师</view>
+          <view class="sc-m-name">阿敏</view>
+          <view class="sc-m-bio">讲究荤素搭配，每天盯紧盐和油的用量。</view>
+          <view class="sc-m-tags"><text class="sc-mtag on">花生过敏</text><text class="sc-mtag">低盐</text></view>
+        </view>
+        <view class="sc-member g-reveal d2 {{ins[23] ? 'in' : ''}}" hover-class="sc-member-hover" bindtap="goMe">
+          <view class="sc-m-av av3"><image class="ic ic-22" src="/assets/icons/lucide/baby.svg" mode="aspectFit" /></view>
+          <view class="sc-m-role">大宝 · 小学生</view>
+          <view class="sc-m-name">小满</view>
+          <view class="sc-m-bio">只爱甜口，绿色蔬菜要哄着吃。最爱番茄。</view>
+          <view class="sc-m-tags"><text class="sc-mtag">嗜甜</text><text class="sc-mtag on">不吃苦瓜</text></view>
+        </view>
+        <view class="sc-member g-reveal d3 {{ins[24] ? 'in' : ''}}" hover-class="sc-member-hover" bindtap="goMe">
+          <view class="sc-m-av av4"><image class="ic ic-22" src="/assets/icons/lucide/paw-print.svg" mode="aspectFit" /></view>
+          <view class="sc-m-role">团宠 · 监督员</view>
+          <view class="sc-m-name">年糕</view>
+          <view class="sc-m-bio">开饭前 30 分钟准时蹲守厨房，负责试吃。</view>
+          <view class="sc-m-tags"><text class="sc-mtag">鱼肉爱好者</text></view>
+        </view>
+      </view>
+    </view>
+
+    <!-- ============ 大 CTA ============ -->
+    <view class="sc-final" id="sc-final">
+      <view class="sc-f-big g-reveal {{ins[25] ? 'in' : ''}}">一家人，<text class="sc-ghost">好好</text><text class="sc-tomato">吃饭</text></view>
+      <view class="sc-f-sub g-reveal d1 {{ins[26] ? 'in' : ''}}">从今晚这顿饭开始，把每天的「吃什么」交给 FAMILY MENU，把时间留给围坐在一起的家人。</view>
+      <view class="sc-btn-primary sc-f-btn g-reveal d2 tap-scale {{ins[27] ? 'in' : ''}}" bindtap="goMenu">开始点菜<image class="ic ic-18" src="/assets/icons/lucide/arrow-right.svg" mode="aspectFit" /></view>
+    </view>
+
+    <!-- ============ 页脚 ============ -->
+    <view class="sc-footer">
+      <view class="sc-f-left">FAMILY MENU · 为一家人设计的晚饭</view>
+      <view class="sc-f-soc">
+        <view class="sc-fs tap-scale"><image class="ic ic-16" src="/assets/icons/lucide/book-open.svg" mode="aspectFit" /></view>
+        <view class="sc-fs tap-scale"><image class="ic ic-16" src="/assets/icons/lucide/message-circle.svg" mode="aspectFit" /></view>
+        <view class="sc-fs tap-scale"><image class="ic ic-16" src="/assets/icons/lucide/info.svg" mode="aspectFit" /></view>
+      </view>
+      <view class="sc-f-top tap-scale" bindtap="scrollTop"><image class="ic ic-14" src="/assets/icons/lucide/arrow-up.svg" mode="aspectFit" />回到顶部</view>
+    </view>
+
+  </scroll-view>
+</view>
