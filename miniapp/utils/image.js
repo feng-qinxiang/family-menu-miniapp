@@ -5,7 +5,7 @@
 // 本地菜图兜底池（16 张）
 const LOCAL_DISHES = [
   'mapo-tofu', 'tomato-egg', 'hongshao-pork', 'kungpao-chicken', 'long-beans',
-  'shrimp-peas', 'egg-dropsoup', 'hot-sour-soup', 'fried-rice', 'lo-mein',
+  'shrimp-peas', 'egg-drop-soup', 'hot-sour-soup', 'fried-rice', 'lo-mein',
   'beef-broccoli', 'chicken-congee', 'orange-chicken', 'sichuan-eggplant',
   'sweet-sour-chicken', 'wontons'
 ];

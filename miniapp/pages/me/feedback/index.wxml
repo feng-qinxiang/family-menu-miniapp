@@ -7,7 +7,7 @@
   <!-- Hero -->
   <view class="fb-head g-fade-up">
     <view class="eyebrow-serif">洗耳恭听</view>
-    <view class="fb-h1 title-stroke title-shadow">意见<text class="pop">反馈</text></view>
+    <view class="fb-h1">意见<text class="pop">反馈</text></view>
     <view class="fb-desc">你的每一条想法，都让这桌饭更合口味。</view>
   </view>
 

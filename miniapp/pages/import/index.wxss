@@ -136,7 +136,7 @@
   align-items: center;
   justify-content: center;
 }
-.m-icon-gold { background: rgba(244, 217, 168, 0.16); }
+.m-icon-gold { background: rgba(232, 71, 42, 0.14); }
 .m-name {
   position: relative;
   z-index: 2;
@@ -191,7 +191,7 @@
   top: 50%;
   width: 22rpx;
   height: 4rpx;
-  background: var(--gold);
+  background: var(--pop);
   transform: translate(-50%, -50%);
 }
 .ic-link-pop { border-color: var(--pop); }

@@ -76,9 +76,8 @@ Page({
     this.setData({ loading: true });
     try {
       const source = this.data.activeSource;
-      const [recipes, favorites, todayMenu, shoppingList, familyProfile] = await Promise.all([
+      const [recipes, todayMenu, shoppingList, familyProfile] = await Promise.all([
         source === 'favorites' ? getMyFavorites() : getRecipes('all'),
-        source !== 'favorites' ? Promise.resolve([]) : Promise.resolve([]),
         getTodayMenu(),
         getShoppingList(),
         getFamilyProfile()
@@ -286,13 +285,18 @@ Page({
   },
 
   clearFilter() {
+    const needReload = this.data.activeSource !== 'all';
     this.setData({
       activeSource: 'all',
       searchText: '',
       showAdvFilter: false,
       advFilter: { cuisine: '', maxTime: 0, minServings: 0 }
     });
-    this.applyFilter();
+    if (needReload) {
+      this.loadRecipes();
+    } else {
+      this.applyFilter();
+    }
   },
 
   applyAdvFilter() {

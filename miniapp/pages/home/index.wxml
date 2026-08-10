@@ -35,7 +35,6 @@
     <image class="mh-hero-img" src="{{heroRecipe.dishImg}}" mode="aspectFill" binderror="onHeroImgError" />
     <view class="mh-hero-shade"></view>
     <view class="mh-hero-glow"></view>
-    <text class="mh-hero-bignum">01</text>
 
     <view class="mh-hero-top safe-top">
       <view class="mh-greet">
@@ -43,7 +42,7 @@
         <view class="mh-name">{{currentUser.nickname || '朋友'}}，今晚想吃点啥</view>
       </view>
       <view class="mh-iconbtns">
-        <view class="mh-iconbtn" catchtap="goMenu">
+        <view class="mh-iconbtn" catchtap="goShopping">
           <view class="mh-ico-bell"></view>
           <view class="mh-bell-dot" wx:if="{{shoppingPending}}"></view>
         </view>
@@ -250,7 +249,7 @@
               <view class="mh-mc-cap">待买</view>
             </view>
           </view>
-          <view class="mh-mc-go tap-scale" catchtap="goMenu">去买菜 ›</view>
+          <view class="mh-mc-go tap-scale" catchtap="goShopping">去买菜 ›</view>
         </view>
       </view>
 
@@ -297,7 +296,9 @@
   <view class="wish-backdrop" catchtap="closeWishModal" catchtouchmove="noopScroll"></view>
   <view class="wish-modal" catchtap="">
     <view class="wish-modal-hd">
-      <text class="wish-modal-emoji serif">味</text>
+      <view class="wish-modal-ic">
+        <text class="wish-modal-ic-glyph">味</text>
+      </view>
       <view class="wish-modal-title">今晚想吃什么？</view>
       <view class="wish-modal-sub">写下来，家人都能看到</view>
     </view>

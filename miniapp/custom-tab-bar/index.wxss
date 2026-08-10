@@ -63,26 +63,6 @@
   100% { transform: scale(1); }
 }
 
-.tab-badge {
-  position: absolute;
-  top: -8rpx;
-  left: 50%;
-  min-width: 30rpx;
-  height: 30rpx;
-  padding: 0 8rpx;
-  box-sizing: border-box;
-  border: 2rpx solid var(--paper);
-  border-radius: var(--r-pill);
-  background: var(--pop);
-  box-shadow: 0 2rpx 8rpx rgba(224, 49, 34, 0.35);
-  color: var(--c-surface);
-  font-size: 18rpx;
-  font-weight: 700;
-  line-height: 26rpx;
-  text-align: center;
-  transform: translateX(6rpx);
-}
-
 .tab-icon {
   width: 44rpx;
   height: 44rpx;

@@ -5,7 +5,7 @@
   <view class="body">
     <!-- Hero -->
     <view class="eyebrow eyebrow-serif g-fade-up">隐私政策</view>
-    <view class="doctitle title-stroke title-shadow g-fade-up g-d1">
+    <view class="doctitle g-fade-up g-d1">
       你的<text class="pop">隐私</text>{{'\n'}}我们认真守护
     </view>
     <view class="effective g-fade-up g-d2">

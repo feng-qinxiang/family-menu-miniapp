@@ -11,7 +11,7 @@
     <!-- Hero 标题 -->
     <view class="hero g-fade-up">
       <text class="hero-eyebrow">消息通知</text>
-      <view class="hero-h2 title-stroke title-shadow">家里的<text class="pop">动静</text></view>
+      <view class="hero-h2">家里的<text class="pop">动静</text></view>
       <view class="hero-unread">你有 <text class="unread-num">{{unreadCount}}</text> 条未读消息</view>
     </view>
 

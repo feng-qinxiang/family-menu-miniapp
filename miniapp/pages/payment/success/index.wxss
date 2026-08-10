@@ -10,7 +10,7 @@
   background: var(--paper);
 }
 
-/* —— 成功徽章 + 金光晕 —— */
+/* —— 成功徽章 —— */
 .ps-badge {
   position: relative;
   width: 170rpx;
@@ -19,14 +19,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--gold), var(--gold-deep) 70%, var(--gold-deep));
-  box-shadow: var(--sh-gold), 0 26rpx 70rpx rgba(176, 137, 73, 0.4);
+  background: linear-gradient(135deg, var(--pop), var(--pop-deep));
+  box-shadow: var(--sh-pop);
 }
 .ps-badge-ring {
   position: absolute;
   inset: -18rpx;
   border-radius: 50%;
-  border: 4rpx solid rgba(176, 137, 73, 0.3);
+  border: 4rpx solid rgba(232, 71, 42, 0.25);
 }
 .ps-badge-check {
   color: var(--c-surface);

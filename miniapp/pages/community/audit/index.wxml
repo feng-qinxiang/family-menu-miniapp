@@ -7,7 +7,7 @@
   <view class="hero g-fade-up">
     <view class="hero-tt">
       <view class="eyebrow-serif">内容审核</view>
-      <view class="title-stroke title-shadow hero-h1">审核<text class="pop">队列</text></view>
+      <view class="title-stroke hero-h1">审核<text class="pop">队列</text></view>
     </view>
     <view wx:if="{{pending.length}}" class="hero-badge">{{pending.length}}</view>
   </view>

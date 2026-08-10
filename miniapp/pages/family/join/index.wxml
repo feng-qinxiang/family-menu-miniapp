@@ -7,7 +7,7 @@
   <!-- Hero -->
   <view class="head g-fade-up">
     <view class="eyebrow-serif">Got an invite code?</view>
-    <view class="title-stroke hero-title title-shadow">加入<text class="pop">家庭</text></view>
+    <view class="title-stroke hero-title">加入<text class="pop">家庭</text></view>
     <view class="lead">输入家人分享的 6 位邀请码，或扫描他们的二维码，一起共享菜单和买菜清单。</view>
   </view>
 

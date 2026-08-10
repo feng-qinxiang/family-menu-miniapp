@@ -6,7 +6,7 @@
     <!-- 引导文案 -->
     <view class="vu-lead g-fade-up g-d1">
       <view class="vu-eyebrow">Family Sync · Premium</view>
-      <view class="vu-h1 title-stroke title-shadow">全家共享<text class="pop">一份菜单</text></view>
+      <view class="vu-h1">全家共享<text class="pop">一份菜单</text></view>
       <view class="vu-lead-p">开通后，家人实时同步今日菜单、买菜清单和菜谱收藏，再也不用反复问"今晚吃啥"。</view>
     </view>
 

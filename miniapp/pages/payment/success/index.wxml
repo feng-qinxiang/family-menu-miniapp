@@ -9,7 +9,7 @@
   </view>
 
   <view class="ps-eyebrow eyebrow-serif g-fade-up g-d2">家庭云同步</view>
-  <view class="ps-title title-stroke title-shadow g-fade-up g-d2">
+  <view class="ps-title g-fade-up g-d2">
     开通<text class="pop">成功</text>
   </view>
   <view class="ps-sub g-fade-up g-d3">家庭云同步已生效，现在全家的菜谱、菜单和购物清单都会实时同步啦。</view>

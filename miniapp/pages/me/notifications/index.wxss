@@ -47,14 +47,8 @@
   letter-spacing: -3rpx;
   line-height: 0.96;
 }
-/* 镂空标题在浅底用墨色描边更可读 */
-.hero-h2.title-stroke {
-  -webkit-text-stroke: 3rpx var(--ink);
-  color: var(--paper);
-}
 .hero-h2 .pop {
   color: var(--pop);
-  -webkit-text-stroke: 0;
 }
 .hero-unread {
   margin-top: 18rpx;

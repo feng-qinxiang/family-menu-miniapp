@@ -20,13 +20,14 @@ page {
   --wx: #07c160;
 
   /* —— 新 token：字体 —— */
-  --serif: Georgia, "Times New Roman", serif;
+  /* 下厨房式：全站无衬线（衬线是杂志配方，已废弃） */
+  --serif: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   --sans: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
 
   /* —— 新 token：字号标尺（10 级，页面统一引用，勿写死数值）—— */
-  --fs-hero-xl: 112rpx;  /* Hero 大标题（照片 hero 主标题） */
-  --fs-hero-lg: 88rpx;   /* Hero 大标题（次 hero） */
-  --fs-hero-sm: 66rpx;   /* Hero 大标题（小 hero/合规页） */
+  --fs-hero-xl: 96rpx;  /* Hero 大标题（照片 hero 主标题） */
+  --fs-hero-lg: 72rpx;  /* Hero 大标题（次 hero） */
+  --fs-hero-sm: 56rpx;  /* Hero 大标题（小 hero/合规页） */
   --fs-hero: 64rpx;      /* 兼容旧引用 */
   --fs-h1: 50rpx;        /* 页面主标题（对齐 .page-title / .shead-title） */
   --fs-h2: 36rpx;        /* 区块标题（对齐 .section-title） */
@@ -38,12 +39,12 @@ page {
   --fs-mini: 21rpx;      /* 角标/统计 */
   --fs-tiny: 19rpx;      /* 极弱提示（尽量不用） */
 
-  /* —— 新 token：圆角 —— */
+  /* —— 新 token：圆角（下厨房式小圆角）—— */
   --r-xs: 8rpx;
   --r-sm: 16rpx;
   --r-md: 24rpx;
-  --r-card: 42rpx;
-  --r-sheet: 52rpx;
+  --r-card: 16rpx;      /* 下厨房式卡片圆角（收敛自 28rpx） */
+  --r-sheet: 20rpx;     /* 上推 sheet 圆角（收敛自 32rpx） */
   --r-chip: 30rpx;
   --r-pill: 999rpx;
 
@@ -52,9 +53,9 @@ page {
   --hero-h-sm: 620rpx;   /* 小 hero（vip/family 类） */
 
   /* —— 新 token：阴影 / 边框 —— */
-  --sh-card: 0 4rpx 12rpx rgba(60, 40, 20, 0.06), 0 36rpx 80rpx rgba(120, 70, 30, 0.16);
+  --sh-card: 0 2rpx 10rpx rgba(60, 40, 20, 0.05);   /* 轻量单层阴影（收敛自双层重投影） */
   --sh-soft: 0 4rpx 12rpx rgba(60, 40, 20, 0.06);
-  --sh-pop: 0 16rpx 36rpx rgba(232, 71, 42, 0.4);
+  --sh-pop: 0 6rpx 16rpx rgba(232, 71, 42, 0.22);   /* 按钮红影收敛 */
   --bd-card: 2rpx solid var(--themeBorderLight, #f1ece2);
 
   /* —— 扩展 token：语义色（UI 审计收敛，页面勿再写死 hex）—— */
@@ -155,9 +156,9 @@ page {
 /* ============ 大字模式（设置页开关，主页面根节点挂 .font-lg）============ */
 /* 覆盖字号 token：用 var() 引用的文字按档位放大；页面静态 rpx 不受影响（已知局限）。 */
 page.font-lg, .font-lg {
-  --fs-hero-xl: 128rpx;
-  --fs-hero-lg: 100rpx;
-  --fs-hero-sm: 76rpx;
+  --fs-hero-xl: 110rpx;
+  --fs-hero-lg: 82rpx;
+  --fs-hero-sm: 64rpx;
   --fs-h1: 56rpx;
   --fs-h2: 40rpx;
   --fs-lg: 36rpx;
@@ -178,12 +179,12 @@ page.font-lg, .font-lg {
 .safe-top { padding-top: env(safe-area-inset-top); }
 
 /* ============ 镂空撞色标题（Hero 通用）============ */
-/* iOS：text-stroke 描出镂空白边；Android：不支持 stroke 时由 text-shadow 兜底，
-   text-shadow 依字形渲染（与 transparent 填充无关），故白底镂空+安卓可读两不误。 */
+/* 实心标题 + 细描边（下厨房式）：不再用透明镂空字，白字在照片 hero 上清晰，
+   浅色底页面用 .title-stroke--ink（墨色实心）接管。 */
 .title-stroke {
-  color: transparent;
-  -webkit-text-stroke: 3rpx #fff;
-  text-shadow: 0 0 1rpx #fff, 2rpx 0 1rpx #fff, -2rpx 0 1rpx #fff, 0 2rpx 1rpx #fff, 0 -2rpx 1rpx #fff, 2rpx 2rpx 1rpx #fff, -2rpx -2rpx 1rpx #fff;
+  color: var(--c-surface);
+  -webkit-text-stroke: 1.5rpx rgba(255, 255, 255, 0.55);
+  text-shadow: 0 4rpx 16rpx rgba(20, 14, 8, 0.4);
   font-family: var(--sans);
   font-weight: 900;
 }
@@ -192,10 +193,11 @@ page.font-lg, .font-lg {
   -webkit-text-stroke: 0;
   text-shadow: none;
 }
-/* 浅底（paper）镂空标题：墨色描边 + 墨色 text-shadow 兜底，避免白影在浅底看不见 */
+/* 浅底（paper）实心标题：墨色实心 + 细墨描边，深色模式随 token 自动 */
 .title-stroke--ink {
-  -webkit-text-stroke-color: var(--ink);
-  text-shadow: 0 0 1rpx var(--ink), 2rpx 0 1rpx var(--ink), -2rpx 0 1rpx var(--ink), 0 2rpx 1rpx var(--ink), 0 -2rpx 1rpx var(--ink), 2rpx 2rpx 1rpx var(--ink), -2rpx -2rpx 1rpx var(--ink);
+  color: var(--ink);
+  -webkit-text-stroke: 1.5rpx rgba(44, 36, 27, 0.3);
+  text-shadow: none;
 }
 /* Android 兜底（旧）：纯实心白字 + 多向白描边，仍保留以兼容历史用法 */
 .title-shadow {
@@ -222,11 +224,11 @@ page.font-lg, .font-lg {
   background: var(--pop);
 }
 .shead .eyebrow {
-  font-family: var(--serif);
-  font-style: italic;
+  font-family: var(--sans);
+  font-style: normal;
   font-size: var(--fs-cap);
   letter-spacing: 1rpx;
-  color: var(--gold-deep);
+  color: var(--mut-strong);
   font-weight: 700;
 }
 .shead h2, .shead .shead-title {
@@ -241,7 +243,7 @@ page.font-lg, .font-lg {
 .shead .shead-title .pop { color: var(--pop); }
 .shead .seeall {
   font-size: var(--fs-sub);
-  color: var(--gold-deep);
+  color: var(--mut-strong);
   font-weight: 700;
   flex: none;
   padding-bottom: 6rpx;
@@ -249,10 +251,10 @@ page.font-lg, .font-lg {
 
 /* ============ 通用 eyebrow / 标题 ============ */
 .eyebrow-serif {
-  font-family: var(--serif);
-  font-style: italic;
+  font-family: var(--sans);
+  font-style: normal;
   font-size: var(--fs-cap);
-  color: var(--gold-deep);
+  color: var(--mut-strong);
   font-weight: 700;
 }
 

@@ -223,7 +223,7 @@ Page({
   },
 
   goAddRecipe() {
-    wx.switchTab({ url: '/pages/home/index' });
+    wx.switchTab({ url: '/pages/recipes/index' });
   },
 
   // ====== §3 / §7 新增 ======

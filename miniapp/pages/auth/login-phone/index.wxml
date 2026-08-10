@@ -7,7 +7,7 @@
   <view class="lp-body">
     <view class="lp-hero g-fade-up">
       <text class="lp-eyebrow">手机号登录</text>
-      <view class="lp-title title-stroke">手机号<text class="pop">登录</text></view>
+      <view class="lp-title">手机号<text class="pop">登录</text></view>
       <text class="lp-sub">输入手机号获取验证码，一步登录你的家庭饭桌。</text>
     </view>
 

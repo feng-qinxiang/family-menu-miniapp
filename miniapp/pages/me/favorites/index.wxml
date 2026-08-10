@@ -1,5 +1,5 @@
 <!-- pages/me/favorites/index.wxml · 我的收藏 -->
-<nav-bar title="个人中心" statusBarHeight="{{statusBarHeight}}"></nav-bar>
+<nav-bar title="我的收藏" statusBarHeight="{{statusBarHeight}}"></nav-bar>
 
 <scroll-view scroll-y class="fav-scroll" style="padding-top: {{statusBarHeight}}px;">
   <view class="container">

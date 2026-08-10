@@ -40,9 +40,7 @@
     "pages/me/help-faq/index",
     "pages/me/about/index",
     "pages/legal/terms/index",
-    "pages/legal/privacy/index",
-    "pages/launch/splash/index",
-    "pages/launch/onboarding/index"
+    "pages/legal/privacy/index"
   ],
   "window": {
     "navigationBarTitleText": "家庭点菜",

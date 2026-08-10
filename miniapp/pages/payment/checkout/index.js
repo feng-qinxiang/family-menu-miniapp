@@ -4,8 +4,8 @@
 const api = require('../../../utils/api');
 
 const PLAN_MAP = {
-  yearly:  { planId: 'annual',  planName: '家庭年卡',  priceFull: '99.00', priceFen: 9900 },
-  monthly: { planId: 'monthly', planName: '家庭月卡', priceFull: '19.90',  priceFen: 1990  },
+  yearly:  { planId: 'annual',  planName: '家庭年卡',  priceFull: '99.00', priceFen: 9900, original: '138.00' },
+  monthly: { planId: 'monthly', planName: '家庭月卡', priceFull: '19.90',  priceFen: 1990, original:  '29.90'  },
 };
 
 Page({

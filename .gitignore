@@ -21,3 +21,8 @@ Thumbs.db
 /artifacts/ui-baseline/
 /artifacts/_probe_shot.png
 /artifacts/_ui_home_after*.png
+/.tools/
+/*.ps1
+/artifacts/p2/
+/artifacts/_p2_*.png
+/artifacts/_stage.png

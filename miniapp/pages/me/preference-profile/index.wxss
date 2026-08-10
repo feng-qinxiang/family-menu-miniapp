@@ -214,7 +214,7 @@
   width: 58rpx;
   height: 58rpx;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--cat-gold), var(--gold), var(--gold-deep));
+  background: linear-gradient(135deg, var(--pop), var(--pop-deep));
   display: flex;
   align-items: center;
   justify-content: center;

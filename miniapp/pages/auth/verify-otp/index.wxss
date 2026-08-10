@@ -39,9 +39,8 @@
   font-size: var(--fs-hero-lg);
   line-height: 0.92;
   letter-spacing: -4rpx;
+  color: var(--ink);
 }
-/* 浅底页面镂空标题改用墨色描边，保证可读 */
-.title-stroke--ink { -webkit-text-stroke-color: var(--ink); }
 .sent {
   margin-top: 34rpx;
   font-size: 28rpx;

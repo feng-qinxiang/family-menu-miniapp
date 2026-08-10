@@ -33,7 +33,7 @@
   line-height: 0.92;
   font-weight: 900;
   letter-spacing: -5rpx;
-  -webkit-text-stroke: 3rpx var(--ink-deep);
+  color: var(--ink);
 }
 .lp-title .pop { color: var(--pop); }
 .lp-sub {

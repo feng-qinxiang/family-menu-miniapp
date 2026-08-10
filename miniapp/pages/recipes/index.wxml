@@ -1,11 +1,10 @@
 <wxs src="../../utils/cuisine.wxs" module="cuisine" />
 <view class="recipes-mag {{fontScale === 'lg' ? 'font-lg' : ''}}">
-  <!-- ===== HERO ===== -->
+  <!-- ===== HERO（轻量头部：小图条 + 实心标题） ===== -->
   <view class="rx-hero g-fade-in">
     <image wx:if="{{heroRecipe.cover}}" class="rx-hero-img" src="{{heroRecipe.cover}}" mode="aspectFill" />
     <image wx:else class="rx-hero-img" src="/assets/dishes/kungpao-chicken.jpg" mode="aspectFill" />
     <view class="rx-hero-shade"></view>
-    <view class="rx-hero-bignum">全</view>
 
     <view class="rx-hero-top g-fade-down g-d1">
       <view class="rx-greet">
@@ -20,10 +19,8 @@
     <view class="rx-hero-body g-fade-up g-d2">
       <view class="rx-tag">菜谱精选</view>
       <view class="rx-hero-title title-stroke">家里能点的<text class="pop">菜</text></view>
-      <view class="rx-hero-sub">{{recipes.length || 0}} 道家常菜，按口味、菜系、忌口随心挑</view>
       <view class="rx-hero-meta">
         <view class="rx-m">{{filteredRecipes.length}} 道可点</view>
-        <view class="rx-m">快手到大菜</view>
         <view class="rx-m">川 · 粤 · 家常</view>
       </view>
     </view>

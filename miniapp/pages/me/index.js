@@ -69,7 +69,8 @@ Page({
     prefBars: [],
     favoriteCuisine: '',
     appVersion: 'v1.0.0',
-    loading: true
+    loading: true,
+    loadError: ''
   },
 
   onShow() {
@@ -189,9 +190,14 @@ Page({
       this.countUp('monthCookCount', monthCookCount);
     } catch (err) {
       console.error('me loadProfile failed', err);
-      this.setData({ loading: false });
+      this.setData({ loading: false, loadError: (err && err.message) || '网络不太好，稍后再试' });
       wx.showToast({ title: '加载失败', icon: 'none' });
     }
+  },
+
+  retryLoad() {
+    this.setData({ loading: true, loadError: '' });
+    this.loadProfile();
   },
 
   goMemberManage() {

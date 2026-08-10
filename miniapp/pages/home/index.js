@@ -523,6 +523,10 @@ Page({
     wx.navigateTo({ url: '/pages/menu/index' });
   },
 
+  goShopping() {
+    wx.navigateTo({ url: '/pages/shopping/index' });
+  },
+
   goRecipes() {
     wx.switchTab({ url: '/pages/recipes/index' });
   },

@@ -5,7 +5,7 @@
   <!-- Hero 标题 -->
   <view class="hero g-fade-up">
     <view class="eyebrow-serif">Need a hand?</view>
-    <view class="hero-h title-stroke title-shadow">帮助<text class="pop">中心</text></view>
+    <view class="hero-h">帮助<text class="pop">中心</text></view>
   </view>
 
   <!-- 搜索框 -->

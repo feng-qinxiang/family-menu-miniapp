@@ -38,6 +38,7 @@
   letter-spacing: -3rpx;
   line-height: 1.04;
   margin-top: 12rpx;
+  color: var(--ink);
 }
 .vu-lead-p {
   font-size: var(--fs-sub);

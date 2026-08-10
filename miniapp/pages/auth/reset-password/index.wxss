@@ -116,7 +116,7 @@
   width: 32rpx;
   height: 22rpx;
   margin-top: 12rpx;
-  background: var(--gold-deep);
+  background: var(--pop);
   border-radius: var(--r-xs);
 }
 .rp-ic-lock::before {
@@ -212,7 +212,7 @@
   color: var(--gold-deep);
 }
 .rp-hint.ok .rp-hint-mark {
-  background: var(--gold-deep);
+  background: var(--pop);
 }
 .rp-hint.bad {
   color: var(--pop);

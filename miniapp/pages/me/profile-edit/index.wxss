@@ -146,7 +146,7 @@
   width: 26rpx;
   height: 26rpx;
   border-radius: var(--r-xs);
-  background: var(--gold-deep);
+  background: var(--pop);
   opacity: 0.85;
 }
 .pe-flabel {

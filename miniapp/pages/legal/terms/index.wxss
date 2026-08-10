@@ -34,9 +34,8 @@
   font-size: 66rpx;
   line-height: 1.05;
   letter-spacing: -3rpx;
-  /* title-shadow 兜底白描边，pop 子字自带番茄红 */
+  color: var(--ink);
 }
-.hero-title.title-shadow { color: var(--ink); text-shadow: none; }
 .hero-title .pop { color: var(--pop); }
 
 .effdate {
@@ -120,7 +119,7 @@
   height: 10rpx;
   margin: 18rpx 22rpx 0 0;
   border-radius: 50%;
-  background: var(--gold-deep);
+  background: var(--pop);
 }
 .clause-li-tx {
   flex: 1;

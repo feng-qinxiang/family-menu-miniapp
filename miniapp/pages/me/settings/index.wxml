@@ -5,7 +5,7 @@
   <!-- Hero eyebrow + 镂空标题 -->
   <view class="set-hero g-fade-up">
     <view class="eyebrow-serif">偏好设置</view>
-    <view class="set-hero-title title-stroke title-shadow">设<text class="pop">置</text></view>
+    <view class="set-hero-title">设<text class="pop">置</text></view>
   </view>
 
   <!-- 账号安全 -->
