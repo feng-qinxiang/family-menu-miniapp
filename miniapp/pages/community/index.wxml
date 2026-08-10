@@ -11,7 +11,6 @@
     <view class="hero">
       <image class="hero-bg" src="/assets/dishes/sweet-sour-chicken.jpg" mode="aspectFill" />
       <view class="hero-mask"></view>
-      <text class="hero-bignum">C</text>
       <view class="hero-body g-fade-up">
         <text class="hero-tag">左邻右舍</text>
         <view class="hero-title title-stroke">邻里<text class="pop">厨房</text></view>

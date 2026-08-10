@@ -9,7 +9,6 @@
   <view class="mkt-hero g-fade-in">
     <image class="mkt-hero-img" src="/assets/dishes/long-beans.jpg" mode="aspectFill" />
     <view class="mkt-hero-mask"></view>
-    <text class="mkt-hero-bignum">{{summary.totalCount}}</text>
     <text class="mkt-hero-eyebrow">买菜清单</text>
 
     <view class="mkt-hero-body">

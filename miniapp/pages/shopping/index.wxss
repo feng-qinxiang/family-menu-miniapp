@@ -20,7 +20,7 @@
 /* ============ HERO ============ */
 .mkt-hero {
   position: relative;
-  height: 862rpx;
+  height: 360rpx;
   overflow: hidden;
 }
 .mkt-hero-img {

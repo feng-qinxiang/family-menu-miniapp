@@ -8,7 +8,6 @@
   <view class="m-hero g-fade-up">
     <image class="m-hero-img" src="{{heroImage}}" mode="aspectFill" data-target="hero" binderror="onHeroImgError" />
     <view class="m-hero-mask"></view>
-    <view class="m-hero-bignum">{{totalCount || 0}}</view>
     <view class="m-hero-top">
       <view class="m-hero-date">{{todayLabel}} · {{mealTimeLabel}}</view>
       <view class="m-hd-add tap-scale" bindtap="goAddRecipe">
@@ -37,6 +36,17 @@
       <view class="m-load-error-desc">{{loadError}}</view>
       <view class="m-load-error-btn tap-scale" bindtap="retryLoad">重新加载</view>
     </view>
+    <!-- 骨架屏：首次加载占位，避免闪 0 道菜 -->
+    <block wx:elif="{{loading}}">
+      <view class="m-skel-card shimmer"></view>
+      <view class="m-skel-row">
+        <view class="m-skel-quick shimmer"></view>
+        <view class="m-skel-quick shimmer"></view>
+        <view class="m-skel-quick shimmer"></view>
+      </view>
+      <view class="m-skel-dish shimmer"></view>
+      <view class="m-skel-dish shimmer"></view>
+    </block>
     <block wx:elif="{{true}}">
     <!-- 统计卡 -->
     <view class="m-stat-card g-fade-up g-d1">

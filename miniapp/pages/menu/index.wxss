@@ -18,7 +18,7 @@
 /* ============ HERO ============ */
 .m-hero {
   position: relative;
-  height: 862rpx;
+  height: 360rpx;
   overflow: hidden;
 }
 .m-hero-img {
@@ -117,7 +117,7 @@
   position: relative;
   margin-top: -50rpx;
   background: var(--paper);
-  border-radius: 54rpx 54rpx 0 0;
+  border-radius: 20rpx 20rpx 0 0;
   padding: 46rpx 28rpx 0;
   z-index: 20;
 }
@@ -497,4 +497,30 @@
   color: var(--c-surface);
   font-size: 26rpx;
   font-weight: 700;
+}
+
+/* ---------- 骨架屏（首次加载） ---------- */
+.m-skel-card {
+  height: 160rpx;
+  border-radius: var(--r-lg, 28rpx);
+  background: var(--skeleton);
+  margin-bottom: 20rpx;
+}
+.m-skel-row {
+  display: flex;
+  gap: 20rpx;
+  margin-bottom: 20rpx;
+}
+.m-skel-quick {
+  flex: 1;
+  height: 180rpx;
+  border-radius: var(--r-md);
+  background: var(--skeleton);
+}
+.m-skel-dish {
+  height: 120rpx;
+  border-radius: var(--r-md);
+  background: var(--skeleton);
+  margin-bottom: 16rpx;
+  opacity: 0.8;
 }

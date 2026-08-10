@@ -13,7 +13,6 @@
   <view class="wm-hero">
     <image class="wm-hero-img" src="{{heroImage}}" mode="aspectFill" />
     <view class="wm-hero-mask"></view>
-    <text class="wm-bignum">7</text>
 
     <view class="wm-hero-body">
       <text class="wm-tag">本周计划</text>

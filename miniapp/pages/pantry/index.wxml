@@ -9,7 +9,6 @@
   <view class="phero g-fade-up">
     <image class="phero-img" src="/assets/dishes/tomato-egg.jpg" mode="aspectFill" />
     <view class="phero-mask"></view>
-    <view class="phero-bignum">{{pantrySummary.count}}</view>
     <view class="phero-copy">
       <text class="phero-tag">我的冰箱</text>
       <view class="title-stroke title-shadow phero-title">冰箱<text class="pop">库存</text></view>

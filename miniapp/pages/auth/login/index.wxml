@@ -6,7 +6,6 @@
     <view class="hero">
       <image class="hero-img" src="/assets/dishes/chicken-congee.jpg" mode="aspectFill" />
       <view class="hero-mask"></view>
-      <text class="hero-bignum">01</text>
 
       <view class="brandbar g-fade-down g-d1">
         <view class="logo">

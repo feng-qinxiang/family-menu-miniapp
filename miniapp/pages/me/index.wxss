@@ -11,7 +11,7 @@
 /* ---------- HERO ---------- */
 .mag-hero {
   position: relative;
-  height: 862rpx;
+  height: 360rpx;
   overflow: hidden;
 }
 .mag-hero-img {
@@ -124,8 +124,8 @@
   margin-left: auto;
   font-size: 24rpx;
   font-weight: 800;
-  color: var(--ink-deep);
-  background: var(--gold);
+  color: var(--c-surface);
+  background: var(--pop);
   padding: 16rpx 28rpx;
   border-radius: var(--r-pill);
 }
@@ -137,7 +137,7 @@
   z-index: 5;
   padding: 46rpx 28rpx 0;
   background: var(--paper);
-  border-radius: 54rpx 54rpx 0 0;
+  border-radius: 20rpx 20rpx 0 0;
 }
 
 /* ---------- VIP banner ---------- */
@@ -147,8 +147,8 @@
   gap: 24rpx;
   padding: 28rpx 30rpx;
   border-radius: var(--r-card);
-  background: linear-gradient(120deg, var(--ink-deep) 0%, var(--cat-brown-deep) 55%, var(--gold-deep) 130%);
-  box-shadow: var(--sh-soft), 0 34rpx 76rpx rgba(120, 70, 30, 0.22);
+  background: linear-gradient(120deg, var(--pop-deep) 0%, var(--pop) 100%);
+  box-shadow: var(--sh-soft);
 }
 .mag-vip-ic {
   width: 80rpx;
@@ -159,9 +159,8 @@
   justify-content: center;
   border-radius: var(--r-md);
   font-size: 38rpx;
-  background: linear-gradient(135deg, var(--gold), var(--gold-deep));
-  color: var(--ink-deep);
-  box-shadow: 0 8rpx 22rpx rgba(0, 0, 0, 0.25);
+  background: rgba(255, 255, 255, 0.18);
+  color: var(--c-surface);
 }
 .mag-vip-mid { flex: 1; min-width: 0; }
 .mag-vip-t { font-size: 28rpx; font-weight: 800; color: var(--c-surface); }
@@ -171,8 +170,8 @@
   flex: none;
   font-size: var(--fs-cap);
   font-weight: 800;
-  color: var(--ink-deep);
-  background: var(--gold);
+  color: var(--pop-deep);
+  background: var(--c-surface);
   padding: 15rpx 26rpx;
   border-radius: var(--r-pill);
 }
@@ -400,3 +399,37 @@
 .mag-phone-t { font-size: 28rpx; font-weight: 600; color: var(--ink-deep); }
 .mag-phone-s { margin-top: 6rpx; font-size: 23rpx; color: var(--mut-strong); }
 .mag-phone-go { font-size: 26rpx; color: var(--pop); font-weight: 600; flex-shrink: 0; }
+
+/* ---------- 加载失败态 ---------- */
+.mag-load-error {
+  margin: 40rpx 0;
+  padding: 56rpx 40rpx;
+  border-radius: var(--r-lg, 28rpx);
+  background: var(--c-surface);
+  box-shadow: var(--sh-card);
+  text-align: center;
+}
+.mag-load-error-title {
+  font-size: 32rpx;
+  font-weight: 800;
+  color: var(--ink-deep);
+}
+.mag-load-error-desc {
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  color: var(--mut-strong);
+  word-break: break-all;
+}
+.mag-load-error-btn {
+  margin: 32rpx auto 0;
+  width: 240rpx;
+  height: 76rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-pill);
+  background: var(--ink-deep);
+  color: var(--c-surface);
+  font-size: 26rpx;
+  font-weight: 700;
+}

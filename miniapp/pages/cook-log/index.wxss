@@ -23,7 +23,7 @@
 /* ===== Hero ===== */
 .hero {
   position: relative;
-  height: 862rpx;
+  height: 360rpx;
   overflow: hidden;
 }
 .hero-img {
@@ -125,7 +125,7 @@
   position: relative;
   margin-top: -50rpx;
   background: var(--paper);
-  border-radius: 54rpx 54rpx 0 0;
+  border-radius: 20rpx 20rpx 0 0;
   padding: 46rpx 0 36rpx;
   z-index: 20;
 }
@@ -223,7 +223,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--gold-deep);
+  background: var(--pop);
 }
 .chip.on .av { background: var(--pop); }
 

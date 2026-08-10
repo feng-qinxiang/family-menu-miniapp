@@ -3,7 +3,6 @@
   <view class="mag-hero g-fade-up">
     <image class="mag-hero-img" src="/assets/dishes/hongshao-pork.jpg" mode="aspectFill" />
     <view class="mag-hero-mask"></view>
-    <view class="mag-hero-bignum">{{monthCookCount}}</view>
 
     <view class="mag-hero-top">
       <view>
@@ -47,12 +46,19 @@
       <view class="mag-phone-go">去绑定 ›</view>
     </view>
 
+    <!-- 加载失败态 -->
+    <view class="mag-load-error" wx:if="{{loadError}}">
+      <view class="mag-load-error-title">厨房数据没加载出来</view>
+      <view class="mag-load-error-desc">{{loadError}}</view>
+      <view class="mag-load-error-btn tap-scale" bindtap="retryLoad">重新加载</view>
+    </view>
+
     <!-- 数据卡 -->
     <view class="mag-stats g-fade-up g-d1">
       <view class="mag-stat tap-scale" bindtap="goRecipes">
         <view class="mag-snum pop {{loading ? 'shimmer num-skel' : ''}}">{{savedCount}}</view>
-        <view class="mag-scap">收藏菜谱</view>
-        <view class="mag-scap-en">已收藏</view>
+        <view class="mag-scap">我的菜谱</view>
+        <view class="mag-scap-en">自建+导入</view>
       </view>
       <view class="mag-stat tap-scale">
         <view class="mag-snum {{loading ? 'shimmer num-skel' : ''}}">{{monthCookCount}}</view>

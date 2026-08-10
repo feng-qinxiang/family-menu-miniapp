@@ -14,7 +14,7 @@
 /* ===== Hero 大图 ===== */
 .rd-hero {
   position: relative;
-  height: 862rpx;
+  height: 360rpx;
   overflow: hidden;
 }
 .rd-hero-img {

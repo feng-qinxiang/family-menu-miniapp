@@ -49,7 +49,7 @@
 /* 照片 hero */
 .wm-hero {
   position: relative;
-  height: 862rpx;
+  height: 360rpx;
   overflow: hidden;
 }
 .wm-hero-img {
@@ -140,7 +140,7 @@
   width: 10rpx;
   height: 10rpx;
   border-radius: 50%;
-  background: var(--gold);
+  background: var(--pop);
   margin: 10rpx auto 0;
 }
 .wm-wb-dot.empty { background: rgba(255, 255, 255, 0.3); }
@@ -151,7 +151,7 @@
   position: relative;
   margin-top: -50rpx;
   background: var(--paper);
-  border-radius: 54rpx 54rpx 0 0;
+  border-radius: 20rpx 20rpx 0 0;
   padding: 46rpx 46rpx 40rpx;
   z-index: 20;
 }

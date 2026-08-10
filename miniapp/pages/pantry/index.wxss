@@ -19,7 +19,7 @@
 /* ============ Hero ============ */
 .phero {
   position: relative;
-  height: 862rpx;
+  height: 360rpx;
   overflow: hidden;
 }
 .phero-img {
@@ -123,7 +123,7 @@
   margin-top: -50rpx;
   z-index: 20;
   background: var(--paper);
-  border-radius: 54rpx 54rpx 0 0;
+  border-radius: 20rpx 20rpx 0 0;
   padding: 50rpx 46rpx calc(env(safe-area-inset-bottom) + 160rpx);
 }
 .psheet .shead { margin-top: 8rpx; }

@@ -8,7 +8,6 @@
     <view class="rd-hero">
       <image class="rd-hero-img" src="{{recipe.cover}}" mode="aspectFill" />
       <view class="rd-hero-mask"></view>
-      <view class="rd-hero-bignum serif">{{recipe.heroChar}}</view>
 
       <!-- 顶部导航：复用 nav-bar，标题留空仅返回 + 右侧收藏/记录槽 -->
       <nav-bar title="" status-bar-height="{{statusBarHeight}}">

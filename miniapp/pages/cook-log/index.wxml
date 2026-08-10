@@ -10,7 +10,6 @@
     <view class="hero">
       <image class="hero-img" src="{{heroCover}}" mode="aspectFill"></image>
       <view class="hero-mask"></view>
-      <text class="hero-bignum serif">{{bigNum}}</text>
 
       <view class="hero-body g-fade-up">
         <text class="hero-tag">做菜记录</text>
