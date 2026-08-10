@@ -9,21 +9,16 @@
   padding-bottom: 340rpx;
 }
 
-/* ===== HERO ===== */
+/* ===== HERO（轻量头部） ===== */
 .rx-hero {
   position: relative;
-  height: 862rpx;
+  height: 480rpx;
   overflow: hidden;
 }
 .rx-hero-img { position: absolute; inset: 0; width: 100%; height: 100%; }
 .rx-hero-shade {
   position: absolute; inset: 0; z-index: 1;
-  background: linear-gradient(180deg, rgba(20,14,8,.5) 0%, rgba(20,14,8,0) 28%, rgba(20,14,8,.18) 52%, rgba(20,14,8,.9) 100%);
-}
-.rx-hero-bignum {
-  position: absolute; top: 162rpx; right: 26rpx; z-index: 2;
-  font-family: var(--serif); font-size: 423rpx; font-weight: 700; line-height: 1;
-  color: rgba(255,255,255,.07);
+  background: linear-gradient(180deg, rgba(20,14,8,.5) 0%, rgba(20,14,8,.25) 45%, rgba(20,14,8,.72) 100%);
 }
 .rx-hero-top {
   position: absolute; top: calc(env(safe-area-inset-top) + 90rpx); left: 46rpx; right: 46rpx; z-index: 10;
@@ -38,28 +33,28 @@
   box-shadow: 0 2rpx 4rpx rgba(180,40,20,.3), var(--sh-pop);
 }
 .rx-create-plus { font-size: 32rpx; font-weight: 700; line-height: 1; }
-.rx-hero-body { position: absolute; left: 46rpx; right: 46rpx; bottom: 58rpx; z-index: 10; color: var(--c-surface); }
+.rx-hero-body { position: absolute; left: 46rpx; right: 46rpx; bottom: 40rpx; z-index: 10; color: var(--c-surface); }
 .rx-tag {
   display: inline-block; font-family: var(--serif); font-style: italic;
   font-size: var(--fs-cap); letter-spacing: 2rpx; font-weight: 700;
   color: var(--c-surface); background: var(--pop); padding: 10rpx 26rpx; border-radius: var(--r-xs);
 }
 .rx-hero-title {
-  font-size: var(--fs-hero-xl); line-height: .9; letter-spacing: -6rpx;
-  margin: 30rpx 0 22rpx; -webkit-text-stroke: 3rpx var(--c-surface);
+  font-size: var(--fs-hero-lg); line-height: 1; letter-spacing: -4rpx;
+  margin: 16rpx 0 12rpx;
 }
 .rx-hero-sub { font-size: var(--fs-cap); color: rgba(255,255,255,.85); font-weight: 400; }
-.rx-hero-meta { display: flex; gap: 18rpx; margin-top: 34rpx; flex-wrap: wrap; }
+.rx-hero-meta { display: flex; gap: 14rpx; margin-top: 6rpx; flex-wrap: wrap; }
 .rx-m {
-  font-size: var(--fs-cap); font-weight: 600; color: var(--c-surface);
-  background: rgba(255,255,255,.16); padding: 13rpx 25rpx; border-radius: var(--r-pill);
+  font-size: var(--fs-mini); font-weight: 600; color: var(--c-surface);
+  background: rgba(255,255,255,.16); padding: 10rpx 22rpx; border-radius: var(--r-pill);
 }
 /* ===== SHEET ===== */
 .rx-sheet {
   position: relative;
   margin-top: -50rpx;
   background: var(--paper);
-  border-radius: 54rpx 54rpx 0 0;
+  border-radius: 20rpx 20rpx 0 0;
   padding: 16rpx 0 24rpx;
   z-index: 20;
 }
@@ -207,7 +202,7 @@
   color: var(--c-surface); font-size: 38rpx; font-weight: 700; line-height: 1;
   box-shadow: 0 2rpx 4rpx rgba(180,40,20,.3), var(--sh-pop);
 }
-.rx-card-add.picked { background: var(--gold-deep); box-shadow: var(--sh-gold); }
+.rx-card-add.picked { background: var(--pop); box-shadow: var(--sh-pop); }
 
 /* 上拉加载 */
 .rx-loadmore {

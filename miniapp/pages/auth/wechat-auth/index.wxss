@@ -106,7 +106,7 @@
   top: 820rpx;
   bottom: 0;
   background: var(--paper);
-  border-radius: 54rpx 54rpx 0 0;
+  border-radius: 20rpx 20rpx 0 0;
   padding: 50rpx 46rpx;
 }
 .wa-bg-wx {

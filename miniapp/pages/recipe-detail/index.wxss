@@ -153,7 +153,7 @@
   position: relative;
   margin-top: -50rpx;
   background: var(--paper);
-  border-radius: 54rpx 54rpx 0 0;
+  border-radius: 20rpx 20rpx 0 0;
   padding: 44rpx 46rpx 220rpx;
   z-index: 5;
 }
