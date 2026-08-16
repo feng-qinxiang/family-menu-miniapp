@@ -2,6 +2,19 @@
 
 家庭点菜 + 菜谱社区 + 导入配方 + VIP/广告 的微信小程序项目。
 
+## 截图
+
+| 首页「今天做什么」 |
+| :---: |
+| ![首页](artifacts/_final_home.png) |
+
+## 技术栈与架构
+
+- 后端：Spring Boot 3.2 / Java 17 / Spring JDBC / MySQL 8（Maven Wrapper 自举，无本机 Maven 依赖）
+- 前端：微信小程序原生（43 页面、自定义 TabBar、设计 token 主题化、深色模式）
+- 测试：`@SpringBootTest` 集成测试连真实 MySQL，覆盖登录→菜单→清单→家庭协作主链路
+- 架构：小程序 ⇄ REST API（`AuthInterceptor` 统一鉴权）⇄ Spring Boot ⇄ MySQL 8；无密码登录（微信 code2session / OTP / 游客会话）
+
 ## 项目结构
 
 - `server/` Spring Boot 3.2 / Java 17 后端 API（包名 `com.familymenu.daily`）
