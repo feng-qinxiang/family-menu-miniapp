@@ -1,4 +1,7 @@
 {
   "navigationBarTitleText": "VIP 会员",
-  "navigationStyle": "custom"
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "section-head": "/components/section-head/index"
+  }
 }

@@ -4,6 +4,8 @@
   "enablePullDownRefresh": true,
   "onReachBottomDistance": 80,
   "usingComponents": {
-    "state-empty": "/components/state-empty/index"
+    "state-empty": "/components/state-empty/index",
+    "recipe-card": "/components/recipe-card/index",
+    "section-head": "/components/section-head/index"
   }
 }

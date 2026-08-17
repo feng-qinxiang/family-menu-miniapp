@@ -1,5 +1,5 @@
 <!-- components/section-head/index.wxml -->
-<view class="shead sh-comp">
+<view class="shead sh-comp ext-class">
   <view class="shead-main">
     <view class="shead-bar"></view>
     <text wx:if="{{eyebrow}}" class="eyebrow">{{eyebrow}}</text>

@@ -37,6 +37,8 @@ Page({
     comments: [],
     commentDraft: '',
     commentSubmitting: false,
+    postSubmitting: false,
+    favoriting: false,
     reportReasons,
     activeReportReason: '内容不实',
     showReportSheet: false,
@@ -164,14 +166,18 @@ Page({
   },
 
   async toggleFavorite(event) {
+    if (this.data.favoriting) return;
     const { id } = event.currentTarget.dataset;
     let updated;
     try {
+      this.setData({ favoriting: true });
       updated = await toggleCommunityFavorite(id);
     } catch (err) {
+      this.setData({ favoriting: false });
       wx.showToast({ title: '操作失败，请重试', icon: 'none' });
       return;
     }
+    this.setData({ favoriting: false });
     if (!updated) {
       return;
     }
@@ -270,6 +276,7 @@ Page({
   },
 
   async submitPost() {
+    if (this.data.postSubmitting) return;
     const { title, content, tagsText } = this.data.postForm;
     if (!title.trim()) {
       wx.showToast({ title: '请输入标题', icon: 'none' });
@@ -280,13 +287,15 @@ Page({
       return;
     }
     const tags = tagsText.split(/[,，]/).map((s) => s.trim()).filter(Boolean);
+    this.setData({ postSubmitting: true });
     try {
       await createCommunityPost({ title: title.trim(), content: content.trim(), tags });
     } catch (err) {
+      this.setData({ postSubmitting: false });
       wx.showToast({ title: '发布失败，请重试', icon: 'none' });
       return;
     }
-    this.setData({ showPostForm: false, postForm: { title: '', content: '', tagsText: '' } });
+    this.setData({ showPostForm: false, postForm: { title: '', content: '', tagsText: '' }, postSubmitting: false });
     await this.loadPosts();
     wx.showToast({ title: '发布成功', icon: 'success' });
   }

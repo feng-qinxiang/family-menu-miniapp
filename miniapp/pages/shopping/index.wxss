@@ -254,7 +254,7 @@
   font-size: 24rpx;
   font-weight: 700;
   color: var(--mut);
-  padding: 12rpx 20rpx;
+  padding: 20rpx 24rpx;   /* 适老触点高度 ≥64rpx（24 字号 + 40 上下 padding） */
   border-radius: var(--r-sm);
   background: var(--paper-2);
 }
@@ -284,34 +284,6 @@
 
 /* shead 已入篮 / 加购 */
 .mkt-shead { margin: 56rpx 0 14rpx; }
-.mkt-shead-main { position: relative; padding-left: 28rpx; }
-.mkt-shead-main .shead-bar {
-  position: absolute;
-  left: 0;
-  top: 6rpx;
-  bottom: 6rpx;
-  width: 8rpx;
-  border-radius: 4rpx;
-  background: var(--pop);
-}
-.mkt-shead-main .eyebrow {
-  display: block;
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: var(--fs-cap);
-  letter-spacing: 1rpx;
-  color: var(--gold-deep);
-  font-weight: 700;
-}
-.mkt-shead-title {
-  font-size: 58rpx;
-  font-weight: 900;
-  color: var(--ink);
-  letter-spacing: -3rpx;
-  margin-top: 8rpx;
-  line-height: 0.96;
-}
-.mkt-shead-title .pop { color: var(--pop); }
 
 /* add bar 虚线 */
 .mkt-addbar {
@@ -444,7 +416,7 @@
 .sp-pitem-name { flex: 1; min-width: 0; font-size: 28rpx; font-weight: 700; color: var(--ink); }
 .sp-pitem-qty { font-size: 24rpx; color: var(--mut-strong); font-weight: 600; }
 .sp-pitem-del {
-  width: 48rpx; height: 48rpx;
+  width: 64rpx; height: 64rpx;   /* 适老触点 ≥64rpx（原 48rpx 偏小） */
   display: flex; align-items: center; justify-content: center;
   border-radius: 50%;
   background: var(--paper-2);

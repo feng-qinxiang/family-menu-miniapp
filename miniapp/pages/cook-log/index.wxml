@@ -77,17 +77,21 @@
 
       <view class="pad">
         <!-- Section 标题 -->
-        <view class="shead">
-          <view class="shead-main">
-            <view class="shead-bar"></view>
-            <view class="eyebrow">最近上桌</view>
-            <view class="shead-title">最近<text class="pop">上桌</text>的</view>
-          </view>
-          <text class="seeall">共 {{totalCount}} 条</text>
+        <section-head eyebrow="最近上桌" title="最近" popPart="上桌" titleTail="的" hint="共 {{totalCount}} 条" />
+
+        <!-- 加载失败态 -->
+        <view wx:if="{{loadError}}" class="g-fade-up">
+          <state-empty
+            type="offline"
+            title="记录没加载出来"
+            desc="网络开小差了，检查后再试"
+            cta="重新加载"
+            bind:action="loadHistory"
+          ></state-empty>
         </view>
 
         <!-- 空态 -->
-        <view wx:if="{{!loading && totalCount === 0}}" class="g-fade-up">
+        <view wx:if="{{!loadError && !loading && totalCount === 0}}" class="g-fade-up">
           <state-empty
             type="gold"
             title="还没有做菜记录"
@@ -101,7 +105,7 @@
         </view>
 
         <!-- Timeline -->
-        <view wx:if="{{!loading && totalCount > 0}}" class="timeline">
+        <view wx:if="{{!loadError && !loading && totalCount > 0}}" class="timeline">
           <block wx:for="{{visibleGroups}}" wx:key="key" wx:for-item="group">
             <view class="month-sep g-fade-up">
               <text class="mtag">{{group.label}}<text class="men">{{group.en}}</text></text>

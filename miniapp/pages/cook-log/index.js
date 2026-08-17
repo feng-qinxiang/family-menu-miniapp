@@ -52,7 +52,8 @@ Page({
     visibleGroups: [],   // 受 expanded 控制
     expanded: false,
     totalCount: 0,
-    hiddenCount: 0
+    hiddenCount: 0,
+    loadError: false
   },
 
   onLoad() {
@@ -69,15 +70,15 @@ Page({
   },
 
   loadHistory() {
-    this.setData({ loading: true });
+    this.setData({ loading: true, loadError: false });
     getCookHistory()
       .then((list) => {
         const records = Array.isArray(list) ? list : [];
         this.buildView(records);
       })
       .catch(() => {
-        this.buildView([]);
-        wx.showToast({ title: '记录加载失败', icon: 'none' });
+        // 加载失败进错误态，不伪装成"没有做菜记录"
+        this.setData({ loading: false, loadError: true });
       });
   },
 

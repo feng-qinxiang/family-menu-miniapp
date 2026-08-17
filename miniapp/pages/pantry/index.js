@@ -35,7 +35,8 @@ Page({
     showMatch: false,
     loaded: false,
     loading: true,
-    loadError: false
+    loadError: false,
+    adding: false
   },
 
   onLoad() {
@@ -106,14 +107,17 @@ Page({
   },
 
   async addItem() {
+    if (this.data.adding) return;
     const { ingredientName, amount, unit, expiresAt } = this.data.newItem;
     if (!ingredientName.trim()) {
       wx.showToast({ title: '请输入食材名', icon: 'none' });
       return;
     }
+    this.setData({ adding: true });
     try {
       await addPantryItem({ ingredientName: ingredientName.trim(), amount, unit, expiresAt });
     } catch (e) {
+      this.setData({ adding: false });
       wx.showToast({ title: '添加失败', icon: 'none' });
       return;
     }
@@ -122,11 +126,19 @@ Page({
       showAddForm: false
     });
     await this.loadPantry();
+    this.setData({ adding: false });
     wx.showToast({ title: '已添加', icon: 'success' });
   },
 
   async removeItem(e) {
     const { id } = e.currentTarget.dataset;
+    // 二次确认（仿 menu 撤菜弹窗），防误触
+    const res = await wx.showModal({
+      title: '删除这个食材？',
+      confirmText: '删除',
+      cancelText: '取消'
+    });
+    if (!res.confirm) return;
     try {
       await deletePantryItem(id);
     } catch (err) {

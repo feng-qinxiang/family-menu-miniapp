@@ -92,8 +92,19 @@
     </view>
   </view>
 
+  <!-- 加载失败态：不伪装成"0 笔订单" -->
+  <view wx:if="{{!loading && loadError}}" class="empty-wrap">
+    <state-empty
+      type="offline"
+      title="订单没加载出来"
+      desc="网络开小差了，检查后再试"
+      cta="重新加载"
+      bind:action="retryLoad"
+    ></state-empty>
+  </view>
+
   <!-- 空态 -->
-  <view wx:if="{{!loading && !orders.length}}" class="empty-wrap">
+  <view wx:if="{{!loading && !loadError && !orders.length}}" class="empty-wrap">
     <state-empty
       type="gold"
       title="还没有开通记录"

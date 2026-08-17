@@ -99,7 +99,14 @@ Page({
             signType: prepay.signType || 'RSA',
             paySign: prepay.paySign,
             success: resolve,
-            fail: (err) => reject(new Error((err && err.errMsg) || '用户取消支付')),
+            fail: (err) => {
+              // 微信 errMsg 为英文 "requestPayment:fail cancel"，标记取消供 catch 静默处理
+              const errMsg = (err && err.errMsg) || '';
+              const cancelled = errMsg.indexOf('cancel') >= 0;
+              const error = new Error(cancelled ? '用户取消支付' : (errMsg || '支付未完成'));
+              error.cancelled = cancelled;
+              reject(error);
+            },
           });
         });
         // 真实支付成功：订单状态由后端 notify 写入，这里直接跳成功页
@@ -107,9 +114,9 @@ Page({
         throw new Error('预支付参数异常');
       }
 
-      // 跳成功页
+      // 跳成功页：redirectTo 替换当前页，防返回栈回到 checkout 重复下单
       const planName = encodeURIComponent(this.data.planName);
-      wx.navigateTo({
+      wx.redirectTo({
         url: `/pages/payment/success/index?orderId=${orderId}&amount=${this.data.payAmount}&planName=${planName}`,
         fail: () => this.showToast('已开通，请在"我的"查看会员状态'),
       });
@@ -117,8 +124,8 @@ Page({
       wx.hideLoading();
       this.setData({ paying: false });
       const msg = (err && err.message) || '支付失败，请重试';
-      // 用户主动取消不弹错误
-      if (msg.indexOf('取消') === -1) {
+      // 用户主动取消（cancel/取消）静默返回，不弹任何错误
+      if (!err || (!err.cancelled && msg.indexOf('cancel') === -1 && msg.indexOf('取消') === -1)) {
         this.showToast(msg);
       }
     }

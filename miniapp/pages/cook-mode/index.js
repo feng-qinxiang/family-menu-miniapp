@@ -67,6 +67,9 @@ Page({
   },
 
   _timer: null,
+  _baseAt: 0,             // 本轮计时起点（Date.now），后台回来按差值追上
+  _baseLeft: 0,           // 起点时的剩余秒数
+  _hiddenRunning: false,  // 切后台前计时是否在跑
 
   onLoad(options) {
     let sbh = 0;
@@ -75,6 +78,10 @@ Page({
     } catch (e) {
       sbh = 0;
     }
+    // 烹饪模式常亮：onLoad 开、onUnload 关
+    if (wx.setKeepScreenOn) {
+      wx.setKeepScreenOn({ keepScreenOn: true });
+    }
     const recipeId = (options && (options.recipeId || options.id)) || '';
     this.setData({ statusBarHeight: sbh, recipeId });
     this.loadDetail(recipeId);
@@ -82,11 +89,25 @@ Page({
 
   onUnload() {
     this.clearTimer();
+    if (wx.setKeepScreenOn) {
+      wx.setKeepScreenOn({ keepScreenOn: false });
+    }
   },
 
   onHide() {
-    // 离开页面暂停计时，避免后台空跑
-    this.pauseTimer();
+    // 切后台停 tick 省电；_baseAt 保留，回来按 Date.now 差值续跑（计时连续，后台时间也算）
+    if (this.data.running) {
+      this.clearTimer();
+      this._hiddenRunning = true;
+    }
+  },
+
+  onShow() {
+    // 后台回来：沿用旧基准重启 tick，第一拍即把后台流逝的时间算进来
+    if (this._hiddenRunning) {
+      this._hiddenRunning = false;
+      this.startTimer(true);
+    }
   },
 
   clearTimer() {
@@ -212,31 +233,47 @@ Page({
     }
   },
 
-  startTimer() {
-    if (this.data.timerLeft <= 0) {
+  startTimer(resumeBase) {
+    if (!resumeBase && this.data.timerLeft <= 0) {
       // 已结束则重置再开
       this.setData({ timerLeft: this.data.timerTotal });
     }
     this.clearTimer();
+    if (!resumeBase) {
+      // 新开始：以当前剩余为基准
+      this._baseAt = Date.now();
+      this._baseLeft = this.data.timerLeft;
+    }
+    // resumeBase=true（后台续跑）：沿用 _baseAt/_baseLeft，差值自动补上后台流逝
     this.setData({ running: true });
-    this._timer = setInterval(() => {
-      let left = this.data.timerLeft - 1;
-      if (left <= 0) {
-        left = 0;
-        this.clearTimer();
-        this.setData({ timerLeft: 0, timerText: this.fmt(0), running: false });
-        wx.vibrateShort && wx.vibrateShort({ type: 'heavy' });
-        wx.showToast({ title: '这一步时间到啦', icon: 'none' });
-        return;
-      }
-      this.setData({ timerLeft: left, timerText: this.fmt(left) });
-    }, 1000);
+    this._timer = setInterval(() => this._tick(), 1000);
+    this._tick();
+  },
+
+  _tick() {
+    const elapsed = (Date.now() - this._baseAt) / 1000;
+    const left = Math.round(this._baseLeft - elapsed);
+    if (left <= 0) {
+      this.clearTimer();
+      this.setData({ timerLeft: 0, timerText: this.fmt(0), running: false });
+      wx.vibrateShort && wx.vibrateShort({ type: 'heavy' });
+      wx.showToast({ title: '这一步时间到啦', icon: 'none' });
+      return;
+    }
+    this.setData({ timerLeft: left, timerText: this.fmt(left) });
   },
 
   pauseTimer() {
     if (!this.data.running) return;
+    // 固化此刻的真实剩余（时间戳差值），下次从暂停点续跑
+    const elapsed = (Date.now() - this._baseAt) / 1000;
+    this._baseLeft = Math.max(0, Math.round(this._baseLeft - elapsed));
     this.clearTimer();
-    this.setData({ running: false });
+    this.setData({
+      running: false,
+      timerLeft: this._baseLeft,
+      timerText: this.fmt(this._baseLeft)
+    });
   },
 
   resetTimer() {
@@ -251,6 +288,8 @@ Page({
   // 退出烹饪模式
   onClose() {
     this.clearTimer();
+    this._hiddenRunning = false;
+    this.setData({ running: false });
     const pages = getCurrentPages();
     if (pages && pages.length > 1) {
       wx.navigateBack({ delta: 1 });
@@ -267,6 +306,8 @@ Page({
   // 完成 → 跳做菜记录
   onFinish() {
     this.clearTimer();
+    this._hiddenRunning = false;
+    this.setData({ running: false });
     const { recipeId, recipe } = this.data;
     const title = recipe ? recipe.title : '';
     const url = `/pages/cook-log/index?recipeId=${encodeURIComponent(recipeId)}&title=${encodeURIComponent(title)}`;

@@ -236,6 +236,17 @@
 }
 
 /* ============ 粘贴区 ============ */
+.imp-shead-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20rpx;
+}
+.imp-shead-row .sh-comp,
+.imp-shead-row section-head {
+  flex: 1;
+  min-width: 0;
+}
 .sample {
   font-size: 24rpx;
   color: var(--gold-deep);
@@ -272,6 +283,9 @@
   border-top: 2rpx solid var(--paper-2);
 }
 .ta-cnt { font-size: 22rpx; color: var(--mut-2); }
+.parsebtn.disabled {
+  opacity: 0.5;
+}
 .parsebtn {
   display: flex;
   align-items: center;

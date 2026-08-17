@@ -86,6 +86,12 @@
   font-size: 26rpx;
   font-weight: 700;
 }
+/* 拉取失败态：重试按钮（金色描边突出可点） */
+.fi-copybtn--retry {
+  background: var(--gold);
+  border-color: var(--gold-deep);
+  color: var(--ink-deep);
+}
 .fi-ic-copy {
   width: 30rpx;
   height: 30rpx;
@@ -106,31 +112,7 @@
   border-radius: 4rpx;
 }
 
-/* 二维码占位 */
-.fi-qrwrap {
-  position: relative;
-  z-index: 2;
-  margin: 42rpx auto 0;
-  width: 330rpx;
-  height: 330rpx;
-  background: var(--c-surface);
-  border-radius: 38rpx;
-  padding: 27rpx;
-  box-sizing: border-box;
-  box-shadow: 0 20rpx 50rpx rgba(0, 0, 0, 0.25);
-}
-.fi-qr {
-  position: relative;
-  width: 276rpx;
-  height: 276rpx;
-}
-.fi-qr-cell {
-  position: absolute;
-  width: 9rpx;
-  height: 9rpx;
-  background: var(--ink);
-  border-radius: 1rpx;
-}
+/* 邀请码说明（替代伪二维码：真实邀请走输码/分享路径） */
 .fi-qr-hint {
   position: relative;
   z-index: 2;
@@ -149,6 +131,14 @@
   font-weight: 800;
   border-radius: 35rpx;
   box-shadow: 0 20rpx 46rpx rgba(7, 193, 96, 0.32);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* 无真实邀请码时的禁用态（点击触发重试而非分享） */
+.fi-disabled {
+  opacity: 0.45;
+  box-shadow: none;
 }
 .fi-wxbtn::after { border: none; }
 .fi-ic-wx {

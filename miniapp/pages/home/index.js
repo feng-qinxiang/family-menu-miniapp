@@ -102,9 +102,6 @@ Page({
 
   onLoad() {
     this._inited = false;
-    let fontScale = 'normal';
-    try { fontScale = wx.getStorageSync('font_scale') || 'normal'; } catch (e) { fontScale = 'normal'; }
-    this.setData({ fontScale });
     const todayKey = todayDateKey();
     // 离线缓存：先用上次数据渲染，网络回来后覆盖
     const cachedMenu = readCache(CACHE_KEY_MENU);
@@ -119,6 +116,10 @@ Page({
   },
 
   onShow() {
+    // 字号档位在 onShow 读取：从设置页切回来立即生效（不再只在首次 onLoad 生效）
+    let fontScale = 'normal';
+    try { fontScale = wx.getStorageSync('font_scale') || 'normal'; } catch (e) { fontScale = 'normal'; }
+    if (fontScale !== this.data.fontScale) this.setData({ fontScale });
     // 跨日刷新（用户隔夜回来）
     const todayKey = todayDateKey();
     if (todayKey !== this.data.todayKey) {
@@ -230,6 +231,13 @@ Page({
   async removeWish(e) {
     const { id } = e.currentTarget.dataset;
     if (!id) return;
+    // 二次确认（仿 menu 撤菜弹窗），防误触
+    const res = await wx.showModal({
+      title: '移除这条心愿？',
+      confirmText: '移除',
+      cancelText: '留下'
+    });
+    if (!res.confirm) return;
     const key = `${this.data.todayKey}:${this.data.currentSlot}`;
     // 乐观删除
     const all = loadWishes();
@@ -274,15 +282,12 @@ Page({
     }
 
     wx.showLoading({ title: '加入菜单中', mask: true });
-    let added = 0;
-    const addedIds = [];
-    for (const w of withRecipe) {
-      try {
-        await addTodayMenuRecipe(w.recipeId, this.data.currentSlot);
-        added++;
-        addedIds.push(w.id);
-      } catch (err) { /* ignore single failure */ }
-    }
+    // 并发下单（不因单个失败中断整体），完成后统一汇报
+    const results = await Promise.allSettled(
+      withRecipe.map((w) => addTodayMenuRecipe(w.recipeId, this.data.currentSlot))
+    );
+    const addedIds = withRecipe.filter((w, i) => results[i].status === 'fulfilled').map((w) => w.id);
+    const failed = results.length - addedIds.length;
     // 只清掉成功加入菜单的许愿，纯文本许愿保留在池中
     const all = loadWishes();
     const key = `${this.data.todayKey}:${this.data.currentSlot}`;
@@ -293,10 +298,15 @@ Page({
     this.setData({ wishes: remaining });
     addedIds.forEach(id => removeWishApi(id).catch(() => {}));
     await this.refreshLight();
-    wx.showToast({
-      title: added ? `已加入 ${added} 道菜` : '加入失败，请重试',
-      icon: added ? 'success' : 'none'
-    });
+    const added = addedIds.length;
+    if (added) {
+      wx.showToast({
+        title: failed ? `已加入 ${added} 道，失败 ${failed} 道` : `已加入 ${added} 道菜`,
+        icon: failed ? 'none' : 'success'
+      });
+    } else {
+      wx.showToast({ title: '加入失败，请重试', icon: 'none' });
+    }
     if (added && textOnly.length) {
       // 提醒还有纯文本心愿未处理
       setTimeout(() => {
@@ -500,8 +510,13 @@ Page({
   },
 
   async addToToday(e) {
-    const id = e.currentTarget.dataset.id;
+    const id = (e.detail && e.detail.id) || (e.currentTarget && e.currentTarget.dataset && e.currentTarget.dataset.id);
     if (!id) return;
+    // 查重（对照 recipes 页 todayDishIds 模式）：已在今日菜单直接提示，不重复加
+    if ((this.data.todayMenu || []).some(it => String(it.recipeId) === String(id))) {
+      wx.showToast({ title: '已经在今日菜单里啦', icon: 'none' });
+      return;
+    }
     const slot = this.data.currentSlot || 'dinner';
     const slotLabel = mealTypeLabels[slot] || '晚餐';
     try {
@@ -514,7 +529,7 @@ Page({
   },
 
   goDetail(e) {
-    const { id } = e.currentTarget.dataset;
+    const id = (e.detail && e.detail.id) || (e.currentTarget && e.currentTarget.dataset && e.currentTarget.dataset.id);
     if (!id) return;
     wx.navigateTo({ url: `/pages/recipe-detail/index?id=${id}` });
   },

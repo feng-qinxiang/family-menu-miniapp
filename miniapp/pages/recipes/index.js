@@ -307,7 +307,8 @@ Page({
 
 
   goDetail(event) {
-    const { id } = event.currentTarget.dataset;
+    const id = (event.detail && event.detail.id) || (event.currentTarget && event.currentTarget.dataset && event.currentTarget.dataset.id);
+    if (!id) return;
     wx.navigateTo({ url: `/pages/recipe-detail/index?id=${id}` });
   },
 
@@ -316,7 +317,7 @@ Page({
   },
 
   async addRecipeToToday(e) {
-    const { id } = e.currentTarget.dataset;
+    const id = (e.detail && e.detail.id) || (e.currentTarget && e.currentTarget.dataset && e.currentTarget.dataset.id);
     if (!id) return;
     if (this.data.todayDishIds.includes(String(id))) {
       wx.navigateTo({ url: '/pages/menu/index' });

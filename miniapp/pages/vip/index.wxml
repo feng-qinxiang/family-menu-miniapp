@@ -25,13 +25,7 @@
   <!-- SHEET -->
   <view class="vip-sheet">
     <!-- 权益网格 -->
-    <view class="shead">
-      <view class="shead-main">
-        <view class="shead-bar"></view>
-        <view class="eyebrow">权益一览</view>
-        <view class="shead-title">开通后<text class="pop">解锁</text>这些</view>
-      </view>
-    </view>
+    <section-head eyebrow="权益一览" title="开通后" popPart="解锁" titleTail="这些" />
     <view class="vip-bgrid">
       <view class="vip-bcard tap-scale g-fade-up g-d{{index % 6 + 1}}" wx:for="{{benefits}}" wx:key="title">
         <view class="vip-bic vip-ic-{{item.icon}}"></view>
@@ -41,13 +35,7 @@
     </view>
 
     <!-- 版本对比 -->
-    <view class="shead">
-      <view class="shead-main">
-        <view class="shead-bar"></view>
-        <view class="eyebrow">版本对比</view>
-        <view class="shead-title">两个版本<text class="pop">对比</text></view>
-      </view>
-    </view>
+    <section-head eyebrow="版本对比" title="两个版本" popPart="对比" />
     <view class="vip-cmp">
       <view class="vip-crow vip-chead">
         <view class="vip-lab">功能</view>
@@ -69,13 +57,7 @@
     </view>
 
     <!-- 套餐选择 -->
-    <view class="shead">
-      <view class="shead-main">
-        <view class="shead-bar"></view>
-        <view class="eyebrow">选择套餐</view>
-        <view class="shead-title">选个<text class="pop">合适</text>的</view>
-      </view>
-    </view>
+    <section-head eyebrow="选择套餐" title="选个" popPart="合适" titleTail="的" />
     <view class="vip-plans">
       <view
         class="vip-plan tap-scale {{selectedPlan === item.key ? 'on' : ''}}"
@@ -96,13 +78,7 @@
     </view>
 
     <!-- 家庭成员 -->
-    <view class="shead">
-      <view class="shead-main">
-        <view class="shead-bar"></view>
-        <view class="eyebrow">家里人</view>
-        <view class="shead-title">家里<text class="pop">这几口</text></view>
-      </view>
-    </view>
+    <section-head eyebrow="家里人" title="家里" popPart="这几口" />
     <view class="vip-members">
       <view class="vip-pile">
         <view class="vip-av" wx:for="{{familyAvatars}}" wx:key="initial" style="background: {{item.tone}};">{{item.initial}}</view>

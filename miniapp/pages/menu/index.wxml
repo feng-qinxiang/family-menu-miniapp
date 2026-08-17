@@ -96,14 +96,12 @@
 
     <!-- 餐次分组 -->
     <block wx:if="{{mealGroups.length}}">
-      <view class="shead">
-        <view class="shead-main">
-          <view class="shead-bar"></view>
-          <view class="eyebrow">今日摆盘</view>
-          <view class="shead-title">餐次<text class="pop">摆盘</text></view>
-        </view>
-        <text class="seeall">{{totalCount}} 道菜</text>
-      </view>
+      <section-head
+        eyebrow="今日摆盘"
+        title="餐次"
+        popPart="摆盘"
+        hint="{{totalCount}} 道菜"
+      />
 
       <view class="m-meal-block" wx:for="{{mealGroups}}" wx:for-item="group" wx:for-index="gIdx" wx:key="meal">
         <view class="m-meal-label">{{group.label}} <text class="n">{{group.items.length}} 道</text></view>

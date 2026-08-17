@@ -70,9 +70,12 @@
   font-weight: 700;
   letter-spacing: 1rpx;
 }
-.ps-viptag-star {
-  color: var(--gold);
-  font-size: 24rpx;
+.ps-viptag-star-mark {
+  width: 20rpx;
+  height: 20rpx;
+  flex: none;
+  background: var(--gold);
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
 }
 
 /* —— 权益清单 —— */

@@ -144,39 +144,34 @@
 
     <!-- 家里常做的菜 -->
     <view class="mh-pad">
-      <view class="shead">
-        <view class="shead-main">
-          <view class="shead-bar"></view>
-          <view class="eyebrow">家的味道</view>
-          <view class="shead-title">家里<text class="pop">常做</text>的菜</view>
-        </view>
-        <view class="seeall tap-scale" bindtap="goRecipes">全部 ›</view>
-      </view>
+      <section-head
+        eyebrow="家的味道"
+        title="家里"
+        popPart="常做"
+        titleTail="的菜"
+        hint="全部"
+        more="{{true}}"
+        bind:tapmore="goRecipes"
+      />
     </view>
 
     <scroll-view scroll-x class="mh-hcards" enhanced="{{true}}" show-scrollbar="{{false}}" wx:if="{{visibleRecipes.length}}">
       <view class="mh-hcards-inner">
         <view
-          class="mh-rcard tap-scale g-fade-up g-d{{index % 4 + 1}}"
+          class="mh-rcard-slot g-fade-up g-d{{index % 4 + 1}}"
           wx:for="{{visibleRecipes}}"
           wx:key="id"
-          data-id="{{item.id}}"
-          bindtap="goDetail"
         >
-          <view class="mh-rcard-ph">
-            <image class="mh-rcard-img" src="{{item.dishImg}}" mode="aspectFill" binderror="onGridImgError" data-index="{{index}}" />
-            <text class="mh-rcard-lbl">{{item.cuisine || '家常'}}</text>
-            <view class="mh-rcard-fav" catchtap="addToToday" data-id="{{item.id}}">
-              <view class="mh-ico-plus-dark"></view>
-            </view>
-          </view>
-          <view class="mh-rcard-info">
-            <view class="mh-rcard-name ellipsis">{{item.title}}</view>
-            <view class="mh-rcard-meta">
-              <text wx:if="{{item.timeCost}}">{{item.timeCost}} 分钟</text>
-              <text class="ellipsis">{{item.tasteTags[0] || item.sourceLabel || '下饭快手'}}</text>
-            </view>
-          </view>
+          <recipe-card
+            recipe="{{item}}"
+            variant="card"
+            density="home"
+            showAdd="{{true}}"
+            showFav="{{false}}"
+            addPlacement="corner"
+            bind:tap="goDetail"
+            bind:add="addToToday"
+          />
         </view>
 
         <!-- 查看全部卡 -->
@@ -190,33 +185,18 @@
 
     <!-- 再来两道清淡的 -->
     <view class="mh-pad" wx:if="{{sideRecipes.length}}">
-      <view class="shead">
-        <view class="shead-main">
-          <view class="shead-bar"></view>
-          <view class="eyebrow">清爽不腻</view>
-          <view class="shead-title">再来两道<text class="pop">清淡</text>的</view>
-        </view>
-      </view>
+      <section-head eyebrow="清爽不腻" title="再来两道" popPart="清淡" titleTail="的" />
 
-      <view
-        class="mh-row g-fade-up g-d{{index + 1}}"
+      <recipe-card
         wx:for="{{sideRecipes}}"
         wx:key="id"
-        data-id="{{item.id}}"
-        bindtap="goDetail"
-      >
-        <image class="mh-row-thumb" src="{{item.dishImg}}" mode="aspectFill" binderror="onSideImgError" data-index="{{index}}" />
-        <view class="mh-row-mid">
-          <view class="mh-row-name ellipsis">{{item.title}}</view>
-          <view class="mh-row-sub">
-            <text wx:if="{{item.timeCost}}">{{item.timeCost}} 分钟</text>
-            <text class="ellipsis">{{item.cuisine || '家常'}}<block wx:if="{{item.tasteTags[0]}}"> · {{item.tasteTags[0]}}</block></text>
-          </view>
-        </view>
-        <view class="mh-row-add tap-scale" catchtap="addToToday" data-id="{{item.id}}">
-          <view class="mh-ico-plus"></view>
-        </view>
-      </view>
+        class="g-fade-up g-d{{index + 1}}"
+        recipe="{{item}}"
+        variant="row"
+        showAdd="{{true}}"
+        bind:tap="goDetail"
+        bind:add="addToToday"
+      />
     </view>
 
     <!-- 今日菜单 暗卡 -->

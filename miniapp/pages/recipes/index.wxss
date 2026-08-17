@@ -164,6 +164,7 @@
 .rx-qf-chip.on { background: var(--pop); color: var(--c-surface); }
 /* 结果标题 */
 .rx-shead { margin: 56rpx 46rpx 26rpx; }
+.rx-card-slot .rc-card { width: 100%; }
 
 /* 点到 */
 .rx-meal { display: flex; align-items: center; gap: 18rpx; margin: 0 46rpx 24rpx; }
@@ -174,35 +175,7 @@
 
 /* 网格 */
 .rx-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28rpx; padding: 0 46rpx 16rpx; }
-.rx-card {
-  position: relative; background: var(--c-surface); border-radius: var(--r-card); overflow: hidden;
-  border: var(--bd-card); box-shadow: var(--sh-card);
-}
-.rx-card.on { border-color: var(--pop); box-shadow: 0 0 0 4rpx var(--pop-soft), var(--sh-card); }
-.rx-card-cover { position: relative; height: 226rpx; }
-.rx-card-img { width: 100%; height: 100%; }
-.rx-card-lbl {
-  position: absolute; top: 17rpx; left: 17rpx;
-  font-size: 18rpx; letter-spacing: 2rpx; font-weight: 800;
-  color: var(--c-surface); background: rgba(40,30,20,.55); padding: var(--r-xs) 15rpx; border-radius: var(--r-xs);
-}
-.rx-card-badge {
-  position: absolute; top: 15rpx; right: 15rpx;
-  font-size: 18rpx; font-weight: 800; color: var(--c-surface);
-  background: rgba(40,30,20,.5); padding: var(--r-xs) 15rpx; border-radius: var(--r-pill);
-}
-.rx-card-badge.fav { background: var(--pop); box-shadow: var(--sh-pop); }
-.rx-card-info { padding: 24rpx 25rpx 28rpx; }
-.rx-card-name { font-size: 32rpx; font-weight: 800; color: var(--ink); letter-spacing: -.8rpx; }
-.rx-card-meta { font-size: 22rpx; color: var(--mut-strong); margin-top: 12rpx; font-weight: 600; }
-.rx-card-add {
-  position: absolute; right: 21rpx; bottom: 21rpx;
-  width: 76rpx; height: 76rpx; border-radius: var(--r-md); background: var(--pop);
-  display: flex; align-items: center; justify-content: center;
-  color: var(--c-surface); font-size: 38rpx; font-weight: 700; line-height: 1;
-  box-shadow: 0 2rpx 4rpx rgba(180,40,20,.3), var(--sh-pop);
-}
-.rx-card-add.picked { background: var(--pop); box-shadow: var(--sh-pop); }
+.rx-card-slot { min-width: 0; }
 
 /* 上拉加载 */
 .rx-loadmore {

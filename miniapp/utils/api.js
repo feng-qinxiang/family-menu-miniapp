@@ -125,15 +125,21 @@ function request(path, options) {
   const config = options || {};
   return rawRequest(path, config).then((result) => {
     if (result.ok) return result.data;
+    // 静默降级为显式 opt-in：仅声明了 fallback 的调用（如 getCurrentUser）保留"失败=默认值"；
+    // 其余失败一律 reject，由页面 catch/loadError 分支处理，禁止伪装成空数据。
     if (typeof config.fallback === 'function') return config.fallback();
-    return null;
+    // 用户可见文案必须中文（经页面 loadError/toast 直出）；status 挂在 error.status 供调试
+    const error = new Error(extractErrorMessage(result.data) || '网络请求失败，请稍后重试');
+    error.status = result.status;
+    error.data = result.data;
+    throw error;
   });
 }
 
 function requestStrict(path, options) {
   return rawRequest(path, options || {}).then((result) => {
     if (result.ok) return result.data;
-    const error = new Error(extractErrorMessage(result.data) || `request failed: ${result.status}`);
+    const error = new Error(extractErrorMessage(result.data) || '网络请求失败，请稍后重试');
     error.status = result.status;
     error.data = result.data;
     throw error;
@@ -141,17 +147,15 @@ function requestStrict(path, options) {
 }
 
 function getDashboard() {
-  return request('/api/home/dashboard', { fallback: () => null });
+  return request('/api/home/dashboard');
 }
 
 function getRecipes(source) {
-  return request(`/api/recipes?source=${encodeURIComponent(source || 'all')}`, {
-    fallback: () => []
-  });
+  return request(`/api/recipes?source=${encodeURIComponent(source || 'all')}`);
 }
 
 function getCommunityPosts() {
-  return request('/api/community/posts', { fallback: () => [] });
+  return request('/api/community/posts');
 }
 
 function createCommunityPost(payload) {
@@ -162,9 +166,7 @@ function createCommunityPost(payload) {
 }
 
 function getCommunityComments(postId) {
-  return request(`/api/community/posts/${encodeURIComponent(postId)}/comments`, {
-    fallback: () => []
-  });
+  return request(`/api/community/posts/${encodeURIComponent(postId)}/comments`);
 }
 
 function toggleCommunityFavorite(postId) {
@@ -188,9 +190,9 @@ function reportCommunityPost(postId, payload) {
 }
 
 function getCommunityReports(status) {
+  // silent：页面 catch 自带提示，避免双重 toast；失败 reject 由 audit 页处理
   return request(`/api/community/reports?status=${encodeURIComponent(status || 'PENDING')}`, {
-    silent: true,
-    fallback: () => []
+    silent: true
   });
 }
 
@@ -202,11 +204,11 @@ function reviewCommunityReport(reportId, payload) {
 }
 
 function getMyFavorites() {
-  return request('/api/me/favorites', { fallback: () => [] });
+  return request('/api/me/favorites');
 }
 
 function getVipStatus() {
-  return request('/api/vip/status', { fallback: () => ({ vip: false, planName: '', benefits: [], adPlacements: [] }) });
+  return request('/api/vip/status');
 }
 
 function activateVip(planName) {
@@ -217,7 +219,7 @@ function activateVip(planName) {
 }
 
 function getFamilyProfile() {
-  return request('/api/family/profile', { fallback: () => null });
+  return request('/api/family/profile');
 }
 
 function createFamily(payload) {
@@ -270,9 +272,7 @@ function saveRecipe(payload) {
 }
 
 function getRecipeDetail(recipeId) {
-  return request(`/api/recipes/${encodeURIComponent(recipeId)}`, {
-    fallback: () => null
-  });
+  return request(`/api/recipes/${encodeURIComponent(recipeId)}`);
 }
 
 function updateRecipe(recipeId, payload) {
@@ -290,9 +290,7 @@ function addCookHistory(payload) {
 }
 
 function getCookHistory() {
-  return request('/api/cook-history', {
-    fallback: () => []
-  });
+  return request('/api/cook-history');
 }
 
 function addShoppingItem(payload) {
@@ -309,7 +307,7 @@ function deleteShoppingItem(itemId) {
 }
 
 function getTodayMenu() {
-  return request('/api/daily-menu/today', { fallback: () => null });
+  return request('/api/daily-menu/today');
 }
 
 function addTodayMenuRecipe(recipeId, mealType) {
@@ -328,8 +326,7 @@ function removeTodayMenuRecipe(recipeId) {
 // ---- 许愿池（家庭共享，按日期+餐次分槽） ----
 function getWishes(date, slot) {
   return request('/api/wishes', {
-    data: { date, slot },
-    fallback: () => []
+    data: { date, slot }
   });
 }
 
@@ -343,7 +340,7 @@ function removeWish(wishId) {
 }
 
 function getShoppingList() {
-  return request('/api/shopping-list/today', { fallback: () => null });
+  return request('/api/shopping-list/today');
 }
 
 function rebuildShoppingList() {
@@ -435,19 +432,15 @@ function generateWeeklyMenu() {
 }
 
 function getWeeklyMenu() {
-  return request('/api/weekly-menu/current', {
-    fallback: () => null
-  });
+  return request('/api/weekly-menu/current');
 }
 
 function getPreferenceProfile() {
-  return request('/api/preference/profile', {
-    fallback: () => null
-  });
+  return request('/api/preference/profile');
 }
 
 function getPantryItems() {
-  return request('/api/pantry', { fallback: () => [] });
+  return request('/api/pantry');
 }
 
 function addPantryItem(payload) {
@@ -464,7 +457,7 @@ function deletePantryItem(itemId) {
 }
 
 function getPantryMatch() {
-  return request('/api/pantry/match', { fallback: () => [] });
+  return request('/api/pantry/match');
 }
 
 // ===== Payment =====
@@ -505,9 +498,12 @@ function mockPayOrder(orderId) {
 }
 
 function getPaymentOrders() {
-  // 后端 OrderView 用 outTradeNo；规范化补 orderId/amountFen 便于页面读取
-  return request('/api/payment/orders', { fallback: () => [] }).then((list) => {
-    if (!Array.isArray(list)) return [];
+  // 后端 OrderView 用 outTradeNo；规范化补 orderId/amountFen 便于页面读取。
+  // 失败 reject（后处理天然跳过，直达页面 catch）；成功但非数组 = 后端契约破坏，响亮抛错不伪装空列表。
+  return request('/api/payment/orders').then((list) => {
+    if (!Array.isArray(list)) {
+      throw new Error('订单列表格式异常');
+    }
     return list.map((o) => ({
       ...o,
       orderId: o.orderId != null ? o.orderId : o.outTradeNo,
@@ -524,9 +520,7 @@ function submitFeedback(payload) {
 }
 
 function getNotifications() {
-  return request('/api/notifications', {
-    fallback: () => ({ items: [], unreadCount: 0 })
-  });
+  return request('/api/notifications');
 }
 
 function markNotificationsRead(ids) {

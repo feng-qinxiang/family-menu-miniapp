@@ -1,6 +1,17 @@
-// 设置页 · 二级页（游客直进，无强制登录拦截）
+// settings · 二级页（游客直进，无强制登录拦截）
 // 视觉对标 artifacts/settings.html，配色全部走 app.wxss 全局 token
 const api = require('../../../utils/api');
+
+// 通知开关本地持久化 key（杀进程重进保持）
+const NOTIFY_STORAGE_KEY = 'notify_settings_v1';
+
+function loadNotifySettings() {
+  try {
+    const saved = wx.getStorageSync(NOTIFY_STORAGE_KEY);
+    if (saved && typeof saved === 'object') return saved;
+  } catch (e) { /* 读失败走默认 */ }
+  return null;
+}
 
 Page({
   data: {
@@ -52,6 +63,17 @@ Page({
     this._refreshCacheSize();
     this._loadAccount();
     this._loadFontScale();
+    this._loadNotifySettings();
+  },
+
+  // 通知开关：从 storage 回填上次状态（未存过则用默认值）
+  _loadNotifySettings() {
+    const saved = loadNotifySettings();
+    if (!saved) return;
+    const list = this.data.notifyList.map((it) =>
+      typeof saved[it.key] === 'boolean' ? { ...it, on: saved[it.key] } : it
+    );
+    this.setData({ notifyList: list });
   },
 
   // 读取大字模式开关并回填设置项展示
@@ -145,13 +167,20 @@ Page({
     }
   },
 
-  // 通知开关切换
+  // 通知开关切换：写 storage 持久化，杀进程重进保持
   onSwitchTap(e) {
     const key = e.currentTarget.dataset.key;
     const list = this.data.notifyList.map((it) =>
       it.key === key ? { ...it, on: !it.on } : it
     );
     this.setData({ notifyList: list });
+    const saved = {};
+    list.forEach((it) => { saved[it.key] = it.on; });
+    try {
+      wx.setStorageSync(NOTIFY_STORAGE_KEY, saved);
+    } catch (err) {
+      // 存储失败仅影响持久化，不影响本次会话生效
+    }
     const cur = list.find((it) => it.key === key);
     this._toast(`${cur.name}已${cur.on ? '开启' : '关闭'}`);
   },

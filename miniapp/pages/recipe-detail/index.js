@@ -62,8 +62,8 @@ Page({
     } catch (e) {
       sbh = 0;
     }
-    this.setData({ statusBarHeight: sbh });
     const recipeId = options.id || options.recipeId;
+    this.setData({ statusBarHeight: sbh, recipeId });
     if (recipeId) {
       this.loadRecipe(recipeId);
     } else {
@@ -169,20 +169,23 @@ Page({
       return;
     }
     wx.showLoading({ title: '加入中', mask: true });
-    try {
-      for (const ing of missing) {
-        await addShoppingItem({
-          ingredientName: ing.name,
-          amount: ing.amountText || ing.baseAmount || '',
-          unit: ing.unit || ''
-        });
-      }
-      wx.hideLoading();
-      wx.showToast({ title: `已加 ${missing.length} 样`, icon: 'success' });
-    } catch (err) {
-      wx.hideLoading();
-      wx.showToast({ title: '加入失败', icon: 'none' });
+    // 并发下单（不因单个失败中断整体），完成后统一汇报
+    const results = await Promise.allSettled(missing.map((ing) => addShoppingItem({
+      ingredientName: ing.name,
+      amount: ing.amountText || ing.baseAmount || '',
+      unit: ing.unit || ''
+    })));
+    wx.hideLoading();
+    const added = results.filter((r) => r.status === 'fulfilled').length;
+    const failed = results.length - added;
+    if (!added) {
+      wx.showToast({ title: '加入失败，请重试', icon: 'none' });
+      return;
     }
+    wx.showToast({
+      title: failed ? `已加 ${added} 样，失败 ${failed} 样` : `已加 ${added} 样`,
+      icon: failed ? 'none' : 'success'
+    });
   },
 
   async addToToday() {
@@ -276,9 +279,11 @@ Page({
 
   onShareAppMessage() {
     const r = this.data.recipe || {};
+    // 分享路径携带真实 id（onLoad 已 setData recipeId），打开直达原菜谱
+    const id = this.data.recipeId || r.id || '';
     return {
       title: r.title ? '分享一道菜：' + r.title : '一道好菜，分享给你',
-      path: '/pages/recipe-detail/index?id=' + (this.data.recipeId || '')
+      path: '/pages/recipe-detail/index?id=' + id
     };
   },
 });

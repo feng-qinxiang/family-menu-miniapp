@@ -82,6 +82,10 @@
 .fav-grid-cell {
   min-width: 0;
 }
+/* recipe-card virtualHost 根节点在格子内铺满 */
+.fav-grid-cell .rc-card {
+  width: 100%;
+}
 
 /* ============ 帖子行卡（对标 .pcard）============ */
 .fav-pcard {
@@ -159,9 +163,12 @@
   font-weight: 700;
   color: var(--pop);
 }
-.fav-plk-ic {
-  font-size: 24rpx;
-  color: var(--pop);
+.fav-plk-dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  background: var(--pop);
+  flex: none;
 }
 /* 加载骨架 */
 .fav-skel-cover {

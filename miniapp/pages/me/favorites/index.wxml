@@ -75,7 +75,7 @@
                 <view class="fav-pav" style="background: {{item.avatarColor}};">{{item.avatarText}}</view>
                 <text class="fav-pnm ellipsis">{{item.author}}</text>
                 <view class="fav-plk">
-                  <text class="fav-plk-ic">♥</text>{{item.likeCount}}
+                  <view class="fav-plk-dot"></view>{{item.likeCount}}
                 </view>
               </view>
             </view>

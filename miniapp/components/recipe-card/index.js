@@ -1,5 +1,5 @@
 // components/recipe-card/index.js
-// 菜谱卡组件：variant="card"(纵向大卡) / "row"(横向行卡)
+// 菜谱卡：variant=card|row；card 可叠 badge/selected/角标加菜
 const FALLBACK_DISHES = [
   'beef-broccoli', 'chicken-congee', 'egg-drop-soup', 'fried-rice',
   'hongshao-pork', 'hot-sour-soup', 'kungpao-chicken', 'lo-mein',
@@ -9,7 +9,9 @@ const FALLBACK_DISHES = [
 
 Component({
   options: {
-    addGlobalClass: true
+    addGlobalClass: true,
+    // 去掉多余宿主节点，width/横滑槽直接作用在根 .rc-card / .rc-row
+    virtualHost: true
   },
 
   properties: {
@@ -17,18 +19,44 @@ Component({
       type: Object,
       value: {}
     },
-    // card: 纵向大卡 | row: 横向行卡
+    // card | row
     variant: {
       type: String,
       value: 'card'
+    },
+    // home 横滑宽卡 | grid 双列 | default(favorites)
+    density: {
+      type: String,
+      value: 'default'
     },
     showFav: {
       type: Boolean,
       value: false
     },
+    // row 右侧 / card 角标加菜
     showAdd: {
       type: Boolean,
       value: true
+    },
+    // card 加菜位置：corner 右上(home) | float 右下(recipes)
+    addPlacement: {
+      type: String,
+      value: 'corner'
+    },
+    // 是否已在今日菜单（recipes 选中描边 + ✓）
+    selected: {
+      type: Boolean,
+      value: false
+    },
+    // 封面角标文案，空则用 cuisine
+    badge: {
+      type: String,
+      value: ''
+    },
+    // 强制副文案；空则按 density 拼
+    metaOverride: {
+      type: String,
+      value: ''
     }
   },
 
@@ -36,64 +64,94 @@ Component({
     cover: '',
     title: '',
     label: '',
+    badgeText: '',
     timeText: '',
     metaText: '',
-    favorited: false
+    favorited: false,
+    addMark: '+'
   },
 
   observers: {
-    recipe: function (recipe) {
-      this._buildView(recipe || {});
+    'recipe, density, badge, metaOverride, selected': function () {
+      this._buildView();
     }
   },
 
   lifetimes: {
     attached() {
-      this._buildView(this.data.recipe || {});
+      this._buildView();
     }
   },
 
   methods: {
-    _buildView(recipe) {
-      const r = recipe || {};
+    _buildView() {
+      const r = this.data.recipe || {};
+      const density = this.data.density || 'default';
 
-      // 封面：优先后端 coverImage，兼容 cover/dishImg 别名，无则按 id/title 稳定兜底本地图
       let cover = r.coverImage || r.cover || r.dishImg;
       if (!cover) {
         const seed = String(r.id || r.title || '');
         let sum = 0;
         for (let i = 0; i < seed.length; i++) sum += seed.charCodeAt(i);
-        const name = FALLBACK_DISHES[sum % FALLBACK_DISHES.length];
-        cover = '/assets/dishes/' + name + '.jpg';
+        cover = '/assets/dishes/' + FALLBACK_DISHES[sum % FALLBACK_DISHES.length] + '.jpg';
       }
 
       const tags = Array.isArray(r.tasteTags) ? r.tasteTags : [];
       const label = r.cuisine || tags[0] || '家常';
       const timeText = r.timeCost ? r.timeCost + ' 分钟' : '';
 
-      // 行卡副信息：菜系 · 口味
-      const subParts = [];
-      if (r.cuisine) subParts.push(r.cuisine);
-      if (tags[0] && tags[0] !== r.cuisine) subParts.push(tags[0]);
-      const metaText = subParts.join(' · ');
+      let metaText = this.data.metaOverride || '';
+      if (!metaText) {
+        if (density === 'grid') {
+          const parts = [
+            r.cuisine || '家常',
+            (r.timeCost || '?') + '分钟',
+            (r.servings || '?') + '人'
+          ];
+          metaText = parts.join(' · ');
+        } else if (density === 'home') {
+          const parts = [];
+          if (timeText) parts.push(timeText);
+          parts.push(tags[0] || r.sourceLabel || '下饭快手');
+          metaText = parts.join(' · ');
+        } else if (this.data.variant === 'row') {
+          const subParts = [];
+          if (r.cuisine) subParts.push(r.cuisine);
+          if (tags[0] && tags[0] !== r.cuisine) subParts.push(tags[0]);
+          metaText = subParts.join(' · ');
+        } else {
+          const subParts = [];
+          if (timeText) subParts.push(timeText);
+          if (r.cuisine) subParts.push(r.cuisine);
+          metaText = subParts.join(' · ');
+        }
+      }
+
+      const badgeProp = this.data.badge;
+      const badgeText = badgeProp !== '' && badgeProp != null
+        ? badgeProp
+        : (r.sourceLabel || '');
 
       this.setData({
         cover: cover,
         title: r.title || '未命名菜谱',
         label: label,
+        badgeText: badgeText,
         timeText: timeText,
         metaText: metaText,
-        favorited: !!r.favorited
+        favorited: !!r.favorited,
+        addMark: this.data.selected ? '✓' : '+'
       });
     },
 
     onTap() {
-      this.triggerEvent('tap', { recipe: this.data.recipe, id: this.data.recipe && this.data.recipe.id });
+      const r = this.data.recipe || {};
+      this.triggerEvent('tap', { recipe: r, id: r.id });
     },
 
     onAdd() {
-      // catchtap 已阻断冒泡
-      this.triggerEvent('add', { recipe: this.data.recipe, id: this.data.recipe && this.data.recipe.id });
+      const r = this.data.recipe || {};
+      this.triggerEvent('add', { recipe: r, id: r.id });
     },
 
     onFav() {

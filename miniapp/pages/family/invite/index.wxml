@@ -14,33 +14,52 @@
 
     <view class="fi-iv-cap">家庭邀请码</view>
 
-    <!-- 6 位 code 分组 -->
+    <!-- 6 位 code 分组（拉取失败时格子留空，不显示任何伪码） -->
     <view class="fi-code">
       <view class="fi-dg" wx:for="{{codeDigits}}" wx:key="index">{{item}}</view>
     </view>
 
-    <view class="fi-copybtn tap-scale" bindtap="onCopyCode">
+    <!-- 失败态：重试按钮；成功态：复制按钮 -->
+    <view
+      wx:if="{{!codeFailed}}"
+      class="fi-copybtn tap-scale"
+      catchtap="onCopyCode"
+    >
       <view class="fi-ic-copy"></view>
       <text>复制邀请码</text>
     </view>
-
-    <!-- 二维码占位 -->
-    <view class="fi-qrwrap">
-      <view class="fi-qr">
-        <view class="fi-qr-cell" wx:for="{{qrCells}}" wx:key="index" style="left:{{item.x}}rpx;top:{{item.y}}rpx;"></view>
-      </view>
+    <view wx:else class="fi-copybtn fi-copybtn--retry tap-scale" catchtap="loadFamily">
+      <view class="fi-ic-copy"></view>
+      <text>邀请码没拿到，点此重试</text>
     </view>
-    <view class="fi-qr-hint">微信扫一扫，加入这桌</view>
+
+    <view class="fi-qr-hint" wx:if="{{!codeFailed}}">把邀请码发给家人，在小程序里输入即可加入</view>
   </view>
 
-  <!-- 微信分享 -->
-  <button class="btn btn-wx btn-block fi-wxbtn tap-scale g-fade-up g-d2" open-type="share">
+  <!-- 微信分享（失败时渲染禁用态普通节点，避免 open-type=share 泄出无码链接） -->
+  <button
+    wx:if="{{inviteCode}}"
+    class="btn btn-wx btn-block fi-wxbtn tap-scale g-fade-up g-d2"
+    open-type="share"
+  >
     <view class="fi-ic-wx"></view>
     微信分享给家人
   </button>
+  <view wx:else class="btn btn-wx btn-block fi-wxbtn fi-disabled g-fade-up g-d2" catchtap="loadFamily">
+    <view class="fi-ic-wx"></view>
+    微信分享给家人
+  </view>
 
-  <!-- 保存邀请图 -->
-  <view class="fi-savebtn tap-scale g-fade-up g-d3" bindtap="onSaveImage">
+  <!-- 保存邀请图（失败禁用） -->
+  <view
+    wx:if="{{inviteCode}}"
+    class="fi-savebtn tap-scale g-fade-up g-d3"
+    catchtap="onSaveImage"
+  >
+    <view class="fi-ic-save"></view>
+    <text>保存邀请图</text>
+  </view>
+  <view wx:else class="fi-savebtn fi-disabled g-fade-up g-d3" catchtap="loadFamily">
     <view class="fi-ic-save"></view>
     <text>保存邀请图</text>
   </view>
@@ -48,7 +67,7 @@
   <!-- Tip 24h -->
   <view class="fi-note g-fade-up g-d4">
     <view class="fi-note-ic"></view>
-    <view class="fi-note-text">家人<text class="b">扫码</text>或在小程序里<text class="b">输入邀请码</text>即可加入这桌，一起点菜、凑齐今晚的菜单。邀请码 <text class="b">24 小时</text>内有效。</view>
+    <view class="fi-note-text">家人在小程序里<text class="b">输入邀请码</text>即可加入这桌，一起点菜、凑齐今晚的菜单。邀请码 <text class="b">24 小时</text>内有效。</view>
   </view>
 
   <view class="safe-bottom"></view>

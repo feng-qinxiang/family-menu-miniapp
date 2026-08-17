@@ -16,6 +16,7 @@ Page({
     charCount: 0,
     preview: null,
     saving: false,
+    parsing: false,
     recentImports: [],
     difficultyOptions: [
       { key: 'easy', label: '简单' },
@@ -103,6 +104,7 @@ Page({
   },
 
   async parseImport() {
+    if (this.data.parsing) return;
     const rawText = this.data.rawText.trim();
     if (!rawText) {
       wx.showToast({ title: '先输入内容', icon: 'none' });
@@ -113,6 +115,8 @@ Page({
       this.setData({ preview: localResult });
       return;
     }
+    // 远端解析：loading 期间按钮禁点防重复提交
+    this.setData({ parsing: true });
     try {
         const preview = await previewImport(rawText);
         if (!preview) {
@@ -127,6 +131,8 @@ Page({
         });
     } catch (err) {
       wx.showToast({ title: '解析失败，请重试', icon: 'none' });
+    } finally {
+      this.setData({ parsing: false });
     }
   },
 

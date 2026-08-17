@@ -102,11 +102,11 @@
       <!-- 已入篮分组 -->
       <view class="mkt-pad" wx:if="{{purchasedItems.length}}">
         <view class="mkt-shead">
-          <view class="mkt-shead-main">
-            <view class="shead-bar"></view>
-            <text class="eyebrow">已入篮</text>
-            <view class="mkt-shead-title">已入篮 <text class="pop">{{purchasedItems.length}}</text></view>
-          </view>
+          <section-head
+            eyebrow="已入篮"
+            title="已入篮 "
+            popPart="{{purchasedItems.length}}"
+          />
         </view>
 
         <block wx:for="{{groupedPurchased}}" wx:key="key" wx:for-item="group">
@@ -125,11 +125,11 @@
       <!-- 临时加购 -->
       <view class="mkt-pad">
         <view class="mkt-shead">
-          <view class="mkt-shead-main">
-            <view class="shead-bar"></view>
-            <text class="eyebrow">临时加购</text>
-            <view class="mkt-shead-title">临时<text class="pop">加购</text></view>
-          </view>
+          <section-head
+            eyebrow="临时加购"
+            title="临时"
+            popPart="加购"
+          />
         </view>
       </view>
 

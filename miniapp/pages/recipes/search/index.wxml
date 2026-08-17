@@ -70,7 +70,7 @@
             <image class="gc-img" src="{{item.cover}}" mode="aspectFill" />
             <view wx:if="{{item.label}}" class="gc-lbl">{{item.label}}</view>
             <view class="gc-fav {{item.favorited ? 'on' : ''}}" data-id="{{item.id}}" catchtap="onFavTap">
-              <text class="gc-heart">{{item.favorited ? '♥' : '♡'}}</text>
+              <view class="gc-heart-dot {{item.favorited ? 'on' : ''}}"></view>
             </view>
           </view>
           <view class="gc-info">

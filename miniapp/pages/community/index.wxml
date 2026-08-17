@@ -35,13 +35,7 @@
     <!-- ===== Sheet ===== -->
     <view class="sheet">
       <view class="pad">
-        <view class="shead">
-          <view class="shead-main">
-            <view class="shead-bar"></view>
-            <view class="eyebrow">今日餐桌</view>
-            <view class="shead-title">邻居们<text class="pop">在做</text>啥</view>
-          </view>
-        </view>
+        <section-head eyebrow="今日餐桌" title="邻居们" popPart="在做" titleTail="啥" />
 
           <!-- 加载态 -->
           <view wx:if="{{loading}}" class="empty-state">

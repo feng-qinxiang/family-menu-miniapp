@@ -54,13 +54,7 @@
     </view>
 
     <!-- section 标题 -->
-    <view class="shead">
-      <view class="shead-main">
-        <view class="shead-bar"></view>
-        <view class="eyebrow">逐日安排</view>
-        <view class="shead-title">七天<text class="pop">餐桌</text></view>
-      </view>
-    </view>
+    <section-head eyebrow="逐日安排" title="七天" popPart="餐桌" />
 
     <!-- 7 个 daycard -->
     <view

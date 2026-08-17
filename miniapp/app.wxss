@@ -165,8 +165,8 @@ page.font-lg, .font-lg {
   --fs-body: 31rpx;
   --fs-btn: 32rpx;
   --fs-sub: 28rpx;
-  --fs-cap: 25rpx;
-  --fs-mini: 23rpx;
+  --fs-cap: 27rpx;   /* 适老：cap/mini 各较标准档 +4rpx（原 +2rpx 偏小） */
+  --fs-mini: 25rpx;
 }
 
 /* ============ 通用容器 / 安全区 ============ */

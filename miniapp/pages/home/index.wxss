@@ -271,59 +271,11 @@
   gap: 30rpx;
   padding: 4rpx 46rpx 12rpx;
 }
-.mh-rcard {
+/* 横滑槽：宽度交给 recipe-card density=home */
+.mh-rcard-slot {
   flex: none;
   width: 404rpx;
-  background: var(--c-surface);
-  border-radius: var(--r-card);
-  overflow: hidden;
-  border: var(--bd-card);
-  box-shadow: var(--sh-card);
 }
-.mh-rcard-ph {
-  position: relative;
-  height: 288rpx;
-}
-.mh-rcard-img { width: 100%; height: 100%; }
-.mh-rcard-lbl {
-  position: absolute;
-  top: 21rpx;
-  left: 21rpx;
-  font-size: var(--fs-tiny);
-  letter-spacing: 2rpx;
-  font-weight: 800;
-  color: var(--c-surface);
-  background: rgba(40, 30, 20, 0.55);
-  padding: 8rpx 18rpx;
-  border-radius: 8rpx;
-}
-.mh-rcard-fav {
-  position: absolute;
-  top: 19rpx;
-  right: 19rpx;
-  width: 72rpx;
-  height: 72rpx;
-  border-radius: 50%;
-  background: var(--pop-soft);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.mh-rcard-info { padding: 26rpx 28rpx 30rpx; }
-.mh-rcard-name {
-  font-size: 32rpx;
-  font-weight: 800;
-  color: var(--ink);
-  letter-spacing: -0.5rpx;
-}
-.mh-rcard-meta {
-  display: flex;
-  gap: 24rpx;
-  margin-top: 16rpx;
-  font-size: var(--fs-cap);
-  color: var(--mut-strong);
-}
-.mh-rcard-meta text { max-width: 200rpx; }
 
 /* 查看全部卡 */
 .mh-seeall-card {
@@ -350,49 +302,8 @@
 }
 .mh-sa-t { font-size: 28rpx; font-weight: 800; color: var(--ink); }
 .mh-sa-s { font-size: 22rpx; color: var(--mut-strong); font-weight: 600; }
-/* ============ 清淡行卡 ============ */
-.mh-row {
-  display: flex;
-  align-items: center;
-  gap: 28rpx;
-  padding: 28rpx 0;
-  border-bottom: 2rpx solid var(--paper-2);
-}
-.mh-row:last-of-type { border-bottom: none; }
-.mh-row-thumb {
-  width: 146rpx;
-  height: 146rpx;
-  border-radius: var(--r-md);
-  flex: none;
-}
-.mh-row-mid { flex: 1; min-width: 0; }
-.mh-row-name {
-  font-size: 32rpx;
-  font-weight: 800;
-  color: var(--ink);
-  letter-spacing: -0.5rpx;
-}
-.mh-row-sub {
-  display: flex;
-  gap: 22rpx;
-  margin-top: 10rpx;
-  font-size: 24rpx;
-  color: var(--mut);
-}
-.mh-row-sub text { max-width: 320rpx; }
-.mh-row-add {
-  width: 80rpx;
-  height: 80rpx;
-  border-radius: var(--r-md);
-  background: var(--pop);
-  flex: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: var(--sh-pop);
-}
 
-/* + 图标 */
+/* + 图标（菜单暗卡等仍用） */
 .mh-ico-plus, .mh-ico-plus-dark {
   position: relative;
   width: 32rpx;
@@ -624,8 +535,8 @@
 .fp-wish-text { flex: 1; min-width: 0; font-size: 28rpx; font-weight: 700; color: var(--ink); }
 .fp-wish-by { font-size: 22rpx; color: var(--mut-strong); font-weight: 600; }
 .fp-wish-del {
-  width: 44rpx;
-  height: 44rpx;
+  width: 64rpx;   /* 适老触点 ≥64rpx（原 44rpx 偏小） */
+  height: 64rpx;
   border-radius: 50%;
   background: var(--c-surface);
   display: flex; align-items: center; justify-content: center;
@@ -737,17 +648,17 @@
   --pop: #e8472a;
   --pop-soft: #fdece6;
   --pop-deep: #b3381f;
-  --ink: #2c2c2c;
-  --mut: #8a8a85;
-  --mut-2: #b8b8b2;
-  --mut-strong: #6b6b66;
-  --paper-2: #f5f5f2;
+  --ink: #2c241b;
+  --mut: #7a6e5d;
+  --mut-2: #b3a795;
+  --mut-strong: #6b5f50;
+  --paper-2: #f0ebe2;
   --c-surface: #ffffff;
-  --line: #ececec;
-  --line-light: #efefef;
+  --line: #e8e0d0;
+  --line-light: #f1ece2;
   --r-sm: 16rpx;
   --r-md: 24rpx;
-  --r-card: 28rpx;
+  --r-card: 16rpx;
   --r-pill: 999rpx;
   --sh-pop: 0 6rpx 16rpx rgba(232, 71, 42, 0.22);
   --fs-cap: 23rpx;

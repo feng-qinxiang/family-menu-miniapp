@@ -36,7 +36,8 @@ Page({
     const cells = [];
     for (let i = 0; i < 6; i += 1) cells[i] = code[i] || '';
     this.setData({ code, cells });
-    if (code.length > 0) {
+    // 满 6 位才请求；不足 6 位清空预览且不弹错（输码过程中保持安静）
+    if (code.length === 6) {
       this.loadFamily(code);
     } else {
       this.setData({ family: null });
@@ -89,15 +90,22 @@ Page({
   },
 
   async loadFamily(code) {
+    // 序号守卫（仿 home _wishSeq）：输码中改码后，旧请求的响应/报错一律丢弃
+    const seq = (this._loadSeq || 0) + 1;
+    this._loadSeq = seq;
     this.setData({ loading: true });
     try {
       const preview = await previewJoinFamily(code);
+      if (this._loadSeq !== seq) return;
       this.setData({ family: this.buildFamily(preview, code) });
     } catch (e) {
+      if (this._loadSeq !== seq) return;
       this.setData({ family: null });
       wx.showToast({ title: e.message || '未找到家庭', icon: 'none' });
     } finally {
-      this.setData({ loading: false });
+      if (this._loadSeq === seq) {
+        this.setData({ loading: false });
+      }
     }
   },
 

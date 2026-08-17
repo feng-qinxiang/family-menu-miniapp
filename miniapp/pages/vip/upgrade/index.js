@@ -62,6 +62,8 @@ Page({
       }
     } catch (err) {
       console.error('vip status load failed', err);
+      // 状态拉取失败不再静默：明确告知，避免把"未知"当"未开通"
+      wx.showToast({ title: '会员状态加载失败，请重试', icon: 'none' });
     }
   },
 

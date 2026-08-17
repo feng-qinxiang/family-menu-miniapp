@@ -45,12 +45,8 @@
 
     <!-- 粘贴区 -->
     <view class="imp-pad">
-      <view class="shead g-fade-up g-d2">
-        <view class="shead-main">
-          <view class="shead-bar"></view>
-          <view class="eyebrow">粘贴文案</view>
-          <view class="shead-title">粘贴<text class="pop">菜谱</text>文案</view>
-        </view>
+      <view class="imp-shead-row g-fade-up g-d2">
+        <section-head eyebrow="粘贴文案" title="粘贴" popPart="菜谱" titleTail="文案" />
         <view class="sample tap-scale" bindtap="sampleText">填入示例 +</view>
       </view>
 
@@ -67,7 +63,7 @@
         <view wx:if="{{!rawText}}" class="ta-cursor"></view>
         <view class="ta-foot">
           <text class="ta-cnt">已粘贴 {{charCount}} 字</text>
-          <view class="parsebtn tap-scale" bindtap="parseImport">开始解析 →</view>
+          <view class="parsebtn tap-scale {{parsing ? 'disabled' : ''}}" bindtap="parseImport">{{parsing ? '解析中…' : '开始解析 →'}}</view>
         </view>
       </view>
 
@@ -165,13 +161,7 @@
 
       <!-- 最近导入 -->
       <block wx:if="{{recentImports.length}}">
-        <view class="shead">
-          <view class="shead-main">
-            <view class="shead-bar"></view>
-            <view class="eyebrow">最近导入</view>
-            <view class="shead-title">最近<text class="pop">导入</text></view>
-          </view>
-        </view>
+        <section-head eyebrow="最近导入" title="最近" popPart="导入" />
         <view class="recent-list g-fade-up">
           <view class="recent tap-scale" wx:for="{{recentImports}}" wx:key="id" data-id="{{item.id}}" bindtap="openRecent">
             <image class="r-thumb" src="{{item.cover}}" mode="aspectFill" />

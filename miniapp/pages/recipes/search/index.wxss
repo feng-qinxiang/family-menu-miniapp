@@ -222,12 +222,17 @@
   align-items: center;
   justify-content: center;
 }
-.gc-heart {
-  font-size: 28rpx;
-  line-height: 1;
-  color: var(--ink-deep);
+.gc-heart-dot {
+  width: 22rpx;
+  height: 22rpx;
+  border-radius: 50%;
+  border: 3rpx solid var(--ink-deep);
+  box-sizing: border-box;
 }
-.gc-fav.on .gc-heart { color: var(--pop); }
+.gc-heart-dot.on {
+  border-color: var(--pop);
+  background: var(--pop);
+}
 
 .gc-info { padding: 23rpx 25rpx 27rpx; }
 .gc-name {

@@ -5,6 +5,7 @@
   "usingComponents": {
     "nav-bar": "/components/nav-bar/index",
     "ad-banner": "/components/ad-banner/index",
-    "state-sheet": "/components/state-sheet/index"
+    "state-sheet": "/components/state-sheet/index",
+    "section-head": "/components/section-head/index"
   }
 }

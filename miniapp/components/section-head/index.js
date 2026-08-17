@@ -5,8 +5,10 @@
 Component({
   options: {
     multipleSlots: true,
-    addGlobalClass: true
+    addGlobalClass: true,
+    virtualHost: true
   },
+  externalClasses: ['ext-class'],
   properties: {
     // Georgia 斜体金色小标 eyebrow（如 "Family Favorites"）
     eyebrow: {

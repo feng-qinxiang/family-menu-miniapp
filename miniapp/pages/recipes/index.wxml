@@ -105,14 +105,15 @@
     </view>
 
     <!-- 结果标题 -->
-    <view class="shead rx-shead" wx:if="{{!loading && displayedRecipes.length}}">
-      <view class="shead-main">
-        <view class="shead-bar"></view>
-        <text class="eyebrow">点到即做</text>
-        <view class="shead-title"><text class="pop">{{filteredRecipes.length}}</text> 道可点</view>
-      </view>
-      <text class="seeall">右下角直接加入</text>
-    </view>
+    <section-head
+      wx:if="{{!loading && displayedRecipes.length}}"
+      ext-class="rx-shead"
+      eyebrow="点到即做"
+      title=""
+      popPart="{{filteredRecipes.length}}"
+      titleTail=" 道可点"
+      hint="右下角直接加入"
+    />
 
     <!-- 点到 -->
     <view class="rx-meal" wx:if="{{!loading && displayedRecipes.length}}">
@@ -126,20 +127,23 @@
 
     <!-- 菜卡网格 -->
     <view class="rx-grid" wx:if="{{!loading && displayedRecipes.length}}">
-      <view class="rx-card g-fade-up g-d{{index % 5 + 1}} tap-scale {{item.selected ? 'on' : ''}}"
-        wx:for="{{displayedRecipes}}" wx:key="id" data-id="{{item.id}}" bindtap="goDetail">
-        <view class="rx-card-cover">
-          <image class="rx-card-img" src="{{item.cover}}" mode="aspectFill" binderror="onGridImgError" data-index="{{index}}" />
-          <view class="rx-card-lbl">{{item.cuisine || '家常'}}</view>
-          <view class="rx-card-badge {{item.selected ? 'fav' : ''}}">{{item.sourceLabel}}</view>
-        </view>
-        <view class="rx-card-info">
-          <view class="rx-card-name">{{item.title}}</view>
-          <view class="rx-card-meta">{{item.cuisine || '家常'}} · {{item.timeCost || '?'}}分钟 · {{item.servings || '?'}}人</view>
-        </view>
-        <view class="rx-card-add {{item.selected ? 'picked' : ''}}" catchtap="addRecipeToToday" data-id="{{item.id}}">
-          <text>{{item.selected ? '✓' : '+'}}</text>
-        </view>
+      <view
+        class="rx-card-slot g-fade-up g-d{{index % 5 + 1}}"
+        wx:for="{{displayedRecipes}}"
+        wx:key="id"
+      >
+        <recipe-card
+          recipe="{{item}}"
+          variant="card"
+          density="grid"
+          selected="{{item.selected}}"
+          badge="{{item.sourceLabel}}"
+          showAdd="{{true}}"
+          showFav="{{false}}"
+          addPlacement="float"
+          bind:tap="goDetail"
+          bind:add="addRecipeToToday"
+        />
       </view>
     </view>
 

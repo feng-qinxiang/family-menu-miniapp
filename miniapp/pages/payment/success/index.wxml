@@ -16,7 +16,7 @@
 
   <!-- VIP 标签 -->
   <view class="ps-viptag g-fade-up g-d3">
-    <text class="ps-viptag-star">★</text>
+    <view class="ps-viptag-star-mark"></view>
     <text>{{planName}}</text>
   </view>
 

@@ -14,8 +14,8 @@
   <state-empty
     wx:elif="{{loadError || !post}}"
     type="offline"
-    title="帖子走丢了"
-    desc="没找到这篇分享，换个网络再试试"
+    title="帖子不存在或已删除"
+    desc="可能已被作者删除或网络开小差，换个网络再试试"
     cta="重新加载"
     bind:action="onRetry"
   ></state-empty>
@@ -70,14 +70,14 @@
       <!-- 操作栏 -->
       <view class="react-bar g-fade-up g-d4">
         <view class="react liked">
-          <text class="ricon">♥</text>
+          <view class="ricon ricon-heart on"></view>
           <text class="n">{{post.likeCount}}</text>
         </view>
         <view
           class="react tap-scale {{post.favorited ? 'fav-on' : ''}}"
           bindtap="onToggleFavorite"
         >
-          <text class="ricon">{{post.favorited ? '★' : '☆'}}</text>
+          <view class="ricon ricon-star {{post.favorited ? 'on' : ''}}"></view>
           <text class="n">收藏 {{post.favoriteCount}}</text>
         </view>
         <view class="react react-end">

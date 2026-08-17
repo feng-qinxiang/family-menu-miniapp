@@ -31,6 +31,7 @@ Page({
   data: {
     statusBarHeight: 0,
     loading: true,
+    loadError: false,
     orders: [],
     totalCount: 0,
     totalSpent: '0',
@@ -53,14 +54,16 @@ Page({
   },
 
   async loadOrders() {
-    this.setData({ loading: true });
+    this.setData({ loading: true, loadError: false });
     let orders = [];
     try {
       const raw = await getPaymentOrders();
-      orders = Array.isArray(raw) ? raw.map(mapOrder) : [];
+      orders = raw.map(mapOrder);
     } catch (err) {
       console.error('orders load failed', err);
-      orders = [];
+      // 加载失败进错误态，不伪装成"0 笔订单"
+      this.setData({ orders: [], loading: false, loadError: true });
+      return;
     }
     const totalFen = orders.reduce((sum, o) => {
       const fen = (parseInt(o.amount, 10) || 0) * 100 + parseInt((o.cents || '.00').slice(1), 10);
@@ -69,6 +72,11 @@ Page({
     const totalYuan = Math.floor(totalFen / 100);
     const totalCents = '.' + String(totalFen % 100).padStart(2, '0');
     this.setData({ orders, totalCount: orders.length, totalSpent: String(totalYuan), totalCents, loading: false });
+  },
+
+  retryLoad() {
+    this.setData({ loading: true, loadError: false });
+    this.loadOrders();
   },
 
   // 续费 → 跳转 vip/upgrade

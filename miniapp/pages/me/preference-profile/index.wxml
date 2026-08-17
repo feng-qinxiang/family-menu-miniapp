@@ -27,7 +27,7 @@
       <view class="ov-mask"></view>
       <text class="ov-big">{{totalCooks}}</text>
       <view class="ov-content">
-        <view class="ov-eyebrow">Taste Profile · 本月</view>
+        <view class="ov-eyebrow">口味画像 · 本月</view>
         <view class="ov-row">
           <view class="ov-stat">
             <view class="ov-n">{{totalCooks}}<text class="ov-u">道</text></view>
@@ -46,13 +46,7 @@
     </view>
 
     <!-- 菜系分布条形图 -->
-    <view class="shead">
-      <view class="shead-main">
-        <view class="shead-bar"></view>
-        <view class="eyebrow">菜系分布</view>
-        <view class="shead-title">菜系<text class="pop">分布</text></view>
-      </view>
-    </view>
+    <section-head eyebrow="菜系分布" title="菜系" popPart="分布" />
     <view wx:if="{{bars.length}}" class="card g-fade-up g-d1">
       <view class="bar" wx:for="{{bars}}" wx:key="name">
         <view class="bar-top">
@@ -67,13 +61,7 @@
     <view wx:else class="card empty-mini g-fade-up g-d1">还没有足够的做菜记录</view>
 
     <!-- 口味标签云 -->
-    <view class="shead">
-      <view class="shead-main">
-        <view class="shead-bar"></view>
-        <view class="eyebrow">口味标签</view>
-        <view class="shead-title">口味<text class="pop">标签</text></view>
-      </view>
-    </view>
+    <section-head eyebrow="口味标签" title="口味" popPart="标签" />
     <view wx:if="{{cloud.length}}" class="card g-fade-up g-d2">
       <view class="cloud">
         <view class="tcl tap-scale tcl-{{item.size}}" wx:for="{{cloud}}" wx:key="name">
@@ -84,13 +72,7 @@
     <view wx:else class="card empty-mini g-fade-up g-d2">口味标签会随做菜越来越丰富</view>
 
     <!-- 最常做 TOP5 -->
-    <view class="shead">
-      <view class="shead-main">
-        <view class="shead-bar"></view>
-        <view class="eyebrow">Most Cooked · Top 5</view>
-        <view class="shead-title">最常做的<text class="pop">菜</text></view>
-      </view>
-    </view>
+    <section-head eyebrow="最常做 · Top 5" title="最常做的" popPart="菜" />
     <view wx:if="{{topList.length}}" class="card g-fade-up g-d3">
       <view
         class="trow tap-scale"

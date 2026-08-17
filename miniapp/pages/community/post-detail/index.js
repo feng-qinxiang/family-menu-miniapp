@@ -93,9 +93,8 @@ Page({
     ])
       .then(([posts, comments]) => {
         const list = Array.isArray(posts) ? posts : [];
-        let raw = list.find((p) => String(p.id) === String(postId));
-        // 找不到则退而取第一条，避免空白
-        if (!raw && list.length) raw = list[0];
+        const raw = list.find((p) => String(p.id) === String(postId)) || null;
+        // 找不到 = 帖子已删除/链接失效 → 走 loadError 空态，禁止静默换第一条
         const post = normalizePost(raw);
         const cmts = (Array.isArray(comments) ? comments : []).map(normalizeComment);
         this.setData({

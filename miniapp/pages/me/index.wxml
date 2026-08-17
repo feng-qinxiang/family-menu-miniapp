@@ -28,7 +28,7 @@
   <view class="mag-sheet">
     <!-- VIP banner -->
     <view class="mag-vip tap-scale" bindtap="goVip">
-      <view class="mag-vip-ic">★</view>
+      <view class="mag-vip-ic"><view class="mag-vip-glyph"></view></view>
       <view class="mag-vip-mid">
         <view class="mag-vip-t">{{vipStatus.vip ? '已开通' : '开通'}}<text class="hl">家庭云同步</text></view>
         <view class="mag-vip-s">{{vipStatus.vip ? (vipStatus.planName || '全家共享 · 多设备实时同步') : '菜谱与做菜记录全家共享，多设备实时同步'}}</view>
@@ -38,7 +38,7 @@
 
     <!-- 游客引导：未绑定手机号 -->
     <view class="mag-phone tap-scale" wx:if="{{currentUser && !currentUser.phoneBound}}" bindtap="goPhoneBind">
-      <view class="mag-phone-ic">☏</view>
+      <view class="mag-phone-ic"><view class="mag-phone-glyph"></view></view>
       <view class="mag-phone-mid">
         <view class="mag-phone-t">绑定手机号，换设备不丢数据</view>
         <view class="mag-phone-s">菜谱、菜单、做菜记录云端保存</view>
@@ -74,7 +74,7 @@
 
     <!-- 最近上桌 -->
     <view class="g-fade-up g-d2" wx:if="{{cookHistory.length}}">
-      <section-head eyebrow="Recently Cooked" title="最近" popPart="上桌" hint="全部" more="{{true}}" bindtapmore="goRecipes" />
+      <section-head eyebrow="最近上桌" title="最近" popPart="上桌" hint="全部" more="{{true}}" bindtapmore="goRecipes" />
       <view class="card mag-history">
         <view class="mag-hrow tap-scale" wx:for="{{cookHistory}}" wx:key="id">
           <image class="mag-thumb" src="{{item.cover}}" mode="aspectFill" />
@@ -91,7 +91,7 @@
     </view>
     <!-- 最近上桌：加载骨架 -->
     <view class="g-fade-up g-d2" wx:elif="{{loading}}">
-      <section-head eyebrow="Recently Cooked" title="最近" popPart="上桌" />
+      <section-head eyebrow="最近上桌" title="最近" popPart="上桌" />
       <view class="card mag-history">
         <view class="mag-hrow" wx:for="{{[1,2]}}" wx:key="*this">
           <view class="mag-skel-thumb shimmer"></view>
@@ -105,7 +105,7 @@
 
     <!-- 厨房工具 -->
     <view class="g-fade-up g-d3">
-      <section-head eyebrow="Kitchen Tools" title="厨房" popPart="工具" />
+      <section-head eyebrow="厨房工具" title="厨房" popPart="工具" />
       <view class="card mag-tools">
         <view class="mag-trow tap-scale" bindtap="goMenu">
           <view class="mag-ticon ti-0">桌</view>
@@ -142,7 +142,7 @@
 
     <!-- 口味偏好 -->
     <view class="g-fade-up g-d4" wx:if="{{prefBars.length}}">
-      <section-head eyebrow="Taste Profile" title="本月" popPart="口味" />
+      <section-head eyebrow="本月口味" title="本月" popPart="口味" />
       <view class="card mag-pref">
         <view class="mag-prow" wx:for="{{prefBars}}" wx:key="label">
           <view class="mag-ptop">
@@ -155,7 +155,7 @@
     </view>
     <!-- 口味偏好：加载骨架 -->
     <view class="g-fade-up g-d4" wx:elif="{{loading}}">
-      <section-head eyebrow="Taste Profile" title="本月" popPart="口味" />
+      <section-head eyebrow="本月口味" title="本月" popPart="口味" />
       <view class="card mag-pref">
         <view class="mag-prow" wx:for="{{[1,2,3]}}" wx:key="*this">
           <view class="mag-skel-line strong shimmer" style="width: 40%;"></view>
@@ -166,7 +166,7 @@
 
     <!-- 偏好画像入口 -->
     <view class="g-fade-up g-d5">
-      <section-head eyebrow="Preference Profile" title="偏好" popPart="画像" />
+      <section-head eyebrow="偏好画像" title="偏好" popPart="画像" />
       <view class="card mag-tools">
         <view class="mag-trow tap-scale" bindtap="goPreference">
           <view class="mag-ticon ti-pref">偏</view>

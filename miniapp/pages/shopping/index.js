@@ -71,7 +71,8 @@ Page({
     newItem: { ingredientName: '', amount: '', unit: '' },
     skeletonRows: [1, 2, 3],
     loading: true,
-    loadError: false
+    loadError: false,
+    addItemSubmitting: false
   },
 
   onShow() {
@@ -97,6 +98,7 @@ Page({
         getTodayMenu(),
         getPantryItems()
       ]);
+      this._lastContext = { todayMenu, pantryItems };
       this.applyShoppingList(shoppingList, { todayMenu, pantryItems, loading: false });
       this.setPantryView(pantryItems);
     } catch (err) {
@@ -124,7 +126,11 @@ Page({
     if (!tab || tab === this.data.tab) return;
     this.setData({ tab });
     if (tab === 'pantry') {
-      getPantryItems().then(items => this.setPantryView(items));
+      getPantryItems()
+        .then((items) => this.setPantryView(items))
+        .catch(() => {
+          wx.showToast({ title: '库存刷新失败', icon: 'none' });
+        });
     }
   },
 
@@ -150,22 +156,38 @@ Page({
       return;
     }
     this.setData({ newPantryItem: { ingredientName: '', amount: '', unit: '' }, showPantryForm: false });
-    const items = await getPantryItems();
-    this.setPantryView(items);
+    try {
+      const items = await getPantryItems();
+      this.setPantryView(items);
+    } catch (err) {
+      wx.showToast({ title: '库存刷新失败', icon: 'none' });
+      return;
+    }
     wx.showToast({ title: '已记入', icon: 'success' });
   },
 
   async removePantryEntry(e) {
     const { id } = e.currentTarget.dataset;
     if (!id) return;
+    // 二次确认（仿 menu 撤菜弹窗），防误触
+    const res = await wx.showModal({
+      title: '删除这个食材？',
+      confirmText: '删除',
+      cancelText: '取消'
+    });
+    if (!res.confirm) return;
     try {
       await deletePantryItem(id);
     } catch (err) {
       wx.showToast({ title: '删除失败', icon: 'none' });
       return;
     }
-    const items = await getPantryItems();
-    this.setPantryView(items);
+    try {
+      const items = await getPantryItems();
+      this.setPantryView(items);
+    } catch (err) {
+      wx.showToast({ title: '库存刷新失败', icon: 'none' });
+    }
   },
 
   async refreshList() {
@@ -175,6 +197,7 @@ Page({
         getTodayMenu(),
         getPantryItems()
       ]);
+      this._lastContext = { todayMenu, pantryItems };
       this.applyShoppingList(shoppingList, { todayMenu, pantryItems });
       wx.showToast({ title: '已按菜单整理', icon: 'success' });
     } catch (err) {
@@ -183,16 +206,22 @@ Page({
   },
 
   async toggleItem(event) {
-    const { id, purchased } = event.currentTarget.dataset;
-    const currentPurchased = purchased === true || purchased === 'true';
+    const { id } = event.currentTarget.dataset;
+    const items = (this.data.shoppingList && this.data.shoppingList.items) || [];
+    const idx = items.findIndex((it) => it.itemId === id);
+    if (idx < 0) return;
+    const next = !items[idx].purchased;
+    // 乐观更新：本地先翻勾（分组/摘要同步重算），单发 PATCH，不重拉列表
+    const flipped = items.map((it, k) => (k === idx ? { ...it, purchased: next } : it));
+    this.setData(this.buildShoppingState({ ...this.data.shoppingList, items: flipped }, this._lastContext || {}));
     try {
-      const [shoppingList, todayMenu, pantryItems] = await Promise.all([
-        toggleShoppingPurchased(id, !currentPurchased),
-        getTodayMenu(),
-        getPantryItems()
-      ]);
-      this.applyShoppingList(shoppingList, { todayMenu, pantryItems });
+      await toggleShoppingPurchased(id, next);
     } catch (err) {
+      // 失败定向翻回目标项：按 itemId 对当前数据操作，仅当该项仍处于本次乐观翻勾态才回退，
+      // 不动期间已翻的其他项（禁止快照覆盖/重拉列表式回滚，防连勾竞态弹回邻项）
+      const current = (this.data.shoppingList && this.data.shoppingList.items) || [];
+      const reverted = current.map((it) => (it.itemId === id && it.purchased === next ? { ...it, purchased: !next } : it));
+      this.setData(this.buildShoppingState({ ...this.data.shoppingList, items: reverted }, this._lastContext || {}));
       wx.showToast({ title: '操作失败，请重试', icon: 'none' });
     }
   },
@@ -213,12 +242,14 @@ Page({
   },
 
   async addItemPayload(payload, shouldClearInput) {
+    if (this.data.addItemSubmitting) return;
     const ingredientName = (payload.ingredientName || '').trim();
     if (!ingredientName.trim()) {
       wx.showToast({ title: '请输入食材名', icon: 'none' });
       return;
     }
     let result;
+    this.setData({ addItemSubmitting: true });
     try {
       result = await addShoppingItem({
         ingredientName,
@@ -226,20 +257,30 @@ Page({
         unit: payload.unit || ''
       });
     } catch (err) {
+      this.setData({ addItemSubmitting: false });
       wx.showToast({ title: '添加失败，请重试', icon: 'none' });
       return;
     }
     if (result) {
-      const [todayMenu, pantryItems] = await Promise.all([getTodayMenu(), getPantryItems()]);
-      const nextState = this.buildShoppingState(result, { todayMenu, pantryItems });
+      let context = this._lastContext || {};
+      try {
+        const [todayMenu, pantryItems] = await Promise.all([getTodayMenu(), getPantryItems()]);
+        context = this._lastContext = { todayMenu, pantryItems };
+      } catch (err) {
+        wx.showToast({ title: '清单已更新，明细刷新失败', icon: 'none' });
+      }
+      const nextState = this.buildShoppingState(result, context);
       if (shouldClearInput) {
         nextState.newItem = { ingredientName: '', amount: '', unit: '' };
       }
+      nextState.addItemSubmitting = false;
       this.setData(nextState);
     } else {
       await this.loadShoppingList();
       if (shouldClearInput) {
-        this.setData({ newItem: { ingredientName: '', amount: '', unit: '' } });
+        this.setData({ newItem: { ingredientName: '', amount: '', unit: '' }, addItemSubmitting: false });
+      } else {
+        this.setData({ addItemSubmitting: false });
       }
     }
     wx.showToast({ title: '已添加', icon: 'success' });
@@ -247,6 +288,13 @@ Page({
 
   async deleteItem(event) {
     const { id } = event.currentTarget.dataset;
+    // 二次确认（仿 menu 撤菜弹窗），防误触
+    const res = await wx.showModal({
+      title: '移除这一项？',
+      confirmText: '移除',
+      cancelText: '保留'
+    });
+    if (!res.confirm) return;
     let result;
     try {
       result = await deleteShoppingItem(id);
@@ -255,8 +303,14 @@ Page({
       return;
     }
     if (result) {
-      const [todayMenu, pantryItems] = await Promise.all([getTodayMenu(), getPantryItems()]);
-      this.applyShoppingList(result, { todayMenu, pantryItems });
+      let context = this._lastContext || {};
+      try {
+        const [todayMenu, pantryItems] = await Promise.all([getTodayMenu(), getPantryItems()]);
+        context = this._lastContext = { todayMenu, pantryItems };
+      } catch (err) {
+        wx.showToast({ title: '清单已更新，明细刷新失败', icon: 'none' });
+      }
+      this.applyShoppingList(result, context);
     } else {
       await this.loadShoppingList();
     }

@@ -5,7 +5,7 @@
   <view class="vu-wrap">
     <!-- 引导文案 -->
     <view class="vu-lead g-fade-up g-d1">
-      <view class="vu-eyebrow">Family Sync · Premium</view>
+      <view class="vu-eyebrow">家庭云同步 · 会员</view>
       <view class="vu-h1">全家共享<text class="pop">一份菜单</text></view>
       <view class="vu-lead-p">开通后，家人实时同步今日菜单、买菜清单和菜谱收藏，再也不用反复问"今晚吃啥"。</view>
     </view>
@@ -22,12 +22,7 @@
     </view>
 
     <!-- 选择套餐 -->
-    <view class="shead vu-shead g-fade-up g-d3">
-      <view class="shead-main">
-        <view class="shead-bar"></view>
-        <view class="shead-title">选择套餐</view>
-      </view>
-    </view>
+    <section-head ext-class="vu-shead g-fade-up g-d3" title="选择套餐" />
     <view class="vu-plans g-fade-up g-d3">
       <view
         class="vu-plan tap-scale {{selectedPlan==='yearly' ? 'on' : ''}}"
@@ -57,12 +52,7 @@
     </view>
 
     <!-- 价格明细 -->
-    <view class="shead vu-shead g-fade-up g-d4">
-      <view class="shead-main">
-        <view class="shead-bar"></view>
-        <view class="shead-title">价格明细</view>
-      </view>
-    </view>
+    <section-head ext-class="vu-shead g-fade-up g-d4" title="价格明细" />
     <view class="card vu-detail g-fade-up g-d4">
       <block wx:if="{{selectedPlan==='yearly'}}">
         <view class="vu-drow"><text class="vu-k">年卡原价</text><text class="vu-v"><text class="vu-del">¥118.00</text></text></view>
@@ -70,7 +60,7 @@
         <view class="vu-dline"></view>
         <view class="vu-drow total"><text class="vu-k">实付金额</text><text class="vu-v-big"><text class="vu-yuan">¥</text>68.00</text></view>
         <view class="vu-savetip">
-          <text class="vu-star">★</text>
+          <view class="vu-star-mark"></view>
           已为你省下 ¥50，相当于 5.8 折
         </view>
       </block>
@@ -79,19 +69,14 @@
         <view class="vu-dline"></view>
         <view class="vu-drow total"><text class="vu-k">实付金额</text><text class="vu-v-big"><text class="vu-yuan">¥</text>9.90</text></view>
         <view class="vu-savetip">
-          <text class="vu-star">★</text>
+          <view class="vu-star-mark"></view>
           随时取消，灵活体验家庭同步
         </view>
       </block>
     </view>
 
     <!-- 会员权益 -->
-    <view class="shead vu-shead g-fade-up g-d5">
-      <view class="shead-main">
-        <view class="shead-bar"></view>
-        <view class="shead-title">会员权益</view>
-      </view>
-    </view>
+    <section-head ext-class="vu-shead g-fade-up g-d5" title="会员权益" />
     <view class="card vu-benes g-fade-up g-d5">
       <view
         class="vu-bene"

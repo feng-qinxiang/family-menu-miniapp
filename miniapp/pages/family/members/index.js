@@ -18,6 +18,7 @@ Page({
     statusBarHeight: 0,
     familyName: '',
     inviteCode: '',
+    codeFailed: false,
     members: [],
     memberCount: 0,
     selfUserId: null,
@@ -54,19 +55,13 @@ Page({
     getFamilyProfile()
       .then((profile) => {
         this.applyProfile(profile);
-        // 若 profile 未带邀请码，主动拉取一次
+        // 若 profile 未带邀请码，主动拉取一次真实码；失败留 codeFailed 态可重试
         if (!profile || !profile.inviteCode) {
-          return getFamilyInviteCode()
-            .then((info) => {
-              if (info && info.inviteCode) {
-                this.setData({ inviteCode: info.inviteCode });
-              }
-            })
-            .catch(() => {}); // 邀请码拉取失败不影响主流程
+          this.retryInviteCode();
         }
       })
       .catch(() => {
-        this.setData({ members: [], memberCount: 0, loaded: true });
+        this.setData({ members: [], memberCount: 0, loaded: true, codeFailed: true });
         this.showToast('家庭信息加载失败');
       });
   },
@@ -96,13 +91,10 @@ Page({
       };
     });
 
-    // 邀请码：后端未下发则用 familyId 生成稳定占位码（演示）
-    const baseId = data.familyId != null ? String(data.familyId) : '0';
-    const inviteCode = (data.inviteCode || (100000 + (Number(baseId) || 0) * 7919).toString().slice(-6));
-
+    // 邀请码：只用后端下发的真实码；未下发/拉取失败 = 空（禁止伪造占位码）
     this.setData({
       familyName: data.familyName || '我的家庭',
-      inviteCode,
+      inviteCode: data.inviteCode || '',
       members,
       memberCount: members.length,
       selfUserId: ownerId,
@@ -110,10 +102,31 @@ Page({
     });
   },
 
+  // 主动拉取真实邀请码；失败进入 codeFailed 态，可点击重试
+  retryInviteCode() {
+    return getFamilyInviteCode()
+      .then((info) => {
+        if (info && info.inviteCode) {
+          this.setData({ inviteCode: info.inviteCode, codeFailed: false });
+        } else {
+          this.setData({ codeFailed: true });
+        }
+      })
+      .catch(() => {
+        this.setData({ codeFailed: true });
+        this.showToast('邀请码获取失败，请重试');
+      });
+  },
+
   // 复制当前家庭邀请码
   onCopyCode() {
     const code = this.data.inviteCode;
-    if (!code) return;
+    if (!code) {
+      // 无真实码时禁止复制占位内容，点击即重试拉取
+      this.showToast('邀请码还没拿到，正在重试');
+      this.retryInviteCode();
+      return;
+    }
     wx.setClipboardData({
       data: code,
       success: () => this.showToast('邀请码已复制'),

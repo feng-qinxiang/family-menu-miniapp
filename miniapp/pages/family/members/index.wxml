@@ -24,7 +24,7 @@
       <view class="fam-bot">
         <view class="fam-invite tap-scale" catchtap="onCopyCode">
           <text class="fam-cap">邀请码</text>
-          <view class="fam-code">{{inviteCode}}</view>
+          <view class="fam-code">{{inviteCode || (codeFailed ? '点击重试' : '获取中…')}}</view>
         </view>
         <view class="fam-count">
           <text class="fam-count-dot"></text>
@@ -34,14 +34,7 @@
     </view>
 
     <!-- Section 标题 -->
-    <view class="shead">
-      <view class="shead-main">
-        <view class="shead-bar"></view>
-        <text class="eyebrow">谁在掌勺</text>
-        <view class="shead-title">成员列表</view>
-      </view>
-      <text class="seeall">{{memberCount}} 位成员</text>
-    </view>
+    <section-head eyebrow="谁在掌勺" title="成员列表" hint="{{memberCount}} 位成员" />
 
     <!-- 成员列表 -->
     <view wx:if="{{members.length}}" class="mlist card g-fade-up g-d2">

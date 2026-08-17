@@ -158,9 +158,15 @@
   align-items: center;
   justify-content: center;
   border-radius: var(--r-md);
-  font-size: 38rpx;
   background: rgba(255, 255, 255, 0.18);
   color: var(--c-surface);
+}
+/* VIP 入口：几何星，不用 emoji ★ */
+.mag-vip-glyph {
+  width: 28rpx;
+  height: 28rpx;
+  background: var(--c-surface);
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
 }
 .mag-vip-mid { flex: 1; min-width: 0; }
 .mag-vip-t { font-size: 28rpx; font-weight: 800; color: var(--c-surface); }
@@ -389,11 +395,30 @@
   border-radius: 50%;
   background: var(--pop);
   color: #fff;
-  font-size: 32rpx;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+}
+/* 绑手机：听筒几何标，不用 ☏ */
+.mag-phone-glyph {
+  width: 22rpx;
+  height: 30rpx;
+  border: 3rpx solid var(--c-surface);
+  border-radius: 6rpx 6rpx 10rpx 10rpx;
+  box-sizing: border-box;
+  position: relative;
+}
+.mag-phone-glyph::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 4rpx;
+  width: 10rpx;
+  height: 3rpx;
+  margin-left: -5rpx;
+  border-radius: 2rpx;
+  background: var(--c-surface);
 }
 .mag-phone-mid { flex: 1; min-width: 0; }
 .mag-phone-t { font-size: 28rpx; font-weight: 600; color: var(--ink-deep); }

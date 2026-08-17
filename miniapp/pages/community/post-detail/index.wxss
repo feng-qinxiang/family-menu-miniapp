@@ -189,6 +189,27 @@
   font-weight: 700;
 }
 .react .ricon { font-size: 28rpx; line-height: 1; }
+/* 几何心/星，不用 emoji */
+.ricon-heart,
+.ricon-star {
+  width: 22rpx;
+  height: 22rpx;
+  flex: none;
+}
+.ricon-heart {
+  border-radius: 50%;
+  border: 3rpx solid currentColor;
+  box-sizing: border-box;
+}
+.ricon-heart.on {
+  background: currentColor;
+}
+.ricon-star {
+  background: currentColor;
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  opacity: 0.45;
+}
+.ricon-star.on { opacity: 1; }
 .react .n { font-weight: 800; }
 .react.liked { background: var(--pop-soft); color: var(--pop); }
 .react.fav-on { background: var(--pop-soft); color: var(--pop); }

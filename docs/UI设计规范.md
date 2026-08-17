@@ -11,7 +11,7 @@
 
 - 奶油纸底 `#fbf8f3`、深墨文字 `#2c241b`、番茄红点睛 `#e8472a`（全站占比约 4%）、金 `#b08949`、墨绿 `#2f4a3a`
 - 深色大图 Hero + 暖光叠层 + 底部渐变；镂空白描边标题（`title-stroke`，Android 用 text-shadow 兜底）
-- 卡片白底大圆角（`--r-card: 42rpx`）+ 双层暖阴影（`--sh-card`）
+- 卡片白底小圆角（`--r-card: 16rpx`，下厨房式）+ 轻量暖阴影（`--sh-card`）
 - 头像一律「文字 + 品牌色」，禁止用菜图/占位图当头像
 - 底部导航固定 4 tab：今日 / 菜谱 / 冰箱 / 我的；二级页用 `nav-bar` 返回
 
@@ -42,9 +42,9 @@
 
 | Token | 值 | 用途 |
 |-------|-----|------|
-| `--fs-hero-xl` | 112rpx | 照片 hero 主标题 |
-| `--fs-hero-lg` | 88rpx | 次 hero 标题 |
-| `--fs-hero-sm` | 66rpx | 小 hero/合规页标题 |
+| `--fs-hero-xl` | 96rpx | 照片 hero 主标题 |
+| `--fs-hero-lg` | 72rpx | 次 hero 标题 |
+| `--fs-hero-sm` | 56rpx | 小 hero/合规页标题 |
 | `--fs-h1` | 50rpx | 页面主标题（.page-title/.shead-title） |
 | `--fs-h2` | 36rpx | 区块标题 |
 | `--fs-lg` | 32rpx | 卡片名/强调正文/图标字符 |

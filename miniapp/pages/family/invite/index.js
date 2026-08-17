@@ -1,53 +1,12 @@
 const { getFamilyInviteCode } = require('../../../utils/api');
 
-// 生成二维码视觉点阵，扫码内容以分享路径中的邀请码为准。
-function buildQrCells(seed) {
-  const cells = [];
-  const size = 21; // 21x21 网格
-  const step = 276 / size; // 与 .fi-qr 尺寸对齐（rpx）
-  let s = 0;
-  for (let i = 0; i < String(seed).length; i++) {
-    s += String(seed).charCodeAt(i) * (i + 7);
-  }
-  const rand = () => {
-    s = (s * 9301 + 49297) % 233280;
-    return s / 233280;
-  };
-  const isFinder = (r, c) => {
-    const inBox = (br, bc) => r >= br && r < br + 7 && c >= bc && c < bc + 7;
-    return inBox(0, 0) || inBox(0, size - 7) || inBox(size - 7, 0);
-  };
-  for (let r = 0; r < size; r++) {
-    for (let c = 0; c < size; c++) {
-      if (isFinder(r, c)) {
-        // 定位角：外框 + 内点
-        const onEdge = (br, bc) =>
-          r === br || r === br + 6 || c === bc || c === bc + 6;
-        const core = (br, bc) =>
-          r >= br + 2 && r <= br + 4 && c >= bc + 2 && c <= bc + 4;
-        const box = [
-          [0, 0],
-          [0, size - 7],
-          [size - 7, 0]
-        ].find(([br, bc]) => r >= br && r < br + 7 && c >= bc && c < bc + 7);
-        if (box && (onEdge(box[0], box[1]) || core(box[0], box[1]))) {
-          cells.push({ x: Math.round(c * step), y: Math.round(r * step) });
-        }
-      } else if (rand() > 0.55) {
-        cells.push({ x: Math.round(c * step), y: Math.round(r * step) });
-      }
-    }
-  }
-  return cells;
-}
-
 Page({
   data: {
     statusBarHeight: 0,
-    inviteCode: '836295',
-    codeDigits: ['8', '3', '6', '2', '9', '5'],
+    inviteCode: '',           // 只展示后端下发的真实码；拉取失败为空
+    codeDigits: ['', '', '', '', '', ''],
+    codeFailed: false,
     familyName: '',
-    qrCells: [],
     toast: { visible: false, type: 'center', text: '' }
   },
 
@@ -63,11 +22,11 @@ Page({
       this.setData({ statusBarHeight: 0 });
     }
 
-    this.setData({ qrCells: buildQrCells(this.data.inviteCode) });
     this.loadFamily();
   },
 
   async loadFamily() {
+    this.setData({ codeFailed: false });
     try {
       const info = await getFamilyInviteCode();
       if (info && info.inviteCode) {
@@ -75,16 +34,24 @@ Page({
           inviteCode: info.inviteCode,
           codeDigits: String(info.inviteCode).split(''),
           familyName: info.familyName || '',
-          qrCells: buildQrCells(info.inviteCode)
+          codeFailed: false
         });
+      } else {
+        this.setData({ codeFailed: true });
+        this.showToast('未拿到邀请码，请重试');
       }
     } catch (e) {
-      this.showToast('邀请码加载失败，请稍后重试');
+      this.setData({ inviteCode: '', codeDigits: ['', '', '', '', '', ''], codeFailed: true });
+      this.showToast('邀请码加载失败，请重试');
     }
   },
 
-  // 复制邀请码
+  // 复制邀请码（无真实码时禁止复制，引导重试）
   onCopyCode() {
+    if (!this.data.inviteCode) {
+      this.showToast('邀请码还没拿到，请先重试');
+      return;
+    }
     wx.setClipboardData({
       data: this.data.inviteCode,
       success: () => {
@@ -98,6 +65,10 @@ Page({
   },
 
   onSaveImage() {
+    if (!this.data.inviteCode) {
+      this.showToast('邀请码还没拿到，请先重试');
+      return;
+    }
     const text = `加入「${this.data.familyName || '我们家'}」一起点菜，邀请码 ${this.data.inviteCode}`;
     wx.setClipboardData({
       data: text,
@@ -106,8 +77,11 @@ Page({
     });
   },
 
-  // 分享转发（配合 open-type="share" 按钮）
+  // 分享转发（配合 open-type="share" 按钮）；无真实码时分享首页，不携带假码
   onShareAppMessage() {
+    if (!this.data.inviteCode) {
+      return { title: '家庭点菜 · 今天吃什么一起定', path: '/pages/home/index' };
+    }
     return {
       title: `加入「${this.data.familyName || '我们家'}」一起点菜，邀请码 ${this.data.inviteCode}`,
       path: `/pages/family/join/index?code=${this.data.inviteCode}`
