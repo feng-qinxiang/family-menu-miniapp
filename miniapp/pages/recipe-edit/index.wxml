@@ -27,7 +27,7 @@
 
   <!-- Basics -->
   <view class="rc-sec g-fade-up g-d2">
-    <view class="rc-eyebrow">基本信息</view>
+    <view class="rc-eyebrow">先写这些</view>
     <view class="rc-sec-h2">基本信息</view>
 
     <view class="rc-field">
@@ -120,7 +120,7 @@
 
   <!-- Steps -->
   <view class="rc-sec g-fade-up g-d4">
-    <view class="rc-eyebrow">做法步骤</view>
+    <view class="rc-eyebrow">跟着做</view>
     <view class="rc-sec-h2">做法步骤</view>
     <view class="rc-list">
       <view class="rc-steprow" wx:for="{{form.steps}}" wx:key="index">

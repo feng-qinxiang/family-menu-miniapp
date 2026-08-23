@@ -28,6 +28,7 @@ page {
   --fs-hero-xl: 96rpx;  /* Hero 大标题（照片 hero 主标题） */
   --fs-hero-lg: 72rpx;  /* Hero 大标题（次 hero） */
   --fs-hero-sm: 56rpx;  /* Hero 大标题（小 hero/合规页） */
+  --photo-hero-h: 720rpx; /* 照片头：装得下状态栏 + 返回 + 大标题，勿再用 360rpx */
   --fs-hero: 64rpx;      /* 兼容旧引用 */
   --fs-h1: 50rpx;        /* 页面主标题（对齐 .page-title / .shead-title） */
   --fs-h2: 36rpx;        /* 区块标题（对齐 .section-title） */
@@ -159,6 +160,7 @@ page.font-lg, .font-lg {
   --fs-hero-xl: 110rpx;
   --fs-hero-lg: 82rpx;
   --fs-hero-sm: 64rpx;
+  --photo-hero-h: 800rpx;
   --fs-h1: 56rpx;
   --fs-h2: 40rpx;
   --fs-lg: 36rpx;

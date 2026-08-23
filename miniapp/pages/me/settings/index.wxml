@@ -10,7 +10,7 @@
 
   <!-- 账号安全 -->
   <view class="set-group g-fade-up g-d1">
-    <view class="set-gtitle">Account &amp; Security</view>
+    <view class="set-gtitle">账号安全</view>
     <view class="card set-card">
       <view
         class="set-item tap-scale"

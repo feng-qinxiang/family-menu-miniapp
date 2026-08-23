@@ -46,7 +46,7 @@
     </view>
 
     <!-- 菜系分布条形图 -->
-    <section-head eyebrow="菜系分布" title="菜系" popPart="分布" />
+    <section-head eyebrow="本月统计" title="菜系" popPart="分布" />
     <view wx:if="{{bars.length}}" class="card g-fade-up g-d1">
       <view class="bar" wx:for="{{bars}}" wx:key="name">
         <view class="bar-top">
@@ -61,10 +61,10 @@
     <view wx:else class="card empty-mini g-fade-up g-d1">还没有足够的做菜记录</view>
 
     <!-- 口味标签云 -->
-    <section-head eyebrow="口味标签" title="口味" popPart="标签" />
+    <section-head eyebrow="常出现" title="口味" popPart="标签" />
     <view wx:if="{{cloud.length}}" class="card g-fade-up g-d2">
       <view class="cloud">
-        <view class="tcl tap-scale tcl-{{item.size}}" wx:for="{{cloud}}" wx:key="name">
+        <view class="tcl tcl-{{item.size}}" wx:for="{{cloud}}" wx:key="name">
           {{item.name}} <text class="tcl-ct">·{{item.count}}</text>
         </view>
       </view>

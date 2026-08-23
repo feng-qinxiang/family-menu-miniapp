@@ -1,5 +1,5 @@
 <!-- components/state-loading · 全屏加载态 -->
-<view wx:if="{{visible}}" class="sl-root">
+<view wx:if="{{visible}}" class="sl-root" catchtouchmove="preventMove">
   <view class="sl-box">
     <view class="sl-spinner"></view>
     <view class="sl-text">{{text}}</view>

@@ -45,12 +45,13 @@
 .community-scroll {
   height: 100vh;
   box-sizing: border-box;
+  padding-bottom: 220rpx;
 }
 
 /* ===================== Hero ===================== */
 .hero {
   position: relative;
-  height: 360rpx;
+  height: var(--photo-hero-h);
   overflow: hidden;
 }
 .hero-bg { position: absolute; inset: 0; width: 100%; height: 100%; }
@@ -254,11 +255,9 @@
   display: flex;
   align-items: center;
   gap: 12rpx;
-  background: var(--c-surface);
-  border: var(--bd-card);
+  background: var(--paper-2);
   border-radius: var(--r-pill);
-  padding: 16rpx 28rpx;
-  box-shadow: var(--sh-soft);
+  padding: 8rpx 20rpx;
 }
 .tchip .tt { font-size: var(--fs-sub); font-weight: 800; color: var(--ink); letter-spacing: -0.4rpx; }
 .tchip .th { font-size: 20rpx; font-weight: 700; color: var(--pop); background: var(--pop-soft); padding: 4rpx 14rpx; border-radius: 20rpx; }

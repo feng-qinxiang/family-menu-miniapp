@@ -130,6 +130,12 @@
   border-radius: 18rpx;
   background: var(--pop-soft);
   margin-bottom: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  font-weight: 800;
+  color: var(--pop);
 }
 .vip-bc-title {
   font-size: 28rpx;

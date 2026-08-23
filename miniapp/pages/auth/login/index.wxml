@@ -38,8 +38,6 @@
 
       <view class="authlinks">
         <text class="authlink" bindtap="onRegister">注册新账号</text>
-        <view class="sep"></view>
-        <text class="authlink" bindtap="onReset">忘记密码</text>
       </view>
 
       <view class="guest">
@@ -62,15 +60,15 @@
         </view>
       </view>
 
-      <view class="agree">
-        <view class="box tap-scale {{agreed ? 'on' : ''}}" bindtap="onToggleAgree">
+      <view class="agree" bindtap="onToggleAgree">
+        <view class="box {{agreed ? 'on' : ''}}">
           <text wx:if="{{agreed}}" class="check">✓</text>
         </view>
         <view class="tx">
           登录即表示你已阅读并同意
-          <text class="lk" bindtap="onTerms">用户协议</text>
+          <text class="lk" catchtap="onTerms">用户协议</text>
           与
-          <text class="lk" bindtap="onPrivacy">隐私政策</text>
+          <text class="lk" catchtap="onPrivacy">隐私政策</text>
           ，我们仅用微信昵称和头像帮你和家人互相认出。
         </view>
       </view>

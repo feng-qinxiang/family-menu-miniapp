@@ -38,7 +38,7 @@
         <section-head eyebrow="今日餐桌" title="邻居们" popPart="在做" titleTail="啥" />
 
           <!-- 加载态 -->
-          <view wx:if="{{loading}}" class="empty-state">
+          <view wx:if="{{loading && !posts.length}}" class="empty-state">
             <view class="empty-text">正在加载社区动态…</view>
           </view>
           <!-- 失败态 -->
@@ -124,13 +124,11 @@
       <!-- 热门话题 -->
       <view class="topics">
         <view class="thead">
-          <text class="tk">热门话题</text>
           <text class="th-title">热门话题</text>
         </view>
         <view class="tchips">
-          <view class="tchip tap-scale" wx:for="{{hotTopics}}" wx:key="tag">
+          <view class="tchip" wx:for="{{hotTopics}}" wx:key="tag">
             <text class="tt">#{{item.tag}}</text>
-            <text class="th">{{item.heat}}</text>
           </view>
         </view>
       </view>

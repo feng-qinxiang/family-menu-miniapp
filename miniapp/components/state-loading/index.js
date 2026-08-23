@@ -12,5 +12,8 @@ Component({
       type: String,
       value: '加载中…'
     }
+  },
+  methods: {
+    preventMove() {}
   }
 });

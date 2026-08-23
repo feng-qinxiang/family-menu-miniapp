@@ -1,19 +1,17 @@
-<!-- pages/family/join · 加入家庭：6格邀请码 + 扫码 + 家庭卡预览 + 申请加入 + 创建新家 -->
-<nav-bar title="加入家庭" status-bar-height="{{statusBarHeight}}">
-  <view slot="" class="nav-eyebrow">加入家庭</view>
-</nav-bar>
+<!-- pages/family/join · 加入家庭：8格邀请码 + 扫码 + 家庭卡预览 + 申请加入 + 创建新家 -->
+<nav-bar title="加入家庭" status-bar-height="{{statusBarHeight}}"></nav-bar>
 
 <view class="container">
   <!-- Hero -->
   <view class="head g-fade-up">
     <view class="eyebrow-serif">有邀请码？</view>
-    <view class="title-stroke hero-title">加入<text class="pop">家庭</text></view>
-    <view class="lead">输入家人分享的 6 位邀请码，或扫描他们的二维码，一起共享菜单和买菜清单。</view>
+    <view class="title-stroke--ink hero-title">加入<text class="pop">家庭</text></view>
+    <view class="lead">输入家人分享的 8 位邀请码，或扫描他们的二维码，一起共享菜单和买菜清单。</view>
   </view>
 
-  <!-- 6 位邀请码 -->
+  <!-- 8 位邀请码 -->
   <view class="code-label g-fade-up g-d1">
-    <text class="code-label-tx">6 位邀请码</text>
+    <text class="code-label-tx">8 位邀请码</text>
     <view class="paste tap-scale" catchtap="onPaste">
       <view class="paste-ic"></view>
       <text>粘贴</text>
@@ -31,7 +29,7 @@
   <input
     class="code-input"
     type="text"
-    maxlength="6"
+    maxlength="8"
     value="{{code}}"
     focus="{{focused}}"
     confirm-type="done"
@@ -92,7 +90,7 @@
     <state-empty
       type="search"
       title="还没有匹配的家庭"
-      desc="补全 6 位邀请码或扫码后，这里会显示家庭信息"
+      desc="补全 8 位邀请码或扫码后，这里会显示家庭信息"
     />
   </view>
 

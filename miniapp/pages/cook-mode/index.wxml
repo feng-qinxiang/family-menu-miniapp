@@ -68,7 +68,7 @@
         <view
           wx:for="{{ingredients}}"
           wx:key="name"
-          class="ing tap-scale"
+          class="ing"
         >
           <view class="dotmark"></view>
           <text>{{item.label}}</text>

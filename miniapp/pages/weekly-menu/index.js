@@ -1,48 +1,11 @@
 const { generateWeeklyMenu, getWeeklyMenu } = require('../../utils/api');
+const { recipeDishImg } = require('../../utils/image');
 
-const LOCAL_DISHES = [
-  'beef-broccoli', 'chicken-congee', 'egg-drop-soup', 'fried-rice',
-  'hongshao-pork', 'hot-sour-soup', 'kungpao-chicken', 'lo-mein',
-  'long-beans', 'mapo-tofu', 'orange-chicken', 'shrimp-peas',
-  'sichuan-eggplant', 'sweet-sour-chicken', 'tomato-egg', 'wontons'
-];
-const TITLE_DISH_MAP = [
-  { kw: ['红烧肉', '红烧'], img: 'hongshao-pork' },
-  { kw: ['番茄', '西红柿', '炒蛋'], img: 'tomato-egg' },
-  { kw: ['宫保', '鸡丁'], img: 'kungpao-chicken' },
-  { kw: ['麻婆', '豆腐'], img: 'mapo-tofu' },
-  { kw: ['空心菜', '豆角', '青菜', '蒜蓉'], img: 'long-beans' },
-  { kw: ['酸辣'], img: 'hot-sour-soup' },
-  { kw: ['蛋花', '紫菜蛋'], img: 'egg-drop-soup' },
-  { kw: ['炒饭'], img: 'fried-rice' },
-  { kw: ['面', '捞面'], img: 'lo-mein' },
-  { kw: ['牛肉', '西兰花'], img: 'beef-broccoli' },
-  { kw: ['茄子'], img: 'sichuan-eggplant' },
-  { kw: ['虾', '豌豆'], img: 'shrimp-peas' },
-  { kw: ['粥'], img: 'chicken-congee' },
-  { kw: ['咕咾', '糖醋', '里脊'], img: 'sweet-sour-chicken' },
-  { kw: ['馄饨', '云吞'], img: 'wontons' },
-  { kw: ['橙', '橘'], img: 'orange-chicken' }
-];
 const WK_SHORT = ['日', '一', '二', '三', '四', '五', '六'];
 const WK_FULL = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
 
-function hashIndex(seed, mod) {
-  const s = (seed || '').toString();
-  let h = 0;
-  for (let i = 0; i < s.length; i += 1) {
-    h = (h * 31 + s.charCodeAt(i)) % 1000000;
-  }
-  return Math.abs(h) % mod;
-}
-
 function dishImageFor(recipe) {
-  if (recipe && recipe.coverImage) return recipe.coverImage;
-  const title = String((recipe && recipe.title) || '');
-  for (const m of TITLE_DISH_MAP) {
-    if (m.kw.some((k) => title.indexOf(k) >= 0)) return `/assets/dishes/${m.img}.jpg`;
-  }
-  return `/assets/dishes/${LOCAL_DISHES[hashIndex(title, LOCAL_DISHES.length)]}.jpg`;
+  return recipeDishImg(recipe);
 }
 
 function parseDate(str) {

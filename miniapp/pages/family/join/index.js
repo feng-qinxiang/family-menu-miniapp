@@ -7,7 +7,7 @@ Page({
   data: {
     statusBarHeight: 0,
     code: '',
-    cells: ['', '', '', '', '', ''],
+    cells: ['', '', '', '', '', '', '', ''],
     focused: false,
     family: null,
     loading: false,
@@ -32,12 +32,12 @@ Page({
   },
 
   applyCode(raw) {
-    const code = String(raw || '').toUpperCase().replace(/[^0-9A-Z]/g, '').slice(0, 6);
+    const code = String(raw || '').toUpperCase().replace(/[^0-9A-Z]/g, '').slice(0, 8);
     const cells = [];
-    for (let i = 0; i < 6; i += 1) cells[i] = code[i] || '';
+    for (let i = 0; i < 8; i += 1) cells[i] = code[i] || '';
     this.setData({ code, cells });
-    // 满 6 位才请求；不足 6 位清空预览且不弹错（输码过程中保持安静）
-    if (code.length === 6) {
+    // 满 8 位才请求；不足 8 位清空预览且不弹错（输码过程中保持安静）
+    if (code.length === 8) {
       this.loadFamily(code);
     } else {
       this.setData({ family: null });
@@ -78,8 +78,16 @@ Page({
       onlyFromCamera: false,
       success: (res) => {
         const result = res.result || '';
-        const m = result.match(/[0-9A-Za-z]{1,6}/);
-        this.applyCode(m ? m[0] : result);
+        const fromQuery = result.match(/[?&]code=([^&#]+)/i);
+        let code = fromQuery ? decodeURIComponent(fromQuery[1]) : '';
+        if (!code && !/^https?:\/\//i.test(result)) {
+          code = result.trim();
+        }
+        if (!code) {
+          wx.showToast({ title: '没有识别到邀请码', icon: 'none' });
+          return;
+        }
+        this.applyCode(code);
         this.setData({ focused: false });
         wx.showToast({ title: '已识别邀请码', icon: 'none' });
       },

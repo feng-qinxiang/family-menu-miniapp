@@ -4,7 +4,7 @@ Page({
   data: {
     statusBarHeight: 0,
     inviteCode: '',           // 只展示后端下发的真实码；拉取失败为空
-    codeDigits: ['', '', '', '', '', ''],
+    codeDigits: ['', '', '', '', '', '', '', ''],
     codeFailed: false,
     familyName: '',
     toast: { visible: false, type: 'center', text: '' }
@@ -41,7 +41,7 @@ Page({
         this.showToast('未拿到邀请码，请重试');
       }
     } catch (e) {
-      this.setData({ inviteCode: '', codeDigits: ['', '', '', '', '', ''], codeFailed: true });
+      this.setData({ inviteCode: '', codeDigits: ['', '', '', '', '', '', '', ''], codeFailed: true });
       this.showToast('邀请码加载失败，请重试');
     }
   },

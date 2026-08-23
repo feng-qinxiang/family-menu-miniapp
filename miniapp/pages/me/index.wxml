@@ -60,12 +60,12 @@
         <view class="mag-scap">我的菜谱</view>
         <view class="mag-scap-en">自建+导入</view>
       </view>
-      <view class="mag-stat tap-scale">
+      <view class="mag-stat tap-scale" bindtap="goCookLog">
         <view class="mag-snum {{loading ? 'shimmer num-skel' : ''}}">{{monthCookCount}}</view>
         <view class="mag-scap">本月做菜</view>
         <view class="mag-scap-en">道菜</view>
       </view>
-      <view class="mag-stat tap-scale">
+      <view class="mag-stat tap-scale" bindtap="goFamilyMembers">
         <view class="mag-snum {{loading ? 'shimmer num-skel' : ''}}">{{memberCount}}</view>
         <view class="mag-scap">家庭成员</view>
         <view class="mag-scap-en">位家人</view>
@@ -74,9 +74,9 @@
 
     <!-- 最近上桌 -->
     <view class="g-fade-up g-d2" wx:if="{{cookHistory.length}}">
-      <section-head eyebrow="最近上桌" title="最近" popPart="上桌" hint="全部" more="{{true}}" bindtapmore="goRecipes" />
+      <section-head eyebrow="做菜记录" title="最近" popPart="上桌" hint="全部" more="{{true}}" bindtapmore="goCookLog" />
       <view class="card mag-history">
-        <view class="mag-hrow tap-scale" wx:for="{{cookHistory}}" wx:key="id">
+        <view class="mag-hrow" wx:for="{{cookHistory}}" wx:key="id">
           <image class="mag-thumb" src="{{item.cover}}" mode="aspectFill" />
           <view class="mag-hmid">
             <view class="mag-hname">{{item.recipeTitle}}</view>
@@ -86,12 +86,12 @@
             <text class="mag-star {{star <= item.score ? 'on' : ''}}" wx:for="{{[1,2,3,4,5]}}" wx:for-item="star" wx:key="*this">★</text>
           </view>
         </view>
-        <view class="mag-hmore tap-scale" bindtap="goRecipes">查看全部记录 ›</view>
+        <view class="mag-hmore tap-scale" bindtap="goCookLog">查看全部记录 ›</view>
       </view>
     </view>
     <!-- 最近上桌：加载骨架 -->
     <view class="g-fade-up g-d2" wx:elif="{{loading}}">
-      <section-head eyebrow="最近上桌" title="最近" popPart="上桌" />
+      <section-head eyebrow="做菜记录" title="最近" popPart="上桌" />
       <view class="card mag-history">
         <view class="mag-hrow" wx:for="{{[1,2]}}" wx:key="*this">
           <view class="mag-skel-thumb shimmer"></view>
@@ -105,7 +105,7 @@
 
     <!-- 厨房工具 -->
     <view class="g-fade-up g-d3">
-      <section-head eyebrow="厨房工具" title="厨房" popPart="工具" />
+      <section-head eyebrow="今天要用" title="厨房" popPart="工具" />
       <view class="card mag-tools">
         <view class="mag-trow tap-scale" bindtap="goMenu">
           <view class="mag-ticon ti-0">桌</view>
@@ -142,7 +142,7 @@
 
     <!-- 口味偏好 -->
     <view class="g-fade-up g-d4" wx:if="{{prefBars.length}}">
-      <section-head eyebrow="本月口味" title="本月" popPart="口味" />
+      <section-head eyebrow="吃过记得" title="本月" popPart="口味" />
       <view class="card mag-pref">
         <view class="mag-prow" wx:for="{{prefBars}}" wx:key="label">
           <view class="mag-ptop">
@@ -155,7 +155,7 @@
     </view>
     <!-- 口味偏好：加载骨架 -->
     <view class="g-fade-up g-d4" wx:elif="{{loading}}">
-      <section-head eyebrow="本月口味" title="本月" popPart="口味" />
+      <section-head eyebrow="吃过记得" title="本月" popPart="口味" />
       <view class="card mag-pref">
         <view class="mag-prow" wx:for="{{[1,2,3]}}" wx:key="*this">
           <view class="mag-skel-line strong shimmer" style="width: 40%;"></view>
@@ -166,7 +166,7 @@
 
     <!-- 偏好画像入口 -->
     <view class="g-fade-up g-d5">
-      <section-head eyebrow="偏好画像" title="偏好" popPart="画像" />
+      <section-head eyebrow="全家口味" title="偏好" popPart="画像" />
       <view class="card mag-tools">
         <view class="mag-trow tap-scale" bindtap="goPreference">
           <view class="mag-ticon ti-pref">偏</view>
@@ -190,6 +190,14 @@
     <!-- 设置 & 关于 -->
     <view class="g-fade-up g-d6">
       <view class="card mag-settings">
+        <view class="mag-srow tap-scale" bindtap="goProfileEdit">
+          <view class="mag-sname">编辑资料</view>
+          <view class="mag-sarrow">›</view>
+        </view>
+        <view class="mag-srow tap-scale" bindtap="goNotifications">
+          <view class="mag-sname">消息</view>
+          <view class="mag-sarrow">›</view>
+        </view>
         <view class="mag-srow tap-scale" bindtap="goSettings">
           <view class="mag-sname">设置</view>
           <view class="mag-sarrow">›</view>

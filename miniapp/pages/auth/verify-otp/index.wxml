@@ -8,7 +8,7 @@
   <view class="wrap">
     <!-- 标题区 -->
     <view class="head g-fade-up g-d1">
-      <view class="eyebrow-serif">验证码</view>
+      <view class="eyebrow-serif">短信已发</view>
       <view class="title-stroke--ink hero-title">输入<text class="pop">验证码</text></view>
       <view class="sent">已发送至 <text class="sent-phone">{{maskedPhone}}</text>，请填写收到的 6 位短信验证码</view>
     </view>

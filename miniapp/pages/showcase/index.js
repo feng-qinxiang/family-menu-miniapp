@@ -7,7 +7,18 @@ Page({
     barA: 0,
     barB: 0,
     barC: 0,
-    pastHero: false
+    pastHero: false,
+    capsuleRight: 96
+  },
+
+  onLoad() {
+    try {
+      const mb = wx.getMenuButtonBoundingClientRect();
+      const sys = (wx.getWindowInfo && wx.getWindowInfo()) || wx.getSystemInfoSync();
+      if (mb && sys && mb.left) {
+        this.setData({ capsuleRight: sys.windowWidth - mb.left + 8 });
+      }
+    } catch (e) {}
   },
 
   onReady() {
@@ -140,5 +151,8 @@ Page({
   goBack() { wx.navigateBack({ fail: () => wx.switchTab({ url: '/pages/home/index' }) }); },
   goMenu() { wx.navigateTo({ url: '/pages/menu/index' }); },
   goWeekly() { wx.navigateTo({ url: '/pages/weekly-menu/index' }); },
-  goMe() { wx.switchTab({ url: '/pages/me/index' }); }
+  goMe() { wx.switchTab({ url: '/pages/me/index' }); },
+  goRecipes() { wx.switchTab({ url: '/pages/recipes/index' }); },
+  goCommunity() { wx.navigateTo({ url: '/pages/community/index' }); },
+  goAbout() { wx.navigateTo({ url: '/pages/me/about/index' }); }
 });

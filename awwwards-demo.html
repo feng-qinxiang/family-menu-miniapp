@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAMILY MENU — 一家人，好好吃饭</title>
+<style>
+  :root{
+    --bg:#0d0c0a;
+    --bg2:#151310;
+    --paper:#f1ece1;
+    --ink:#12100c;
+    --tomato:#ff4a22;
+    --tomato-deep:#d63a12;
+    --grey:#8d887e;
+    --grey-2:#5b574e;
+    --line:rgba(241,236,225,.14);
+    --line-soft:rgba(241,236,225,.07);
+    --e-out:cubic-bezier(.16,1,.3,1);
+    --e-spring:cubic-bezier(.34,1.56,.64,1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    color:var(--paper);
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",-apple-system,"Helvetica Neue",Arial,sans-serif;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--tomato);color:var(--paper)}
+  i[data-lucide]{width:1em;height:1em;display:inline-block;vertical-align:-.14em;stroke-width:1.8}
+
+  /* ============ 噪点叠加 ============ */
+  .grain{
+    position:fixed;inset:-50%;width:200%;height:200%;z-index:9998;
+    pointer-events:none;opacity:.05;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation:grain 8s steps(10) infinite;
+  }
+  @keyframes grain{
+    0%,100%{transform:translate(0,0)}10%{transform:translate(-2%,-3%)}30%{transform:translate(3%,2%)}
+    50%{transform:translate(-3%,3%)}70%{transform:translate(2%,-2%)}90%{transform:translate(-1%,1%)}
+  }
+
+  /* ============ 自定义光标 ============ */
+  .cursor-dot,.cursor-ring{position:fixed;top:0;left:0;z-index:9999;pointer-events:none;border-radius:50%;transform:translate(-50%,-50%)}
+  .cursor-dot{width:8px;height:8px;background:var(--tomato);transition:opacity .2s}
+  .cursor-ring{
+    width:38px;height:38px;border:1.5px solid rgba(241,236,225,.4);
+    transition:width .3s var(--e-spring),height .3s var(--e-spring),border-color .3s,opacity .2s;
+  }
+  .cursor-ring.is-hover{width:64px;height:64px;border-color:var(--tomato)}
+  @media(hover:none){.cursor-dot,.cursor-ring{display:none}}
+
+  /* ============ 背景流体 canvas ============ */
+  #fx{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;transition:opacity 1.2s ease}
+  body.is-past-hero #fx{opacity:0}
+
+  /* ============ 顶部导航 ============ */
+  .site-head{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:22px 5vw;
+    background:linear-gradient(180deg,rgba(13,12,10,.65),transparent);
+    backdrop-filter:blur(2px);
+  }
+  .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--paper)}
+  .brand-mark{
+    width:40px;height:40px;border-radius:11px;background:var(--tomato);color:var(--paper);
+    display:flex;align-items:center;justify-content:center;font-weight:900;font-size:19px;
+    box-shadow:0 0 0 1px rgba(255,74,34,.4),0 8px 24px rgba(255,74,34,.35);
+  }
+  .brand-name{font-size:15px;font-weight:800;letter-spacing:.12em}
+  .brand-sub{display:block;font-size:10px;font-weight:600;letter-spacing:.28em;color:inherit;opacity:.6}
+  .site-nav{display:flex;align-items:center;gap:6px}
+  .site-nav a{
+    color:var(--paper);text-decoration:none;font-size:13px;font-weight:700;
+    padding:10px 16px;border-radius:999px;letter-spacing:.04em;transition:background .3s,color .3s;
+  }
+  .site-nav a:hover{background:rgba(241,236,225,.12);color:#fff}
+  .nav-cta{
+    display:flex;align-items:center;gap:8px;margin-left:10px;
+    background:var(--tomato);color:var(--paper)!important;
+    padding:11px 20px!important;font-weight:800;
+  }
+  .nav-cta i{transition:transform .3s var(--e-out)}
+  .nav-cta:hover i{transform:translateX(4px)}
+
+  /* ============ Hero ============ */
+  .hero{
+    position:relative;z-index:1;min-height:100vh;
+    display:flex;flex-direction:column;justify-content:center;
+    padding:120px 5vw 40px;
+  }
+  .hero-kicker{
+    display:flex;align-items:center;gap:14px;
+    font-size:12px;font-weight:700;letter-spacing:.34em;color:var(--grey);
+    text-transform:uppercase;margin-bottom:34px;
+  }
+  .hero-kicker::before{content:"";width:44px;height:1px;background:var(--tomato)}
+  .hero-title{
+    font-size:clamp(64px,13vw,178px);
+    font-weight:900;line-height:.92;letter-spacing:-.045em;
+  }
+  .hero-title .line{display:block;overflow:hidden}
+  .hero-title .l1{animation:riseIn 1s var(--e-out) .1s both}
+  .hero-title .l2{animation:riseIn 1s var(--e-out) .3s both}
+  @keyframes riseIn{from{transform:translateY(110%)}to{transform:translateY(0)}}
+  .hero-title .outline{
+    color:transparent;-webkit-text-stroke:2px rgba(241,236,225,.92);
+    filter:drop-shadow(0 2px 0 rgba(13,12,10,.6));
+  }
+  .hero-title .q{
+    color:var(--tomato);font-style:italic;
+    display:inline-block;animation:qPulse 3.2s ease-in-out infinite;
+  }
+  @keyframes qPulse{
+    0%,100%{transform:scale(1) rotate(-4deg)}
+    50%{transform:scale(1.14) rotate(4deg)}
+  }
+  .hero-meta{
+    display:flex;align-items:flex-end;justify-content:space-between;gap:40px;
+    margin-top:56px;flex-wrap:wrap;
+  }
+  .hero-sub{
+    max-width:420px;font-size:16px;line-height:1.85;color:var(--grey);
+    font-weight:500;animation:riseIn 1s var(--e-out) .5s both;
+  }
+  .hero-sub b{color:var(--paper);font-weight:700}
+  .hero-actions{display:flex;align-items:center;gap:26px;animation:riseIn 1s var(--e-out) .65s both}
+  .btn-primary{
+    position:relative;display:inline-flex;align-items:center;gap:12px;
+    background:var(--tomato);color:var(--paper);
+    border:none;border-radius:999px;padding:20px 34px;
+    font-size:15px;font-weight:800;letter-spacing:.06em;cursor:pointer;
+    transition:transform .35s var(--e-spring),box-shadow .35s;
+    box-shadow:0 12px 34px rgba(255,74,34,.34);
+  }
+  .btn-primary:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 20px 48px rgba(255,74,34,.45)}
+  .btn-primary i{transition:transform .3s var(--e-out)}
+  .btn-primary:hover i{transform:translateX(5px)}
+  .btn-ghost{
+    display:inline-flex;align-items:center;gap:10px;
+    background:transparent;color:var(--paper);border:1.5px solid var(--line);
+    border-radius:999px;padding:19px 30px;font-size:14px;font-weight:700;cursor:pointer;
+    transition:border-color .3s,background .3s;
+  }
+  .btn-ghost:hover{border-color:var(--tomato);background:rgba(255,74,34,.06)}
+  .hero-stats{
+    display:flex;gap:0;margin-top:64px;
+    border-top:1px solid var(--line);padding-top:30px;width:100%;
+  }
+  .stat{flex:1;min-width:120px}
+  .stat+.stat{border-left:1px solid var(--line);padding-left:34px}
+  .stat-n{font-size:clamp(30px,4vw,54px);font-weight:900;letter-spacing:-.03em;display:flex;align-items:baseline;gap:6px}
+  .stat-n i{color:var(--tomato);font-size:.5em;width:1.6em}
+  .stat-c{font-size:12px;color:var(--grey);margin-top:8px;font-weight:600;letter-spacing:.08em}
+  .scroll-hint{
+    position:absolute;bottom:22px;left:50%;transform:translateX(-50%);
+    display:flex;flex-direction:column;align-items:center;gap:9px;
+    color:var(--grey);opacity:.55;
+    font-size:10px;letter-spacing:.3em;font-weight:600;
+  }
+  .scroll-hint .wheel{
+    width:22px;height:36px;border:1.5px solid var(--grey);border-radius:12px;position:relative;
+  }
+  .scroll-hint .wheel::after{
+    content:"";position:absolute;left:50%;top:7px;width:3px;height:7px;border-radius:2px;
+    background:var(--tomato);transform:translateX(-50%);
+    animation:wheel 1.8s ease-in-out infinite;
+  }
+  @keyframes wheel{0%{transform:translate(-50%,0);opacity:1}70%{transform:translate(-50%,13px);opacity:0}100%{opacity:0}}
+
+  /* ============ Marquee ============ */
+  .marquee{
+    position:relative;z-index:1;overflow:hidden;
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    padding:22px 0;
+  }
+  .marquee-track{
+    display:flex;width:max-content;gap:0;
+    animation:marquee 26s linear infinite;
+  }
+  .marquee-item{
+    display:flex;align-items:center;gap:34px;padding-right:34px;
+    font-size:15px;font-weight:700;letter-spacing:.18em;white-space:nowrap;color:var(--paper);
+  }
+  .marquee-item i{color:var(--tomato)}
+  .marquee-item .m-ghost{color:transparent;-webkit-text-stroke:1px var(--grey)}
+  @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+  /* ============ 区块通用 ============ */
+  .sec{position:relative;z-index:1;padding:150px 5vw}
+  .sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:30px;margin-bottom:70px}
+  .sec-idx{
+    font-size:13px;font-weight:800;letter-spacing:.3em;color:var(--tomato);
+    display:flex;align-items:center;gap:12px;
+  }
+  .sec-idx::after{content:"";width:60px;height:1px;background:var(--tomato)}
+  .sec-title{
+    font-size:clamp(42px,7vw,96px);font-weight:900;letter-spacing:-.04em;line-height:.95;
+  }
+  .sec-title em{font-style:normal;color:transparent;-webkit-text-stroke:2px currentColor}
+  .sec-title .t-tomato{color:var(--tomato);-webkit-text-stroke:0}
+  .sec-desc{max-width:380px;font-size:14px;line-height:1.9;color:var(--grey);font-weight:500}
+
+  /* ============ 今日餐桌（反转浅色区） ============ */
+  .today{background:var(--paper);color:var(--ink)}
+  .today .sec-title em{-webkit-text-stroke-color:var(--ink)}
+  .today .sec-desc{color:var(--grey-2)}
+  .today-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:60px;align-items:stretch}
+  .today-copy .today-list{margin-top:44px;border-top:1px solid rgba(18,16,12,.14)}
+  .trow{
+    display:flex;align-items:center;gap:24px;padding:26px 0;
+    border-bottom:1px solid rgba(18,16,12,.14);
+  }
+  .trow-idx{font-size:13px;font-weight:800;color:var(--tomato);letter-spacing:.1em;width:40px;flex:none}
+  .trow-ic{
+    width:58px;height:58px;border-radius:17px;flex:none;
+    background:rgba(18,16,12,.06);display:flex;align-items:center;justify-content:center;
+    color:var(--tomato);font-size:26px;
+  }
+  .trow-n{font-size:21px;font-weight:800;letter-spacing:-.01em}
+  .trow-s{font-size:12px;color:var(--grey-2);margin-top:5px;font-weight:600}
+  .trow-tag{
+    margin-left:auto;font-size:11px;font-weight:800;letter-spacing:.06em;
+    color:var(--tomato);background:rgba(255,74,34,.1);
+    padding:7px 15px;border-radius:999px;flex:none;
+  }
+  .today-visual{position:relative}
+  .plate{
+    position:relative;aspect-ratio:1;max-width:460px;margin:0 auto;width:100%;
+    border-radius:50%;
+    background:
+      radial-gradient(circle at 36% 32%,#4a3826,#2c2013 55%,#171009);
+    box-shadow:0 40px 90px rgba(18,16,12,.4),inset 0 0 0 1px rgba(241,236,225,.08);
+  }
+  .plate::before{
+    content:"";position:absolute;inset:9%;border-radius:50%;
+    border:1.5px solid rgba(241,236,225,.14);
+  }
+  .plate::after{
+    content:"";position:absolute;inset:22%;border-radius:50%;
+    background:radial-gradient(circle,#0f0b06,#191108);
+    box-shadow:0 0 60px rgba(0,0,0,.5) inset;
+  }
+  .plate-orb{
+    position:absolute;inset:24%;border-radius:50%;overflow:hidden;z-index:2;
+    background:
+      radial-gradient(circle at 50% 45%,rgba(255,74,34,.95) 0 8%,transparent 8.5%),
+      radial-gradient(circle at 50% 45%,#f0a05f 0 26%,transparent 27%),
+      radial-gradient(circle at 50% 45%,#2f7a3f 0 34%,transparent 35%),
+      radial-gradient(circle at 50% 45%,#f7d9a0 0 47%,transparent 48%),
+      radial-gradient(circle at 50% 45%,#c94d1f 0 100%);
+    box-shadow:0 14px 40px rgba(0,0,0,.55);
+    animation:spin 40s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .plate-chip{
+    position:absolute;z-index:5;
+    background:rgba(13,12,10,.72);border:1px solid rgba(241,236,225,.16);
+    border-radius:16px;padding:13px 16px;backdrop-filter:blur(8px);
+    display:flex;align-items:center;gap:10px;color:var(--paper);
+    font-size:12px;font-weight:700;
+  }
+  .plate-chip i{color:var(--tomato);font-size:18px}
+  .pc-a{top:-4px;left:-14px;animation:float 5s ease-in-out infinite}
+  .pc-b{top:34%;right:-18px;animation:float 5s ease-in-out 1.2s infinite}
+  .pc-c{bottom:-6px;left:16%;animation:float 5s ease-in-out 2.1s infinite}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+
+  /* ============ 菜谱库（深色） ============ */
+  .recipes .grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+  .r-card{
+    grid-column:span 2;position:relative;overflow:hidden;border-radius:20px;
+    border:1px solid var(--line-soft);
+    aspect-ratio:.86;display:flex;flex-direction:column;justify-content:flex-end;
+    padding:24px;transition:transform .5s var(--e-out),border-color .4s;
+    background:
+      radial-gradient(120% 90% at 20% 0%,rgba(255,74,34,.18),transparent 55%),
+      radial-gradient(90% 70% at 85% 100%,rgba(255,170,90,.1),transparent 50%),
+      linear-gradient(165deg,#2b1d12,#151008);
+  }
+  .r-card::after{
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:.28;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)' opacity='0.35'/%3E%3C/svg%3E");
+  }
+  .r-card:hover{transform:translateY(-8px);border-color:rgba(255,74,34,.5)}
+  .r-card.big{grid-column:span 3;grid-row:span 2;aspect-ratio:auto;background:
+    radial-gradient(130% 100% at 15% 0%,rgba(255,74,34,.28),transparent 55%),
+    radial-gradient(100% 80% at 90% 90%,rgba(255,170,90,.14),transparent 50%),
+    linear-gradient(160deg,#33200f,#171008)}
+  .r-card.g2{background:
+    radial-gradient(120% 90% at 20% 0%,rgba(95,184,115,.16),transparent 55%),
+    linear-gradient(165deg,#1c2a18,#0f1510)}
+  .r-card.g3{background:
+    radial-gradient(120% 90% at 20% 0%,rgba(233,185,92,.16),transparent 55%),
+    linear-gradient(165deg,#2a2410,#161308)}
+  .r-card.g4{background:
+    radial-gradient(120% 90% at 20% 0%,rgba(122,111,201,.16),transparent 55%),
+    linear-gradient(165deg,#1e1a2e,#12101c)}
+  .r-card.big .r-num{font-size:140px;opacity:.16}
+  .r-num{
+    position:absolute;top:14px;right:20px;font-size:92px;font-weight:900;
+    line-height:1;color:rgba(255,74,34,.16);letter-spacing:-.04em;
+    transition:opacity .4s,transform .6s var(--e-out),color .4s;
+  }
+  .r-card:hover .r-num{opacity:.3;transform:rotate(-8deg) scale(1.06);color:rgba(255,74,34,.4)}
+  .r-ic{
+    width:52px;height:52px;border-radius:15px;background:rgba(255,74,34,.12);
+    color:var(--tomato);display:flex;align-items:center;justify-content:center;
+    font-size:24px;margin-bottom:auto;
+  }
+  .r-tag{font-size:10px;font-weight:800;letter-spacing:.22em;color:var(--tomato);margin-top:16px}
+  .r-name{font-size:22px;font-weight:800;letter-spacing:-.02em;margin-top:6px}
+  .r-meta{font-size:12px;color:var(--grey);margin-top:8px;display:flex;gap:14px;align-items:center;font-weight:600}
+  .r-meta i{font-size:13px;color:var(--tomato)}
+  .r-fill{
+    position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(13,12,10,.85) 100%);
+    pointer-events:none;
+  }
+  .r-go{
+    position:absolute;right:20px;bottom:20px;width:44px;height:44px;border-radius:50%;
+    background:var(--tomato);color:var(--paper);display:flex;align-items:center;justify-content:center;
+    transform:scale(0);transition:transform .4s var(--e-spring);
+  }
+  .r-card:hover .r-go{transform:scale(1)}
+
+  /* ============ 冰箱（反转浅色区） ============ */
+  .pantry{background:var(--paper);color:var(--ink)}
+  .pantry .sec-title em{-webkit-text-stroke-color:var(--ink)}
+  .pantry .sec-desc{color:var(--grey-2)}
+  .pantry-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+  .p-row{margin-bottom:34px}
+  .p-row:last-child{margin-bottom:0}
+  .p-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px}
+  .p-name{font-size:15px;font-weight:800;display:flex;align-items:center;gap:10px}
+  .p-name i{color:var(--tomato)}
+  .p-val{font-size:26px;font-weight:900;letter-spacing:-.02em}
+  .p-val small{font-size:12px;color:var(--grey-2);font-weight:700;margin-left:3px}
+  .p-bar{height:14px;border-radius:7px;background:rgba(18,16,12,.08);overflow:hidden}
+  .p-bar i{
+    display:block;height:100%;border-radius:7px;
+    background:linear-gradient(90deg,var(--tomato-deep),var(--tomato));
+    width:0;transition:width 1.2s var(--e-out) .2s;
+  }
+  .p-bar.alt i{background:linear-gradient(90deg,#3f8f5a,#5fb873)}
+  .p-bar.warn i{background:linear-gradient(90deg,#d9a03a,#e8bc5e)}
+  .p-bar .p-w{transition:none}
+  .fridge{
+    position:relative;width:280px;height:400px;margin:0 auto;
+    border-radius:28px;background:linear-gradient(150deg,#2c2a24,#181611);
+    border:1px solid rgba(241,236,225,.1);box-shadow:0 44px 90px rgba(18,16,12,.45);
+  }
+  .fridge::before{
+    content:"";position:absolute;left:50%;top:24px;bottom:24px;width:1.5px;
+    background:rgba(241,236,225,.14);transform:translateX(-50%);
+  }
+  .fridge-shelf{
+    position:absolute;left:0;right:0;height:1px;background:rgba(241,236,225,.2);
+  }
+  .fridge-item{
+    position:absolute;border-radius:9px;display:flex;align-items:center;justify-content:center;
+    color:rgba(241,236,225,.85);font-size:20px;
+    animation:fridgeIn 1s var(--e-spring) both;
+  }
+  .fi-1{top:52px;left:14%;width:74px;height:52px;background:rgba(255,74,34,.5);animation-delay:.1s}
+  .fi-2{top:52px;right:14%;width:64px;height:44px;background:rgba(63,143,90,.5);animation-delay:.25s}
+  .fi-3{top:150px;left:22%;width:86px;height:40px;background:rgba(233,185,92,.45);animation-delay:.4s}
+  .fi-4{top:150px;right:16%;width:56px;height:56px;border-radius:50%;background:rgba(255,74,34,.42);animation-delay:.55s}
+  .fi-5{bottom:30px;left:18%;width:120px;height:58px;background:rgba(255,74,34,.45);animation-delay:.7s}
+  .fi-6{bottom:120px;right:12%;width:70px;height:70px;border-radius:50%;background:rgba(63,143,90,.4);animation-delay:.85s}
+  @keyframes fridgeIn{from{transform:scale(0) rotate(-14deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+  .fridge-tag{
+    position:absolute;bottom:-34px;left:50%;transform:translateX(-50%);
+    font-size:11px;font-weight:800;letter-spacing:.16em;color:var(--grey-2);
+    display:flex;align-items:center;gap:8px;white-space:nowrap;
+  }
+
+  /* ============ 家庭口味 ============ */
+  .taste{background:var(--bg2)}
+  .taste-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .member{
+    position:relative;border-radius:22px;padding:30px 26px;
+    background:var(--bg);border:1px solid var(--line-soft);
+    transition:transform .45s var(--e-out),border-color .4s;
+  }
+  .member:hover{transform:translateY(-7px);border-color:rgba(255,74,34,.45)}
+  .member-av{
+    width:54px;height:54px;border-radius:17px;margin-bottom:22px;
+    display:flex;align-items:center;justify-content:center;font-size:23px;
+    background:linear-gradient(140deg,var(--tomato),var(--tomato-deep));color:var(--paper);
+  }
+  .member:nth-child(2) .member-av{background:linear-gradient(140deg,#4a9a6b,#2f7a4a)}
+  .member:nth-child(3) .member-av{background:linear-gradient(140deg,#c98a3a,#a06a24)}
+  .member:nth-child(4) .member-av{background:linear-gradient(140deg,#7a6fc9,#5a4fa8)}
+  .member-role{font-size:10px;font-weight:800;letter-spacing:.26em;color:var(--tomato)}
+  .member-name{font-size:21px;font-weight:800;margin-top:6px}
+  .member-bio{font-size:12px;color:var(--grey);margin-top:8px;line-height:1.7;font-weight:500}
+  .member-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+  .mtag{
+    font-size:10px;font-weight:800;padding:6px 12px;border-radius:999px;
+    background:rgba(241,236,225,.07);color:var(--grey);letter-spacing:.04em;
+  }
+  .mtag.on{background:rgba(255,74,34,.14);color:var(--tomato)}
+
+  /* ============ 大 CTA ============ */
+  .final{text-align:center;padding:200px 5vw 160px;position:relative;overflow:hidden}
+  .final .f-big{
+    font-size:clamp(56px,11vw,150px);font-weight:900;letter-spacing:-.045em;line-height:1;
+  }
+  .final .f-big .outline{color:transparent;-webkit-text-stroke:2px var(--paper)}
+  .final .f-big .t-tomato{color:var(--tomato)}
+  .final p{margin:34px auto 48px;max-width:440px;color:var(--grey);line-height:1.9;font-size:15px}
+  .final .btn-primary{font-size:17px;padding:24px 44px}
+
+  /* ============ 页脚 ============ */
+  footer{
+    position:relative;z-index:1;border-top:1px solid var(--line);
+    padding:40px 5vw 46px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;
+  }
+  .foot-left{font-size:12px;color:var(--grey);font-weight:600;letter-spacing:.06em}
+  .foot-social{display:flex;gap:10px}
+  .foot-social a{
+    width:42px;height:42px;border-radius:50%;border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;color:var(--grey);
+    transition:color .3s,border-color .3s,transform .3s var(--e-spring);
+  }
+  .foot-social a:hover{color:var(--tomato);border-color:var(--tomato);transform:translateY(-3px)}
+  .foot-top{
+    font-size:11px;font-weight:800;letter-spacing:.22em;color:var(--grey-2);
+    display:flex;align-items:center;gap:8px;text-decoration:none;cursor:pointer;
+  }
+
+  /* ============ 滚动入场 ============ */
+  .reveal{opacity:0;transform:translateY(46px);transition:opacity .9s var(--e-out),transform .9s var(--e-out)}
+  .reveal.in{opacity:1;transform:translateY(0)}
+  .reveal.d1{transition-delay:.08s}.reveal.d2{transition-delay:.16s}
+  .reveal.d3{transition-delay:.24s}.reveal.d4{transition-delay:.32s}
+  [data-parallax]{will-change:transform}
+
+  /* ============ 响应式 ============ */
+  @media(max-width:900px){
+    .site-nav a:not(.nav-cta){display:none}
+    .hero-title{font-size:clamp(54px,17vw,110px)}
+    .today-grid,.pantry-grid{grid-template-columns:1fr}
+    .recipes .grid{grid-template-columns:repeat(2,1fr)}
+    .r-card{grid-column:span 1!important;aspect-ratio:.9}
+    .r-card.big{grid-column:span 2;grid-row:auto;aspect-ratio:1.4}
+    .taste-grid{grid-template-columns:repeat(2,1fr)}
+    .stat+.stat{padding-left:16px}
+    .sec{padding:110px 6vw}
+  }
+  @media(max-width:520px){
+    .taste-grid{grid-template-columns:1fr}
+    .hero-stats{flex-wrap:wrap;gap:24px}
+    .stat{flex:1 1 40%}
+  }
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+  }
+</style>
+</head>
+<body>
+
+<canvas id="fx"></canvas>
+<div class="grain"></div>
+<div class="cursor-dot"></div>
+<div class="cursor-ring"></div>
+
+<!-- ==================== 顶部导航 ==================== -->
+<header class="site-head">
+  <a class="brand" href="#top">
+    <span class="brand-mark">家</span>
+    <span class="brand-name">FAMILY MENU<span class="brand-sub">家庭点菜系统</span></span>
+  </a>
+  <nav class="site-nav">
+    <a href="#today">今日餐桌</a>
+    <a href="#recipes">菜谱库</a>
+    <a href="#pantry">冰箱</a>
+    <a href="#taste">家庭成员</a>
+    <a class="nav-cta" href="#final">开始点菜<i data-lucide="arrow-right"></i></a>
+  </nav>
+</header>
+
+<main id="top">
+
+  <!-- ==================== HERO ==================== -->
+  <section class="hero">
+    <div class="hero-kicker">FAMILY MENU · 家庭点菜系统</div>
+    <h1 class="hero-title">
+      <span class="line l1">今晚<span class="outline">吃</span></span>
+      <span class="line l2">什么<span class="q">？</span></span>
+    </h1>
+    <div class="hero-meta">
+      <p class="hero-sub">一家人围桌而坐，是每日<b>最要紧</b>的事。点菜、备菜、上桌，把这一顿饭安排得明明白白。</p>
+      <div class="hero-actions">
+        <button class="btn-primary" data-magnetic>开饭了<i data-lucide="utensils"></i></button>
+        <button class="btn-ghost" data-magnetic>查看本周菜谱<i data-lucide="calendar-days"></i></button>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-n"><i data-lucide="chef-hat"></i><span data-count="11">0</span></div><div class="stat-c">道拿手菜谱</div></div>
+      <div class="stat"><div class="stat-n"><i data-lucide="users"></i><span data-count="4">0</span></div><div class="stat-c">位家庭成员</div></div>
+      <div class="stat"><div class="stat-n"><i data-lucide="sparkles"></i><span data-count="98">0</span>%</div><div class="stat-c">忌口自动避开</div></div>
+      <div class="stat"><div class="stat-n"><i data-lucide="flame"></i><span data-count="0">0</span></div><div class="stat-c">次饭菜浪费</div></div>
+    </div>
+    <div class="scroll-hint"><div class="wheel"></div>SCROLL</div>
+  </section>
+
+  <!-- ==================== MARQUEE ==================== -->
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+      <span class="marquee-item">今晚吃什么 <i data-lucide="star"></i> 一家人吃饭是正事 <i data-lucide="star"></i> <span class="m-ghost">FAMILY MENU</span> <i data-lucide="star"></i> 11 道菜谱 <i data-lucide="star"></i> 4 位成员 <i data-lucide="star"></i> 忌口自动避开 <i data-lucide="star"></i> 冰箱库存一目了然 <i data-lucide="star"></i></span>
+      <span class="marquee-item">今晚吃什么 <i data-lucide="star"></i> 一家人吃饭是正事 <i data-lucide="star"></i> <span class="m-ghost">FAMILY MENU</span> <i data-lucide="star"></i> 11 道菜谱 <i data-lucide="star"></i> 4 位成员 <i data-lucide="star"></i> 忌口自动避开 <i data-lucide="star"></i> 冰箱库存一目了然 <i data-lucide="star"></i></span>
+    </div>
+  </div>
+
+  <!-- ==================== 今日餐桌 ==================== -->
+  <section class="sec today" id="today">
+    <div class="sec-head">
+      <div>
+        <div class="sec-idx reveal">01 · 今日餐桌</div>
+        <h2 class="sec-title reveal d1">今天的饭<br><em>吃什么</em><span class="t-tomato">？</span></h2>
+      </div>
+      <p class="sec-desc reveal d2">每天自动排出一桌菜：荤素搭配、口味轮换，避开每位家人的忌口。到点开饭，不费脑子。</p>
+    </div>
+    <div class="today-grid">
+      <div class="today-copy reveal">
+        <div class="today-list">
+          <div class="trow" data-parallax="0.06">
+            <span class="trow-idx">A·1</span>
+            <span class="trow-ic"><i data-lucide="flame"></i></span>
+            <div><div class="trow-n">番茄牛腩煲</div><div class="trow-s">主菜 · 炖 90 分钟 · 3 人份</div></div>
+            <span class="trow-tag">今晚</span>
+          </div>
+          <div class="trow" data-parallax="0.12">
+            <span class="trow-idx">B·2</span>
+            <span class="trow-ic"><i data-lucide="leaf"></i></span>
+            <div><div class="trow-n">清炒时蔬</div><div class="trow-s">素菜 · 5 分钟 · 2 人份</div></div>
+            <span class="trow-tag">爽口</span>
+          </div>
+          <div class="trow" data-parallax="0.18">
+            <span class="trow-idx">C·3</span>
+            <span class="trow-ic"><i data-lucide="egg-fried"></i></span>
+            <div><div class="trow-n">紫菜蛋花汤</div><div class="trow-s">汤品 · 10 分钟 · 3 人份</div></div>
+            <span class="trow-tag">清淡</span>
+          </div>
+        </div>
+      </div>
+      <div class="today-visual reveal d2">
+        <div class="plate" data-parallax="0.1">
+          <div class="plate-orb"></div>
+          <div class="plate-chip pc-a"><i data-lucide="clock"></i>19:00 开饭</div>
+          <div class="plate-chip pc-b"><i data-lucide="check"></i>已避开忌口</div>
+          <div class="plate-chip pc-c"><i data-lucide="chef-hat"></i>3 菜 1 汤</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 菜谱库 ==================== -->
+  <section class="sec recipes" id="recipes">
+    <div class="sec-head">
+      <div>
+        <div class="sec-idx reveal">02 · 菜谱库</div>
+        <h2 class="sec-title reveal d1">家传味道<br><em>按图索骥</em></h2>
+      </div>
+      <p class="sec-desc reveal d2">每道菜都有做法、火候与照片。不会做？照着步骤来，翻车率接近于零。</p>
+    </div>
+    <div class="grid">
+      <div class="r-card reveal" data-parallax="0.05">
+        <div class="r-num">01</div>
+        <div class="r-ic"><i data-lucide="flame"></i></div>
+        <div class="r-fill"></div>
+        <div class="r-tag">拿手菜</div>
+        <div class="r-name">红烧肉</div>
+        <div class="r-meta"><i data-lucide="clock"></i>2.5 小时 <i data-lucide="flame"></i>中火</div>
+        <div class="r-go"><i data-lucide="arrow-right"></i></div>
+      </div>
+      <div class="r-card g2 reveal d1" data-parallax="0.1">
+        <div class="r-num">02</div>
+        <div class="r-ic"><i data-lucide="leaf"></i></div>
+        <div class="r-fill"></div>
+        <div class="r-tag">素食</div>
+        <div class="r-name">麻婆豆腐</div>
+        <div class="r-meta"><i data-lucide="clock"></i>25 分钟 <i data-lucide="flame"></i>猛火</div>
+        <div class="r-go"><i data-lucide="arrow-right"></i></div>
+      </div>
+      <div class="r-card big reveal d2" data-parallax="0.06">
+        <div class="r-num">03</div>
+        <div class="r-ic"><i data-lucide="chef-hat"></i></div>
+        <div class="r-fill"></div>
+        <div class="r-tag">全家最爱 · 每周必点</div>
+        <div class="r-name" style="font-size:34px">番茄牛腩煲</div>
+        <div class="r-meta" style="font-size:13px"><i data-lucide="clock"></i>90 分钟 <i data-lucide="users"></i>3 人份 <i data-lucide="star"></i>4.9 分</div>
+        <div class="r-go"><i data-lucide="arrow-right"></i></div>
+      </div>
+      <div class="r-card g3 reveal d1" data-parallax="0.14">
+        <div class="r-num">04</div>
+        <div class="r-ic"><i data-lucide="egg-fried"></i></div>
+        <div class="r-fill"></div>
+        <div class="r-tag">快手菜</div>
+        <div class="r-name">西红柿炒蛋</div>
+        <div class="r-meta"><i data-lucide="clock"></i>10 分钟 <i data-lucide="flame"></i>中火</div>
+        <div class="r-go"><i data-lucide="arrow-right"></i></div>
+      </div>
+      <div class="r-card g4 reveal d2" data-parallax="0.08">
+        <div class="r-num">05</div>
+        <div class="r-ic"><i data-lucide="fish-symbol"></i></div>
+        <div class="r-fill"></div>
+        <div class="r-tag">海鲜</div>
+        <div class="r-name">清蒸鲈鱼</div>
+        <div class="r-meta"><i data-lucide="clock"></i>20 分钟 <i data-lucide="flame"></i>大火</div>
+        <div class="r-go"><i data-lucide="arrow-right"></i></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 冰箱 ==================== -->
+  <section class="sec pantry" id="pantry">
+    <div class="sec-head">
+      <div>
+        <div class="sec-idx reveal">03 · 冰箱库存</div>
+        <h2 class="sec-title reveal d1">冰箱里<br><em>还剩什么</em></h2>
+      </div>
+      <p class="sec-desc reveal d2">食材临期自动提醒，缺什么买菜清单里补上。冰箱不再有被遗忘的角落。</p>
+    </div>
+    <div class="pantry-grid">
+      <div class="reveal">
+        <div class="p-row">
+          <div class="p-head"><div class="p-name"><i data-lucide="check"></i>新鲜在库</div><div class="p-val"><span data-count="23">0</span><small>类</small></div></div>
+          <div class="p-bar"><i class="p-w" data-w="76"></i></div>
+        </div>
+        <div class="p-row">
+          <div class="p-head"><div class="p-name"><i data-lucide="alert-triangle"></i>即将临期</div><div class="p-val"><span data-count="4">0</span><small>类</small></div></div>
+          <div class="p-bar warn"><i class="p-w" data-w="13"></i></div>
+        </div>
+        <div class="p-row">
+          <div class="p-head"><div class="p-name"><i data-lucide="shopping-basket"></i>需要补货</div><div class="p-val"><span data-count="3">0</span><small>项</small></div></div>
+          <div class="p-bar alt"><i class="p-w" data-w="10"></i></div>
+        </div>
+      </div>
+      <div class="reveal d1">
+        <div class="fridge" data-parallax="0.08">
+          <div class="fridge-shelf" style="top:44%"></div>
+          <div class="fridge-shelf" style="top:76%"></div>
+          <div class="fridge-item fi-1"><i data-lucide="egg"></i></div>
+          <div class="fridge-item fi-2"><i data-lucide="carrot"></i></div>
+          <div class="fridge-item fi-3"><i data-lucide="milk"></i></div>
+          <div class="fridge-item fi-4"><i data-lucide="apple"></i></div>
+          <div class="fridge-item fi-5"><i data-lucide="beef"></i></div>
+          <div class="fridge-item fi-6"><i data-lucide="wheat"></i></div>
+          <div class="fridge-tag"><i data-lucide="bell"></i>4 类食材明天到期</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 家庭口味 ==================== -->
+  <section class="sec taste" id="taste">
+    <div class="sec-head">
+      <div>
+        <div class="sec-idx reveal">04 · 家庭成员</div>
+        <h2 class="sec-title reveal d1">每个人的<br><em>口味画像</em></h2>
+      </div>
+      <p class="sec-desc reveal d2">爸爸不吃香菜，大宝不能吃花生。系统记住每个人的忌口，点菜时自动绕开。</p>
+    </div>
+    <div class="taste-grid">
+      <div class="member reveal" data-parallax="0.05">
+        <div class="member-av"><i data-lucide="user"></i></div>
+        <div class="member-role">爸爸 · 掌勺人</div>
+        <div class="member-name">老周</div>
+        <div class="member-bio">无辣不欢，最擅红烧。做饭不看菜谱，全凭手感。</div>
+        <div class="member-tags"><span class="mtag on">不吃香菜</span><span class="mtag">偏爱浓油赤酱</span></div>
+      </div>
+      <div class="member reveal d1" data-parallax="0.1">
+        <div class="member-av"><i data-lucide="user"></i></div>
+        <div class="member-role">妈妈 · 营养师</div>
+        <div class="member-name">阿敏</div>
+        <div class="member-bio">讲究荤素搭配，每天盯紧盐和油的用量。</div>
+        <div class="member-tags"><span class="mtag on">花生过敏</span><span class="mtag">低盐</span></div>
+      </div>
+      <div class="member reveal d2" data-parallax="0.06">
+        <div class="member-av"><i data-lucide="baby"></i></div>
+        <div class="member-role">大宝 · 小学生</div>
+        <div class="member-name">小满</div>
+        <div class="member-bio">只爱甜口，绿色蔬菜要哄着吃。最爱番茄。</div>
+        <div class="member-tags"><span class="mtag">嗜甜</span><span class="mtag on">不吃苦瓜</span></div>
+      </div>
+      <div class="member reveal d3" data-parallax="0.12">
+        <div class="member-av"><i data-lucide="paw-print"></i></div>
+        <div class="member-role">团宠 · 监督员</div>
+        <div class="member-name">年糕</div>
+        <div class="member-bio">开饭前 30 分钟准时蹲守厨房，负责试吃。</div>
+        <div class="member-tags"><span class="mtag">鱼肉爱好者</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 大 CTA ==================== -->
+  <section class="sec final" id="final">
+    <h2 class="f-big reveal">一家人，<span class="outline">好好</span><span class="t-tomato">吃饭</span></h2>
+    <p class="reveal d1">从今晚这顿饭开始，把每天的「吃什么」交给 FAMILY MENU，把时间留给围坐在一起的家人。</p>
+    <button class="btn-primary reveal d2" data-magnetic>开始点菜<i data-lucide="arrow-right"></i></button>
+  </section>
+
+</main>
+
+<footer>
+  <div class="foot-left">FAMILY MENU · 家庭点菜系统 — 为一家人设计的晚饭</div>
+  <div class="foot-social">
+    <a href="#" aria-label="食谱"><i data-lucide="book-open"></i></a>
+    <a href="#" aria-label="社区"><i data-lucide="message-circle"></i></a>
+    <a href="#" aria-label="关于"><i data-lucide="info"></i></a>
+  </div>
+  <a class="foot-top" href="#top"><i data-lucide="arrow-up"></i>回到顶部</a>
+</footer>
+
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+(function(){
+  try{ window.lucide && lucide.createIcons(); }catch(e){}
+
+  /* ============ 光标：dot 即时 + ring 缓动 ============ */
+  const dot=document.querySelector('.cursor-dot'), ring=document.querySelector('.cursor-ring');
+  let mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
+  addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;dot.style.left=mx+'px';dot.style.top=my+'px'});
+  (function loop(){
+    rx+=(mx-rx)*.16;ry+=(my-ry)*.16;
+    ring.style.left=rx+'px';ring.style.top=ry+'px';
+    requestAnimationFrame(loop);
+  })();
+  document.querySelectorAll('a,button').forEach(el=>{
+    el.addEventListener('mouseenter',()=>ring.classList.add('is-hover'));
+    el.addEventListener('mouseleave',()=>ring.classList.remove('is-hover'));
+  });
+
+  /* ============ 磁吸按钮 ============ */
+  document.querySelectorAll('[data-magnetic]').forEach(btn=>{
+    btn.addEventListener('mousemove',e=>{
+      const r=btn.getBoundingClientRect();
+      const dx=e.clientX-(r.left+r.width/2), dy=e.clientY-(r.top+r.height/2);
+      btn.style.transform=`translate(${dx*.18}px,${dy*.22}px)`;
+    });
+    btn.addEventListener('mouseleave',()=>{btn.style.transform=''});
+  });
+
+  /* ============ 背景流体 canvas（鼠标驱动光斑） ============ */
+  const cv=document.getElementById('fx'),ctx=cv.getContext('2d');
+  let W,H,px=-1,py=-1;
+  function size(){W=cv.width=innerWidth;H=cv.height=innerHeight}
+  size();addEventListener('resize',size);
+  const orbs=[];
+  for(let i=0;i<22;i++){
+    orbs.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,
+      r:50+Math.random()*160,
+      hx:Math.random()*innerWidth,hy:Math.random()*innerHeight,
+      vx:(Math.random()-.5)*.22,vy:(Math.random()-.5)*.22});
+  }
+  let frame=0;
+  (function draw(){
+    frame++;
+    ctx.clearRect(0,0,W,H);
+    for(const o of orbs){
+      o.hx+=o.vx;o.hy+=o.vy;
+      if(o.hx<-100||o.hx>W+100)o.vx*=-1;
+      if(o.hy<-100||o.hy>H+100)o.vy*=-1;
+      const tx=o.hx,ty=o.hy;
+      if(px>=0){
+        const d=Math.hypot(px-o.hx,py-o.hy);
+        if(d<240){o.hx+=(px-o.hx)*.012;o.hy+=(py-o.hy)*.012}
+      }
+      const g=ctx.createRadialGradient(tx,ty,0,tx,ty,o.r);
+      g.addColorStop(0,'rgba(255,74,34,.05)');
+      g.addColorStop(.6,'rgba(255,74,34,.018)');
+      g.addColorStop(1,'rgba(255,74,34,0)');
+      ctx.fillStyle=g;
+      ctx.beginPath();ctx.arc(tx,ty,o.r,0,6.2832);ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  })();
+  addEventListener('mousemove',e=>{px=e.clientX;py=e.clientY});
+  let pastHero=false;
+  addEventListener('scroll',()=>{
+    const p=scrollY>600;
+    if(p!==pastHero){pastHero=p;document.body.classList.toggle('is-past-hero',p)}
+  },{passive:true});
+
+  /* ============ 滚动入场 reveal ============ */
+  const io=new IntersectionObserver(es=>{
+    es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target)}});
+  },{threshold:.14});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  /* ============ 视差 ============ */
+  const pars=[];
+  document.querySelectorAll('[data-parallax]').forEach(el=>pars.push({el,sp:parseFloat(el.dataset.parallax),base:0}));
+  addEventListener('scroll',()=>{
+    const sy=scrollY;
+    pars.forEach(p=>{
+      const r=p.el.getBoundingClientRect();
+      p.el.style.transform=`translateY(${r.top*.06*p.sp*10}px)`;
+    });
+  },{passive:true});
+
+  /* ============ 数字滚动 ============ */
+  const io2=new IntersectionObserver(es=>{
+    es.forEach(en=>{
+      if(!en.isIntersecting)return;
+      io2.unobserve(en.target);
+      const el=en.target,target=+el.dataset.count,st=performance.now(),dur=1400;
+      (function tick(now){
+        const p=Math.min(1,(now-st)/dur);
+        el.textContent=Math.round(target*(1-Math.pow(1-p,3)));
+        if(p<1)requestAnimationFrame(tick);
+      })(st);
+    });
+  },{threshold:.6});
+  document.querySelectorAll('[data-count]').forEach(el=>io2.observe(el));
+
+  /* ============ 冰箱进度条（进入时展开） ============ */
+  const io3=new IntersectionObserver(es=>{
+    es.forEach(en=>{
+      if(en.isIntersecting){
+        en.target.style.width=en.target.dataset.w+'%';
+        io3.unobserve(en.target);
+      }
+    });
+  },{threshold:.5});
+  document.querySelectorAll('.p-bar .p-w').forEach(el=>io3.observe(el));
+
+})();
+</script>
+</body>
+</html>

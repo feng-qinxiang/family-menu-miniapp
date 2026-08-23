@@ -85,8 +85,8 @@
           <text class="mkt-gcount">{{group.items.length}} 样</text>
         </view>
 
-        <view class="mkt-item g-fade-up g-d{{idx % 5 + 1}}" wx:for="{{group.items}}" wx:for-item="food" wx:for-index="idx" wx:key="itemId">
-          <view class="mkt-check tap-scale" data-id="{{food.itemId}}" data-purchased="{{food.purchased}}" bindtap="toggleItem"></view>
+        <view class="mkt-item g-fade-up g-d{{idx % 5 + 1}}" wx:for="{{group.items}}" wx:for-item="food" wx:for-index="idx" wx:key="itemId" data-id="{{food.itemId}}" data-purchased="{{food.purchased}}" bindtap="toggleItem">
+          <view class="mkt-check"></view>
           <view class="mkt-imid">
             <text class="nm">{{food.ingredientName}}</text>
             <text class="amt">{{food.amount}} {{food.unit}}</text>
@@ -110,8 +110,8 @@
         </view>
 
         <block wx:for="{{groupedPurchased}}" wx:key="key" wx:for-item="group">
-          <view class="mkt-item done" wx:for="{{group.items}}" wx:for-item="food" wx:key="itemId">
-            <view class="mkt-check done tap-scale" data-id="{{food.itemId}}" data-purchased="{{food.purchased}}" bindtap="toggleItem">
+          <view class="mkt-item done" wx:for="{{group.items}}" wx:for-item="food" wx:key="itemId" data-id="{{food.itemId}}" data-purchased="{{food.purchased}}" bindtap="toggleItem">
+            <view class="mkt-check done">
               <view class="mkt-tick"></view>
             </view>
             <view class="mkt-imid">

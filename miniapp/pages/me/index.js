@@ -9,6 +9,7 @@ const {
 } = require('../../utils/api');
 
 const { fallbackDishImg, LOCAL_DISHES } = require('../../utils/image');
+const { withTabSelect } = require('../../behaviors/tab-select');
 
 const memberTones = ['mavt-a', 'mavt-b', 'mavt-c', 'mavt-d', 'mavt-e'];
 const TITLE_DISH_MAP = [
@@ -74,43 +75,11 @@ Page({
   },
 
   onShow() {
+    withTabSelect(this, 3);
     let fontScale = 'normal';
     try { fontScale = wx.getStorageSync('font_scale') || 'normal'; } catch (e) { fontScale = 'normal'; }
     if (fontScale !== this.data.fontScale) this.setData({ fontScale });
     this.loadProfile();
-  },
-
-  onHide() {
-    if (this._countUpFrame) {
-      cancelAnimationFrame(this._countUpFrame);
-      this._countUpFrame = null;
-    }
-  },
-
-  // 统计数字滚动动画：0 → target，600ms cubic-out
-  countUp(key, target) {
-    if (this._countUpFrame) {
-      cancelAnimationFrame(this._countUpFrame);
-      this._countUpFrame = null;
-    }
-    const targetNum = Number(target) || 0;
-    if (targetNum <= 0) {
-      this.setData({ [key]: 0 });
-      return;
-    }
-    const startTime = Date.now();
-    const duration = 600;
-    const tick = () => {
-      const p = Math.min(1, (Date.now() - startTime) / duration);
-      const eased = 1 - Math.pow(1 - p, 3);
-      this.setData({ [key]: Math.round(targetNum * eased) });
-      if (p < 1) {
-        this._countUpFrame = requestAnimationFrame(tick);
-      } else {
-        this._countUpFrame = null;
-      }
-    };
-    this._countUpFrame = requestAnimationFrame(tick);
   },
 
   async loadProfile() {
@@ -184,14 +153,12 @@ Page({
         cookHistory: enrichedHistory,
         prefBars,
         favoriteCuisine,
-        loading: false
+        loading: false,
+        loadError: ''
       });
-      // 统计数字滚动（600ms 缓出）
-      this.countUp('monthCookCount', monthCookCount);
     } catch (err) {
       console.error('me loadProfile failed', err);
       this.setData({ loading: false, loadError: (err && err.message) || '网络不太好，稍后再试' });
-      wx.showToast({ title: '加载失败', icon: 'none' });
     }
   },
 
@@ -216,6 +183,9 @@ Page({
   goRecipes() { wx.switchTab({ url: '/pages/recipes/index' }); },
   goPreference() { wx.navigateTo({ url: '/pages/me/preference-profile/index' }); },
   goSettings() { wx.navigateTo({ url: '/pages/me/settings/index' }); },
+  goCookLog() { wx.navigateTo({ url: '/pages/cook-log/index' }); },
+  goProfileEdit() { wx.navigateTo({ url: '/pages/me/profile-edit/index' }); },
+  goNotifications() { wx.navigateTo({ url: '/pages/me/notifications/index' }); },
   goFeedback() { wx.navigateTo({ url: '/pages/me/feedback/index' }); },
   goAbout() { wx.navigateTo({ url: '/pages/me/about/index' }); },
   goPrivacy() { wx.navigateTo({ url: '/pages/legal/privacy/index' }); },

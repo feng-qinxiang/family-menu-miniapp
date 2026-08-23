@@ -192,7 +192,7 @@
 .contact-ph { color: var(--mut); }
 
 /* —— 提交 —— */
-.submit-area { padding: 60rpx 0 40rpx; }
+.submit-area { padding: 60rpx 0 80rpx; }
 .submit-area .btn-pop {
   gap: 14rpx;
   min-height: 104rpx;

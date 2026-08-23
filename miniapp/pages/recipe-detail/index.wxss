@@ -14,7 +14,9 @@
 /* ===== Hero 大图 ===== */
 .rd-hero {
   position: relative;
-  height: 360rpx;
+  min-height: var(--photo-hero-h);
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
 }
 .rd-hero-img {
@@ -43,28 +45,11 @@
   pointer-events: none;
 }
 
-/* nav-bar 右侧操作按钮 */
-.rd-nav-actions {
-  display: flex;
-  gap: 18rpx;
-}
-.rd-cbtn {
-  width: 88rpx;
-  height: 88rpx;
-  border-radius: 50%;
-  background: rgba(58, 46, 35, 0.55);
-  border: 2rpx solid rgba(255, 255, 255, 0.18);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 /* Hero 文案 */
 .rd-hero-body {
-  position: absolute;
-  left: 46rpx;
-  right: 46rpx;
-  bottom: 88rpx;
+  position: relative;
+  margin-top: auto;
+  padding: 0 46rpx 48rpx;
   z-index: 2;
   color: var(--c-surface);
 }
@@ -185,16 +170,6 @@
 }
 .rd-dot.have { background: var(--pine); }
 .rd-dot.miss { background: var(--pop); }
-.rd-icw {
-  width: 80rpx;
-  height: 80rpx;
-  border-radius: var(--r-md);
-  background: var(--paper-2);
-  flex: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 .rd-iname { flex: 1; }
 .rd-iname-h {
   font-size: 28rpx;
@@ -467,26 +442,6 @@
   border-left: 24rpx solid var(--gold);
   border-top: 14rpx solid transparent;
   border-bottom: 14rpx solid transparent;
-}
-/* 食材盒子图标 */
-.rd-ic-box {
-  width: 34rpx; height: 34rpx;
-  border: 3rpx solid var(--gold-deep);
-  border-radius: var(--r-xs);
-}
-.rd-ic-box::after {
-  content: ""; position: absolute; left: 7rpx; right: 7rpx; top: 50%;
-  height: 3rpx; background: var(--gold-deep); transform: translateY(-50%); border-radius: 2rpx;
-}
-/* 购物车（nav-bar 右上 + 卡内）*/
-.rd-ic-cart, .rd-ic-cart2 {
-  width: 34rpx; height: 30rpx;
-  border: 3rpx solid var(--c-surface);
-  border-top: none; border-radius: 0 0 var(--r-xs) var(--r-xs);
-}
-.rd-ic-cart::before, .rd-ic-cart2::before {
-  content: ""; position: absolute; left: -2rpx; top: -16rpx; width: 16rpx; height: 18rpx;
-  border-left: 3rpx solid var(--c-surface); border-top: 3rpx solid var(--c-surface); transform: skewX(-12deg); border-radius: 4rpx 0 0 0;
 }
 /* 星形 tip */
 .rd-ic-star {

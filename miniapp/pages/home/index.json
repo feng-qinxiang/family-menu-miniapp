@@ -1,5 +1,5 @@
 {
-  "navigationBarTitleText": "点菜",
+  "navigationBarTitleText": "今日点菜",
   "enablePullDownRefresh": true,
   "usingComponents": {
     "state-empty": "/components/state-empty/index",

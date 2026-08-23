@@ -1,7 +1,8 @@
 const { addTodayMenuRecipe, getMyFavorites, getRecipes, getShoppingList, getTodayMenu, getFamilyProfile } = require('../../utils/api');
 const { recipeSourceLabels, cuisineList, mealOptions, sourceTabs } = require('../../utils/constants');
-const { fallbackDishImg, onImgError } = require('../../utils/image');
+const { fallbackDishImg, recipeDishImg, onImgError } = require('../../utils/image');
 const { debounce } = require('../../utils/debounce');
+const { withTabSelect } = require('../../behaviors/tab-select');
 
 const PAGE_SIZE = 6;
 
@@ -55,16 +56,29 @@ Page({
     // 家庭忌口过滤（自动生效，可临时关闭）
     avoidTags: [],
     avoidActive: true,
-    avoidHiddenCount: 0
+    avoidHiddenCount: 0,
+    capsuleTop: 'calc(env(safe-area-inset-top) + 90rpx)',
+    capsuleRight: '96px'
   },
 
   onLoad() {
     let fontScale = 'normal';
     try { fontScale = wx.getStorageSync('font_scale') || 'normal'; } catch (e) { fontScale = 'normal'; }
-    this.setData({ fontScale });
+    let capsuleTop = '';
+    let capsuleRight = '96px';
+    try {
+      const mb = wx.getMenuButtonBoundingClientRect();
+      const sys = (wx.getWindowInfo && wx.getWindowInfo()) || wx.getSystemInfoSync();
+      if (mb && sys && mb.left) {
+        capsuleTop = mb.top + 'px';
+        capsuleRight = (sys.windowWidth - mb.left + 8) + 'px';
+      }
+    } catch (e) {}
+    this.setData({ fontScale, capsuleTop, capsuleRight });
   },
 
   onShow() {
+      withTabSelect(this, 1);
       this.loadRecipes();
     },
 
@@ -102,8 +116,7 @@ Page({
       });
       this.applyFilter();
     } catch (err) {
-      wx.showToast({ title: '加载菜谱失败', icon: 'none' });
-      this.setData({ recipes: [], filteredRecipes: [], loading: false, loadError: true });
+      this.setData({ recipes: [], filteredRecipes: [], displayedRecipes: [], loading: false, loadError: true });
     }
   },
 
@@ -120,7 +133,7 @@ Page({
       selected: ids.includes(id),
       tasteTags: Array.isArray(recipe.tasteTags) ? recipe.tasteTags : [],
       summary: recipe.summary || '',
-      cover: recipe.coverImage || fallbackDishImg(recipe.id || recipe.title),
+      cover: recipeDishImg(recipe),
       sourceLabel: recipeSourceLabels[recipe.sourceType] || '自家菜谱'
     };
   },

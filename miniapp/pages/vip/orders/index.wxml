@@ -5,7 +5,7 @@
   <!-- Hero 标题 -->
   <view class="head g-fade-up">
     <view class="eyebrow-serif">我的订阅</view>
-    <view class="hero-ttl title-stroke title-shadow">开通<text class="pop">记录</text></view>
+    <view class="hero-ttl">开通<text class="pop">记录</text></view>
     <view class="lead">家庭云同步年卡的开通与续费记录都在这儿。</view>
   </view>
 
@@ -109,7 +109,7 @@
       type="gold"
       title="还没有开通记录"
       desc="开通家庭云同步年卡，全家菜单与买菜清单实时共享，换设备也不丢。"
-      cta="立即开通 ¥68/年"
+      cta="立即开通 ¥99/年"
       cta-style="pop"
       bind:action="onActivate"
     ></state-empty>

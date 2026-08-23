@@ -12,7 +12,7 @@
 /* ===== HERO（轻量头部） ===== */
 .rx-hero {
   position: relative;
-  height: 480rpx;
+  height: var(--photo-hero-h);
   overflow: hidden;
 }
 .rx-hero-img { position: absolute; inset: 0; width: 100%; height: 100%; }
@@ -21,7 +21,7 @@
   background: linear-gradient(180deg, rgba(20,14,8,.5) 0%, rgba(20,14,8,.25) 45%, rgba(20,14,8,.72) 100%);
 }
 .rx-hero-top {
-  position: absolute; top: calc(env(safe-area-inset-top) + 90rpx); left: 46rpx; right: 46rpx; z-index: 10;
+  position: absolute; top: calc(env(safe-area-inset-top) + 90rpx); left: 46rpx; right: 96px; z-index: 10;
   display: flex; align-items: center; justify-content: space-between;
 }
 .rx-hi { font-size: var(--fs-cap); letter-spacing: 4rpx; text-transform: uppercase; opacity: .85; font-weight: 700; color: var(--c-surface); }

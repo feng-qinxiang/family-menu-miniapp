@@ -7,7 +7,7 @@
   <view class="sc-grain"></view>
 
   <!-- 顶部导航 -->
-  <view class="sc-head">
+  <view class="sc-head" style="padding-right: {{capsuleRight}}px;">
     <view class="sc-head-left">
       <view class="sc-back tap-scale" bindtap="goBack">
         <image class="ic ic-24" src="/assets/icons/lucide/arrow-left.svg" mode="aspectFit" />
@@ -256,9 +256,9 @@
     <view class="sc-footer">
       <view class="sc-f-left">FAMILY MENU · 为一家人设计的晚饭</view>
       <view class="sc-f-soc">
-        <view class="sc-fs tap-scale"><image class="ic ic-16" src="/assets/icons/lucide/book-open.svg" mode="aspectFit" /></view>
-        <view class="sc-fs tap-scale"><image class="ic ic-16" src="/assets/icons/lucide/message-circle.svg" mode="aspectFit" /></view>
-        <view class="sc-fs tap-scale"><image class="ic ic-16" src="/assets/icons/lucide/info.svg" mode="aspectFit" /></view>
+        <view class="sc-fs tap-scale" bindtap="goRecipes"><image class="ic ic-16" src="/assets/icons/lucide/book-open.svg" mode="aspectFit" /></view>
+        <view class="sc-fs tap-scale" bindtap="goCommunity"><image class="ic ic-16" src="/assets/icons/lucide/message-circle.svg" mode="aspectFit" /></view>
+        <view class="sc-fs tap-scale" bindtap="goAbout"><image class="ic ic-16" src="/assets/icons/lucide/info.svg" mode="aspectFit" /></view>
       </view>
       <view class="sc-f-top tap-scale" bindtap="scrollTop"><image class="ic ic-14" src="/assets/icons/lucide/arrow-up.svg" mode="aspectFit" />回到顶部</view>
     </view>

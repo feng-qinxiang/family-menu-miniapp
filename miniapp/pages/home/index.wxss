@@ -64,7 +64,7 @@
   align-items: center;
   justify-content: center;
 }
-.mh-bell-dot {
+.mh-cart-dot {
   position: absolute;
   top: 12rpx;
   right: 14rpx;
@@ -74,43 +74,41 @@
   background: var(--pop);
   border: 3rpx solid var(--c-surface);
 }
-.mh-ico-bell {
-  width: 32rpx;
-  height: 30rpx;
-  border: 3rpx solid var(--c-surface);
-  border-radius: 50% 50% 12rpx 12rpx;
-  border-bottom: none;
-  position: relative;
-}
-.mh-ico-bell::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  bottom: -8rpx;
-  transform: translateX(-50%);
-  width: 14rpx;
-  height: 8rpx;
+.mh-ico-cart {
+  width: 30rpx;
+  height: 22rpx;
   border: 3rpx solid var(--c-surface);
   border-top: none;
   border-radius: 0 0 8rpx 8rpx;
-}
-.mh-ico-search {
-  width: 28rpx;
-  height: 28rpx;
-  border: 3rpx solid var(--c-surface);
-  border-radius: 50%;
   position: relative;
+  margin-top: 8rpx;
 }
-.mh-ico-search::after {
+.mh-ico-cart::before {
   content: "";
   position: absolute;
-  right: -10rpx;
-  bottom: -8rpx;
-  width: 14rpx;
-  height: 3rpx;
+  left: -2rpx;
+  top: -10rpx;
+  width: 28rpx;
+  height: 12rpx;
+  border: 3rpx solid var(--c-surface);
+  border-bottom: none;
+  border-radius: 6rpx 6rpx 0 0;
+}
+.mh-ico-book {
+  width: 28rpx;
+  height: 32rpx;
+  border: 3rpx solid var(--c-surface);
+  border-radius: 4rpx 8rpx 8rpx 4rpx;
+  position: relative;
+}
+.mh-ico-book::after {
+  content: "";
+  position: absolute;
+  left: 8rpx;
+  top: 6rpx;
+  bottom: 6rpx;
+  width: 3rpx;
   background: var(--c-surface);
-  transform: rotate(45deg);
-  border-radius: 2rpx;
 }
 /* ---- hero body ---- */
 .mh-hero-body {
@@ -801,65 +799,78 @@
 }
 
 
-/* ===== 加载失败态 ===== */
+/* ===== 加载失败态：静态「碗」图示，禁止任何 spin/无限动画 ===== */
 .mh-load-error {
-  padding: 120rpx 48rpx 80rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+  box-sizing: border-box;
 }
-.mh-load-error-bowl {
-  width: 140rpx;
-  height: 140rpx;
-  border-radius: 50%;
-  background: var(--paper-2);
+.mh-load-error--full {
+  min-height: 72vh;
+  padding: calc(env(safe-area-inset-top) + 120rpx) 48rpx 120rpx;
+  justify-content: center;
+}
+.mh-load-error--soft {
+  padding: 72rpx 48rpx 40rpx;
+  border-bottom: 2rpx solid var(--paper-2);
+}
+.mh-load-error-mark {
   position: relative;
-  margin-bottom: 32rpx;
-}
-.mh-load-error-circle {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 60rpx;
-  height: 60rpx;
-  margin: -30rpx 0 0 -30rpx;
+  width: 128rpx;
+  height: 128rpx;
+  margin-bottom: 36rpx;
   border-radius: 50%;
-  border: 6rpx solid var(--line);
-  border-top-color: var(--pop);
-  animation: mh-spin 1s linear infinite;
+  background: var(--pop-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.mh-load-error-steam {
+/* 静态碗形：下半圆弧 + 顶横线，绝无 animation */
+.mh-load-error-cloud {
+  width: 64rpx;
+  height: 36rpx;
+  border: 5rpx solid var(--pop);
+  border-top: none;
+  border-radius: 0 0 36rpx 36rpx;
+  box-sizing: border-box;
+  margin-top: 12rpx;
+}
+.mh-load-error-bolt {
   position: absolute;
-  width: 8rpx;
-  border-radius: 4rpx;
-  background: var(--skeleton);
-  animation: mh-steam 1.6s ease-in-out infinite;
+  top: 36rpx;
+  left: 50%;
+  width: 48rpx;
+  height: 5rpx;
+  margin-left: -24rpx;
+  border-radius: 3rpx;
+  background: var(--pop);
 }
-.mh-steam-a { left: 46rpx; top: 18rpx; height: 26rpx; }
-.mh-steam-b { right: 46rpx; top: 26rpx; height: 18rpx; animation-delay: 0.4s; }
 .mh-load-error-title {
   font-size: 36rpx;
-  font-weight: 600;
+  font-weight: 800;
   color: var(--ink-deep);
+  letter-spacing: -0.5rpx;
 }
 .mh-load-error-desc {
-  margin-top: 12rpx;
+  margin-top: 14rpx;
+  max-width: 480rpx;
   font-size: 26rpx;
+  line-height: 1.5;
   color: var(--mut-strong);
 }
 .mh-load-error-btn {
-  margin-top: 40rpx;
-  padding: 18rpx 56rpx;
-  border-radius: 999rpx;
+  margin-top: 44rpx;
+  min-height: 88rpx;
+  padding: 0 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-pill);
   background: var(--pop);
-  color: #fff;
-  font-size: 28rpx;
-  font-weight: 600;
-}
-@keyframes mh-spin { to { transform: rotate(360deg); } }
-@keyframes mh-steam {
-  0% { opacity: 0; transform: translateY(8rpx); }
-  40% { opacity: 0.8; }
-  100% { opacity: 0; transform: translateY(-14rpx); }
+  color: var(--c-surface);
+  font-size: var(--fs-btn);
+  font-weight: 800;
+  box-shadow: var(--sh-pop);
 }

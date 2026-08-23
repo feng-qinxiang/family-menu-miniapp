@@ -4,7 +4,7 @@ const api = require('../../../utils/api');
 
 Page({
   data: {
-    phone: '138 8888 6666', // 注册手机号，readonly 展示
+    phone: '', // 从登录页带入；未带入则空，不展示伪号码
     code: '',
     focusKey: '',
     // 验证码倒计时

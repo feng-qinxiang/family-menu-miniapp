@@ -5,8 +5,8 @@
 Component({
   options: {
     multipleSlots: true,
-    addGlobalClass: true,
-    virtualHost: true
+    addGlobalClass: true
+    // 不用 virtualHost：部分基础库/模拟器下会触发空白或样式不生效
   },
   externalClasses: ['ext-class'],
   properties: {

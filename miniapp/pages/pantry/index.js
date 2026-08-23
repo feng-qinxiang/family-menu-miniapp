@@ -5,6 +5,7 @@ const {
   getPantryMatch,
   getWeeklyMenu
 } = require('../../utils/api');
+const { withTabSelect } = require('../../behaviors/tab-select');
 
 // 分类规则：按食材名关键字归类（蔬菜 / 肉蛋 / 调料 / 其他）
 const CATEGORY_RULES = [
@@ -52,6 +53,7 @@ Page({
   },
 
   onShow() {
+    withTabSelect(this, 2);
     this.loadPantry();
   },
 
@@ -76,8 +78,13 @@ Page({
       failed = true;
     }
     if (failed) {
-      this.setData({ loaded: true, loading: false, loadError: true });
-      wx.showToast({ title: '冰箱数据加载失败', icon: 'none' });
+      this.setData({
+        loaded: true,
+        loading: false,
+        loadError: true,
+        categories: [],
+        pantrySummary: { count: 0, expiringCount: 0, categoryCount: 0 }
+      });
       return;
     }
     const enriched = this.enrichPantryItems(pantryItems || [], weeklyMenu);

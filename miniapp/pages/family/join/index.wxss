@@ -30,7 +30,7 @@
   color: var(--mut-strong);
 }
 
-/* ===== 6 位邀请码 ===== */
+/* ===== 8 位邀请码 ===== */
 .code-label {
   display: flex;
   align-items: center;
@@ -62,19 +62,19 @@
 
 .codeboxes {
   display: flex;
-  gap: 18rpx;
+  gap: 10rpx;
   padding: 26rpx 0 0;
 }
 .cell {
   flex: 1;
-  height: 120rpx;
+  height: 100rpx;
   background: var(--c-surface);
   border: 3rpx solid var(--paper-2);
   border-radius: var(--r-md);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 50rpx;
+  font-size: 36rpx;
   font-weight: 900;
   color: var(--ink);
   box-shadow: var(--sh-soft);

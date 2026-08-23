@@ -56,7 +56,7 @@ Page({
           .catch((err) => {
             // 后端未配置微信凭据（503）时降级游客登录，不打断体验
             if (err && err.status === 503) {
-              this._fallbackGuest('微信登录成功');
+              this._fallbackGuest('微信登录暂不可用，已用游客身份进入');
             } else {
               this.setData({ submitting: false });
               this.toast(err && err.message ? err.message : '微信登录失败');

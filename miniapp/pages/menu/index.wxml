@@ -1,7 +1,9 @@
 <view class="container menu-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <!-- 二级页顶部返回（透明叠在 hero 上）-->
   <view class="nav-float">
-    <nav-bar title="" show-back="{{true}}" status-bar-height="{{statusBarHeight}}" />
+    <nav-bar title="" show-back="{{true}}" status-bar-height="{{statusBarHeight}}">
+      <view class="m-nav-add tap-scale" bindtap="goAddRecipe">点菜</view>
+    </nav-bar>
   </view>
 
   <!-- HERO 今日餐桌 -->
@@ -10,10 +12,6 @@
     <view class="m-hero-mask"></view>
     <view class="m-hero-top">
       <view class="m-hero-date">{{todayLabel}} · {{mealTimeLabel}}</view>
-      <view class="m-hd-add tap-scale" bindtap="goAddRecipe">
-        <view class="m-hd-add-main"><text class="m-plus">+</text></view>
-        <view class="m-hd-add-label">点菜</view>
-      </view>
     </view>
     <view class="m-hero-body">
       <text class="m-hero-tag">今日餐桌</text>

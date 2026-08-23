@@ -16,7 +16,7 @@
         <view class="rp-ic">
           <view class="rp-ic-phone"></view>
         </view>
-        <text class="rp-txt">{{phone}}</text>
+        <text class="rp-txt">{{phone || '未带入手机号'}}</text>
       </view>
     </view>
 

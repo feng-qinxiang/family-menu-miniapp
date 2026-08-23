@@ -9,7 +9,7 @@ const {
   removeTodayMenuRecipe
 } = require('../../utils/api');
 const { mealTypeLabels, mealOrder } = require('../../utils/constants');
-const { fallbackDishImg, LOCAL_DISHES } = require('../../utils/image');
+const { fallbackDishImg, recipeDishImg, LOCAL_DISHES } = require('../../utils/image');
 
 function buildToday() {
   const d = new Date();
@@ -39,7 +39,7 @@ function localDishImage(seed) {
 }
 
 function resolveImage(recipe, seed) {
-  if (recipe && recipe.coverImage) return recipe.coverImage;
+  if (recipe) return recipeDishImg(recipe);
   return localDishImage(seed);
 }
 
@@ -181,7 +181,6 @@ Page({
         loading: false,
         loadError: (err && err.message) ? err.message : '加载失败'
       });
-      wx.showToast({ title: '加载失败', icon: 'none' });
     }
   },
 

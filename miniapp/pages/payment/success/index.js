@@ -36,7 +36,7 @@ Page({
         ? orders.find((o) => String(o.orderId) === String(orderId))
         : null;
       const order = {
-        orderNo: (matched && matched.outTradeNo) || orderId || '--',
+        orderNo: (matched && matched.outTradeNo) || orderId || '',
         payAmount: amount ? `¥${Number(amount).toFixed(2)}` : (matched && matched.amountFen ? `¥${(matched.amountFen / 100).toFixed(2)}` : ''),
         expireAt: (matched && matched.expireAt) ? String(matched.expireAt).slice(0, 10).replace(/-/g, '.') : '',
       };
@@ -47,7 +47,7 @@ Page({
     } catch (err) {
       console.error('[success] load order failed', err);
       this.setData({
-        order: { orderNo: orderId || '--', payAmount: amount ? `¥${amount}` : '', expireAt: '' },
+        order: { orderNo: orderId || '', payAmount: amount ? `¥${amount}` : '', expireAt: '' },
         loading: false,
       });
     }

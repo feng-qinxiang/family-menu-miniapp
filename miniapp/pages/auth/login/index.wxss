@@ -12,7 +12,7 @@
 /* ============ Hero ============ */
 .hero {
   position: relative;
-  height: 360rpx;
+  height: var(--photo-hero-h);
   overflow: hidden;
 }
 .hero-img {
@@ -245,8 +245,8 @@
   padding: 0 8rpx;
 }
 .agree .box {
-  width: 35rpx;
-  height: 35rpx;
+  width: 64rpx;
+  height: 64rpx;
   flex: none;
   margin-top: 2rpx;
   border-radius: 12rpx;

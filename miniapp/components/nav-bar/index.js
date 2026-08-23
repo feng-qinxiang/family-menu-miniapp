@@ -23,9 +23,13 @@ Component({
     },
   },
 
+  data: {
+    capsulePad: 96
+  },
+
   lifetimes: {
     attached() {
-      // 若页面未传 statusBarHeight，则从系统信息读取，保证刘海屏适配
+      const patch = {};
       if (!this.data.statusBarHeight) {
         let sbh = 0;
         try {
@@ -37,8 +41,16 @@ Component({
         } catch (e) {
           sbh = 0;
         }
-        this.setData({ statusBarHeight: sbh });
+        patch.statusBarHeight = sbh;
       }
+      try {
+        const mb = wx.getMenuButtonBoundingClientRect();
+        const sys = (wx.getWindowInfo && wx.getWindowInfo()) || wx.getSystemInfoSync();
+        if (mb && sys && mb.left) {
+          patch.capsulePad = sys.windowWidth - mb.left + 8;
+        }
+      } catch (e) {}
+      if (Object.keys(patch).length) this.setData(patch);
     },
   },
 

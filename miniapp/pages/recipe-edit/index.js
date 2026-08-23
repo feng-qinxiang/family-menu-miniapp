@@ -1,5 +1,6 @@
 const { getRecipeDetail, saveRecipe, updateRecipe } = require('../../utils/api');
 const { chooseAndUpload } = require('../../utils/upload');
+const { decodeStep, encodeStep } = require('../../utils/recipe-steps');
 
 const DIFFICULTY_OPTIONS = [
   { key: 'easy', label: '简单' },
@@ -70,7 +71,7 @@ Page({
     }
     if (!recipe) return;
     const steps = (recipe.steps && recipe.steps.length)
-      ? recipe.steps.map((s) => typeof s === 'string' ? { text: s, image: '' } : { text: s.text || '', image: s.image || '' })
+      ? recipe.steps.map((s) => decodeStep(s))
       : [{ text: '', image: '' }];
     const form = {
       title: recipe.title || '',
@@ -291,7 +292,7 @@ Page({
       tasteTags: form.tasteTags.filter(Boolean),
       summary: form.summary.trim(),
         ingredients: form.ingredients.filter((i) => i.name.trim()),
-        steps: form.steps.filter((s) => s.text.trim()).map((s) => s.text.trim()),
+        steps: form.steps.filter((s) => s.text.trim()).map((s) => encodeStep(s)),
       sourceType: 'owned'
     };
 

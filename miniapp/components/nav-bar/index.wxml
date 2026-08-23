@@ -14,7 +14,7 @@
 
     <view class="navbar-title ellipsis">{{title}}</view>
 
-    <view class="navbar-right">
+    <view class="navbar-right" style="padding-right: {{capsulePad}}px;">
       <slot></slot>
     </view>
   </view>

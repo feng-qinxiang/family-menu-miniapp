@@ -2,7 +2,7 @@
 <view class="search-page">
   <!-- sticky 搜索栏：状态栏占位 + 返回 + 输入 + 清除 + 取消 -->
   <view class="searchbar" style="padding-top: {{statusBarHeight}}px;">
-    <view class="searchbar-inner">
+    <view class="searchbar-inner" style="padding-right: {{capsuleRight}}px;">
       <view class="backbtn tap-scale" catchtap="onBack">
         <view class="backbtn-icon"></view>
       </view>

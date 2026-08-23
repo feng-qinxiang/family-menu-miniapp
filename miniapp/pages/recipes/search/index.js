@@ -2,13 +2,7 @@
 // sticky 搜索栏 + 排序 chip 横滑 + 2 列网格（关键词 .pop 高亮）
 // 数据：getRecipes('all') 本地过滤，禁用臆造 api
 const api = require('../../../utils/api');
-
-const FALLBACK_DISHES = [
-  'beef-broccoli', 'chicken-congee', 'egg-drop-soup', 'fried-rice',
-  'hongshao-pork', 'hot-sour-soup', 'kungpao-chicken', 'lo-mein',
-  'long-beans', 'mapo-tofu', 'orange-chicken', 'shrimp-peas',
-  'sichuan-eggplant', 'sweet-sour-chicken', 'tomato-egg', 'wontons'
-];
+const { recipeDishImg } = require('../../../utils/image');
 
 // 排序/筛选 chip：综合 / 最快 / 川菜 / 家常 / 做过的
 const SORTS = [
@@ -28,7 +22,8 @@ Page({
     allRecipes: [],
     list: [],
     total: 0,
-    loaded: false
+    loaded: false,
+    capsuleRight: 96
   },
 
   onLoad(options) {
@@ -42,8 +37,14 @@ Page({
     } catch (e) {
       sbh = 0;
     }
+    let capsuleRight = 96;
+    try {
+      const mb = wx.getMenuButtonBoundingClientRect();
+      const sys = (wx.getWindowInfo && wx.getWindowInfo()) || wx.getSystemInfoSync();
+      if (mb && sys && mb.left) capsuleRight = sys.windowWidth - mb.left + 8;
+    } catch (e) {}
     const kw = (options && options.keyword) ? decodeURIComponent(options.keyword) : '';
-    this.setData({ statusBarHeight: sbh, keyword: kw });
+    this.setData({ statusBarHeight: sbh, keyword: kw, capsuleRight });
     this._fetch(kw);
   },
 
@@ -98,13 +99,7 @@ Page({
   // 构建卡片视图：封面兜底 + 标题高亮分段
   _buildCard(recipe, kw) {
     const r = recipe || {};
-    let cover = r.coverImage;
-    if (!cover) {
-      const seed = String(r.id || r.title || '');
-      let sum = 0;
-      for (let i = 0; i < seed.length; i++) sum += seed.charCodeAt(i);
-      cover = '/assets/dishes/' + FALLBACK_DISHES[sum % FALLBACK_DISHES.length] + '.jpg';
-    }
+    const cover = recipeDishImg(r);
     const tags = Array.isArray(r.tasteTags) ? r.tasteTags : [];
     return {
       id: r.id,

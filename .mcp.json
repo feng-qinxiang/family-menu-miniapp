@@ -1,12 +1,8 @@
 {
   "mcpServers": {
-    "weapp-dev": {
-      "type": "stdio",
-      "command": "cmd",
-      "args": ["/c", "E:\\rjd\\nvm\\v22.15.0\\node.exe", "E:\\rjd\\mcp\\weapp-dev-mcp\\dist\\index.js"],
-      "env": {
-        "WEAPP_WS_ENDPOINT": "ws://127.0.0.1:18375"
-      }
+    "wechat-devtools": {
+      "command": "E:\\rjd\\微信开发者工具\\wechatide.cmd",
+      "args": ["mcp"]
     }
   }
 }

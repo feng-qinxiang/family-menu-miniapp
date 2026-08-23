@@ -11,8 +11,9 @@ const {
   removeWish: removeWishApi
 } = require('../../utils/api');
 const { sourceLabels, mealTypeLabels, SLOTS, cuisinePinyin } = require('../../utils/constants');
-const { fallbackDishImg, onImgError } = require('../../utils/image');
+const { fallbackDishImg, recipeDishImg, onImgError } = require('../../utils/image');
 const { decorateHero, filterBySlot } = require('../../utils/dish-logic');
+const { withTabSelect } = require('../../behaviors/tab-select');
 const WISH_STORAGE_KEY = 'family_wishes_v1';
 const CACHE_KEY_MENU = 'home_cache_todayMenu';
 const CACHE_KEY_SHOPPING = 'home_cache_shoppingPending';
@@ -97,25 +98,56 @@ Page({
 
     allRecipes: [],
     isEmpty: false,        // 菜谱全空（sideRecipes 与 visibleRecipes 均空），用于空态文案收敛
-    loadError: ''
+    loadError: '',
+    // 有可展示内容时刷新失败不摘下方结构（DEC-5）
+    hasHomeData: false,
+    capsuleRight: '96px'
+  },
+
+  /**
+   * 软失败保留下方：必须有「可浏览的菜谱/hero/有内容的菜单卡/许愿」
+   * 仅 todayMenu 离线缓存不够——否则 load 失败仍露出空区块标题+空白（截图痛点）
+   */
+  _syncHasHomeData(patch) {
+    const d = Object.assign({}, this.data, patch || {});
+    const hasRecipes =
+      !!(d.heroRecipe) ||
+      (Array.isArray(d.visibleRecipes) && d.visibleRecipes.length > 0) ||
+      (Array.isArray(d.sideRecipes) && d.sideRecipes.length > 0) ||
+      (Array.isArray(d.allRecipes) && d.allRecipes.length > 0);
+    const hasMenuCard = Array.isArray(d.slotMenu) && d.slotMenu.length > 0;
+    const hasWishes = Array.isArray(d.wishes) && d.wishes.length > 0;
+    return !!(hasRecipes || hasMenuCard || hasWishes);
   },
 
   onLoad() {
     this._inited = false;
     const todayKey = todayDateKey();
-    // 离线缓存：先用上次数据渲染，网络回来后覆盖
+    // 离线缓存：先用上次菜单渲染；hasHomeData 等 loadAll/applyFilters 后再定
     const cachedMenu = readCache(CACHE_KEY_MENU);
     const cachedPending = readCache(CACHE_KEY_SHOPPING);
+    const menu = Array.isArray(cachedMenu) ? cachedMenu : [];
+    let capsuleRight = '96px';
+    try {
+      const mb = wx.getMenuButtonBoundingClientRect();
+      const sys = (wx.getWindowInfo && wx.getWindowInfo()) || wx.getSystemInfoSync();
+      if (mb && sys && mb.left) {
+        capsuleRight = (sys.windowWidth - mb.left + 8) + 'px';
+      }
+    } catch (e) {}
     this.setData({
       todayKey,
-      todayMenu: Array.isArray(cachedMenu) ? cachedMenu : [],
-      shoppingPending: typeof cachedPending === 'number' ? cachedPending : 0
+      todayMenu: menu,
+      shoppingPending: typeof cachedPending === 'number' ? cachedPending : 0,
+      hasHomeData: false,
+      capsuleRight
     });
     this.refreshWishes();
     this.loadAll();
   },
 
   onShow() {
+    withTabSelect(this, 0);
     // 字号档位在 onShow 读取：从设置页切回来立即生效（不再只在首次 onLoad 生效）
     let fontScale = 'normal';
     try { fontScale = wx.getStorageSync('font_scale') || 'normal'; } catch (e) { fontScale = 'normal'; }
@@ -316,6 +348,21 @@ Page({
   },
 
   async loadAll() {
+    this.setData({ loading: true, loadError: '' });
+    // 超时兜底：避免接口挂死导致永久骨架/白屏
+    const seq = (this._loadAllSeq = (this._loadAllSeq || 0) + 1);
+    if (this._loadAllWatchdog) clearTimeout(this._loadAllWatchdog);
+    this._loadAllWatchdog = setTimeout(() => {
+      if (this._loadAllSeq !== seq) return;
+      if (!this.data.loading) return;
+      this._loadAllSeq += 1;
+      console.warn('home loadAll watchdog timeout');
+      this.setData({
+        loading: false,
+        loadError: this.data.loadError || '加载超时，请重试',
+        hasHomeData: this._inited ? this._syncHasHomeData() : false
+      });
+    }, 8000);
     try {
       const [dashboard, todayMenu, shopping, family, user, match] = await Promise.all([
         getDashboard(),
@@ -330,8 +377,7 @@ Page({
       const normalizedItems = items.map(item => ({
         ...item,
         mealTypeLabel: mealTypeLabels[item.mealType] || '晚餐',
-        dishImg: (item.recipe && item.recipe.coverImage)
-          || fallbackDishImg(item.recipeId || (item.recipe && item.recipe.title))
+        dishImg: recipeDishImg(item.recipe || { id: item.recipeId })
       }));
 
       const shoppingItems = shopping && Array.isArray(shopping.items) ? shopping.items : [];
@@ -345,6 +391,8 @@ Page({
         matchedMap.set(String(recipeId), Math.round(((m.matchRate) || 0) * 100));
       });
 
+      if (this._loadAllSeq !== seq) return;
+
       const allRecipes = this.collectRecipes(dashboard, matchedMap);
       const cuisineTiles = this.buildCuisineTiles(allRecipes);
       const cookCandidates = this.buildCookCandidates(user, family);
@@ -353,7 +401,7 @@ Page({
       writeCache(CACHE_KEY_MENU, normalizedItems);
       writeCache(CACHE_KEY_SHOPPING, shoppingPending);
 
-      this.setData({
+      const patch = {
         loading: false,
         loadError: '',
         greeting: greetingText(),
@@ -366,7 +414,9 @@ Page({
         shoppingPending,
         allRecipes,
         cuisineTiles
-      });
+      };
+      patch.hasHomeData = this._syncHasHomeData(patch);
+      this.setData(patch);
       this.updateSlotMenu();
 
       // 写入离线缓存
@@ -374,14 +424,22 @@ Page({
       writeCache(CACHE_KEY_SHOPPING, shoppingPending);
 
       this.applyFilters('all', allRecipes);
+      // applyFilters 后刷新 hasHomeData（hero/visible/side 已写入）
+      this.setData({ hasHomeData: this._syncHasHomeData() });
       this._inited = true;
+      if (this._loadAllWatchdog) { clearTimeout(this._loadAllWatchdog); this._loadAllWatchdog = null; }
     } catch (err) {
+      if (this._loadAllWatchdog) { clearTimeout(this._loadAllWatchdog); this._loadAllWatchdog = null; }
+      if (this._loadAllSeq !== seq) return;
       console.error('home loadAll failed', err);
+      // 从未成功加载过 → 强制全屏错误（忽略本地许愿/菜单缓存造成的 hasHomeData 误判）
+      // 已成功过 → 软失败，保留下方可交互结构
+      const soft = !!this._inited;
       this.setData({
         loading: false,
-        loadError: (err && err.message) ? err.message : '加载失败'
+        loadError: (err && err.message) ? err.message : '加载失败',
+        hasHomeData: soft ? this._syncHasHomeData({ loading: false }) : false
       });
-      wx.showToast({ title: '加载失败', icon: 'none' });
     }
   },
 
@@ -393,8 +451,7 @@ Page({
       const normalizedItems = items.map(item => ({
         ...item,
         mealTypeLabel: mealTypeLabels[item.mealType] || '晚餐',
-        dishImg: (item.recipe && item.recipe.coverImage)
-          || fallbackDishImg(item.recipeId || (item.recipe && item.recipe.title))
+        dishImg: recipeDishImg(item.recipe || { id: item.recipeId })
       }));
       const shoppingPending = shoppingItems.filter(i => !i.purchased).length;
       this.setData({ todayMenu: normalizedItems, shoppingPending });
@@ -402,7 +459,17 @@ Page({
       writeCache(CACHE_KEY_MENU, normalizedItems);
       writeCache(CACHE_KEY_SHOPPING, shoppingPending);
     } catch (err) {
-      console.warn('home refreshLight failed', err);
+      console.warn('home refreshLight menu', err);
+      return;
+    }
+    try {
+      const [family, user] = await Promise.all([getFamilyProfile(), getCurrentUser()]);
+      const patch = {};
+      if (family) patch.familyProfile = family;
+      if (user) patch.currentUser = user;
+      if (Object.keys(patch).length) this.setData(patch);
+    } catch (err) {
+      console.warn('home refreshLight profile', err);
     }
   },
 
@@ -449,7 +516,7 @@ Page({
         summary: recipe.summary || '',
         sourceLabel: sourceLabels[recipe.sourceType] || '',
         cuisineClass: getCuisineClass(recipe.cuisine),
-        dishImg: recipe.coverImage || fallbackDishImg(recipe.id || recipe.title),
+        dishImg: recipeDishImg(recipe),
         matchedRatio
       });
     });
@@ -489,7 +556,7 @@ Page({
       heroRecipe: hero ? { ...hero, titleClass: decorateHero(hero.title) } : null,
       sideRecipes: sides,
       visibleRecipes: visible,
-      isEmpty: !sides.length && !visible.length
+      isEmpty: !hero && !sides.length && !visible.length
     });
   },
 
@@ -566,7 +633,7 @@ Page({
       heroRecipe: hero ? { ...hero, titleClass: decorateHero(hero.title) } : null,
       sideRecipes: sides,
       visibleRecipes: visible,
-      isEmpty: !sides.length && !visible.length
+      isEmpty: !hero && !sides.length && !visible.length
     });
     wx.pageScrollTo({ scrollTop: 0, duration: 300 });
   },

@@ -21,7 +21,7 @@ Page({
     // 账号安全分组（手机号/微信绑定，登录后拉真实数据）
     accountList: [
       { key: 'phone', name: '手机号', icon: 'phone', value: '未绑定' },
-      { key: 'wechat', name: '微信绑定', icon: 'wechat', value: '已绑定' },
+      { key: 'wechat', name: '微信绑定', icon: 'wechat', value: '未知' },
     ],
     // 通知开关（3 个）
     notifyList: [
@@ -163,7 +163,8 @@ Page({
       return;
     }
     if (key === 'wechat') {
-      this._toast('微信已绑定');
+      this._toast('账号里还查不到绑定状态，去登录页用微信登录');
+      wx.navigateTo({ url: '/pages/auth/login/index', fail: () => {} });
     }
   },
 
@@ -200,11 +201,14 @@ Page({
     try {
       const deviceId = wx.getStorageSync('device_id');
       const token = wx.getStorageSync('auth_token');
+      let fontScale = '';
+      try { fontScale = wx.getStorageSync('font_scale') || ''; } catch (e) { fontScale = ''; }
       if (typeof wx.clearStorageSync === 'function') {
         wx.clearStorageSync();
       }
       if (deviceId) wx.setStorageSync('device_id', deviceId);
       if (token) wx.setStorageSync('auth_token', token);
+      if (fontScale) wx.setStorageSync('font_scale', fontScale);
     } catch (e) {
       // 忽略清理失败
     }
@@ -212,6 +216,7 @@ Page({
       it.key === 'cache' ? { ...it, value: '0 MB' } : it
     );
     this.setData({ generalList: list });
+    this._loadFontScale();
     this._toast('缓存已清除');
   },
 
@@ -247,10 +252,13 @@ Page({
     this.setData({ logoutVisible: false });
     try {
       const deviceId = wx.getStorageSync('device_id');
+      let fontScale = '';
+      try { fontScale = wx.getStorageSync('font_scale') || ''; } catch (e) { fontScale = ''; }
       if (typeof wx.clearStorageSync === 'function') {
         wx.clearStorageSync();
       }
       if (deviceId) wx.setStorageSync('device_id', deviceId);
+      if (fontScale) wx.setStorageSync('font_scale', fontScale);
     } catch (e) {
       // 忽略清理失败
     }

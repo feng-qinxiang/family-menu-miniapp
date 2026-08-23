@@ -14,7 +14,7 @@
 
     <view class="fi-iv-cap">家庭邀请码</view>
 
-    <!-- 6 位 code 分组（拉取失败时格子留空，不显示任何伪码） -->
+    <!-- 8 位邀请码（拉取失败时格子留空，不显示任何伪码） -->
     <view class="fi-code">
       <view class="fi-dg" wx:for="{{codeDigits}}" wx:key="index">{{item}}</view>
     </view>

@@ -1,17 +1,11 @@
 // components/recipe-card/index.js
 // 菜谱卡：variant=card|row；card 可叠 badge/selected/角标加菜
-const FALLBACK_DISHES = [
-  'beef-broccoli', 'chicken-congee', 'egg-drop-soup', 'fried-rice',
-  'hongshao-pork', 'hot-sour-soup', 'kungpao-chicken', 'lo-mein',
-  'long-beans', 'mapo-tofu', 'orange-chicken', 'shrimp-peas',
-  'sichuan-eggplant', 'sweet-sour-chicken', 'tomato-egg', 'wontons'
-];
+const { recipeDishImg } = require('../../utils/image');
 
 Component({
   options: {
-    addGlobalClass: true,
-    // 去掉多余宿主节点，width/横滑槽直接作用在根 .rc-card / .rc-row
-    virtualHost: true
+    addGlobalClass: true
+    // 不用 virtualHost：部分基础库/模拟器下会触发空白或样式不生效
   },
 
   properties: {
@@ -88,13 +82,7 @@ Component({
       const r = this.data.recipe || {};
       const density = this.data.density || 'default';
 
-      let cover = r.coverImage || r.cover || r.dishImg;
-      if (!cover) {
-        const seed = String(r.id || r.title || '');
-        let sum = 0;
-        for (let i = 0; i < seed.length; i++) sum += seed.charCodeAt(i);
-        cover = '/assets/dishes/' + FALLBACK_DISHES[sum % FALLBACK_DISHES.length] + '.jpg';
-      }
+      const cover = recipeDishImg(r);
 
       const tags = Array.isArray(r.tasteTags) ? r.tasteTags : [];
       const label = r.cuisine || tags[0] || '家常';

@@ -9,14 +9,8 @@
       <image class="rd-hero-img" src="{{recipe.cover}}" mode="aspectFill" />
       <view class="rd-hero-mask"></view>
 
-      <!-- 顶部导航：复用 nav-bar，标题留空仅返回 + 右侧收藏/记录槽 -->
-      <nav-bar title="" status-bar-height="{{statusBarHeight}}">
-        <view class="rd-nav-actions">
-          <view class="rd-cbtn tap-scale" bindtap="addMissingToCart">
-            <view class="rd-ic rd-ic-cart"></view>
-          </view>
-        </view>
-      </nav-bar>
+      <!-- 顶部导航：复用 nav-bar，标题留空仅返回 -->
+      <nav-bar title="" status-bar-height="{{statusBarHeight}}"></nav-bar>
 
       <!-- Hero 文案 -->
       <view class="rd-hero-body">
@@ -44,15 +38,12 @@
     <view class="rd-sheet">
 
       <!-- 食材清单 -->
-      <section-head wx:if="{{recipe.totalCount}}" eyebrow="食材清单" title="食材" popPart="清单" hint="家里有 {{recipe.haveCount}}/{{recipe.totalCount}}" />
-      <section-head wx:else eyebrow="食材清单" title="食材" popPart="清单" />
+      <section-head wx:if="{{recipe.totalCount}}" eyebrow="备料" title="食材" popPart="清单" hint="家里有 {{recipe.haveCount}}/{{recipe.totalCount}}" />
+      <section-head wx:else eyebrow="备料" title="食材" popPart="清单" />
 
       <view class="card rd-card" wx:if="{{recipe.ingredients.length}}">
         <view class="rd-ing" wx:for="{{recipe.ingredients}}" wx:key="name">
           <view class="rd-dot {{item.inStock ? 'have' : 'miss'}}"></view>
-          <view class="rd-icw">
-            <view class="rd-ic rd-ic-box"></view>
-          </view>
           <view class="rd-iname">
             <view class="rd-iname-h">{{item.name}}</view>
             <view class="rd-note {{item.inStock ? '' : 'miss'}}">{{item.inStock ? '冰箱里有' : '待采购'}}</view>
@@ -62,7 +53,6 @@
 
         <view class="rd-ing-cart" wx:if="{{missCount > 0}}">
           <view class="rd-cart-btn tap-scale" bindtap="addMissingToCart">
-            <view class="rd-ic rd-ic-cart2"></view>
             <text>把</text>
             <text class="rd-cnum">{{missCount}}</text>
             <text>样缺的加入买菜清单</text>
@@ -72,7 +62,7 @@
       <view class="card rd-card rd-empty-mini" wx:else>暂无食材信息</view>
 
       <!-- 做法步骤 -->
-      <section-head eyebrow="做法步骤" title="做法" popPart="步骤" hint="按顺序出菜" />
+      <section-head eyebrow="跟着做" title="做法" popPart="步骤" hint="按顺序出菜" />
 
       <view class="card rd-card" wx:if="{{recipe.steps.length}}">
         <view class="rd-step" wx:for="{{recipe.steps}}" wx:key="index">
@@ -91,8 +81,8 @@
       <view class="card rd-card rd-empty-mini" wx:else>暂无步骤信息</view>
 
       <!-- 家人评价 -->
-      <section-head wx:if="{{recipe.cookCount}}" eyebrow="家人评价" title="家人" popPart="评价" hint="做过 {{recipe.cookCount}} 次" />
-      <section-head wx:else eyebrow="家人评价" title="家人" popPart="评价" />
+      <section-head wx:if="{{recipe.cookCount}}" eyebrow="吃过的人" title="家人" popPart="评价" hint="做过 {{recipe.cookCount}} 次" />
+      <section-head wx:else eyebrow="吃过的人" title="家人" popPart="评价" />
 
       <view class="card rd-card">
         <block wx:if="{{recipe.reviews.length}}">

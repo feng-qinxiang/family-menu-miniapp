@@ -1,22 +1,7 @@
 // pages/cook-mode/index.js · 烹饪模式（沉浸暗底分步引导）
 const api = require('../../utils/api');
-
-// 本地菜图兜底池（接口清单 16 张），禁止用作 background-image
-const LOCAL_DISHES = [
-  'mapo-tofu', 'tomato-egg', 'hongshao-pork', 'kungpao-chicken', 'long-beans',
-  'shrimp-peas', 'egg-drop-soup', 'hot-sour-soup', 'fried-rice', 'lo-mein',
-  'beef-broccoli', 'chicken-congee', 'orange-chicken', 'sichuan-eggplant',
-  'sweet-sour-chicken', 'wontons'
-];
-
-function fallbackDishImg(seed) {
-  let h = 0;
-  const s = String(seed || '');
-  for (let i = 0; i < s.length; i++) {
-    h = (h * 31 + s.charCodeAt(i)) >>> 0;
-  }
-  return `/assets/dishes/${LOCAL_DISHES[h % LOCAL_DISHES.length]}.jpg`;
-}
+const { decodeStep } = require('../../utils/recipe-steps');
+const { recipeDishImg } = require('../../utils/image');
 
 // 数字补零
 function pad2(n) {
@@ -140,16 +125,16 @@ Page({
     }
 
     const rawSteps = Array.isArray(recipe.steps) ? recipe.steps : [];
-    const dishImg = recipe.coverImage || fallbackDishImg(recipe.id || recipe.title);
+    const dishImg = recipeDishImg(recipe);
 
-    // 归一化步骤：兼容 string 或 { text, image }
     const steps = rawSteps.map((st, i) => {
-      const text = typeof st === 'string' ? st : (st && (st.text || st.desc)) || '';
-      const image = (typeof st === 'object' && st && st.image) ? st.image : '';
+      const decoded = decodeStep(st);
+      const text = decoded.text;
+      const image = decoded.image || dishImg;
       return {
         index: i,
         text,
-        image: image || dishImg,
+        image,
         num: pad2(i + 1),
         cn: cnStep(i + 1),
         en: enStep(i + 1),
@@ -303,7 +288,7 @@ Page({
     this.loadDetail(this.data.recipeId);
   },
 
-  // 完成 → 跳做菜记录
+  // 完成 → 回做菜记录（本档不新增写入；记录接口未在 What 授权）
   onFinish() {
     this.clearTimer();
     this._hiddenRunning = false;
@@ -314,7 +299,6 @@ Page({
     wx.navigateTo({
       url,
       fail: () => {
-        // cook-log 暂未就绪时兜底返回
         wx.showToast({ title: '完成本次烹饪', icon: 'success' });
         setTimeout(() => this.onClose(), 800);
       }

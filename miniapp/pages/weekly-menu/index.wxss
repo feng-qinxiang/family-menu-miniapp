@@ -49,7 +49,7 @@
 /* 照片 hero */
 .wm-hero {
   position: relative;
-  height: 360rpx;
+  height: var(--photo-hero-h);
   overflow: hidden;
 }
 .wm-hero-img {

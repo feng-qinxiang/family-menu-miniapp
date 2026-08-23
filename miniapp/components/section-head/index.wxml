@@ -9,16 +9,12 @@
       <text wx:if="{{titleTail}}">{{titleTail}}</text>
     </view>
   </view>
-
   <view
     wx:if="{{more || hint}}"
     class="seeall {{more ? 'tap-scale' : ''}}"
     bindtap="onMore"
   >
-    <text wx:if="{{hint}}">{{hint}}</text>
-    <view wx:if="{{more}}" class="seeall-arrow">
-      <view class="arrow-line al1"></view>
-      <view class="arrow-line al2"></view>
-    </view>
+    <text class="seeall-hint">{{hint || '全部'}}</text>
+    <text wx:if="{{more}}" class="seeall-chev"> ›</text>
   </view>
 </view>

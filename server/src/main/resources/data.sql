@@ -17,14 +17,14 @@ VALUES
 -- Sample recipes
 INSERT IGNORE INTO recipe (id, title, source_type, owner_user_id, family_id, cuisine, taste_tags_json, time_cost, servings, rating, summary, cover_image, status)
 VALUES
-(1, '番茄炒蛋', 'owned', 1, 1, '家常', '["鲜","酸甜","下饭"]', 10, 2, 4.8, '最经典的家常菜，酸甜开胃，10分钟搞定', 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop&q=80', 'ACTIVE'),
-(2, '红烧肉', 'owned', 1, 1, '川菜', '["咸甜","浓香","下饭"]', 60, 4, 4.9, '肥而不腻，入口即化的经典硬菜', 'https://images.unsplash.com/photo-1544025162-d76694265947?w=400&h=300&fit=crop&q=80', 'ACTIVE'),
-(3, '清炒时蔬', 'owned', 1, 1, '家常', '["清淡","爽口"]', 8, 2, 4.5, '当季蔬菜简单翻炒，健康快手', 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop&q=80', 'ACTIVE'),
-(4, '酸辣土豆丝', 'owned', 1, 1, '川菜', '["酸辣","爽脆","下饭"]', 15, 2, 4.7, '刀工练习经典菜，酸辣爽脆', 'https://images.unsplash.com/photo-1625938145744-e380515399bf?w=400&h=300&fit=crop&q=80', 'ACTIVE'),
-(5, '可乐鸡翅', 'owned', 1, 1, '家常', '["甜","鲜香"]', 30, 3, 4.8, '小朋友最爱，甜香入味', 'https://images.unsplash.com/photo-1527477396000-e27163b481c2?w=400&h=300&fit=crop&q=80', 'ACTIVE'),
-(6, '麻婆豆腐', 'community', 1, 1, '川菜', '["麻辣","鲜香","下饭"]', 20, 3, 4.6, '麻辣鲜香，米饭杀手', 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&h=300&fit=crop&q=80', 'ACTIVE'),
-(7, '蒜蓉西兰花', 'owned', 1, 1, '家常', '["清淡","蒜香"]', 10, 2, 4.4, '低脂高纤，蒜香浓郁', 'https://images.unsplash.com/photo-1459411552884-841db9b3cc2a?w=400&h=300&fit=crop&q=80', 'ACTIVE'),
-(8, '糖醋排骨', 'community', 1, 1, '粤菜', '["酸甜","外酥里嫩"]', 40, 4, 4.9, '外酥里嫩，酸甜适口的宴客菜', 'https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=400&h=300&fit=crop&q=80', 'ACTIVE');
+(1, '番茄炒蛋', 'owned', 1, 1, '家常', '["鲜","酸甜","下饭"]', 10, 2, 4.8, '最经典的家常菜，酸甜开胃，10分钟搞定', '/assets/dishes/tomato-egg.jpg', 'ACTIVE'),
+(2, '红烧肉', 'owned', 1, 1, '川菜', '["咸甜","浓香","下饭"]', 60, 4, 4.9, '肥而不腻，入口即化的经典硬菜', '/assets/dishes/hongshao-pork.jpg', 'ACTIVE'),
+(3, '清炒时蔬', 'owned', 1, 1, '家常', '["清淡","爽口"]', 8, 2, 4.5, '当季蔬菜简单翻炒，健康快手', '/assets/dishes/long-beans.jpg', 'ACTIVE'),
+(4, '酸辣土豆丝', 'owned', 1, 1, '川菜', '["酸辣","爽脆","下饭"]', 15, 2, 4.7, '刀工练习经典菜，酸辣爽脆', '/assets/dishes/sichuan-eggplant.jpg', 'ACTIVE'),
+(5, '可乐鸡翅', 'owned', 1, 1, '家常', '["甜","鲜香"]', 30, 3, 4.8, '小朋友最爱，甜香入味', '/assets/dishes/orange-chicken.jpg', 'ACTIVE'),
+(6, '麻婆豆腐', 'community', 1, 1, '川菜', '["麻辣","鲜香","下饭"]', 20, 3, 4.6, '麻辣鲜香，米饭杀手', '/assets/dishes/mapo-tofu.jpg', 'ACTIVE'),
+(7, '蒜蓉西兰花', 'owned', 1, 1, '家常', '["清淡","蒜香"]', 10, 2, 4.4, '低脂高纤，蒜香浓郁', '/assets/dishes/beef-broccoli.jpg', 'ACTIVE'),
+(8, '糖醋排骨', 'community', 1, 1, '粤菜', '["酸甜","外酥里嫩"]', 40, 4, 4.9, '外酥里嫩，酸甜适口的宴客菜', '/assets/dishes/sweet-sour-chicken.jpg', 'ACTIVE');
 
 -- Recipe ingredients
 INSERT IGNORE INTO recipe_ingredient (id, recipe_id, ingredient_name, amount, unit) VALUES
@@ -47,7 +47,23 @@ INSERT IGNORE INTO recipe_ingredient (id, recipe_id, ingredient_name, amount, un
 (17, 5, '鸡翅中', '8', '个'),
 (18, 5, '可乐', '1', '罐'),
 (19, 5, '生抽', '2', '勺'),
-(20, 5, '姜片', '3', '片');
+(20, 5, '姜片', '3', '片'),
+(21, 3, '时蔬', '400', '克'),
+(22, 3, '蒜', '3', '瓣'),
+(23, 3, '盐', '适量', ''),
+(24, 6, '嫩豆腐', '400', '克'),
+(25, 6, '牛肉末', '100', '克'),
+(26, 6, '郫县豆瓣酱', '1', '勺'),
+(27, 6, '花椒粉', '少许', ''),
+(28, 6, '蒜苗', '1', '把'),
+(29, 7, '西兰花', '1', '颗'),
+(30, 7, '蒜', '4', '瓣'),
+(31, 7, '盐', '适量', ''),
+(32, 8, '排骨', '500', '克'),
+(33, 8, '淀粉', '适量', ''),
+(34, 8, '糖', '2', '勺'),
+(35, 8, '醋', '3', '勺'),
+(36, 8, '生抽', '1', '勺');
 
 -- Recipe steps
 INSERT IGNORE INTO recipe_step (id, recipe_id, step_no, step_text) VALUES
@@ -68,7 +84,21 @@ INSERT IGNORE INTO recipe_step (id, recipe_id, step_no, step_text) VALUES
 (15, 5, 1, '鸡翅划两刀方便入味，冷水焯去血水'),
 (16, 5, 2, '锅中少许油煎鸡翅至两面金黄'),
 (17, 5, 3, '倒入可乐和生抽，放姜片'),
-(18, 5, 4, '大火烧开转中火煮15分钟，大火收汁');
+(18, 5, 4, '大火烧开转中火煮15分钟，大火收汁'),
+(201, 3, 1, '时蔬洗净切段，蒜末备用'),
+(202, 3, 2, '热锅少油，蒜末爆香后下菜大火快炒'),
+(203, 3, 3, '加盐调味，断生即出锅'),
+(204, 6, 1, '豆腐切块焯水，牛肉末加料酒抓匀'),
+(205, 6, 2, '热油炒牛肉末，下豆瓣酱炒出红油'),
+(206, 6, 3, '加水烧开下豆腐，中火入味后勾薄芡'),
+(207, 6, 4, '出锅撒花椒粉和蒜苗'),
+(208, 7, 1, '西兰花掰小朵，沸水加盐焯一分钟捞出沥干'),
+(209, 7, 2, '热锅少油炒香蒜末，下西兰花大火翻匀'),
+(210, 7, 3, '加盐出锅，不要炒太久以免变黄'),
+(211, 8, 1, '排骨冷水下锅焯去血沫，沥干后拍干淀粉'),
+(212, 8, 2, '热油炸至表面金黄捞出'),
+(213, 8, 3, '锅中调糖醋汁（糖:醋:水约 2:3:4），下排骨翻炒'),
+(214, 8, 4, '大火收汁，汁浓挂油即可');
 
 -- Community posts
 INSERT IGNORE INTO community_post (id, recipe_id, author_user_id, title, content, like_count, comment_count, tags_json, audit_status)
@@ -142,7 +172,7 @@ SELECT 1, id, 'member', 'ACTIVE' FROM user_account WHERE openid IN ('seed-aunt-n
 INSERT IGNORE INTO recipe (id, title, source_type, owner_user_id, family_id, cuisine, taste_tags_json, time_cost, servings, rating, summary, cover_image, status)
 VALUES
   (101, '紫菜蛋花汤', 'owned', 1, 1, '汤羹', '["清淡","快手","晚餐"]', 8, 3, 4.6, '晚饭收尾的清爽热汤', '/assets/dishes/egg-drop-soup.jpg', 'ACTIVE'),
-  (102, '青椒土豆丝', 'owned', 1, 1, '家常', '["脆爽","省钱","快手"]', 10, 3, 4.4, '冰箱常备食材也能炒出香气', '/assets/dishes/long-beans.jpg', 'ACTIVE'),
+  (102, '青椒土豆丝', 'owned', 1, 1, '家常', '["脆爽","省钱","快手"]', 10, 3, 4.4, '冰箱常备食材也能炒出香气', '/assets/dishes/sichuan-eggplant.jpg', 'ACTIVE'),
   (103, '香菇滑鸡', 'owned', 1, 1, '粤菜', '["鲜香","蒸菜","少油"]', 28, 3, 4.7, '电饭煲蒸格也能完成的嫩滑鸡肉', '/assets/dishes/chicken-congee.jpg', 'ACTIVE'),
   (104, '酸辣汤', 'community', 1, NULL, '川菜', '["酸辣","开胃","汤羹"]', 18, 4, 4.6, '下雨天最适合的一碗酸辣热汤', '/assets/dishes/hot-sour-soup.jpg', 'ACTIVE'),
   (105, '牛肉炒西兰花', 'community', 1, NULL, '家常', '["高蛋白","清爽","便当"]', 20, 3, 4.8, '肉菜均衡的工作日晚餐', '/assets/dishes/beef-broccoli.jpg', 'ACTIVE'),

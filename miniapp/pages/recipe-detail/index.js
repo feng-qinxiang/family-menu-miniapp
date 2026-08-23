@@ -3,8 +3,11 @@ const {
   addTodayMenuRecipe,
   addShoppingItem,
   getPantryItems,
-  getRecipeDetail
+  getRecipeDetail,
+  getTodayMenu
 } = require('../../utils/api');
+const { decodeStep } = require('../../utils/recipe-steps');
+const { recipeDishImg } = require('../../utils/image');
 
 const sourceLabels = {
   owned: '自建',
@@ -16,20 +19,8 @@ const sourceLabels = {
 
 const difficultyLabels = { easy: '简单', medium: '中等', hard: '困难' };
 
-// 本地菜图兜底（与 recipe-card 一致的稳定 hash 映射）
-const FALLBACK_DISHES = [
-  'beef-broccoli', 'chicken-congee', 'egg-drop-soup', 'fried-rice',
-  'hongshao-pork', 'hot-sour-soup', 'kungpao-chicken', 'lo-mein',
-  'long-beans', 'mapo-tofu', 'orange-chicken', 'shrimp-peas',
-  'sichuan-eggplant', 'sweet-sour-chicken', 'tomato-egg', 'wontons'
-];
-
 function pickCover(recipe) {
-  if (recipe.coverImage) return recipe.coverImage;
-  const seed = String(recipe.id || recipe.title || '');
-  let sum = 0;
-  for (let i = 0; i < seed.length; i++) sum += seed.charCodeAt(i);
-  return '/assets/dishes/' + FALLBACK_DISHES[sum % FALLBACK_DISHES.length] + '.jpg';
+  return recipeDishImg(recipe);
 }
 
 // 把份量缩放比例应用到数值用量，非数值（适量/少许）原样保留
@@ -100,8 +91,8 @@ Page({
       const missCount = totalCount - haveCount;
       const rawSteps = Array.isArray(recipe.steps) ? recipe.steps : [];
       const steps = rawSteps.map((s) => {
-        if (typeof s === 'string') return { text: s, image: '', tip: '' };
-        return { text: s.text || '', image: s.image || '', tip: s.tip || '' };
+        const decoded = decodeStep(s);
+        return { text: decoded.text, image: decoded.image, tip: (s && s.tip) || '' };
       });
       const reviews = Array.isArray(recipe.reviews) ? recipe.reviews : [];
       const baseServings = Number(recipe.servings) > 0 ? Number(recipe.servings) : 2;
@@ -189,12 +180,22 @@ Page({
   },
 
   async addToToday() {
-    if (!this.data.recipe) return;
+    if (!this.data.recipe || this._addingToday) return;
+    const id = this.data.recipe.id;
+    this._addingToday = true;
     try {
-      await addTodayMenuRecipe(this.data.recipe.id, 'dinner');
+      const menu = await getTodayMenu();
+      const items = (menu && Array.isArray(menu.items)) ? menu.items : [];
+      if (items.some((it) => String(it.recipeId) === String(id))) {
+        wx.showToast({ title: '已经在今日菜单里啦', icon: 'none' });
+        return;
+      }
+      await addTodayMenuRecipe(id, 'dinner');
       wx.showToast({ title: '已加入今日菜单', icon: 'success' });
     } catch (err) {
       wx.showToast({ title: '加入失败', icon: 'none' });
+    } finally {
+      this._addingToday = false;
     }
   },
 

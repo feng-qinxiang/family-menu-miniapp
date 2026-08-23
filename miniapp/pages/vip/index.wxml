@@ -17,7 +17,7 @@
       <view class="vip-hero-meta">
         <view class="vip-m">实时云同步</view>
         <view class="vip-m">成员无限</view>
-        <view class="vip-m">¥68/年</view>
+        <view class="vip-m">¥99/年</view>
       </view>
     </view>
   </view>
@@ -28,7 +28,7 @@
     <section-head eyebrow="权益一览" title="开通后" popPart="解锁" titleTail="这些" />
     <view class="vip-bgrid">
       <view class="vip-bcard tap-scale g-fade-up g-d{{index % 6 + 1}}" wx:for="{{benefits}}" wx:key="title">
-        <view class="vip-bic vip-ic-{{item.icon}}"></view>
+        <view class="vip-bic">{{item.icon}}</view>
         <view class="vip-bc-title">{{item.title}}</view>
         <view class="vip-bc-desc">{{item.desc}}</view>
       </view>
@@ -90,7 +90,7 @@
     <!-- CTA -->
     <view class="vip-cta safe-bottom">
       <view class="btn btn-pop btn-block tap-scale {{activating ? 'disabled' : ''}}" bindtap="activateVip">
-        {{isVip ? '已开通 · ' + planName : (selectedPlan === 'yearly' ? '开通家庭同步 · ¥68/年' : '开通家庭同步 · ¥9.9/月')}}
+        {{isVip ? '已开通 · ' + planName : (selectedPlan === 'yearly' ? '开通家庭同步 · ¥99/年' : '开通家庭同步 · ¥19.9/月')}}
       </view>
       <view class="vip-note">连续包{{selectedPlan === 'yearly' ? '年' : '月'}}，可随时在设置中取消</view>
     </view>

@@ -31,7 +31,7 @@
     <view class="ta-wrap">
       <textarea
         class="ta"
-        placeholder="说说你的想法...&#10;比如想要的新功能、用着不顺手的地方、菜谱建议等。"
+        placeholder="说说你的想法，比如想要的新功能、用着不顺手的地方、菜谱建议等。"
         placeholder-class="ta-ph"
         maxlength="500"
         value="{{content}}"

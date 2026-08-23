@@ -19,40 +19,39 @@
   </view>
 
   <!-- ============ LOAD ERROR ============ -->
-  <view class="mh-load-error" wx:elif="{{loadError}}">
-    <view class="mh-load-error-bowl">
-      <view class="mh-load-error-steam mh-steam-a"></view>
-      <view class="mh-load-error-steam mh-steam-b"></view>
-      <view class="mh-load-error-circle"></view>
+  <view class="mh-load-error {{hasHomeData ? 'mh-load-error--soft' : 'mh-load-error--full'}}" wx:if="{{!loading && loadError}}">
+    <view class="mh-load-error-mark" aria-hidden="true">
+      <view class="mh-load-error-cloud"></view>
+      <view class="mh-load-error-bolt"></view>
     </view>
-    <view class="mh-load-error-title">首页没加载出来</view>
+    <view class="mh-load-error-title">连不上厨房了</view>
     <view class="mh-load-error-desc">网络开小差了，检查后再试一次</view>
     <view class="mh-load-error-btn tap-scale" bindtap="loadAll">重新加载</view>
   </view>
 
   <!-- ============ HERO ============ -->
-  <view class="mh-hero g-fade-in" wx:elif="{{heroRecipe}}" data-id="{{heroRecipe.id}}" bindtap="goDetail">
-    <image class="mh-hero-img" src="{{heroRecipe.dishImg}}" mode="aspectFill" binderror="onHeroImgError" />
+  <view class="mh-hero g-fade-in" wx:if="{{!loading && !(loadError && !hasHomeData) && heroRecipe}}">
+    <image class="mh-hero-img" src="{{heroRecipe.dishImg}}" mode="aspectFill" data-id="{{heroRecipe.id}}" bindtap="goDetail" binderror="onHeroImgError" />
     <view class="mh-hero-shade"></view>
     <view class="mh-hero-glow"></view>
 
-    <view class="mh-hero-top safe-top">
+    <view class="mh-hero-top safe-top" style="right: {{capsuleRight}};">
       <view class="mh-greet">
         <view class="mh-hi">{{greeting}}</view>
         <view class="mh-name">{{currentUser.nickname || '朋友'}}，今晚想吃点啥</view>
       </view>
       <view class="mh-iconbtns">
-        <view class="mh-iconbtn" catchtap="goShopping">
-          <view class="mh-ico-bell"></view>
-          <view class="mh-bell-dot" wx:if="{{shoppingPending}}"></view>
+        <view class="mh-iconbtn" catchtap="goShopping" aria-label="买菜">
+          <view class="mh-ico-cart"></view>
+          <view class="mh-cart-dot" wx:if="{{shoppingPending}}"></view>
         </view>
-        <view class="mh-iconbtn" catchtap="goRecipes">
-          <view class="mh-ico-search"></view>
+        <view class="mh-iconbtn" catchtap="goRecipes" aria-label="菜谱库">
+          <view class="mh-ico-book"></view>
         </view>
       </view>
     </view>
 
-    <view class="mh-hero-body g-fade-up g-d2">
+    <view class="mh-hero-body g-fade-up g-d2" data-id="{{heroRecipe.id}}" bindtap="goDetail">
       <text class="mh-pill-tag">今晚主打</text>
       <view class="mh-hero-title title-stroke {{heroRecipe.titleClass}}">
         {{heroRecipe.title}}
@@ -73,7 +72,7 @@
   </view>
 
   <!-- Hero 空态：紧凑杂志风，文字驱动 -->
-  <view class="mh-hero mh-hero--empty g-fade-in" wx:else>
+  <view class="mh-hero mh-hero--empty g-fade-in" wx:if="{{!loading && !(loadError && !hasHomeData) && !heroRecipe}}">
     <view class="mh-empty-body g-fade-up">
       <view class="mh-greet">
         <view class="mh-hi">{{greeting}}</view>
@@ -88,8 +87,8 @@
     </view>
   </view>
 
-  <!-- ============ 餐次选择器 + 许愿池 (§3/§4/§5) ============ -->
-  <view class="fp-slotbar">
+  <!-- ============ 餐次选择器 + 许愿池（冷启动全屏错误时隐藏） ============ -->
+  <view class="fp-slotbar" wx:if="{{!loading && !(loadError && !hasHomeData)}}">
     <view
       wx:for="{{slots}}"
       wx:key="key"
@@ -100,7 +99,7 @@
     <view class="fp-slot fp-slot-week" bindtap="goWeek">本周 ›</view>
   </view>
 
-  <view class="fp-wish">
+  <view class="fp-wish" wx:if="{{!loading && !(loadError && !hasHomeData)}}">
     <view class="fp-wish-head">
       <view class="fp-wish-title">
         <text class="fp-wish-eyebrow">许愿池</text>
@@ -127,7 +126,7 @@
   </view>
 
   <!-- ============ SHEET ============ -->
-  <view class="mh-sheet">
+  <view class="mh-sheet" wx:if="{{!loading && !(loadError && !hasHomeData)}}">
 
     <!-- 菜系 chips -->
     <scroll-view scroll-x class="mh-chips" enhanced="{{true}}" show-scrollbar="{{false}}">
@@ -260,7 +259,7 @@
 
     <!-- 全空兜底 -->
     <state-empty
-      wx:if="{{!visibleRecipes.length && !sideRecipes.length && !loading}}"
+      wx:if="{{!heroRecipe && !visibleRecipes.length && !sideRecipes.length && !loading}}"
       type="pop"
       title="还没有菜谱"
       cta="去添加菜谱"

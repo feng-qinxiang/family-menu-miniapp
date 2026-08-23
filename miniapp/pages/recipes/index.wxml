@@ -6,13 +6,13 @@
     <image wx:else class="rx-hero-img" src="/assets/dishes/kungpao-chicken.jpg" mode="aspectFill" />
     <view class="rx-hero-shade"></view>
 
-    <view class="rx-hero-top g-fade-down g-d1">
+    <view class="rx-hero-top g-fade-down g-d1" style="top: {{capsuleTop}}; right: {{capsuleRight}};">
       <view class="rx-greet">
         <view class="rx-hi">家常菜谱库</view>
         <view class="rx-name">挑一道，今晚就点它</view>
       </view>
       <view class="rx-create tap-scale" bindtap="goCreate">
-        <text class="rx-create-plus">+</text>新建菜谱
+        <text class="rx-create-plus">+</text>新建
       </view>
     </view>
 
@@ -112,7 +112,7 @@
       title=""
       popPart="{{filteredRecipes.length}}"
       titleTail=" 道可点"
-      hint="右下角直接加入"
+      hint="点 + 加入今日"
     />
 
     <!-- 点到 -->
@@ -140,7 +140,7 @@
           badge="{{item.sourceLabel}}"
           showAdd="{{true}}"
           showFav="{{false}}"
-          addPlacement="float"
+          addPlacement="corner"
           bind:tap="goDetail"
           bind:add="addRecipeToToday"
         />

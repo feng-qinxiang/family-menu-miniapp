@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>本轮改动点看</title>
+<style>
+  :root { --paper:#fbf8f3; --pop:#e8472a; --ink:#2c241b; --mut:#7a6e5d; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:"PingFang SC","Microsoft YaHei",sans-serif; background:#e8e0d4; color:var(--ink); }
+  nav { display:flex; flex-wrap:wrap; gap:8px; padding:12px; background:#fff; position:sticky; top:0; z-index:9; }
+  nav button { border:1px solid #ddd; background:#fff; padding:8px 12px; border-radius:999px; cursor:pointer; }
+  nav button.on { background:var(--pop); color:#fff; border-color:var(--pop); }
+  .phone { width:375px; min-height:720px; margin:16px auto 40px; background:var(--paper); border-radius:24px; box-shadow:0 20px 50px rgba(0,0,0,.18); overflow:hidden; }
+  .bar { height:44px; display:flex; align-items:center; justify-content:center; font-weight:700; background:var(--paper); border-bottom:1px solid #efe8dc; }
+  .pad { padding:24px 20px; }
+  .err { text-align:center; padding:80px 24px; }
+  .err.soft { padding:28px 24px 16px; border-bottom:2px solid #efe8dc; }
+  .bowl { width:64px; height:64px; margin:0 auto 16px; border-radius:50%; background:#fde8e4; display:flex; align-items:center; justify-content:center; color:var(--pop); font-size:28px; }
+  h1 { font-size:22px; margin:0 0 8px; }
+  p { color:var(--mut); margin:0 0 16px; }
+  .btn { display:inline-block; background:var(--pop); color:#fff; padding:10px 22px; border-radius:999px; }
+  .hero { background:#3a2e23; color:#fff; padding:48px 20px 32px; }
+  .hero small { opacity:.7; }
+  .hero h2 { margin:8px 0; font-size:28px; }
+  .chips { display:flex; gap:8px; padding:12px 16px; }
+  .chip { background:#fff; padding:6px 12px; border-radius:999px; border:1px solid #eee; }
+  .card { margin:16px; background:#fff; border-radius:16px; padding:16px; }
+  .row { display:flex; justify-content:space-between; padding:14px 0; border-bottom:1px solid #f3eee6; cursor:pointer; }
+  .row:last-child { border:0; }
+  .toast { position:fixed; left:50%; bottom:80px; transform:translateX(-50%); background:#2c241b; color:#fff; padding:10px 16px; border-radius:8px; display:none; }
+  .hidden { display:none !important; }
+  .login-btn { width:100%; padding:14px; border-radius:12px; border:0; margin:8px 0; cursor:pointer; }
+  .wx { background:#07c160; color:#fff; }
+  .ph { background:#fff; border:1px solid #ddd !important; }
+  .topics { display:flex; flex-wrap:wrap; gap:8px; padding:16px; }
+  .tchip { background:#fff; padding:8px 12px; border-radius:999px; }
+</style>
+</head>
+<body>
+<nav>
+  <button class="on" data-s="full">1 冷启动失败</button>
+  <button data-s="soft">2 刷新失败留内容</button>
+  <button data-s="one">3 只有一道菜</button>
+  <button data-s="me">4 我的</button>
+  <button data-s="login">5 登录</button>
+  <button data-s="set">6 设置</button>
+  <button data-s="com">7 社区话题</button>
+</nav>
+
+<div id="full" class="phone">
+  <div class="bar">今日点菜</div>
+  <div class="err">
+    <div class="bowl">碗</div>
+    <h1>连不上厨房了</h1>
+    <p>网络开小差了，检查后再试一次</p>
+    <span class="btn">重新加载</span>
+  </div>
+</div>
+
+<div id="soft" class="phone hidden">
+  <div class="bar">今日点菜</div>
+  <div class="err soft">
+    <div class="bowl">碗</div>
+    <h1>连不上厨房了</h1>
+    <p>网络开小差了，检查后再试一次</p>
+    <span class="btn">重新加载</span>
+  </div>
+  <div class="chips"><span class="chip">今日·早餐</span><span class="chip">今日·午餐</span><span class="chip">今日·晚餐</span></div>
+  <div class="card">许愿池还在 · 红烧排骨</div>
+  <div class="card">家里常做的菜 <span>全部 ›</span></div>
+</div>
+
+<div id="one" class="phone hidden">
+  <div class="bar">今日点菜</div>
+  <div class="hero">
+    <small>今晚主打</small>
+    <h2>番茄炒蛋</h2>
+    <p style="color:#ddd">家里唯一一道菜，下面不应再写「还没有菜谱」</p>
+  </div>
+  <div class="card">没有「还没有菜谱」空态</div>
+</div>
+
+<div id="me" class="phone hidden">
+  <div class="bar">我的</div>
+  <div class="card">
+    <div style="display:flex;justify-content:space-between"><b>最近上桌</b><a id="go-log" href="#">全部 ›</a></div>
+    <div class="row" id="go-log-2"><span>查看全部记录 ›</span></div>
+  </div>
+  <div class="card">
+    <div class="row" id="go-edit"><span>编辑资料</span><span>›</span></div>
+    <div class="row" id="go-msg"><span>消息</span><span>›</span></div>
+    <div class="row"><span>设置</span><span>›</span></div>
+  </div>
+</div>
+
+<div id="log" class="phone hidden">
+  <div class="bar">做菜记录</div>
+  <div class="pad"><h1>这里是 cook-log</h1><p>从「查看全部记录 / 全部」进来，不是菜谱库。</p></div>
+</div>
+<div id="edit" class="phone hidden">
+  <div class="bar">编辑资料</div>
+  <div class="pad"><h1>profile-edit</h1><p>入口已接通。</p></div>
+</div>
+<div id="msg" class="phone hidden">
+  <div class="bar">消息</div>
+  <div class="pad"><h1>notifications</h1><p>入口已接通。</p></div>
+</div>
+
+<div id="login" class="phone hidden">
+  <div class="bar">登录</div>
+  <div class="pad">
+    <button class="login-btn wx" id="wx">微信一键登录</button>
+    <button class="login-btn ph">手机号登录</button>
+    <p>注册新账号</p>
+    <p id="no-reset">本页没有「忘记密码」</p>
+  </div>
+</div>
+
+<div id="set" class="phone hidden">
+  <div class="bar">设置</div>
+  <div class="card">
+    <div class="row"><span>手机号</span><span>未绑定</span></div>
+    <div class="row" id="wxbind"><span>微信绑定</span><span>未知</span></div>
+    <div class="row" id="cache"><span>清除缓存</span><span>保留大字</span></div>
+  </div>
+</div>
+
+<div id="com" class="phone hidden">
+  <div class="bar">邻里厨房</div>
+  <div class="topics">
+    <span class="tchip">#今天吃什么</span>
+    <span class="tchip">#快手菜</span>
+    <span class="tchip">#宝宝辅食</span>
+    <span class="tchip">#一人食</span>
+    <span class="tchip">#光盘打卡</span>
+  </div>
+  <p class="pad" id="no-heat">话题旁没有「2.4万」假热度</p>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+const phones = [...document.querySelectorAll('.phone')];
+const buttons = [...document.querySelectorAll('nav button')];
+function show(id) {
+  phones.forEach(p => p.classList.toggle('hidden', p.id !== id));
+  buttons.forEach(b => b.classList.toggle('on', b.dataset.s === id));
+}
+buttons.forEach(b => b.onclick = () => show(b.dataset.s));
+function toast(t){ const el=document.getElementById('toast'); el.textContent=t; el.style.display='block'; setTimeout(()=>el.style.display='none',1600); }
+document.getElementById('go-log').onclick = e => { e.preventDefault(); show('log'); };
+document.getElementById('go-log-2').onclick = () => show('log');
+document.getElementById('go-edit').onclick = () => show('edit');
+document.getElementById('go-msg').onclick = () => show('msg');
+document.getElementById('wx').onclick = () => toast('微信登录暂不可用，已用游客身份进入');
+document.getElementById('wxbind').onclick = () => toast('账号里还查不到绑定状态，去登录页用微信登录');
+document.getElementById('cache').onclick = () => toast('缓存已清除，大字模式还在');
+</script>
+</body>
+</html>

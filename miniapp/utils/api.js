@@ -52,6 +52,7 @@ function ensureGuestSession() {
       url: `${resolveBaseUrl()}/api/auth/guest`,
       method: 'POST',
       header: { 'X-Device-Id': getDeviceId() },
+      timeout: 10000,
       success(res) {
         if (res.statusCode >= 200 && res.statusCode < 300 && res.data && res.data.token) {
           setAuthToken(res.data.token);
@@ -78,6 +79,7 @@ function performRequest(path, config) {
         'X-Auth-Token': getAuthToken(),
         'X-Device-Id': getDeviceId()
       },
+      timeout: 10000,
       success(res) { resolve({ res }); },
       fail(err) { resolve({ err }); }
     });
@@ -147,15 +149,15 @@ function requestStrict(path, options) {
 }
 
 function getDashboard() {
-  return request('/api/home/dashboard');
+  return request('/api/home/dashboard', { silent: true });
 }
 
 function getRecipes(source) {
-  return request(`/api/recipes?source=${encodeURIComponent(source || 'all')}`);
+  return request(`/api/recipes?source=${encodeURIComponent(source || 'all')}`, { silent: true });
 }
 
 function getCommunityPosts() {
-  return request('/api/community/posts');
+  return request('/api/community/posts', { silent: true });
 }
 
 function createCommunityPost(payload) {
@@ -166,7 +168,7 @@ function createCommunityPost(payload) {
 }
 
 function getCommunityComments(postId) {
-  return request(`/api/community/posts/${encodeURIComponent(postId)}/comments`);
+  return request(`/api/community/posts/${encodeURIComponent(postId)}/comments`, { silent: true });
 }
 
 function toggleCommunityFavorite(postId) {
@@ -204,11 +206,11 @@ function reviewCommunityReport(reportId, payload) {
 }
 
 function getMyFavorites() {
-  return request('/api/me/favorites');
+  return request('/api/me/favorites', { silent: true });
 }
 
 function getVipStatus() {
-  return request('/api/vip/status');
+  return request('/api/vip/status', { silent: true });
 }
 
 function activateVip(planName) {
@@ -219,7 +221,7 @@ function activateVip(planName) {
 }
 
 function getFamilyProfile() {
-  return request('/api/family/profile');
+  return request('/api/family/profile', { silent: true });
 }
 
 function createFamily(payload) {
@@ -272,7 +274,7 @@ function saveRecipe(payload) {
 }
 
 function getRecipeDetail(recipeId) {
-  return request(`/api/recipes/${encodeURIComponent(recipeId)}`);
+  return request(`/api/recipes/${encodeURIComponent(recipeId)}`, { silent: true });
 }
 
 function updateRecipe(recipeId, payload) {
@@ -282,15 +284,16 @@ function updateRecipe(recipeId, payload) {
   });
 }
 
-function addCookHistory(payload) {
+function addCookHistory(payload, options) {
   return requestStrict('/api/cook-history', {
     method: 'POST',
-    data: payload
+    data: payload,
+    silent: !!(options && options.silent)
   });
 }
 
 function getCookHistory() {
-  return request('/api/cook-history');
+  return request('/api/cook-history', { silent: true });
 }
 
 function addShoppingItem(payload) {
@@ -307,7 +310,7 @@ function deleteShoppingItem(itemId) {
 }
 
 function getTodayMenu() {
-  return request('/api/daily-menu/today');
+  return request('/api/daily-menu/today', { silent: true });
 }
 
 function addTodayMenuRecipe(recipeId, mealType) {
@@ -326,7 +329,8 @@ function removeTodayMenuRecipe(recipeId) {
 // ---- 许愿池（家庭共享，按日期+餐次分槽） ----
 function getWishes(date, slot) {
   return request('/api/wishes', {
-    data: { date, slot }
+    data: { date, slot },
+    silent: true
   });
 }
 
@@ -340,7 +344,7 @@ function removeWish(wishId) {
 }
 
 function getShoppingList() {
-  return request('/api/shopping-list/today');
+  return request('/api/shopping-list/today', { silent: true });
 }
 
 function rebuildShoppingList() {
@@ -432,15 +436,15 @@ function generateWeeklyMenu() {
 }
 
 function getWeeklyMenu() {
-  return request('/api/weekly-menu/current');
+  return request('/api/weekly-menu/current', { silent: true });
 }
 
 function getPreferenceProfile() {
-  return request('/api/preference/profile');
+  return request('/api/preference/profile', { silent: true });
 }
 
 function getPantryItems() {
-  return request('/api/pantry');
+  return request('/api/pantry', { silent: true });
 }
 
 function addPantryItem(payload) {
@@ -457,7 +461,7 @@ function deletePantryItem(itemId) {
 }
 
 function getPantryMatch() {
-  return request('/api/pantry/match');
+  return request('/api/pantry/match', { silent: true });
 }
 
 // ===== Payment =====
@@ -500,7 +504,7 @@ function mockPayOrder(orderId) {
 function getPaymentOrders() {
   // 后端 OrderView 用 outTradeNo；规范化补 orderId/amountFen 便于页面读取。
   // 失败 reject（后处理天然跳过，直达页面 catch）；成功但非数组 = 后端契约破坏，响亮抛错不伪装空列表。
-  return request('/api/payment/orders').then((list) => {
+  return request('/api/payment/orders', { silent: true }).then((list) => {
     if (!Array.isArray(list)) {
       throw new Error('订单列表格式异常');
     }
@@ -520,7 +524,7 @@ function submitFeedback(payload) {
 }
 
 function getNotifications() {
-  return request('/api/notifications');
+  return request('/api/notifications', { silent: true });
 }
 
 function markNotificationsRead(ids) {

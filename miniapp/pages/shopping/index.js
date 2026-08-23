@@ -104,7 +104,6 @@ Page({
     } catch (err) {
       console.error('shopping load failed', err);
       this.setData({ loading: false, loadError: true });
-      wx.showToast({ title: '加载失败', icon: 'none' });
     }
   },
 

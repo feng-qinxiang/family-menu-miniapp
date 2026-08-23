@@ -7,12 +7,12 @@ Page({
     selectedPlan: 'yearly',
     activating: false,
     benefits: [
-      { icon: 'sync', title: '多设备云同步', desc: '手机平板换着用，数据始终一致' },
-      { icon: 'filter', title: '高级筛选', desc: '按忌口、口味、时长多维度找菜' },
-      { icon: 'noad', title: '去除广告', desc: '清清爽爽看菜谱，不再被打断' },
-      { icon: 'week', title: '智能周菜单', desc: '一键排好一周吃什么，省心' },
-      { icon: 'members', title: '成员无限共享', desc: '爸妈伴侣孩子，想加几个加几个' },
-      { icon: 'fav', title: '菜谱无限收藏', desc: '看到喜欢的随手存，不限数量' }
+      { icon: '云', title: '多设备云同步', desc: '手机平板换着用，数据始终一致' },
+      { icon: '筛', title: '高级筛选', desc: '按忌口、口味、时长多维度找菜' },
+      { icon: '净', title: '去除广告', desc: '清清爽爽看菜谱，不再被打断' },
+      { icon: '周', title: '智能周菜单', desc: '一键排好一周吃什么，省心' },
+      { icon: '家', title: '成员无限共享', desc: '爸妈伴侣孩子，想加几个加几个' },
+      { icon: '藏', title: '菜谱无限收藏', desc: '看到喜欢的随手存，不限数量' }
     ],
     compareRows: [
       { feat: '家庭云同步', free: false, vip: true },

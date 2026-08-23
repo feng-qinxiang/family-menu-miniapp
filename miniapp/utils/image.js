@@ -1,8 +1,7 @@
 /**
- * 图片工具 — 统一的加载失败兜底逻辑
+ * 图片工具 — 按菜名落到本地图；unsplash 外链不当封面
  */
 
-// 本地菜图兜底池（16 张）
 const LOCAL_DISHES = [
   'mapo-tofu', 'tomato-egg', 'hongshao-pork', 'kungpao-chicken', 'long-beans',
   'shrimp-peas', 'egg-drop-soup', 'hot-sour-soup', 'fried-rice', 'lo-mein',
@@ -10,36 +9,76 @@ const LOCAL_DISHES = [
   'sweet-sour-chicken', 'wontons'
 ];
 
-/**
- * 根据种子字符串稳定映射到一张本地兜底图片
- * @param {string} seed - 通常是 recipeId 或 title
- * @returns {string} 本地图片路径
- */
+const TITLE_RULES = [
+  { kw: ['番茄炒蛋', '西红柿炒鸡', '西红柿炒蛋'], file: 'tomato-egg' },
+  { kw: ['红烧肉'], file: 'hongshao-pork' },
+  { kw: ['麻婆'], file: 'mapo-tofu' },
+  { kw: ['宫保'], file: 'kungpao-chicken' },
+  { kw: ['糖醋'], file: 'sweet-sour-chicken' },
+  { kw: ['西兰花'], file: 'beef-broccoli' },
+  { kw: ['香菇滑鸡'], file: 'chicken-congee' },
+  { kw: ['炒饭'], file: 'fried-rice' },
+  { kw: ['拌面', '捞面'], file: 'lo-mein' },
+  { kw: ['馄饨'], file: 'wontons' },
+  { kw: ['酸辣汤'], file: 'hot-sour-soup' },
+  { kw: ['紫菜', '蛋花'], file: 'egg-drop-soup' },
+  { kw: ['可乐鸡', '鸡翅'], file: 'orange-chicken' },
+  { kw: ['清炒时蔬', '空心菜', '豆角'], file: 'long-beans' },
+  { kw: ['土豆'], file: 'sichuan-eggplant' },
+  { kw: ['牛肉炒'], file: 'beef-broccoli' },
+  { kw: ['虾', '豌豆'], file: 'shrimp-peas' }
+];
+
+function localPath(file) {
+  return `/assets/dishes/${file}.jpg`;
+}
+
+function localDishByTitle(title) {
+  const t = String(title || '');
+  if (!t) return '';
+  for (let i = 0; i < TITLE_RULES.length; i++) {
+    const rule = TITLE_RULES[i];
+    for (let j = 0; j < rule.kw.length; j++) {
+      if (t.indexOf(rule.kw[j]) >= 0) return localPath(rule.file);
+    }
+  }
+  return '';
+}
+
 function fallbackDishImg(seed) {
+  const byTitle = localDishByTitle(seed);
+  if (byTitle) return byTitle;
   let h = 0;
   const s = String(seed || '');
   for (let i = 0; i < s.length; i++) {
     h = (h * 31 + s.charCodeAt(i)) >>> 0;
   }
-  return `/assets/dishes/${LOCAL_DISHES[h % LOCAL_DISHES.length]}.jpg`;
+  return localPath(LOCAL_DISHES[h % LOCAL_DISHES.length]);
 }
 
-/**
- * 通用图片加载错误处理器 — 在 Page 方法中使用
- * 用法: onImgError(e, this, 'coverImage') 或带列表: onImgError(e, this, 'recipes[0].cover')
- * 
- * @param {Event} e - 微信 image 组件 error 事件
- * @param {Page} pageCtx - 页面实例 (this)
- * @param {string} dataPath - setData 的路径，如 'heroRecipe.coverImage'
- * @param {string} [seed] - 用于生成兜底图的种子，默认用 dataPath
- */
+function isRemoteStock(url) {
+  return /unsplash\.com|images\.unsplash/i.test(String(url || ''));
+}
+
+function recipeDishImg(recipe) {
+  if (!recipe) return fallbackDishImg('');
+  const title = recipe.title || recipe.recipeTitle || recipe.name || '';
+  const byTitle = localDishByTitle(title);
+  if (byTitle) return byTitle;
+  const cover = recipe.coverImage || recipe.cover || recipe.dishImg || '';
+  if (cover && !isRemoteStock(cover)) return cover;
+  return fallbackDishImg(recipe.id || title);
+}
+
 function onImgError(e, pageCtx, dataPath, seed) {
-  const fallback = fallbackDishImg(seed || dataPath);
+  const fallback = localDishByTitle(seed) || fallbackDishImg(seed || dataPath);
   pageCtx.setData({ [dataPath]: fallback });
 }
 
 module.exports = {
   LOCAL_DISHES,
   fallbackDishImg,
+  recipeDishImg,
+  localDishByTitle,
   onImgError
 };

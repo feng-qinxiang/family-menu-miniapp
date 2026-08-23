@@ -1,12 +1,5 @@
 const { getCookHistory } = require('../../utils/api');
-
-// 本地菜图兜底（稳定 hash 映射，与 recipe-card 一致）
-const FALLBACK_DISHES = [
-  'beef-broccoli', 'chicken-congee', 'egg-drop-soup', 'fried-rice',
-  'hongshao-pork', 'hot-sour-soup', 'kungpao-chicken', 'lo-mein',
-  'long-beans', 'mapo-tofu', 'orange-chicken', 'shrimp-peas',
-  'sichuan-eggplant', 'sweet-sour-chicken', 'tomato-egg', 'wontons'
-];
+const { recipeDishImg } = require('../../utils/image');
 
 const WEEK_LABELS = ['日', '一', '二', '三', '四', '五', '六'];
 const MONTH_EN = ['January', 'February', 'March', 'April', 'May', 'June',
@@ -14,11 +7,11 @@ const MONTH_EN = ['January', 'February', 'March', 'April', 'May', 'June',
 const TONES = ['tone-a', 'tone-b', 'tone-c', 'tone-d', 'tone-e'];
 
 function pickCover(item) {
-  if (item && item.coverImage) return item.coverImage;
-  const seed = String((item && (item.recipeId || item.recipeTitle)) || '');
-  let sum = 0;
-  for (let i = 0; i < seed.length; i++) sum += seed.charCodeAt(i);
-  return '/assets/dishes/' + FALLBACK_DISHES[sum % FALLBACK_DISHES.length] + '.jpg';
+  return recipeDishImg({
+    id: item && item.recipeId,
+    title: item && (item.recipeTitle || item.title),
+    coverImage: item && item.coverImage
+  });
 }
 
 // 解析 cookedAt（YYYY-MM-DD 或带时间）为 Date，失败回退当天

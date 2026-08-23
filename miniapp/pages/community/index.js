@@ -18,11 +18,11 @@ const FALLBACK_PHOTOS = [
 ];
 // 热门话题（演示数据，后端暂无对应接口）
 const HOT_TOPICS = [
-  { tag: '今天吃什么', heat: '2.4万' },
-  { tag: '快手菜', heat: '1.1万' },
-  { tag: '宝宝辅食', heat: '8732' },
-  { tag: '一人食', heat: '5610' },
-  { tag: '光盘打卡', heat: '3408' }
+  { tag: '今天吃什么' },
+  { tag: '快手菜' },
+  { tag: '宝宝辅食' },
+  { tag: '一人食' },
+  { tag: '光盘打卡' }
 ];
 
 Page({
@@ -74,7 +74,6 @@ Page({
       posts = this.normalizePosts(await getCommunityPosts() || []);
     } catch (err) {
       console.error('community loadPosts failed', err);
-      wx.showToast({ title: '社区加载失败', icon: 'none' });
       this.setData({
         loadError: true,
         loading: false,

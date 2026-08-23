@@ -77,7 +77,7 @@
 
       <view class="pad">
         <!-- Section 标题 -->
-        <section-head eyebrow="最近上桌" title="最近" popPart="上桌" titleTail="的" hint="共 {{totalCount}} 条" />
+        <section-head eyebrow="按时间" title="最近" popPart="上桌" titleTail="的" hint="共 {{totalCount}} 条" />
 
         <!-- 加载失败态 -->
         <view wx:if="{{loadError}}" class="g-fade-up">
