@@ -17,7 +17,8 @@ Durable facts for future changes. One line each.
 - 功能图标禁止 emoji 字形；评分装饰 ★ 可保留；弹层 mask 须 catchtouchmove 或 state-sheet | evidence: ui-visual-polish | 2026-08-17
 - 交付验收：`node test/dish-logic.test.js` EXIT=0；无 CI | evidence: both changes | 2026-08-17
 - tab 页 `onShow` 必须 `withTabSelect(this, index)`；`custom-tab-bar` 的 `pageLifetimes.show` 在 switchTab 时常不跑 | evidence: miniapp-full-test R-3 | 2026-08-23
-- 封面用 `recipeDishImg`：按菜名落到本地图，unsplash 外链不当封面；`土豆丝` 用 potato-shreds，勿把「土豆」映射成茄子图 | evidence: miniapp-full-test R-4 | 2026-08-25
+- 封面用 `recipeDishImg`：按菜名落到本地图，unsplash 外链不当封面；`土豆丝`→potato-shreds，`香菇滑鸡`→mushroom-chicken，勿把「土豆」映射成茄子图 | evidence: miniapp-full-test R-4 | 2026-08-25
+- `recipe-steps.js` 编解码种子步骤图 JSON；做菜模式读步骤走它，不要再在页里手写一份 | evidence: index.md (miniapp-full-test) A-8 | 2026-08-25
 - 顶栏右侧按钮须避开微信胶囊：`getMenuButtonBoundingClientRect` 算 right；nav-bar slot 已垫 capsulePad | evidence: miniapp-full-test R-4 | 2026-08-23
 - section-head 的 eyebrow 不要和 title+popPart 重复同一句话 | evidence: miniapp-full-test R-4 | 2026-08-23
 - 「我的」查看全部记录走 `goCookLog`；编辑资料/消息是已有入口，全量测试不要为对齐 git HEAD 撤回 | evidence: miniapp-full-test V-7/V-8 user-override | 2026-08-23

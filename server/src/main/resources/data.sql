@@ -173,7 +173,7 @@ INSERT IGNORE INTO recipe (id, title, source_type, owner_user_id, family_id, cui
 VALUES
   (101, '紫菜蛋花汤', 'owned', 1, 1, '汤羹', '["清淡","快手","晚餐"]', 8, 3, 4.6, '晚饭收尾的清爽热汤', '/assets/dishes/egg-drop-soup.jpg', 'ACTIVE'),
   (102, '青椒土豆丝', 'owned', 1, 1, '家常', '["脆爽","省钱","快手"]', 10, 3, 4.4, '冰箱常备食材也能炒出香气', '/assets/dishes/potato-shreds.jpg', 'ACTIVE'),
-  (103, '香菇滑鸡', 'owned', 1, 1, '粤菜', '["鲜香","蒸菜","少油"]', 28, 3, 4.7, '电饭煲蒸格也能完成的嫩滑鸡肉', '/assets/dishes/kungpao-chicken.jpg', 'ACTIVE'),
+  (103, '香菇滑鸡', 'owned', 1, 1, '粤菜', '["鲜香","蒸菜","少油"]', 28, 3, 4.7, '电饭煲蒸格也能完成的嫩滑鸡肉', '/assets/dishes/mushroom-chicken.jpg', 'ACTIVE'),
   (104, '酸辣汤', 'community', 1, NULL, '川菜', '["酸辣","开胃","汤羹"]', 18, 4, 4.6, '下雨天最适合的一碗酸辣热汤', '/assets/dishes/hot-sour-soup.jpg', 'ACTIVE'),
   (105, '牛肉炒西兰花', 'community', 1, NULL, '家常', '["高蛋白","清爽","便当"]', 20, 3, 4.8, '肉菜均衡的工作日晚餐', '/assets/dishes/beef-broccoli.jpg', 'ACTIVE'),
   (106, '鲜肉馄饨', 'owned', 1, 1, '面点', '["早餐","孩子爱吃","可冷冻"]', 38, 4, 4.5, '周末包好冷冻，早晨十分钟上桌', '/assets/dishes/wontons.jpg', 'ACTIVE'),

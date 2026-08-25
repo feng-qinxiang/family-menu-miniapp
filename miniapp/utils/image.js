@@ -6,7 +6,8 @@ const LOCAL_DISHES = [
   'mapo-tofu', 'tomato-egg', 'hongshao-pork', 'kungpao-chicken', 'long-beans',
   'shrimp-peas', 'egg-drop-soup', 'hot-sour-soup', 'fried-rice', 'lo-mein',
   'beef-broccoli', 'chicken-congee', 'orange-chicken', 'sichuan-eggplant',
-  'sweet-sour-chicken', 'wontons', 'potato-shreds', 'stir-fry-veg'
+  'sweet-sour-chicken', 'wontons', 'potato-shreds', 'stir-fry-veg',
+  'mushroom-chicken'
 ];
 
 const TITLE_RULES = [
@@ -16,7 +17,7 @@ const TITLE_RULES = [
   { kw: ['宫保'], file: 'kungpao-chicken' },
   { kw: ['糖醋'], file: 'sweet-sour-chicken' },
   { kw: ['西兰花', '清炒时蔬', '空心菜', '青菜', '蒜蓉'], file: 'stir-fry-veg' },
-  { kw: ['香菇滑鸡'], file: 'kungpao-chicken' },
+  { kw: ['香菇滑鸡'], file: 'mushroom-chicken' },
   { kw: ['炒饭'], file: 'fried-rice' },
   { kw: ['拌面', '捞面'], file: 'lo-mein' },
   { kw: ['馄饨'], file: 'wontons' },
