@@ -6,6 +6,7 @@ const {
   getWeeklyMenu
 } = require('../../utils/api');
 const { withTabSelect } = require('../../behaviors/tab-select');
+const { recipeDishImg } = require('../../utils/image');
 
 // 分类规则：按食材名关键字归类（蔬菜 / 肉蛋 / 调料 / 其他）
 const CATEGORY_RULES = [
@@ -13,17 +14,6 @@ const CATEGORY_RULES = [
   { key: 'meat', label: '肉蛋', icon: 'meat', words: ['肉', '蛋', '鸡', '鸭', '鱼', '虾', '牛', '猪', '羊', '豆腐', '排骨', '虾仁'] },
   { key: 'season', label: '调料', icon: 'season', words: ['生抽', '老抽', '酱', '醋', '油', '盐', '糖', '淀粉', '料酒', '蚝油', '辣', '椒粉', '味精', '鸡精', '豆瓣'] }
 ];
-
-// 本地菜图兜底映射（无 coverImage 时按标题猜）
-const DISH_IMG = {
-  麻婆豆腐: 'mapo-tofu', 番茄炒蛋: 'tomato-egg', 西红柿炒鸡蛋: 'tomato-egg',
-  宫保鸡丁: 'kungpao-chicken', 红烧肉: 'hongshao-pork', 炒饭: 'fried-rice',
-  蛋炒饭: 'fried-rice', 西兰花: 'beef-broccoli', 鱼香茄子: 'sichuan-eggplant',
-  酸辣汤: 'hot-sour-soup', 鸡蛋汤: 'egg-drop-soup', 馄饨: 'wontons',
-  皮蛋瘦肉粥: 'chicken-congee', 炒面: 'lo-mein', 橙汁鸡: 'orange-chicken',
-  糖醋里脊: 'sweet-sour-chicken', 虾仁炒豌豆: 'shrimp-peas', 干煸豆角: 'long-beans'
-};
-const DEFAULT_DISH_IMG = '/assets/dishes/tomato-egg.jpg';
 
 Page({
   data: {
@@ -228,7 +218,7 @@ Page({
         id: item.id || recipe.id || item.recipeId,
         title: recipe.title || '未命名',
         metaText: `${recipe.cuisine || '家常'} · ${recipe.timeCost || '--'} 分钟`,
-        coverImage: recipe.coverImage || this.dishImage(recipe.title),
+        coverImage: recipeDishImg(recipe),
         haveText: total ? `${have}/${total}` : `${Math.round(rate * 100)}%`,
         percentWidth: Math.max(6, Math.round(rate * 100)),
         full,
@@ -239,10 +229,6 @@ Page({
     });
   },
 
-  dishImage(title) {
-    const slug = DISH_IMG[String(title || '').trim()];
-    return slug ? `/assets/dishes/${slug}.jpg` : DEFAULT_DISH_IMG;
-  },
 
   daysLeft(expiresAt) {
     if (!expiresAt) return null;

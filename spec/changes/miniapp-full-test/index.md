@@ -8,6 +8,7 @@ Requirement source: 用户消息，2026-08-23
 - R-3: "开始吧，全部开始修复" | source: 用户消息 2026-08-23
 - R-4: "全部ui都得看，点击，懂吗" | source: 用户消息 2026-08-23
 - R-5: "好多的页面显示i不行" | source: 用户消息 2026-08-23（详情页番茄炒蛋截图：标题顶进状态栏）
+- R-6: "你帮我全部进行修复" | source: 用户消息 2026-08-23（含开通页标价对齐后端 99/19.9；清掉用户可见英文残句和坏图标）
 
 ## Assets
 - A-1: 官方 `wechat-devtools` MCP（`automation_runtime_info` / `automation_element_action` / `simulator_screenshot` / `simulator_open_page`） | use: reuse

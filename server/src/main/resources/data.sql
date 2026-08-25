@@ -19,11 +19,11 @@ INSERT IGNORE INTO recipe (id, title, source_type, owner_user_id, family_id, cui
 VALUES
 (1, '番茄炒蛋', 'owned', 1, 1, '家常', '["鲜","酸甜","下饭"]', 10, 2, 4.8, '最经典的家常菜，酸甜开胃，10分钟搞定', '/assets/dishes/tomato-egg.jpg', 'ACTIVE'),
 (2, '红烧肉', 'owned', 1, 1, '川菜', '["咸甜","浓香","下饭"]', 60, 4, 4.9, '肥而不腻，入口即化的经典硬菜', '/assets/dishes/hongshao-pork.jpg', 'ACTIVE'),
-(3, '清炒时蔬', 'owned', 1, 1, '家常', '["清淡","爽口"]', 8, 2, 4.5, '当季蔬菜简单翻炒，健康快手', '/assets/dishes/long-beans.jpg', 'ACTIVE'),
-(4, '酸辣土豆丝', 'owned', 1, 1, '川菜', '["酸辣","爽脆","下饭"]', 15, 2, 4.7, '刀工练习经典菜，酸辣爽脆', '/assets/dishes/sichuan-eggplant.jpg', 'ACTIVE'),
+(3, '清炒时蔬', 'owned', 1, 1, '家常', '["清淡","爽口"]', 8, 2, 4.5, '当季蔬菜简单翻炒，健康快手', '/assets/dishes/stir-fry-veg.jpg', 'ACTIVE'),
+(4, '酸辣土豆丝', 'owned', 1, 1, '川菜', '["酸辣","爽脆","下饭"]', 15, 2, 4.7, '刀工练习经典菜，酸辣爽脆', '/assets/dishes/potato-shreds.jpg', 'ACTIVE'),
 (5, '可乐鸡翅', 'owned', 1, 1, '家常', '["甜","鲜香"]', 30, 3, 4.8, '小朋友最爱，甜香入味', '/assets/dishes/orange-chicken.jpg', 'ACTIVE'),
 (6, '麻婆豆腐', 'community', 1, 1, '川菜', '["麻辣","鲜香","下饭"]', 20, 3, 4.6, '麻辣鲜香，米饭杀手', '/assets/dishes/mapo-tofu.jpg', 'ACTIVE'),
-(7, '蒜蓉西兰花', 'owned', 1, 1, '家常', '["清淡","蒜香"]', 10, 2, 4.4, '低脂高纤，蒜香浓郁', '/assets/dishes/beef-broccoli.jpg', 'ACTIVE'),
+(7, '蒜蓉西兰花', 'owned', 1, 1, '家常', '["清淡","蒜香"]', 10, 2, 4.4, '低脂高纤，蒜香浓郁', '/assets/dishes/stir-fry-veg.jpg', 'ACTIVE'),
 (8, '糖醋排骨', 'community', 1, 1, '粤菜', '["酸甜","外酥里嫩"]', 40, 4, 4.9, '外酥里嫩，酸甜适口的宴客菜', '/assets/dishes/sweet-sour-chicken.jpg', 'ACTIVE');
 
 -- Recipe ingredients
@@ -172,8 +172,8 @@ SELECT 1, id, 'member', 'ACTIVE' FROM user_account WHERE openid IN ('seed-aunt-n
 INSERT IGNORE INTO recipe (id, title, source_type, owner_user_id, family_id, cuisine, taste_tags_json, time_cost, servings, rating, summary, cover_image, status)
 VALUES
   (101, '紫菜蛋花汤', 'owned', 1, 1, '汤羹', '["清淡","快手","晚餐"]', 8, 3, 4.6, '晚饭收尾的清爽热汤', '/assets/dishes/egg-drop-soup.jpg', 'ACTIVE'),
-  (102, '青椒土豆丝', 'owned', 1, 1, '家常', '["脆爽","省钱","快手"]', 10, 3, 4.4, '冰箱常备食材也能炒出香气', '/assets/dishes/sichuan-eggplant.jpg', 'ACTIVE'),
-  (103, '香菇滑鸡', 'owned', 1, 1, '粤菜', '["鲜香","蒸菜","少油"]', 28, 3, 4.7, '电饭煲蒸格也能完成的嫩滑鸡肉', '/assets/dishes/chicken-congee.jpg', 'ACTIVE'),
+  (102, '青椒土豆丝', 'owned', 1, 1, '家常', '["脆爽","省钱","快手"]', 10, 3, 4.4, '冰箱常备食材也能炒出香气', '/assets/dishes/potato-shreds.jpg', 'ACTIVE'),
+  (103, '香菇滑鸡', 'owned', 1, 1, '粤菜', '["鲜香","蒸菜","少油"]', 28, 3, 4.7, '电饭煲蒸格也能完成的嫩滑鸡肉', '/assets/dishes/kungpao-chicken.jpg', 'ACTIVE'),
   (104, '酸辣汤', 'community', 1, NULL, '川菜', '["酸辣","开胃","汤羹"]', 18, 4, 4.6, '下雨天最适合的一碗酸辣热汤', '/assets/dishes/hot-sour-soup.jpg', 'ACTIVE'),
   (105, '牛肉炒西兰花', 'community', 1, NULL, '家常', '["高蛋白","清爽","便当"]', 20, 3, 4.8, '肉菜均衡的工作日晚餐', '/assets/dishes/beef-broccoli.jpg', 'ACTIVE'),
   (106, '鲜肉馄饨', 'owned', 1, 1, '面点', '["早餐","孩子爱吃","可冷冻"]', 38, 4, 4.5, '周末包好冷冻，早晨十分钟上桌', '/assets/dishes/wontons.jpg', 'ACTIVE'),

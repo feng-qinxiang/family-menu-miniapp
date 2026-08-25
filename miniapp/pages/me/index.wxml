@@ -6,7 +6,6 @@
 
     <view class="mag-hero-top">
       <view>
-        <view class="mag-hi-en">我的厨房</view>
         <view class="mag-hi-cn">本月一起做了 {{monthCookCount}} 道菜</view>
       </view>
     </view>

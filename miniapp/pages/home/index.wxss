@@ -74,41 +74,11 @@
   background: var(--pop);
   border: 3rpx solid var(--c-surface);
 }
-.mh-ico-cart {
-  width: 30rpx;
-  height: 22rpx;
-  border: 3rpx solid var(--c-surface);
-  border-top: none;
-  border-radius: 0 0 8rpx 8rpx;
-  position: relative;
-  margin-top: 8rpx;
-}
-.mh-ico-cart::before {
-  content: "";
-  position: absolute;
-  left: -2rpx;
-  top: -10rpx;
-  width: 28rpx;
-  height: 12rpx;
-  border: 3rpx solid var(--c-surface);
-  border-bottom: none;
-  border-radius: 6rpx 6rpx 0 0;
-}
-.mh-ico-book {
-  width: 28rpx;
-  height: 32rpx;
-  border: 3rpx solid var(--c-surface);
-  border-radius: 4rpx 8rpx 8rpx 4rpx;
-  position: relative;
-}
-.mh-ico-book::after {
-  content: "";
-  position: absolute;
-  left: 8rpx;
-  top: 6rpx;
-  bottom: 6rpx;
-  width: 3rpx;
-  background: var(--c-surface);
+.mh-ico-glyph {
+  font-size: 28rpx;
+  font-weight: 800;
+  color: var(--c-surface);
+  line-height: 1;
 }
 /* ---- hero body ---- */
 .mh-hero-body {

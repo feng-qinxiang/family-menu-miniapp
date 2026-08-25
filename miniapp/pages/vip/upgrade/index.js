@@ -50,7 +50,7 @@ Page({
       });
       if (Array.isArray(safe.benefits) && safe.benefits.length) {
         const mapped = safe.benefits.map((b, i) => {
-          const base = this.data.benefits[i] || { icon: '✨', desc: '' };
+          const base = this.data.benefits[i] || { icon: '荐', desc: '' };
           if (typeof b === 'string') return { icon: base.icon, title: b, desc: base.desc };
           return {
             icon: b.icon || base.icon,

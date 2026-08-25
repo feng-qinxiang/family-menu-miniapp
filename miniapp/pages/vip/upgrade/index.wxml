@@ -15,7 +15,7 @@
       <image class="vu-hero-img" src="/assets/dishes/hongshao-pork.jpg" mode="aspectFill"></image>
       <view class="vu-hero-mask"></view>
       <view class="vu-hero-ic">
-        <view class="vu-hero-et">Family Menu Plus</view>
+        <view class="vu-hero-et">家庭会员</view>
         <view class="vu-hero-ht">家庭同步会员</view>
         <view class="vu-hero-hs">最多 8 位家人 · 无限菜谱</view>
       </view>

@@ -8,7 +8,7 @@
     </view>
     <view class="dishbar">
       <view class="dn ellipsis">{{dishName || '烹饪模式'}}</view>
-      <view class="prog" wx:if="{{total}}">Step {{current + 1}} / {{total}} · {{steps[current].cn}}</view>
+      <view class="prog" wx:if="{{total}}">{{steps[current].cn}} · {{current + 1}}/{{total}}</view>
     </view>
     <view class="nbtn keep {{running ? 'on' : ''}}" catchtap="toggleTimer">
       <view class="ic-clock"></view>
@@ -53,7 +53,6 @@
       </view>
       <view class="bignum title-stroke"><text>{{steps[current].num}}</text></view>
       <view class="small">
-        <view class="e">{{steps[current].en}}</view>
         <view class="t ellipsis">{{steps[current].cn}}</view>
       </view>
     </view>

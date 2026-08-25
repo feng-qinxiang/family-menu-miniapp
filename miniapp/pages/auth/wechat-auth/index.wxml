@@ -12,7 +12,7 @@
         <view class="ic-home"></view>
       </view>
       <view class="wa-brand-tx">
-        <text class="wa-brand-en">FAMILY MENU</text>
+        <text class="wa-brand-en">家庭点菜系统</text>
         <text class="wa-brand-cn">家庭点菜</text>
       </view>
     </view>
@@ -40,7 +40,7 @@
         <view class="ic-home"></view>
       </view>
       <view class="wa-at-tx">
-        <text class="wa-eyebrow">家庭菜单</text>
+        <text class="wa-eyebrow">家庭点菜</text>
         <text class="wa-h1">申请获取你的头像、昵称</text>
       </view>
       <view class="wa-wxbadge">

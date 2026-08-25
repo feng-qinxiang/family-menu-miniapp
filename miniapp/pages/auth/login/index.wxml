@@ -12,7 +12,7 @@
           <text class="logo-glyph">家</text>
         </view>
         <view class="bt">
-          <text class="en">FAMILY MENU</text>
+          <text class="en">家庭点菜系统</text>
           <text class="cn">家庭点菜</text>
         </view>
       </view>
@@ -46,7 +46,7 @@
 
       <view class="divider-deco">
         <view class="ln"></view>
-        <text class="dt">为什么选择家庭菜单</text>
+        <text class="dt">为什么选择家庭点菜</text>
         <view class="ln"></view>
       </view>
 

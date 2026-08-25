@@ -14,7 +14,7 @@
       </view>
       <view class="sc-brand">
         <view class="sc-brand-mark">家</view>
-        <view class="sc-brand-name">FAMILY MENU<text class="sc-brand-sub">家庭点菜系统</text></view>
+        <view class="sc-brand-name">家庭点菜<text class="sc-brand-sub">家庭点菜系统</text></view>
       </view>
     </view>
     <view class="sc-head-cta tap-scale" bindtap="goMenu">开饭<image class="ic ic-16" src="/assets/icons/lucide/utensils.svg" mode="aspectFit" /></view>
@@ -24,7 +24,7 @@
 
     <!-- ============ HERO ============ -->
     <view class="sc-hero">
-      <view class="sc-kicker">FAMILY MENU · 家庭点菜系统</view>
+      <view class="sc-kicker">家庭点菜 · 一家人的晚饭</view>
       <view class="sc-hero-title">
         <view class="sc-hero-line">今晚<text class="sc-outline">吃</text></view>
         <view class="sc-hero-line">什么<text class="sc-q">？</text></view>
@@ -54,14 +54,14 @@
           <view class="sc-stat-c">次饭菜浪费</view>
         </view>
       </view>
-      <view class="sc-scroll-hint"><view class="sc-wheel"></view>SCROLL</view>
+      <view class="sc-scroll-hint"><view class="sc-wheel"></view>下滑</view>
     </view>
 
     <!-- ============ MARQUEE ============ -->
     <view class="sc-marquee">
       <view class="sc-marquee-track">
-        <view class="sc-marquee-item">今晚吃什么 <image class="ic ic-14" src="/assets/icons/lucide/star.svg" mode="aspectFit" /> 一家人吃饭是正事 <image class="ic ic-14" src="/assets/icons/lucide/star.svg" mode="aspectFit" /> <text class="sc-mg-ghost">FAMILY MENU</text> <image class="ic ic-14" src="/assets/icons/lucide/star.svg" mode="aspectFit" /> 11 道菜谱 <image class="ic ic-14" src="/assets/icons/lucide/star.svg" mode="aspectFit" /> 4 位成员 <image class="ic ic-14" src="/assets/icons/lucide/star.svg" mode="aspectFit" /></view>
-        <view class="sc-marquee-item">今晚吃什么 <image class="ic ic-14" src="/assets/icons/lucide/star.svg" mode="aspectFit" /> 一家人吃饭是正事 <image class="ic ic-14" src="/assets/icons/lucide/star.svg" mode="aspectFit" /> <text class="sc-mg-ghost">FAMILY MENU</text> <image class="ic ic-14" src="/assets/icons/lucide/star.svg" mode="aspectFit" /> 11 道菜谱 <image class="ic ic-14" src="/assets/icons/lucide/star.svg" mode="aspectFit" /> 4 位成员 <image class="ic ic-14" src="/assets/icons/lucide/star.svg" mode="aspectFit" /></view>
+        <view class="sc-marquee-item">今晚吃什么 <image class="ic ic-14" src="/assets/icons/lucide/star.svg" mode="aspectFit" /> 一家人吃饭是正事 <image class="ic ic-14" src="/assets/icons/lucide/star.svg" mode="aspectFit" /> <text class="sc-mg-ghost">家庭点菜</text> <image class="ic ic-14" src="/assets/icons/lucide/star.svg" mode="aspectFit" /> 11 道菜谱 <image class="ic ic-14" src="/assets/icons/lucide/star.svg" mode="aspectFit" /> 4 位成员 <image class="ic ic-14" src="/assets/icons/lucide/star.svg" mode="aspectFit" /></view>
+        <view class="sc-marquee-item">今晚吃什么 <image class="ic ic-14" src="/assets/icons/lucide/star.svg" mode="aspectFit" /> 一家人吃饭是正事 <image class="ic ic-14" src="/assets/icons/lucide/star.svg" mode="aspectFit" /> <text class="sc-mg-ghost">家庭点菜</text> <image class="ic ic-14" src="/assets/icons/lucide/star.svg" mode="aspectFit" /> 11 道菜谱 <image class="ic ic-14" src="/assets/icons/lucide/star.svg" mode="aspectFit" /> 4 位成员 <image class="ic ic-14" src="/assets/icons/lucide/star.svg" mode="aspectFit" /></view>
       </view>
     </view>
 
@@ -248,13 +248,13 @@
     <!-- ============ 大 CTA ============ -->
     <view class="sc-final" id="sc-final">
       <view class="sc-f-big g-reveal {{ins[25] ? 'in' : ''}}">一家人，<text class="sc-ghost">好好</text><text class="sc-tomato">吃饭</text></view>
-      <view class="sc-f-sub g-reveal d1 {{ins[26] ? 'in' : ''}}">从今晚这顿饭开始，把每天的「吃什么」交给 FAMILY MENU，把时间留给围坐在一起的家人。</view>
+      <view class="sc-f-sub g-reveal d1 {{ins[26] ? 'in' : ''}}">从今晚这顿饭开始，把每天的「吃什么」交给家庭点菜，把时间留给围坐在一起的家人。</view>
       <view class="sc-btn-primary sc-f-btn g-reveal d2 tap-scale {{ins[27] ? 'in' : ''}}" bindtap="goMenu">开始点菜<image class="ic ic-18" src="/assets/icons/lucide/arrow-right.svg" mode="aspectFit" /></view>
     </view>
 
     <!-- ============ 页脚 ============ -->
     <view class="sc-footer">
-      <view class="sc-f-left">FAMILY MENU · 为一家人设计的晚饭</view>
+      <view class="sc-f-left">家庭点菜 · 为一家人设计的晚饭</view>
       <view class="sc-f-soc">
         <view class="sc-fs tap-scale" bindtap="goRecipes"><image class="ic ic-16" src="/assets/icons/lucide/book-open.svg" mode="aspectFit" /></view>
         <view class="sc-fs tap-scale" bindtap="goCommunity"><image class="ic ic-16" src="/assets/icons/lucide/message-circle.svg" mode="aspectFit" /></view>

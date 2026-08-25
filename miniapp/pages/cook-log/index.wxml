@@ -12,7 +12,6 @@
       <view class="hero-mask"></view>
 
       <view class="hero-body g-fade-up">
-        <text class="hero-tag">做菜记录</text>
         <view class="hero-title title-stroke">做菜<text class="pop">记录</text></view>
 
         <view class="ach g-fade-up g-d2">
@@ -108,7 +107,7 @@
         <view wx:if="{{!loadError && !loading && totalCount > 0}}" class="timeline">
           <block wx:for="{{visibleGroups}}" wx:key="key" wx:for-item="group">
             <view class="month-sep g-fade-up">
-              <text class="mtag">{{group.label}}<text class="men">{{group.en}}</text></text>
+              <text class="mtag">{{group.label}}</text>
               <view class="mline"></view>
               <text class="mcnt">{{group.count}} 道</text>
             </view>

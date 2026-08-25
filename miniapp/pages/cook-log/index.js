@@ -2,8 +2,6 @@ const { getCookHistory } = require('../../utils/api');
 const { recipeDishImg } = require('../../utils/image');
 
 const WEEK_LABELS = ['日', '一', '二', '三', '四', '五', '六'];
-const MONTH_EN = ['January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December'];
 const TONES = ['tone-a', 'tone-b', 'tone-c', 'tone-d', 'tone-e'];
 
 function pickCover(item) {
@@ -162,7 +160,7 @@ Page({
         praise
       },
       week,
-      weekDoneText: doneCount + ' / 7 days',
+      weekDoneText: doneCount + ' / 7 天',
       cooks,
       totalCount: enriched.length
     }, () => this.applyFilter());
@@ -187,7 +185,6 @@ Page({
         groupMap[e.ymKey] = {
           key: e.ymKey,
           label: (e.month + 1) + '月',
-          en: MONTH_EN[e.month],
           year: e.year,
           count: 0,
           items: []

@@ -46,7 +46,7 @@
     <!-- 粘贴区 -->
     <view class="imp-pad">
       <view class="imp-shead-row g-fade-up g-d2">
-        <section-head eyebrow="粘贴文案" title="粘贴" popPart="菜谱" titleTail="文案" />
+        <section-head eyebrow="导入" title="粘贴" popPart="菜谱" titleTail="文案" />
         <view class="sample tap-scale" bindtap="sampleText">填入示例 +</view>
       </view>
 
@@ -113,7 +113,7 @@
 
         <!-- 食材 -->
         <view class="res-block">
-          <view class="blabel">食材清单 <text class="en">食材清单</text></view>
+          <view class="blabel">食材清单</view>
           <view wx:if="{{!preview.ingredients.length}}" class="res-empty">未识别到食材，可手动补充</view>
           <view class="ing-grid">
             <view class="ing" wx:for="{{preview.ingredients}}" wx:key="name">
@@ -125,7 +125,7 @@
 
         <!-- 步骤 -->
         <view class="res-block">
-          <view class="blabel">做法步骤 <text class="en">做法步骤</text></view>
+          <view class="blabel">做法步骤</view>
           <view wx:if="{{!preview.steps.length}}" class="res-empty">未识别到步骤，可手动补充</view>
           <view class="step" wx:for="{{preview.steps}}" wx:key="index">
             <view class="sno">{{index + 1}}</view>
@@ -161,7 +161,7 @@
 
       <!-- 最近导入 -->
       <block wx:if="{{recentImports.length}}">
-        <section-head eyebrow="最近导入" title="最近" popPart="导入" />
+        <section-head eyebrow="记录" title="最近" popPart="导入" />
         <view class="recent-list g-fade-up">
           <view class="recent tap-scale" wx:for="{{recentImports}}" wx:key="id" data-id="{{item.id}}" bindtap="openRecent">
             <image class="r-thumb" src="{{item.cover}}" mode="aspectFill" />

@@ -8,35 +8,10 @@ const {
   getVipStatus
 } = require('../../utils/api');
 
-const { fallbackDishImg, LOCAL_DISHES } = require('../../utils/image');
+const { recipeDishImg } = require('../../utils/image');
 const { withTabSelect } = require('../../behaviors/tab-select');
 
 const memberTones = ['mavt-a', 'mavt-b', 'mavt-c', 'mavt-d', 'mavt-e'];
-const TITLE_DISH_MAP = [
-  { kw: ['红烧肉', '红烧'], img: 'hongshao-pork' },
-  { kw: ['番茄', '西红柿', '炒蛋'], img: 'tomato-egg' },
-  { kw: ['宫保', '鸡丁'], img: 'kungpao-chicken' },
-  { kw: ['麻婆', '豆腐'], img: 'mapo-tofu' },
-  { kw: ['空心菜', '豆角', '青菜', '蒜蓉'], img: 'long-beans' },
-  { kw: ['酸辣'], img: 'hot-sour-soup' },
-  { kw: ['蛋花', '紫菜蛋'], img: 'egg-drop-soup' },
-  { kw: ['炒饭'], img: 'fried-rice' },
-  { kw: ['面', '捞面'], img: 'lo-mein' },
-  { kw: ['牛肉', '西兰花'], img: 'beef-broccoli' },
-  { kw: ['茄子'], img: 'sichuan-eggplant' },
-  { kw: ['虾', '豌豆'], img: 'shrimp-peas' },
-  { kw: ['粥'], img: 'chicken-congee' },
-  { kw: ['咕咾', '糖醋'], img: 'sweet-sour-chicken' },
-  { kw: ['馄饨', '云吞'], img: 'wontons' }
-];
-
-function dishImageFor(title, index) {
-  const t = String(title || '');
-  for (const m of TITLE_DISH_MAP) {
-    if (m.kw.some((k) => t.indexOf(k) >= 0)) return `/assets/dishes/${m.img}.jpg`;
-  }
-  return `/assets/dishes/${LOCAL_DISHES[index % LOCAL_DISHES.length]}.jpg`;
-}
 
 function formatCookedLabel(item) {
   const dateStr = item.cookedAt;
@@ -104,7 +79,7 @@ Page({
       const history = Array.isArray(cookHistory) ? cookHistory : [];
       const enrichedHistory = history.slice(0, 3).map((h, i) => ({
         ...h,
-        cover: h.coverImage || dishImageFor(h.recipeTitle, i),
+        cover: recipeDishImg({ title: h.recipeTitle, coverImage: h.coverImage }),
         whenLabel: formatCookedLabel(h),
         score: Math.max(0, Math.min(5, Number(h.score) || 0))
       }));

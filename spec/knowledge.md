@@ -17,12 +17,13 @@ Durable facts for future changes. One line each.
 - 功能图标禁止 emoji 字形；评分装饰 ★ 可保留；弹层 mask 须 catchtouchmove 或 state-sheet | evidence: ui-visual-polish | 2026-08-17
 - 交付验收：`node test/dish-logic.test.js` EXIT=0；无 CI | evidence: both changes | 2026-08-17
 - tab 页 `onShow` 必须 `withTabSelect(this, index)`；`custom-tab-bar` 的 `pageLifetimes.show` 在 switchTab 时常不跑 | evidence: miniapp-full-test R-3 | 2026-08-23
-- 封面用 `recipeDishImg`：按菜名落到本地图，unsplash 外链不当封面 | evidence: miniapp-full-test R-4 | 2026-08-23
+- 封面用 `recipeDishImg`：按菜名落到本地图，unsplash 外链不当封面；`土豆丝` 用 potato-shreds，勿把「土豆」映射成茄子图 | evidence: miniapp-full-test R-4 | 2026-08-25
 - 顶栏右侧按钮须避开微信胶囊：`getMenuButtonBoundingClientRect` 算 right；nav-bar slot 已垫 capsulePad | evidence: miniapp-full-test R-4 | 2026-08-23
 - section-head 的 eyebrow 不要和 title+popPart 重复同一句话 | evidence: miniapp-full-test R-4 | 2026-08-23
 - 「我的」查看全部记录走 `goCookLog`；编辑资料/消息是已有入口，全量测试不要为对齐 git HEAD 撤回 | evidence: miniapp-full-test V-7/V-8 user-override | 2026-08-23
 - 种子菜 3/6/7/8 已补 `recipe_step`/`recipe_ingredient`；`INSERT IGNORE` 不改旧库，活库要另插 | evidence: miniapp-full-test R-3 | 2026-08-23
 - 家庭邀请码后端生成 8 位；join 输入格 / FAQ / 邀请页必须 8 位，6 格永远对不上 | evidence: miniapp-full-test R-4 | 2026-08-23
-- 会员价以后端 PlanCatalog 为准：年卡 9900 分 / 月卡 1990 分；前端勿再写死 ¥68/¥9.9 | evidence: miniapp-full-test R-4 | 2026-08-23
+- 会员价以后端 PlanCatalog 为准：年卡 9900 分 / 月卡 1990 分；前端勿再写死 ¥68/¥9.9 | evidence: miniapp-full-test R-4 / R-6 | 2026-08-23
+- 用户可见文案用中文；CSS 画的购物车/方框减号容易看成垃圾桶，改用汉字标 | evidence: miniapp-full-test R-6 | 2026-08-23
 - 浅色底 Hero 用 `title-stroke--ink` 或实心字；`title-stroke` 白字只给照片底，否则标题叠成一团 | evidence: miniapp-full-test R-4 | 2026-08-23
 - 照片头高度用 `--photo-hero-h`（720rpx）；360rpx 装不下状态栏+返回+大标题 | evidence: miniapp-full-test R-5 | 2026-08-23

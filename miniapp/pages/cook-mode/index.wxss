@@ -200,14 +200,6 @@
   right: 30rpx;
   z-index: 2;
 }
-.stepimg .small .e {
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: var(--fs-mini);
-  color: var(--gold);
-  font-weight: 700;
-  letter-spacing: 1rpx;
-}
 .stepimg .small .t {
   font-size: var(--fs-cap);
   font-weight: 800;

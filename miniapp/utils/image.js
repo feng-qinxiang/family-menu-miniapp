@@ -6,7 +6,7 @@ const LOCAL_DISHES = [
   'mapo-tofu', 'tomato-egg', 'hongshao-pork', 'kungpao-chicken', 'long-beans',
   'shrimp-peas', 'egg-drop-soup', 'hot-sour-soup', 'fried-rice', 'lo-mein',
   'beef-broccoli', 'chicken-congee', 'orange-chicken', 'sichuan-eggplant',
-  'sweet-sour-chicken', 'wontons'
+  'sweet-sour-chicken', 'wontons', 'potato-shreds', 'stir-fry-veg'
 ];
 
 const TITLE_RULES = [
@@ -15,16 +15,17 @@ const TITLE_RULES = [
   { kw: ['麻婆'], file: 'mapo-tofu' },
   { kw: ['宫保'], file: 'kungpao-chicken' },
   { kw: ['糖醋'], file: 'sweet-sour-chicken' },
-  { kw: ['西兰花'], file: 'beef-broccoli' },
-  { kw: ['香菇滑鸡'], file: 'chicken-congee' },
+  { kw: ['西兰花', '清炒时蔬', '空心菜', '青菜', '蒜蓉'], file: 'stir-fry-veg' },
+  { kw: ['香菇滑鸡'], file: 'kungpao-chicken' },
   { kw: ['炒饭'], file: 'fried-rice' },
   { kw: ['拌面', '捞面'], file: 'lo-mein' },
   { kw: ['馄饨'], file: 'wontons' },
   { kw: ['酸辣汤'], file: 'hot-sour-soup' },
   { kw: ['紫菜', '蛋花'], file: 'egg-drop-soup' },
   { kw: ['可乐鸡', '鸡翅'], file: 'orange-chicken' },
-  { kw: ['清炒时蔬', '空心菜', '豆角'], file: 'long-beans' },
-  { kw: ['土豆'], file: 'sichuan-eggplant' },
+  { kw: ['豆角'], file: 'long-beans' },
+  { kw: ['土豆丝', '酸辣土豆', '青椒土豆'], file: 'potato-shreds' },
+  { kw: ['茄子'], file: 'sichuan-eggplant' },
   { kw: ['牛肉炒'], file: 'beef-broccoli' },
   { kw: ['虾', '豌豆'], file: 'shrimp-peas' }
 ];

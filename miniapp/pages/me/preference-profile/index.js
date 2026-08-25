@@ -1,26 +1,9 @@
 // 偏好画像页 · 我们家的口味（二级页，游客直进）
 // 数据源：getPreferenceProfile() + getCookHistory()
 const api = require('../../../utils/api');
+const { recipeDishImg } = require('../../../utils/image');
 
-// 本地菜图兜底库（标题关键词 → 本地图）
-const LOCAL_DISH_IMAGES = [
-  { keys: ['麻婆', '豆腐'], img: '/assets/dishes/mapo-tofu.jpg' },
-  { keys: ['番茄', '西红柿', '炒蛋'], img: '/assets/dishes/tomato-egg.jpg' },
-  { keys: ['红烧肉', '红烧'], img: '/assets/dishes/hongshao-pork.jpg' },
-  { keys: ['宫保', '鸡丁'], img: '/assets/dishes/kungpao-chicken.jpg' },
-  { keys: ['蛋花', '紫菜', '蛋汤'], img: '/assets/dishes/egg-drop-soup.jpg' },
-  { keys: ['酸辣'], img: '/assets/dishes/hot-sour-soup.jpg' },
-  { keys: ['炒饭'], img: '/assets/dishes/fried-rice.jpg' },
-  { keys: ['牛', '西兰花'], img: '/assets/dishes/beef-broccoli.jpg' },
-  { keys: ['粥'], img: '/assets/dishes/chicken-congee.jpg' },
-  { keys: ['茄子'], img: '/assets/dishes/sichuan-eggplant.jpg' },
-  { keys: ['虾'], img: '/assets/dishes/shrimp-peas.jpg' },
-  { keys: ['馄饨'], img: '/assets/dishes/wontons.jpg' },
-  { keys: ['面'], img: '/assets/dishes/lo-mein.jpg' },
-  { keys: ['豆角', '长豆'], img: '/assets/dishes/long-beans.jpg' }
-];
-const DEFAULT_DISH_IMG = '/assets/dishes/hongshao-pork.jpg';
-const HERO_IMG = '/assets/dishes/sichuan-eggplant.jpg';
+const HERO_IMG = '/assets/dishes/hongshao-pork.jpg';
 
 // 条形图配色（套用全局 token，渐变收尾用柔色）
 const BAR_GRADIENTS = [
@@ -34,13 +17,7 @@ const BAR_GRADIENTS = [
 const CLOUD_SIZES = ['xl', 'lg', 'md', 'sm'];
 
 function pickLocalImage(title) {
-  const name = String(title || '');
-  for (const entry of LOCAL_DISH_IMAGES) {
-    if (entry.keys.some((k) => name.indexOf(k) >= 0)) {
-      return entry.img;
-    }
-  }
-  return DEFAULT_DISH_IMG;
+  return recipeDishImg({ title });
 }
 
 Page({

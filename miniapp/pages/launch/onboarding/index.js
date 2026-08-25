@@ -7,7 +7,7 @@ Page({
       {
         num: '01',
         image: '/assets/dishes/mapo-tofu.jpg',
-        tag: 'Welcome Aboard',
+        tag: '欢迎加入',
         line1: '全家一起',
         line2a: '点', pop: '菜', line2b: '',
         slogan: '今天吃什么，不用再纠结。一家人各自挑，菜单自动凑齐，买菜清单一键生成。'
@@ -15,7 +15,7 @@ Page({
       {
         num: '02',
         image: '/assets/dishes/hongshao-pork.jpg',
-        tag: 'Pick Together',
+        tag: '一起点菜',
         line1: '各点各的',
         line2a: '一', pop: '锅', line2b: '端',
         slogan: '爸妈想吃硬菜，孩子要喝汤，每个人挑自己的，今日菜单帮你凑得明明白白。'
@@ -23,7 +23,7 @@ Page({
       {
         num: '03',
         image: '/assets/dishes/tomato-egg.jpg',
-        tag: 'Shop Smart',
+        tag: '聪明买菜',
         line1: '买菜清单',
         line2a: '一键', pop: '齐', line2b: '',
         slogan: '选好的菜自动拆成食材，按品类归好，去超市照着买，不漏不重复。'

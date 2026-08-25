@@ -42,11 +42,11 @@
       </view>
       <view class="mh-iconbtns">
         <view class="mh-iconbtn" catchtap="goShopping" aria-label="买菜">
-          <view class="mh-ico-cart"></view>
+          <text class="mh-ico-glyph">买</text>
           <view class="mh-cart-dot" wx:if="{{shoppingPending}}"></view>
         </view>
         <view class="mh-iconbtn" catchtap="goRecipes" aria-label="菜谱库">
-          <view class="mh-ico-book"></view>
+          <text class="mh-ico-glyph">谱</text>
         </view>
       </view>
     </view>

@@ -81,7 +81,6 @@
         <view class="mkt-ghead g-fade-up">
           <view class="mkt-gdot {{group.key === 'seasoning' ? 'spice' : group.key}}"></view>
           <text class="mkt-gname">{{group.label}}</text>
-          <text class="mkt-gen">{{group.key === 'veg' ? 'Greens' : group.key === 'meat' ? 'Protein' : group.key === 'seasoning' ? 'Seasoning' : 'Others'}}</text>
           <text class="mkt-gcount">{{group.items.length}} 样</text>
         </view>
 
@@ -103,7 +102,7 @@
       <view class="mkt-pad" wx:if="{{purchasedItems.length}}">
         <view class="mkt-shead">
           <section-head
-            eyebrow="已入篮"
+            eyebrow="采购"
             title="已入篮 "
             popPart="{{purchasedItems.length}}"
           />
@@ -126,7 +125,7 @@
       <view class="mkt-pad">
         <view class="mkt-shead">
           <section-head
-            eyebrow="临时加购"
+            eyebrow="自己加"
             title="临时"
             popPart="加购"
           />

@@ -247,13 +247,6 @@
   letter-spacing: 0.6rpx;
   flex: none;
 }
-.month-sep .mtag .men {
-  font-style: italic;
-  color: var(--gold-deep);
-  font-size: var(--fs-cap);
-  font-weight: 700;
-  margin-left: 10rpx;
-}
 .month-sep .mline {
   flex: 1;
   height: 2rpx;

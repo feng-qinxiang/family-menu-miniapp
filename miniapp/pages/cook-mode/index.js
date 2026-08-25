@@ -13,11 +13,6 @@ const CN_NUM = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '
 function cnStep(i) {
   return CN_NUM[i] ? `第${CN_NUM[i]}步` : `第${i}步`;
 }
-const EN_STEP = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten'];
-function enStep(i) {
-  return EN_STEP[i] ? `Step ${EN_STEP[i]}` : `Step ${i}`;
-}
-
 // 从步骤文本里抽取「约 N 分钟 / N 分钟」估算秒数；无则 0
 function detectSeconds(text) {
   if (!text) return 0;
@@ -137,7 +132,6 @@ Page({
         image,
         num: pad2(i + 1),
         cn: cnStep(i + 1),
-        en: enStep(i + 1),
         seconds: detectSeconds(text)
       };
     });
