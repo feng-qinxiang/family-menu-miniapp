@@ -58,12 +58,9 @@ Page({
     }
   },
 
+  // ponytail: 拍照识别（OCR 截图提文字）未实现已下线入口，重做时需接入 OCR 服务再补回第三个 tab
   switchTab(e) {
     const { tab } = e.currentTarget.dataset;
-    if (tab === 'photo') {
-      wx.showToast({ title: '拍照识别即将上线', icon: 'none' });
-      return;
-    }
     this.setData({ activeTab: tab, preview: null });
   },
 

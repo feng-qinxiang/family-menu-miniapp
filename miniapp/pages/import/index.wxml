@@ -1,7 +1,7 @@
 <view class="imp-page">
-  <!-- 固定顶部返回（透明叠加在 hero 上）-->
-  <view class="imp-nav" style="padding-top: {{statusBarHeight}}px;">
-    <nav-bar title="导入配方" status-bar-height="{{statusBarHeight}}"></nav-bar>
+  <!-- 固定顶部返回（透明叠加在 hero 上；hero 已有大标题，这里不重复标题避免叠字）-->
+  <view class="imp-nav">
+    <nav-bar title="" status-bar-height="{{statusBarHeight}}"></nav-bar>
   </view>
 
   <!-- HERO -->
@@ -34,11 +34,6 @@
           <view class="m-icon"><view class="ic-text"></view></view>
           <view class="m-name">纯文本</view>
           <view class="m-desc">手敲或粘贴文字</view>
-        </view>
-        <view class="imp-method tap-scale" data-tab="photo" bindtap="switchTab">
-          <view class="m-icon"><view class="ic-cam"></view></view>
-          <view class="m-name">拍照识别</view>
-          <view class="m-desc">截图自动提文字</view>
         </view>
       </view>
     </view>

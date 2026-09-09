@@ -14,10 +14,12 @@ import com.familymenu.daily.dto.ApiModels.ShareScopeRequest;
 import com.familymenu.daily.dto.AuthModels.AuthUser;
 import com.familymenu.daily.payment.PaymentService;
 import com.familymenu.daily.payment.PlanCatalog;
+import com.familymenu.daily.payment.WechatPayProperties;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.Enumeration;
@@ -45,9 +48,11 @@ public class PaymentController {
     private static final Logger log = LoggerFactory.getLogger(PaymentController.class);
 
     private final PaymentService paymentService;
+    private final WechatPayProperties wechatPayProperties;
 
-    public PaymentController(PaymentService paymentService) {
+    public PaymentController(PaymentService paymentService, WechatPayProperties wechatPayProperties) {
         this.paymentService = paymentService;
+        this.wechatPayProperties = wechatPayProperties;
     }
 
     /** 套餐目录：金额/时长后端权威，前端只用于展示与回传 plan_code。 */
@@ -66,11 +71,18 @@ public class PaymentController {
         return paymentService.createOrder(user.userId(), user.familyId(), request.planCode());
     }
 
-    /** 模拟支付：凭 out_trade_no 触发开通，仅下单者本人可调，幂等。 */
+    /**
+     * 模拟支付：凭 out_trade_no 触发开通，仅下单者本人可调，幂等。
+     * 免真实付款即可开通会员，存在资损风险 → 默认禁用，
+     * 仅本地联调用 WECHAT_PAY_MOCK_ENABLED=true 显式开启。
+     */
     @PostMapping("/mock-pay")
     @RequiresAuth
     public PayResult mockPay(@CurrentUser AuthUser user,
                              @Valid @RequestBody MockPayRequest request) {
+        if (!wechatPayProperties.isMockPayEnabled()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "模拟支付未开启");
+        }
         return paymentService.markPaid(user.userId(), request.outTradeNo());
     }
 
@@ -132,8 +144,9 @@ public class PaymentController {
             paymentService.handleWechatNotify(headers, body);
             return ResponseEntity.ok(Map.of("code", "SUCCESS"));
         } catch (Exception ex) {
+            // 不回传内部异常信息（可能含订单号/签名细节），只记日志；微信按 FAIL 重试
             log.warn("[WechatPay] notify failed: {}", ex.getMessage());
-            return ResponseEntity.ok(Map.of("code", "FAIL", "message", ex.getMessage()));
+            return ResponseEntity.ok(Map.of("code", "FAIL", "message", "notify rejected"));
         }
     }
 }

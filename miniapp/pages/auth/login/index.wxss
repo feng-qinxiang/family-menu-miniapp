@@ -126,7 +126,7 @@
   margin-top: -50rpx;
   background: var(--paper);
   border-radius: 20rpx 20rpx 0 0;
-  padding: 50rpx 46rpx 80rpx;
+  padding: 50rpx 46rpx calc(80rpx + env(safe-area-inset-bottom));
   z-index: 20;
 }
 

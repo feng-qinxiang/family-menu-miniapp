@@ -8,24 +8,16 @@
  */
 
 /**
- * 创建一个 onShow 包装器，自动设置 tabBar 选中态
- * @param {number} index - 当前页面对应的 tab 索引 (0-based)
- * @returns {Function} 可作为 mixin 使用的 onShow 增强函数
- * 
- * 用法：
- *   const { withTabSelect } = require('../../behaviors/tab-select');
- *   Page({
- *     onShow() {
- *       withTabSelect(this, 0);
- *       // ...其他 onShow 逻辑
- *     }
- *   })
+ * 在 tabBar 页面 onShow 中调用，同步底栏选中态。
+ * 选中项由 custom-tab-bar 按当前路由自动匹配（_syncSelected），
+ * 不再依赖固定索引 —— tab 增删（如社区随开关显隐）时无需全局改数字。
+ * 旧调用形如 withTabSelect(this, 2) 的 index 参数已忽略，保留兼容。
  */
-function withTabSelect(pageCtx, index) {
+function withTabSelect(pageCtx) {
   if (typeof pageCtx.getTabBar === 'function') {
     const tabBar = pageCtx.getTabBar();
-    if (tabBar) {
-      tabBar.setData({ selected: index });
+    if (tabBar && typeof tabBar._syncSelected === 'function') {
+      tabBar._syncSelected();
     }
   }
 }

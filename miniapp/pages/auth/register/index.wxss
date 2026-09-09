@@ -1,7 +1,27 @@
 /* pages/auth/register · 注册账号 · 全用全局 token */
 .rg {
+  position: relative;
   min-height: 100vh;
   background: var(--paper);
+}
+.rg-nav {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 60;
+}
+.rg-nav .navbar-title {
+  color: var(--c-surface);
+  text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.35);
+}
+.rg-nav .navbar-back {
+  background: rgba(255, 255, 255, 0.18);
+  border: 2rpx solid rgba(255, 255, 255, 0.24);
+}
+.rg-nav .navbar-back-icon {
+  border-left-color: var(--c-surface);
+  border-bottom-color: var(--c-surface);
 }
 .rg-scroll {
   height: 100vh;
@@ -39,7 +59,7 @@
   position: absolute;
   left: 46rpx;
   right: 46rpx;
-  bottom: 80rpx;
+  bottom: var(--hero-body-above-sheet);
   color: var(--c-surface);
 }
 .rg-tag {
@@ -75,7 +95,7 @@
   margin-top: -50rpx;
   background: var(--paper);
   border-radius: var(--r-sheet) var(--r-sheet) 0 0;
-  padding: 50rpx 46rpx 80rpx;
+  padding: 50rpx 46rpx calc(80rpx + env(safe-area-inset-bottom));
   z-index: 2;
 }
 

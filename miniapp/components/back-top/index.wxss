@@ -1,0 +1,22 @@
+/* 与 recipe-detail 悬浮快捷键同风格：纸色半透明圆钮 + 上箭头 */
+.bt-btn {
+  position: fixed;
+  z-index: 60;
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 50%;
+  background: var(--glass);
+  border: 2rpx solid var(--c-border);
+  box-shadow: 0 10rpx 30rpx rgba(60, 40, 20, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.bt-ic {
+  width: 26rpx;
+  height: 26rpx;
+  border-left: 5rpx solid var(--ink-deep);
+  border-top: 5rpx solid var(--ink-deep);
+  transform: rotate(45deg) translate(4rpx, 4rpx);
+  border-radius: 2rpx;
+}

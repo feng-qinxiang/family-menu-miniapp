@@ -80,7 +80,7 @@
   position: absolute;
   left: 46rpx;
   right: 46rpx;
-  bottom: 58rpx;
+  bottom: var(--hero-body-above-sheet);
   color: var(--c-surface);
 }
 .hero-tag {
@@ -271,7 +271,8 @@
 .fab {
   position: fixed;
   right: 38rpx;
-  bottom: calc(env(safe-area-inset-bottom) + 56rpx);
+  /* tab 页需避开底部 custom-tab-bar（约 130rpx）再留间距 */
+  bottom: calc(env(safe-area-inset-bottom) + 190rpx);
   width: 112rpx;
   height: 112rpx;
   border-radius: 50%;

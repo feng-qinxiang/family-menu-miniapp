@@ -30,4 +30,56 @@ function filterBySlot(items, slot) {
   return items.filter(it => (it && (it.mealType || 'dinner')) === slot);
 }
 
-module.exports = { decorateHero, filterBySlot };
+/**
+ * 从社区帖子列表提取关联菜谱（按 recipeId 去重）。
+ * 收藏接口 GET /api/me/favorites 返回的是 CommunityPost[]，不是 RecipeCard[]，
+ * 直接当菜谱解析会拿到帖子 id → 详情 404 / 加菜失败。必须先映射 p.recipe。
+ * @param {Array} posts
+ * @returns {Array} 去重后的菜谱数组
+ */
+function recipesFromPosts(posts) {
+  if (!Array.isArray(posts)) return [];
+  const seen = {};
+  const out = [];
+  posts.forEach((p) => {
+    const r = p && p.recipe;
+    if (r && r.id != null && !seen[r.id]) {
+      seen[r.id] = true;
+      out.push(r);
+    }
+  });
+  return out;
+}
+
+/**
+ * 本地时区的 YYYY-MM-DD。禁止用 toISOString().slice(0,10)：
+ * 那是 UTC 日期，东八区凌晨会算成前一天。
+ * @param {Date} [date]
+ * @returns {string}
+ */
+function todayDateKey(date) {
+  const d = date instanceof Date ? date : new Date();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${d.getFullYear()}-${m}-${day}`;
+}
+
+/**
+ * 解析 'YYYY-MM-DD' 为本地时区日期。
+ * new Date('2026-09-10') 按 UTC 解析，东八区下会少一天，必须手写。
+ * @param {string} value
+ * @returns {Date|null}
+ */
+function parseLocalDate(value) {
+  const s = String(value || '').trim();
+  if (!s) return null;
+  const m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if (m) {
+    const d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+    return Number.isNaN(d.getTime()) ? null : d;
+  }
+  const d = new Date(s.replace(' ', 'T'));
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+module.exports = { decorateHero, filterBySlot, recipesFromPosts, todayDateKey, parseLocalDate };

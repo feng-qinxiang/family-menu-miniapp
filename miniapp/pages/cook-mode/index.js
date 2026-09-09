@@ -1,7 +1,7 @@
 // pages/cook-mode/index.js · 烹饪模式（沉浸暗底分步引导）
 const api = require('../../utils/api');
 const { decodeStep } = require('../../utils/recipe-steps');
-const { recipeDishImg } = require('../../utils/image');
+const { recipeDishImg, stepDishImg } = require('../../utils/image');
 
 // 数字补零
 function pad2(n) {
@@ -53,8 +53,15 @@ Page({
 
   onLoad(options) {
     let sbh = 0;
+    // 顶栏右侧计时按钮避开微信胶囊：胶囊左缘到屏幕右缘的宽度作为 padding-right
+    let capsulePad = 19; // 兜底 = 原 38rpx
     try {
-      sbh = (wx.getWindowInfo ? wx.getWindowInfo().statusBarHeight : wx.getSystemInfoSync().statusBarHeight) || 0;
+      const win = wx.getWindowInfo ? wx.getWindowInfo() : wx.getSystemInfoSync();
+      sbh = (win && win.statusBarHeight) || 0;
+      const mb = wx.getMenuButtonBoundingClientRect();
+      if (mb && mb.left && win && win.windowWidth && mb.left < win.windowWidth) {
+        capsulePad = win.windowWidth - mb.left + 8;
+      }
     } catch (e) {
       sbh = 0;
     }
@@ -63,7 +70,9 @@ Page({
       wx.setKeepScreenOn({ keepScreenOn: true });
     }
     const recipeId = (options && (options.recipeId || options.id)) || '';
-    this.setData({ statusBarHeight: sbh, recipeId });
+    // 从菜单页「开做」进入时带 menuItemId，完成烹饪自动把该菜标记「已上桌」
+    this._menuItemId = (options && options.menuItemId) || '';
+    this.setData({ statusBarHeight: sbh, capsulePad, recipeId });
     this.loadDetail(recipeId);
   },
 
@@ -125,7 +134,7 @@ Page({
     const steps = rawSteps.map((st, i) => {
       const decoded = decodeStep(st);
       const text = decoded.text;
-      const image = decoded.image || dishImg;
+      const image = stepDishImg(recipe, i, decoded.image);
       return {
         index: i,
         text,
@@ -202,14 +211,39 @@ Page({
     this.gotoStep(current + 1);
   },
 
-  // 计时器开关
+  // 计时器开关：步骤没写时长时先选时长；已有时长则开始/暂停
   toggleTimer() {
-    if (!this.data.hasTimer) return;
+    if (!this.data.hasTimer) {
+      this.pickDuration();
+      return;
+    }
     if (this.data.running) {
       this.pauseTimer();
     } else {
       this.startTimer();
     }
+  },
+
+  // 快捷选/换时长：随时可重选，选完按新时长重新开始计时
+  pickDuration() {
+    const labels = ['1 分钟', '3 分钟', '5 分钟', '10 分钟', '15 分钟', '30 分钟'];
+    const seconds = [60, 180, 300, 600, 900, 1800];
+    wx.showActionSheet({
+      itemList: labels,
+      success: (res) => {
+        const total = seconds[res.tapIndex];
+        this.clearTimer();
+        this.setData({
+          timerTotal: total,
+          timerLeft: total,
+          timerText: this.fmt(total),
+          hasTimer: true,
+          running: false
+        });
+        this.startTimer();
+      },
+      fail: () => {}
+    });
   },
 
   startTimer(resumeBase) {
@@ -231,7 +265,8 @@ Page({
 
   _tick() {
     const elapsed = (Date.now() - this._baseAt) / 1000;
-    const left = Math.round(this._baseLeft - elapsed);
+    // ceil：向下取整会在 1000ms 间隔下少显示一秒（0.4s 就跳成 0）
+    const left = Math.ceil(this._baseLeft - elapsed);
     if (left <= 0) {
       this.clearTimer();
       this.setData({ timerLeft: 0, timerText: this.fmt(0), running: false });
@@ -246,7 +281,7 @@ Page({
     if (!this.data.running) return;
     // 固化此刻的真实剩余（时间戳差值），下次从暂停点续跑
     const elapsed = (Date.now() - this._baseAt) / 1000;
-    this._baseLeft = Math.max(0, Math.round(this._baseLeft - elapsed));
+    this._baseLeft = Math.max(0, Math.ceil(this._baseLeft - elapsed));
     this.clearTimer();
     this.setData({
       running: false,
@@ -282,13 +317,26 @@ Page({
     this.loadDetail(this.data.recipeId);
   },
 
-  // 完成 → 回做菜记录（本档不新增写入；记录接口未在 What 授权）
-  onFinish() {
+  // 完成 → 写做菜记录 + 回做菜记录页
+  async onFinish() {
     this.clearTimer();
     this._hiddenRunning = false;
     this.setData({ running: false });
+    // 菜单联动：走完烹饪流程即视为这道菜上桌，静默回写菜单状态
+    if (this._menuItemId) {
+      api.updateMenuItemStatus(this._menuItemId, 'done').catch(() => {});
+      this._menuItemId = '';
+    }
     const { recipeId, recipe } = this.data;
     const title = recipe ? recipe.title : '';
+    // 记一笔做菜历史：按钮承诺「记一笔」，失败不阻塞跳转但要提示
+    if (recipeId) {
+      try {
+        await api.addCookHistory({ recipeId, score: 5, remark: '' });
+      } catch (err) {
+        wx.showToast({ title: '记录保存失败', icon: 'none' });
+      }
+    }
     const url = `/pages/cook-log/index?recipeId=${encodeURIComponent(recipeId)}&title=${encodeURIComponent(title)}`;
     wx.navigateTo({
       url,

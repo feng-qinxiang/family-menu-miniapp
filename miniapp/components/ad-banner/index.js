@@ -1,3 +1,5 @@
+const features = require('../../utils/features');
+
 const adPool = [
   { title: '排今晚的菜', desc: '把晚餐加入今日菜单，购物清单会跟着算。' },
   { title: '录冰箱里的菜', desc: '挑菜时能看到哪些菜食材已经齐了。' },
@@ -9,6 +11,7 @@ Component({
   properties: {},
   data: {
     isVip: false,
+    payable: true,
     adTitle: '',
     adDesc: ''
   },
@@ -18,12 +21,14 @@ Component({
       const isVip = (app && app.globalData && app.globalData.isVip)
         || wx.getStorageSync('vip_status') === true;
       const ad = adPool[Math.floor(Math.random() * adPool.length)];
-      this.setData({ isVip, adTitle: ad.title, adDesc: ad.desc });
+      // 支付能力关闭时不展示「去开通」，避免把用户带进已下线的付费流程
+      this.setData({ isVip, payable: !!features.PAYMENT, adTitle: ad.title, adDesc: ad.desc });
     }
   },
   methods: {
     goVip() {
-      wx.navigateTo({ url: '/pages/vip/index' });
+      if (!features.PAYMENT) return;
+      wx.navigateTo({ url: '/pkg-extra/vip/index' });
     }
   }
 });

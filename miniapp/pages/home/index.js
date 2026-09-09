@@ -12,9 +12,10 @@ const {
 } = require('../../utils/api');
 const { sourceLabels, mealTypeLabels, SLOTS, cuisinePinyin } = require('../../utils/constants');
 const { fallbackDishImg, recipeDishImg, onImgError } = require('../../utils/image');
-const { decorateHero, filterBySlot } = require('../../utils/dish-logic');
+const { decorateHero, filterBySlot, todayDateKey } = require('../../utils/dish-logic');
 const { withTabSelect } = require('../../behaviors/tab-select');
 const WISH_STORAGE_KEY = 'family_wishes_v1';
+const WISH_PENDING_KEY = 'wish_pending_v1';
 const CACHE_KEY_MENU = 'home_cache_todayMenu';
 const CACHE_KEY_SHOPPING = 'home_cache_shoppingPending';
 
@@ -24,13 +25,6 @@ function readCache(key) {
 }
 function writeCache(key, val) {
   try { wx.setStorageSync(key, val); } catch (e) { /* best-effort */ }
-}
-
-function todayDateKey() {
-  const d = new Date();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${d.getFullYear()}-${m}-${day}`;
 }
 
 function loadWishes() {
@@ -43,6 +37,27 @@ function loadWishes() {
 
 function saveWishes(map) {
   try { wx.setStorageSync(WISH_STORAGE_KEY, map); } catch (err) {}
+}
+
+// —— 离线许愿待同步队列 ——
+// 之前只提示「联网后自动同步」但没有任何补发逻辑，服务端一刷新就把本地许愿抹掉。
+function loadPending() {
+  try {
+    const raw = wx.getStorageSync(WISH_PENDING_KEY);
+    if (Array.isArray(raw)) return raw;
+  } catch (e) {}
+  return [];
+}
+function savePending(list) {
+  try { wx.setStorageSync(WISH_PENDING_KEY, list || []); } catch (e) {}
+}
+function pushPending(wish) {
+  const list = loadPending();
+  list.push(wish);
+  savePending(list);
+}
+function removePending(id) {
+  savePending(loadPending().filter((w) => w.id !== id));
 }
 
 const memberTones = ['tone-a', 'tone-b', 'tone-c', 'tone-d', 'tone-e'];
@@ -84,12 +99,12 @@ Page({
     currentSlot: 'dinner',
     todayKey: '',
     wishes: [],            // 当前 (date,slot) 下的许愿数组
+    wishExpanded: false,   // 许愿池默认折叠一行，点击展开（DEC-UI1）
     role: 'cook',          // 简化：默认本人=做饭人；接入后端后由 family.members[me].role 决定
     canConfirm: true,      // role∈{admin,cook} 时为 true（§6）
 
     activeCuisine: 'all',
     heroRecipe: null,
-    sideRecipes: [],
     visibleRecipes: [],
     todayMenu: [],
     slotMenu: [],          // 当前餐次 (currentSlot) 的菜单项，随 slotbar 联动
@@ -97,10 +112,10 @@ Page({
     cuisineTiles: [],
 
     allRecipes: [],
-    isEmpty: false,        // 菜谱全空（sideRecipes 与 visibleRecipes 均空），用于空态文案收敛
     loadError: '',
     // 有可展示内容时刷新失败不摘下方结构（DEC-5）
     hasHomeData: false,
+    capsuleTop: 'calc(env(safe-area-inset-top) + 90rpx)',
     capsuleRight: '96px'
   },
 
@@ -113,7 +128,6 @@ Page({
     const hasRecipes =
       !!(d.heroRecipe) ||
       (Array.isArray(d.visibleRecipes) && d.visibleRecipes.length > 0) ||
-      (Array.isArray(d.sideRecipes) && d.sideRecipes.length > 0) ||
       (Array.isArray(d.allRecipes) && d.allRecipes.length > 0);
     const hasMenuCard = Array.isArray(d.slotMenu) && d.slotMenu.length > 0;
     const hasWishes = Array.isArray(d.wishes) && d.wishes.length > 0;
@@ -127,11 +141,13 @@ Page({
     const cachedMenu = readCache(CACHE_KEY_MENU);
     const cachedPending = readCache(CACHE_KEY_SHOPPING);
     const menu = Array.isArray(cachedMenu) ? cachedMenu : [];
+    let capsuleTop = 'calc(env(safe-area-inset-top) + 90rpx)';
     let capsuleRight = '96px';
     try {
       const mb = wx.getMenuButtonBoundingClientRect();
       const sys = (wx.getWindowInfo && wx.getWindowInfo()) || wx.getSystemInfoSync();
       if (mb && sys && mb.left) {
+        capsuleTop = mb.top + 'px';
         capsuleRight = (sys.windowWidth - mb.left + 8) + 'px';
       }
     } catch (e) {}
@@ -140,6 +156,7 @@ Page({
       todayMenu: menu,
       shoppingPending: typeof cachedPending === 'number' ? cachedPending : 0,
       hasHomeData: false,
+      capsuleTop,
       capsuleRight
     });
     this.refreshWishes();
@@ -175,6 +192,8 @@ Page({
     const reqSeq = (this._wishSeq || 0) + 1;
     this._wishSeq = reqSeq;
     try {
+      // 先把上次离线存的许愿补发，再拉最新列表，避免被服务端结果覆盖掉
+      await this.flushPendingWishes(date, slot);
       const list = await getWishes(date, slot);
       // 快速切餐次时，旧响应晚到直接丢弃，避免覆盖新 slot 数据
       if (this._wishSeq !== reqSeq) return;
@@ -191,6 +210,17 @@ Page({
     }
   },
 
+  // 补发离线期间积压的许愿；成功的出队，仍失败的留队下次再试
+  async flushPendingWishes(date, slot) {
+    const pending = loadPending().filter((w) => w.date === date && w.slot === slot);
+    if (!pending.length) return;
+    await Promise.all(pending.map((w) =>
+      addWish({ date: w.date, slot: w.slot, text: w.text, recipeId: null })
+        .then(() => { removePending(w.id); })
+        .catch(() => {})
+    ));
+  },
+
   selectSlot(e) {
     const { slot } = e.currentTarget.dataset;
     if (!slot || slot === this.data.currentSlot) return;
@@ -202,7 +232,9 @@ Page({
   // 当前餐次菜单：todayMenu 按 currentSlot 过滤（mealType 缺失默认归 dinner，见 dish-logic.js）
   updateSlotMenu() {
     const slotMenu = filterBySlot(this.data.todayMenu, this.data.currentSlot);
-    this.setData({ slotMenu });
+    // 上桌进度：菜单页标记的 done 状态在首页卡片同步展示
+    const slotDoneCount = slotMenu.filter(it => it.status === 'done').length;
+    this.setData({ slotMenu, slotDoneCount });
   },
 
   goWeek() {
@@ -255,7 +287,8 @@ Page({
         this.setData({ wishes: updated });
       }
     } catch (err) {
-      // 离线兜底：保留本地乐观结果，提示用户稍后同步
+      // 离线兜底：入待同步队列，下次 refreshWishes 会补发（不是只喊口号）
+      pushPending({ id: wish.id, date, slot, text: wish.text });
       wx.showToast({ title: '已记在本机，联网后自动同步', icon: 'none' });
     }
   },
@@ -270,6 +303,8 @@ Page({
       cancelText: '留下'
     });
     if (!res.confirm) return;
+    // 若这条还在待同步队列里，直接出队，避免删除后被补发回来
+    removePending(id);
     const key = `${this.data.todayKey}:${this.data.currentSlot}`;
     // 乐观删除
     const all = loadWishes();
@@ -280,12 +315,27 @@ Page({
     try {
       await removeWishApi(id);
     } catch (err) {
-      // 离线兜底：本地已删，提示用户稍后同步
-      wx.showToast({ title: '已在本机移除，联网后同步', icon: 'none' });
+      // 本地已删，服务端删除失败下次拉取会重现；提示重试而非承诺自动同步
+      wx.showToast({ title: '已在本机移除，云端可能稍后恢复', icon: 'none' });
     }
   },
 
-  async confirmMenu() {
+  // 心愿条目「待挑菜」→ 带心愿文本直达菜谱搜索；wishId/slot 一路透传，
+  // 详情页加菜成功后自动销愿（点菜闭环：许愿 → 挑菜 → 入菜单 → 愿望达成）
+  pickForWish(e) {
+    const ds = e.currentTarget.dataset;
+    const text = (ds.text || '').trim();
+    const wishId = ds.id || '';
+    const slot = ds.slot || this.data.currentSlot || 'dinner';
+    wx.navigateTo({
+      url: `/pages/recipes/search/index?keyword=${encodeURIComponent(text)}&wishId=${encodeURIComponent(wishId)}&slot=${slot}`,
+      fail: () => wx.switchTab({ url: '/pages/recipes/index' })
+    });
+  },
+
+  // 许愿都是纯文本（confirmWish 不写 recipeId），无法直接入菜单，
+  // 主 CTA 改为带第一条心愿直达搜索挑菜；挑到后详情页加菜会自动销愿。
+  confirmMenu() {
     if (!this.data.canConfirm) {
       wx.showToast({ title: '请等做饭人确认', icon: 'none' });
       return;
@@ -295,56 +345,16 @@ Page({
       wx.showToast({ title: '先从下面挑菜或点「我想吃」', icon: 'none' });
       return;
     }
-    // 区分：带 recipeId 的可直接入菜单；纯文本许愿无法匹配菜谱
-    const withRecipe = list.filter(w => w.recipeId);
-    const textOnly = list.filter(w => !w.recipeId);
-
-    if (!withRecipe.length) {
-      // 全是纯文本许愿，无法加入菜单，保留许愿池不清空
-      wx.showModal({
-        title: '还差一步',
-        content: '许愿池里都是「想吃什么」的心愿，去菜谱里挑到对应的菜、点 + 加入，就能凑成今晚的菜单啦。',
-        confirmText: '去挑菜',
-        cancelText: '知道了',
-        success: (res) => {
-          if (res.confirm) wx.switchTab({ url: '/pages/recipes/index' });
+    const first = list[0];
+    this.pickForWish({
+      currentTarget: {
+        dataset: {
+          text: first.text || '',
+          id: first.id || '',
+          slot: first.slot || this.data.currentSlot
         }
-      });
-      return;
-    }
-
-    wx.showLoading({ title: '加入菜单中', mask: true });
-    // 并发下单（不因单个失败中断整体），完成后统一汇报
-    const results = await Promise.allSettled(
-      withRecipe.map((w) => addTodayMenuRecipe(w.recipeId, this.data.currentSlot))
-    );
-    const addedIds = withRecipe.filter((w, i) => results[i].status === 'fulfilled').map((w) => w.id);
-    const failed = results.length - addedIds.length;
-    // 只清掉成功加入菜单的许愿，纯文本许愿保留在池中
-    const all = loadWishes();
-    const key = `${this.data.todayKey}:${this.data.currentSlot}`;
-    const remaining = (all[key] || []).filter(w => !addedIds.includes(w.id));
-    all[key] = remaining;
-    saveWishes(all);
-    wx.hideLoading();
-    this.setData({ wishes: remaining });
-    addedIds.forEach(id => removeWishApi(id).catch(() => {}));
-    await this.refreshLight();
-    const added = addedIds.length;
-    if (added) {
-      wx.showToast({
-        title: failed ? `已加入 ${added} 道，失败 ${failed} 道` : `已加入 ${added} 道菜`,
-        icon: failed ? 'none' : 'success'
-      });
-    } else {
-      wx.showToast({ title: '加入失败，请重试', icon: 'none' });
-    }
-    if (added && textOnly.length) {
-      // 提醒还有纯文本心愿未处理
-      setTimeout(() => {
-        wx.showToast({ title: `还有 ${textOnly.length} 条心愿待挑菜`, icon: 'none' });
-      }, 1600);
-    }
+      }
+    });
   },
 
   async loadAll() {
@@ -418,10 +428,6 @@ Page({
       patch.hasHomeData = this._syncHasHomeData(patch);
       this.setData(patch);
       this.updateSlotMenu();
-
-      // 写入离线缓存
-      writeCache(CACHE_KEY_MENU, normalizedItems);
-      writeCache(CACHE_KEY_SHOPPING, shoppingPending);
 
       this.applyFilters('all', allRecipes);
       // applyFilters 后刷新 hasHomeData（hero/visible/side 已写入）
@@ -548,28 +554,18 @@ Page({
 
     const shuffled = shuffle(filtered);
     const hero = shuffled[0] || null;
-    const sides = shuffled.slice(1, 3).map(r => ({ ...r }));
-    const visible = shuffled.slice(3, 11);
+    const visible = shuffled.slice(1, 11);
 
     this.setData({
       activeCuisine: cuisine,
       heroRecipe: hero ? { ...hero, titleClass: decorateHero(hero.title) } : null,
-      sideRecipes: sides,
-      visibleRecipes: visible,
-      isEmpty: !hero && !sides.length && !visible.length
+      visibleRecipes: visible
     });
   },
 
   selectCuisine(e) {
     const { cuisine } = e.currentTarget.dataset;
     this.applyFilters(cuisine);
-  },
-
-  selectCook(e) {
-    const { key } = e.currentTarget.dataset;
-    const cook = this.data.cookCandidates.find(c => c.key === key);
-    if (!cook) return;
-    this.setData({ activeCookKey: key, activeCook: cook });
   },
 
   shuffleHero() {
@@ -613,35 +609,6 @@ Page({
     wx.switchTab({ url: '/pages/recipes/index' });
   },
 
-  goRandom() {
-    this.applyFilters(this.data.activeCuisine);
-    wx.pageScrollTo({ scrollTop: 0, duration: 300 });
-  },
-
-  goByTime() {
-    const fast = this.data.allRecipes.filter(r => r.timeCost && r.timeCost <= 15);
-    if (!fast.length) {
-      wx.showToast({ title: '暂无快手菜', icon: 'none' });
-      return;
-    }
-    const shuffled = shuffle(fast);
-    const hero = shuffled[0] || null;
-    const sides = shuffled.slice(1, 3);
-    const visible = shuffled.slice(3, 11);
-    this.setData({
-      activeCuisine: 'all',
-      heroRecipe: hero ? { ...hero, titleClass: decorateHero(hero.title) } : null,
-      sideRecipes: sides,
-      visibleRecipes: visible,
-      isEmpty: !hero && !sides.length && !visible.length
-    });
-    wx.pageScrollTo({ scrollTop: 0, duration: 300 });
-  },
-
-  goByPantry() {
-    wx.switchTab({ url: '/pages/pantry/index' });
-  },
-
   onHeroImgError() {
     const hero = this.data.heroRecipe;
     if (!hero) return;
@@ -656,12 +623,8 @@ Page({
     }
   },
 
-  onSideImgError(e) {
-    const idx = e.currentTarget.dataset.index;
-    const item = this.data.sideRecipes[idx];
-    if (typeof idx === 'number' && item) {
-      this.setData({ [`sideRecipes[${idx}].dishImg`]: fallbackDishImg(item.id || item.title) });
-    }
+  toggleWishExpand() {
+    this.setData({ wishExpanded: !this.data.wishExpanded });
   },
   onShareAppMessage() {
     return {

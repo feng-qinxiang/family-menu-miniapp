@@ -10,7 +10,7 @@
 /* ===== Hero 大图（288px → 554rpx）===== */
 .fc-hero {
   position: relative;
-  height: 554rpx;
+  height: var(--photo-hero-h);
   overflow: hidden;
 }
 .fc-hero-img {
@@ -45,7 +45,7 @@
   position: absolute;
   left: 46rpx;
   right: 46rpx;
-  bottom: 86rpx;
+  bottom: 140rpx;
   z-index: 10;
   color: var(--c-surface);
 }
@@ -74,7 +74,7 @@
   margin-top: -50rpx;
   background: var(--paper);
   border-radius: 20rpx 20rpx 0 0;
-  padding: 0 46rpx 60rpx;
+  padding: 48rpx 46rpx calc(60rpx + env(safe-area-inset-bottom));
   z-index: 20;
 }
 

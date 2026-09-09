@@ -15,6 +15,18 @@
   right: 0;
   z-index: 60;
 }
+.cl-nav .navbar-title {
+  color: var(--c-surface);
+  text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.35);
+}
+.cl-nav .navbar-back {
+  background: rgba(255, 255, 255, 0.18);
+  border: 2rpx solid rgba(255, 255, 255, 0.24);
+}
+.cl-nav .navbar-back-icon {
+  border-left-color: var(--c-surface);
+  border-bottom-color: var(--c-surface);
+}
 
 .cl-scroll {
   height: 100vh;
@@ -58,7 +70,7 @@
   position: absolute;
   left: 46rpx;
   right: 46rpx;
-  bottom: 50rpx;
+  bottom: var(--hero-body-above-sheet);
   z-index: 10;
   color: var(--c-surface);
 }
@@ -126,14 +138,14 @@
   margin-top: -50rpx;
   background: var(--paper);
   border-radius: 20rpx 20rpx 0 0;
-  padding: 46rpx 0 36rpx;
+  padding: 46rpx 0 calc(36rpx + env(safe-area-inset-bottom));
   z-index: 20;
 }
-.pad { padding: 0 28rpx; }
+.pad { padding: 0 46rpx; }
 
 /* 本周打卡（复用 .card-dark + .deco-circle） */
 .calwrap {
-  margin: 0 28rpx;
+  margin: 0 46rpx;
   padding: 30rpx 30rpx 32rpx;
 }
 .cal-top {
@@ -212,7 +224,7 @@
   margin-top: 42rpx;
   width: 100%;
 }
-.chips .hscroll-inner { padding: 4rpx 28rpx; }
+.chips .hscroll-inner { padding: 4rpx 46rpx; }
 .chip .av {
   width: 36rpx;
   height: 36rpx;
@@ -333,6 +345,17 @@
 }
 .cook .cn { font-size: 24rpx; color: var(--mut); font-weight: 600; }
 .cook .cn-b { color: var(--ink-deep); font-weight: 700; }
+/* 再来一单：右对齐胶囊按钮 */
+.cook .redo {
+  margin-left: auto;
+  flex: none;
+  font-size: 22rpx;
+  font-weight: 800;
+  color: var(--pop);
+  background: var(--pop-soft);
+  border-radius: var(--r-pill);
+  padding: 10rpx 22rpx;
+}
 
 .note {
   margin-top: 18rpx;

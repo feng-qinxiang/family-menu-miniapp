@@ -57,10 +57,12 @@ public class PaymentService {
     public CreateOrderResponse createOrder(long payerUserId, Long familyId, String planCode) {
         PlanCatalog.Plan plan = PlanCatalog.require(planCode);
         String outTradeNo = generateOutTradeNo();
+        // payment_method 先留空，支付成功时由回调/mock 通道写入真实渠道（WECHAT/MOCK），
+        // 否则真实微信订单也会被记成 MOCK，对账时分不清。
         jdbcTemplate.update("""
                         INSERT INTO payment_order
                             (out_trade_no, payer_user_id, family_id, plan_code, amount_fen, duration_days, status, payment_method)
-                        VALUES (?, ?, ?, ?, ?, ?, 'PENDING', 'MOCK')
+                        VALUES (?, ?, ?, ?, ?, ?, 'PENDING', '')
                         """,
                 outTradeNo, payerUserId, familyId, plan.code(), plan.amountFen(), plan.durationDays()
         );
@@ -154,6 +156,20 @@ public class PaymentService {
             long payerUserId = ((Number) order.get("payer_user_id")).longValue();
             String planCode = (String) order.get("plan_code");
             int durationDays = ((Number) order.get("duration_days")).intValue();
+
+            // 金额一致性校验：回调金额必须与订单金额完全一致，防止篡改金额骗取会员
+            long expectedFen = ((Number) order.get("amount_fen")).longValue();
+            JsonNode amountNode = json.get("amount");
+            if (amountNode == null || !amountNode.has("total")) {
+                log.warn("[WechatNotify] outTradeNo={} missing amount.total, reject", outTradeNo);
+                return;
+            }
+            long paidFen = amountNode.get("total").asLong(-1);
+            if (paidFen != expectedFen) {
+                log.error("[WechatNotify] outTradeNo={} amount mismatch: paid={} expected={}, reject",
+                        outTradeNo, paidFen, expectedFen);
+                return;
+            }
 
             jdbcTemplate.update(
                     "UPDATE payment_order SET status = 'PAID', payment_method = 'WECHAT', paid_at = NOW() WHERE out_trade_no = ?",

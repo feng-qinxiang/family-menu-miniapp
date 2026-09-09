@@ -47,6 +47,32 @@ function localDishByTitle(title) {
   return '';
 }
 
+const INGREDIENT_RULES = [
+  { kw: ['土豆', '马铃薯'], file: 'potato-shreds' },
+  { kw: ['时蔬', '青菜', '生菜', '空心菜', '西兰花'], file: 'stir-fry-veg' },
+  { kw: ['番茄', '西红柿'], file: 'tomato-egg' },
+  { kw: ['豆角'], file: 'long-beans' },
+  { kw: ['茄子'], file: 'sichuan-eggplant' },
+  { kw: ['鸡蛋'], file: 'tomato-egg' },
+  { kw: ['豆腐'], file: 'mapo-tofu' },
+  { kw: ['紫菜'], file: 'egg-drop-soup' }
+];
+
+/** 食材名落到本地菜图。对不上就空，不用哈希乱配。 */
+function localDishByIngredient(name) {
+  const n = String(name || '').trim();
+  if (!n) return '';
+  const byTitle = localDishByTitle(n);
+  if (byTitle) return byTitle;
+  for (let i = 0; i < INGREDIENT_RULES.length; i++) {
+    const rule = INGREDIENT_RULES[i];
+    for (let j = 0; j < rule.kw.length; j++) {
+      if (n.indexOf(rule.kw[j]) >= 0) return localPath(rule.file);
+    }
+  }
+  return '';
+}
+
 function fallbackDishImg(seed) {
   const byTitle = localDishByTitle(seed);
   if (byTitle) return byTitle;
@@ -72,6 +98,11 @@ function recipeDishImg(recipe) {
   return fallbackDishImg(recipe.id || title);
 }
 
+function stepDishImg(recipe, index, explicit) {
+  if (explicit) return explicit;
+  return recipeDishImg(recipe);
+}
+
 function onImgError(e, pageCtx, dataPath, seed) {
   const fallback = localDishByTitle(seed) || fallbackDishImg(seed || dataPath);
   pageCtx.setData({ [dataPath]: fallback });
@@ -82,5 +113,7 @@ module.exports = {
   fallbackDishImg,
   recipeDishImg,
   localDishByTitle,
+  localDishByIngredient,
+  stepDishImg,
   onImgError
 };

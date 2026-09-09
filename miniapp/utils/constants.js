@@ -2,6 +2,8 @@
  * 全局常量 — 各页面共用的枚举/标签映射统一维护于此
  */
 
+const features = require('./features');
+
 const mealTypeLabels = {
   breakfast: '早餐',
   lunch: '午餐',
@@ -11,7 +13,8 @@ const mealTypeLabels = {
 
 const sourceLabels = {
   owned: '自建',
-  community: '社区',
+  // 社区功能隐藏时来源标签改用中性词，避免出现无处可去的"社区"字样
+  community: features.COMMUNITY ? '社区' : '精选',
   imported: '导入'
 };
 
@@ -29,12 +32,13 @@ const cuisineLabels = {
 const cuisinePinyin = cuisineLabels;
 
 // 菜谱库 tab 的来源筛选 chips
+// "社区"与"我的收藏"（数据源是社区帖子收藏）随 COMMUNITY 开关隐藏
 const sourceTabs = [
   { key: 'all', label: '全部' },
   { key: 'owned', label: '自建' },
-  { key: 'community', label: '社区' },
+  ...(features.COMMUNITY ? [{ key: 'community', label: '社区' }] : []),
   { key: 'imported', label: '导入' },
-  { key: 'favorites', label: '我的收藏' }
+  ...(features.COMMUNITY ? [{ key: 'favorites', label: '我的收藏' }] : [])
 ];
 
 // 菜系筛选项（字符串列表）

@@ -21,9 +21,10 @@
 .imp-nav .navbar-back-icon { border-color: var(--c-surface); }
 
 /* ============ HERO ============ */
+/* 与全站照片头统一高度，勿再单独写 560rpx */
 .imp-hero {
   position: relative;
-  height: 560rpx;
+  height: var(--photo-hero-h);
   overflow: hidden;
 }
 .imp-hero-img {
@@ -88,14 +89,16 @@
   margin-top: -50rpx;
   background: var(--paper);
   border-radius: var(--r-sheet) var(--r-sheet) 0 0;
-  padding: 50rpx 0 0;
+  padding: 50rpx 0 calc(env(safe-area-inset-bottom) + 40rpx);
   z-index: 10;
 }
-.imp-pad { padding: 0 28rpx; }
+.imp-pad { padding: 0 46rpx; }
 
 /* ============ 导入方式卡 ============ */
-.imp-methods { display: flex; gap: 18rpx; padding: 0 28rpx; }
+.imp-methods { display: flex; gap: 18rpx; padding: 0 46rpx; }
 .imp-mcol { display: flex; flex-direction: column; gap: 18rpx; flex: 1; }
+/* 拍照识别下线后只剩一张卡：撑满左卡高度，避免右侧留白 */
+.imp-mcol .imp-method { flex: 1; }
 .imp-method {
   box-sizing: border-box;
   background: var(--c-surface);

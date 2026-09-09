@@ -16,6 +16,9 @@ const SORTS = [
 Page({
   data: {
     statusBarHeight: 0,
+    // 结果流回顶键（滚深出现）
+    showBackTop: false,
+    scrollTopTo: -1,
     keyword: '',
     sorts: SORTS,
     activeSort: 'all',
@@ -44,6 +47,9 @@ Page({
       if (mb && sys && mb.left) capsuleRight = sys.windowWidth - mb.left + 8;
     } catch (e) {}
     const kw = (options && options.keyword) ? decodeURIComponent(options.keyword) : '';
+    // 从首页心愿「待挑菜」跳来时带 wishId/slot，点卡片透传给详情页做销愿闭环
+    this._wishId = (options && options.wishId) ? decodeURIComponent(options.wishId) : '';
+    this._wishSlot = (options && options.slot) || '';
     this.setData({ statusBarHeight: sbh, keyword: kw, capsuleRight });
     this._fetch(kw);
   },
@@ -107,7 +113,6 @@ Page({
       label: r.cuisine || tags[0] || '家常',
       cuisine: r.cuisine || tags[0] || '家常',
       timeText: r.timeCost ? r.timeCost + ' 分钟' : '',
-      favorited: !!r.favorited,
       titleParts: this._highlight(r.title || '未命名菜谱', kw)
     };
   },
@@ -165,19 +170,24 @@ Page({
     this._apply(this.data.keyword, key);
   },
 
-  onCardTap(e) {
-    const id = e.currentTarget.dataset.id;
-    if (!id && id !== 0) return;
-    wx.navigateTo({ url: '/pages/recipe-detail/index?id=' + id });
+  // —— 回顶悬浮键 ——
+  onScrollBody(e) {
+    const show = ((e.detail && e.detail.scrollTop) || 0) > 600;
+    if (show !== this.data.showBackTop) this.setData({ showBackTop: show });
   },
 
-  onFavTap(e) {
+  backToTop() {
+    // scroll-top 同值不触发滚动：0 与 0.1 交替，视觉无差
+    this.setData({ scrollTopTo: this.data.scrollTopTo === 0 ? 0.1 : 0 });
+  },
+
+  onCardTap(e) {
     const id = e.currentTarget.dataset.id;
-    const list = this.data.list.map((it) => {
-      if (it.id === id) it.favorited = !it.favorited;
-      return it;
-    });
-    this.setData({ list });
-    wx.showToast({ title: '已更新稍后做', icon: 'none' });
+    if (!id) return;
+    let url = `/pages/recipe-detail/index?id=${id}`;
+    if (this._wishId) {
+      url += `&wishId=${encodeURIComponent(this._wishId)}&slot=${this._wishSlot || ''}`;
+    }
+    wx.navigateTo({ url });
   }
 });

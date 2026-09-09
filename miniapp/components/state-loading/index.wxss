@@ -6,7 +6,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(251, 248, 243, 0.82);
+  background: var(--glass-soft);
   backdrop-filter: blur(6px);
 }
 .sl-box {

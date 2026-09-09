@@ -1,7 +1,13 @@
 /* pages/me/profile-edit · 编辑资料 · 套用全局 token（--paper/--pop/--ink-deep/--gold-deep/--serif） */
+/* nav-bar 在流内占位，滚动区 flex 撑满剩余高度 */
 .pe-page {
-  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
   background: var(--paper);
+}
+.pe-page nav-bar {
+  flex: none;
 }
 
 /* nav-bar 右侧保存文字 */
@@ -14,8 +20,9 @@
 }
 
 .pe-scroll {
+  flex: 1;
+  min-height: 0;
   box-sizing: border-box;
-  height: calc(100vh - 0rpx);
   padding: 8rpx 0 40rpx;
 }
 
@@ -116,9 +123,19 @@
   font-weight: 700;
 }
 
+/* 「仅本机保存」提示：这些字段后端无落库，避免用户误以为已同步 */
+.pe-localtip {
+  font-family: var(--sans);
+  font-style: normal;
+  font-size: var(--fs-tiny);
+  color: var(--mut-2);
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
 /* ===== 表单组（复用 .card）===== */
 .pe-group {
-  margin: 0 28rpx;
+  margin: 0 46rpx;
   padding: 0;
   overflow: hidden;
 }
@@ -240,8 +257,9 @@
 }
 
 /* ===== 保存按钮 ===== */
+/* padding 简写会盖掉 .safe-bottom，底部安全区写在这里 */
 .pe-savebar {
-  padding: 48rpx 28rpx 40rpx;
+  padding: 48rpx 28rpx calc(40rpx + env(safe-area-inset-bottom));
 }
 .pe-savebar .btn {
   gap: 14rpx;

@@ -1,16 +1,19 @@
-<wxs src="../../utils/cuisine.wxs" module="cuisine" />
+<wxs src="/utils/cuisine.wxs" module="cuisine" />
 
 <!-- ============ 正常态 ============ -->
 <view class="rd-page g-fade-in" wx:if="{{recipe}}">
-  <scroll-view class="rd-scroll" scroll-y enhanced show-scrollbar="{{false}}">
+  <scroll-view class="rd-scroll" scroll-y enhanced show-scrollbar="{{false}}"
+    scroll-top="{{scrollTopTo}}" scroll-with-animation bindscroll="onScrollBody">
 
     <!-- ===== Hero 大图 ===== -->
     <view class="rd-hero">
       <image class="rd-hero-img" src="{{recipe.cover}}" mode="aspectFill" />
       <view class="rd-hero-mask"></view>
 
-      <!-- 顶部导航：复用 nav-bar，标题留空仅返回 -->
-      <nav-bar title="" status-bar-height="{{statusBarHeight}}"></nav-bar>
+      <!-- 顶部导航：复用 nav-bar，标题留空仅返回；右侧 slot 放编辑（仅自建菜谱） -->
+      <nav-bar title="" status-bar-height="{{statusBarHeight}}">
+        <view wx:if="{{recipe.sourceType === 'owned'}}" class="rd-navedit tap-scale" bindtap="goEdit">编辑</view>
+      </nav-bar>
 
       <!-- Hero 文案 -->
       <view class="rd-hero-body">
@@ -42,6 +45,14 @@
       <section-head wx:else eyebrow="备料" title="食材" popPart="清单" />
 
       <view class="card rd-card" wx:if="{{recipe.ingredients.length}}">
+        <view class="rd-ing-cart" wx:if="{{missCount > 0}}">
+          <view class="rd-cart-btn tap-scale" bindtap="addMissingToCart">
+            <text>把</text>
+            <text class="rd-cnum">{{missCount}}</text>
+            <text>样缺的加入买菜清单</text>
+          </view>
+        </view>
+
         <view class="rd-ing" wx:for="{{recipe.ingredients}}" wx:key="name">
           <view class="rd-dot {{item.inStock ? 'have' : 'miss'}}"></view>
           <view class="rd-iname">
@@ -50,14 +61,6 @@
           </view>
           <text class="rd-amt">{{item.amountText}} {{item.unit}}</text>
         </view>
-
-        <view class="rd-ing-cart" wx:if="{{missCount > 0}}">
-          <view class="rd-cart-btn tap-scale" bindtap="addMissingToCart">
-            <text>把</text>
-            <text class="rd-cnum">{{missCount}}</text>
-            <text>样缺的加入买菜清单</text>
-          </view>
-        </view>
       </view>
       <view class="card rd-card rd-empty-mini" wx:else>暂无食材信息</view>
 
@@ -65,11 +68,33 @@
       <section-head eyebrow="跟着做" title="做法" popPart="步骤" hint="按顺序出菜" />
 
       <view class="card rd-card" wx:if="{{recipe.steps.length}}">
+        <view class="rd-video" bindtap="onTapVideo">
+          <video
+            wx:if="{{playingVideo && recipe.videoUrl}}"
+            class="rd-video-player"
+            src="{{recipe.videoUrl}}"
+            autoplay
+            controls
+            show-center-play-btn
+            object-fit="cover"
+          />
+          <block wx:else>
+            <image class="rd-video-poster" src="{{recipe.cover}}" mode="aspectFill" />
+            <view class="rd-video-mask"></view>
+            <view class="rd-video-play">
+              <view class="rd-ic rd-ic-play rd-ic-play-lg"></view>
+            </view>
+            <view class="rd-video-meta">
+              <text class="rd-video-kicker">{{recipe.videoUrl ? '教学视频' : '分步演示'}}</text>
+              <text class="rd-video-sub">{{recipe.videoUrl ? '点开看完整做法' : '点开按步骤做'}}</text>
+            </view>
+          </block>
+        </view>
         <view class="rd-step" wx:for="{{recipe.steps}}" wx:key="index">
           <view class="rd-sno {{index === 2 ? 'hot' : ''}} serif">{{index + 1}}</view>
           <view class="rd-stx">
             <view class="rd-stx-p">{{item.text}}</view>
-            <image wx:if="{{item.image}}" class="rd-step-img" src="{{item.image}}" mode="widthFix"
+            <image class="rd-step-img" src="{{item.image}}" mode="aspectFill"
               bindtap="previewStepImage" data-url="{{item.image}}" />
             <view wx:if="{{item.tip}}" class="rd-tip">
               <view class="rd-ic rd-ic-star"></view>
@@ -112,19 +137,29 @@
     </view>
   </scroll-view>
 
-  <!-- ===== 底部 footbar ===== -->
+  <!-- 悬浮快捷键：长菜谱滚深后一键回顶 / 直接退出（滚动超一屏出现） -->
+  <view class="rd-quicknav" wx:if="{{showQuickNav}}">
+    <view class="rd-qbtn tap-scale" bindtap="backToTop" aria-label="回到顶部">
+      <view class="rd-qic-up"></view>
+    </view>
+    <view class="rd-qbtn rd-qbtn-exit tap-scale" bindtap="goBack" aria-label="退出">
+      <view class="rd-qic-x"></view>
+    </view>
+  </view>
+
+  <!-- ===== 底部 footbar：主按钮=开始做菜（做饭动线入口），加菜单降为次按钮 ===== -->
   <view class="rd-footbar safe-bottom">
     <view class="rd-ghost-btn tap-scale" bindtap="recordCook">
       <view class="rd-ic rd-ic-check"></view>
       <text>记录做过</text>
     </view>
-    <view class="rd-primary-btn tap-scale" bindtap="addToToday">
-      <view class="rd-ic rd-ic-plus"></view>
-      <text>加入今日菜单</text>
+    <view class="rd-secondary-btn tap-scale {{inTodayMenu ? 'rd-secondary-btn--added' : ''}} {{addingToday ? 'rd-secondary-btn--busy' : ''}}" bindtap="addToToday">
+      <view class="rd-ic {{inTodayMenu ? 'rd-ic-check' : 'rd-ic-plus'}}"></view>
+      <text>{{inTodayMenu ? '已在菜单' : (addingToday ? '加入中…' : '加菜单')}}</text>
     </view>
-    <view class="rd-cook-btn tap-scale" bindtap="startCook">
+    <view class="rd-primary-btn tap-scale" bindtap="startCook">
       <view class="rd-ic rd-ic-play"></view>
-      <text>做菜</text>
+      <text>开始做菜</text>
     </view>
   </view>
 </view>

@@ -1,0 +1,10 @@
+<!-- 通用回顶悬浮键：长列表/长内容页滚深后出现，点击回到顶部（滚动由页面执行） -->
+<view
+  wx:if="{{show}}"
+  class="bt-btn tap-scale"
+  style="right: {{right}}; bottom: calc(env(safe-area-inset-bottom) + {{bottom}});"
+  bindtap="onTap"
+  aria-label="回到顶部"
+>
+  <view class="bt-ic"></view>
+</view>

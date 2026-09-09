@@ -1,5 +1,11 @@
 server:
   port: ${SERVER_PORT:9088}
+  # 部署在 nginx 之后：让 Spring 采信 X-Forwarded-* 头，否则限流/日志里全是代理 IP
+  forward-headers-strategy: native
+  tomcat:
+    # 默认 200 线程远大于连接池（默认 10），请求会排队等连接；给一个保守上限
+    threads:
+      max: ${TOMCAT_MAX_THREADS:100}
 
 spring:
   application:
@@ -8,9 +14,21 @@ spring:
     url: jdbc:mysql://${DB_HOST:127.0.0.1}:${DB_PORT:3306}/${DB_NAME:family_menu_daily_db}?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: ${DB_USERNAME:root}
     password: ${DB_PASSWORD:123456}
+    hikari:
+      maximum-pool-size: ${DB_POOL_SIZE:20}
+      minimum-idle: ${DB_POOL_MIN_IDLE:5}
+      connection-timeout: 10000
+      max-lifetime: 1740000
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
   sql:
     init:
-      mode: always
+      # 默认 always 便于本地开发与测试；生产必须设 SPRING_SQL_INIT_MODE=never，
+      # 否则每次启动都会执行 schema.sql 并注入 data.sql 的演示数据（含免费年卡会员）。
+      # 见 application-prod.yml。
+      mode: ${SPRING_SQL_INIT_MODE:always}
       encoding: UTF-8
       continue-on-error: true
 
@@ -23,7 +41,12 @@ wechat:
     api-v3-key: ${WECHAT_PAY_API_V3_KEY:}        # APIv3 密钥（32 位，用于回调 AES-256-GCM 解密）
     cert-serial-no: ${WECHAT_PAY_CERT_SERIAL:}   # 商户证书序列号
     private-key-path: ${WECHAT_PAY_KEY_PATH:}    # 商户私钥 PEM 文件路径（apiclient_key.pem）
+    # 微信支付平台证书 PEM（回调 RSA 验签用）。未配置则回调一律拒绝，防止伪造到账。
+    platform-cert-path: ${WECHAT_PAY_PLATFORM_CERT_PATH:}
     notify-url: ${WECHAT_PAY_NOTIFY_URL:}        # 回调地址（公网 https）
+    # 模拟支付开关：mock-pay 端点免真实付款直接开通会员（资损风险），
+    # 生产必须保持 false，本地联调用 WECHAT_PAY_MOCK_ENABLED=true 显式开启。
+    mock-pay-enabled: ${WECHAT_PAY_MOCK_ENABLED:false}
 
 sms:
   # 短信网关供应商：noop=未接入（落库 + 日志告警），后续可接 aliyun/tencent。
@@ -36,6 +59,11 @@ auth:
 
 upload:
   dir: ${UPLOAD_DIR:uploads}
+
+admin:
+  # 首次管理员的 openid 白名单（逗号分隔），仅用于启动时升权，只升不降。
+  # 必须通过环境变量注入，禁止把真实 openid 写进代码或配置默认值；留空 = 不播种任何管理员。
+  bootstrap-openids: ${ADMIN_OPENIDS:}
 
 cors:
   allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:9088,http://127.0.0.1:9088}

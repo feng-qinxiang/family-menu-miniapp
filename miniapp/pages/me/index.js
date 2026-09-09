@@ -10,6 +10,7 @@ const {
 
 const { recipeDishImg } = require('../../utils/image');
 const { withTabSelect } = require('../../behaviors/tab-select');
+const features = require('../../utils/features');
 
 const memberTones = ['mavt-a', 'mavt-b', 'mavt-c', 'mavt-d', 'mavt-e'];
 
@@ -33,7 +34,9 @@ function formatCookedLabel(item) {
 
 Page({
   data: {
+    features,
     currentUser: {},
+    isAdmin: false,
     vipStatus: { vip: false, planName: '' },
     familyProfile: { familyId: 1, familyName: '', members: [] },
     memberCount: 0,
@@ -46,7 +49,15 @@ Page({
     favoriteCuisine: '',
     appVersion: 'v1.0.0',
     loading: true,
-    loadError: ''
+    loadError: '',
+    capsuleTop: '51px'
+  },
+
+  onLoad() {
+    try {
+      const mb = wx.getMenuButtonBoundingClientRect();
+      if (mb && mb.top) this.setData({ capsuleTop: mb.top + 'px' });
+    } catch (e) {}
   },
 
   onShow() {
@@ -61,7 +72,8 @@ Page({
     try {
       const [currentUser, vipStatus, familyProfile, todayMenu, cookHistory, preference, dashboard] = await Promise.all([
         getCurrentUser(),
-        getVipStatus(),
+        // 支付关闭时跳过会员状态请求
+        features.PAYMENT ? getVipStatus() : Promise.resolve({ vip: false }),
         getFamilyProfile(),
         getTodayMenu(),
         getCookHistory(),
@@ -115,6 +127,8 @@ Page({
 
       this.setData({
         currentUser: currentUser || {},
+        // 管理入口可见性：后端 AuthUser.admin 字段（仅管理员为 true）
+        isAdmin: !!(currentUser && currentUser.admin),
         vipStatus: vipStatus || { vip: false },
         familyProfile: {
           ...(familyProfile || { familyName: '' }),
@@ -146,15 +160,12 @@ Page({
     wx.navigateTo({ url: '/pages/family/members/index' });
   },
 
-  goVip() { wx.navigateTo({ url: '/pages/vip/index' }); },
-    goPhoneBind() { wx.navigateTo({ url: '/pages/auth/login-phone/index' }); },
+  goVip() { wx.navigateTo({ url: '/pkg-extra/vip/index' }); },
+  goPhoneBind() { wx.navigateTo({ url: '/pages/auth/login-phone/index' }); },
   goWeekly() { wx.navigateTo({ url: '/pages/weekly-menu/index' }); },
-  goMenu() { wx.navigateTo({ url: '/pages/menu/index' }); },
-  goPantry() { wx.switchTab({ url: '/pages/pantry/index' }); },
-  goShopping() { wx.navigateTo({ url: '/pages/shopping/index' }); },
-  goCommunity() { wx.navigateTo({ url: '/pages/community/index' }); },
   goImport() { wx.navigateTo({ url: '/pages/import/index' }); },
-  goRecipeEdit() { wx.navigateTo({ url: '/pages/recipe-edit/index' }); },
+  goFavorites() { wx.navigateTo({ url: '/pkg-extra/favorites/index' }); },
+  goCommunityAudit() { wx.navigateTo({ url: '/pkg-extra/community/audit/index' }); },
   goRecipes() { wx.switchTab({ url: '/pages/recipes/index' }); },
   goPreference() { wx.navigateTo({ url: '/pages/me/preference-profile/index' }); },
   goSettings() { wx.navigateTo({ url: '/pages/me/settings/index' }); },

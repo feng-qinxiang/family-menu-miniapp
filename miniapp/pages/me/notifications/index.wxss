@@ -1,7 +1,13 @@
 /* pages/me/notifications · 消息中心 · 杂志风 + 番茄红撞色 */
+/* nav-bar 在流内占位，滚动区 flex 撑满剩余高度 */
 .notif-page {
-  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
   background: var(--paper);
+}
+.notif-page nav-bar {
+  flex: none;
 }
 
 /* nav-bar 右侧「全部已读」 */
@@ -23,9 +29,10 @@
 }
 
 .notif-scroll {
+  flex: 1;
+  min-height: 0;
   box-sizing: border-box;
-  height: 100vh;
-  padding-top: calc(env(safe-area-inset-top) + 96rpx);
+  padding-top: 16rpx;
 }
 
 /* ===== Hero ===== */
@@ -134,6 +141,8 @@
 .ic-fam { background: var(--pop-soft); }
 .ic-com { background: var(--c-success-soft); }
 .ic-sys { background: var(--gold); }
+.ic-wish { background: var(--pop-soft); }
+.ic-meal { background: var(--gold); }
 .ic-img { width: 88rpx; height: 88rpx; border-radius: var(--r-md); }
 
 /* 用 CSS 画简易类型图标（避免 background-image 本地图） */

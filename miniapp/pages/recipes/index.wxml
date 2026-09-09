@@ -1,4 +1,4 @@
-<wxs src="../../utils/cuisine.wxs" module="cuisine" />
+<wxs src="/utils/cuisine.wxs" module="cuisine" />
 <view class="recipes-mag {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <!-- ===== HERO（轻量头部：小图条 + 实心标题） ===== -->
   <view class="rx-hero g-fade-in">
@@ -35,47 +35,48 @@
         value="{{searchText}}" bindinput="onSearchInput" bindfocus="onSearchFocus" bindblur="onSearchBlur" />
     </view>
 
-    <!-- 忌口过滤提示条 -->
-    <view wx:if="{{avoidTags.length}}" class="rx-dietbar g-fade-up g-d1">
-      <view class="rx-dietbar-ic"></view>
-      <view class="rx-dietbar-t">
-        已按家人忌口过滤：{{avoidTagsText}}
-        <text wx:if="{{avoidHiddenCount}}">（隐藏 {{avoidHiddenCount}} 道）</text>
+    <!-- 来源 chips + 忌口设置 -->
+    <view class="rx-srcrow">
+      <scroll-view scroll-x class="rx-chips" enhanced="{{true}}" show-scrollbar="{{false}}">
+        <view class="rx-chips-inner">
+          <view wx:for="{{sourceTabs}}" wx:key="key"
+            class="chip rx-chip {{activeSource === item.key ? 'on' : ''}}"
+            data-source="{{item.key}}" bindtap="selectSource">
+            <view class="rx-sdot rx-sdot--{{item.key}}"></view>
+            {{item.label}}
+          </view>
+        </view>
+      </scroll-view>
+      <!-- 忌口小 icon：避开整行占位 -->
+      <view wx:if="{{avoidTags.length}}" class="rx-avd-ic tap-scale" catchtap="toggleAvoidFilter" aria-label="家人忌口">
+        <view class="rx-avd-dot" wx:if="{{avoidActive}}"></view>
+        <view class="rx-avd-glyph"></view>
+        <text class="rx-avd-t">{{avoidActive ? '忌口' : '关'}}</text>
       </view>
-      <view class="rx-dietbar-x tap-scale" catchtap="toggleAvoidFilter">{{avoidActive ? '临时显示全部' : '恢复过滤'}}</view>
     </view>
 
-    <!-- 来源 chips -->
-    <scroll-view scroll-x class="rx-chips" enhanced="{{true}}" show-scrollbar="{{false}}">
-      <view class="rx-chips-inner">
-        <view wx:for="{{sourceTabs}}" wx:key="key"
-          class="chip rx-chip {{activeSource === item.key ? 'on' : ''}}"
-          data-source="{{item.key}}" bindtap="selectSource">
-          <view class="rx-sdot rx-sdot--{{item.key}}"></view>
-          {{item.label}}
-        </view>
-      </view>
-    </scroll-view>
-
-    <!-- 菜系 chips -->
-    <scroll-view scroll-x class="rx-cuisine" enhanced="{{true}}" show-scrollbar="{{false}}">
-      <view class="rx-cuisine-inner">
-        <view class="rx-cchip {{!advFilter.cuisine ? 'on' : ''}}" data-val="" bindtap="setFilterCuisine">全部</view>
-        <view wx:for="{{cuisineList}}" wx:key="*this"
-          class="rx-cchip {{advFilter.cuisine === item ? 'on' : ''}}"
-          data-val="{{item}}" bindtap="setFilterCuisine">{{item}}</view>
-      </view>
-    </scroll-view>
-
-    <!-- 细筛栏 -->
+    <!-- 点菜条件：菜系 + 耗时 + 人份，合并到一个可展开面板 -->
     <view class="rx-diet tap-scale" bindtap="toggleAdvFilter">
       <view class="rx-diet-ico"></view>
       <text class="rx-diet-label">点菜条件</text>
-      <text class="rx-diet-val">{{showAdvFilter ? '正在筛耗时和人份' : '快手 · 多人餐可继续细筛'}}</text>
+      <text class="rx-diet-val">{{advFilter.cuisine || (advFilter.maxTime ? advFilter.maxTime + '分' : '') || (advFilter.minServings ? advFilter.minServings + '人' : '') || '菜系 · 耗时 · 人份'}}</text>
       <text class="rx-diet-toggle">{{showAdvFilter ? '收起' : '细筛'}}</text>
     </view>
 
     <view class="rx-quickfilters" wx:if="{{showAdvFilter}}">
+      <!-- 菜系 -->
+      <view class="rx-qf-row">
+        <text class="rx-qf-label">菜系</text>
+        <scroll-view scroll-x class="rx-qf-scroll" enhanced="{{true}}" show-scrollbar="{{false}}">
+          <view class="rx-qf-chips">
+            <view class="rx-qf-chip {{!advFilter.cuisine ? 'on' : ''}}" data-val="" bindtap="setFilterCuisine">全部</view>
+            <view wx:for="{{cuisineList}}" wx:key="*this"
+              class="rx-qf-chip {{advFilter.cuisine === item ? 'on' : ''}}"
+              data-val="{{item}}" bindtap="setFilterCuisine">{{item}}</view>
+          </view>
+        </scroll-view>
+      </view>
+      <!-- 耗时 -->
       <view class="rx-qf-row">
         <text class="rx-qf-label">耗时</text>
         <view class="rx-qf-chips">
@@ -85,6 +86,7 @@
           <view class="rx-qf-chip {{advFilter.maxTime === 60 ? 'on' : ''}}" data-val="60" bindtap="setFilterTime">60分钟</view>
         </view>
       </view>
+      <!-- 人份 -->
       <view class="rx-qf-row">
         <text class="rx-qf-label">人份</text>
         <view class="rx-qf-chips">
@@ -92,6 +94,10 @@
           <view class="rx-qf-chip {{advFilter.minServings === 2 ? 'on' : ''}}" data-val="2" bindtap="setFilterServings">2人+</view>
           <view class="rx-qf-chip {{advFilter.minServings === 4 ? 'on' : ''}}" data-val="4" bindtap="setFilterServings">4人+</view>
         </view>
+      </view>
+      <!-- 一键清空 -->
+      <view class="rx-qf-reset tap-scale" bindtap="clearFilter">
+        <text>清空全部条件</text>
       </view>
     </view>
 
@@ -115,14 +121,14 @@
       hint="点 + 加入今日"
     />
 
-    <!-- 点到 -->
-    <view class="rx-meal" wx:if="{{!loading && displayedRecipes.length}}">
-      <text class="rx-meal-label">点到</text>
-      <view class="rx-meal-opts">
-        <view wx:for="{{mealOptions}}" wx:key="key"
-          class="rx-meal-chip {{activeMealType === item.key ? 'on' : ''}}"
-          data-meal="{{item.key}}" bindtap="selectMeal">{{item.label}}</view>
-      </view>
+    <!-- 点到下拉 picker：不占单独行 -->
+    <view class="rx-meal-picker" wx:if="{{!loading && displayedRecipes.length}}">
+      <picker class="rx-meal-pk" value="{{mealIndex}}" range="{{mealOptionLabels}}" bindchange="onMealPicker">
+        <view class="rx-meal-pk-btn tap-scale">
+          <text class="rx-meal-pk-l">点到</text>
+          <text class="rx-meal-pk-v">{{mealOptionLabels[mealIndex]}} ▾</text>
+        </view>
+      </picker>
     </view>
 
     <!-- 菜卡网格 -->
@@ -165,6 +171,9 @@
       </state-empty>
     </view>
   </view>
+
+  <!-- 长菜谱列表滚深后回顶（页面级滚动，避开餐盘条） -->
+  <back-top show="{{showBackTop}}" right="32rpx" bottom="320rpx" bind:totop="backToTop" />
 
   <!-- ===== 餐盘 tray ===== -->
   <view class="rx-tray" wx:if="{{!loading}}">

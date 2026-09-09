@@ -30,7 +30,8 @@
   </view>
 
   <!-- 结果区 -->
-  <scroll-view class="scroll" scroll-y enhanced show-scrollbar="{{false}}">
+  <scroll-view class="scroll" scroll-y enhanced show-scrollbar="{{false}}"
+    scroll-top="{{scrollTopTo}}" scroll-with-animation bindscroll="onScrollBody">
     <view class="pad">
       <!-- 结果标题 -->
       <view class="rhead g-fade-up">
@@ -69,9 +70,6 @@
           <view class="gc-ph">
             <image class="gc-img" src="{{item.cover}}" mode="aspectFill" />
             <view wx:if="{{item.label}}" class="gc-lbl">{{item.label}}</view>
-            <view class="gc-fav {{item.favorited ? 'on' : ''}}" data-id="{{item.id}}" catchtap="onFavTap">
-              <view class="gc-heart-dot {{item.favorited ? 'on' : ''}}"></view>
-            </view>
           </view>
           <view class="gc-info">
             <view class="gc-name ellipsis">
@@ -100,4 +98,7 @@
       <view class="safe-bottom"></view>
     </view>
   </scroll-view>
+
+  <!-- 结果流滚深后回顶 -->
+  <back-top show="{{showBackTop}}" bottom="200rpx" bind:totop="backToTop" />
 </view>

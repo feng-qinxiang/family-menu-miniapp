@@ -68,5 +68,8 @@ public class WebCorsConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         String location = Paths.get(uploadDir).toAbsolutePath().normalize().toUri().toString();
         registry.addResourceHandler("/uploads/**").addResourceLocations(location);
+        // 运营后台静态资源（classpath:/admin/），与 C 端 static/ 隔离
+        registry.addResourceHandler("/admin/**")
+                .addResourceLocations("classpath:/admin/");
     }
 }

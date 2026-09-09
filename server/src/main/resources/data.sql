@@ -180,6 +180,11 @@ VALUES
   (107, '扬州炒饭', 'owned', 1, 1, '主食', '["快手","剩饭改造","孩子爱吃"]', 14, 2, 4.5, '剩米饭和鸡蛋的稳定发挥', '/assets/dishes/fried-rice.jpg', 'ACTIVE'),
   (108, '家常拌面', 'community', 1, NULL, '面食', '["快手","香辣","夜宵"]', 12, 2, 4.3, '不想开大火时的拌面方案', '/assets/dishes/lo-mein.jpg', 'ACTIVE');
 
+-- 种子菜谱对全部家庭可见：用显式 is_public 标记，取代历史上按 family_id = 1 判断的做法
+-- （那会让"第一个真实家庭"的私有菜谱意外全球可见）。
+UPDATE recipe SET is_public = 1
+WHERE id IN (1,2,3,4,5,6,7,8,101,102,103,104,105,106,107,108);
+
 INSERT IGNORE INTO recipe_ingredient (id, recipe_id, ingredient_name, amount, unit) VALUES
   (101, 101, '紫菜', '8', 'g'), (102, 101, '鸡蛋', '2', '个'), (103, 101, '香葱', '1', '根'),
   (104, 102, '土豆', '2', '个'), (105, 102, '青椒', '1', '个'), (106, 102, '米醋', '1', '勺'),

@@ -47,15 +47,15 @@ public class TodayService {
     }
 
     @Transactional
-    public DailyMenuView addMenuItem(long familyId, AddMenuItemRequest request) {
+    public DailyMenuView addMenuItem(long familyId, String addedByName, AddMenuItemRequest request) {
         long menuId = ensureTodayMenu(familyId);
         if (request == null || request.recipeId() == null) {
             return loadMenuView(menuId, familyId);
         }
-        // 只允许加入本家庭可见的菜谱（community / 本家庭 / 种子演示数据），防跨家庭串菜
+        // 只允许加入本家庭可见的菜谱（community / 本家庭 / 公共种子菜谱），防跨家庭串菜
         Boolean visible = jdbcTemplate.query(
                 "SELECT 1 FROM recipe WHERE id = ? AND status = 'ACTIVE' " +
-                        "AND (source_type = 'community' OR family_id = ? OR family_id = 1 OR family_id IS NULL)",
+                        "AND (source_type = 'community' OR family_id = ? OR is_public = 1 OR family_id IS NULL)",
                 rs -> rs.next() ? Boolean.TRUE : null,
                 request.recipeId(), familyId
         );
@@ -66,12 +66,28 @@ public class TodayService {
         String mealType = normalizeMealType(request.mealType());
         jdbcTemplate.update("DELETE FROM daily_menu_item WHERE daily_menu_id = ? AND recipe_id = ?", menuId, request.recipeId());
         jdbcTemplate.update(
-                "INSERT INTO daily_menu_item(daily_menu_id, recipe_id, meal_type) VALUES (?, ?, ?)",
+                "INSERT INTO daily_menu_item(daily_menu_id, recipe_id, meal_type, status, added_by_name) VALUES (?, ?, ?, 'todo', ?)",
                 menuId,
                 request.recipeId(),
-                mealType
+                mealType,
+                addedByName
         );
         rebuildShoppingList(familyId);
+        return loadMenuView(menuId, familyId);
+    }
+
+    /** 菜单项状态流转：todo（待做）→ cooking（烧着）→ done（上桌）。itemId 限定在本家庭今日菜单内。 */
+    @Transactional
+    public DailyMenuView updateItemStatus(long familyId, long itemId, String status) {
+        long menuId = ensureTodayMenu(familyId);
+        jdbcTemplate.update("""
+                        UPDATE daily_menu_item dmi
+                        JOIN daily_menu dm ON dm.id = dmi.daily_menu_id
+                        SET dmi.status = ?
+                        WHERE dmi.id = ? AND dm.id = ? AND dm.family_id = ?
+                        """,
+                normalizeStatus(status), itemId, menuId, familyId
+        );
         return loadMenuView(menuId, familyId);
     }
 
@@ -160,6 +176,22 @@ public class TodayService {
         }
         String amount = request.amount() == null ? "" : request.amount().trim();
         String unit = request.unit() == null ? "" : request.unit().trim();
+        // 同名食材去重：菜谱缺料「一键加购」可重复点击，重复 INSERT 会累积多行。
+        // 已有同名行则只在原用量为空时补全用量，不再新增行。
+        Long existingId = jdbcTemplate.query(
+                "SELECT id FROM shopping_list_item WHERE shopping_list_id = ? AND ingredient_name = ? LIMIT 1",
+                rs -> rs.next() ? rs.getLong("id") : null,
+                shoppingListId, name
+        );
+        if (existingId != null) {
+            if (!amount.isBlank()) {
+                jdbcTemplate.update(
+                        "UPDATE shopping_list_item SET amount = ?, unit = ? WHERE id = ? AND (amount IS NULL OR amount = '')",
+                        amount, unit, existingId
+                );
+            }
+            return loadShoppingListView(shoppingListId, menuId, familyId);
+        }
         jdbcTemplate.update(
                 "INSERT INTO shopping_list_item(shopping_list_id, ingredient_name, amount, unit, purchased, is_manual) VALUES (?, ?, ?, ?, 0, 1)",
                 shoppingListId, name, amount, unit
@@ -280,7 +312,8 @@ public class TodayService {
 
     private List<DailyMenuItemView> loadMenuItems(long menuId) {
         return jdbcTemplate.query("""
-                        SELECT dmi.recipe_id, dmi.meal_type, r.id, r.title, r.source_type, r.cuisine, r.taste_tags_json,
+                        SELECT dmi.id AS item_id, dmi.recipe_id, dmi.meal_type, dmi.status AS item_status, dmi.added_by_name,
+                               r.id, r.title, r.source_type, r.cuisine, r.taste_tags_json,
                                r.time_cost, r.servings, r.rating, r.source_url, r.summary, r.cover_image
                         FROM daily_menu_item dmi
                         JOIN recipe r ON r.id = dmi.recipe_id
@@ -288,8 +321,11 @@ public class TodayService {
                         ORDER BY dmi.id ASC
                         """,
                 (rs, rowNum) -> new DailyMenuItemView(
+                        rs.getLong("item_id"),
                         rs.getLong("recipe_id"),
                         rs.getString("meal_type"),
+                        rs.getString("item_status"),
+                        rs.getString("added_by_name"),
                         new RecipeCard(
                                 rs.getLong("id"),
                                 rs.getString("title"),
@@ -393,6 +429,17 @@ public class TodayService {
             result.put(normalizeIngredientKey(item.ingredientName(), item.unit()), item.purchased());
         }
         return result;
+    }
+
+    private String normalizeStatus(String status) {
+        if (status == null || status.isBlank()) {
+            return "todo";
+        }
+        String normalized = status.trim().toLowerCase(Locale.ROOT);
+        return switch (normalized) {
+            case "todo", "cooking", "done" -> normalized;
+            default -> "todo";
+        };
     }
 
     private String normalizeMealType(String mealType) {

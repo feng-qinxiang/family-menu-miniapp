@@ -87,6 +87,14 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", "参数格式有误"));
     }
 
+    /** 方法用错（例如对只支持 POST 的接口发 GET）应返回 405，而不是"服务器内部错误"。 */
+    @ExceptionHandler(org.springframework.web.HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<Map<String, String>> handleMethodNotSupported(
+            org.springframework.web.HttpRequestMethodNotSupportedException ex) {
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
+                .body(Map.of("error", "请求方法不支持"));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleGeneric(Exception ex) {
         log.error("unhandled exception", ex);

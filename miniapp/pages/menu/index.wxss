@@ -3,7 +3,7 @@
    配色/工具类来自 app.wxss，本页只写专属布局，禁止重定义 token
    ============================================================ */
 .menu-page {
-  padding: 0 0 80rpx;
+  padding: 0 0 calc(200rpx + env(safe-area-inset-bottom));
 }
 
 /* 二级页顶部返回（透明叠在 hero 上） */
@@ -57,7 +57,7 @@
 }
 .m-hero-top {
   position: absolute;
-  top: calc(env(safe-area-inset-top) + 90rpx);
+  top: 91px;
   left: 46rpx;
   right: 46rpx;
   z-index: 10;
@@ -86,7 +86,7 @@
   position: absolute;
   left: 46rpx;
   right: 46rpx;
-  bottom: 92rpx;
+  bottom: var(--hero-body-above-sheet);
   z-index: 10;
   color: var(--c-surface);
 }
@@ -117,7 +117,7 @@
   margin-top: -50rpx;
   background: var(--paper);
   border-radius: 20rpx 20rpx 0 0;
-  padding: 46rpx 28rpx 0;
+  padding: 46rpx 46rpx 0;
   z-index: 20;
 }
 
@@ -300,8 +300,11 @@
   margin-top: 10rpx;
   display: flex;
   align-items: center;
-  gap: 14rpx;
+  gap: 8rpx 14rpx;
+  flex-wrap: wrap;
 }
+/* 行内被操作按钮挤窄时按"项"换行，禁止文字在词内竖排断行 */
+.m-rsub text { white-space: nowrap; }
 .m-rsub .cz { color: var(--gold-deep); font-weight: 700; }
 .m-rsub .dot { width: 6rpx; height: 6rpx; border-radius: 50%; background: var(--mut-2); }
 .m-remove {
@@ -313,8 +316,11 @@
   border-radius: var(--r-chip);
   padding: 16rpx 26rpx;
   background: var(--paper);
+  /* 防误触：与右侧"开始做/上桌"操作区拉开间距，弱化存在感（破坏性操作不该和主操作同热区） */
+  margin-right: 20rpx;
+  opacity: 0.75;
 }
-.m-remove:active { background: var(--pop-soft); color: var(--pop); border-color: var(--pop); }
+.m-remove:active { background: var(--pop-soft); color: var(--pop); border-color: var(--pop); opacity: 1; }
 
 /* ============ 周预览 暗卡 ============ */
 .m-week-card {
@@ -432,6 +438,86 @@
   border: 2rpx solid var(--c-border);
 }
 
+/* ============ 菜品状态流转（待做 / 烧着呢 / 已上桌） ============ */
+/* 烧着呢：左侧暖色描边 + 缩略图轻呼吸，一眼看出锅上有菜 */
+.m-row.is-cooking { position: relative; }
+.m-row.is-cooking::before {
+  content: "";
+  position: absolute;
+  left: -18rpx;
+  top: 28rpx;
+  bottom: 28rpx;
+  width: 6rpx;
+  border-radius: 6rpx;
+  background: var(--pop);
+}
+.m-row.is-cooking .m-thumb { animation: mCookPulse 2.2s ease-in-out infinite; }
+@keyframes mCookPulse {
+  0%, 100% { box-shadow: 0 8rpx 22rpx rgba(120, 70, 30, 0.16); }
+  50% { box-shadow: 0 8rpx 30rpx rgba(214, 69, 27, 0.38); }
+}
+/* 已上桌：整行降透明度 + 菜名划线，视觉上"划掉" */
+.m-row.is-done { opacity: 0.55; }
+.m-row.is-done .m-rname { text-decoration: line-through; text-decoration-thickness: 3rpx; }
+.m-state {
+  display: inline-block;
+  vertical-align: 4rpx;
+  font-size: 20rpx;
+  font-weight: 800;
+  border-radius: var(--r-pill);
+  padding: 4rpx 14rpx;
+  margin-right: 10rpx;
+  letter-spacing: 1rpx;
+}
+.m-state.st-cooking { background: var(--pop-soft); color: var(--pop); }
+.m-state.st-done { background: var(--paper-2); color: var(--mut); }
+.m-rby { color: var(--gold-deep); font-weight: 700; }
+.m-acts-done {
+  margin-left: 12rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.m-done-check {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  background: var(--paper-2);
+  color: var(--gold-deep);
+  font-size: 30rpx;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 做菜顺序建议条：先炖后炒，同时上桌 */
+.m-cook-order {
+  display: flex;
+  align-items: flex-start;
+  gap: 12rpx;
+  background: var(--pop-soft);
+  border-radius: var(--r-chip);
+  padding: 16rpx 20rpx;
+  margin-bottom: 8rpx;
+}
+.m-co-tag {
+  flex: none;
+  font-size: 20rpx;
+  font-weight: 800;
+  color: var(--c-surface);
+  background: var(--pop);
+  border-radius: var(--r-pill);
+  padding: 4rpx 14rpx;
+  letter-spacing: 1rpx;
+}
+.m-co-text {
+  font-size: 22rpx;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.6;
+}
+
 /* 底部固定行动条 */
 .m-fab-bar {
   position: fixed;
@@ -441,7 +527,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20rpx 46rpx 28rpx;
+  padding: 20rpx 46rpx calc(28rpx + env(safe-area-inset-bottom));
   background: var(--paper);
   border-top: 2rpx solid var(--paper-2);
   z-index: 100;

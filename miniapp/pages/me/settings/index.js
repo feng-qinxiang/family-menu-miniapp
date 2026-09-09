@@ -1,34 +1,19 @@
 // settings · 二级页（游客直进，无强制登录拦截）
 // 视觉对标 artifacts/settings.html，配色全部走 app.wxss 全局 token
 const api = require('../../../utils/api');
-
-// 通知开关本地持久化 key（杀进程重进保持）
-const NOTIFY_STORAGE_KEY = 'notify_settings_v1';
-
-function loadNotifySettings() {
-  try {
-    const saved = wx.getStorageSync(NOTIFY_STORAGE_KEY);
-    if (saved && typeof saved === 'object') return saved;
-  } catch (e) { /* 读失败走默认 */ }
-  return null;
-}
+const features = require('../../../utils/features');
 
 Page({
   data: {
     statusBarHeight: 0,
     version: 'v1.0.0',
     year: 2026,
-    // 账号安全分组（手机号/微信绑定，登录后拉真实数据）
+    // 账号安全分组（手机号项随 PHONE_LOGIN 开关裁剪）
     accountList: [
-      { key: 'phone', name: '手机号', icon: 'phone', value: '未绑定' },
+      ...(features.PHONE_LOGIN ? [{ key: 'phone', name: '手机号', icon: 'phone', value: '未绑定' }] : []),
       { key: 'wechat', name: '微信绑定', icon: 'wechat', value: '未知' },
     ],
-    // 通知开关（3 个）
-    notifyList: [
-      { key: 'family', name: '家庭动态提醒', desc: '家人加菜、排菜时通知我', icon: 'bell', on: true },
-      { key: 'community', name: '社区互动提醒', desc: '评论、点赞、收藏', icon: 'chat', on: true },
-      { key: 'marketing', name: '营销推送', desc: '', icon: 'send', on: false },
-    ],
+    // ponytail: 消息通知开关已下线（原来只写 storage，没人读也没有 wx.requestSubscribeMessage）；重做需 requestSubscribeMessage + 后端订阅推送
     // 通用分组
     generalList: [
       { key: 'font', name: '字体大小', icon: 'font', value: '标准' },
@@ -63,17 +48,6 @@ Page({
     this._refreshCacheSize();
     this._loadAccount();
     this._loadFontScale();
-    this._loadNotifySettings();
-  },
-
-  // 通知开关：从 storage 回填上次状态（未存过则用默认值）
-  _loadNotifySettings() {
-    const saved = loadNotifySettings();
-    if (!saved) return;
-    const list = this.data.notifyList.map((it) =>
-      typeof saved[it.key] === 'boolean' ? { ...it, on: saved[it.key] } : it
-    );
-    this.setData({ notifyList: list });
   },
 
   // 读取大字模式开关并回填设置项展示
@@ -168,24 +142,6 @@ Page({
     }
   },
 
-  // 通知开关切换：写 storage 持久化，杀进程重进保持
-  onSwitchTap(e) {
-    const key = e.currentTarget.dataset.key;
-    const list = this.data.notifyList.map((it) =>
-      it.key === key ? { ...it, on: !it.on } : it
-    );
-    this.setData({ notifyList: list });
-    const saved = {};
-    list.forEach((it) => { saved[it.key] = it.on; });
-    try {
-      wx.setStorageSync(NOTIFY_STORAGE_KEY, saved);
-    } catch (err) {
-      // 存储失败仅影响持久化，不影响本次会话生效
-    }
-    const cur = list.find((it) => it.key === key);
-    this._toast(`${cur.name}已${cur.on ? '开启' : '关闭'}`);
-  },
-
   // 通用项点击
   onGeneralTap(e) {
     const key = e.currentTarget.dataset.key;
@@ -250,26 +206,29 @@ Page({
   // 确认退出：清登录态但保留游客身份锚点 device_id，避免下次进入变成全新游客账号
   onLogoutConfirm() {
     this.setData({ logoutVisible: false });
-    try {
-      const deviceId = wx.getStorageSync('device_id');
-      let fontScale = '';
-      try { fontScale = wx.getStorageSync('font_scale') || ''; } catch (e) { fontScale = ''; }
-      if (typeof wx.clearStorageSync === 'function') {
-        wx.clearStorageSync();
+    // 先吊销服务端会话，再清本地；失败也不阻塞（本地清完用户已无 token 可用）
+    api.logout().catch(() => {}).then(() => {
+      try {
+        const deviceId = wx.getStorageSync('device_id');
+        let fontScale = '';
+        try { fontScale = wx.getStorageSync('font_scale') || ''; } catch (e) { fontScale = ''; }
+        if (typeof wx.clearStorageSync === 'function') {
+          wx.clearStorageSync();
+        }
+        if (deviceId) wx.setStorageSync('device_id', deviceId);
+        if (fontScale) wx.setStorageSync('font_scale', fontScale);
+      } catch (e) {
+        // 忽略清理失败
       }
-      if (deviceId) wx.setStorageSync('device_id', deviceId);
-      if (fontScale) wx.setStorageSync('font_scale', fontScale);
-    } catch (e) {
-      // 忽略清理失败
-    }
-    wx.showToast({ title: '已退出登录', icon: 'none' });
-    setTimeout(() => {
-      wx.navigateTo({
-        url: '/pages/auth/login/index',
-        fail: () => {
-          wx.navigateBack({ delta: 1 });
-        },
-      });
-    }, 320);
+      wx.showToast({ title: '已退出登录', icon: 'none' });
+      setTimeout(() => {
+        wx.navigateTo({
+          url: '/pages/auth/login/index',
+          fail: () => {
+            wx.navigateBack({ delta: 1 });
+          },
+        });
+      }, 320);
+    });
   },
 });

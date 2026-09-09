@@ -10,7 +10,7 @@
   <view class="m-hero g-fade-up">
     <image class="m-hero-img" src="{{heroImage}}" mode="aspectFill" data-target="hero" binderror="onHeroImgError" />
     <view class="m-hero-mask"></view>
-    <view class="m-hero-top">
+    <view class="m-hero-top" style="top: {{heroMetaTop}};">
       <view class="m-hero-date">{{todayLabel}} · {{mealTimeLabel}}</view>
     </view>
     <view class="m-hero-body">
@@ -58,8 +58,8 @@
           <view class="m-stat-label">厨房耗时</view>
         </view>
         <view class="m-stat-cell">
-          <view class="m-stat-num">{{totalServings || '?'}}<text class="m-stat-u">人</text></view>
-          <view class="m-stat-label">最多人份</view>
+          <view class="m-stat-num">{{totalServings || '?'}}<text class="m-stat-u">份</text></view>
+          <view class="m-stat-label">单菜最多份数</view>
         </view>
       </view>
       <view class="m-shop-progress" wx:if="{{shoppingTotal}}">
@@ -103,8 +103,13 @@
 
       <view class="m-meal-block" wx:for="{{mealGroups}}" wx:for-item="group" wx:for-index="gIdx" wx:key="meal">
         <view class="m-meal-label">{{group.label}} <text class="n">{{group.items.length}} 道</text></view>
+        <!-- 做菜顺序建议：≥2 道待做时按耗时倒排，先炖后炒同时上桌 -->
+        <view class="m-cook-order" wx:if="{{group.cookOrderText}}">
+          <text class="m-co-tag">建议顺序</text>
+          <text class="m-co-text">{{group.cookOrderText}}</text>
+        </view>
         <view
-          class="m-row tap-scale g-fade-up g-d{{dishIndex % 5 + 1}}"
+          class="m-row tap-scale g-fade-up g-d{{dishIndex % 5 + 1}} {{dish.status === 'done' ? 'is-done' : ''}} {{dish.status === 'cooking' ? 'is-cooking' : ''}}"
           wx:for="{{group.items}}"
           wx:for-item="dish"
           wx:for-index="dishIndex"
@@ -122,19 +127,26 @@
             binderror="onImgError"
           />
           <view class="m-rmid">
-            <view class="m-rname">{{dish.recipe.title}}</view>
+            <view class="m-rname">
+              <text wx:if="{{dish.status === 'cooking'}}" class="m-state st-cooking">烧着呢</text>
+              <text wx:elif="{{dish.status === 'done'}}" class="m-state st-done">已上桌</text>
+              {{dish.recipe.title}}
+            </view>
             <view class="m-rsub">
               <text class="cz">{{dish.recipe.cuisine || '家常'}}</text>
               <text class="dot"></text>
               <text>{{dish.recipe.timeCost || '?'}} 分钟</text>
-              <text class="dot"></text>
-              <text>{{dish.recipe.servings || '?'}} 人</text>
+              <text class="dot" wx:if="{{dish.addedByName}}"></text>
+              <text class="m-rby" wx:if="{{dish.addedByName}}">{{dish.addedByName}} 点的</text>
             </view>
           </view>
           <view class="m-remove" data-id="{{dish.recipeId}}" catchtap="removeItem">撤</view>
-          <view class="m-acts">
-            <view class="m-act m-act-cook tap-scale" data-id="{{dish.recipeId}}" catchtap="startCook">开始做</view>
-            <view class="m-act m-act-done tap-scale" data-id="{{dish.recipeId}}" catchtap="markCooked">完成</view>
+          <view class="m-acts" wx:if="{{dish.status !== 'done'}}">
+            <view class="m-act m-act-cook tap-scale" data-id="{{dish.recipeId}}" data-item="{{dish.itemId}}" catchtap="startCook">{{dish.status === 'cooking' ? '继续做' : '开始做'}}</view>
+            <view class="m-act m-act-done tap-scale" data-id="{{dish.recipeId}}" data-item="{{dish.itemId}}" catchtap="markCooked">上桌</view>
+          </view>
+          <view class="m-acts m-acts-done" wx:else>
+            <view class="m-done-check">✓</view>
           </view>
         </view>
       </view>

@@ -3,6 +3,7 @@ const { recipeSourceLabels, cuisineList, mealOptions, sourceTabs } = require('..
 const { fallbackDishImg, recipeDishImg, onImgError } = require('../../utils/image');
 const { debounce } = require('../../utils/debounce');
 const { withTabSelect } = require('../../behaviors/tab-select');
+const { recipesFromPosts } = require('../../utils/dish-logic');
 
 const PAGE_SIZE = 6;
 
@@ -34,6 +35,8 @@ Page({
   data: {
     sourceTabs,
     cuisineList,
+    // 长列表回顶键（页面级滚动，滚深出现）
+    showBackTop: false,
     activeSource: 'all',
     searchText: '',
     recipes: [],
@@ -46,6 +49,8 @@ Page({
     todayDishIds: [],
     menuTray: { count: 0, names: '', shoppingCount: 0 },
     mealOptions,
+    mealOptionLabels: mealOptions.map(m => m.label),
+    mealIndex: 2,                                    // 默认 'dinner'
     activeMealType: 'dinner',
     loading: true,
     loadError: false,
@@ -90,13 +95,15 @@ Page({
     this.setData({ loading: true });
     try {
       const source = this.data.activeSource;
-      const [recipes, todayMenu, shoppingList, familyProfile] = await Promise.all([
+      const [rawList, todayMenu, shoppingList, familyProfile] = await Promise.all([
         source === 'favorites' ? getMyFavorites() : getRecipes('all'),
         getTodayMenu(),
         getShoppingList(),
         getFamilyProfile()
       ]);
       const tray = this.buildMenuTray(todayMenu, shoppingList);
+      // 收藏接口返回 CommunityPost[]，须先提取关联菜谱，否则 id 是帖子 id（详情 404 / 加菜失败）
+      const recipes = source === 'favorites' ? recipesFromPosts(rawList) : rawList;
       const raw = Array.isArray(recipes) ? recipes : [];
       // 汇总家庭成员忌口（去重）
       const memberAvoids = Array.isArray(familyProfile && familyProfile.members)
@@ -290,11 +297,11 @@ Page({
     this.applyFilter();
   },
 
-  selectMeal(e) {
-    const { meal } = e.currentTarget.dataset;
-    if (meal) {
-      this.setData({ activeMealType: meal });
-    }
+  onMealPicker(e) {
+    const idx = Number(e.detail.value);
+    const key = mealOptions[idx] && mealOptions[idx].key;
+    if (!key) return;
+    this.setData({ mealIndex: idx, activeMealType: key });
   },
 
   clearFilter() {
@@ -348,6 +355,16 @@ Page({
 
   goMenu() {
     wx.navigateTo({ url: '/pages/menu/index' });
+  },
+
+  // —— 回顶悬浮键（页面级滚动） ——
+  onPageScroll(e) {
+    const show = ((e && e.scrollTop) || 0) > 600;
+    if (show !== this.data.showBackTop) this.setData({ showBackTop: show });
+  },
+
+  backToTop() {
+    wx.pageScrollTo({ scrollTop: 0, duration: 300 });
   },
 
   goShopping() {

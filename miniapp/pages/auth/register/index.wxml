@@ -1,6 +1,8 @@
 <!-- pages/auth/register · 注册账号(二级页) -->
 <view class="rg safe-bottom">
-  <nav-bar title="注册账号" show-back="{{true}}"></nav-bar>
+  <view class="rg-nav">
+    <nav-bar title="注册账号" show-back="{{true}}"></nav-bar>
+  </view>
 
   <scroll-view class="rg-scroll" scroll-y enhanced show-scrollbar="{{false}}">
     <!-- Hero -->

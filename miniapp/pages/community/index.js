@@ -6,6 +6,7 @@ const {
   reportCommunityPost,
   toggleCommunityFavorite
 } = require('../../utils/api');
+const { withTabSelect } = require('../../behaviors/tab-select');
 
 const reportReasons = ['内容不实', '步骤不全', '疑似搬运', '其他'];
 
@@ -16,7 +17,7 @@ const FALLBACK_PHOTOS = [
   'sweet-sour-chicken', 'hongshao-pork', 'tomato-egg', 'kungpao-chicken',
   'mapo-tofu', 'fried-rice', 'orange-chicken', 'beef-broccoli'
 ];
-// 热门话题（演示数据，后端暂无对应接口）
+// 热门话题：后端暂无话题接口，点击直接带关键词跳菜谱搜索（复用搜索页 keyword 参数）
 const HOT_TOPICS = [
   { tag: '今天吃什么' },
   { tag: '快手菜' },
@@ -28,6 +29,11 @@ const HOT_TOPICS = [
 Page({
   data: {
       statusBarHeight: 0,
+    fontScale: 'normal',
+    // 信息流回顶键（滚深出现）
+    showBackTop: false,
+    scrollTopTo: -1,
+    refreshing: false,
     posts: [],
     loading: true,
     loadError: false,
@@ -60,12 +66,33 @@ Page({
   },
 
   onShow() {
+      withTabSelect(this);
+      // 大字模式（适老）：与其余 tab 页保持一致，onShow 读一次以便设置页切换后回来生效
+      let fontScale = 'normal';
+      try { fontScale = wx.getStorageSync('font_scale') || 'normal'; } catch (e) { fontScale = 'normal'; }
+      if (fontScale !== this.data.fontScale) this.setData({ fontScale });
       this.loadPosts();
     },
 
-    onPullDownRefresh() {
-      Promise.resolve(this.loadPosts()).catch(() => {}).then(() => setTimeout(() => wx.stopPullDownRefresh(), 300));
+    // 页面滚动在内层 scroll-view，页面级 onPullDownRefresh 不会触发；
+    // 用 scroll-view 的 refresher 接管下拉刷新
+    onRefresh() {
+      this.setData({ refreshing: true });
+      Promise.resolve(this.loadPosts())
+        .catch(() => {})
+        .then(() => setTimeout(() => this.setData({ refreshing: false }), 300));
     },
+
+  // —— 回顶悬浮键 ——
+  onScrollBody(e) {
+    const show = ((e.detail && e.detail.scrollTop) || 0) > 600;
+    if (show !== this.data.showBackTop) this.setData({ showBackTop: show });
+  },
+
+  backToTop() {
+    // scroll-top 同值不触发滚动：0 与 0.1 交替，视觉无差
+    this.setData({ scrollTopTo: this.data.scrollTopTo === 0 ? 0.1 : 0 });
+  },
 
   async loadPosts() {
     this.setData({ loading: true, loadError: false });
@@ -146,13 +173,20 @@ Page({
     this.loadComments(id);
   },
 
+  // 话题 chip → 菜谱搜索页（keyword 命中菜名/菜系/标签）
+  onTopicTap(event) {
+    const { tag } = event.currentTarget.dataset;
+    if (!tag) return;
+    wx.navigateTo({ url: `/pages/recipes/search/index?keyword=${encodeURIComponent(tag)}` });
+  },
+
   // 帖子卡 → 详情页
   openPost(event) {
     const { id } = event.currentTarget.dataset;
     if (!id) {
       return;
     }
-    wx.navigateTo({ url: `/pages/community/post-detail/index?postId=${id}` });
+    wx.navigateTo({ url: `/pkg-extra/community/post-detail/index?postId=${id}` });
   },
 
   // 关联菜谱 → 菜谱详情

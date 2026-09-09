@@ -1,15 +1,14 @@
 <!-- 买菜清单 · 精致美食杂志撞色风（设计稿 shopping-final.html）-->
 <view class="mkt-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <!-- 二级页导航：透明覆盖在 hero 上 -->
-  <view class="mkt-nav">
-    <nav-bar title="" show-back="{{true}}"></nav-bar>
+  <view class="mkt-nav {{navSolid ? 'mkt-nav--solid' : ''}}">
+    <nav-bar title="买菜清单" show-back="{{true}}"></nav-bar>
   </view>
 
   <!-- HERO · 本地菜图 long-beans -->
   <view class="mkt-hero g-fade-in">
     <image class="mkt-hero-img" src="/assets/dishes/long-beans.jpg" mode="aspectFill" />
     <view class="mkt-hero-mask"></view>
-    <text class="mkt-hero-eyebrow">买菜清单</text>
 
     <view class="mkt-hero-body">
       <view class="mkt-hero-left">
@@ -86,6 +85,8 @@
 
         <view class="mkt-item g-fade-up g-d{{idx % 5 + 1}}" wx:for="{{group.items}}" wx:for-item="food" wx:for-index="idx" wx:key="itemId" data-id="{{food.itemId}}" data-purchased="{{food.purchased}}" bindtap="toggleItem">
           <view class="mkt-check"></view>
+          <image wx:if="{{food.cover}}" class="mkt-thumb" src="{{food.cover}}" mode="aspectFill" />
+          <view wx:else class="mkt-thumb mkt-thumb--letter {{food.categoryKey}}">{{food.initial}}</view>
           <view class="mkt-imid">
             <text class="nm">{{food.ingredientName}}</text>
             <text class="amt">{{food.amount}} {{food.unit}}</text>
@@ -113,6 +114,8 @@
             <view class="mkt-check done">
               <view class="mkt-tick"></view>
             </view>
+            <image wx:if="{{food.cover}}" class="mkt-thumb" src="{{food.cover}}" mode="aspectFill" />
+            <view wx:else class="mkt-thumb mkt-thumb--letter {{food.categoryKey}}">{{food.initial}}</view>
             <view class="mkt-imid">
               <text class="nm">{{food.ingredientName}}</text>
               <text class="amt">{{food.amount}} {{food.unit}}</text>
@@ -166,7 +169,8 @@
               <text class="sp-pcat-count">{{item.items.length}} 项</text>
             </view>
             <view class="sp-pitem" wx:for="{{item.items}}" wx:for-item="it" wx:key="id">
-              <view class="sp-pitem-dot"></view>
+              <image wx:if="{{it.cover}}" class="mkt-thumb" src="{{it.cover}}" mode="aspectFill" />
+              <view wx:else class="mkt-thumb mkt-thumb--letter {{it.categoryKey}}">{{it.initial}}</view>
               <text class="sp-pitem-name ellipsis">{{it.ingredientName || it.name}}</text>
               <text class="sp-pitem-qty">{{it.amount || ''}}{{it.unit || ''}}</text>
               <view class="sp-pitem-del tap-scale" data-id="{{it.id || it.pantryItemId}}" catchtap="removePantryEntry">×</view>

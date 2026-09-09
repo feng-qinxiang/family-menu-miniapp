@@ -40,6 +40,8 @@
             <view wx:if="{{p.icon === 'user'}}" class="ic-glyph ic-user"></view>
             <!-- camera -->
             <view wx:elif="{{p.icon === 'camera'}}" class="ic-glyph ic-camera"></view>
+            <!-- clipboard -->
+            <view wx:elif="{{p.icon === 'clipboard'}}" class="ic-glyph ic-clipboard"></view>
             <!-- bell -->
             <view wx:else class="ic-glyph ic-bell"></view>
           </view>
@@ -55,6 +57,8 @@
     <view class="card-dark footnote g-fade-up g-d8">
       <view class="deco-circle"></view>
       <view class="ft-eb">联系我们</view>
+      <view class="ft-text">运营者：{{operatorName}}</view>
+      <view class="ft-text">联系方式：{{operatorContact}}</view>
       <view class="ft-text">如对本隐私政策有任何疑问，或希望行使查询、更正、删除个人信息的权利，欢迎随时联系我们：</view>
       <view class="ft-mail tap-scale" catchtap="onCopyMail">{{contactMail}}</view>
     </view>

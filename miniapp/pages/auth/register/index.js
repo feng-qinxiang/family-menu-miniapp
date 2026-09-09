@@ -10,6 +10,8 @@ Page({
     codeFocus: false,
     agreed: false,
     counting: false,
+    sendingCode: false,
+    submitting: false,
     countdown: 60,
     toast: { visible: false, type: 'top', text: '' },
   },
@@ -58,15 +60,17 @@ Page({
 
   // —— 验证码倒计时（真实 OTP 下发）——
   onSendCode() {
-    if (this.data.counting) return;
+    // sending 在请求发出前就置位，防止飞行期连点重复下发短信
+    if (this.data.counting || this.data.sendingCode) return;
     const phone = (this.data.phone || '').trim();
     if (!/^1\d{10}$/.test(phone)) {
       this._toast('请输入正确的手机号', 'error');
       return;
     }
+    this.setData({ sendingCode: true });
     api.requestPhoneOtp(phone)
       .then((res) => {
-        this.setData({ counting: true, countdown: 60 });
+        this.setData({ sendingCode: false, counting: true, countdown: 60 });
         this._toast(res && res.devCode ? `验证码已发送（调试码 ${res.devCode}）` : '验证码已发送', 'top');
         this._clearTimer();
         this._timer = setInterval(() => {
@@ -80,12 +84,14 @@ Page({
         }, 1000);
       })
       .catch((err) => {
+        this.setData({ sendingCode: false });
         this._toast(err && err.message ? err.message : '发送失败，请重试', 'error');
       });
   },
 
   // —— 注册：手机验证码即注册登录（后端为无密码体系）——
   onRegister() {
+    if (this.data.submitting) return;
     const { phone, code, agreed } = this.data;
     if (!/^1\d{10}$/.test((phone || '').trim())) {
       this._toast('请输入正确的手机号', 'error');
@@ -100,6 +106,7 @@ Page({
       return;
     }
 
+    this.setData({ submitting: true });
     wx.showLoading({ title: '注册中', mask: true });
     api.loginWithOtp({ phone: phone.trim(), code: code.trim() })
       .then((res) => {
@@ -117,6 +124,7 @@ Page({
       })
       .catch((err) => {
         wx.hideLoading();
+        this.setData({ submitting: false });
         this._toast(err && err.message ? err.message : '验证码错误或已过期', 'error');
       });
   },

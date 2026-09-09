@@ -41,7 +41,7 @@
       <view class="fc-form g-fade-up g-d1">
         <view class="fc-field">
           <view class="fc-label">家庭名称</view>
-          <view class="fc-inp {{focusName ? 'focus' : ''}}">
+          <view class="fc-inp {{focusName ? 'focus' : ''}} {{nameError ? 'field-error' : ''}}">
             <view class="fc-ic fc-ic-home"></view>
             <input
               class="fc-input"
@@ -54,6 +54,7 @@
               bindblur="onNameBlur"
             />
           </view>
+          <view class="field-error-msg" wx:if="{{nameError}}">请填写家庭名称</view>
         </view>
 
         <view class="fc-field">

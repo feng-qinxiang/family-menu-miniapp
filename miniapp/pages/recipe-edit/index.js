@@ -1,6 +1,9 @@
 const { getRecipeDetail, saveRecipe, updateRecipe } = require('../../utils/api');
-const { chooseAndUpload } = require('../../utils/upload');
-const { decodeStep, encodeStep } = require('../../utils/recipe-steps');
+const { chooseAndUpload, chooseVideo, uploadFile } = require('../../utils/upload');
+const { decodeStep, encodeStep, hoistVideo } = require('../../utils/recipe-steps');
+const { LOCAL_DISHES, recipeDishImg } = require('../../utils/image');
+
+const PICKER_IMAGES = LOCAL_DISHES.map((file) => `/assets/dishes/${file}.jpg`);
 
 const DIFFICULTY_OPTIONS = [
   { key: 'easy', label: '简单' },
@@ -27,6 +30,7 @@ Page({
       tasteTags: [],
       summary: '',
       ingredients: [{ name: '', amount: '', unit: '' }],
+      videoUrl: '',
       steps: [{ text: '', image: '' }]
     },
     tasteTagsText: '',
@@ -49,7 +53,13 @@ Page({
       { name: '宴客', active: false },
       { name: '低脂', active: false }
     ],
-    saving: false
+    saving: false,
+    editTab: 'info',
+    editingStep: -1,
+    tagsLabel: '未选',
+    pickSheet: { visible: false, mode: 'cuisine' },
+    mediaSheet: { visible: false, mode: 'image', index: 0 },
+    pickerImages: PICKER_IMAGES
   },
 
   onLoad(options) {
@@ -79,20 +89,29 @@ Page({
       timeCost: recipe.timeCost || 15,
       servings: recipe.servings || 2,
       difficulty: recipe.difficulty || 'medium',
-      coverImage: recipe.coverImage || '',
+      coverImage: recipe.coverImage || recipeDishImg(recipe) || '',
       tasteTags: recipe.tasteTags || [],
       summary: recipe.summary || '',
       ingredients: (recipe.ingredients && recipe.ingredients.length)
         ? recipe.ingredients
         : [{ name: '', amount: '', unit: '' }],
+      videoUrl: hoistVideo(steps) || recipe.videoUrl || '',
       steps
     };
     this.setData({
       form,
       tasteTagsText: form.tasteTags.join(','),
+      tagsLabel: this.labelForTags(form.tasteTags),
       commonTags: this.buildCommonTags(form.tasteTags)
     });
     this.refreshQuality();
+  },
+
+  switchTab(e) {
+    const tab = e.currentTarget.dataset.tab;
+    if (!tab || tab === this.data.editTab) return;
+    this.setData({ editTab: tab, editingStep: -1 });
+    wx.pageScrollTo({ scrollTop: 0, duration: 0 });
   },
 
   onInput(e) {
@@ -109,8 +128,28 @@ Page({
 
   selectCuisine(e) {
     const { value } = e.currentTarget.dataset;
-    this.setData({ 'form.cuisine': value });
+    this.setData({
+      'form.cuisine': value,
+      'pickSheet.visible': false
+    });
     this.refreshQuality();
+  },
+
+  openCuisineSheet() {
+    this.setData({ pickSheet: { visible: true, mode: 'cuisine' } });
+  },
+
+  openTagSheet() {
+    this.setData({ pickSheet: { visible: true, mode: 'tags' } });
+  },
+
+  closePickSheet() {
+    this.setData({ 'pickSheet.visible': false });
+  },
+
+  labelForTags(tags) {
+    const list = (tags || []).filter(Boolean);
+    return list.length ? list.join('、') : '未选';
   },
 
   stepperChange(e) {
@@ -123,26 +162,19 @@ Page({
     this.refreshQuality();
   },
 
-  async chooseCover() {
-    const urls = await chooseAndUpload(1);
-    if (urls.length) {
-      this.setData({ 'form.coverImage': urls[0] });
-    }
+  chooseCover() {
+    const cover = this.data.form.coverImage || '';
+    const pickerImages = (cover && PICKER_IMAGES.indexOf(cover) < 0)
+      ? [cover].concat(PICKER_IMAGES)
+      : PICKER_IMAGES;
+    this.setData({
+      pickerImages,
+      mediaSheet: { visible: true, mode: 'cover', index: 0 }
+    });
   },
 
   removeCover() {
     this.setData({ 'form.coverImage': '' });
-  },
-
-  onTagsInput(e) {
-    const text = e.detail.value || '';
-    const tags = text.split(/[,，]/).map((s) => s.trim()).filter(Boolean);
-    this.setData({
-      tasteTagsText: text,
-      'form.tasteTags': tags,
-      commonTags: this.buildCommonTags(tags)
-    });
-    this.refreshQuality();
   },
 
   toggleCommonTag(e) {
@@ -152,6 +184,7 @@ Page({
     this.setData({
       'form.tasteTags': next,
       tasteTagsText: next.join(','),
+      tagsLabel: this.labelForTags(next),
       commonTags: this.buildCommonTags(next)
     });
     this.refreshQuality();
@@ -190,12 +223,24 @@ Page({
     this.refreshQuality();
   },
 
-  async chooseStepImage(e) {
-    const { index } = e.currentTarget.dataset;
-    const urls = await chooseAndUpload(1);
-    if (urls.length) {
-      this.setData({ [`form.steps[${index}].image`]: urls[0] });
-    }
+  editStep(e) {
+    this.setData({ editingStep: Number(e.currentTarget.dataset.index) });
+  },
+
+  blurStep() {
+    this.setData({ editingStep: -1 });
+  },
+
+  chooseStepImage(e) {
+    const index = Number(e.currentTarget.dataset.index);
+    const cover = this.data.form.coverImage || '';
+    const pickerImages = (cover && PICKER_IMAGES.indexOf(cover) < 0)
+      ? [cover].concat(PICKER_IMAGES)
+      : PICKER_IMAGES;
+    this.setData({
+      pickerImages,
+      mediaSheet: { visible: true, mode: 'image', index }
+    });
   },
 
   removeStepImage(e) {
@@ -203,9 +248,74 @@ Page({
     this.setData({ [`form.steps[${index}].image`]: '' });
   },
 
+  chooseLessonVideo() {
+    this.setData({
+      mediaSheet: { visible: true, mode: 'video', index: 0 }
+    });
+  },
+
+  closeMediaSheet() {
+    this.setData({ 'mediaSheet.visible': false });
+  },
+
+  pickLocalImage(e) {
+    const url = e.currentTarget.dataset.url;
+    if (!url) return;
+    if (this.data.mediaSheet.mode === 'cover') {
+      this.setData({ 'form.coverImage': url, 'mediaSheet.visible': false });
+      return;
+    }
+    const index = this.data.mediaSheet.index;
+    this.setData({
+      [`form.steps[${index}].image`]: url,
+      'mediaSheet.visible': false
+    });
+  },
+
+  async pickImageFromAlbum() {
+    const urls = await chooseAndUpload(1);
+    // 上传失败会返回空串（不再回退本地临时路径），必须按空值拦截
+    if (!urls.length || !urls[0]) {
+      wx.showToast({ title: '上传失败，请重试', icon: 'none' });
+      return;
+    }
+    if (this.data.mediaSheet.mode === 'cover') {
+      this.setData({ 'form.coverImage': urls[0], 'mediaSheet.visible': false });
+      return;
+    }
+    const index = this.data.mediaSheet.index;
+    this.setData({
+      [`form.steps[${index}].image`]: urls[0],
+      'mediaSheet.visible': false
+    });
+  },
+
+  async pickVideoFromAlbum() {
+    const path = await chooseVideo();
+    if (!path) {
+      wx.showToast({ title: '没有选到视频', icon: 'none' });
+      return;
+    }
+    wx.showLoading({ title: '上传中', mask: true });
+    const url = await uploadFile(path);
+    wx.hideLoading();
+    if (!url) {
+      wx.showToast({ title: '上传失败', icon: 'none' });
+      return;
+    }
+    this.setData({
+      'form.videoUrl': url,
+      'mediaSheet.visible': false
+    });
+  },
+
+  removeLessonVideo() {
+    this.setData({ 'form.videoUrl': '' });
+  },
+
   addStep() {
     const steps = this.data.form.steps.concat([{ text: '', image: '' }]);
-    this.setData({ 'form.steps': steps });
+    this.setData({ 'form.steps': steps, editingStep: steps.length - 1 });
     this.refreshQuality();
   },
 
@@ -229,13 +339,13 @@ Page({
     }
     let tipText = '';
     if (!hasTitle) {
-      tipText = '先给这道菜起个名字吧';
-    } else if (ingredientCount < 2) {
-      tipText = `再填 ${2 - ingredientCount} 个食材，这道菜就完整啦`;
+      tipText = '还没写菜名';
+    } else if (!hasCuisine) {
+      tipText = '选个菜系';
+    } else if (!ingredientCount) {
+      tipText = '至少加一种食材';
     } else if (!stepCount) {
-      tipText = '加一个做法步骤，家人照着做不出错';
-    } else {
-      tipText = '信息齐全，随时可以保存';
+      tipText = '至少加一步做法';
     }
     this.setData({
       formQuality: { ingredientCount, stepCount, hasSummary, readyText },
@@ -292,7 +402,11 @@ Page({
       tasteTags: form.tasteTags.filter(Boolean),
       summary: form.summary.trim(),
         ingredients: form.ingredients.filter((i) => i.name.trim()),
-        steps: form.steps.filter((s) => s.text.trim()).map((s) => encodeStep(s)),
+        steps: form.steps.filter((s) => s.text.trim()).map((s, i) => encodeStep({
+          text: s.text,
+          image: s.image,
+          video: i === 0 ? (form.videoUrl || '') : ''
+        })),
       sourceType: 'owned'
     };
 

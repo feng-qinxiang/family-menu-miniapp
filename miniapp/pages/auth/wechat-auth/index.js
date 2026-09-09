@@ -149,8 +149,8 @@ Page({
     } catch (err) {
       wx.hideLoading();
       this.setData({ submitting: false });
-      const msg = (err && err.message) || '微信登录暂不可用，请使用手机号登录';
-      this._toast(msg.indexOf('WeChat login disabled') >= 0 ? '微信登录未配置，请使用手机号验证码' : msg, 'error');
+      const msg = (err && err.message) || '微信登录暂不可用，可先游客身份逛逛';
+      this._toast(msg.indexOf('WeChat login disabled') >= 0 ? '微信登录暂不可用，可先游客身份逛逛' : msg, 'error');
     }
   },
 
@@ -161,10 +161,7 @@ Page({
     if (pages && pages.length > 1) {
       wx.navigateBack({ delta: 1 });
     } else {
-      wx.navigateTo({
-        url: '/pages/auth/login-phone/index',
-        fail: () => wx.switchTab({ url: '/pages/home/index', fail() {} })
-      });
+      wx.switchTab({ url: '/pages/home/index', fail() {} });
     }
   },
 

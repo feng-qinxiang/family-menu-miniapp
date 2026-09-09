@@ -23,9 +23,11 @@ import java.util.Locale;
 public class WishService {
 
     private final JdbcTemplate jdbcTemplate;
+    private final NotificationService notificationService;
 
-    public WishService(JdbcTemplate jdbcTemplate) {
+    public WishService(JdbcTemplate jdbcTemplate, NotificationService notificationService) {
         this.jdbcTemplate = jdbcTemplate;
+        this.notificationService = notificationService;
     }
 
     public List<WishItem> listWishes(long familyId, String date, String slot) {
@@ -73,6 +75,16 @@ public class WishService {
 
         Number key = keyHolder.getKey();
         long id = key == null ? 0L : key.longValue();
+
+        // 点菜闭环：许愿即刻通知家里其他人（对齐同行"下单推送给厨师"），失败不影响许愿本身
+        if (!text.isBlank()) {
+            notificationService.notifyFamily(
+                    user.familyId(), user.userId(), "wish",
+                    "家人的心愿",
+                    authorName + " 想吃「" + text + "」（" + slotLabel(slot) + "）",
+                    "home"
+            );
+        }
         return new WishItem(
                 String.valueOf(id),
                 text,
@@ -122,6 +134,15 @@ public class WishService {
         } catch (Exception ex) {
             return LocalDate.now();
         }
+    }
+
+    private String slotLabel(String slot) {
+        return switch (slot) {
+            case "breakfast" -> "早餐";
+            case "lunch" -> "午餐";
+            case "snack" -> "加餐";
+            default -> "晚餐";
+        };
     }
 
     private String normalizeSlot(String slot) {

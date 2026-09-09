@@ -5,11 +5,14 @@ CREATE TABLE IF NOT EXISTS user_account (
     nickname VARCHAR(64) NOT NULL,
     avatar_url VARCHAR(255) NULL,
     is_admin TINYINT(1) NOT NULL DEFAULT 0,
+    -- 账号停用状态：ACTIVE 正常 / BANNED 封禁（封禁用户所有会话立即失效且无法再登录）
+    status VARCHAR(16) NOT NULL DEFAULT 'ACTIVE',
     session_key VARCHAR(64) NULL,
     phone_number VARCHAR(20) NULL,
     current_family_id BIGINT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY uk_user_phone (phone_number)
 );
 -- 会员资格已迁出 user_account：vip_status / plan_name 由 user_membership 表取代（见 ADR-0002/0005）。
 
@@ -72,6 +75,9 @@ CREATE TABLE IF NOT EXISTS recipe (
     source_url VARCHAR(512) NULL,
     owner_user_id BIGINT NOT NULL,
     family_id BIGINT NULL,
+    -- 1 = 种子/公共菜谱，对全部家庭可见；0 = 家庭私有。
+    -- 取代历史上按 family_id = 1 判断公共菜谱的写法：那会让"第一个真实家庭"意外全球可见。
+    is_public TINYINT(1) NOT NULL DEFAULT 0,
     cuisine VARCHAR(32) NOT NULL,
     taste_tags_json TEXT NOT NULL,
     time_cost INT NOT NULL DEFAULT 15,
@@ -79,10 +85,12 @@ CREATE TABLE IF NOT EXISTS recipe (
     rating DECIMAL(3,1) NOT NULL DEFAULT 4.5,
     summary VARCHAR(255) NULL,
     cover_image VARCHAR(512) NULL,
+    difficulty VARCHAR(16) NOT NULL DEFAULT 'medium',
     status VARCHAR(16) NOT NULL DEFAULT 'ACTIVE',
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_recipe_status_source (status, source_type),
+    INDEX idx_recipe_public (is_public, status),
     INDEX idx_recipe_family (family_id),
     INDEX idx_recipe_owner (owner_user_id),
     INDEX idx_recipe_cuisine (cuisine)
@@ -180,6 +188,8 @@ CREATE TABLE IF NOT EXISTS community_post_comment (
     post_id BIGINT NOT NULL,
     user_id BIGINT NOT NULL,
     content VARCHAR(500) NOT NULL,
+    -- 评论同样需要审核：无法机审时先 PENDING，仅作者本人可见（详见 ContentSecurityService）
+    audit_status VARCHAR(16) NOT NULL DEFAULT 'APPROVED',
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_comment_post (post_id, id DESC),
     INDEX idx_comment_user (user_id)
@@ -216,10 +226,15 @@ CREATE TABLE IF NOT EXISTS import_source (
     source_text TEXT NULL,
     parse_status VARCHAR(16) NOT NULL DEFAULT 'PARSED',
     audit_status VARCHAR(16) NOT NULL DEFAULT 'PENDING',
+    reviewer_user_id BIGINT NULL,
+    review_note VARCHAR(255) NULL,
+    resolved_at DATETIME NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
+-- token 列存的是 bearer token 的 SHA-256 十六进制摘要，不是明文：
+-- 数据库泄露时无法直接冒用会话。老库遗留的明文行会因哈希不匹配自然失效。
 CREATE TABLE IF NOT EXISTS user_session (
     token VARCHAR(64) PRIMARY KEY,
     user_id BIGINT NOT NULL,
@@ -289,24 +304,6 @@ CREATE TABLE IF NOT EXISTS uploaded_file (
     INDEX idx_uploaded_user (user_id, created_at DESC)
 );
 
--- 旧库前向兼容 ALTER：仅保留 CREATE 阶段未覆盖的列补丁。
--- 这些列在早期部署的 user_account 里不存在，新库已在 CREATE 中建全，旧库靠下面两条补齐。
--- continue-on-error 让列已存在时安全跳过。
-ALTER TABLE user_account ADD COLUMN phone_number VARCHAR(20) NULL;
-ALTER TABLE user_account ADD COLUMN current_family_id BIGINT NULL;
-
--- 会员迁表收尾：清除旧库 user_account 上已废弃的会员列（见 ADR-0002/0005）。
--- 新库无此列时 continue-on-error 安全跳过；数据已不再读取，删除不影响业务。
-ALTER TABLE user_account DROP COLUMN vip_status;
-ALTER TABLE user_account DROP COLUMN plan_name;
-
--- T3: 成员忌口标签（JSON 数组），创建/编辑成员可写，菜单推荐与今日菜单过滤读取。
--- 不使用 IF NOT EXISTS（部分 MySQL 版本不支持），依赖 continue-on-error 兜底旧部署列已存在的情况。
-ALTER TABLE family_member ADD COLUMN avoid_tags_json TEXT DEFAULT NULL COMMENT '忌口标签JSON数组';
-
--- 安全修复：邀请码随机化，family 表增加 invite_token 列（替代 base36(id) 可枚举方案）。
-ALTER TABLE family ADD COLUMN invite_token VARCHAR(32) NULL UNIQUE;
-
 -- 许愿池：家庭共享，按日期+餐次分槽（见 家庭点菜-核心方案 §5）。
 CREATE TABLE IF NOT EXISTS family_wish (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
@@ -321,5 +318,27 @@ CREATE TABLE IF NOT EXISTS family_wish (
     INDEX idx_wish_family_date_slot (family_id, wish_date, slot, id)
 );
 
--- 迁移：举报补充描述（列已存在时启动会报错，被 continue-on-error 吞掉，无副作用）
-ALTER TABLE community_post_report ADD COLUMN description VARCHAR(500) NULL;
+-- 运营审计日志：记录管理员的每一次敏感操作（谁、何时、对什么、做了什么、结果）。
+-- 只增不改不删，用于事后追责与合规。
+CREATE TABLE IF NOT EXISTS admin_audit_log (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    actor_user_id BIGINT NOT NULL,
+    actor_nickname VARCHAR(64) NULL,
+    action VARCHAR(64) NOT NULL,
+    target_type VARCHAR(32) NOT NULL,
+    target_id VARCHAR(64) NULL,
+    detail VARCHAR(512) NULL,
+    result VARCHAR(16) NOT NULL DEFAULT 'OK',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_audit_actor (actor_user_id, id DESC),
+    INDEX idx_audit_created (created_at DESC)
+);
+
+-- ============================================================================
+-- 本文件只包含 CREATE TABLE IF NOT EXISTS，可重复执行（幂等）。
+--
+-- 历史遗留的 ALTER TABLE 补丁（给"早期部署的旧库"补列）已移到
+-- server/sql/migrate-legacy.sql。原因：MySQL 8 的 ALTER 不支持 IF NOT EXISTS，
+-- 重复执行会以 1060/1061 报错并中断 mysql CLI —— 生产建库流程必须能安全重跑。
+-- 新库用本文件即可建全所有列，无需执行 migrate-legacy.sql。
+-- ============================================================================

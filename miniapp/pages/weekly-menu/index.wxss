@@ -79,7 +79,7 @@
   position: absolute;
   left: 46rpx;
   right: 46rpx;
-  bottom: 50rpx;
+  bottom: var(--hero-body-above-sheet);
   z-index: 10;
   color: var(--c-surface);
 }
@@ -152,7 +152,7 @@
   margin-top: -50rpx;
   background: var(--paper);
   border-radius: 20rpx 20rpx 0 0;
-  padding: 46rpx 46rpx 40rpx;
+  padding: 46rpx 46rpx calc(40rpx + env(safe-area-inset-bottom));
   z-index: 20;
 }
 

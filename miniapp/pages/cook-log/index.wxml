@@ -5,7 +5,8 @@
     <nav-bar title="做菜记录" show-back="{{true}}" status-bar-height="{{statusBarHeight}}"></nav-bar>
   </view>
 
-  <scroll-view class="cl-scroll" scroll-y enhanced show-scrollbar="{{false}}">
+  <scroll-view class="cl-scroll" scroll-y enhanced show-scrollbar="{{false}}"
+    scroll-top="{{scrollTopTo}}" scroll-with-animation bindscroll="onScrollBody">
     <!-- ===== Hero ===== -->
     <view class="hero">
       <image class="hero-img" src="{{heroCover}}" mode="aspectFill"></image>
@@ -141,6 +142,14 @@
                 <view class="cook">
                   <text class="ca {{rec.cookTone}}">{{rec.cookInitial}}</text>
                   <text class="cn"><text class="cn-b">{{rec.cookName}}</text> 掌勺</text>
+                  <!-- 再来一单：做过的菜一键回到今日菜单（对齐同行复盘闭环） -->
+                  <view
+                    wx:if="{{rec.recipeId || rec.recipeId === 0}}"
+                    class="redo tap-scale"
+                    catchtap="redoCook"
+                    data-recipe-id="{{rec.recipeId}}"
+                    data-title="{{rec.title}}"
+                  >再做一次</view>
                 </view>
                 <view wx:if="{{rec.remark}}" class="note {{rec.score >= 4 ? '' : 'plain'}}">
                   <text class="who">{{rec.score >= 4 ? '好评' : '备注'}}</text>{{rec.remark}}
@@ -167,4 +176,7 @@
       </view>
     </view>
   </scroll-view>
+
+  <!-- 历史时间线滚深后回顶 -->
+  <back-top show="{{showBackTop}}" bottom="200rpx" bind:totop="backToTop" />
 </view>

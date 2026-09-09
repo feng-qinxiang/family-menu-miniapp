@@ -19,7 +19,7 @@
   display: flex;
   align-items: center;
   gap: 23rpx;
-  padding: 15rpx 38rpx 27rpx;
+  padding: 15rpx 46rpx 27rpx;
 }
 .backbtn {
   width: 88rpx;
@@ -210,30 +210,6 @@
   padding: 8rpx 15rpx;
   border-radius: var(--r-xs);
 }
-.gc-fav {
-  position: absolute;
-  top: 15rpx;
-  right: 15rpx;
-  width: 65rpx;
-  height: 65rpx;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.92);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.gc-heart-dot {
-  width: 22rpx;
-  height: 22rpx;
-  border-radius: 50%;
-  border: 3rpx solid var(--ink-deep);
-  box-sizing: border-box;
-}
-.gc-heart-dot.on {
-  border-color: var(--pop);
-  background: var(--pop);
-}
-
 .gc-info { padding: 23rpx 25rpx 27rpx; }
 .gc-name {
   font-size: 32rpx;

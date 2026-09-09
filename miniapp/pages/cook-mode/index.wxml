@@ -2,7 +2,7 @@
 <view class="cook" style="--sbh: {{statusBarHeight}}px;">
 
   <!-- 顶部：返回 X + 菜名步数 + 计时入口 -->
-  <view class="topbar" style="padding-top: {{statusBarHeight}}px;">
+  <view class="topbar" style="padding-top: {{statusBarHeight}}px; padding-right: {{capsulePad || 19}}px;">
     <view class="nbtn tap-scale" catchtap="onClose">
       <view class="ic-x"></view>
     </view>
@@ -11,7 +11,8 @@
       <view class="prog" wx:if="{{total}}">{{steps[current].cn}} · {{current + 1}}/{{total}}</view>
     </view>
     <view class="nbtn keep {{running ? 'on' : ''}}" catchtap="toggleTimer">
-      <view class="ic-clock"></view>
+      <view class="ic-clock-sm keep-ic"></view>
+      <text class="keep-tx">计时</text>
     </view>
   </view>
 
@@ -76,8 +77,8 @@
 
       <!-- 计时卡 -->
       <view wx:if="{{hasTimer}}" class="timer">
-        <view class="tl">
-          <view class="cap">这一步计时</view>
+        <view class="tl" catchtap="pickDuration">
+          <view class="cap">这一步计时 <text class="cap-pick">换时长 ›</text></view>
           <view class="num">{{timerText[0]}}{{timerText[1]}}<text class="pop">:</text>{{timerText[3]}}{{timerText[4]}}</view>
         </view>
         <view class="timer-acts">

@@ -31,12 +31,12 @@
         微信一键登录
       </button>
 
-      <view class="btn-phone tap-scale" bindtap="onPhoneLogin">
+      <view class="btn-phone tap-scale" wx:if="{{features.PHONE_LOGIN}}" bindtap="onPhoneLogin">
         <text class="phone-glyph">▢</text>
         手机号登录
       </view>
 
-      <view class="authlinks">
+      <view class="authlinks" wx:if="{{features.PHONE_LOGIN}}">
         <text class="authlink" bindtap="onRegister">注册新账号</text>
       </view>
 

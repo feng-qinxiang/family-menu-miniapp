@@ -24,32 +24,27 @@ Component({
   },
 
   data: {
-    capsulePad: 96
+    capsulePad: 96,
+    innerHeight: 44
   },
 
   lifetimes: {
     attached() {
       const patch = {};
-      if (!this.data.statusBarHeight) {
-        let sbh = 0;
-        try {
-          if (typeof wx.getWindowInfo === 'function') {
-            sbh = wx.getWindowInfo().statusBarHeight || 0;
-          } else if (typeof wx.getSystemInfoSync === 'function') {
-            sbh = wx.getSystemInfoSync().statusBarHeight || 0;
-          }
-        } catch (e) {
-          sbh = 0;
-        }
-        patch.statusBarHeight = sbh;
-      }
+      let sbh = this.data.statusBarHeight || 0;
       try {
+        const sys = (typeof wx.getWindowInfo === 'function' ? wx.getWindowInfo() : wx.getSystemInfoSync()) || {};
+        if (!sbh) sbh = sys.statusBarHeight || 0;
         const mb = wx.getMenuButtonBoundingClientRect();
-        const sys = (wx.getWindowInfo && wx.getWindowInfo()) || wx.getSystemInfoSync();
-        if (mb && sys && mb.left) {
-          patch.capsulePad = sys.windowWidth - mb.left + 8;
+        if (mb && mb.height) {
+          const gap = Math.max(0, mb.top - sbh);
+          patch.innerHeight = mb.height + gap * 2;
+          if (sys.windowWidth && mb.left) {
+            patch.capsulePad = sys.windowWidth - mb.left + 8;
+          }
         }
       } catch (e) {}
+      if (sbh) patch.statusBarHeight = sbh;
       if (Object.keys(patch).length) this.setData(patch);
     },
   },

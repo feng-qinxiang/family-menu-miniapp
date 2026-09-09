@@ -1,6 +1,7 @@
 // 意见反馈页 · 二级页
-// 真实接口：submitFeedback（POST /api/feedback）。游客直进，不拦登录。
+// 真实接口：submitFeedback（POST /api/feedback，支持 images 字段）。游客直进，不拦登录。
 const { submitFeedback } = require('../../../utils/api');
+const { uploadFile } = require('../../../utils/upload');
 
 Page({
   data: {
@@ -85,7 +86,7 @@ Page({
     this.setData({ images });
   },
 
-  // 提交：真调 submitFeedback
+  // 提交：图片先真上传，URL 随 payload 一起落库
   onSubmit() {
     if (this.data.submitting) return;
 
@@ -101,21 +102,44 @@ Page({
 
     this.setData({ submitting: true });
     const that = this;
-    const payload = {
-      types: picked.map((t) => t.key),
-      content: this.data.content.trim(),
-      contact: this.data.contact.trim(),
-    };
-    submitFeedback(payload)
-      .then(function () {
-        that.setData({
-          submitting: false,
-          toast: { visible: true, type: 'center', text: '已收到，感谢反馈' },
+    const finish = (images) => {
+      const payload = {
+        types: picked.map((t) => t.key),
+        content: that.data.content.trim(),
+        contact: that.data.contact.trim(),
+        images,
+      };
+      return submitFeedback(payload)
+        .then(function () {
+          that.setData({
+            submitting: false,
+            toast: { visible: true, type: 'center', text: '已收到，感谢反馈' },
+          });
+        })
+        .catch(function () {
+          that.setData({ submitting: false });
+          that.showToast('提交失败，请稍后重试');
         });
+    };
+    // 无图直接提交；有图先上传（失败项返回空串，过滤掉并提示）
+    if (!this.data.images.length) {
+      finish([]);
+      return;
+    }
+    wx.showLoading({ title: '上传图片中', mask: true });
+    Promise.all(this.data.images.map((p) => uploadFile(p)))
+      .then((urls) => {
+        wx.hideLoading();
+        const ok = urls.filter(Boolean);
+        if (urls.length && !ok.length) {
+          that.showToast('图片上传失败，已不带图提交');
+        }
+        return finish(ok);
       })
-      .catch(function () {
+      .catch(() => {
+        wx.hideLoading();
         that.setData({ submitting: false });
-        that.showToast('提交失败，请稍后重试');
+        that.showToast('图片上传失败，请重试');
       });
   },
 

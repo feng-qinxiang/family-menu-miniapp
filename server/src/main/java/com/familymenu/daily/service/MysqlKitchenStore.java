@@ -153,14 +153,14 @@ public class MysqlKitchenStore {
     }
 
     // 菜谱可见范围统一约定（多处 SQL 保持同步）：
-    // 社区菜谱 + 本家庭菜谱 + 种子演示数据（family_id=1，data.sql 内置，供所有新家庭演示引用）+ 本人创建
+    // 社区菜谱 + 本家庭菜谱 + 公共种子菜谱（is_public=1，data.sql 内置）+ 本人创建
     public List<RecipeCard> listRecipes(String source, long userId, long familyId) {
         String normalized = Optional.ofNullable(source).orElse("owned").trim().toLowerCase(Locale.ROOT);
         String sql = """
                 SELECT id, title, source_type, source_url, cuisine, taste_tags_json, time_cost, servings, rating, summary, cover_image
                 FROM recipe
                 WHERE status = 'ACTIVE' AND (? = 'all' OR source_type = ?)
-                          AND (source_type = 'community' OR family_id = ? OR family_id = 1 OR family_id IS NULL OR owner_user_id = ?)
+                          AND (source_type = 'community' OR family_id = ? OR is_public = 1 OR family_id IS NULL OR owner_user_id = ?)
                 ORDER BY rating DESC, id DESC
                 """;
         return jdbcTemplate.query(sql, (rs, rowNum) -> new RecipeCard(
@@ -194,7 +194,9 @@ public class MysqlKitchenStore {
                 4.5,
                 request.summary() == null || request.summary().isBlank()
                         ? request.title() + "，适合家庭快手做法"
-                        : request.summary()
+                        : request.summary(),
+                request.coverImage(),
+                normalizeDifficulty(request.difficulty())
         );
         saveSteps(recipeId, request.steps());
         saveIngredients(recipeId, request.ingredients());
@@ -227,7 +229,7 @@ public class MysqlKitchenStore {
                     GROUP BY post_id
                 ) fav ON fav.post_id = p.id
                 LEFT JOIN community_post_favorite my_fav ON my_fav.post_id = p.id AND my_fav.user_id = ?
-                WHERE p.audit_status = 'APPROVED'
+                WHERE p.audit_status = 'APPROVED' OR p.author_user_id = ?
                 ORDER BY p.like_count DESC, p.id DESC
                 """;
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
@@ -260,7 +262,7 @@ public class MysqlKitchenStore {
                     readStringList(rs.getString("tags_json")),
                     recipe
             );
-        }, userId);
+        }, userId, userId);
     }
 
     public List<CommunityPost> myFavoritePosts(long userId) {
@@ -316,13 +318,14 @@ public class MysqlKitchenStore {
     }
 
     @Transactional
-    public CommunityPost createCommunityPost(long userId, ApiModels.CreateCommunityPostRequest request) {
+    public CommunityPost createCommunityPost(long userId, ApiModels.CreateCommunityPostRequest request,
+                                            String auditStatus) {
         String tagsJson = writeStringList(request.tags() != null ? request.tags() : List.of());
         var keyHolder = new org.springframework.jdbc.support.GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement("""
                     INSERT INTO community_post (recipe_id, author_user_id, title, content, tags_json, audit_status)
-                    VALUES (?, ?, ?, ?, ?, 'APPROVED')
+                    VALUES (?, ?, ?, ?, ?, ?)
                     """, Statement.RETURN_GENERATED_KEYS);
             if (request.recipeId() == null) {
                 ps.setNull(1, java.sql.Types.BIGINT);
@@ -333,6 +336,7 @@ public class MysqlKitchenStore {
             ps.setString(3, request.title());
             ps.setString(4, request.content());
             ps.setString(5, tagsJson);
+            ps.setString(6, auditStatus == null ? ContentSecurityService.STATUS_PENDING : auditStatus);
             return ps;
         }, keyHolder);
         Number key = keyHolder.getKey();
@@ -342,13 +346,14 @@ public class MysqlKitchenStore {
         return loadCommunityPostById(key.longValue(), userId);
     }
 
-    public List<CommunityCommentItem> communityComments(long postId) {
+    public List<CommunityCommentItem> communityComments(long postId, long viewerUserId) {
         return jdbcTemplate.query("""
                         SELECT c.id, c.post_id, u.nickname AS author, c.content,
                                DATE_FORMAT(c.created_at, '%Y-%m-%d %H:%i') AS created_at
                         FROM community_post_comment c
                         JOIN user_account u ON u.id = c.user_id
-                        WHERE c.post_id = ?
+                        WHERE c.post_id = ? AND c.deleted = 0
+                          AND (c.audit_status = 'APPROVED' OR c.user_id = ?)
                         ORDER BY c.id DESC
                         LIMIT 20
                         """,
@@ -359,32 +364,38 @@ public class MysqlKitchenStore {
                         rs.getString("content"),
                         rs.getString("created_at")
                 ),
-                postId
+                postId, viewerUserId
         );
     }
 
     @Transactional
-    public CommunityCommentItem addCommunityComment(long postId, long userId, CommunityCommentRequest request) {
+    public CommunityCommentItem addCommunityComment(long postId, long userId, CommunityCommentRequest request,
+                                                   String auditStatus) {
         String content = request == null || request.content() == null ? "" : request.content().trim();
         if (content.isBlank()) {
             throw new IllegalArgumentException("comment content required");
         }
+        String status = auditStatus == null ? ContentSecurityService.STATUS_PENDING : auditStatus;
         ensureCommunityPostExists(postId);
         jdbcTemplate.update("""
-                        INSERT INTO community_post_comment(post_id, user_id, content)
-                        VALUES (?, ?, ?)
+                        INSERT INTO community_post_comment(post_id, user_id, content, audit_status)
+                        VALUES (?, ?, ?, ?)
                         """,
                 postId,
                 userId,
-                content
+                content,
+                status
         );
-        jdbcTemplate.update("UPDATE community_post SET comment_count = comment_count + 1 WHERE id = ?", postId);
+        // 只有公开可见的评论才计入 comment_count，否则列表显示的评论数与实际不符
+        if (ContentSecurityService.STATUS_APPROVED.equals(status)) {
+            jdbcTemplate.update("UPDATE community_post SET comment_count = comment_count + 1 WHERE id = ?", postId);
+        }
         return jdbcTemplate.queryForObject("""
                         SELECT c.id, c.post_id, u.nickname AS author, c.content,
                                DATE_FORMAT(c.created_at, '%Y-%m-%d %H:%i') AS created_at
                         FROM community_post_comment c
                         JOIN user_account u ON u.id = c.user_id
-                        WHERE c.post_id = ?
+                        WHERE c.post_id = ? AND c.deleted = 0
                         ORDER BY c.id DESC
                         LIMIT 1
                         """,
@@ -536,10 +547,10 @@ public class MysqlKitchenStore {
     public RecipeDetail getRecipeDetail(long recipeId, long userId, long familyId) {
         return jdbcTemplate.query("""
                         SELECT id, title, source_type, source_url, cuisine, taste_tags_json,
-                               time_cost, servings, rating, summary,
+                               time_cost, servings, rating, summary, cover_image, difficulty,
                                DATE_FORMAT(created_at, '%Y-%m-%d %H:%i') AS created_at
                         FROM recipe WHERE id = ? AND status = 'ACTIVE'
-                  AND (source_type = 'community' OR family_id = ? OR family_id = 1 OR family_id IS NULL OR owner_user_id = ?)
+                  AND (source_type = 'community' OR family_id = ? OR is_public = 1 OR family_id IS NULL OR owner_user_id = ?)
                         """,
                 rs -> {
                     if (!rs.next()) {
@@ -559,7 +570,9 @@ public class MysqlKitchenStore {
                             rs.getString("summary"),
                             loadSteps(recipeId),
                             loadIngredients(recipeId),
-                            rs.getString("created_at")
+                            rs.getString("created_at"),
+                            rs.getString("cover_image"),
+                            rs.getString("difficulty")
                     );
                 },
                 recipeId, familyId, userId
@@ -615,6 +628,14 @@ public class MysqlKitchenStore {
             sql.append(", summary = ?");
             params.add(request.summary().trim());
         }
+        if (request.coverImage() != null) {
+            sql.append(", cover_image = ?");
+            params.add(request.coverImage().isBlank() ? null : request.coverImage().trim());
+        }
+        if (request.difficulty() != null) {
+            sql.append(", difficulty = ?");
+            params.add(normalizeDifficulty(request.difficulty()));
+        }
         sql.append(" WHERE id = ?");
         params.add(recipeId);
         jdbcTemplate.update(sql.toString(), params.toArray());
@@ -634,7 +655,7 @@ public class MysqlKitchenStore {
         StringBuilder sql = new StringBuilder("""
                 SELECT id, title, source_type, source_url, cuisine, taste_tags_json, time_cost, servings, rating, summary, cover_image
                 FROM recipe
-                WHERE status = 'ACTIVE' AND (source_type = 'community' OR family_id = ? OR family_id = 1 OR family_id IS NULL OR owner_user_id = ?)
+                WHERE status = 'ACTIVE' AND (source_type = 'community' OR family_id = ? OR is_public = 1 OR family_id IS NULL OR owner_user_id = ?)
                 """);
         List<Object> params = new ArrayList<>(List.of(familyId, userId));
         String normalizedSource = normalizeSourceType(source);
@@ -680,7 +701,7 @@ public class MysqlKitchenStore {
             throw new IllegalArgumentException("recipeId required");
         }
         Boolean accessible = jdbcTemplate.query(
-                "SELECT 1 FROM recipe WHERE id = ? AND status = 'ACTIVE' AND (owner_user_id = ? OR family_id = ? OR family_id = 1 OR source_type = 'community')",
+                "SELECT 1 FROM recipe WHERE id = ? AND status = 'ACTIVE' AND (owner_user_id = ? OR family_id = ? OR is_public = 1 OR source_type = 'community')",
                 rs -> rs.next() ? Boolean.TRUE : null,
                 request.recipeId(), userId, familyId
         );
@@ -791,13 +812,14 @@ public class MysqlKitchenStore {
     }
 
     private long insertRecipe(long ownerId, long familyId, String title, String sourceType, String sourceUrl, String cuisine,
-                              List<String> tags, int timeCost, int servings, double rating, String summary) {
+                              List<String> tags, int timeCost, int servings, double rating, String summary,
+                              String coverImage, String difficulty) {
         var keyHolder = new org.springframework.jdbc.support.GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement("""
                     INSERT INTO recipe(title, source_type, source_url, owner_user_id, family_id, cuisine, taste_tags_json,
-                                       time_cost, servings, rating, summary, status)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'ACTIVE')
+                                       time_cost, servings, rating, summary, cover_image, difficulty, status)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'ACTIVE')
                     """, Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, title);
             ps.setString(2, normalizeSourceType(sourceType));
@@ -810,6 +832,8 @@ public class MysqlKitchenStore {
             ps.setInt(9, servings);
             ps.setDouble(10, rating);
             ps.setString(11, summary);
+            ps.setString(12, coverImage == null || coverImage.isBlank() ? null : coverImage.trim());
+            ps.setString(13, difficulty);
             return ps;
         }, keyHolder);
         Number key = keyHolder.getKey();
@@ -817,6 +841,13 @@ public class MysqlKitchenStore {
             throw new IllegalStateException("recipe insert failed");
         }
         return key.longValue();
+    }
+
+    /** 难度只接受 easy/medium/hard，其余（含 null）归 medium */
+    private static String normalizeDifficulty(String value) {
+        if (value == null) return "medium";
+        String v = value.trim().toLowerCase();
+        return ("easy".equals(v) || "hard".equals(v)) ? v : "medium";
     }
 
     private void saveSteps(long recipeId, List<String> steps) {

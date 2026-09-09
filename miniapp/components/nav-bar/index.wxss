@@ -3,50 +3,63 @@
   box-sizing: border-box;
   width: 100%;
 }
+.navbar-safe {
+  width: 100%;
+  flex: none;
+}
 .navbar-inner {
   position: relative;
   display: flex;
   align-items: center;
-  min-height: 88rpx;
-  padding: 18rpx 24rpx;
+  box-sizing: border-box;
+  padding: 0 24rpx;
 }
 
-/* 返回圆按钮：深棕 ink-deep 44rpx 圆（双倍 88rpx 触控区）*/
+/* 返回圆按钮：深棕 ink-deep，高度跟胶囊行对齐 */
 .navbar-back {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 88rpx;
-  height: 88rpx;
+  width: 64rpx;
+  height: 64rpx;
   border-radius: 50%;
   background: var(--ink-deep);
   flex: none;
 }
 .navbar-back--hover { opacity: 0.85; }
-.navbar-side { width: 88rpx; height: 88rpx; flex: none; }
+.navbar-side { width: 64rpx; height: 64rpx; flex: none; }
 
 /* 返回箭头：纯 CSS 描边三角，避免外部图标依赖 */
 .navbar-back-icon {
-  width: 20rpx;
-  height: 20rpx;
+  width: 18rpx;
+  height: 18rpx;
   border-left: 5rpx solid var(--paper);
   border-bottom: 5rpx solid var(--paper);
   transform: translateX(3rpx) rotate(45deg);
   border-radius: 2rpx;
 }
 
-/* 居中标题：绝对居中，不受左右块宽度影响 */
-.navbar-title {
+/* 标题只在胶囊行里居中，不吃状态栏高度 */
+.navbar-title-slot {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 1;
+}
+.navbar-title {
   max-width: 56%;
   text-align: center;
-  font-size: 36rpx;
+  font-size: 32rpx;
   font-weight: 800;
   color: var(--ink);
   letter-spacing: -1rpx;
+  pointer-events: none;
 }
 
 /* 右侧 slot 容器 */
@@ -55,5 +68,7 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  min-height: 88rpx;
+  min-height: 100%;
+  position: relative;
+  z-index: 2;
 }

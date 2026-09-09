@@ -10,6 +10,7 @@ Page({
     region: [],
     regionText: '',
     focusName: false,
+    nameError: false,
     submitting: false,
   },
 
@@ -45,7 +46,9 @@ Page({
   },
 
   onNameInput(e) {
-    this.setData({ familyName: e.detail.value });
+    const val = e.detail.value;
+    // 边输入边清空错误
+    this.setData({ familyName: val, nameError: !val || !val.trim() ? this.data.nameError : false });
   },
   onNameFocus() {
     this.setData({ focusName: true });
@@ -65,9 +68,12 @@ Page({
   async onCreate() {
     const name = (this.data.familyName || '').trim();
     if (!name) {
+      // inline 错误 + toast 兜底
+      this.setData({ nameError: true });
       wx.showToast({ title: '请先填写家庭名称', icon: 'none' });
       return;
     }
+    this.setData({ nameError: false });
     if (this.data.submitting) return;
     this.setData({ submitting: true });
     wx.showLoading({ title: '创建中...', mask: true });
@@ -103,7 +109,7 @@ Page({
     wx.navigateTo({
       url: '/pages/family/join/index',
       fail: () => {
-        wx.showToast({ title: '加入页开发中', icon: 'none' });
+        wx.showToast({ title: '页面打开失败，请重试', icon: 'none' });
       },
     });
   },

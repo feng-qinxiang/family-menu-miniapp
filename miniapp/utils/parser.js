@@ -1,7 +1,12 @@
-const UNIT_PATTERN = /([\d.½¼¾⅓⅔]+)\s*(g|克|kg|斤|两|ml|毫升|升|个|只|颗|瓣|勺|大勺|小勺|片|根|碗|杯|把|小把|块|条|段|盒|袋|包|瓶|适量|少许|若干)/i;
+const UNIT_PATTERN = /([\d.½¼¾⅓⅔]+|[一二两三四五六七八九十半]{1,3})\s*(g|克|kg|斤|两|ml|毫升|升|个|只|颗|瓣|勺|大勺|小勺|片|根|碗|杯|把|小把|块|条|段|盒|袋|包|瓶|适量|少许|若干)/i;
 const STEP_PREFIX = /^[0-9一二三四五六七八九十]+[、..)）:：\s]/;
 const XHS_LINK = /https?:\/\/(www\.)?xiaohongshu\.com\/\S+|https?:\/\/xhslink\.com\/\S+/i;
 const ANY_URL = /https?:\/\/\S+/;
+// 自然语言"想法"输入的解析线索：烹饪动词（识别步骤子句）与菜名提示（做个X/想吃X）
+const COOK_VERB = /焯|炖|炒|蒸|煮|烤|煎|炸|拌|腌|卤|烧|切|剁|捞|沥|收汁|下锅|出锅|装盘|调味/;
+const TITLE_HINT = /(?:做个|做道|做一道|想做|想吃|来个|来道|整个|试试)([\u4e00-\u9fa5]{2,10})/;
+// 食材名里的动词杂质（"排骨买500克"→"排骨"）
+const ING_NOISE = /买|用|备好|准备|需要|放|加|要/g;
 
 const CUISINE_RULES = [
   { pattern: /川|麻辣|豆瓣|花椒|回锅|鱼香|水煮/, cuisine: '川菜' },
@@ -20,12 +25,16 @@ const DIFFICULTY_RULES = [
 const DIFFICULTY_LABELS = { easy: '简单', medium: '中等', hard: '困难' };
 
 function parseRecipeText(rawText) {
-  const lines = rawText.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+  let lines = rawText.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
   if (!lines.length) return null;
+  // 一段话式"想法"输入（行少且长）：按中文标点切成子句，逐句归类
+  if (lines.length <= 2 && rawText.trim().length > 16) {
+    lines = rawText.split(/[，,。；;！!？?\r\n]/).map((l) => l.trim()).filter(Boolean);
+  }
 
   const url = extractUrl(rawText);
   const isXhs = XHS_LINK.test(rawText);
-  const title = inferTitle(lines, url);
+  const title = inferTitle(lines, url, rawText);
   const cuisine = detectCuisine(rawText);
   const difficulty = detectDifficulty(rawText);
   const { ingredients, ingredientLines } = extractIngredients(lines);
@@ -63,7 +72,10 @@ function extractUrl(text) {
   return any ? any[0] : '';
 }
 
-function inferTitle(lines, url) {
+function inferTitle(lines, url, rawText) {
+  // 优先从"做个X/想吃X"类表达提取菜名（自然语言输入）
+  const hint = String(rawText || '').match(TITLE_HINT);
+  if (hint && hint[1]) return hint[1];
   const first = lines[0];
   if (first.length <= 30 && !ANY_URL.test(first) && !UNIT_PATTERN.test(first) && !STEP_PREFIX.test(first)) {
     return first.replace(/^[#【\[]+|[】\]]+$/g, '').trim() || '导入菜谱';
@@ -92,17 +104,23 @@ function extractIngredients(lines) {
     if (STEP_PREFIX.test(line)) continue;
     const match = line.match(UNIT_PATTERN);
     if (match) {
+      let name = line.slice(0, line.indexOf(match[0])).replace(/[：:,，、]/g, '').trim() || line.replace(UNIT_PATTERN, '').trim();
+      // 清理"想吃X/做个X"菜名提示语和"买/用/准备"等动词杂质（自然语言里常见：排骨买500克）
+      name = name.replace(/(?:做个|做道|做一道|想做|想吃|来个|来道|整个|试试)[\u4e00-\u9fa5]{2,10}/g, '')
+        .replace(ING_NOISE, '').trim();
+      // 名字过长说明是叙述句而非食材行，丢弃避免整句话变食材
+      if (!name || name.length > 10) continue;
       ingredientLines.push(line);
-      const name = line.slice(0, line.indexOf(match[0])).replace(/[：:,，、]/g, '').trim() || line.replace(UNIT_PATTERN, '').trim();
-      ingredients.push({ name: name || line, amount: match[1], unit: match[2] });
+      ingredients.push({ name, amount: match[1], unit: match[2] });
     } else if (/适量|少许|若干/.test(line) && line.length < 20) {
       ingredientLines.push(line);
-      const name = line.replace(/适量|少许|若干/g, '').replace(/[：:,，、]/g, '').trim();
+      const name = line.replace(/适量|少许|若干/g, '').replace(/[：:,，、]/g, '').replace(ING_NOISE, '').trim();
       if (name) ingredients.push({ name, amount: '适量', unit: '' });
     }
   }
   if (!ingredients.length) {
-    const fallback = lines.slice(1).filter((l) => !STEP_PREFIX.test(l) && l.length < 20).slice(0, 5);
+    // 兜底也排除烹饪动作句，避免"先焯水再炖"被当食材
+    const fallback = lines.slice(1).filter((l) => !STEP_PREFIX.test(l) && !COOK_VERB.test(l) && l.length < 20).slice(0, 5);
     fallback.forEach((l) => {
       ingredientLines.push(l);
       ingredients.push({ name: l, amount: '', unit: '' });
@@ -119,6 +137,14 @@ function extractSteps(lines) {
       stepLines.push(line);
       steps.push({ text: line.replace(STEP_PREFIX, '').trim(), image: '' });
     }
+  }
+  if (!steps.length) {
+    // 无序号时：含烹饪动词且不是食材行的子句按顺序当步骤（自然语言输入）
+    const verbLines = lines.filter((l) => COOK_VERB.test(l) && !UNIT_PATTERN.test(l) && l.length >= 4);
+    verbLines.slice(0, 8).forEach((l) => {
+      stepLines.push(l);
+      steps.push({ text: l, image: '' });
+    });
   }
   if (!steps.length) {
     const candidates = lines.filter((l) => l.length > 15 && !UNIT_PATTERN.test(l));

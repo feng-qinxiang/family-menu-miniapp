@@ -175,6 +175,30 @@
   border: 4rpx solid var(--pop);
   box-sizing: border-box;
 }
+/* clipboard：板身 + 顶部夹子 */
+.ic-clipboard::before {
+  content: "";
+  position: absolute;
+  top: 8rpx;
+  left: 4rpx;
+  width: 30rpx;
+  height: 28rpx;
+  border: 4rpx solid var(--pop);
+  border-radius: 4rpx;
+  box-sizing: border-box;
+}
+.ic-clipboard::after {
+  content: "";
+  position: absolute;
+  top: 2rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16rpx;
+  height: 10rpx;
+  border: 4rpx solid var(--pop);
+  border-radius: 4rpx;
+  box-sizing: border-box;
+}
 /* bell：钟身 + 钟摆 */
 .ic-bell::before {
   content: "";

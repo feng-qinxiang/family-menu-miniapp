@@ -142,7 +142,8 @@
   box-sizing: border-box;
   background: var(--c-surface);
   border-radius: 50rpx 50rpx 0 0;
-  padding: 46rpx 46rpx 40rpx;
+  /* 整页 disableScroll，底部按钮必须靠内边距让开 home indicator */
+  padding: 46rpx 46rpx calc(40rpx + env(safe-area-inset-bottom));
   box-shadow: 0 -16rpx 80rpx rgba(40, 25, 12, 0.28);
   transform: translateY(105%);
   transition: transform 0.46s var(--g-back-out);

@@ -4,7 +4,7 @@
     <image class="mag-hero-img" src="/assets/dishes/hongshao-pork.jpg" mode="aspectFill" />
     <view class="mag-hero-mask"></view>
 
-    <view class="mag-hero-top">
+    <view class="mag-hero-top" style="top: {{capsuleTop}};">
       <view>
         <view class="mag-hi-cn">本月一起做了 {{monthCookCount}} 道菜</view>
       </view>
@@ -25,8 +25,8 @@
 
   <!-- 奶油 sheet -->
   <view class="mag-sheet">
-    <!-- VIP banner -->
-    <view class="mag-vip tap-scale" bindtap="goVip">
+    <!-- VIP banner（支付开关关闭时隐藏） -->
+    <view class="mag-vip tap-scale" wx:if="{{features.PAYMENT}}" bindtap="goVip">
       <view class="mag-vip-ic"><view class="mag-vip-glyph"></view></view>
       <view class="mag-vip-mid">
         <view class="mag-vip-t">{{vipStatus.vip ? '已开通' : '开通'}}<text class="hl">家庭云同步</text></view>
@@ -35,8 +35,8 @@
       <view class="mag-vip-go">{{vipStatus.vip ? '查看' : '开通'}} ›</view>
     </view>
 
-    <!-- 游客引导：未绑定手机号 -->
-    <view class="mag-phone tap-scale" wx:if="{{currentUser && !currentUser.phoneBound}}" bindtap="goPhoneBind">
+    <!-- 游客引导：未绑定手机号（手机号登录开关关闭时隐藏） -->
+    <view class="mag-phone tap-scale" wx:if="{{features.PHONE_LOGIN && currentUser && !currentUser.phoneBound}}" bindtap="goPhoneBind">
       <view class="mag-phone-ic"><view class="mag-phone-glyph"></view></view>
       <view class="mag-phone-mid">
         <view class="mag-phone-t">绑定手机号，换设备不丢数据</view>
@@ -102,28 +102,13 @@
       </view>
     </view>
 
-    <!-- 厨房工具 -->
+    <!-- 厨房工具：走 tab 不可达的功能（周菜单、导入） -->
     <view class="g-fade-up g-d3">
       <section-head eyebrow="今天要用" title="厨房" popPart="工具" />
       <view class="card mag-tools">
-        <view class="mag-trow tap-scale" bindtap="goMenu">
-          <view class="mag-ticon ti-0">桌</view>
-          <view class="mag-tmid"><view class="mag-tname">今日菜单</view><view class="mag-tdesc">今天这桌吃点什么</view></view>
-          <view class="mag-tarrow">›</view>
-        </view>
         <view class="mag-trow tap-scale" bindtap="goWeekly">
           <view class="mag-ticon ti-1">周</view>
           <view class="mag-tmid"><view class="mag-tname">周菜单计划</view><view class="mag-tdesc">一周吃什么提前排好</view></view>
-          <view class="mag-tarrow">›</view>
-        </view>
-        <view class="mag-trow tap-scale" bindtap="goPantry">
-          <view class="mag-ticon ti-2">箱</view>
-          <view class="mag-tmid"><view class="mag-tname">冰箱库存</view><view class="mag-tdesc">家里还剩哪些食材</view></view>
-          <view class="mag-tarrow">›</view>
-        </view>
-        <view class="mag-trow tap-scale" bindtap="goShopping">
-          <view class="mag-ticon ti-3">篮</view>
-          <view class="mag-tmid"><view class="mag-tname">菜篮子</view><view class="mag-tdesc">要买的食材一键清点</view></view>
           <view class="mag-tarrow">›</view>
         </view>
         <view class="mag-trow tap-scale" bindtap="goImport">
@@ -131,9 +116,15 @@
           <view class="mag-tmid"><view class="mag-tname">导入菜谱</view><view class="mag-tdesc">粘贴文字一键生成菜谱</view></view>
           <view class="mag-tarrow">›</view>
         </view>
-        <view class="mag-trow tap-scale" bindtap="goCommunity">
-          <view class="mag-ticon ti-5">社</view>
-          <view class="mag-tmid"><view class="mag-tname">社区菜谱 <text class="mag-tvip" wx:if="{{!vipStatus.vip}}">VIP</text></view><view class="mag-tdesc">看看别人家在做什么菜</view></view>
+        <view wx:if="{{features.COMMUNITY}}" class="mag-trow tap-scale" bindtap="goFavorites">
+          <view class="mag-ticon ti-2">藏</view>
+          <view class="mag-tmid"><view class="mag-tname">我的收藏</view><view class="mag-tdesc">收藏的菜谱和帖子都在这儿</view></view>
+          <view class="mag-tarrow">›</view>
+        </view>
+        <!-- 运营入口：仅管理员可见（后端 admin 字段） -->
+        <view wx:if="{{isAdmin}}" class="mag-trow tap-scale" bindtap="goCommunityAudit">
+          <view class="mag-ticon ti-3">审</view>
+          <view class="mag-tmid"><view class="mag-tname">社区审核</view><view class="mag-tdesc">处理举报，下架违规内容</view></view>
           <view class="mag-tarrow">›</view>
         </view>
       </view>
@@ -163,7 +154,7 @@
       </view>
     </view>
 
-    <!-- 偏好画像入口 -->
+    <!-- 偏好画像入口：直接 merge 到设置 card -->
     <view class="g-fade-up g-d5">
       <section-head eyebrow="全家口味" title="偏好" popPart="画像" />
       <view class="card mag-tools">

@@ -44,6 +44,9 @@ public class AuthService {
     private final boolean devOtpEnabled;
     private final boolean wechatConfigured;
     private final ConcurrentHashMap<String, AuthUser> guestCache = new ConcurrentHashMap<>();
+
+    /** 游客缓存上限（超过则整体清空，只是多查一次库） */
+    private static final int GUEST_CACHE_MAX = 10_000;
     // ponytail: 内存态验证码试错限流（failCount, lockUntilEpochMillis）；重启清零可接受，升级路径为落库
     private final ConcurrentHashMap<String, long[]> phoneOtpAttempts = new ConcurrentHashMap<>();
     private static final int OTP_MAX_FAILURES = 5;
@@ -54,7 +57,8 @@ public class AuthService {
                        SmsGateway smsGateway,
                        @Value("${wechat.app-id:}") String appId,
                        @Value("${wechat.app-secret:}") String appSecret,
-                       @Value("${auth.dev-otp-enabled:true}") boolean devOtpEnabled) {
+                       // 默认 false：只有显式配置才开启固定验证码，避免任何配置缺失导致 246810 生效
+                       @Value("${auth.dev-otp-enabled:false}") boolean devOtpEnabled) {
         this.jdbcTemplate = jdbcTemplate;
         this.membershipService = membershipService;
         this.smsGateway = smsGateway;
@@ -121,7 +125,21 @@ public class AuthService {
     public LoginResponse loginWithPhoneOtp(OtpLoginRequest request) {
         String phone = normalizePhone(request == null ? null : request.phone());
         String code = request == null ? "" : request.code();
-        if (code == null || !code.matches("\\d{6}")) {
+        consumePhoneOtp(phone, code);
+        String nickname = isBlank(request.nickname()) ? "手机用户" + phone.substring(phone.length() - 4) : request.nickname().trim();
+        String avatarUrl = request.avatarUrl() == null ? "" : request.avatarUrl().trim();
+        return loginByPhone(phone, nickname, avatarUrl);
+    }
+
+    /**
+     * 校验并消费验证码。失败抛 401/429，成功后该码不可复用。
+     * 抽出来供普通登录与管理员后台登录共用，避免两套校验逻辑漂移。
+     */
+    @Transactional
+    public void consumePhoneOtp(String rawPhone, String rawCode) {
+        String phone = normalizePhone(rawPhone);
+        String code = rawCode == null ? "" : rawCode;
+        if (!code.matches("\\d{6}")) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid otp code");
         }
         long[] attempt = phoneOtpAttempts.get(phone);
@@ -147,20 +165,20 @@ public class AuthService {
         }
         phoneOtpAttempts.remove(phone);
         jdbcTemplate.update("UPDATE phone_otp SET consumed_at = NOW() WHERE id = ?", otpId);
-        String nickname = isBlank(request.nickname()) ? "手机用户" + phone.substring(phone.length() - 4) : request.nickname().trim();
-        String avatarUrl = request.avatarUrl() == null ? "" : request.avatarUrl().trim();
-        return loginByPhone(phone, nickname, avatarUrl);
     }
 
     public Optional<AuthUser> resolveToken(String token) {
         if (isBlank(token)) {
             return Optional.empty();
         }
+        // 库里存的是 token 的 SHA-256 摘要，不存明文；
+        // 封禁（status=BANNED）账号的会话即时失效
+        String tokenHash = sha256Hex(token.trim());
         String sql = """
                 SELECT u.id, u.nickname, u.avatar_url, u.is_admin, u.phone_number, s.expires_at
                 FROM user_session s
                 JOIN user_account u ON u.id = s.user_id
-                WHERE s.token = ? AND s.expires_at > NOW()
+                WHERE s.token = ? AND s.expires_at > NOW() AND u.status = 'ACTIVE'
                 """;
         return jdbcTemplate.query(sql, rs -> {
             if (!rs.next()) {
@@ -171,7 +189,7 @@ public class AuthService {
             LocalDateTime expiresAt = rs.getTimestamp("expires_at").toLocalDateTime();
             if (expiresAt.isBefore(LocalDateTime.now().plusDays(15))) {
                 jdbcTemplate.update("UPDATE user_session SET expires_at = ? WHERE token = ?",
-                        LocalDateTime.now().plusDays(30), token.trim());
+                        LocalDateTime.now().plusDays(30), tokenHash);
             }
             com.familymenu.daily.payment.MembershipService.Coverage coverage =
                     membershipService.resolveCoverage(userId);
@@ -185,7 +203,7 @@ public class AuthService {
                     rs.getBoolean("is_admin"),
                     rs.getString("phone_number") != null && !rs.getString("phone_number").isBlank()
             ));
-        }, token.trim());
+        }, tokenHash);
     }
 
     public long resolveUserIdOrGuest(String token) {
@@ -214,7 +232,7 @@ public class AuthService {
     }
 
     @Transactional
-    public AuthUser updateProfile(AuthUser current, String nickname, String avatarUrl, String phone) {
+    public AuthUser updateProfile(AuthUser current, String nickname, String avatarUrl, String phone, String phoneCode) {
         long userId = current.userId();
         if (nickname != null && !nickname.isBlank()) {
             jdbcTemplate.update("UPDATE user_account SET nickname = ? WHERE id = ?", nickname.trim(), userId);
@@ -224,7 +242,26 @@ public class AuthService {
         }
         if (phone != null && !phone.isBlank()) {
             String normalized = normalizePhone(phone);
-            jdbcTemplate.update("UPDATE user_account SET phone_number = ? WHERE id = ?", normalized, userId);
+            // 与原值相同则视为回传，不做变更（前端保存资料时会原样带回已有手机号）
+            String currentPhone = jdbcTemplate.query(
+                    "SELECT phone_number FROM user_account WHERE id = ?",
+                    rs -> rs.next() ? rs.getString("phone_number") : null, userId);
+            boolean unchanged = normalized.equals(currentPhone);
+            if (!unchanged) {
+                // 换绑手机号必须先验证该手机号的验证码，否则可把他人手机号绑到自己账号 → 账号接管
+                if (phoneCode == null || phoneCode.isBlank()) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "绑定手机号需要验证码");
+                }
+                consumePhoneOtp(normalized, phoneCode);
+                // 该手机号已被其他账号占用时拒绝，避免一号多号（登录按最小 id 认领会串号）
+                Long occupied = jdbcTemplate.query(
+                        "SELECT id FROM user_account WHERE phone_number = ? AND id <> ? LIMIT 1",
+                        rs -> rs.next() ? rs.getLong("id") : null, normalized, userId);
+                if (occupied != null) {
+                    throw new ResponseStatusException(HttpStatus.CONFLICT, "该手机号已绑定其他账号");
+                }
+                jdbcTemplate.update("UPDATE user_account SET phone_number = ? WHERE id = ?", normalized, userId);
+            }
         }
         guestCache.clear();
         return loadUser(userId, current.familyId());
@@ -247,6 +284,13 @@ public class AuthService {
                 rs -> rs.next() ? rs.getLong("id") : null, phone);
         if (existingUserId != null) {
             long userId = existingUserId;
+            // 封禁账号拒绝登录
+            String status = jdbcTemplate.query(
+                    "SELECT status FROM user_account WHERE id = ?",
+                    rs -> rs.next() ? rs.getString("status") : null, userId);
+            if ("BANNED".equals(status)) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "该账号已被停用，如有疑问请联系客服");
+            }
             long familyId = findOrCreateDefaultFamily(userId);
             String token = createSession(userId, "phone");
             AuthUser user = loadUser(userId, familyId);
@@ -265,14 +309,48 @@ public class AuthService {
 
     private String createSession(long userId, String loginType) {
         String token = UUID.randomUUID().toString().replace("-", "");
+        // 只落库哈希；明文 token 仅在本次响应里返回给客户端
         jdbcTemplate.update(
                 "INSERT INTO user_session(token, user_id, login_type, expires_at) VALUES (?, ?, ?, ?)",
-                token,
+                sha256Hex(token),
                 userId,
                 loginType,
                 LocalDateTime.now().plusDays(30)
         );
         return token;
+    }
+
+    /** 登出：删除该 token 对应的会话行。不存在也视为成功（幂等）。 */
+    @Transactional
+    public void logout(String token) {
+        if (isBlank(token)) {
+            return;
+        }
+        int removed = jdbcTemplate.update("DELETE FROM user_session WHERE token = ?", sha256Hex(token.trim()));
+        if (removed > 0) {
+            guestCache.clear();
+        }
+    }
+
+    /**
+     * 管理后台登录：手机号 + 验证码，但只放行 is_admin=1 的账号。
+     * 非管理员即使验证码正确也拒绝，避免普通用户拿到后台 token。
+     */
+    @Transactional
+    public LoginResponse adminLoginByPhoneOtp(String rawPhone, String rawCode) {
+        String phone = normalizePhone(rawPhone);
+        // 先确认该手机号属于管理员，再校验验证码：避免对非管理员账号做无意义的验证码消耗
+        Long adminUserId = jdbcTemplate.query(
+                "SELECT id FROM user_account WHERE phone_number = ? AND is_admin = 1 AND status = 'ACTIVE' ORDER BY id LIMIT 1",
+                rs -> rs.next() ? rs.getLong("id") : null, phone);
+        if (adminUserId == null) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "该账号不是管理员");
+        }
+        consumePhoneOtp(phone, rawCode);
+        long familyId = findOrCreateDefaultFamily(adminUserId);
+        String token = createSession(adminUserId, "admin");
+        log.info("admin login: userId={}", adminUserId);
+        return new LoginResponse(token, loadUser(adminUserId, familyId));
     }
 
     private AuthUser ensureGuestAccount(String deviceFingerprint) {
@@ -287,8 +365,16 @@ public class AuthService {
         long userId = findUserId(openid);
         long familyId = findOrCreateDefaultFamily(userId);
         AuthUser user = loadUser(userId, familyId);
-        guestCache.put(openid, user);
+        putGuestCache(openid, user);
         return user;
+    }
+
+    /** 游客会话缓存：加个上限，防止被大量伪造设备指纹撑爆内存（缓存只影响性能，清空无副作用）。 */
+    private void putGuestCache(String openid, AuthUser user) {
+        if (guestCache.size() >= GUEST_CACHE_MAX) {
+            guestCache.clear();
+        }
+        guestCache.put(openid, user);
     }
 
     private AuthUser resolveGuestAccount() {
@@ -314,7 +400,7 @@ public class AuthService {
             return ensureGuestAccount(null);
         }
         AuthUser user = loadUser(userId, familyId);
-        guestCache.put(SEED_GUEST_OPENID, user);
+        putGuestCache(SEED_GUEST_OPENID, user);
         return user;
     }
 
@@ -435,11 +521,11 @@ public class AuthService {
         if (familyId <= 0) {
             return;
         }
-        // ponytail: 用 daily_menu 的固定 ID 做存在性检测，已播种则跳过全部 INSERT
-        long base = familyId * 1000L;
+        // 已播种则跳过：按"本家庭今天是否已有菜单"判断，而不是按固定主键 id。
+        // 历史写法用 familyId*1000+n 当主键，会和真实自增 id 撞车（把种子菜单项挂到别人家的菜单上）。
         Boolean seeded = jdbcTemplate.query(
-                "SELECT COUNT(1) > 0 FROM daily_menu WHERE id = ?",
-                rs -> rs.next() && rs.getBoolean(1), base + 1);
+                "SELECT COUNT(1) > 0 FROM daily_menu WHERE family_id = ? AND menu_date = CURRENT_DATE",
+                rs -> rs.next() && rs.getBoolean(1), familyId);
         if (Boolean.TRUE.equals(seeded)) {
             return;
         }
@@ -450,32 +536,62 @@ public class AuthService {
         if (tomato == null || soup == null || beef == null || friedRice == null) {
             return;
         }
-        jdbcTemplate.update("INSERT IGNORE INTO daily_menu(id, family_id, menu_date, status) VALUES (?, ?, CURRENT_DATE, 'READY')", base + 1, familyId);
-        jdbcTemplate.update("INSERT IGNORE INTO daily_menu_item(id, daily_menu_id, recipe_id, meal_type) VALUES (?, ?, ?, 'lunch')", base + 11, base + 1, tomato);
-        jdbcTemplate.update("INSERT IGNORE INTO daily_menu_item(id, daily_menu_id, recipe_id, meal_type) VALUES (?, ?, ?, 'lunch')", base + 12, base + 1, soup);
-        jdbcTemplate.update("INSERT IGNORE INTO daily_menu_item(id, daily_menu_id, recipe_id, meal_type) VALUES (?, ?, ?, 'dinner')", base + 13, base + 1, beef);
-        jdbcTemplate.update("INSERT IGNORE INTO daily_menu_item(id, daily_menu_id, recipe_id, meal_type) VALUES (?, ?, ?, 'dinner')", base + 14, base + 1, friedRice);
-        jdbcTemplate.update("INSERT IGNORE INTO shopping_list(id, family_id, daily_menu_id, status) VALUES (?, ?, ?, 'OPEN')", base + 21, familyId, base + 1);
-        jdbcTemplate.update("INSERT IGNORE INTO shopping_list_item(id, shopping_list_id, ingredient_name, amount, unit, purchased, is_manual) VALUES (?, ?, ?, ?, ?, 0, 0)", base + 31, base + 21, "番茄", "2", "个");
-        jdbcTemplate.update("INSERT IGNORE INTO shopping_list_item(id, shopping_list_id, ingredient_name, amount, unit, purchased, is_manual) VALUES (?, ?, ?, ?, ?, 1, 0)", base + 32, base + 21, "鸡蛋", "5", "个");
-        jdbcTemplate.update("INSERT IGNORE INTO shopping_list_item(id, shopping_list_id, ingredient_name, amount, unit, purchased, is_manual) VALUES (?, ?, ?, ?, ?, 0, 0)", base + 33, base + 21, "牛肉", "250", "g");
-        jdbcTemplate.update("INSERT IGNORE INTO shopping_list_item(id, shopping_list_id, ingredient_name, amount, unit, purchased, is_manual) VALUES (?, ?, ?, ?, ?, 0, 0)", base + 34, base + 21, "西兰花", "1", "颗");
-        jdbcTemplate.update("INSERT IGNORE INTO shopping_list_item(id, shopping_list_id, ingredient_name, amount, unit, purchased, is_manual) VALUES (?, ?, ?, ?, ?, 0, 1)", base + 35, base + 21, "水果", "1", "袋");
-        jdbcTemplate.update("INSERT IGNORE INTO pantry_item(id, family_id, ingredient_name, amount, unit, expires_at) VALUES (?, ?, ?, ?, ?, ?)", base + 41, familyId, "鸡蛋", "8", "个", LocalDate.now().plusDays(10));
-        jdbcTemplate.update("INSERT IGNORE INTO pantry_item(id, family_id, ingredient_name, amount, unit, expires_at) VALUES (?, ?, ?, ?, ?, ?)", base + 42, familyId, "西兰花", "1", "颗", LocalDate.now().plusDays(2));
-        jdbcTemplate.update("INSERT IGNORE INTO pantry_item(id, family_id, ingredient_name, amount, unit, expires_at) VALUES (?, ?, ?, ?, ?, ?)", base + 43, familyId, "番茄", "3", "个", LocalDate.now().plusDays(3));
-        jdbcTemplate.update("INSERT IGNORE INTO pantry_item(id, family_id, ingredient_name, amount, unit, expires_at) VALUES (?, ?, ?, ?, ?, ?)", base + 44, familyId, "紫菜", "1", "包", LocalDate.now().plusDays(90));
-        jdbcTemplate.update("INSERT IGNORE INTO pantry_item(id, family_id, ingredient_name, amount, unit, expires_at) VALUES (?, ?, ?, ?, ?, ?)", base + 45, familyId, "米饭", "2", "碗", LocalDate.now().plusDays(1));
-        jdbcTemplate.update("INSERT IGNORE INTO cook_history(id, recipe_id, user_id, family_id, cooked_at, score, remark) VALUES (?, ?, ?, ?, ?, ?, ?)", base + 51, tomato, userId, familyId, LocalDateTime.now().minusDays(1), 5, "孩子拌饭吃光了");
-        jdbcTemplate.update("INSERT IGNORE INTO cook_history(id, recipe_id, user_id, family_id, cooked_at, score, remark) VALUES (?, ?, ?, ?, ?, ?, ?)", base + 52, beef, userId, familyId, LocalDateTime.now().minusDays(2), 4, "适合带饭");
-        jdbcTemplate.update("INSERT IGNORE INTO cook_history(id, recipe_id, user_id, family_id, cooked_at, score, remark) VALUES (?, ?, ?, ?, ?, ?, ?)", base + 53, soup, userId, familyId, LocalDateTime.now().minusDays(3), 5, "八分钟出汤，很稳");
-        jdbcTemplate.update("INSERT IGNORE INTO cook_history(id, recipe_id, user_id, family_id, cooked_at, score, remark) VALUES (?, ?, ?, ?, ?, ?, ?)", base + 54, friedRice, userId, familyId, LocalDateTime.now().minusDays(5), 4, "剩饭改造成功");
-        jdbcTemplate.update("INSERT IGNORE INTO cook_history(id, recipe_id, user_id, family_id, cooked_at, score, remark) VALUES (?, ?, ?, ?, ?, ?, ?)", base + 55, tomato, userId, familyId, LocalDateTime.now().minusDays(8), 5, "本周第二次点名要吃");
-        jdbcTemplate.update("INSERT IGNORE INTO cook_history(id, recipe_id, user_id, family_id, cooked_at, score, remark) VALUES (?, ?, ?, ?, ?, ?, ?)", base + 56, beef, userId, familyId, LocalDateTime.now().minusDays(13), 5, "肉菜均衡");
-        jdbcTemplate.update("INSERT IGNORE INTO cook_history(id, recipe_id, user_id, family_id, cooked_at, score, remark) VALUES (?, ?, ?, ?, ?, ?, ?)", base + 57, soup, userId, familyId, LocalDateTime.now().minusDays(21), 4, "清淡不腻");
-        jdbcTemplate.update("INSERT IGNORE INTO cook_history(id, recipe_id, user_id, family_id, cooked_at, score, remark) VALUES (?, ?, ?, ?, ?, ?, ?)", base + 58, friedRice, userId, familyId, LocalDateTime.now().minusDays(30), 4, "早餐也能吃");
-        jdbcTemplate.update("INSERT IGNORE INTO notification_message(id, user_id, family_id, kind, title, body_text, action_type, unread, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?)", base + 61, userId, familyId, "fam", "今晚菜单已生成", "午餐有番茄炒蛋和紫菜蛋花汤，晚餐安排牛肉炒西兰花。", "menu", LocalDateTime.now().minusMinutes(20));
-        jdbcTemplate.update("INSERT IGNORE INTO notification_message(id, user_id, family_id, kind, title, body_text, action_type, unread, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?)", base + 62, userId, familyId, "sys", "买菜清单待确认", "还有 5 项食材未购买，出门前可以再核对一次。", "shopping", LocalDateTime.now().minusHours(2));
+        long menuId = insertAndReturnId(
+                "INSERT INTO daily_menu(family_id, menu_date, status) VALUES (?, CURRENT_DATE, 'READY')", familyId);
+        for (Object[] item : new Object[][]{
+                {tomato, "lunch"}, {soup, "lunch"}, {beef, "dinner"}, {friedRice, "dinner"}}) {
+            jdbcTemplate.update(
+                    "INSERT INTO daily_menu_item(daily_menu_id, recipe_id, meal_type) VALUES (?, ?, ?)",
+                    menuId, item[0], item[1]);
+        }
+        long shoppingListId = insertAndReturnId(
+                "INSERT INTO shopping_list(family_id, daily_menu_id, status) VALUES (?, ?, 'OPEN')",
+                familyId, menuId);
+        jdbcTemplate.update("INSERT INTO shopping_list_item(shopping_list_id, ingredient_name, amount, unit, purchased, is_manual) VALUES (?, ?, ?, ?, 0, 0)", shoppingListId, "番茄", "2", "个");
+        jdbcTemplate.update("INSERT INTO shopping_list_item(shopping_list_id, ingredient_name, amount, unit, purchased, is_manual) VALUES (?, ?, ?, ?, 1, 0)", shoppingListId, "鸡蛋", "5", "个");
+        jdbcTemplate.update("INSERT INTO shopping_list_item(shopping_list_id, ingredient_name, amount, unit, purchased, is_manual) VALUES (?, ?, ?, ?, 0, 0)", shoppingListId, "牛肉", "250", "g");
+        jdbcTemplate.update("INSERT INTO shopping_list_item(shopping_list_id, ingredient_name, amount, unit, purchased, is_manual) VALUES (?, ?, ?, ?, 0, 0)", shoppingListId, "西兰花", "1", "颗");
+        jdbcTemplate.update("INSERT INTO shopping_list_item(shopping_list_id, ingredient_name, amount, unit, purchased, is_manual) VALUES (?, ?, ?, ?, 0, 1)", shoppingListId, "水果", "1", "袋");
+        jdbcTemplate.update("INSERT INTO pantry_item(family_id, ingredient_name, amount, unit, expires_at) VALUES (?, ?, ?, ?, ?)", familyId, "鸡蛋", "8", "个", LocalDate.now().plusDays(10));
+        jdbcTemplate.update("INSERT INTO pantry_item(family_id, ingredient_name, amount, unit, expires_at) VALUES (?, ?, ?, ?, ?)", familyId, "西兰花", "1", "颗", LocalDate.now().plusDays(2));
+        jdbcTemplate.update("INSERT INTO pantry_item(family_id, ingredient_name, amount, unit, expires_at) VALUES (?, ?, ?, ?, ?)", familyId, "番茄", "3", "个", LocalDate.now().plusDays(3));
+        jdbcTemplate.update("INSERT INTO pantry_item(family_id, ingredient_name, amount, unit, expires_at) VALUES (?, ?, ?, ?, ?)", familyId, "紫菜", "1", "包", LocalDate.now().plusDays(90));
+        jdbcTemplate.update("INSERT INTO pantry_item(family_id, ingredient_name, amount, unit, expires_at) VALUES (?, ?, ?, ?, ?)", familyId, "米饭", "2", "碗", LocalDate.now().plusDays(1));
+        Object[][] history = new Object[][]{
+                {tomato, 1, 5, "孩子拌饭吃光了"},
+                {beef, 2, 4, "适合带饭"},
+                {soup, 3, 5, "八分钟出汤，很稳"},
+                {friedRice, 5, 4, "剩饭改造成功"},
+                {tomato, 8, 5, "本周第二次点名要吃"},
+                {beef, 13, 5, "肉菜均衡"},
+                {soup, 21, 4, "清淡不腻"},
+                {friedRice, 30, 4, "早餐也能吃"}};
+        for (Object[] row : history) {
+            jdbcTemplate.update(
+                    "INSERT INTO cook_history(recipe_id, user_id, family_id, cooked_at, score, remark) VALUES (?, ?, ?, ?, ?, ?)",
+                    row[0], userId, familyId, LocalDateTime.now().minusDays((Integer) row[1]), row[2], row[3]);
+        }
+        jdbcTemplate.update("INSERT INTO notification_message(user_id, family_id, kind, title, body_text, action_type, unread, created_at) VALUES (?, ?, ?, ?, ?, ?, 1, ?)", userId, familyId, "fam", "今晚菜单已生成", "午餐有番茄炒蛋和紫菜蛋花汤，晚餐安排牛肉炒西兰花。", "menu", LocalDateTime.now().minusMinutes(20));
+        jdbcTemplate.update("INSERT INTO notification_message(user_id, family_id, kind, title, body_text, action_type, unread, created_at) VALUES (?, ?, ?, ?, ?, ?, 1, ?)", userId, familyId, "sys", "买菜清单待确认", "还有 5 项食材未购买，出门前可以再核对一次。", "shopping", LocalDateTime.now().minusHours(2));
+    }
+
+    /** 插入并返回自增主键（避免为种子数据硬编码主键）。 */
+    private long insertAndReturnId(String sql, Object... args) {
+        org.springframework.jdbc.support.GeneratedKeyHolder keyHolder =
+                new org.springframework.jdbc.support.GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            java.sql.PreparedStatement ps =
+                    connection.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS);
+            for (int i = 0; i < args.length; i++) {
+                ps.setObject(i + 1, args[i]);
+            }
+            return ps;
+        }, keyHolder);
+        Number key = keyHolder.getKey();
+        if (key == null) {
+            throw new IllegalStateException("insert failed, no generated key: " + sql);
+        }
+        return key.longValue();
     }
 
     private Long findRecipeIdByTitle(String title) {

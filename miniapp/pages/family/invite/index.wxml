@@ -50,18 +50,18 @@
     微信分享给家人
   </view>
 
-  <!-- 保存邀请图（失败禁用） -->
+  <!-- 复制邀请信息（实为复制文本，非图片，按钮名须与行为一致） -->
   <view
     wx:if="{{inviteCode}}"
     class="fi-savebtn tap-scale g-fade-up g-d3"
     catchtap="onSaveImage"
   >
     <view class="fi-ic-save"></view>
-    <text>保存邀请图</text>
+    <text>复制邀请信息</text>
   </view>
   <view wx:else class="fi-savebtn fi-disabled g-fade-up g-d3" catchtap="loadFamily">
     <view class="fi-ic-save"></view>
-    <text>保存邀请图</text>
+    <text>复制邀请信息</text>
   </view>
 
   <!-- Tip 24h -->

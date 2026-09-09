@@ -25,7 +25,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
-@TestPropertySource(properties = "auth.dev-otp-enabled=true")
+@TestPropertySource(properties = {
+        "auth.dev-otp-enabled=true",
+        // 测试环境显式开启模拟支付（生产默认关闭，mock-pay 返回 403）
+        "wechat.pay.mock-pay-enabled=true"
+})
 class PaymentFlowTests {
 
     @Autowired

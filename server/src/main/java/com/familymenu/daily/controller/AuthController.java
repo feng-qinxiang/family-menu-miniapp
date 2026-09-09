@@ -67,7 +67,15 @@ public class AuthController {
         if (request == null) {
             return user;
         }
-        return authService.updateProfile(user, request.nickname(), request.avatarUrl(), request.phone());
+        return authService.updateProfile(user, request.nickname(), request.avatarUrl(),
+                request.phone(), request.phoneCode());
+    }
+
+    /** 登出：吊销当前会话 token（幂等）。 */
+    @PostMapping("/logout")
+    public java.util.Map<String, Object> logout(@RequestHeader(name = "X-Auth-Token", required = false) String token) {
+        authService.logout(token);
+        return java.util.Map.of("ok", true);
     }
 
     private static String safeHeader(HttpServletRequest request, String name) {

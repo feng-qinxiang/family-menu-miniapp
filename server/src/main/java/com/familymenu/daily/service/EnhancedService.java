@@ -53,6 +53,9 @@ public class EnhancedService {
                 return cached;
             }
             WeeklyMenuView generated = doGenerateWeeklyMenu(familyId, userId);
+            // 顺手清掉上一周的缓存，避免缓存随家庭数无限增长（每项都含整周菜谱）
+            String thisWeek = mondayOfThisWeek();
+            weeklyMenuCache.entrySet().removeIf(e -> !thisWeek.equals(e.getValue().weekStart()));
             weeklyMenuCache.put(familyId, generated);
             return generated;
         }

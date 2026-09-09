@@ -21,6 +21,7 @@ import com.familymenu.daily.dto.ApiModels.CommunityReportRequest;
 import com.familymenu.daily.dto.ApiModels.UpdateRecipeRequest;
 import com.familymenu.daily.dto.ApiModels.VipStatus;
 import com.familymenu.daily.dto.AuthModels.AuthUser;
+import com.familymenu.daily.service.ContentSecurityService;
 import com.familymenu.daily.service.MysqlKitchenStore;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,9 +40,11 @@ import java.util.List;
 public class HomeController {
 
     private final MysqlKitchenStore store;
+    private final ContentSecurityService contentSecurity;
 
-    public HomeController(MysqlKitchenStore store) {
+    public HomeController(MysqlKitchenStore store, ContentSecurityService contentSecurity) {
         this.store = store;
+        this.contentSecurity = contentSecurity;
     }
 
     @GetMapping("/home/dashboard")
@@ -63,8 +66,9 @@ public class HomeController {
     }
 
     @GetMapping("/community/posts")
-    public List<CommunityPost> communityPosts(@CurrentUser(orGuest = true) AuthUser user) {
-        return store.communityPosts(user.userId());
+    public List<CommunityPost> communityPosts(@CurrentUser AuthUser user) {
+        // 只读公开接口：未带 token 也能浏览（user 为 null 时不返回"我收藏的"标记）
+        return store.communityPosts(user == null ? 0L : user.userId());
     }
 
     @GetMapping("/me/favorites")
@@ -77,12 +81,19 @@ public class HomeController {
     @RequiresAuth
     public CommunityPost createCommunityPost(@Valid @RequestBody ApiModels.CreateCommunityPostRequest request,
                                              @CurrentUser AuthUser user) {
-        return store.createCommunityPost(user.userId(), request);
+        // UGC 机审：标题+正文+标签一起送微信 msgSecCheck。
+        // 违规直接 400；无法机审（未配凭据 / 游客账号无真实 openid）→ PENDING，进人工审核队列。
+        String text = request.title() + "\n" + request.content()
+                + (request.tags() == null ? "" : "\n" + String.join(" ", request.tags()));
+        String auditStatus = contentSecurity.auditStatus(user.userId(), text, ContentSecurityService.SCENE_FORUM);
+        return store.createCommunityPost(user.userId(), request, auditStatus);
     }
 
     @GetMapping("/community/posts/{postId}/comments")
-    public List<CommunityCommentItem> communityComments(@PathVariable long postId) {
-        return store.communityComments(postId);
+    public List<CommunityCommentItem> communityComments(@PathVariable long postId,
+                                                        @CurrentUser AuthUser user) {
+        // 只读公开接口：未登录只看得到已通过审核的评论
+        return store.communityComments(postId, user == null ? 0L : user.userId());
     }
 
     @PostMapping("/community/posts/{postId}/comments")
@@ -90,7 +101,10 @@ public class HomeController {
     public CommunityCommentItem addCommunityComment(@PathVariable long postId,
                                                     @Valid @RequestBody CommunityCommentRequest request,
                                                     @CurrentUser AuthUser user) {
-        return store.addCommunityComment(postId, user.userId(), request);
+        // UGC 机审：评论文本送微信 msgSecCheck，违规直接 400，无法机审转人工审核
+        String auditStatus = contentSecurity.auditStatus(user.userId(), request.content(),
+                ContentSecurityService.SCENE_COMMENT);
+        return store.addCommunityComment(postId, user.userId(), request, auditStatus);
     }
 
     @PostMapping("/community/posts/{postId}/favorite")
@@ -131,13 +145,8 @@ public class HomeController {
         return store.vipStatus(user.userId());
     }
 
-    @PostMapping("/vip/activate")
-    @RequiresAuth
-    public VipStatus activateVip(@RequestBody(required = false) ApiModels.ActivateVipRequest request,
-                                 @CurrentUser AuthUser user) {
-        String plan = request == null ? null : request.planName();
-        return store.activateVip(user.userId(), plan);
-    }
+    // 遗留端点 POST /vip/activate 已删除：它只需登录即可免费开通会员（资损漏洞）。
+    // 用户开通会员一律走 /api/payment/** 的订单 + 支付回调；运营人工开通见 /api/admin/**。
 
     @GetMapping("/recipes/{recipeId}")
     public RecipeDetail recipeDetail(@PathVariable long recipeId,

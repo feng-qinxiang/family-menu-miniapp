@@ -4,23 +4,21 @@
 
 ## 截图
 
-| 首页「今天做什么」 |
-| :---: |
-| ![首页](artifacts/_final_home.png) |
+首页与各页真机截图在 `spec/launch-shots/`、`spec/archive/*/` 下（历史评审产物 `artifacts/` 已清理）。
 
 ## 技术栈与架构
 
 - 后端：Spring Boot 3.2 / Java 17 / Spring JDBC / MySQL 8（Maven Wrapper 自举，无本机 Maven 依赖）
-- 前端：微信小程序原生（43 页面、自定义 TabBar、设计 token 主题化、深色模式）
+- 前端：微信小程序原生（41 页面、自定义 TabBar、设计 token 主题化、深色模式）
 - 测试：`@SpringBootTest` 集成测试连真实 MySQL，覆盖登录→菜单→清单→家庭协作主链路
 - 架构：小程序 ⇄ REST API（`AuthInterceptor` 统一鉴权）⇄ Spring Boot ⇄ MySQL 8；无密码登录（微信 code2session / OTP / 游客会话）
 
 ## 项目结构
 
 - `server/` Spring Boot 3.2 / Java 17 后端 API（包名 `com.familymenu.daily`）
-- `miniapp/` 微信小程序原生前端（43 个页面）
+- `miniapp/` 微信小程序原生前端（41 个页面）
 - `docs/` 产品方案、MVP、数据模型、开发路线
-- `artifacts/` 评审与设计稿产物
+- `spec/` 上线清单（`LAUNCH-CHECKLIST.md`）与历史评审产物
 
 ## 启动后端
 
@@ -60,19 +58,29 @@ cd server
 
 主链路集成测试在 `server/src/test/java/com/familymenu/daily/CoreFlowTests.java`，覆盖：游客登录 → 首页看板 → 菜谱 → 今日菜单 → 购物清单重建 → OTP 下发与登录 → 家庭创建/邀请码/加入/移除 → 反馈提交 → 通知已读。测试用 `@SpringBootTest` 连真实 MySQL，需本机 3306 可用。
 
+全量 **59 项测试**（10 个测试类），含管理台权限、支付回调验签、手机号绑定安全、会话 token 等专项。
+
+前端纯逻辑单测（零依赖，node 直接跑）：
+
+```powershell
+node test/dish-logic.test.js
+node test/recipe-steps.test.js
+```
+
 ## 小程序
 
-用微信开发者工具打开 `miniapp/` 目录。`app.js` 的 `apiBaseUrl` 默认指向 `http://localhost:9088`。
+用微信开发者工具打开 `miniapp/` 目录。API 基址由 `miniapp/utils/env.js` 按运行环境解析（开发者工具走 `http://localhost:9088`，体验版/正式版走该文件里的域名，**上线前必须替换占位域名**，见 `spec/LAUNCH-CHECKLIST.md`）。
 
 ## 登录体系说明
 
 本项目为**无密码体系**，`user_account` 表无密码字段，登录方式三种：
 
 1. **微信登录** — `wx.login` 拿 code 换 openid（需配置 `WECHAT_APP_ID/SECRET`，否则提示改用手机号验证码）
-2. **手机验证码** — OTP 下发 + 校验，验证码登录即注册，无独立注册/改密流程
-3. **游客会话** — 免凭据临时会话
+2. **手机验证码** — OTP 下发 + 校验，验证码登录即注册，无独立注册/改密流程（个人主体上线时用开关隐藏）
+3. **游客会话** — 免凭据临时会话，每次启动自动获取，按设备隔离
 
-鉴权走 `X-Auth-Token` 请求头（`AuthInterceptor`）。所谓"注册/找回密码"在前端统一收口为验证码登录引导，不存在密码相关后端能力。
+鉴权走 `X-Auth-Token` 请求头。`AuthInterceptor` 采用**默认拒绝**策略：`/api/**` 除少数白名单端点外一律要求有效会话（游客会话也算），
+公开白名单只有登录/注册、管理台登录、价目表、支付回调、社区只读浏览。
 
 ## 能力状态
 
@@ -83,11 +91,12 @@ cd server
 | 菜谱库 | ✅ 已接通 | 搜索、来源筛选、增改、详情、做菜记录 |
 | 今日菜单 / 购物清单 | ✅ 已接通 | 自动生成清单、待买已买分组、进度统计、勾选 |
 | 家庭成员 | ✅ 已接通 | 展示与添加 |
-| 社区 | ✅ 已接通 | 菜谱流、评论、收藏、举报、审核队列 |
-| 导入配方 | ✅ 已接通 | 链接/文本导入预览，保存进菜谱库 |
+| 社区 | ✅ 已接通 | 菜谱流、评论、收藏、举报；发帖/评论先审后发（msgSecCheck + 人工队列） |
+| 导入配方 | ✅ 已接通 | 链接/文本导入预览，保存进菜谱库（拍照识别未实现，入口已下线） |
 | 食材库存 / 周菜单 | ✅ 已接通 | 库存匹配菜谱、周菜单生成 |
-| 文件上传 / 反馈 / 通知 | ✅ 已接通 | 后端真实落库 |
+| 文件上传 / 反馈 / 通知 | ✅ 已接通 | 后端真实落库；上传校验文件头 |
 | 资料编辑 | ✅ 已接通 | 昵称、头像、手机号展示接后端；口味画像由记录生成 |
-| VIP 权益页 | ✅ 已接通 | 状态、权益展示与会员开通确认 |
-| 广告位 | 🟡 演示态 | 位置预留 |
-| 支付 | ⏳ 预留 | 不发起真实扣款；后续接微信支付、订单表与回调 |
+| VIP 权益页 | 🟡 代码完整，开关关闭 | 个人主体无支付资质，`features.PAYMENT=false` 时入口全隐藏 |
+| 广告位 | 🟡 演示态 | 社区页底部自运营位（非微信广告 SDK） |
+| 支付 | 🟡 代码完整，开关关闭 | 下单→预下单→`wx.requestPayment`→回调 RSA 验签/AES 解密已实现；个人主体无资质，`PAYMENT=false` 时整条链路不可达 |
+| 管理台 `/admin` | 🟡 代码完整，需前置条件 | 需 `ADMIN_OPENIDS` + 管理员手机号；**登录依赖短信网关，当前为 noop，接真实网关前登不进** |

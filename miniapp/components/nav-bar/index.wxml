@@ -1,6 +1,7 @@
 <!-- nav-bar · 二级页顶部导航：返回圆按钮 + 居中标题 + 右侧 slot -->
-<view class="navbar" style="padding-top: {{statusBarHeight}}px;">
-  <view class="navbar-inner">
+<view class="navbar">
+  <view class="navbar-safe" style="height: {{statusBarHeight}}px;"></view>
+  <view class="navbar-inner" style="height: {{innerHeight}}px;">
     <view
       wx:if="{{showBack}}"
       class="navbar-back tap-scale"
@@ -12,7 +13,9 @@
     </view>
     <view wx:else class="navbar-side"></view>
 
-    <view class="navbar-title ellipsis">{{title}}</view>
+    <view class="navbar-title-slot">
+      <view class="navbar-title ellipsis">{{title}}</view>
+    </view>
 
     <view class="navbar-right" style="padding-right: {{capsulePad}}px;">
       <slot></slot>

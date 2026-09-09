@@ -11,6 +11,7 @@ Page({
     focused: false,
     countdown: 60,
     submitting: false,
+    sending: false,
     toast: { visible: false, type: 'top', text: '' },
   },
 
@@ -96,19 +97,23 @@ Page({
 
   // 重新获取验证码
   onResend() {
-    if (this.data.countdown > 0) {
+    if (this.data.countdown > 0 || this.data.sending) {
       return;
     }
     if (!/^1\d{10}$/.test(this.data.phone)) {
       this.showToast('error', '手机号无效，请返回重试');
       return;
     }
+    // sending 在请求发出前置位，防止飞行期连点重复下发
+    this.setData({ sending: true });
     api.requestPhoneOtp(this.data.phone)
       .then((res) => {
+        this.setData({ sending: false });
         this.showToast('top', res.devCode ? `验证码 ${res.devCode}` : '验证码已重新发送');
         this.startCountdown();
       })
       .catch((err) => {
+        this.setData({ sending: false });
         this.showToast('error', err.message || '验证码发送失败');
       });
   },

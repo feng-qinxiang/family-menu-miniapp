@@ -19,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -50,6 +51,8 @@ public class WechatPayService {
 
     // 私钥缓存，避免每次请求读磁盘
     private volatile PrivateKey cachedPrivateKey;
+    // 平台证书公钥缓存（回调验签用）
+    private volatile PublicKey cachedPlatformPublicKey;
 
     public WechatPayService(WechatPayProperties props, ObjectMapper objectMapper,
                             @org.springframework.beans.factory.annotation.Value("${wechat.app-id:}") String appId) {
@@ -61,12 +64,17 @@ public class WechatPayService {
 
     /**
      * 是否已配置商户凭据。false → prepay 返回 mockMode，notify 直接 FAIL。
+     *
+     * 必须把 platformCertPath 也算进来：没有平台证书就无法验证回调签名，
+     * 若此时仍允许 prepay，用户会被真实扣款却永远拿不到会员（钱扣了、回调一律拒绝）。
+     * 宁可提前降级为 mockMode，也不能让用户付钱买不到东西。
      */
     public boolean isConfigured() {
         return !props.getMchId().isEmpty()
                 && !props.getApiV3Key().isEmpty()
                 && !props.getCertSerialNo().isEmpty()
-                && !props.getPrivateKeyPath().isEmpty();
+                && !props.getPrivateKeyPath().isEmpty()
+                && !props.getPlatformCertPath().isEmpty();
     }
 
     /**
@@ -188,7 +196,9 @@ public class WechatPayService {
 
     /**
      * 验证微信回调请求头中的签名，确认通知来源为微信平台。
-     * 签名串：timestamp + "\n" + nonce + "\n" + body + "\n"
+     * 签名串：timestamp + "\n" + nonce + "\n" + body + "\n"，用平台证书公钥做 SHA256withRSA 验签。
+     *
+     * 未配置平台证书时直接拒绝（抛异常），不再静默放行——否则可伪造到账。
      */
     private void verifyNotifySignature(Map<String, String> headers, String body) {
         String timestamp = headers.getOrDefault("Wechatpay-Timestamp",
@@ -203,16 +213,76 @@ public class WechatPayService {
         }
 
         // 时间戳校验：拒绝超过 5 分钟的通知（防重放）
-        long ts = Long.parseLong(timestamp);
+        long ts;
+        try {
+            ts = Long.parseLong(timestamp);
+        } catch (NumberFormatException ex) {
+            throw new IllegalArgumentException("invalid wechatpay timestamp");
+        }
         long now = Instant.now().getEpochSecond();
         if (Math.abs(now - ts) > 300) {
             throw new IllegalArgumentException("notify timestamp expired (replay attack?)");
         }
 
-        // 注意：完整的验签需要微信平台证书公钥验证 RSA 签名。
-        // 当前阶段记录 WARN 日志；生产环境应加载平台证书并验证。
-        log.info("[WechatPay] notify signature present: ts={}, nonce={}, sig={}...",
-                timestamp, nonce, signature.substring(0, Math.min(16, signature.length())));
+        PublicKey publicKey = loadPlatformPublicKey();
+        if (publicKey == null) {
+            throw new IllegalStateException("wechat pay platform cert not configured, cannot verify notify signature");
+        }
+        if (!verifyWithPublicKey(publicKey, timestamp, nonce, body, signature)) {
+            throw new IllegalArgumentException("wechatpay notify signature mismatch");
+        }
+    }
+
+    /**
+     * 用给定公钥校验回调签名（包级可见，便于单测覆盖真实 RSA 验签逻辑）。
+     * 签名串：timestamp + "\n" + nonce + "\n" + body + "\n"
+     */
+    boolean verifyWithPublicKey(PublicKey publicKey, String timestamp, String nonce, String body, String signature) {
+        String signStr = timestamp + "\n" + nonce + "\n" + body + "\n";
+        try {
+            Signature verifier = Signature.getInstance("SHA256withRSA");
+            verifier.initVerify(publicKey);
+            verifier.update(signStr.getBytes(StandardCharsets.UTF_8));
+            return verifier.verify(Base64.getDecoder().decode(signature));
+        } catch (Exception ex) {
+            log.warn("[WechatPay] signature verify error: {}", ex.getMessage());
+            return false;
+        }
+    }
+
+    /** 平台证书公钥缓存：启动后只读一次磁盘。未配置路径时返回 null。 */
+    private PublicKey loadPlatformPublicKey() {
+        if (cachedPlatformPublicKey != null) {
+            return cachedPlatformPublicKey;
+        }
+        String path = props.getPlatformCertPath();
+        if (path == null || path.isEmpty()) {
+            return null;
+        }
+        synchronized (this) {
+            if (cachedPlatformPublicKey != null) {
+                return cachedPlatformPublicKey;
+            }
+            try {
+                String pem = new String(Files.readAllBytes(Paths.get(path)), StandardCharsets.UTF_8);
+                String base64 = pem
+                        .replace("-----BEGIN CERTIFICATE-----", "")
+                        .replace("-----END CERTIFICATE-----", "")
+                        .replaceAll("\\s", "");
+                byte[] der = Base64.getDecoder().decode(base64);
+                java.security.cert.CertificateFactory factory =
+                        java.security.cert.CertificateFactory.getInstance("X.509");
+                java.security.cert.X509Certificate cert =
+                        (java.security.cert.X509Certificate) factory.generateCertificate(
+                                new java.io.ByteArrayInputStream(der));
+                cachedPlatformPublicKey = cert.getPublicKey();
+                log.info("[WechatPay] platform certificate loaded: serial={}", cert.getSerialNumber().toString(16));
+                return cachedPlatformPublicKey;
+            } catch (Exception ex) {
+                log.error("[WechatPay] load platform cert failed: {}", ex.getMessage());
+                return null;
+            }
+        }
     }
 
     // ─────────── 内部工具 ───────────

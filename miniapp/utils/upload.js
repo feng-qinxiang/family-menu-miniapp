@@ -1,11 +1,8 @@
-function resolveBaseUrl() {
-  try {
-    const app = typeof getApp === 'function' ? getApp() : null;
-    if (app && app.globalData && app.globalData.apiBaseUrl) {
-      return app.globalData.apiBaseUrl;
-    }
-  } catch (err) {}
-  return 'http://localhost:9088';
+// 全站 baseURL 唯一来源（见 utils/env.js），不再维护第二套逻辑
+const { resolveBaseUrl } = require('./env');
+
+function isCancel(err) {
+  return !!(err && err.errMsg && /cancel/i.test(err.errMsg));
 }
 
 function chooseImage(count) {
@@ -19,7 +16,12 @@ function chooseImage(count) {
         const paths = (res.tempFiles || []).map((f) => f.tempFilePath);
         resolve(paths);
       },
-      fail() { resolve([]); }
+      fail(err) {
+        if (!isCancel(err)) {
+          wx.showToast({ title: '选图失败', icon: 'none' });
+        }
+        resolve([]);
+      }
     });
   });
 }
@@ -32,6 +34,7 @@ function uploadFile(tempFilePath) {
       filePath: tempFilePath,
       name: 'file',
       header: { 'X-Auth-Token': token },
+      timeout: 30000,
       success(res) {
         if (res.statusCode >= 200 && res.statusCode < 300) {
           try {
@@ -39,13 +42,15 @@ function uploadFile(tempFilePath) {
             const url = data.url || '';
             resolve(url.indexOf('http') === 0 ? url : `${resolveBaseUrl()}${url}`);
           } catch (e) {
-            resolve(tempFilePath);
+            // 解析失败说明服务端没给出可用 URL，返回空串而非本地临时路径
+            resolve('');
           }
         } else {
-          resolve(tempFilePath);
+          resolve('');
         }
       },
-      fail() { resolve(tempFilePath); }
+      // 失败返回空串：调用方按「未上传」处理，避免把 wxfile:// 临时路径写库后裂图
+      fail() { resolve(''); }
     });
   });
 }
@@ -57,4 +62,32 @@ function chooseAndUpload(count) {
   });
 }
 
-module.exports = { chooseImage, uploadFile, chooseAndUpload };
+function chooseVideo() {
+  return new Promise((resolve) => {
+    wx.chooseMedia({
+      count: 1,
+      mediaType: ['video'],
+      sourceType: ['album', 'camera'],
+      maxDuration: 60,
+      success(res) {
+        const file = (res.tempFiles || [])[0];
+        resolve(file ? file.tempFilePath : '');
+      },
+      fail(err) {
+        if (!isCancel(err)) {
+          wx.showToast({ title: '选视频失败', icon: 'none' });
+        }
+        resolve('');
+      }
+    });
+  });
+}
+
+function chooseAndUploadVideo() {
+  return chooseVideo().then((path) => {
+    if (!path) return '';
+    return uploadFile(path);
+  });
+}
+
+module.exports = { chooseImage, uploadFile, chooseAndUpload, chooseVideo, chooseAndUploadVideo };

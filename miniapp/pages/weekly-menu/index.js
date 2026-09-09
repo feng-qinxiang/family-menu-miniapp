@@ -1,5 +1,6 @@
 const { generateWeeklyMenu, getWeeklyMenu } = require('../../utils/api');
 const { recipeDishImg } = require('../../utils/image');
+const { todayDateKey } = require('../../utils/dish-logic');
 
 const WK_SHORT = ['日', '一', '二', '三', '四', '五', '六'];
 const WK_FULL = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
@@ -98,7 +99,8 @@ Page({
 
   normalizeWeeklyMenu(weeklyMenu) {
     const days = Array.isArray(weeklyMenu && weeklyMenu.days) ? weeklyMenu.days : [];
-    const todayStr = new Date().toISOString().slice(0, 10);
+    // 本地日期，避免 toISOString 的 UTC 偏移在凌晨判错「今天」
+    const todayStr = todayDateKey();
     return {
       weekStart: (weeklyMenu && weeklyMenu.weekStart) || '',
       weekEnd: (weeklyMenu && weeklyMenu.weekEnd) || '',

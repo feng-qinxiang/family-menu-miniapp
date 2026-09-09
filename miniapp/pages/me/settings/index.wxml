@@ -27,31 +27,6 @@
     </view>
   </view>
 
-  <!-- 通知 -->
-  <view class="set-group g-fade-up g-d2">
-    <view class="set-gtitle">消息通知</view>
-    <view class="card set-card">
-      <view
-        class="set-item"
-        wx:for="{{notifyList}}"
-        wx:key="key"
-      >
-        <view class="set-ic"><text class="set-glyph">{{item.icon === 'bell' ? '铃' : item.icon === 'chat' ? '评' : '推'}}</text></view>
-        <view class="set-mid">
-          <view class="set-name">{{item.name}}</view>
-          <view wx:if="{{item.desc}}" class="set-desc">{{item.desc}}</view>
-        </view>
-        <view
-          class="set-sw {{item.on ? 'on' : ''}} tap-scale"
-          data-key="{{item.key}}"
-          catchtap="onSwitchTap"
-        >
-          <view class="set-sw-knob"></view>
-        </view>
-      </view>
-    </view>
-  </view>
-
   <!-- 通用 -->
   <view class="set-group g-fade-up g-d3">
     <view class="set-gtitle">通用</view>

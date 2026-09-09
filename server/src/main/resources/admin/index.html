@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>运营后台 · 家庭点菜</title>
+  <link rel="stylesheet" href="/admin/admin.css" />
+</head>
+<body>
+  <!-- 登录态 -->
+  <div id="loginView" class="login-wrap">
+    <form id="loginForm" class="login-card" autocomplete="off">
+      <h1>运营后台</h1>
+      <p class="muted">仅限管理员账号登录</p>
+      <label for="phone">手机号</label>
+      <input id="phone" name="phone" type="tel" inputmode="numeric" maxlength="11" placeholder="11 位手机号" required />
+      <div class="otp-row">
+        <input id="code" name="code" type="text" inputmode="numeric" maxlength="6" placeholder="6 位验证码" required />
+        <button id="sendOtpBtn" type="button" class="btn ghost">获取验证码</button>
+      </div>
+      <button id="loginBtn" type="submit" class="btn primary">登录</button>
+      <div id="loginMsg" class="msg" role="alert" aria-live="polite"></div>
+    </form>
+  </div>
+
+  <!-- 主界面 -->
+  <div id="appView" class="app-wrap" hidden>
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">家庭点菜 · 运营后台</div>
+        <h1>内容与用户管理</h1>
+      </div>
+      <div class="meta">
+        <span id="adminName" class="badge">管理员</span>
+        <button id="logoutBtn" type="button" class="btn ghost">退出</button>
+      </div>
+    </header>
+
+    <nav class="tabs" id="navTabs"></nav>
+
+    <main id="panelRoot" class="panel-root"></main>
+
+    <div id="toast" class="toast" hidden></div>
+  </div>
+
+  <script src="/admin/admin.js" defer></script>
+</body>
+</html>

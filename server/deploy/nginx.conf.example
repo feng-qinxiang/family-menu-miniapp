@@ -1,0 +1,57 @@
+# 生产反代样例（nginx）。
+# 要点：
+#  1) 只暴露 HTTPS，HTTP 全量跳转
+#  2) 反代到应用容器 9088；上传体积需 >= 应用上限 20MB
+#  3) 运营后台 /admin 建议加 IP 白名单（示例已注释），不要对公网开放
+#  4) 微信小程序要求 HTTPS 且域名已备案
+
+upstream family_menu_app {
+    server 127.0.0.1:9088;
+    keepalive 32;
+}
+
+server {
+    listen 80;
+    server_name api.example.com;
+    # 微信要求 https；HTTP 一律跳转
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name api.example.com;
+
+    ssl_certificate     /etc/nginx/ssl/fullchain.pem;
+    ssl_certificate_key /etc/nginx/ssl/privkey.pem;
+    ssl_protocols       TLSv1.2 TLSv1.3;
+    ssl_ciphers         HIGH:!aNULL:!MD5;
+    ssl_session_cache   shared:SSL:10m;
+
+    # 上传：与 spring.servlet.multipart.max-file-size 保持一致（20MB）
+    client_max_body_size 20m;
+
+    # 安全响应头（应用侧对 /uploads、/admin 也会加，这里做兜底）
+    add_header X-Content-Type-Options nosniff always;
+    add_header Referrer-Policy no-referrer always;
+
+    # ---- 运营后台：强烈建议限制来源 IP ----
+    # location /admin {
+    #     allow 203.0.113.10;      # 你的办公/运维出口 IP
+    #     deny all;
+    #     proxy_pass http://family_menu_app;
+    #     include /etc/nginx/proxy_params;
+    # }
+
+    location / {
+        proxy_pass http://family_menu_app;
+        proxy_http_version 1.1;
+        proxy_set_header Host              $host;
+        proxy_set_header X-Real-IP         $remote_addr;
+        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Connection        "";
+        # 支付回调等长请求
+        proxy_read_timeout 60s;
+        proxy_connect_timeout 10s;
+    }
+}

@@ -41,7 +41,7 @@
 }
 .mag-hero-top {
   position: absolute;
-  top: calc(env(safe-area-inset-top) + 90rpx);
+  top: 51px;
   left: 46rpx;
   right: 46rpx;
   z-index: 3;
@@ -63,7 +63,7 @@
   position: absolute;
   left: 46rpx;
   right: 46rpx;
-  bottom: 76rpx;
+  bottom: var(--hero-body-above-sheet);
   z-index: 3;
 }
 .mag-hero-tag {
@@ -135,7 +135,7 @@
   position: relative;
   margin-top: -50rpx;
   z-index: 5;
-  padding: 46rpx 28rpx 0;
+  padding: 46rpx 46rpx 0;
   background: var(--paper);
   border-radius: 20rpx 20rpx 0 0;
 }

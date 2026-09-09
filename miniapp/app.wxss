@@ -11,13 +11,17 @@ page {
   --ink-deep: var(--themeInkDeep, #3a2e23);
   --mut: var(--themeMut, #7a6e5d);
   --mut-2: var(--themeMut2, #b3a795);
-  --mut-strong: #6b5f50;    /* 强调次要文字（比 --mut 更深一档） */
+  --mut-strong: var(--themeMutStrong, #6b5f50);    /* 强调次要文字（比 --mut 更深一档） */
   --gold: var(--themeGold, #f4d9a8);
   --gold-deep: var(--themeGoldDeep, #b08949);
   --pop: var(--themePop, #e8472a);
   --pop-soft: var(--themePopSoft, #fdece6);
   --pine: var(--themePine, #2f4a3a);
   --wx: #07c160;
+  /* 半透明悬浮面板底色（深色模式必须跟着变，否则发白） */
+  --glass: var(--themeGlass, rgba(251, 248, 243, 0.92));
+  --glass-soft: var(--themeGlassSoft, rgba(251, 248, 243, 0.82));
+  --glass-clear: var(--themeGlassClear, rgba(251, 248, 243, 0));
 
   /* —— 新 token：字体 —— */
   /* 下厨房式：全站无衬线（衬线是杂志配方，已废弃） */
@@ -29,6 +33,7 @@ page {
   --fs-hero-lg: 72rpx;  /* Hero 大标题（次 hero） */
   --fs-hero-sm: 56rpx;  /* Hero 大标题（小 hero/合规页） */
   --photo-hero-h: 720rpx; /* 照片头：装得下状态栏 + 返回 + 大标题，勿再用 360rpx */
+  --hero-body-above-sheet: 96rpx; /* 白卡上推约 50rpx 时，头图正文距底；小于此会贴边 */
   --fs-hero: 64rpx;      /* 兼容旧引用 */
   --fs-h1: 50rpx;        /* 页面主标题（对齐 .page-title / .shead-title） */
   --fs-h2: 36rpx;        /* 区块标题（对齐 .section-title） */
@@ -93,10 +98,10 @@ page {
   --c-primary-soft: #fdece6;
   --c-primary-light: #f7c9bd;
   --c-accent: #2f4a3a;
-  --c-accent-soft: #e7efe9;
+  --c-accent-soft: var(--themePineSoft, #e7efe9);
   --c-accent-dark: #233a2c;
   --c-gold: #b08949;
-  --c-gold-soft: #f9efda;
+  --c-gold-soft: var(--themeGoldSoft, #f9efda);
   --c-gold-dark: #8d6517;
   --c-ink: #2c241b;
   --c-text: #2c241b;
@@ -105,15 +110,15 @@ page {
   --c-bg: #fbf8f3;
   --c-bg-warm: #f0ebe2;
   --c-surface: var(--themeSurface, #ffffff);
-  --c-surface-soft: #fbf8f3;
-  --c-border: #e6dccb;
-  --c-border-light: #f1ece2;
-  --c-success: #2f8f6b;
-  --c-success-soft: #eaf7f1;
+  --c-surface-soft: var(--themeSurfaceSoft, #fbf8f3);
+  --c-border: var(--themeBorder, #e6dccb);
+  --c-border-light: var(--themeBorderLight, #f1ece2);
+  --c-success: var(--themeSuccess, #2f8f6b);
+  --c-success-soft: var(--themeSuccessSoft, #eaf7f1);
   --c-warning: #b08949;
-  --c-warning-soft: #f9efda;
-  --c-info: #366d9f;
-  --c-info-soft: #edf5fc;
+  --c-warning-soft: var(--themeGoldSoft, #f9efda);
+  --c-info: var(--themeInfo, #366d9f);
+  --c-info-soft: var(--themeInfoSoft, #edf5fc);
   --c-danger: #e8472a;
   --c-danger-soft: #fdece6;
   --c-food-red: #e8472a;
@@ -175,7 +180,7 @@ page.font-lg, .font-lg {
 .container {
   box-sizing: border-box;
   min-height: 100vh;
-  padding: 22rpx 28rpx 186rpx;
+  padding: 22rpx 46rpx 186rpx;
 }
 .safe-bottom { padding-bottom: calc(env(safe-area-inset-bottom) + 16rpx); }
 .safe-top { padding-top: env(safe-area-inset-top); }
@@ -378,6 +383,25 @@ page.font-lg, .font-lg {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+}
+
+/* ============ 表单 inline 校验 ============ */
+.field-error {
+  border-color: #d8342c !important;
+  animation: field-error-shake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+.field-error-msg {
+  display: block;
+  margin-top: 8rpx;
+  font-size: 22rpx;
+  font-weight: 600;
+  color: #d8342c;
+}
+@keyframes field-error-shake {
+  10%, 90% { transform: translateX(-4rpx); }
+  20%, 80% { transform: translateX(6rpx); }
+  30%, 50%, 70% { transform: translateX(-8rpx); }
+  40%, 60% { transform: translateX(8rpx); }
 }
 
 /* ============ 兼容：现有页面在用的通用类 ============ */

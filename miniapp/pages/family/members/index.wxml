@@ -54,8 +54,9 @@
           <view class="msub">{{item.sub}}</view>
         </view>
         <view wx:if="{{item.isSelf}}" class="mself">本人</view>
+        <view wx:elif="{{item.isOwner}}" class="mself">创建者</view>
         <view
-          wx:else
+          wx:elif="{{item.removable}}"
           class="mremove tap-scale"
           data-id="{{item.userId}}"
           catchtap="onRemoveTap"

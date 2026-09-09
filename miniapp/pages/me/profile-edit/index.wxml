@@ -19,7 +19,7 @@
     </view>
 
     <!-- 基本信息 -->
-    <view class="pe-grlabel g-fade-up g-d2">基本信息</view>
+    <view class="pe-grlabel g-fade-up g-d2">基本信息 <text class="pe-localtip">（性别/生日仅本机保存）</text></view>
     <view class="card pe-group g-fade-up g-d2">
       <view class="pe-frow">
         <view class="pe-fic"><view class="pe-ic-dot"></view></view>
@@ -39,7 +39,7 @@
         </view>
       </view>
 
-      <view class="pe-frow tap-scale" catchtap="onEditPhone">
+      <view class="pe-frow tap-scale" wx:if="{{features.PHONE_LOGIN}}" catchtap="onEditPhone">
         <view class="pe-fic"><view class="pe-ic-dot"></view></view>
         <text class="pe-flabel pe-flabel-wide">手机号</text>
         <text class="pe-fval {{form.phone ? '' : 'pe-ph'}}">{{form.phone || '未绑定'}}</text>
@@ -58,8 +58,8 @@
       </view>
     </view>
 
-    <!-- 关于口味 -->
-    <view class="pe-grlabel g-fade-up g-d3">关于口味</view>
+    <!-- 关于口味：后端暂无对应字段，仅本机保存 -->
+    <view class="pe-grlabel g-fade-up g-d3">关于口味 <text class="pe-localtip">（仅本机保存）</text></view>
     <view class="card pe-group g-fade-up g-d3">
       <view class="pe-frow pe-frow-col">
         <view class="pe-frow-head">
@@ -71,13 +71,6 @@
             class="chip pe-tag {{form.tasteTags.indexOf(item) >= 0 ? 'on' : ''}}"
             data-tag="{{item}}" catchtap="onToggleTaste">{{item}}</view>
         </view>
-      </view>
-
-      <view class="pe-frow tap-scale" catchtap="onEditAvoid">
-        <view class="pe-fic"><view class="pe-ic-dot"></view></view>
-        <text class="pe-flabel pe-flabel-wide">忌口食材</text>
-        <text class="pe-fval {{form.avoid ? '' : 'pe-ph'}}">{{form.avoid || '暂未设置'}}</text>
-        <view class="pe-chev"></view>
       </view>
     </view>
 

@@ -115,6 +115,11 @@
       hint="按库存匹配"
     />
 
+    <!-- 有食材但一道都匹配不上：给空态，别整块消失让人以为没反应 -->
+    <view wx:if="{{showMatch && !matchResults.length && pantrySummary.count}}" class="pantry-empty g-fade-up">
+      <text class="pantry-empty-txt">冰箱里的食材还没匹配到菜谱，再添几样或去菜谱库看看</text>
+    </view>
+
     <view
       class="mcard g-fade-up g-d{{midx + 1}}"
       wx:for="{{matchResults}}"

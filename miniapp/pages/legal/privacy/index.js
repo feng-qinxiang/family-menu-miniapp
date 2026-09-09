@@ -34,8 +34,12 @@ Page({
     permissions: [
       { icon: 'user', name: '微信资料', desc: '用于显示你的头像与昵称，方便家庭成员互相识别。' },
       { icon: 'camera', name: '相册 / 相机', desc: '仅在你上传自家菜品照片时调用，照片只用于你的菜谱。' },
+      { icon: 'clipboard', name: '剪切板', desc: '用于复制家庭邀请码与联系邮箱，以及在你主动点击「粘贴邀请码」时读取剪贴板内容；不会读取其他内容。' },
       { icon: 'bell', name: '通知', desc: '用于提醒今晚菜单与买菜清单，可随时在系统设置中关闭。' },
     ],
+    // 上线前必须由运营者本人填写，勿留占位符提审
+    operatorName: '【请填写运营者名称】',
+    operatorContact: '【请填写联系方式】',
   },
 
   onLoad() {

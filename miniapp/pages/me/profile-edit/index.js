@@ -1,8 +1,24 @@
 // pages/me/profile-edit · 编辑资料（二级页）
-// 数据来源：getCurrentUser()。保存：updateProfile()（PATCH /api/auth/me）。
-// 后端 user_account 仅支持 nickname/avatarUrl/phone 落库；性别/生日/口味/忌口暂无字段。
+// 数据来源：getCurrentUser() + 本机偏好 profile_prefs_v1。
+// 保存：updateProfile()（PATCH /api/auth/me）只落 nickname/avatarUrl/phone；
+// 性别/生日/口味/忌口后端无字段，改存本机并在页面标注「仅本机保存」。
 const { getCurrentUser, updateProfile } = require('../../../utils/api');
 const { chooseAndUpload } = require('../../../utils/upload');
+const features = require('../../../utils/features');
+
+const PREFS_KEY = 'profile_prefs_v1';
+
+function loadPrefs() {
+  try {
+    const raw = wx.getStorageSync(PREFS_KEY);
+    if (raw && typeof raw === 'object') return raw;
+  } catch (e) {}
+  return {};
+}
+
+function savePrefs(prefs) {
+  try { wx.setStorageSync(PREFS_KEY, prefs || {}); } catch (e) {}
+}
 
 const TASTE_OPTIONS = ['微辣', '中辣', '重辣', '少油', '少盐', '清淡', '香甜', '酸爽'];
 
@@ -24,6 +40,7 @@ function birthdayDisplay(value) {
 
 Page({
   data: {
+    features,
     avatarInitial: '家',
     today: todayStr(),
     birthdayLabel: '未填写',
@@ -49,19 +66,22 @@ Page({
   async loadUser() {
     try {
       const user = await getCurrentUser();
+      const prefs = loadPrefs();
       const nickname = (user && user.nickname) || '';
       // 已有口味标签与 TASTE_OPTIONS 求交，避免脏数据
       const rawTags = (user && Array.isArray(user.tasteTags)) ? user.tasteTags : [];
       const tasteTags = rawTags.filter((t) => TASTE_OPTIONS.indexOf(t) >= 0);
+      // 本机偏好优先（后端无这些字段），兜底用接口返回值
+      const localTags = Array.isArray(prefs.tasteTags) ? prefs.tasteTags : [];
 
       const form = {
         nickname,
         avatarUrl: (user && user.avatarUrl) || '',
-        gender: (user && user.gender) || 'male',
+        gender: prefs.gender || (user && user.gender) || 'male',
         phone: (user && user.phone) || '',
-        birthday: (user && user.birthday) || '',
-        tasteTags,
-        avoid: (user && user.avoid) || ''
+        birthday: prefs.birthday || (user && user.birthday) || '',
+        tasteTags: localTags.length ? localTags : tasteTags,
+        avoid: prefs.avoid || (user && user.avoid) || ''
       };
 
       this.setData({
@@ -110,16 +130,12 @@ Page({
     this.setData({ 'form.tasteTags': tags });
   },
 
-  // 手机号由 OTP 登录绑定，当前页只展示后端已绑定号码
+  // 手机号由 OTP 登录绑定（当前版本手机号登录未开放），此处仅展示
   onEditPhone() {
-    wx.showToast({ title: this.data.form.phone ? '手机号已绑定' : '请用手机验证码登录绑定', icon: 'none' });
+    wx.showToast({ title: this.data.form.phone ? '手机号已绑定' : '当前版本暂不支持绑定手机号', icon: 'none' });
   },
 
-  // 忌口目前保存在本页本地状态，后端偏好表接入后再落库
-  onEditAvoid() {
-    wx.showToast({ title: '忌口会随做菜记录生成画像', icon: 'none' });
-  },
-
+  // ponytail: 忌口标签在本页无输入控件，入口已下线；改忌口去「家庭 → 成员」页（updateMemberAvoidTags）
   async onChangeAvatar() {
     if (this.data.uploading) return;
     this.setData({ uploading: true });
@@ -152,6 +168,13 @@ Page({
         avatarUrl: this.data.form.avatarUrl || '',
         phone: this.data.form.phone || ''
       };
+      // 后端无字段的偏好存本机（页面已标注「仅本机保存」，不做假同步）
+      savePrefs({
+        gender: this.data.form.gender || 'male',
+        birthday: this.data.form.birthday || '',
+        tasteTags: (this.data.form.tasteTags || []).slice(),
+        avoid: this.data.form.avoid || ''
+      });
       const user = await updateProfile(payload);
       try {
         if (user) wx.setStorageSync('user', user);

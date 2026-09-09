@@ -1,12 +1,14 @@
-<view class="community-page">
-  <!-- 二级页顶部导航（透明覆盖在 hero 上）-->
-  <nav-bar title="邻里厨房" status-bar-height="{{statusBarHeight}}">
+<view class="community-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
+  <!-- tab 页顶部导航（透明覆盖在 hero 上，无返回键）-->
+  <nav-bar title="邻里厨房" show-back="{{false}}" status-bar-height="{{statusBarHeight}}">
     <view class="nav-post-btn tap-scale" catchtap="togglePostForm">
       <text class="nav-post-plus">+</text>{{showPostForm ? '收起' : '发帖'}}
     </view>
   </nav-bar>
 
-  <scroll-view class="community-scroll" scroll-y enhanced show-scrollbar="{{false}}">
+  <scroll-view class="community-scroll" scroll-y enhanced show-scrollbar="{{false}}"
+    refresher-enabled="{{true}}" refresher-triggered="{{refreshing}}" bindrefresherrefresh="onRefresh"
+    scroll-top="{{scrollTopTo}}" scroll-with-animation bindscroll="onScrollBody">
     <!-- ===== Hero ===== -->
     <view class="hero">
       <image class="hero-bg" src="/assets/dishes/sweet-sour-chicken.jpg" mode="aspectFill" />
@@ -127,7 +129,7 @@
           <text class="th-title">热门话题</text>
         </view>
         <view class="tchips">
-          <view class="tchip" wx:for="{{hotTopics}}" wx:key="tag">
+          <view class="tchip tap-scale" wx:for="{{hotTopics}}" wx:key="tag" data-tag="{{item.tag}}" bindtap="onTopicTap">
             <text class="tt">#{{item.tag}}</text>
           </view>
         </view>
@@ -146,6 +148,9 @@
   <view class="fab tap-scale" catchtap="togglePostForm">
     <view class="fab-plus"></view>
   </view>
+
+  <!-- 信息流滚深后回顶（与 FAB 同轴竖排） -->
+  <back-top show="{{showBackTop}}" right="38rpx" bottom="352rpx" bind:totop="backToTop" />
 
   <!-- ===== 发帖弹层 ===== -->
   <state-sheet visible="{{showPostForm}}" title="分享今天的菜" bind:close="togglePostForm">

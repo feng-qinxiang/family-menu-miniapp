@@ -1,4 +1,4 @@
-const { getFamilyProfile, getFamilyInviteCode, removeFamilyMember, updateMemberAvoidTags } = require('../../../utils/api');
+const { getFamilyProfile, getFamilyInviteCode, removeFamilyMember, updateMemberAvoidTags, getCurrentUser } = require('../../../utils/api');
 
 // 身份 → 展示文案 / badge 样式
 const ROLE_MAP = {
@@ -51,7 +51,24 @@ Page({
     this.loadProfile();
   },
 
+  // 从邀请页返回后新成员/邀请码可能已变，重新拉取
+  onShow() {
+    if (this._loaded) this.loadProfile();
+    this._loaded = true;
+  },
+
   loadProfile() {
+    // 当前登录用户 id 必须单独取：FamilyProfile 的 ownerUserId 是家庭创建者，
+    // 拿它判「本人」会把非创建者自己标成可删除（曾经的 bug）。
+    getCurrentUser()
+      .then((me) => {
+        this._selfUserId = me && me.userId != null ? me.userId : null;
+      })
+      .catch(() => {})
+      .then(() => this.loadFamilyProfile());
+  },
+
+  loadFamilyProfile() {
     getFamilyProfile()
       .then((profile) => {
         this.applyProfile(profile);
@@ -70,12 +87,15 @@ Page({
     const data = profile || {};
     const rawMembers = Array.isArray(data.members) ? data.members : [];
     const ownerId = data.ownerUserId != null ? data.ownerUserId : (rawMembers[0] && rawMembers[0].userId);
+    // 「本人」认当前登录用户；取不到时退化为创建者，至少不会把自己标成可删
+    const selfId = this._selfUserId != null ? this._selfUserId : ownerId;
 
     const members = rawMembers.map((m, idx) => {
       const role = (m.role || 'member').toLowerCase();
       const roleInfo = ROLE_MAP[role] || ROLE_MAP.member;
       const nickname = m.nickname || '家庭成员';
-      const isSelf = ownerId != null && m.userId === ownerId;
+      const isSelf = selfId != null && m.userId === selfId;
+      const isOwner = ownerId != null && m.userId === ownerId;
       const avoidTags = Array.isArray(m.avoidTags) ? m.avoidTags.filter(Boolean) : [];
       return {
         userId: m.userId,
@@ -84,10 +104,11 @@ Page({
         roleLabel: roleInfo.label,
         roleBadge: roleInfo.badge,
         tone: AVT_TONES[idx % AVT_TONES.length],
-        sub: avoidTags.length ? '忌口：' + avoidTags.join('、') : (isSelf ? '家庭创建者' : '已加入这个家'),
+        sub: avoidTags.length ? '忌口：' + avoidTags.join('、') : (isOwner ? '家庭创建者' : '已加入这个家'),
         avoidTags,
         isSelf,
-        removable: !isSelf
+        isOwner,
+        removable: !isSelf && !isOwner
       };
     });
 
@@ -97,7 +118,7 @@ Page({
       inviteCode: data.inviteCode || '',
       members,
       memberCount: members.length,
-      selfUserId: ownerId,
+      selfUserId: selfId,
       loaded: true
     });
   },

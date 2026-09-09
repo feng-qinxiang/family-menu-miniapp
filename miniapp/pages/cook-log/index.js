@@ -1,4 +1,4 @@
-const { getCookHistory } = require('../../utils/api');
+const { getCookHistory, addTodayMenuRecipe } = require('../../utils/api');
 const { recipeDishImg } = require('../../utils/image');
 
 const WEEK_LABELS = ['日', '一', '二', '三', '四', '五', '六'];
@@ -31,6 +31,9 @@ function pad2(n) { return n < 10 ? '0' + n : '' + n; }
 Page({
   data: {
     statusBarHeight: 0,
+    // 时间线回顶键（滚深出现）
+    showBackTop: false,
+    scrollTopTo: -1,
     loading: true,
     heroCover: '/assets/dishes/beef-broccoli.jpg',
     bigNum: 0,
@@ -58,6 +61,12 @@ Page({
     } catch (e) { sbh = 0; }
     this.setData({ statusBarHeight: sbh });
     this.loadHistory();
+  },
+
+  // 从详情页「再做一次/记录做过」返回后要能看到新记录
+  onShow() {
+    if (this._loaded) this.loadHistory();
+    this._loaded = true;
   },
 
   loadHistory() {
@@ -243,6 +252,34 @@ Page({
         fail: () => wx.switchTab({ url: '/pages/recipes/index', fail() {} })
       });
     }
+  },
+
+  // —— 回顶悬浮键 ——
+  onScrollBody(e) {
+    const show = ((e.detail && e.detail.scrollTop) || 0) > 600;
+    if (show !== this.data.showBackTop) this.setData({ showBackTop: show });
+  },
+
+  backToTop() {
+    // scroll-top 同值不触发滚动：0 与 0.1 交替，视觉无差
+    this.setData({ scrollTopTo: this.data.scrollTopTo === 0 ? 0.1 : 0 });
+  },
+
+  // 再来一单：把做过的菜按当前时段加回今日菜单（15 点前算午餐，之后算晚餐）
+  redoCook(e) {
+    const recipeId = e.currentTarget.dataset.recipeId;
+    if (recipeId == null) return;
+    if (this._redoing) return;
+    this._redoing = true;
+    const slot = new Date().getHours() < 15 ? 'lunch' : 'dinner';
+    addTodayMenuRecipe(recipeId, slot)
+      .then(() => {
+        wx.showToast({ title: slot === 'lunch' ? '已加入今日午餐' : '已加入今日晚餐', icon: 'success' });
+      })
+      .catch(() => {
+        wx.showToast({ title: '加入失败，请重试', icon: 'none' });
+      })
+      .then(() => { this._redoing = false; });
   },
 
   onCardTap(e) {

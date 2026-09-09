@@ -1,5 +1,6 @@
 const { guestLogin, getVipStatus } = require('./utils/api');
 const { resolveConfig } = require('./utils/env');
+const features = require('./utils/features');
 
 App({
   globalData: {
@@ -21,6 +22,8 @@ App({
   },
 
   async refreshVipStatus() {
+    // 支付关闭时无 VIP 概念，跳过请求（权益全员可用）
+    if (!features.PAYMENT) return;
     try {
       const status = await getVipStatus();
       const vip = !!(status && status.vip);

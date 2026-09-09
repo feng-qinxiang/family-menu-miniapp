@@ -2,21 +2,18 @@
   "pages": [
     "pages/home/index",
     "pages/recipes/index",
+    "pages/community/index",
     "pages/menu/index",
     "pages/me/index",
     "pages/shopping/index",
-    "pages/community/index",
     "pages/import/index",
     "pages/recipe-detail/index",
     "pages/recipe-edit/index",
-    "pages/vip/index",
     "pages/weekly-menu/index",
     "pages/pantry/index",
     "pages/recipes/search/index",
     "pages/cook-mode/index",
     "pages/cook-log/index",
-    "pages/community/post-detail/index",
-    "pages/community/audit/index",
     "pages/auth/login/index",
     "pages/auth/login-phone/index",
     "pages/auth/verify-otp/index",
@@ -27,11 +24,6 @@
     "pages/family/join/index",
     "pages/family/members/index",
     "pages/family/invite/index",
-    "pages/vip/upgrade/index",
-    "pages/vip/orders/index",
-    "pages/payment/checkout/index",
-    "pages/payment/success/index",
-    "pages/me/favorites/index",
     "pages/me/profile-edit/index",
     "pages/me/settings/index",
     "pages/me/notifications/index",
@@ -40,8 +32,22 @@
     "pages/me/help-faq/index",
     "pages/me/about/index",
     "pages/legal/terms/index",
-    "pages/legal/privacy/index",
-    "pages/showcase/index"
+    "pages/legal/privacy/index"
+  ],
+  "subpackages": [
+    {
+      "root": "pkg-extra",
+      "pages": [
+        "community/post-detail/index",
+        "community/audit/index",
+        "vip/index",
+        "vip/upgrade/index",
+        "vip/orders/index",
+        "payment/checkout/index",
+        "payment/success/index",
+        "favorites/index"
+      ]
+    }
   ],
   "window": {
     "navigationBarTitleText": "家庭点菜",
@@ -63,6 +69,10 @@
       {
         "pagePath": "pages/recipes/index",
         "text": "菜谱"
+      },
+      {
+        "pagePath": "pages/community/index",
+        "text": "社区"
       },
       {
         "pagePath": "pages/pantry/index",

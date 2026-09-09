@@ -55,7 +55,7 @@
   position: absolute;
   left: 46rpx;
   right: 46rpx;
-  bottom: 58rpx;
+  bottom: var(--hero-body-above-sheet);
   z-index: 10;
 }
 .phero-tag {
@@ -376,3 +376,19 @@
   border-radius: 6rpx;
 }
 .mc-bar-i.full { background: var(--pine); }
+
+/* 匹配为空时的空态：与列表卡片同宽同圆角 */
+.pantry-empty {
+  box-sizing: border-box;
+  margin: 0 46rpx;
+  padding: 44rpx 32rpx;
+  border-radius: var(--r-card);
+  background: var(--c-surface);
+  border: var(--bd-card);
+  text-align: center;
+}
+.pantry-empty-txt {
+  font-size: var(--fs-sub);
+  color: var(--mut);
+  line-height: 1.6;
+}

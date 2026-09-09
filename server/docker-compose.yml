@@ -1,0 +1,77 @@
+# 生产部署编排：MySQL + 应用。
+#
+# 使用方式：
+#   cp .env.example .env   # 填真实凭据，.env 不入库
+#   docker compose up -d
+#
+# 注意：数据库初始化不在容器启动时执行（SPRING_SQL_INIT_MODE=never）。
+# 首次部署必须手动执行两步（只跑第 1 步会得到空库，接口全 500）：
+#   1) docker compose exec -T mysql mysql -uroot -p"$DB_PASSWORD" < sql/create-database.sql
+#   2) docker compose exec -T mysql mysql -uroot -p"$DB_PASSWORD" family_menu_daily_db < src/main/resources/schema.sql
+# 可选（仅体验环境，生产别跑）：再导入 src/main/resources/data.sql 演示数据。
+# 旧库补列：docker compose exec -T mysql mysql -uroot -p"$DB_PASSWORD" --force family_menu_daily_db < sql/migrate-legacy.sql
+
+services:
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:?必须设置 DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME:-family_menu_daily_db}
+      TZ: Asia/Shanghai
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-time-zone=+08:00
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-p${DB_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    # 不对外暴露端口：仅应用容器内网访问
+    expose:
+      - "3306"
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_SQL_INIT_MODE: never
+      DB_HOST: mysql
+      DB_PORT: "3306"
+      DB_NAME: ${DB_NAME:-family_menu_daily_db}
+      DB_USERNAME: ${DB_USERNAME:-root}
+      DB_PASSWORD: ${DB_PASSWORD:?必须设置 DB_PASSWORD}
+      WECHAT_APP_ID: ${WECHAT_APP_ID:-}
+      WECHAT_APP_SECRET: ${WECHAT_APP_SECRET:-}
+      # 微信支付（未开通留空即可；留空时 prepay 返回 mockMode，不会真实扣款）
+      WECHAT_MCH_ID: ${WECHAT_MCH_ID:-}
+      WECHAT_PAY_API_V3_KEY: ${WECHAT_PAY_API_V3_KEY:-}
+      WECHAT_PAY_CERT_SERIAL: ${WECHAT_PAY_CERT_SERIAL:-}
+      WECHAT_PAY_KEY_PATH: ${WECHAT_PAY_KEY_PATH:-}
+      WECHAT_PAY_PLATFORM_CERT_PATH: ${WECHAT_PAY_PLATFORM_CERT_PATH:-}
+      WECHAT_PAY_NOTIFY_URL: ${WECHAT_PAY_NOTIFY_URL:-}
+      ADMIN_OPENIDS: ${ADMIN_OPENIDS:-}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-}
+      UPLOAD_DIR: /app/uploads
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      TZ: Asia/Shanghai
+      # 以下三项生产严禁开启（保持默认空/关）
+      AUTH_DEV_OTP_ENABLED: "false"
+      WECHAT_PAY_MOCK_ENABLED: "false"
+    volumes:
+      - uploads:/app/uploads
+    # 只绑定回环地址：公网流量必须经 nginx（HTTPS + /admin IP 白名单），
+    # 直接暴露 9088 会绕过 HTTPS，明文传输 X-Auth-Token / 验证码 / 管理台登录。
+    ports:
+      - "127.0.0.1:${APP_PORT:-9088}:9088"
+
+volumes:
+  mysql-data:
+  uploads:

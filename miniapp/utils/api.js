@@ -1,17 +1,6 @@
-const BASE_URL_FALLBACK = 'http://localhost:9088';
 const DEVICE_ID_KEY = 'device_id';
-
-function resolveBaseUrl() {
-  try {
-    const app = typeof getApp === 'function' ? getApp() : null;
-    if (app && app.globalData && app.globalData.apiBaseUrl) {
-      return app.globalData.apiBaseUrl;
-    }
-  } catch (err) {
-    // getApp may throw before App() runs; fall through to fallback.
-  }
-  return BASE_URL_FALLBACK;
-}
+// 全站 baseURL 唯一来源（见 utils/env.js），此处不再保留第二套兜底地址
+const { resolveBaseUrl } = require('./env');
 
 function getAuthToken() {
   return wx.getStorageSync('auth_token') || '';
@@ -45,8 +34,11 @@ function extractErrorMessage(data) {
 }
 
 let reauthPromise = null;
-function ensureGuestSession() {
+// expectedToken = 触发 401 时用的 token。期间若用户登录写了新 token（或 token 已被清），
+// 就丢弃游客 token，避免游客身份覆盖刚拿到的登录态。
+function ensureGuestSession(expectedToken) {
   if (reauthPromise) return reauthPromise;
+  const baseline = expectedToken !== undefined ? expectedToken : getAuthToken();
   reauthPromise = new Promise((resolve) => {
     wx.request({
       url: `${resolveBaseUrl()}/api/auth/guest`,
@@ -55,6 +47,11 @@ function ensureGuestSession() {
       timeout: 10000,
       success(res) {
         if (res.statusCode >= 200 && res.statusCode < 300 && res.data && res.data.token) {
+          if (getAuthToken() !== baseline) {
+            // token 已被其他流程改写（如刚登录成功），不覆盖
+            resolve(null);
+            return;
+          }
           setAuthToken(res.data.token);
           resolve(res.data.token);
         } else {
@@ -95,7 +92,8 @@ async function rawRequest(path, options) {
       return { ok: true, data: res.data };
     }
     if (res.statusCode === 401 && config.skipReauth !== true) {
-      const refreshed = await ensureGuestSession();
+      // 传当前 token 作基线，游客会话只在 token 未被改写时写入
+      const refreshed = await ensureGuestSession(getAuthToken());
       if (refreshed) {
         const retry = await performRequest(path, config);
         if (retry.res && retry.res.statusCode >= 200 && retry.res.statusCode < 300) {
@@ -209,15 +207,13 @@ function getMyFavorites() {
   return request('/api/me/favorites', { silent: true });
 }
 
-function getVipStatus() {
-  return request('/api/vip/status', { silent: true });
+// 登出：吊销服务端会话（失败不阻塞本地清理）
+function logout() {
+  return requestStrict('/api/auth/logout', { method: 'POST' }).catch(() => null);
 }
 
-function activateVip(planName) {
-  return requestStrict('/api/vip/activate', {
-    method: 'POST',
-    data: { planName: planName || '家庭年卡' }
-  });
+function getVipStatus() {
+  return request('/api/vip/status', { silent: true });
 }
 
 function getFamilyProfile() {
@@ -326,6 +322,19 @@ function removeTodayMenuRecipe(recipeId) {
   });
 }
 
+// 菜单项状态流转：todo（待做）/ cooking（烧着）/ done（上桌）
+function updateMenuItemStatus(itemId, status) {
+  return requestStrict(`/api/daily-menu/today/items/${itemId}/status`, {
+    method: 'PATCH',
+    data: { status }
+  });
+}
+
+// 开饭广播：给家里其他成员发"开饭啦"站内通知
+function announceMeal() {
+  return requestStrict('/api/daily-menu/today/announce', { method: 'POST' });
+}
+
 // ---- 许愿池（家庭共享，按日期+餐次分槽） ----
 function getWishes(date, slot) {
   return request('/api/wishes', {
@@ -421,10 +430,15 @@ function loginWithOtp(payload) {
 }
 
 function getCurrentUser() {
-  return ensureGuestSession().then(() => request('/api/auth/me', {
+  // 已有 token（手机/微信/游客）直接读 /me；无 token 才补游客。
+  // 若先 ensureGuestSession，会用设备游客盖掉刚写上的登录态。
+  const token = getAuthToken();
+  const loadMe = () => request('/api/auth/me', {
     silent: true,
     fallback: () => null
-  }));
+  });
+  if (token) return loadMe();
+  return ensureGuestSession().then(loadMe);
 }
 
 // ===== Phase 4: Enhanced =====
@@ -565,11 +579,13 @@ module.exports = {
   getRecipeDetail,
   getRecipes,
   getVipStatus,
-  activateVip,
+  logout,
   getWeeklyMenu,
   getTodayMenu,
   addTodayMenuRecipe,
   removeTodayMenuRecipe,
+  updateMenuItemStatus,
+  announceMeal,
   getWishes,
   addWish,
   removeWish,

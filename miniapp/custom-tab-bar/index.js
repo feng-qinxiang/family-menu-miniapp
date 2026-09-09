@@ -1,6 +1,9 @@
+const features = require('../utils/features');
+
 Component({
   data: {
     selected: 0,
+    // 社区 tab 随 COMMUNITY 开关显隐（app.json tabBar list 仍声明，关闭时仅不渲染）
     list: [
       {
         pagePath: '/pages/home/index',
@@ -14,6 +17,12 @@ Component({
         icon: '/assets/icons/tab-recipe.svg',
         activeIcon: '/assets/icons/tab-recipe-active.svg'
       },
+      ...(features.COMMUNITY ? [{
+        pagePath: '/pages/community/index',
+        text: '社区',
+        icon: '/assets/icons/tab-community.svg',
+        activeIcon: '/assets/icons/tab-community-active.svg'
+      }] : []),
       {
         pagePath: '/pages/pantry/index',
         text: '冰箱',

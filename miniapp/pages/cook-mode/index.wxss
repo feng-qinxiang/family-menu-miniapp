@@ -31,6 +31,11 @@
   border: 2rpx solid rgba(255, 255, 255, 0.1);
 }
 .nbtn.keep {
+  /* 计时按钮：圆钮改胶囊，图标+「计时」文字，语义可读（CSS 小图标单独看不懂） */
+  width: auto;
+  padding: 0 24rpx;
+  border-radius: 44rpx;
+  gap: 10rpx;
   background: rgba(232, 71, 42, 0.16);
   border-color: rgba(232, 71, 42, 0.4);
 }
@@ -38,6 +43,17 @@
   background: var(--pop);
   border-color: var(--pop);
 }
+.nbtn.keep .keep-ic { border-color: var(--pop); }
+.nbtn.keep .keep-ic::after { background: var(--pop); }
+.nbtn.keep.on .keep-ic { border-color: var(--c-surface); }
+.nbtn.keep.on .keep-ic::after { background: var(--c-surface); }
+.keep-tx {
+  font-size: 24rpx;
+  font-weight: 800;
+  color: var(--pop);
+  letter-spacing: 1rpx;
+}
+.nbtn.keep.on .keep-tx { color: var(--c-surface); }
 .dishbar {
   flex: 1;
   min-width: 0;
@@ -227,6 +243,8 @@
   flex: 1;
   min-height: 0;
   padding: 0 46rpx;
+  /* scroll-view 原生默认 width:100% + content-box，padding 会把总宽撑出视口导致文字被裁 */
+  box-sizing: border-box;
 }
 .stepeyebrow {
   font-family: var(--serif);
@@ -237,8 +255,9 @@
   letter-spacing: 1rpx;
 }
 .steptext {
-  font-size: 44rpx;
-  line-height: 1.45;
+  /* 厨房场景手机放得远、手上有油：字号行高放大一档，扫读不费劲（对齐懒饭大字风格） */
+  font-size: 50rpx;
+  line-height: 1.6;
   font-weight: 800;
   color: var(--c-border-light);
   letter-spacing: -0.5rpx;
@@ -257,12 +276,13 @@
   display: flex;
   align-items: center;
   gap: 14rpx;
-  font-size: var(--fs-sub);
+  /* 配料标签同步放大一档，与步骤正文匹配 */
+  font-size: 30rpx;
   font-weight: 600;
   color: var(--c-border-light);
   background: var(--ink);
   border: 2rpx solid rgba(255, 255, 255, 0.1);
-  padding: 16rpx 26rpx;
+  padding: 18rpx 30rpx;
   border-radius: var(--r-pill);
 }
 .ing .dotmark {
@@ -289,6 +309,12 @@
   letter-spacing: 3rpx;
   color: var(--mut-2);
   font-weight: 700;
+}
+/* 换时长入口：点时间区域随时重选 */
+.timer .tl .cap .cap-pick {
+  margin-left: 10rpx;
+  color: var(--gold-deep);
+  letter-spacing: 1rpx;
 }
 .timer .tl .num {
   font-family: var(--serif);

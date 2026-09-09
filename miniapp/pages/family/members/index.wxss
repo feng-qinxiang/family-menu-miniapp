@@ -9,7 +9,7 @@
 }
 
 .mem-scroll {
-  padding: 0 46rpx 0;
+  padding: 0 46rpx calc(220rpx + env(safe-area-inset-bottom));
 }
 
 /* —— Hero 标题 —— */
@@ -327,8 +327,8 @@
   right: 0;
   bottom: 0;
   z-index: 40;
-  padding: 32rpx 46rpx;
-  background: linear-gradient(180deg, rgba(251, 248, 243, 0), var(--paper) 32%);
+  padding: 32rpx 46rpx calc(32rpx + env(safe-area-inset-bottom));
+  background: linear-gradient(180deg, var(--glass-clear), var(--paper) 32%);
 }
 .mem-invbtn {
   height: 108rpx;

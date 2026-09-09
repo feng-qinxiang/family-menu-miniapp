@@ -7,6 +7,7 @@ const {
 } = require('../../utils/api');
 const { withTabSelect } = require('../../behaviors/tab-select');
 const { recipeDishImg } = require('../../utils/image');
+const { parseLocalDate } = require('../../utils/dish-logic');
 
 // 分类规则：按食材名关键字归类（蔬菜 / 肉蛋 / 调料 / 其他）
 const CATEGORY_RULES = [
@@ -232,9 +233,10 @@ Page({
 
   daysLeft(expiresAt) {
     if (!expiresAt) return null;
-    const target = new Date(expiresAt).getTime();
-    if (Number.isNaN(target)) return null;
-    return Math.floor((target - Date.now()) / 86400000);
+    // 用本地解析：new Date('2026-09-10') 按 UTC 算，东八区会少一天
+    const target = parseLocalDate(expiresAt);
+    if (!target) return null;
+    return Math.floor((target.getTime() - Date.now()) / 86400000);
   },
 
   buildAmountText(item) {

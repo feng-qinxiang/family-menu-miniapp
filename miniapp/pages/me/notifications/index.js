@@ -1,25 +1,30 @@
 // pages/me/notifications · 消息中心
 // 真实接口：getNotifications / markNotificationsRead（GET/PATCH /api/notifications）
 const { getNotifications, markNotificationsRead } = require('../../../utils/api');
+const features = require('../../../utils/features');
 
-// 通知 kind → tab 归属
-const KIND_TAB = { fam: 'family', com: 'community', sys: 'system' };
+// 通知 kind → tab 归属（wish=家人许愿 / meal=开饭提醒，都算家庭事件）
+const KIND_TAB = { fam: 'family', com: 'community', sys: 'system', wish: 'family', meal: 'family' };
 
 // kind → 默认图标
-const KIND_ICON = { fam: 'home', com: 'heart', sys: 'bell' };
+const KIND_ICON = { fam: 'home', com: 'heart', sys: 'bell', wish: 'heart', meal: 'bell' };
 
 // actionType → 按钮文案 + 跳转
 const ACTION_MAP = {
   menu: { label: '去看看', ghost: false, route: '/pages/menu/index' },
   shopping: { label: '查看清单', ghost: true, route: '/pages/shopping/index' },
   community: { label: '去社区', ghost: true, route: '/pages/community/index' },
-  feedback: { label: '查看', ghost: true, route: '' },
+  home: { label: '去看看', ghost: false, route: '/pages/home/index' },
+  feedback: { label: '查看', ghost: true, route: '/pages/me/feedback/index' },
 };
 
 // 后端扁平 NotificationItem → 前端卡片视图模型
 function adapt(item) {
   const kind = item.kind || 'sys';
-  const action = ACTION_MAP[item.actionType] || null;
+  // 社区关闭时不渲染"去社区"动作按钮，避免死链
+  const action = (!features.COMMUNITY && item.actionType === 'community')
+    ? null
+    : (ACTION_MAP[item.actionType] || null);
   return {
     id: item.id,
     group: item.group === 'today' ? 'today' : 'earlier',
@@ -40,7 +45,7 @@ Page({
     tabs: [
       { key: 'all', label: '全部', unread: 0 },
       { key: 'family', label: '家庭', unread: 0 },
-      { key: 'community', label: '社区', unread: 0 },
+      ...(features.COMMUNITY ? [{ key: 'community', label: '社区', unread: 0 }] : []),
       { key: 'system', label: '系统', unread: 0 }
     ],
     activeTab: 'all',
@@ -53,6 +58,12 @@ Page({
 
   onLoad() {
     this.loadData();
+  },
+
+  // 从目标页返回后未读数可能已变，重新拉取
+  onShow() {
+    if (this._loaded) this.loadData();
+    this._loaded = true;
   },
 
   loadData() {
@@ -132,9 +143,13 @@ Page({
   },
 
   // 点击卡片 → 标记已读
+  // 点卡片 = 标记已读 + 按通知类型跳转（原来只标已读，用户点了「没反应」）
   onCardTap(e) {
     const id = e.currentTarget.dataset.id;
     this.markRead(id);
+    const n = (this.data.all || []).find((x) => x.id === id);
+    const type = n && n.action ? n.action.type : '';
+    this.navigateByType(type, n);
   },
 
   markRead(id) {
@@ -159,21 +174,29 @@ Page({
     const n = (this.data.all || []).find((x) => x.id === id);
     this.markRead(id);
     const type = n && n.action ? n.action.type : '';
+    this.navigateByType(type, n);
+  },
 
-    // 冰箱/菜谱/今日是 tabBar 页，用 switchTab；其余为普通页，用 navigateTo
-    const tabRoutes = { pantry: '/pages/pantry/index' };
+  // tabBar 页用 switchTab，其余普通页用 navigateTo
+  navigateByType(type, n) {
+    const tabRoutes = {
+      pantry: '/pages/pantry/index',
+      community: '/pages/community/index',
+      home: '/pages/home/index'
+    };
     const navRoutes = {
       menu: '/pages/menu/index',
       shopping: '/pages/shopping/index',
-      community: '/pages/community/index'
+      feedback: '/pages/me/feedback/index'
     };
 
     if (tabRoutes[type]) {
       wx.switchTab({ url: tabRoutes[type], fail: () => this.showToast('目标页面暂不可达') });
     } else if (navRoutes[type]) {
       wx.navigateTo({ url: navRoutes[type], fail: () => this.showToast('目标页面暂不可达') });
-    } else {
-      this.showToast('暂无可跳转的内容');
+    } else if (n && n.body && n.body[0] && n.body[0].v) {
+      // 无可跳转目标时给出内容反馈，避免「点了没反应」
+      this.showToast('已标记为已读');
     }
   },
 

@@ -49,7 +49,7 @@
 .rd-hero-body {
   position: relative;
   margin-top: auto;
-  padding: 0 46rpx 48rpx;
+  padding: 0 46rpx var(--hero-body-above-sheet);
   z-index: 2;
   color: var(--c-surface);
 }
@@ -65,9 +65,22 @@
   padding: 10rpx 26rpx;
   border-radius: var(--r-xs);
 }
+
+/* nav-bar 右侧编辑入口（仅自建菜谱）：压在 hero 暗底上，用半透明描边胶囊 */
+.rd-navedit {
+  height: 56rpx;
+  padding: 0 28rpx;
+  display: flex;
+  align-items: center;
+  font-size: var(--fs-cap);
+  font-weight: 700;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.28);
+  border: 2rpx solid rgba(255, 255, 255, 0.45);
+  border-radius: 999rpx;
+}
 .rd-hero-title {
-  font-size: var(--fs-hero-xl);
-  line-height: 0.92;
+  font-size: var(--fs-hero-xl);  line-height: 0.92;
   letter-spacing: -6rpx;
   margin: 28rpx 0 26rpx;
   -webkit-text-stroke: 3rpx var(--c-surface);
@@ -139,7 +152,7 @@
   margin-top: -50rpx;
   background: var(--paper);
   border-radius: 20rpx 20rpx 0 0;
-  padding: 44rpx 46rpx 220rpx;
+  padding: 44rpx 46rpx calc(400rpx + env(safe-area-inset-bottom));
   z-index: 5;
 }
 .rd-sheet .shead { margin: 0 0 30rpx; }
@@ -158,7 +171,7 @@
   display: flex;
   align-items: center;
   gap: 24rpx;
-  padding: 24rpx 0;
+  padding: 16rpx 0;
   border-bottom: 2rpx solid var(--paper-2);
 }
 .rd-ing:last-child { border-bottom: none; }
@@ -191,7 +204,7 @@
 }
 
 /* 加入买菜清单按钮 */
-.rd-ing-cart { padding: 26rpx 0 8rpx; }
+.rd-ing-cart { padding: 0 0 22rpx; }
 .rd-cart-btn {
   display: flex;
   align-items: center;
@@ -217,6 +230,63 @@
   background: rgba(255, 255, 255, 0.25);
   font-size: 24rpx;
   font-weight: 900;
+}
+
+/* —— 做法视频 —— */
+.rd-video {
+  position: relative;
+  height: 320rpx;
+  margin: 0 0 8rpx;
+  border-radius: 24rpx;
+  overflow: hidden;
+  background: var(--ink-deep);
+}
+.rd-video-poster,
+.rd-video-player {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.rd-video-mask {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 38%, rgba(28, 22, 16, 0.58));
+}
+.rd-video-play {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.94);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translate(-50%, -50%);
+}
+.rd-ic-play-lg {
+  border-left-color: var(--ink-deep);
+  margin-left: 8rpx;
+}
+.rd-video-meta {
+  position: absolute;
+  left: 24rpx;
+  right: 24rpx;
+  bottom: 20rpx;
+  color: #fff;
+}
+.rd-video-kicker {
+  display: block;
+  font-size: 22rpx;
+  font-weight: 700;
+  opacity: 0.86;
+}
+.rd-video-sub {
+  display: block;
+  margin-top: 4rpx;
+  font-size: 28rpx;
+  font-weight: 800;
 }
 
 /* —— 做法步骤 —— */
@@ -253,8 +323,10 @@
 }
 .rd-step-img {
   width: 100%;
+  height: 240rpx;
   margin-top: 18rpx;
   border-radius: 20rpx;
+  background: var(--paper-2);
 }
 .rd-tip {
   display: inline-flex;
@@ -365,9 +437,8 @@
   z-index: 50;
   display: flex;
   gap: 16rpx;
-  padding: 24rpx 30rpx;
-  background: rgba(251, 248, 243, 0.94);
-  border-top: 2rpx solid var(--paper-2);
+  padding: 40rpx 30rpx calc(24rpx + env(safe-area-inset-bottom));
+  background: linear-gradient(180deg, var(--glass-clear), var(--paper) 28%);
 }
 .rd-ghost-btn {
   flex: none;
@@ -385,24 +456,26 @@
   gap: 6rpx;
   border: 2rpx solid var(--c-border);
 }
+/* 主按钮 = 开始做菜（做饭动线入口，占满剩余宽度） */
 .rd-primary-btn {
   flex: 1;
   height: 104rpx;
   border-radius: var(--r-chip);
   background: var(--pop);
   color: var(--c-surface);
-  font-size: 28rpx;
+  font-size: 30rpx;
   font-weight: 900;
-  letter-spacing: 1rpx;
+  letter-spacing: 2rpx;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 12rpx;
   box-shadow: var(--sh-pop);
 }
-.rd-cook-btn {
+/* 次按钮 = 加菜单（窄条，保持加入中/已加入状态反馈） */
+.rd-secondary-btn {
   flex: none;
-  width: 130rpx;
+  width: 170rpx;
   height: 104rpx;
   border-radius: var(--r-chip);
   background: var(--ink-deep);
@@ -415,6 +488,70 @@
   justify-content: center;
   gap: 6rpx;
 }
+/* 请求进行中：压暗提示不可重复点 */
+.rd-secondary-btn--busy {
+  opacity: 0.6;
+}
+/* 已在今日菜单：松绿描边 + 对勾，与"待加入"深色底区分 */
+.rd-secondary-btn--added {
+  background: var(--paper-2);
+  color: var(--pine);
+  border: 2rpx solid var(--pine);
+}
+.rd-secondary-btn--added .rd-ic-check {
+  border-left-color: var(--pine);
+  border-bottom-color: var(--pine);
+}
+
+/* ===== 悬浮快捷键（回顶/退出）：右侧竖排，避开底部操作栏 ===== */
+.rd-quicknav {
+  position: fixed;
+  right: 20rpx;
+  bottom: calc(360rpx + env(safe-area-inset-bottom));
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 18rpx;
+}
+.rd-qbtn {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 50%;
+  /* 轻微半透明：悬浮在内容上时不完全遮字 */
+  background: var(--glass);
+  border: 2rpx solid var(--c-border);
+  box-shadow: 0 10rpx 30rpx rgba(60, 40, 20, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* 上箭头（chevron） */
+.rd-qic-up {
+  width: 26rpx;
+  height: 26rpx;
+  border-left: 5rpx solid var(--ink-deep);
+  border-top: 5rpx solid var(--ink-deep);
+  transform: rotate(45deg) translate(4rpx, 4rpx);
+  border-radius: 2rpx;
+}
+/* × 退出 */
+.rd-qic-x {
+  position: relative;
+  width: 30rpx;
+  height: 30rpx;
+}
+.rd-qic-x::before, .rd-qic-x::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 34rpx;
+  height: 5rpx;
+  background: var(--mut);
+  border-radius: 3rpx;
+}
+.rd-qic-x::before { transform: translate(-50%, -50%) rotate(45deg); }
+.rd-qic-x::after { transform: translate(-50%, -50%) rotate(-45deg); }
 
 /* ===== 纯 CSS 图标 ===== */
 .rd-ic { position: relative; flex: none; }
@@ -425,7 +562,8 @@
 .rd-ic-plus::before, .rd-ic-plus::after {
   content: ""; position: absolute; left: 50%; top: 50%; background: currentColor; border-radius: 3rpx;
 }
-.rd-ic-plus { color: var(--c-surface); }
+/* 加号跟随所在按钮文字色（次按钮深色底→金色，主按钮红底→白色） */
+.rd-ic-plus { color: currentColor; }
 .rd-ic-plus::before { width: 30rpx; height: 5rpx; transform: translate(-50%, -50%); }
 .rd-ic-plus::after { width: 5rpx; height: 30rpx; transform: translate(-50%, -50%); }
 /* 对勾 */
@@ -436,10 +574,10 @@
   transform: rotate(-45deg) translateY(-4rpx);
   border-radius: 2rpx;
 }
-/* 播放三角 */
+/* 播放三角：跟随所在按钮文字色（主按钮红底白字→白色三角） */
 .rd-ic-play {
   width: 0; height: 0;
-  border-left: 24rpx solid var(--gold);
+  border-left: 24rpx solid currentColor;
   border-top: 14rpx solid transparent;
   border-bottom: 14rpx solid transparent;
 }
@@ -450,8 +588,9 @@
 }
 
 /* ===== 加载骨架 ===== */
+/* 高度必须与真实 hero（--photo-hero-h）一致，否则加载完成时页面跳变 */
 .rd-hero-skel {
-  height: 560rpx;
+  height: var(--photo-hero-h);
   background: linear-gradient(135deg, var(--paper-2), var(--c-border-light));
 }
 .rd-skel-row { display: flex; align-items: center; gap: 24rpx; padding: 24rpx 0; }

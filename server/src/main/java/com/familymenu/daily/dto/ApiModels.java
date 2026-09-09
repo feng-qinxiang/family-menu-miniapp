@@ -3,6 +3,7 @@ package com.familymenu.daily.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -90,40 +91,43 @@ public final class ApiModels {
     }
 
     public record CreateRecipeRequest(
-            @NotBlank String title,
-            String sourceType,
-            String sourceUrl,
-            @NotBlank String cuisine,
-            @NotEmpty List<String> tasteTags,
+            @NotBlank @Size(max = 128) String title,
+            @Size(max = 16) String sourceType,
+            @Size(max = 512) String sourceUrl,
+            @NotBlank @Size(max = 32) String cuisine,
+            @NotEmpty @Size(max = 20) List<String> tasteTags,
             Integer timeCost,
             Integer servings,
-            @NotEmpty List<String> steps,
-            @NotEmpty List<IngredientItem> ingredients,
-            String summary
+            @NotEmpty @Size(max = 50) List<String> steps,
+            @NotEmpty @Size(max = 50) List<IngredientItem> ingredients,
+            @Size(max = 255) String summary,
+            @Size(max = 512) String coverImage,
+            @Size(max = 16) String difficulty
     ) {
     }
 
     public record ParseImportRequest(
-            @NotBlank String rawText
+            // 纯文本导入：限长防止把超大文本丢进解析器刷 CPU
+            @NotBlank @Size(max = 20000) String rawText
     ) {
     }
 
     public record CommunityCommentRequest(
-            @NotBlank String content
+            @NotBlank @Size(max = 500) String content
     ) {
     }
 
     public record CreateCommunityPostRequest(
-            @NotBlank String title,
-            @NotBlank String content,
+            @NotBlank @Size(max = 128) String title,
+            @NotBlank @Size(max = 5000) String content,
             Long recipeId,
-            List<String> tags
+            @Size(max = 10) List<@Size(max = 32) String> tags
     ) {
     }
 
     public record CommunityReportRequest(
-            @NotBlank String reason,
-            String description
+            @NotBlank @Size(max = 64) String reason,
+            @Size(max = 500) String description
     ) {
     }
 
@@ -194,7 +198,9 @@ public final class ApiModels {
     public record UpdateProfileRequest(
             String nickname,
             String avatarUrl,
-            String phone
+            String phone,
+            // 绑定/换绑手机号必须同时提供验证码，防止把他人手机号绑到自己账号（账号接管）
+            String phoneCode
     ) {
     }
 
@@ -206,9 +212,17 @@ public final class ApiModels {
     }
 
     public record DailyMenuItemView(
+            Long itemId,
             Long recipeId,
             String mealType,
+            String status,
+            String addedByName,
             RecipeCard recipe
+    ) {
+    }
+
+    public record UpdateMenuItemStatusRequest(
+            @NotBlank String status
     ) {
     }
 
@@ -263,7 +277,9 @@ public final class ApiModels {
             String summary,
             List<String> steps,
             List<IngredientItem> ingredients,
-            String createdAt
+            String createdAt,
+            String coverImage,
+            String difficulty
     ) {
     }
 
@@ -275,7 +291,9 @@ public final class ApiModels {
             Integer servings,
             List<String> steps,
             List<IngredientItem> ingredients,
-            String summary
+            String summary,
+            String coverImage,
+            String difficulty
     ) {
     }
 
@@ -454,10 +472,10 @@ public final class ApiModels {
     }
 
     public record FeedbackRequest(
-            @NotEmpty List<String> types,
-            @NotBlank String content,
-            String contact,
-            List<String> images
+            @NotEmpty @Size(max = 10) List<String> types,
+            @NotBlank @Size(max = 2000) String content,
+            @Size(max = 128) String contact,
+            @Size(max = 9) List<String> images
     ) {
     }
 
@@ -511,9 +529,9 @@ public final class ApiModels {
     }
 
     public record AddWishRequest(
-            @NotBlank String date,
-            @NotBlank String slot,
-            @NotBlank String text,
+            @NotBlank @Size(max = 20) String date,
+            @NotBlank @Size(max = 16) String slot,
+            @NotBlank @Size(max = 128) String text,
             Long recipeId
     ) {
     }

@@ -1,5 +1,5 @@
 {
-  "appid": "wxd797651d984e4e80",
+  "appid": "wx2a5074fe4337e696",
   "compileType": "miniprogram",
   "miniprogramRoot": "miniapp/",
   "projectname": "family-menu-daily",
@@ -31,8 +31,14 @@
   },
   "simulatorPluginLibVersion": {},
   "packOptions": {
-    "ignore": [],
+    "ignore": [
+      {
+        "type": "folder",
+        "value": "test"
+      }
+    ],
     "include": []
   },
-  "editorSetting": {}
+  "editorSetting": {},
+  "isGameTourist": false
 }

@@ -145,8 +145,9 @@
   bottom: 0;
   z-index: 50;
   box-sizing: border-box;
-  padding: 60rpx 46rpx 28rpx;
-  background: linear-gradient(180deg, rgba(251, 248, 243, 0) 0%, var(--paper) 26%);
+  /* padding 简写会盖掉 .safe-bottom，底部安全区写在这里 */
+  padding: 60rpx 46rpx calc(28rpx + env(safe-area-inset-bottom));
+  background: linear-gradient(180deg, var(--glass-clear) 0%, var(--paper) 26%);
 }
 .cta {
   display: flex;

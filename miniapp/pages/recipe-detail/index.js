@@ -4,15 +4,16 @@ const {
   addShoppingItem,
   getPantryItems,
   getRecipeDetail,
-  getTodayMenu
+  getTodayMenu,
+  removeWish
 } = require('../../utils/api');
-const { decodeStep } = require('../../utils/recipe-steps');
-const { recipeDishImg } = require('../../utils/image');
+const { decodeStep, hoistVideo } = require('../../utils/recipe-steps');
+const { recipeDishImg, stepDishImg } = require('../../utils/image');
+const { sourceLabels: baseSourceLabels } = require('../../utils/constants');
 
+// 复用全局来源标签（社区开关关闭时 community 显示"精选"），本页额外支持 link/text
 const sourceLabels = {
-  owned: '自建',
-  community: '社区',
-  imported: '导入',
+  ...baseSourceLabels,
   link: '链接',
   text: '文本'
 };
@@ -43,7 +44,14 @@ Page({
     baseServings: 2,
     missCount: 0,
     skeletonRows: [1, 2, 3],
-    loading: true
+    loading: true,
+    playingVideo: false,
+    // 今日菜单状态：页面加载时并行查好，点击加入时无需再查（省一个请求来回）
+    inTodayMenu: false,
+    addingToday: false,
+    // 长页快捷导航：滚动超一屏显示"回顶/退出"悬浮键
+    showQuickNav: false,
+    scrollTopTo: -1
   },
 
   onLoad(options) {
@@ -54,6 +62,9 @@ Page({
       sbh = 0;
     }
     const recipeId = options.id || options.recipeId;
+    // 从心愿「待挑菜」链路跳来：加菜成功后自动销愿，slot 用心愿的餐次
+    this._wishId = options.wishId ? decodeURIComponent(options.wishId) : '';
+    this._wishSlot = options.slot || '';
     this.setData({ statusBarHeight: sbh, recipeId });
     if (recipeId) {
       this.loadRecipe(recipeId);
@@ -62,9 +73,24 @@ Page({
     }
   },
 
+  // 从 cook-mode / recipe-edit 返回后刷新：加菜态、评价、份量都可能已变
+  onShow() {
+    if (this._inited && this.data.recipeId && !this.data.loading) {
+      this.loadRecipe(this.data.recipeId);
+    }
+    this._inited = true;
+  },
+
   async loadRecipe(id) {
     try {
-      const [recipe, pantryItems] = await Promise.all([getRecipeDetail(id), getPantryItems()]);
+      const [recipe, pantryItems, todayMenu] = await Promise.all([
+        getRecipeDetail(id),
+        getPantryItems(),
+        // 今日菜单拉取失败不阻断详情展示，按钮回退为可点击态
+        getTodayMenu().catch(() => null)
+      ]);
+      const menuItems = (todayMenu && Array.isArray(todayMenu.items)) ? todayMenu.items : [];
+      const inTodayMenu = menuItems.some((it) => String(it.recipeId) === String(id));
       if (!recipe) {
         this.setData({ recipe: null, loading: false });
         return;
@@ -90,10 +116,13 @@ Page({
       const totalCount = ingredients.length;
       const missCount = totalCount - haveCount;
       const rawSteps = Array.isArray(recipe.steps) ? recipe.steps : [];
-      const steps = rawSteps.map((s) => {
-        const decoded = decodeStep(s);
-        return { text: decoded.text, image: decoded.image, tip: (s && s.tip) || '' };
-      });
+      const decodedSteps = rawSteps.map((s) => decodeStep(s));
+      const videoUrl = hoistVideo(decodedSteps) || recipe.videoUrl || '';
+      const steps = decodedSteps.map((decoded, i) => ({
+        text: decoded.text,
+        image: stepDishImg(recipe, i, decoded.image),
+        tip: (rawSteps[i] && rawSteps[i].tip) || ''
+      }));
       const reviews = Array.isArray(recipe.reviews) ? recipe.reviews : [];
       const baseServings = Number(recipe.servings) > 0 ? Number(recipe.servings) : 2;
       const heroChar = (recipe.title || '菜').trim().charAt(0);
@@ -109,6 +138,7 @@ Page({
           haveCount,
           totalCount,
           steps,
+          videoUrl,
           reviews,
           cookCount: recipe.cookCount || reviews.length,
           rating: recipe.rating || '',
@@ -120,6 +150,8 @@ Page({
         servings: baseServings,
         baseServings,
         missCount,
+        inTodayMenu,
+        playingVideo: false,
         loading: false
       });
     } catch (err) {
@@ -180,28 +212,43 @@ Page({
   },
 
   async addToToday() {
-    if (!this.data.recipe || this._addingToday) return;
-    const id = this.data.recipe.id;
-    this._addingToday = true;
+    if (!this.data.recipe || this.data.addingToday) return;
+    // 已加入：零请求即时反馈（状态在页面加载时并行查好，成功加入后本地置位）
+    if (this.data.inTodayMenu) {
+      wx.showToast({ title: '已经在今日菜单里啦', icon: 'none' });
+      return;
+    }
+    this.setData({ addingToday: true });
     try {
-      const menu = await getTodayMenu();
-      const items = (menu && Array.isArray(menu.items)) ? menu.items : [];
-      if (items.some((it) => String(it.recipeId) === String(id))) {
-        wx.showToast({ title: '已经在今日菜单里啦', icon: 'none' });
-        return;
+      await addTodayMenuRecipe(this.data.recipe.id, this._wishSlot || 'dinner');
+      this.setData({ inTodayMenu: true });
+      // 心愿闭环：这道菜是为某条心愿挑的 → 加入菜单即愿望达成，自动销愿
+      if (this._wishId) {
+        removeWish(this._wishId).catch(() => {});
+        this._wishId = '';
+        wx.showToast({ title: '愿望达成，已入菜单', icon: 'success' });
+      } else {
+        wx.showToast({ title: '已加入今日菜单', icon: 'success' });
       }
-      await addTodayMenuRecipe(id, 'dinner');
-      wx.showToast({ title: '已加入今日菜单', icon: 'success' });
     } catch (err) {
       wx.showToast({ title: '加入失败', icon: 'none' });
     } finally {
-      this._addingToday = false;
+      this.setData({ addingToday: false });
     }
   },
 
   goEdit() {
     if (!this.data.recipe) return;
     wx.navigateTo({ url: `/pages/recipe-edit/index?id=${this.data.recipe.id}` });
+  },
+
+  onTapVideo() {
+    if (!this.data.recipe) return;
+    if (this.data.recipe.videoUrl) {
+      this.setData({ playingVideo: true });
+      return;
+    }
+    this.startCook();
   },
 
   // —— 开始做菜：进入烹饪模式 ——
@@ -211,8 +258,8 @@ Page({
     wx.navigateTo({
       url: `/pages/cook-mode/index?id=${recipe.id}&servings=${this.data.servings}`,
       fail: () => {
-        // cook-mode 尚未上线时的兜底：记录做菜
-        wx.showToast({ title: '烹饪模式开发中', icon: 'none' });
+        // 真机导航失败兜底（cook-mode 页面存在，这里只报打开失败，不误报"未开发"）
+        wx.showToast({ title: '页面打开失败，请重试', icon: 'none' });
       }
     });
   },
@@ -257,6 +304,19 @@ Page({
         wx.switchTab({ url: '/pages/recipes/index' });
       }
     });
+  },
+
+  // —— 长页快捷导航 ——
+  onScrollBody(e) {
+    const show = (e.detail && e.detail.scrollTop || 0) > 600;
+    if (show !== this.data.showQuickNav) {
+      this.setData({ showQuickNav: show });
+    }
+  },
+
+  backToTop() {
+    // scroll-top 同值不触发滚动：0 与 0.1 交替，视觉无差
+    this.setData({ scrollTopTo: this.data.scrollTopTo === 0 ? 0.1 : 0 });
   },
 
   recordCook() {

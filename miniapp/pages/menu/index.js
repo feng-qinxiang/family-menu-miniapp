@@ -6,7 +6,9 @@ const {
   generateWeeklyMenu,
   rebuildShoppingList,
   addCookHistory,
-  removeTodayMenuRecipe
+  removeTodayMenuRecipe,
+  updateMenuItemStatus,
+  announceMeal
 } = require('../../utils/api');
 const { mealTypeLabels, mealOrder } = require('../../utils/constants');
 const { fallbackDishImg, recipeDishImg, LOCAL_DISHES } = require('../../utils/image');
@@ -47,6 +49,18 @@ function normalizeName(name) {
   return (name || '').toString().toLowerCase().trim();
 }
 
+// 做菜顺序建议（轻量统筹）：同一餐 ≥2 道待做菜时，按耗时倒排——
+// 先开工最耗时的（炖煮类），空档再做快手菜，尽量同时上桌（对齐同行逆排程思路的简化版）
+function buildCookOrder(list) {
+  const pending = list.filter(d => d.status !== 'done' && d.recipe && Number(d.recipe.timeCost) > 0);
+  if (pending.length < 2) return '';
+  return pending
+    .slice()
+    .sort((a, b) => Number(b.recipe.timeCost) - Number(a.recipe.timeCost))
+    .map(d => `${d.recipe.title} ${d.recipe.timeCost}分`)
+    .join(' → ');
+}
+
 Page({
   data: {
     view: 'today',          // today | week (§3 segment)
@@ -65,7 +79,15 @@ Page({
     pantryReadyCount: 0,
     weeklyDays: [],
     loading: true,
-    loadError: ''
+    loadError: '',
+    heroMetaTop: '91px'
+  },
+
+  onLoad() {
+    try {
+      const mb = wx.getMenuButtonBoundingClientRect();
+      if (mb && mb.bottom) this.setData({ heroMetaTop: (mb.bottom + 8) + 'px' });
+    } catch (e) {}
   },
 
   onShow() {
@@ -101,7 +123,9 @@ Page({
 
       const totalCount = items.length;
       const totalTime = items.reduce((sum, it) => sum + (it.recipe && it.recipe.timeCost ? Number(it.recipe.timeCost) : 0), 0);
-      const totalServings = items.reduce((max, it) => Math.max(max, (it.recipe && it.recipe.servings) || 0), 0);
+      // 份量口径：单菜最大份数（每道菜按各自份数做），不是总人数。
+      // 文案同步为「最多 N 份」，避免多道菜时被误读成"几个人吃"。
+      const maxServings = items.reduce((max, it) => Math.max(max, (it.recipe && it.recipe.servings) || 0), 0);
 
       const pantrySet = new Set(pantryItems.map(p => normalizeName(p.ingredientName || p.name)));
       const pendingItems = shoppingItems.filter(i => !i.purchased);
@@ -113,32 +137,34 @@ Page({
       const shoppingPercent = shoppingItems.length === 0 ? 0
         : Math.round(purchasedItems.length * 100 / shoppingItems.length);
 
+      const decorate = (it, mealLabel) => ({
+        ...it,
+        status: it.status || 'todo',
+        mealTypeLabel: mealLabel,
+        dishImage: resolveImage(it.recipe, it.recipeId || (it.recipe && it.recipe.title))
+      });
+
       const groups = mealOrder
         .map(meal => {
           const list = items
             .filter(it => (it.mealType || 'dinner') === meal)
-            .map(it => ({
-              ...it,
-              mealTypeLabel: mealTypeLabels[meal] || '晚餐',
-              dishImage: resolveImage(it.recipe, it.recipeId || (it.recipe && it.recipe.title))
-            }));
+            .map(it => decorate(it, mealTypeLabels[meal] || '晚餐'));
           return {
             meal,
             label: mealTypeLabels[meal] || '晚餐',
-            items: list
+            items: list,
+            cookOrderText: buildCookOrder(list)
           };
         })
         .filter(g => g.items.length > 0);
 
       if (groups.length === 0 && items.length) {
+        const list = items.map(it => decorate(it, '晚餐'));
         groups.push({
           meal: 'dinner',
           label: mealTypeLabels.dinner,
-          items: items.map(it => ({
-            ...it,
-            mealTypeLabel: '晚餐',
-            dishImage: resolveImage(it.recipe, it.recipeId || (it.recipe && it.recipe.title))
-          }))
+          items: list,
+          cookOrderText: buildCookOrder(list)
         });
       }
 
@@ -155,7 +181,7 @@ Page({
         mealTimeLabel: mealTimeLabel(),
         totalCount,
         totalTime,
-        totalServings,
+        totalServings: maxServings,
         shoppingPending: pendingItems.length,
         shoppingTotal: shoppingItems.length,
         shoppingDone: purchasedItems.length,
@@ -175,6 +201,7 @@ Page({
         loading: false,
         loadError: ''
       });
+      this.checkAllDone(items);
     } catch (err) {
       console.error('menu loadData failed', err);
       this.setData({
@@ -238,28 +265,55 @@ Page({
   },
 
   async startCook(e) {
-    const { id } = e.currentTarget.dataset;
+    const { id, item } = e.currentTarget.dataset;
     if (!id) return;
-    wx.navigateTo({ url: `/pages/cook-mode/index?id=${id}` });
+    // 标记「烧着呢」：乐观发出不阻塞跳转，回到本页 onShow 会刷新出状态
+    if (item) updateMenuItemStatus(item, 'cooking').catch(() => {});
+    wx.navigateTo({ url: `/pages/cook-mode/index?id=${id}&menuItemId=${item || ''}` });
   },
 
   async markCooked(e) {
-    const { id } = e.currentTarget.dataset;
+    const { id, item } = e.currentTarget.dataset;
     if (!id) return;
     const res = await wx.showModal({
-      title: '已做完？',
-      content: '记一笔到做菜历史',
-      confirmText: '完成',
+      title: '这道菜上桌了？',
+      content: '标记上桌，并记一笔做菜历史',
+      confirmText: '上桌',
       cancelText: '再等等',
       editable: false
     });
     if (!res.confirm) return;
     try {
-      await addCookHistory({ recipeId: id });
-      wx.showToast({ title: '已记录', icon: 'success' });
+      await Promise.all([
+        item ? updateMenuItemStatus(item, 'done') : Promise.resolve(),
+        addCookHistory({ recipeId: id }).catch(() => {})
+      ]);
+      wx.showToast({ title: '已上桌', icon: 'success' });
     } catch (err) {
-      wx.showToast({ title: '记录失败', icon: 'none' });
+      wx.showToast({ title: '操作失败', icon: 'none' });
+      return;
     }
+    await this.loadData();
+  },
+
+  // 全部上桌的跳变检测（loadData 末尾调用）：从"未全做完"变成"全做完"时弹一次开饭广播
+  checkAllDone(items) {
+    const allDone = items.length > 0 && items.every(it => (it.status || 'todo') === 'done');
+    const wasDone = this._allDone;
+    this._allDone = allDone;
+    if (!allDone || wasDone !== false) return;
+    wx.showModal({
+      title: '今天的菜都做好了！',
+      content: '要喊家人来吃饭吗？会给家里每个人发一条开饭通知。',
+      confirmText: '喊开饭',
+      cancelText: '先不用',
+      success: (res) => {
+        if (!res.confirm) return;
+        announceMeal()
+          .then(() => wx.showToast({ title: '已通知家人', icon: 'success' }))
+          .catch(() => wx.showToast({ title: '通知没发出去', icon: 'none' }));
+      }
+    });
   },
 
   async buildShopping() {

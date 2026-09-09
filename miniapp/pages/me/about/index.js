@@ -5,10 +5,11 @@ Page({
     version: 'v1.0.0',
     year: 2026,
     slogan: '一家人围着饭桌点菜，把每顿家常饭都吃成想念的味道。',
+    // 产品能力事实（勿写虚构运营数据，审核会按虚假宣传驳回）
     stats: [
-      { value: '12', unit: '万', label: '家庭在用' },
-      { value: '86', unit: '万', label: '沉淀菜谱' },
-      { value: '1.3', unit: '亿', label: '累计点菜' },
+      { value: '8', unit: '人', label: '全家共享菜单' },
+      { value: '7', unit: '天', label: '周菜单计划' },
+      { value: '1', unit: '键', label: '生成买菜清单' },
     ],
     story: [
       '这句话，每个家庭一天要问好几遍。问的人累，答的人烦，最后还是老三样。',

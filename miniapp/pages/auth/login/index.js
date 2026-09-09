@@ -1,8 +1,10 @@
 // pages/auth/login/index · 登录落地页逻辑
 const api = require('../../../utils/api');
+const features = require('../../../utils/features');
 
 Page({
   data: {
+    features,
     agreed: false,
     submitting: false,
     toast: { visible: false, text: '' },
