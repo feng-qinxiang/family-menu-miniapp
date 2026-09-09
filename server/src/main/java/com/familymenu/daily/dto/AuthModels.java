@@ -43,6 +43,8 @@ public final class AuthModels {
             boolean vip,
             String planName,
             boolean admin,
+            /** 管理端角色：SUPER / MODERATOR / SUPPORT；非管理员为 null */
+            String adminRole,
             boolean phoneBound
     ) {
     }

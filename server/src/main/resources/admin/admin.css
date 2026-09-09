@@ -293,6 +293,8 @@ body {
   justify-content: space-between;
   gap: 10px;
 }
+.sidebar-user { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.role-chip { font-size: 11px; color: rgba(255, 255, 255, .5); padding-left: 2px; }
 .sidebar-foot .badge { background: rgba(255, 255, 255, .1); border-color: rgba(255, 255, 255, .16); color: #fff; }
 .sidebar-foot .btn { background: transparent; border-color: rgba(255, 255, 255, .22); color: rgba(255, 255, 255, .85); }
 .sidebar-foot .btn:hover { background: rgba(255, 255, 255, .1); color: #fff; }
@@ -661,6 +663,10 @@ td.clamp { max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-sp
 .plan-name { flex: 1; font-size: 14px; font-weight: 600; }
 .plan-price { font-size: 14px; font-weight: 700; color: var(--pop); }
 .plan-days { font-size: 12px; color: var(--mut); min-width: 52px; text-align: right; }
+
+/* 角色选择：标题 + 一行说明 */
+.role-option .role-name { flex: 1; font-size: 13.5px; font-weight: 600; display: flex; flex-direction: column; gap: 2px; }
+.role-option .role-name small { font-size: 11.5px; font-weight: 400; color: var(--mut); line-height: 1.5; }
 
 /* 加载态 */
 .loading { display: flex; align-items: center; gap: 10px; color: var(--mut); padding: 8px 0; }

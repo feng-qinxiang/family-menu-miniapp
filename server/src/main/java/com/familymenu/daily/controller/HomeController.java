@@ -1,8 +1,9 @@
 package com.familymenu.daily.controller;
 
+import com.familymenu.daily.auth.AdminPermission;
 import com.familymenu.daily.auth.CurrentUser;
-import com.familymenu.daily.auth.RequiresAdmin;
 import com.familymenu.daily.auth.RequiresAuth;
+import com.familymenu.daily.auth.RequiresPermission;
 import com.familymenu.daily.dto.ApiModels;
 import com.familymenu.daily.dto.ApiModels.AddCookHistoryRequest;
 import com.familymenu.daily.dto.ApiModels.CommunityPost;
@@ -125,13 +126,13 @@ public class HomeController {
     }
 
     @GetMapping("/community/reports")
-    @RequiresAdmin
+    @RequiresPermission(AdminPermission.REPORT_REVIEW)
     public List<CommunityReportItem> communityReports(@RequestParam(defaultValue = "PENDING") String status) {
         return store.communityReports(status);
     }
 
     @PostMapping("/community/reports/{reportId}/review")
-    @RequiresAdmin
+    @RequiresPermission(AdminPermission.REPORT_REVIEW)
     public CommunityReportItem reviewCommunityReport(@PathVariable long reportId,
                                                      @Valid @RequestBody CommunityReportReviewRequest request,
                                                      @CurrentUser AuthUser user) {
@@ -149,7 +150,7 @@ public class HomeController {
 
     /** 批量处置举报：一次下架/忽略多条。 */
     @PostMapping("/community/reports/batch-review")
-    @RequiresAdmin
+    @RequiresPermission(AdminPermission.REPORT_REVIEW)
     public java.util.Map<String, Object> batchReviewCommunityReports(
             @RequestBody(required = false) com.familymenu.daily.dto.AdminModels.AdminBatchStatusRequest request,
             @CurrentUser AuthUser user) {

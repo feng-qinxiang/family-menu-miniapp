@@ -175,7 +175,7 @@ public class AuthService {
         // 封禁（status=BANNED）账号的会话即时失效
         String tokenHash = sha256Hex(token.trim());
         String sql = """
-                SELECT u.id, u.nickname, u.avatar_url, u.is_admin, u.phone_number, s.expires_at
+                SELECT u.id, u.nickname, u.avatar_url, u.is_admin, u.admin_role, u.phone_number, s.expires_at
                 FROM user_session s
                 JOIN user_account u ON u.id = s.user_id
                 WHERE s.token = ? AND s.expires_at > NOW() AND u.status = 'ACTIVE'
@@ -201,6 +201,7 @@ public class AuthService {
                     coverage.vip(),
                     com.familymenu.daily.payment.PlanCatalog.displayName(coverage.planCode()),
                     rs.getBoolean("is_admin"),
+                    roleName(rs.getBoolean("is_admin"), rs.getString("admin_role")),
                     rs.getString("phone_number") != null && !rs.getString("phone_number").isBlank()
             ));
         }, tokenHash);
@@ -227,6 +228,21 @@ public class AuthService {
         AuthUser user = requireAuthenticatedUser(token);
         if (!user.admin()) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "admin role required");
+        }
+        return user;
+    }
+
+    /**
+     * 要求管理员且角色包含指定权限。
+     * 权限矩阵见 {@link com.familymenu.daily.auth.AdminRole}；越权返回 403 并写审计。
+     */
+    public AuthUser requirePermission(String token, com.familymenu.daily.auth.AdminPermission permission) {
+        AuthUser user = requireAdminUser(token);
+        com.familymenu.daily.auth.AdminRole role = com.familymenu.daily.auth.AdminRole.of(true, user.adminRole());
+        if (role == null || !role.allows(permission)) {
+            log.warn("admin permission denied: userId={} role={} need={}", user.userId(), user.adminRole(), permission);
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "当前角色（" + (role == null ? "无" : role.displayName()) + "）没有此操作权限");
         }
         return user;
     }
@@ -408,7 +424,7 @@ public class AuthService {
         com.familymenu.daily.payment.MembershipService.Coverage coverage =
                 membershipService.resolveCoverage(userId);
         return jdbcTemplate.queryForObject("""
-                        SELECT id, nickname, avatar_url, is_admin, phone_number
+                        SELECT id, nickname, avatar_url, is_admin, admin_role, phone_number
                         FROM user_account
                         WHERE id = ?
                         """,
@@ -420,10 +436,17 @@ public class AuthService {
                         coverage.vip(),
                         com.familymenu.daily.payment.PlanCatalog.displayName(coverage.planCode()),
                         rs.getBoolean("is_admin"),
+                        roleName(rs.getBoolean("is_admin"), rs.getString("admin_role")),
                         rs.getString("phone_number") != null && !rs.getString("phone_number").isBlank()
                 ),
                 userId
         );
+    }
+
+    /** 有效角色名；非管理员返回 null（AdminRole.of 对历史 is_admin=1 的账号回退为 SUPER）。 */
+    private static String roleName(boolean isAdmin, String rawRole) {
+        com.familymenu.daily.auth.AdminRole role = com.familymenu.daily.auth.AdminRole.of(isAdmin, rawRole);
+        return role == null ? null : role.name();
     }
 
     private void upsertUser(String openid, String nickname, String avatarUrl) {

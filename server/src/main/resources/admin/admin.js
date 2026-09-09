@@ -10,6 +10,10 @@
   var state = {
     token: '',
     nickname: '',
+    /** 当前管理员的角色与权限点（由 /api/admin/me 下发；后端仍逐接口校验） */
+    role: null,
+    roleName: '管理员',
+    permissions: [],
     tab: 'dashboard',
     dashboard: null,
     metrics: null,
@@ -123,25 +127,6 @@
       return '<span class="avatar ' + avatarClass(name) + '"><img src="' + escapeHtml(url) + '" alt="" /></span>';
     }
     return '<span class="avatar ' + avatarClass(name) + '">' + escapeHtml(label) + '</span>';
-  }
-
-  /** 客户端导出 CSV（加 BOM，Excel 打开不乱码）。 */
-  function csvExport(filename, headers, rows) {
-    var esc = function (v) {
-      var s = String(v == null ? '' : v).replace(/"/g, '""');
-      return /[",\n]/.test(s) ? '"' + s + '"' : s;
-    };
-    var lines = [headers.map(esc).join(',')];
-    rows.forEach(function (r) { lines.push(r.map(esc).join(',')); });
-    var blob = new Blob(['\uFEFF' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
-    var a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
-    toast('已导出 ' + rows.length + ' 行');
   }
 
   var ICONS = {
@@ -350,8 +335,48 @@
     $('loginView').hidden = true;
     $('appView').hidden = false;
     $('adminName').textContent = state.nickname;
-    renderNav();
-    loadTab();
+    loadingCard();
+    request('/api/admin/me').then(function (me) {
+      state.role = me.role;
+      state.roleName = me.roleName || '管理员';
+      state.permissions = me.permissions || [];
+      state.nickname = me.nickname || state.nickname;
+      $('adminName').textContent = state.nickname;
+      var roleEl = $('adminRole');
+      if (roleEl) roleEl.textContent = state.roleName;
+      // 当前标签没有权限就落到第一个有权限的页面
+      if (!canTab(state.tab)) {
+        state.tab = firstAllowedTab();
+      }
+      renderNav();
+      loadTab();
+    }).catch(function (err) {
+      // /me 失败时按最小权限渲染，避免白屏
+      state.permissions = ['DASHBOARD_VIEW'];
+      state.tab = 'dashboard';
+      renderNav();
+      loadTab();
+      toast(err.message || '权限信息获取失败', 2600, 'error');
+    });
+  }
+
+  /** 是否拥有某权限点 */
+  function can(permission) {
+    return state.permissions.indexOf(permission) >= 0;
+  }
+
+  function canTab(key) {
+    var item = navItem(key);
+    return !item || !item.perm || can(item.perm);
+  }
+
+  function firstAllowedTab() {
+    for (var i = 0; i < NAV.length; i++) {
+      for (var j = 0; j < NAV[i].items.length; j++) {
+        if (can(NAV[i].items[j].perm)) return NAV[i].items[j].key;
+      }
+    }
+    return 'dashboard';
   }
 
   // ==================== 导航 ====================
@@ -359,33 +384,33 @@
   var NAV = [
     {
       group: '概览',
-      items: [{ key: 'dashboard', label: '数据看板', icon: 'grid', desc: '核心指标与趋势' }]
+      items: [{ key: 'dashboard', label: '数据看板', icon: 'grid', perm: 'DASHBOARD_VIEW', desc: '核心指标与趋势' }]
     },
     {
       group: '内容',
       items: [
-        { key: 'posts', label: '内容治理', icon: 'file', badge: 'pendingPostCount', desc: '帖子审核与下架' },
-        { key: 'comments', label: '评论管理', icon: 'comment', badge: 'pendingCommentCount', desc: '评论审核与删除' },
-        { key: 'reports', label: '举报审核', icon: 'flag', badge: 'pendingReportCount', desc: '用户举报处置' },
-        { key: 'imports', label: '导入审核', icon: 'download', badge: 'pendingImportCount', desc: '外部菜谱导入队列' }
+        { key: 'posts', label: '内容治理', icon: 'file', perm: 'CONTENT_MODERATE', badge: 'pendingPostCount', desc: '帖子审核与下架' },
+        { key: 'comments', label: '评论管理', icon: 'comment', perm: 'COMMENT_MODERATE', badge: 'pendingCommentCount', desc: '评论审核与删除' },
+        { key: 'reports', label: '举报审核', icon: 'flag', perm: 'REPORT_REVIEW', badge: 'pendingReportCount', desc: '用户举报处置' },
+        { key: 'imports', label: '导入审核', icon: 'download', perm: 'IMPORT_REVIEW', badge: 'pendingImportCount', desc: '外部菜谱导入队列' }
       ]
     },
     {
       group: '用户',
-      items: [{ key: 'users', label: '用户管理', icon: 'users', desc: '检索、权限、封禁、会员' }]
+      items: [{ key: 'users', label: '用户管理', icon: 'users', perm: 'USER_VIEW', desc: '检索、权限、封禁、会员' }]
     },
     {
       group: '运营',
       items: [
-        { key: 'orders', label: '订单管理', icon: 'card', desc: '支付订单与退款' },
-        { key: 'feedback', label: '反馈工单', icon: 'inbox', badge: 'openFeedbackCount', desc: '用户反馈处理' }
+        { key: 'orders', label: '订单管理', icon: 'card', perm: 'ORDER_VIEW', desc: '支付订单与退款' },
+        { key: 'feedback', label: '反馈工单', icon: 'inbox', perm: 'FEEDBACK_HANDLE', badge: 'openFeedbackCount', desc: '用户反馈处理' }
       ]
     },
     {
       group: '系统',
       items: [
-        { key: 'recipes', label: '菜谱治理', icon: 'book', desc: '菜谱下架与恢复' },
-        { key: 'audit', label: '审计日志', icon: 'shield', desc: '全部管理操作留痕' }
+        { key: 'recipes', label: '菜谱治理', icon: 'book', perm: 'RECIPE_MODERATE', desc: '菜谱下架与恢复' },
+        { key: 'audit', label: '审计日志', icon: 'shield', perm: 'AUDIT_VIEW', desc: '全部管理操作留痕' }
       ]
     }
   ];
@@ -402,8 +427,10 @@
   function renderNav() {
     var d = state.dashboard || {};
     $('navList').innerHTML = NAV.map(function (group) {
+      var visible = group.items.filter(function (item) { return can(item.perm); });
+      if (!visible.length) return '';
       return '<div class="nav-group"><div class="nav-group-label">' + escapeHtml(group.group) + '</div>' +
-        group.items.map(function (item) {
+        visible.map(function (item) {
           var count = item.badge ? Number(d[item.badge] || 0) : 0;
           var badge = item.badge
             ? '<span class="nav-badge' + (count > 0 ? '' : ' zero') + '">' + (count > 99 ? '99+' : count) + '</span>'
@@ -582,24 +609,6 @@
   }
 
   /** 把某个列表的全部页拉下来（导出用；cap 防止把浏览器拖死） */
-  function fetchAllPages(buildUrl, cap) {
-    var size = 200;
-    var all = [];
-    var limit = cap || 4000;
-    function step(page) {
-      return request(buildUrl(page, size)).then(function (res) {
-        var items = (res && res.items) || [];
-        all = all.concat(items);
-        var total = (res && res.total) || 0;
-        if (items.length === size && all.length < Math.min(total, limit)) {
-          return step(page + 1);
-        }
-        return all;
-      });
-    }
-    return step(0);
-  }
-
   // ==================== 看板 ====================
 
   function loadDashboard() {
@@ -1170,16 +1179,17 @@
           '<div><div class="name">' + escapeHtml(u.nickname || '') + '</div>' +
           '<div class="sub">' + escapeHtml(u.openid || '—') + '</div></div></div></td>' +
         '<td>' + escapeHtml(u.phone || '—') + '</td>' +
-        '<td>' + (u.admin ? '<span class="pill info">管理员</span>' : '<span class="pill">普通用户</span>') + '</td>' +
+        '<td>' + (u.admin ? '<span class="pill info">' + escapeHtml(roleLabel(u.adminRole)) + '</span>' : '<span class="pill">普通用户</span>') + '</td>' +
         '<td>' + (banned ? '<span class="pill bad">已封禁</span>' : '<span class="pill ok">正常</span>') + '</td>' +
         '<td title="' + escapeHtml(u.createdAt || '') + '">' + fmtTime(u.createdAt) + '</td><td class="actions">' +
-        (u.admin
-          ? '<button class="btn small danger" data-admin="' + escapeHtml(String(u.userId)) + '" data-on="0">撤销管理员</button>'
-          : '<button class="btn small" data-admin="' + escapeHtml(String(u.userId)) + '" data-on="1">设为管理员</button>') +
-        '<button class="btn small" data-vip="' + escapeHtml(String(u.userId)) + '">开通会员</button>' +
-        (u.admin ? '' : (banned
-          ? '<button class="btn small" data-userstatus="' + escapeHtml(String(u.userId)) + '" data-on="ACTIVE">解封</button>'
-          : '<button class="btn small danger" data-userstatus="' + escapeHtml(String(u.userId)) + '" data-on="BANNED">封禁</button>')) +
+        (can('USER_MANAGE')
+          ? '<button class="btn small' + (u.admin ? ' danger' : '') + '" data-role="' + escapeHtml(String(u.userId)) + '">' +
+              (u.admin ? '调整角色' : '设为管理员') + '</button>' +
+            '<button class="btn small" data-vip="' + escapeHtml(String(u.userId)) + '">开通会员</button>' +
+            (u.admin ? '' : (banned
+              ? '<button class="btn small" data-userstatus="' + escapeHtml(String(u.userId)) + '" data-on="ACTIVE">解封</button>'
+              : '<button class="btn small danger" data-userstatus="' + escapeHtml(String(u.userId)) + '" data-on="BANNED">封禁</button>'))
+          : '<span class="muted">只读</span>') +
         '</td></tr>';
     }).join('') : '<tr><td colspan="7"><div class="empty">没有匹配的用户</div></td></tr>';
     setPageHeader('共 ' + fmtNum(p.total) + ' 个账号');
@@ -1205,24 +1215,6 @@
       danger: true,
       confirmText: '确认封禁'
     }).then(function (ok) { if (ok) run(); });
-  }
-
-  function setAdmin(userId, on) {
-    var u = findUser(userId);
-    confirmDialog({
-      title: on ? '设为管理员？' : '撤销管理员权限？',
-      desc: on
-        ? '「' + (u.nickname || ('用户 ' + userId)) + '」将获得运营后台的全部权限，包括封禁用户和退款。'
-        : '「' + (u.nickname || ('用户 ' + userId)) + '」将立即失去运营后台访问权限。',
-      danger: !on,
-      confirmText: on ? '确认授权' : '确认撤销'
-    }).then(function (ok) {
-      if (!ok) return;
-      request('/api/admin/users/' + encodeURIComponent(userId) + '/admin', {
-        method: 'POST', body: { admin: !!on }
-      }).then(function () { toast(on ? '已设为管理员' : '已撤销管理员'); loadUsers(); })
-        .catch(function (err) { toast(err.message, 2600, 'error'); });
-    });
   }
 
   function grantVip(userId) {
@@ -1294,10 +1286,12 @@
         '<td title="下单 ' + escapeHtml(o.createdAt || '') + (o.paidAt ? ' / 支付 ' + escapeHtml(o.paidAt) : '') + '">' +
         fmtTime(o.paidAt || o.createdAt) + '</td>' +
         '<td class="actions">' +
-        (o.status === 'PENDING'
-          ? '<button class="btn small danger" data-orderclose="' + escapeHtml(o.outTradeNo) + '">关单</button>' : '') +
-        (o.status === 'PAID'
-          ? '<button class="btn small danger" data-orderrefund="' + escapeHtml(o.outTradeNo) + '">退款</button>' : '') +
+        (can('ORDER_MANAGE')
+          ? (o.status === 'PENDING'
+              ? '<button class="btn small danger" data-orderclose="' + escapeHtml(o.outTradeNo) + '">关单</button>' : '') +
+            (o.status === 'PAID'
+              ? '<button class="btn small danger" data-orderrefund="' + escapeHtml(o.outTradeNo) + '">退款</button>' : '')
+          : '<span class="muted">只读</span>') +
         '</td></tr>';
     }).join('') : '<tr><td colspan="9"><div class="empty">没有订单</div></td></tr>';
     setPageHeader('共 ' + fmtNum(state.orderTotal) + ' 笔');
@@ -1384,99 +1378,58 @@
       pagerHtml('audit', state.auditPage, state.auditSize, state.auditTotal) + '</div>';
   }
 
-  // ==================== CSV 导出 ====================
-  // 导出的是"筛选后的全量数据"，不是当前页——分页之后只导一页会误导运营。
+  // ==================== 导出 ====================
+  // 导出真正的 .xlsx（服务端生成，零依赖）；导出的是当前筛选条件下的全量数据。
 
-  function exportCurrent() {
+  function exportQuery() {
     var t = state.tab;
-    var fail = function (err) { toast(err.message || '导出失败', 2600, 'error'); };
-
     if (t === 'users') {
-      toast('正在汇总全部用户…', 1400);
-      fetchAllPages(function (page, size) {
-        return '/api/admin/users?keyword=' + encodeURIComponent(state.userKeyword || '') +
-          '&page=' + page + '&size=' + size;
-      }).then(function (rows) {
-        csvExport('用户-' + stamp() + '.csv', ['ID', '昵称', '手机号', 'openid', '管理员', '状态', '注册时间'],
-          rows.map(function (u) { return [u.userId, u.nickname, u.phone, u.openid, u.admin ? '是' : '否', u.status, u.createdAt]; }));
-      }).catch(fail);
-      return;
+      return 'users?keyword=' + encodeURIComponent(state.userKeyword || '') +
+        '&sort=' + encodeURIComponent(state.userSort) + '&order=' + encodeURIComponent(state.userOrder);
     }
     if (t === 'orders') {
-      toast('正在汇总全部订单…', 1400);
-      fetchAllPages(function (page, size) {
-        return '/api/admin/orders?status=' + encodeURIComponent(state.orderFilter || '') +
-          '&page=' + page + '&size=' + size;
-      }).then(function (rows) {
-        csvExport('订单-' + stamp() + '.csv',
-          ['ID', '商户单号', '用户ID', '套餐', '金额(元)', '状态', '支付方式', '创建时间', '支付时间'],
-          rows.map(function (o) {
-            return [o.orderId, o.outTradeNo, o.payerUserId, o.planName || o.planCode,
-              (Number(o.amountFen || 0) / 100).toFixed(2), o.status, o.paymentMethod, o.createdAt, o.paidAt];
-          }));
-      }).catch(fail);
-      return;
+      return 'orders?status=' + encodeURIComponent(state.orderFilter || '') +
+        '&from=' + encodeURIComponent(state.orderFrom || '') + '&to=' + encodeURIComponent(state.orderTo || '');
     }
     if (t === 'audit') {
-      toast('正在汇总审计日志…', 1400);
-      fetchAllPages(function (page, size) {
-        return '/api/admin/audit?keyword=' + encodeURIComponent(state.auditKeyword || '') +
-          '&page=' + page + '&size=' + size;
-      }).then(function (rows) {
-        csvExport('审计日志-' + stamp() + '.csv',
-          ['ID', '操作人', '动作', '对象类型', '对象ID', '详情', '结果', '时间'],
-          rows.map(function (a) {
-            return [a.id, a.actorNickname || a.actorUserId, a.action, a.targetType, a.targetId, a.detail, a.result, a.createdAt];
-          }));
-      }).catch(fail);
-      return;
+      return 'audit?keyword=' + encodeURIComponent(state.auditKeyword || '') +
+        '&from=' + encodeURIComponent(state.auditFrom || '') + '&to=' + encodeURIComponent(state.auditTo || '');
     }
     if (t === 'comments') {
-      toast('正在汇总全部评论…', 1400);
-      fetchAllPages(function (page, size) {
-        return '/api/admin/comments?auditStatus=' + encodeURIComponent(state.commentFilter || '') +
-          (state.commentPostId ? '&postId=' + encodeURIComponent(state.commentPostId) : '') +
-          '&page=' + page + '&size=' + size;
-      }).then(function (rows) {
-        csvExport('评论-' + stamp() + '.csv',
-          ['ID', '帖子ID', '帖子标题', '作者', '内容', '状态', '已删除', '时间'],
-          rows.map(function (c) {
-            return [c.commentId, c.postId, c.postTitle, c.authorNickname, c.content,
-              c.auditStatus, c.deleted ? '是' : '否', c.createdAt];
-          }));
-      }).catch(fail);
-      return;
+      return 'comments?auditStatus=' + encodeURIComponent(state.commentFilter || '') +
+        (state.commentPostId ? '&postId=' + encodeURIComponent(state.commentPostId) : '');
     }
-    if (t === 'feedback') {
-      toast('正在汇总全部工单…', 1400);
-      fetchAllPages(function (page, size) {
-        return '/api/admin/feedback?status=' + encodeURIComponent(state.feedbackFilter || '') +
-          '&page=' + page + '&size=' + size;
-      }).then(function (rows) {
-        csvExport('反馈工单-' + stamp() + '.csv', ['ID', '用户', '类型', '内容', '联系方式', '状态', '时间'],
-          rows.map(function (f) {
-            return [f.id, f.nickname, (f.types || []).join('、'), f.content, f.contact, f.status, f.createdAt];
-          }));
-      }).catch(fail);
-      return;
-    }
-    if (t === 'posts') {
-      csvExport('帖子-' + stamp() + '.csv', ['ID', '标题', '作者', '状态', '赞', '评论', '时间'],
-        state.posts.map(function (p) { return [p.id, p.title, p.author, p.auditStatus, p.likeCount, p.commentCount, p.createdAt]; }));
-      return;
-    }
-    if (t === 'reports') {
-      csvExport('举报-' + stamp() + '.csv', ['ID', '帖子ID', '原因', '说明', '状态', '时间'],
-        state.reports.map(function (r) { return [r.reportId, r.postId, r.reason, r.description, r.status, r.createdAt]; }));
-      return;
-    }
-    toast('当前页面没有可导出的数据');
+    if (t === 'feedback') return 'feedback?status=' + encodeURIComponent(state.feedbackFilter || '');
+    if (t === 'posts') return 'posts?auditStatus=' + encodeURIComponent(state.postFilter || '');
+    if (t === 'reports') return 'reports?status=' + encodeURIComponent(state.reportFilter || '');
+    return null;
   }
 
-  function stamp() {
-    var d = new Date();
-    var p = function (n) { return String(n).padStart(2, '0'); };
-    return d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + '-' + p(d.getHours()) + p(d.getMinutes());
+  function exportCurrent() {
+    if (!can('EXPORT')) { toast('当前角色没有导出权限', 2600, 'error'); return; }
+    var qs = exportQuery();
+    if (!qs) { toast('当前页面没有可导出的数据'); return; }
+    toast('正在生成 Excel…', 1600);
+    fetch('/api/admin/export/' + qs, { headers: { 'X-Auth-Token': state.token } })
+      .then(function (res) {
+        if (res.status === 401) { logout(true); throw new Error('登录已失效'); }
+        if (!res.ok) throw new Error('导出失败（' + res.status + '）');
+        var name = (res.headers.get('Content-Disposition') || '').match(/filename\*=UTF-8''([^;]+)/);
+        return res.blob().then(function (blob) {
+          return { blob: blob, name: name ? decodeURIComponent(name[1]) : 'export.xlsx' };
+        });
+      })
+      .then(function (out) {
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(out.blob);
+        a.download = out.name;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(function () { URL.revokeObjectURL(a.href); }, 1500);
+        toast('已导出 ' + out.name, 2600);
+      })
+      .catch(function (err) { toast(err.message, 2600, 'error'); });
   }
 
   // ==================== 站内弹窗 ====================
@@ -1652,11 +1605,53 @@
     });
   }
 
+  var ROLE_OPTIONS = [
+    { value: 'SUPER', name: '超级管理员', desc: '全部权限：用户管理、退款、审计日志' },
+    { value: 'MODERATOR', name: '内容审核员', desc: '只能处理内容：帖子 / 评论 / 举报 / 导入 / 菜谱' },
+    { value: 'SUPPORT', name: '客服', desc: '只读用户与订单 + 处理反馈工单，不能封禁或退款' },
+    { value: '', name: '取消管理员', desc: '收回后台访问权限，其登录会话立即失效' }
+  ];
+
+  /** 角色选择弹窗（仅超管可见） */
+  function openRoleDialog(userId) {
+    var u = findUser(userId);
+    var current = u.admin ? (u.adminRole || 'SUPER') : '';
+    openModal({
+      title: '设置管理端角色',
+      desc: '「' + (u.nickname || ('用户 ' + userId)) + '」当前：' +
+        (u.admin ? roleLabel(u.adminRole) : '非管理员'),
+      body: '<div class="plan-grid">' + ROLE_OPTIONS.map(function (o) {
+        return '<label class="plan-option role-option">' +
+          '<input type="radio" name="rolePick" value="' + o.value + '"' + (o.value === current ? ' checked' : '') + ' />' +
+          '<span class="role-name">' + escapeHtml(o.name) + '<small>' + escapeHtml(o.desc) + '</small></span></label>';
+      }).join('') + '</div>',
+      confirmText: '保存角色',
+      read: function (root) {
+        var el = root.querySelector('input[name="rolePick"]:checked');
+        return { role: el ? el.value : '' };
+      },
+      onConfirm: function (v) {
+        return request('/api/admin/users/' + encodeURIComponent(userId) + '/role', {
+          method: 'POST', body: { role: v.role }
+        }).then(function () {
+          toast(v.role ? '已设为' + roleLabel(v.role) : '已取消管理员');
+          loadUsers();
+        });
+      }
+    });
+  }
+
+  function roleLabel(role) {
+    var found = ROLE_OPTIONS.filter(function (o) { return o.value === role; })[0];
+    if (found) return found.name;
+    return role ? String(role) : '管理员';
+  }
+
   // ==================== 事件绑定 ====================
   // 可点击元素内部常有子节点（卡片数字/文字），点击时 e.target 是子节点，
   // 直接读它的 data-* 会拿到 null，所以先向上找到真正带属性的宿主元素。
   var CLICKABLE = [
-    '[data-tab]', '[data-goto]', '[data-review]', '[data-rptfilter]', '[data-admin]', '[data-vip]',
+    '[data-tab]', '[data-goto]', '[data-review]', '[data-rptfilter]', '[data-role]', '[data-vip]',
     '[data-postfilter]', '[data-poststatus]', '[data-recipefilter]', '[data-recipestatus]',
     '[data-cmtfilter]', '[data-cmtstatus]', '[data-cmtdel]', '[data-cmtrestore]', '[data-fbfilter]',
     '[data-fb]', '[data-orderfilter]', '[data-orderclose]', '[data-orderrefund]', '[data-userstatus]',
@@ -1699,8 +1694,8 @@
     var rptf = t.getAttribute('data-rptfilter');
     if (rptf !== null) { state.reportFilter = rptf; loadReports(); return; }
 
-    var adminId = t.getAttribute('data-admin');
-    if (adminId) { setAdmin(adminId, t.getAttribute('data-on') === '1'); return; }
+    var roleBtn = t.getAttribute('data-role');
+    if (roleBtn) { openRoleDialog(roleBtn); return; }
 
     var vipId = t.getAttribute('data-vip');
     if (vipId) { grantVip(vipId); return; }

@@ -5,6 +5,9 @@ CREATE TABLE IF NOT EXISTS user_account (
     nickname VARCHAR(64) NOT NULL,
     avatar_url VARCHAR(255) NULL,
     is_admin TINYINT(1) NOT NULL DEFAULT 0,
+    -- 管理端角色：SUPER 超管 / MODERATOR 内容审核员 / SUPPORT 客服；NULL 表示非管理员
+    -- 历史数据 is_admin=1 且 admin_role IS NULL 视为 SUPER（见 AdminRole.of）
+    admin_role VARCHAR(16) NULL,
     -- 账号停用状态：ACTIVE 正常 / BANNED 封禁（封禁用户所有会话立即失效且无法再登录）
     status VARCHAR(16) NOT NULL DEFAULT 'ACTIVE',
     session_key VARCHAR(64) NULL,

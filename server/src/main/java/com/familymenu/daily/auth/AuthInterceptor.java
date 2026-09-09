@@ -70,6 +70,12 @@ public class AuthInterceptor implements HandlerInterceptor {
         String token = request.getHeader("X-Auth-Token");
         request.setAttribute(ATTR_TOKEN, token);
 
+        // 权限点优先：它已经隐含"必须是管理员"
+        RequiresPermission permission = findAnnotation(method, RequiresPermission.class);
+        if (permission != null) {
+            request.setAttribute(ATTR_USER, authService.requirePermission(token, permission.value()));
+            return true;
+        }
         if (findAnnotation(method, RequiresAdmin.class) != null) {
             request.setAttribute(ATTR_USER, authService.requireAdminUser(token));
             return true;

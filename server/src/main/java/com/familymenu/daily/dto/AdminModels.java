@@ -16,6 +16,8 @@ public final class AdminModels {
             String avatarUrl,
             String phone,
             boolean admin,
+            /** 管理端角色：SUPER / MODERATOR / SUPPORT；非管理员为 null */
+            String adminRole,
             String status,
             Long familyId,
             String createdAt
@@ -47,6 +49,23 @@ public final class AdminModels {
     /** 管理员状态变更请求。 */
     public record AdminGrantRequest(
             Boolean admin
+    ) {
+    }
+
+    /** 管理端角色变更请求：role = SUPER / MODERATOR / SUPPORT，空值表示撤销管理员。 */
+    public record AdminRoleRequest(
+            String role
+    ) {
+    }
+
+    /** 当前登录管理员的身份与权限（前端据此隐藏无权限的菜单/按钮；后端仍独立校验）。 */
+    public record AdminProfile(
+            Long userId,
+            String nickname,
+            /** SUPER / MODERATOR / SUPPORT */
+            String role,
+            String roleName,
+            List<String> permissions
     ) {
     }
 

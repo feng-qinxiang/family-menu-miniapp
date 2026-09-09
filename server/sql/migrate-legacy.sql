@@ -42,6 +42,10 @@ ALTER TABLE community_post_comment ADD COLUMN deleted TINYINT(1) NOT NULL DEFAUL
 -- 评论审核状态：旧数据默认 APPROVED（历史内容保持可见），新内容按机审结果写入
 ALTER TABLE community_post_comment ADD COLUMN audit_status VARCHAR(16) NOT NULL DEFAULT 'APPROVED';
 
+-- ---- user_account ----
+-- 管理端角色分级：历史 is_admin=1 的账号保持 admin_role=NULL，代码按 SUPER 处理，无需回填。
+ALTER TABLE user_account ADD COLUMN admin_role VARCHAR(16) NULL AFTER is_admin;
+
 -- ---- daily_menu_item ----
 ALTER TABLE daily_menu_item ADD COLUMN status VARCHAR(16) NOT NULL DEFAULT 'todo';
 ALTER TABLE daily_menu_item ADD COLUMN added_by_name VARCHAR(64) NULL;

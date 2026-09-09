@@ -1,5 +1,6 @@
 package com.familymenu.daily.service;
 
+import com.familymenu.daily.auth.AdminRole;
 import com.familymenu.daily.dto.AdminModels.AdminAuditItem;
 import com.familymenu.daily.dto.AdminModels.AdminCommentItem;
 import com.familymenu.daily.dto.AdminModels.AdminDashboard;
@@ -102,7 +103,7 @@ public class AdminService {
                 """, Long.class, kw, like, like, like);
 
         List<AdminUserItem> items = jdbcTemplate.query("""
-                        SELECT id, openid, nickname, avatar_url, phone_number, is_admin, status,
+                        SELECT id, openid, nickname, avatar_url, phone_number, is_admin, admin_role, status,
                                current_family_id, created_at
                         FROM user_account
                         WHERE (? = '' OR nickname LIKE ? OR phone_number LIKE ? OR openid LIKE ?)
@@ -114,6 +115,7 @@ public class AdminService {
                         rs.getString("avatar_url"),
                         maskPhone(rs.getString("phone_number")),
                         rs.getBoolean("is_admin"),
+                        roleName(rs.getBoolean("is_admin"), rs.getString("admin_role")),
                         rs.getString("status"),
                         rs.getObject("current_family_id") == null ? null : rs.getLong("current_family_id"),
                         rs.getString("created_at")
@@ -133,7 +135,7 @@ public class AdminService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "不能修改自己的管理员状态");
         }
         List<AdminUserItem> found = jdbcTemplate.query("""
-                        SELECT id, openid, nickname, avatar_url, phone_number, is_admin, status,
+                        SELECT id, openid, nickname, avatar_url, phone_number, is_admin, admin_role, status,
                                current_family_id, created_at
                         FROM user_account WHERE id = ?
                         """,
@@ -144,6 +146,7 @@ public class AdminService {
                         rs.getString("avatar_url"),
                         maskPhone(rs.getString("phone_number")),
                         rs.getBoolean("is_admin"),
+                        roleName(rs.getBoolean("is_admin"), rs.getString("admin_role")),
                         rs.getString("status"),
                         rs.getObject("current_family_id") == null ? null : rs.getLong("current_family_id"),
                         rs.getString("created_at")
@@ -161,6 +164,82 @@ public class AdminService {
         return found.get(0);
     }
 
+    /**
+     * 设置管理端角色。role 为空 → 撤销管理员；SUPER/MODERATOR/SUPPORT → 授予对应角色。
+     *
+     * 两条硬约束（否则会把系统锁死或自我提权）：
+     * 1. 不能改自己的角色；
+     * 2. 系统必须至少保留一名超管（降级最后一个超管会被拒绝）。
+     */
+    @Transactional
+    public AdminUserItem setAdminRole(long actorUserId, long targetUserId, String rawRole) {
+        boolean revoke = rawRole == null || rawRole.isBlank();
+        AdminRole role = AdminRole.parse(rawRole);
+        if (!revoke && role == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "角色只能是 SUPER/MODERATOR/SUPPORT");
+        }
+        if (actorUserId == targetUserId) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "不能修改自己的角色");
+        }
+        Boolean targetIsSuper = jdbcTemplate.query("""
+                SELECT (is_admin = 1 AND (admin_role = 'SUPER' OR admin_role IS NULL))
+                FROM user_account WHERE id = ?
+                """, rs -> rs.next() ? rs.getBoolean(1) : null, targetUserId);
+        if (targetIsSuper == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "用户不存在");
+        }
+        boolean losingSuper = targetIsSuper && (revoke || role != AdminRole.SUPER);
+        if (losingSuper) {
+            Long superCount = jdbcTemplate.queryForObject("""
+                    SELECT COUNT(*) FROM user_account
+                    WHERE is_admin = 1 AND status = 'ACTIVE'
+                      AND (admin_role = 'SUPER' OR admin_role IS NULL)
+                    """, Long.class);
+            if (superCount == null || superCount <= 1) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "系统至少要保留一名超级管理员");
+            }
+        }
+        if (revoke) {
+            jdbcTemplate.update("UPDATE user_account SET is_admin = 0, admin_role = NULL WHERE id = ?", targetUserId);
+            // 回收管理员时吊销其所有会话，立即生效
+            jdbcTemplate.update("DELETE FROM user_session WHERE user_id = ?", targetUserId);
+        } else {
+            jdbcTemplate.update("UPDATE user_account SET is_admin = 1, admin_role = ? WHERE id = ?",
+                    role.name(), targetUserId);
+        }
+        log.info("admin role change: actor={} target={} role={}",
+                actorUserId, targetUserId, revoke ? "NONE" : role.name());
+        return findUserById(targetUserId);
+    }
+
+    /** 取单个用户（角色变更后回显用）。 */
+    private AdminUserItem findUserById(long userId) {
+        return jdbcTemplate.query("""
+                        SELECT id, openid, nickname, avatar_url, phone_number, is_admin, admin_role, status,
+                               current_family_id, created_at
+                        FROM user_account WHERE id = ?
+                        """,
+                (rs, rowNum) -> new AdminUserItem(
+                        rs.getLong("id"),
+                        maskOpenid(rs.getString("openid")),
+                        rs.getString("nickname"),
+                        rs.getString("avatar_url"),
+                        maskPhone(rs.getString("phone_number")),
+                        rs.getBoolean("is_admin"),
+                        roleName(rs.getBoolean("is_admin"), rs.getString("admin_role")),
+                        rs.getString("status"),
+                        rs.getObject("current_family_id") == null ? null : rs.getLong("current_family_id"),
+                        rs.getString("created_at")
+                ),
+                userId).stream().findFirst().orElse(null);
+    }
+
+    /** 有效角色名；非管理员返回 null（历史 is_admin=1 且无角色 → SUPER）。 */
+    private static String roleName(boolean isAdmin, String rawRole) {
+        AdminRole role = AdminRole.of(isAdmin, rawRole);
+        return role == null ? null : role.name();
+    }
+
     // ==================== 用户封禁 / 解封 ====================
 
     /** 封禁（BANNED）或解封（ACTIVE）。封禁同时吊销全部会话，立即生效；禁止封禁自己。 */
@@ -174,7 +253,7 @@ public class AdminService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "不能修改自己的账号状态");
         }
         List<AdminUserItem> found = jdbcTemplate.query("""
-                        SELECT id, openid, nickname, avatar_url, phone_number, is_admin, status,
+                        SELECT id, openid, nickname, avatar_url, phone_number, is_admin, admin_role, status,
                                current_family_id, created_at
                         FROM user_account WHERE id = ?
                         """,
@@ -185,6 +264,7 @@ public class AdminService {
                         rs.getString("avatar_url"),
                         maskPhone(rs.getString("phone_number")),
                         rs.getBoolean("is_admin"),
+                        roleName(rs.getBoolean("is_admin"), rs.getString("admin_role")),
                         rs.getString("status"),
                         rs.getObject("current_family_id") == null ? null : rs.getLong("current_family_id"),
                         rs.getString("created_at")
