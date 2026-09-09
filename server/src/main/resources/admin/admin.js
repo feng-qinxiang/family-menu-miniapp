@@ -20,6 +20,9 @@
     userKeyword: '',
     feedback: [],
     feedbackFilter: 'OPEN',
+    feedbackPage: 0,
+    feedbackTotal: 0,
+    feedbackSize: 50,
     posts: [],
     postFilter: '',
     recipes: [],
@@ -28,10 +31,19 @@
     comments: [],
     commentPostId: '',
     commentFilter: 'PENDING',
+    commentPage: 0,
+    commentTotal: 0,
+    commentSize: 50,
     orders: [],
     orderFilter: '',
+    orderPage: 0,
+    orderTotal: 0,
+    orderSize: 50,
     audit: [],
     auditKeyword: '',
+    auditPage: 0,
+    auditTotal: 0,
+    auditSize: 50,
     imports: [],
     importFilter: 'PENDING'
   };
@@ -384,7 +396,8 @@
           var badge = item.badge
             ? '<span class="nav-badge' + (count > 0 ? '' : ' zero') + '">' + (count > 99 ? '99+' : count) + '</span>'
             : '';
-          return '<div class="nav-item' + (state.tab === item.key ? ' on' : '') + '" data-tab="' + item.key + '">' +
+          return '<div class="nav-item' + (state.tab === item.key ? ' on' : '') + '" data-tab="' + item.key +
+            '" role="button" tabindex="0" title="' + escapeHtml(item.desc || item.label) + '">' +
             icon(item.icon) + '<span class="nav-label">' + escapeHtml(item.label) + '</span>' + badge + '</div>';
         }).join('') + '</div>';
     }).join('');
@@ -405,7 +418,17 @@
       comments: loadComments, recipes: loadRecipes, feedback: loadFeedback,
       imports: loadImports, users: loadUsers, orders: loadOrders, audit: loadAudit
     };
-    (loaders[state.tab] || loadDashboard)();
+    return (loaders[state.tab] || loadDashboard)();
+  }
+
+  /** 刷新按钮：给出进行中反馈，而不是点了没反应 */
+  function refreshCurrent() {
+    var btn = $('refreshBtn');
+    var label = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = '刷新中…';
+    var done = function () { btn.disabled = false; btn.textContent = label; };
+    Promise.resolve(loadTab()).then(done, done);
   }
 
   function goTab(key, filter) {
@@ -444,18 +467,62 @@
     }).join('');
   }
 
+  /** 服务端分页控件；kind 用于回调时区分是哪个列表 */
+  function pagerHtml(kind, page, size, total) {
+    var from = total ? page * size + 1 : 0;
+    var to = Math.min((page + 1) * size, total);
+    return '<div class="pager">' +
+      '<span>第 ' + (page + 1) + ' 页 · 显示 ' + from + '–' + to + ' / ' + fmtNum(total) + ' 条</span>' +
+      '<button class="btn small" data-pager="' + kind + ':prev"' + (page <= 0 ? ' disabled' : '') + '>上一页</button>' +
+      '<button class="btn small" data-pager="' + kind + ':next"' + (to >= total ? ' disabled' : '') + '>下一页</button>' +
+      '</div>';
+  }
+
+  /** 分页跳转：spec = "orders:next" / "audit:prev" … */
+  function changePage(spec) {
+    var parts = String(spec).split(':');
+    var kind = parts[0];
+    var delta = parts[1] === 'next' ? 1 : -1;
+    var jump = function (cur) { return Math.max(0, cur + delta); };
+    if (kind === 'orders') { state.orderPage = jump(state.orderPage); loadOrders(); }
+    else if (kind === 'comments') { state.commentPage = jump(state.commentPage); loadComments(); }
+    else if (kind === 'feedback') { state.feedbackPage = jump(state.feedbackPage); loadFeedback(); }
+    else if (kind === 'audit') { state.auditPage = jump(state.auditPage); loadAudit(); }
+    else if (kind === 'users') { state.users.page = jump(state.users.page); loadUsers(); }
+  }
+
+  /** 把某个列表的全部页拉下来（导出用；cap 防止把浏览器拖死） */
+  function fetchAllPages(buildUrl, cap) {
+    var size = 200;
+    var all = [];
+    var limit = cap || 4000;
+    function step(page) {
+      return request(buildUrl(page, size)).then(function (res) {
+        var items = (res && res.items) || [];
+        all = all.concat(items);
+        var total = (res && res.total) || 0;
+        if (items.length === size && all.length < Math.min(total, limit)) {
+          return step(page + 1);
+        }
+        return all;
+      });
+    }
+    return step(0);
+  }
+
   // ==================== 看板 ====================
 
   function loadDashboard() {
     loadingCard();
-    Promise.all([
+    // 趋势与最近操作是"锦上添花"：任何一个挂了都不该让整个看板白屏
+    return Promise.all([
       request('/api/admin/dashboard'),
-      request('/api/admin/metrics?days=14'),
-      request('/api/admin/audit?limit=8')
+      request('/api/admin/metrics?days=14').catch(function () { return null; }),
+      request('/api/admin/audit?page=0&size=8').catch(function () { return null; })
     ]).then(function (res) {
       state.dashboard = res[0];
-      state.metrics = res[1];
-      state.recentAudit = Array.isArray(res[2]) ? res[2] : [];
+      state.metrics = res[1] || { days: 14, series: [], hotPosts: [], recentUsers: [] };
+      state.recentAudit = (res[2] && res[2].items) || [];
       renderNav();
       renderDashboard();
     }).catch(errorCard);
@@ -517,14 +584,14 @@
 
     var trendCard = '<div class="card"><h2>内容趋势</h2>' +
       '<p class="card-sub">近 ' + escapeHtml(String(m.days || 14)) + ' 天每日新增</p>' +
-      '<div class="chart-wrap">' + lineChart({
+      (series.length ? '<div class="chart-wrap">' + lineChart({
         labels: labels,
         series: [
           { name: '新增用户', color: '#2f4a3a', values: series.map(function (p) { return Number(p.newUsers || 0); }) },
           { name: '新增帖子', color: '#c2402a', values: series.map(function (p) { return Number(p.newPosts || 0); }) },
           { name: '新增评论', color: '#a8792c', values: series.map(function (p) { return Number(p.newComments || 0); }) }
         ]
-      }) + '</div>' +
+      }) + '</div>' : '<div class="empty">趋势数据暂时不可用</div>') +
       '<div class="chart-legend">' +
       '<span><i class="legend-dot" style="background:#2f4a3a"></i>新增用户</span>' +
       '<span><i class="legend-dot" style="background:#c2402a"></i>新增帖子</span>' +
@@ -533,7 +600,7 @@
 
     var revenueCard = '<div class="card"><h2>收入趋势</h2>' +
       '<p class="card-sub">近 ' + escapeHtml(String(m.days || 14)) + ' 天已支付金额</p>' +
-      '<div class="chart-wrap">' + barChart({
+      (series.length ? '<div class="chart-wrap">' + barChart({
         labels: labels,
         values: series.map(function (p) { return Number(p.revenueFen || 0) / 100; }),
         color: '#c2402a',
@@ -542,7 +609,7 @@
           if (v >= 1000) return (v / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
           return v;
         }
-      }) + '</div></div>';
+      }) + '</div>' : '<div class="empty">收入数据暂时不可用</div>') + '</div>';
 
     var hot = (m.hotPosts || []);
     var hotCard = '<div class="card"><h2>热门内容</h2><p class="card-sub">按点赞与评论排序的已发布帖子</p>' +
@@ -584,7 +651,7 @@
 
   function loadReports() {
     loadingCard();
-    request('/api/community/reports?status=' + encodeURIComponent(state.reportFilter || ''))
+    return request('/api/community/reports?status=' + encodeURIComponent(state.reportFilter || ''))
       .then(function (list) { state.reports = Array.isArray(list) ? list : []; renderReports(); })
       .catch(errorCard);
   }
@@ -601,7 +668,7 @@
       return '<tr><td class="num">' + escapeHtml(String(r.reportId)) + '</td>' +
         '<td>#' + escapeHtml(String(r.postId)) + ' ' + escapeHtml(r.postTitle || '') + '</td>' +
         '<td>' + escapeHtml(r.reason || '') + '</td>' +
-        '<td class="clamp">' + escapeHtml(r.description || '—') + '</td>' +
+        '<td class="clamp" title="' + escapeHtml(r.description || '') + '">' + escapeHtml(r.description || '—') + '</td>' +
         '<td>' + escapeHtml(r.reporter || '—') + '</td>' +
         '<td>' + pill + '</td><td>' + fmtTime(r.createdAt) + '</td><td class="actions">' +
         (pending
@@ -641,7 +708,7 @@
 
   function loadPosts() {
     loadingCard();
-    request('/api/admin/posts?auditStatus=' + encodeURIComponent(state.postFilter))
+    return request('/api/admin/posts?auditStatus=' + encodeURIComponent(state.postFilter))
       .then(function (list) { state.posts = Array.isArray(list) ? list : []; renderPosts(); })
       .catch(errorCard);
   }
@@ -705,11 +772,16 @@
 
   function loadComments() {
     loadingCard();
-    var q = '/api/admin/comments?limit=200' +
+    var q = '/api/admin/comments?page=' + state.commentPage + '&size=' + state.commentSize +
       '&auditStatus=' + encodeURIComponent(state.commentFilter || '') +
       (state.commentPostId ? '&postId=' + encodeURIComponent(state.commentPostId) : '');
-    request(q)
-      .then(function (list) { state.comments = Array.isArray(list) ? list : []; renderComments(); })
+    return request(q)
+      .then(function (page) {
+        state.comments = (page && page.items) || [];
+        state.commentTotal = (page && page.total) || 0;
+        state.commentPage = (page && page.page) || 0;
+        renderComments();
+      })
       .catch(errorCard);
   }
 
@@ -743,14 +815,15 @@
         '<td>#' + escapeHtml(String(c.postId)) + ' ' + escapeHtml(c.postTitle || '') + '</td>' +
         '<td><div class="cell-user">' + avatarHtml(c.authorNickname) +
           '<span class="name">' + escapeHtml(c.authorNickname || ('用户' + c.authorUserId)) + '</span></div></td>' +
-        '<td class="clamp">' + escapeHtml(c.content || '') + '</td>' +
+        '<td class="clamp" title="' + escapeHtml(c.content || '') + '">' + escapeHtml(c.content || '') + '</td>' +
         '<td>' + pill + '</td><td>' + fmtTime(c.createdAt) + '</td>' +
         '<td class="actions">' + actions + '</td></tr>';
     }).join('') : '<tr><td colspan="7"><div class="empty">没有评论</div></td></tr>';
-    setPageHeader(rows.length + ' 条');
+    setPageHeader('共 ' + fmtNum(state.commentTotal) + ' 条');
     $('panelRoot').innerHTML = '<div class="card">' + head +
       '<table><thead><tr><th class="num">ID</th><th>帖子</th><th>作者</th><th>内容</th><th>状态</th>' +
-      '<th>时间</th><th>操作</th></tr></thead><tbody>' + body + '</tbody></table></div>';
+      '<th>时间</th><th>操作</th></tr></thead><tbody>' + body + '</tbody></table>' +
+      pagerHtml('comments', state.commentPage, state.commentSize, state.commentTotal) + '</div>';
   }
 
   function setCommentStatus(commentId, status) {
@@ -785,7 +858,7 @@
 
   function loadRecipes() {
     loadingCard();
-    request('/api/admin/recipes?keyword=' + encodeURIComponent(state.recipeKeyword || '') +
+    return request('/api/admin/recipes?keyword=' + encodeURIComponent(state.recipeKeyword || '') +
       '&status=' + encodeURIComponent(state.recipeFilter))
       .then(function (list) { state.recipes = Array.isArray(list) ? list : []; renderRecipes(); })
       .catch(errorCard);
@@ -841,8 +914,14 @@
 
   function loadFeedback() {
     loadingCard();
-    request('/api/admin/feedback?status=' + encodeURIComponent(state.feedbackFilter))
-      .then(function (list) { state.feedback = Array.isArray(list) ? list : []; renderFeedback(); })
+    return request('/api/admin/feedback?status=' + encodeURIComponent(state.feedbackFilter) +
+      '&page=' + state.feedbackPage + '&size=' + state.feedbackSize)
+      .then(function (page) {
+        state.feedback = (page && page.items) || [];
+        state.feedbackTotal = (page && page.total) || 0;
+        state.feedbackPage = (page && page.page) || 0;
+        renderFeedback();
+      })
       .catch(errorCard);
   }
 
@@ -857,7 +936,7 @@
         '<td><div class="cell-user">' + avatarHtml(f.nickname) + '<span class="name">' +
           escapeHtml(f.nickname || ('用户' + f.userId)) + '</span></div></td>' +
         '<td>' + escapeHtml((f.types || []).join('、')) + '</td>' +
-        '<td class="clamp">' + escapeHtml(f.content || '') + '</td>' +
+        '<td class="clamp" title="' + escapeHtml(f.content || '') + '">' + escapeHtml(f.content || '') + '</td>' +
         '<td>' + escapeHtml(f.contact || '—') + '</td>' +
         '<td><span class="pill ' + pill + '">' + escapeHtml(FB_STATUS[f.status] || f.status) + '</span></td>' +
         '<td>' + fmtTime(f.createdAt) + '</td><td class="actions">' +
@@ -865,10 +944,11 @@
         (f.status !== 'CLOSED' ? '<button class="btn small primary-sm" data-fb="' + escapeHtml(String(f.id)) + '" data-on="CLOSED">关闭</button>' : '') +
         '</td></tr>';
     }).join('') : '<tr><td colspan="8"><div class="empty">没有工单</div></td></tr>';
-    setPageHeader(rows.length + ' 条');
+    setPageHeader('共 ' + fmtNum(state.feedbackTotal) + ' 条');
     $('panelRoot').innerHTML = '<div class="card">' + head +
       '<table><thead><tr><th class="num">ID</th><th>用户</th><th>类型</th><th>内容</th><th>联系方式</th>' +
-      '<th>状态</th><th>时间</th><th>操作</th></tr></thead><tbody>' + body + '</tbody></table></div>';
+      '<th>状态</th><th>时间</th><th>操作</th></tr></thead><tbody>' + body + '</tbody></table>' +
+      pagerHtml('feedback', state.feedbackPage, state.feedbackSize, state.feedbackTotal) + '</div>';
   }
 
   function handleFeedback(id, status) {
@@ -901,7 +981,7 @@
 
   function loadImports() {
     loadingCard();
-    request('/api/admin/imports?auditStatus=' + encodeURIComponent(state.importFilter))
+    return request('/api/admin/imports?auditStatus=' + encodeURIComponent(state.importFilter))
       .then(function (list) { state.imports = Array.isArray(list) ? list : []; renderImports(); })
       .catch(errorCard);
   }
@@ -914,8 +994,8 @@
       var pill = im.auditStatus === 'APPROVED' ? 'ok' : (im.auditStatus === 'REJECTED' ? 'bad' : 'pending');
       return '<tr><td class="num">' + escapeHtml(String(im.id)) + '</td>' +
         '<td>' + escapeHtml(im.sourceType || '—') + '</td>' +
-        '<td class="clamp">' + escapeHtml(im.sourceUrl || '—') + '</td>' +
-        '<td class="clamp">' + escapeHtml(im.sourceText || '—') + '</td>' +
+        '<td class="clamp" title="' + escapeHtml(im.sourceUrl || '') + '">' + escapeHtml(im.sourceUrl || '—') + '</td>' +
+        '<td class="clamp" title="' + escapeHtml(im.sourceText || '') + '">' + escapeHtml(im.sourceText || '—') + '</td>' +
         '<td><span class="pill ' + pill + '">' + escapeHtml(IMPORT_STATUS[im.auditStatus] || im.auditStatus) + '</span></td>' +
         '<td>' + fmtTime(im.createdAt) + '</td><td class="actions">' +
         (im.auditStatus === 'PENDING'
@@ -959,7 +1039,7 @@
 
   function loadUsers() {
     loadingCard();
-    request('/api/admin/users?keyword=' + encodeURIComponent(state.userKeyword || '') +
+    return request('/api/admin/users?keyword=' + encodeURIComponent(state.userKeyword || '') +
       '&page=' + state.users.page + '&size=' + state.users.size)
       .then(function (page) { state.users = page || { items: [], total: 0, page: 0, size: 20 }; renderUsers(); })
       .catch(errorCard);
@@ -968,8 +1048,6 @@
   function renderUsers() {
     var p = state.users;
     var rows = p.items || [];
-    var from = p.total ? p.page * p.size + 1 : 0;
-    var to = Math.min((p.page + 1) * p.size, p.total);
     var head = pageHead('用户管理', '检索账号、授予权限、封禁、人工开通会员',
       '<input id="userSearch" type="search" placeholder="搜昵称 / 手机号 / openid" value="' + escapeHtml(state.userKeyword) +
       '" style="height:30px;padding:0 10px;border:1px solid var(--line-2);border-radius:9px;font-size:12.5px;width:200px" />' +
@@ -998,9 +1076,7 @@
     $('panelRoot').innerHTML = '<div class="card">' + head +
       '<table><thead><tr><th class="num">ID</th><th>用户</th><th>手机号</th><th>角色</th><th>状态</th>' +
       '<th>注册时间</th><th>操作</th></tr></thead><tbody>' + body + '</tbody></table>' +
-      '<div class="pager"><span>第 ' + (p.page + 1) + ' 页 · 显示 ' + from + '–' + to + ' / ' + fmtNum(p.total) + '</span>' +
-      '<button class="btn small" id="prevPage"' + (p.page <= 0 ? ' disabled' : '') + '>上一页</button>' +
-      '<button class="btn small" id="nextPage"' + (to >= p.total ? ' disabled' : '') + '>下一页</button></div></div>';
+      pagerHtml('users', p.page, p.size, p.total) + '</div>';
   }
 
   function setUserStatus(userId, status) {
@@ -1074,8 +1150,14 @@
 
   function loadOrders() {
     loadingCard();
-    request('/api/admin/orders?status=' + encodeURIComponent(state.orderFilter))
-      .then(function (list) { state.orders = Array.isArray(list) ? list : []; renderOrders(); })
+    return request('/api/admin/orders?status=' + encodeURIComponent(state.orderFilter) +
+      '&page=' + state.orderPage + '&size=' + state.orderSize)
+      .then(function (page) {
+        state.orders = (page && page.items) || [];
+        state.orderTotal = (page && page.total) || 0;
+        state.orderPage = (page && page.page) || 0;
+        renderOrders();
+      })
       .catch(errorCard);
   }
 
@@ -1083,7 +1165,8 @@
     var rows = state.orders;
     var paid = rows.filter(function (o) { return o.status === 'PAID'; });
     var revenue = paid.reduce(function (a, o) { return a + Number(o.amountFen || 0); }, 0);
-    var head = pageHead('订单管理', '已支付 ' + paid.length + ' 笔 · 合计 ' + fmtMoney(revenue),
+    var head = pageHead('订单管理',
+      '共 ' + fmtNum(state.orderTotal) + ' 笔 · 本页已支付 ' + paid.length + ' 笔 ' + fmtMoney(revenue),
       chips([['', '全部'], ['PENDING', '待支付'], ['PAID', '已支付'], ['CLOSED', '已关闭'], ['REFUNDED', '已退款']], state.orderFilter, 'orderfilter') +
       '<button class="btn small" id="exportOrders">导出 CSV</button>');
     var body = rows.length ? rows.map(function (o) {
@@ -1103,10 +1186,11 @@
           ? '<button class="btn small danger" data-orderrefund="' + escapeHtml(o.outTradeNo) + '">退款</button>' : '') +
         '</td></tr>';
     }).join('') : '<tr><td colspan="9"><div class="empty">没有订单</div></td></tr>';
-    setPageHeader(rows.length + ' 条');
+    setPageHeader('共 ' + fmtNum(state.orderTotal) + ' 笔');
     $('panelRoot').innerHTML = '<div class="card">' + head +
       '<table><thead><tr><th class="num">ID</th><th>商户单号</th><th class="num">用户</th><th>套餐</th>' +
-      '<th class="num">金额</th><th>状态</th><th>方式</th><th>时间</th><th>操作</th></tr></thead><tbody>' + body + '</tbody></table></div>';
+      '<th class="num">金额</th><th>状态</th><th>方式</th><th>时间</th><th>操作</th></tr></thead><tbody>' + body + '</tbody></table>' +
+      pagerHtml('orders', state.orderPage, state.orderSize, state.orderTotal) + '</div>';
   }
 
   function closeOrder(outTradeNo) {
@@ -1145,22 +1229,25 @@
 
   function loadAudit() {
     loadingCard();
-    request('/api/admin/audit?limit=200')
-      .then(function (list) { state.audit = Array.isArray(list) ? list : []; renderAudit(); })
+    return request('/api/admin/audit?keyword=' + encodeURIComponent(state.auditKeyword || '') +
+      '&page=' + state.auditPage + '&size=' + state.auditSize)
+      .then(function (page) {
+        state.audit = (page && page.items) || [];
+        state.auditTotal = (page && page.total) || 0;
+        state.auditPage = (page && page.page) || 0;
+        renderAudit();
+      })
       .catch(errorCard);
   }
 
   function renderAudit() {
-    var kw = (state.auditKeyword || '').trim().toLowerCase();
-    var all = state.audit;
-    var rows = kw ? all.filter(function (a) {
-      return [a.actorNickname, a.action, a.targetType, a.targetId, a.detail, a.result]
-        .some(function (v) { return String(v == null ? '' : v).toLowerCase().indexOf(kw) >= 0; });
-    }) : all;
-    var head = pageHead('审计日志', '所有管理写操作都会留痕（最近 200 条）',
+    var rows = state.audit;
+    var kw = (state.auditKeyword || '').trim();
+    var head = pageHead('审计日志', '所有管理写操作都会留痕' + (kw ? '（已按「' + kw + '」过滤）' : ''),
       '<input id="auditSearch" type="search" placeholder="搜操作人 / 动作 / 对象 / 详情" value="' +
       escapeHtml(state.auditKeyword) + '" style="height:30px;padding:0 10px;border:1px solid var(--line-2);border-radius:9px;font-size:12.5px;width:240px" />' +
       '<button class="btn small" id="auditSearchBtn">搜索</button>' +
+      (kw ? '<button class="btn small" id="auditClearBtn">清除</button>' : '') +
       '<button class="btn small" id="exportAudit">导出 CSV</button>');
     var body = rows.length ? rows.map(function (a) {
       return '<tr><td class="num">' + escapeHtml(String(a.id)) + '</td>' +
@@ -1168,57 +1255,102 @@
           escapeHtml(a.actorNickname || String(a.actorUserId)) + '</span></div></td>' +
         '<td><span class="pill">' + escapeHtml(a.action) + '</span></td>' +
         '<td>' + escapeHtml(a.targetType + (a.targetId ? '#' + a.targetId : '')) + '</td>' +
-        '<td class="clamp">' + escapeHtml(a.detail || '—') + '</td>' +
+        '<td class="clamp" title="' + escapeHtml(a.detail || '') + '">' + escapeHtml(a.detail || '—') + '</td>' +
         '<td><span class="pill ' + (a.result === 'OK' ? 'ok' : 'bad') + '">' + escapeHtml(a.result) + '</span></td>' +
-        '<td>' + fmtTime(a.createdAt) + '</td></tr>';
+        '<td title="' + escapeHtml(a.createdAt || '') + '">' + fmtTime(a.createdAt) + '</td></tr>';
     }).join('') : '<tr><td colspan="7"><div class="empty">没有匹配的操作记录</div></td></tr>';
-    setPageHeader(kw ? ('匹配 ' + rows.length + ' / ' + all.length + ' 条') : (all.length + ' 条'));
+    setPageHeader('共 ' + fmtNum(state.auditTotal) + ' 条');
     $('panelRoot').innerHTML = '<div class="card">' + head +
       '<table><thead><tr><th class="num">ID</th><th>操作人</th><th>动作</th><th>对象</th><th>详情</th>' +
-      '<th>结果</th><th>时间</th></tr></thead><tbody>' + body + '</tbody></table></div>';
+      '<th>结果</th><th>时间</th></tr></thead><tbody>' + body + '</tbody></table>' +
+      pagerHtml('audit', state.auditPage, state.auditSize, state.auditTotal) + '</div>';
   }
 
   // ==================== CSV 导出 ====================
+  // 导出的是"筛选后的全量数据"，不是当前页——分页之后只导一页会误导运营。
 
   function exportCurrent() {
     var t = state.tab;
+    var fail = function (err) { toast(err.message || '导出失败', 2600, 'error'); };
+
     if (t === 'users') {
-      var us = (state.users.items || []);
-      return csvExport('用户-' + stamp() + '.csv', ['ID', '昵称', '手机号', 'openid', '管理员', '状态', '注册时间'],
-        us.map(function (u) { return [u.userId, u.nickname, u.phone, u.openid, u.admin ? '是' : '否', u.status, u.createdAt]; }));
+      toast('正在汇总全部用户…', 1400);
+      fetchAllPages(function (page, size) {
+        return '/api/admin/users?keyword=' + encodeURIComponent(state.userKeyword || '') +
+          '&page=' + page + '&size=' + size;
+      }).then(function (rows) {
+        csvExport('用户-' + stamp() + '.csv', ['ID', '昵称', '手机号', 'openid', '管理员', '状态', '注册时间'],
+          rows.map(function (u) { return [u.userId, u.nickname, u.phone, u.openid, u.admin ? '是' : '否', u.status, u.createdAt]; }));
+      }).catch(fail);
+      return;
     }
     if (t === 'orders') {
-      return csvExport('订单-' + stamp() + '.csv', ['ID', '商户单号', '用户ID', '套餐', '金额(元)', '状态', '支付方式', '创建时间', '支付时间'],
-        state.orders.map(function (o) {
-          return [o.orderId, o.outTradeNo, o.payerUserId, o.planName || o.planCode,
-            (Number(o.amountFen || 0) / 100).toFixed(2), o.status, o.paymentMethod, o.createdAt, o.paidAt];
-        }));
+      toast('正在汇总全部订单…', 1400);
+      fetchAllPages(function (page, size) {
+        return '/api/admin/orders?status=' + encodeURIComponent(state.orderFilter || '') +
+          '&page=' + page + '&size=' + size;
+      }).then(function (rows) {
+        csvExport('订单-' + stamp() + '.csv',
+          ['ID', '商户单号', '用户ID', '套餐', '金额(元)', '状态', '支付方式', '创建时间', '支付时间'],
+          rows.map(function (o) {
+            return [o.orderId, o.outTradeNo, o.payerUserId, o.planName || o.planCode,
+              (Number(o.amountFen || 0) / 100).toFixed(2), o.status, o.paymentMethod, o.createdAt, o.paidAt];
+          }));
+      }).catch(fail);
+      return;
     }
     if (t === 'audit') {
-      return csvExport('审计日志-' + stamp() + '.csv', ['ID', '操作人', '动作', '对象类型', '对象ID', '详情', '结果', '时间'],
-        state.audit.map(function (a) {
-          return [a.id, a.actorNickname || a.actorUserId, a.action, a.targetType, a.targetId, a.detail, a.result, a.createdAt];
-        }));
-    }
-    if (t === 'posts') {
-      return csvExport('帖子-' + stamp() + '.csv', ['ID', '标题', '作者', '状态', '赞', '评论', '时间'],
-        state.posts.map(function (p) { return [p.id, p.title, p.author, p.auditStatus, p.likeCount, p.commentCount, p.createdAt]; }));
+      toast('正在汇总审计日志…', 1400);
+      fetchAllPages(function (page, size) {
+        return '/api/admin/audit?keyword=' + encodeURIComponent(state.auditKeyword || '') +
+          '&page=' + page + '&size=' + size;
+      }).then(function (rows) {
+        csvExport('审计日志-' + stamp() + '.csv',
+          ['ID', '操作人', '动作', '对象类型', '对象ID', '详情', '结果', '时间'],
+          rows.map(function (a) {
+            return [a.id, a.actorNickname || a.actorUserId, a.action, a.targetType, a.targetId, a.detail, a.result, a.createdAt];
+          }));
+      }).catch(fail);
+      return;
     }
     if (t === 'comments') {
-      return csvExport('评论-' + stamp() + '.csv', ['ID', '帖子ID', '帖子标题', '作者', '内容', '状态', '已删除', '时间'],
-        state.comments.map(function (c) {
-          return [c.commentId, c.postId, c.postTitle, c.authorNickname, c.content, c.auditStatus, c.deleted ? '是' : '否', c.createdAt];
-        }));
+      toast('正在汇总全部评论…', 1400);
+      fetchAllPages(function (page, size) {
+        return '/api/admin/comments?auditStatus=' + encodeURIComponent(state.commentFilter || '') +
+          (state.commentPostId ? '&postId=' + encodeURIComponent(state.commentPostId) : '') +
+          '&page=' + page + '&size=' + size;
+      }).then(function (rows) {
+        csvExport('评论-' + stamp() + '.csv',
+          ['ID', '帖子ID', '帖子标题', '作者', '内容', '状态', '已删除', '时间'],
+          rows.map(function (c) {
+            return [c.commentId, c.postId, c.postTitle, c.authorNickname, c.content,
+              c.auditStatus, c.deleted ? '是' : '否', c.createdAt];
+          }));
+      }).catch(fail);
+      return;
     }
     if (t === 'feedback') {
-      return csvExport('反馈工单-' + stamp() + '.csv', ['ID', '用户', '类型', '内容', '联系方式', '状态', '时间'],
-        state.feedback.map(function (f) {
-          return [f.id, f.nickname, (f.types || []).join('、'), f.content, f.contact, f.status, f.createdAt];
-        }));
+      toast('正在汇总全部工单…', 1400);
+      fetchAllPages(function (page, size) {
+        return '/api/admin/feedback?status=' + encodeURIComponent(state.feedbackFilter || '') +
+          '&page=' + page + '&size=' + size;
+      }).then(function (rows) {
+        csvExport('反馈工单-' + stamp() + '.csv', ['ID', '用户', '类型', '内容', '联系方式', '状态', '时间'],
+          rows.map(function (f) {
+            return [f.id, f.nickname, (f.types || []).join('、'), f.content, f.contact, f.status, f.createdAt];
+          }));
+      }).catch(fail);
+      return;
+    }
+    if (t === 'posts') {
+      csvExport('帖子-' + stamp() + '.csv', ['ID', '标题', '作者', '状态', '赞', '评论', '时间'],
+        state.posts.map(function (p) { return [p.id, p.title, p.author, p.auditStatus, p.likeCount, p.commentCount, p.createdAt]; }));
+      return;
     }
     if (t === 'reports') {
-      return csvExport('举报-' + stamp() + '.csv', ['ID', '帖子ID', '原因', '说明', '状态', '时间'],
+      csvExport('举报-' + stamp() + '.csv', ['ID', '帖子ID', '原因', '说明', '状态', '时间'],
         state.reports.map(function (r) { return [r.reportId, r.postId, r.reason, r.description, r.status, r.createdAt]; }));
+      return;
     }
     toast('当前页面没有可导出的数据');
   }
@@ -1379,7 +1511,7 @@
     '[data-postfilter]', '[data-poststatus]', '[data-recipefilter]', '[data-recipestatus]',
     '[data-cmtfilter]', '[data-cmtstatus]', '[data-cmtdel]', '[data-cmtrestore]', '[data-fbfilter]',
     '[data-fb]', '[data-orderfilter]', '[data-orderclose]', '[data-orderrefund]', '[data-userstatus]',
-    '[data-importfilter]', '[data-import]'
+    '[data-importfilter]', '[data-import]', '[data-pager]'
   ].join(',');
 
   document.addEventListener('click', function (e) {
@@ -1395,14 +1527,12 @@
     if (id === 'logoutBtn') { logout(); return; }
     if (id === 'menuBtn') { $('appView').classList.toggle('nav-open'); return; }
     if (id === 'navBackdrop') { closeNav(); return; }
-    if (id === 'refreshBtn') { loadTab(); return; }
+    if (id === 'refreshBtn') { refreshCurrent(); return; }
 
     if (id === 'userSearchBtn') {
       state.userKeyword = ($('userSearch') || {}).value || '';
       state.users.page = 0; loadUsers(); return;
     }
-    if (id === 'prevPage') { state.users.page = Math.max(0, state.users.page - 1); loadUsers(); return; }
-    if (id === 'nextPage') { state.users.page += 1; loadUsers(); return; }
 
     if (id === 'exportUsers' || id === 'exportOrders' || id === 'exportAudit' ||
         id === 'exportPosts' || id === 'exportComments' || id === 'exportFeedback' ||
@@ -1443,6 +1573,7 @@
 
     if (id === 'commentFilterBtn') {
       state.commentPostId = ($('commentPostFilter') || {}).value || '';
+      state.commentPage = 0;
       loadComments(); return;
     }
     var cd = t.getAttribute('data-cmtdel');
@@ -1450,23 +1581,31 @@
     var cr = t.getAttribute('data-cmtrestore');
     if (cr) { restoreComment(cr); return; }
     var ctf = t.getAttribute('data-cmtfilter');
-    if (ctf !== null) { state.commentFilter = ctf; loadComments(); return; }
+    if (ctf !== null) { state.commentFilter = ctf; state.commentPage = 0; loadComments(); return; }
     var cts = t.getAttribute('data-cmtstatus');
     if (cts) { setCommentStatus(cts, t.getAttribute('data-on')); return; }
 
     if (id === 'auditSearchBtn') {
       state.auditKeyword = ($('auditSearch') || {}).value || '';
-      renderAudit(); return;
+      state.auditPage = 0;
+      loadAudit(); return;
+    }
+
+    var pager = t.getAttribute('data-pager');
+    if (pager) { changePage(pager); return; }
+
+    if (id === 'auditClearBtn') {
+      state.auditKeyword = ''; state.auditPage = 0; loadAudit(); return;
     }
 
     var fbf = t.getAttribute('data-fbfilter');
-    if (fbf !== null) { state.feedbackFilter = fbf; loadFeedback(); return; }
+    if (fbf !== null) { state.feedbackFilter = fbf; state.feedbackPage = 0; loadFeedback(); return; }
 
     var fb = t.getAttribute('data-fb');
     if (fb) { handleFeedback(fb, t.getAttribute('data-on')); return; }
 
     var of = t.getAttribute('data-orderfilter');
-    if (of !== null) { state.orderFilter = of; loadOrders(); return; }
+    if (of !== null) { state.orderFilter = of; state.orderPage = 0; loadOrders(); return; }
 
     var us = t.getAttribute('data-userstatus');
     if (us) { setUserStatus(us, t.getAttribute('data-on')); return; }
@@ -1494,6 +1633,25 @@
         if (btn && !btn.disabled) btn.click();
         return;
       }
+      // 焦点锁在弹窗内，Tab 不跑到背后的页面上
+      if (e.key === 'Tab') {
+        var root = $('modalRoot');
+        var focusables = Array.prototype.slice.call(
+          root.querySelectorAll('button, input, textarea, select, [tabindex]:not([tabindex="-1"])'))
+          .filter(function (el) { return !el.disabled; });
+        if (focusables.length) {
+          var first = focusables[0], last = focusables[focusables.length - 1];
+          if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+          else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        }
+      }
+      return;
+    }
+    // 侧边导航键盘可达：Enter / 空格切换
+    if ((e.key === 'Enter' || e.key === ' ') && e.target && e.target.classList &&
+        e.target.classList.contains('nav-item')) {
+      e.preventDefault();
+      e.target.click();
       return;
     }
     if (e.key === 'Enter' && e.target) {
@@ -1502,9 +1660,9 @@
       } else if (e.target.id === 'recipeSearch') {
         state.recipeKeyword = e.target.value || ''; loadRecipes();
       } else if (e.target.id === 'commentPostFilter') {
-        state.commentPostId = e.target.value || ''; loadComments();
+        state.commentPostId = e.target.value || ''; state.commentPage = 0; loadComments();
       } else if (e.target.id === 'auditSearch') {
-        state.auditKeyword = e.target.value || ''; renderAudit();
+        state.auditKeyword = e.target.value || ''; state.auditPage = 0; loadAudit();
       }
     }
   });

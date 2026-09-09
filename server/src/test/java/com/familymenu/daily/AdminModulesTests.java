@@ -120,11 +120,14 @@ class AdminModulesTests {
         try {
             MvcResult list = mockMvc.perform(get("/api/admin/feedback?status=OPEN").header("X-Auth-Token", admin))
                     .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.total").isNumber())
                     .andReturn();
-            // 返回的是数组
-            JsonNode arr = objectMapper.readTree(list.getResponse().getContentAsString());
+            // 分页信封：{ items, total, page, size }
+            JsonNode page = objectMapper.readTree(list.getResponse().getContentAsString());
+            JsonNode arr = page.get("items");
             assertThat(arr.isArray()).isTrue();
             assertThat(arr.size()).isGreaterThan(0);
+            assertThat(page.get("total").asLong()).isGreaterThanOrEqualTo(arr.size());
 
             long feedbackId = arr.get(0).get("id").asLong();
             mockMvc.perform(post("/api/admin/feedback/" + feedbackId + "/handle")
@@ -422,10 +425,10 @@ class AdminModulesTests {
             MvcResult listed = mockMvc.perform(get("/api/admin/comments?postId=" + postId)
                             .header("X-Auth-Token", admin))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$[0].commentId").exists())
-                    .andExpect(jsonPath("$[0].postTitle").exists())
+                    .andExpect(jsonPath("$.items[0].commentId").exists())
+                    .andExpect(jsonPath("$.items[0].postTitle").exists())
                     .andReturn();
-            JsonNode rows = objectMapper.readTree(listed.getResponse().getContentAsString());
+            JsonNode rows = objectMapper.readTree(listed.getResponse().getContentAsString()).get("items");
             boolean found = false;
             for (JsonNode row : rows) {
                 if (row.get("commentId").asLong() == commentId) {
@@ -455,8 +458,26 @@ class AdminModulesTests {
         long[] id = new long[1];
         String admin = adminToken(id);
         try {
-            mockMvc.perform(get("/api/admin/orders").header("X-Auth-Token", admin))
-                    .andExpect(status().isOk());
+            MvcResult first = mockMvc.perform(get("/api/admin/orders?page=0&size=3").header("X-Auth-Token", admin))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.items.length()").value(3))
+                    .andExpect(jsonPath("$.total").isNumber())
+                    .andExpect(jsonPath("$.page").value(0))
+                    .andExpect(jsonPath("$.size").value(3))
+                    .andReturn();
+            JsonNode p0 = objectMapper.readTree(first.getResponse().getContentAsString());
+            assertThat(p0.get("total").asLong()).isGreaterThanOrEqualTo(3);
+
+            // 第二页必须是不同的一批，否则分页是假的
+            MvcResult second = mockMvc.perform(get("/api/admin/orders?page=1&size=3").header("X-Auth-Token", admin))
+                    .andExpect(status().isOk()).andReturn();
+            JsonNode p1 = objectMapper.readTree(second.getResponse().getContentAsString());
+            if (p1.get("items").size() > 0) {
+                assertThat(p1.get("items").get(0).get("orderId").asLong())
+                        .as("第二页首条不能与第一页首条相同")
+                        .isNotEqualTo(p0.get("items").get(0).get("orderId").asLong());
+            }
+            assertThat(p1.get("total").asLong()).isEqualTo(p0.get("total").asLong());
         } finally {
             demote(id[0]);
         }
@@ -475,8 +496,10 @@ class AdminModulesTests {
 
             MvcResult audit = mockMvc.perform(get("/api/admin/audit").header("X-Auth-Token", admin))
                     .andExpect(status().isOk()).andReturn();
-            JsonNode arr = objectMapper.readTree(audit.getResponse().getContentAsString());
+            JsonNode page = objectMapper.readTree(audit.getResponse().getContentAsString());
+            JsonNode arr = page.get("items");
             assertThat(arr.isArray()).isTrue();
+            assertThat(page.get("total").asLong()).isGreaterThan(0);
             boolean found = false;
             for (JsonNode n : arr) {
                 if ("SET_POST_STATUS".equals(n.get("action").asText())

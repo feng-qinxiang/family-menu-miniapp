@@ -31,6 +31,19 @@ public final class AdminModels {
     ) {
     }
 
+    /**
+     * 管理台列表统一分页信封。
+     * 订单/评论/工单/审计这些会持续增长的表必须分页，否则接口静默截断，
+     * 运营看到的"共 N 条"就是假的。
+     */
+    public record AdminPage<T>(
+            List<T> items,
+            long total,
+            int page,
+            int size
+    ) {
+    }
+
     /** 管理员状态变更请求。 */
     public record AdminGrantRequest(
             Boolean admin

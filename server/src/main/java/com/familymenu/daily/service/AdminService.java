@@ -8,6 +8,7 @@ import com.familymenu.daily.dto.AdminModels.AdminImportItem;
 import com.familymenu.daily.dto.AdminModels.AdminMetricPoint;
 import com.familymenu.daily.dto.AdminModels.AdminMetrics;
 import com.familymenu.daily.dto.AdminModels.AdminOrderItem;
+import com.familymenu.daily.dto.AdminModels.AdminPage;
 import com.familymenu.daily.dto.AdminModels.AdminPostItem;
 import com.familymenu.daily.dto.AdminModels.AdminRecipeItem;
 import com.familymenu.daily.dto.AdminModels.AdminUserItem;
@@ -228,16 +229,19 @@ public class AdminService {
 
     // ==================== 反馈工单 ====================
 
-    public List<AdminFeedbackItem> listFeedback(String status, int limit) {
-        int safeLimit = Math.max(1, Math.min(limit, 200));
+    public AdminPage<AdminFeedbackItem> listFeedback(String status, int page, int size) {
+        int safeSize = Math.max(1, Math.min(size, 200));
+        int safePage = Math.max(0, page);
         String st = status == null ? "" : status.trim().toUpperCase();
-        return jdbcTemplate.query("""
+        Long total = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM feedback_ticket f WHERE (? = '' OR f.status = ?)", Long.class, st, st);
+        List<AdminFeedbackItem> items = jdbcTemplate.query("""
                         SELECT f.id, f.user_id, u.nickname, f.types_json, f.content, f.contact,
                                f.images_json, f.status, f.created_at, f.handled_at, f.reply
                         FROM feedback_ticket f
                         LEFT JOIN user_account u ON u.id = f.user_id
                         WHERE (? = '' OR f.status = ?)
-                        ORDER BY f.id DESC LIMIT ?
+                        ORDER BY f.id DESC LIMIT ? OFFSET ?
                         """,
                 (rs, rowNum) -> new AdminFeedbackItem(
                         rs.getLong("id"),
@@ -252,7 +256,8 @@ public class AdminService {
                         rs.getString("handled_at"),
                         rs.getString("reply")
                 ),
-                st, st, safeLimit);
+                st, st, safeSize, (long) safePage * safeSize);
+        return new AdminPage<>(items, total == null ? 0 : total, safePage, safeSize);
     }
 
     /** 工单状态流转：OPEN → PROCESSING → CLOSED。 */
@@ -271,10 +276,32 @@ public class AdminService {
         if (updated == 0) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "工单不存在");
         }
-        return listFeedback(null, 200).stream()
-                .filter(f -> f.id() != null && f.id() == feedbackId)
-                .findFirst()
-                .orElse(null);
+        return feedbackById(feedbackId);
+    }
+
+    /** 按 id 取单条工单（处理完回显用，不能依赖分页列表里恰好有它）。 */
+    private AdminFeedbackItem feedbackById(long feedbackId) {
+        return jdbcTemplate.query("""
+                        SELECT f.id, f.user_id, u.nickname, f.types_json, f.content, f.contact,
+                               f.images_json, f.status, f.created_at, f.handled_at, f.reply
+                        FROM feedback_ticket f
+                        LEFT JOIN user_account u ON u.id = f.user_id
+                        WHERE f.id = ?
+                        """,
+                rs -> rs.next() ? new AdminFeedbackItem(
+                        rs.getLong("id"),
+                        rs.getLong("user_id"),
+                        rs.getString("nickname"),
+                        readJsonList(rs.getString("types_json")),
+                        rs.getString("content"),
+                        rs.getString("contact"),
+                        readJsonList(rs.getString("images_json")),
+                        rs.getString("status"),
+                        rs.getString("created_at"),
+                        rs.getString("handled_at"),
+                        rs.getString("reply")
+                ) : null,
+                feedbackId);
     }
 
     // ==================== 帖子 / 菜谱治理 ====================
@@ -369,11 +396,17 @@ public class AdminService {
     }
 
     /** 评论列表（治理用）：可按帖子与审核状态过滤，包含已软删除的评论（deleted 标记）。 */
-    public List<AdminCommentItem> listComments(Long postId, int limit, String auditStatus) {
-        int safeLimit = Math.max(1, Math.min(limit, 200));
+    public AdminPage<AdminCommentItem> listComments(Long postId, int page, int size, String auditStatus) {
+        int safeSize = Math.max(1, Math.min(size, 200));
+        int safePage = Math.max(0, page);
         Long pid = (postId == null || postId <= 0) ? null : postId;
         String st = auditStatus == null ? "" : auditStatus.trim().toUpperCase();
-        return jdbcTemplate.query("""
+        Long total = jdbcTemplate.queryForObject("""
+                SELECT COUNT(*) FROM community_post_comment c
+                WHERE (? IS NULL OR c.post_id = ?)
+                  AND (? = '' OR c.audit_status = ?)
+                """, Long.class, pid, pid, st, st);
+        List<AdminCommentItem> items = jdbcTemplate.query("""
                         SELECT c.id, c.post_id, p.title, c.user_id, u.nickname, c.content, c.audit_status,
                                c.deleted, c.created_at
                         FROM community_post_comment c
@@ -381,7 +414,7 @@ public class AdminService {
                         LEFT JOIN user_account u ON u.id = c.user_id
                         WHERE (? IS NULL OR c.post_id = ?)
                           AND (? = '' OR c.audit_status = ?)
-                        ORDER BY c.id DESC LIMIT ?
+                        ORDER BY c.id DESC LIMIT ? OFFSET ?
                         """,
                 (rs, rowNum) -> new AdminCommentItem(
                         rs.getLong("id"),
@@ -394,7 +427,8 @@ public class AdminService {
                         rs.getBoolean("deleted"),
                         rs.getString("created_at")
                 ),
-                pid, pid, st, st, safeLimit);
+                pid, pid, st, st, safeSize, (long) safePage * safeSize);
+        return new AdminPage<>(items, total == null ? 0 : total, safePage, safeSize);
     }
 
     /**
@@ -451,15 +485,18 @@ public class AdminService {
 
     // ==================== 订单 / 会员 ====================
 
-    public List<AdminOrderItem> listOrders(String status, int limit) {
-        int safeLimit = Math.max(1, Math.min(limit, 200));
+    public AdminPage<AdminOrderItem> listOrders(String status, int page, int size) {
+        int safeSize = Math.max(1, Math.min(size, 200));
+        int safePage = Math.max(0, page);
         String st = status == null ? "" : status.trim().toUpperCase();
-        return jdbcTemplate.query("""
+        Long total = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM payment_order WHERE (? = '' OR status = ?)", Long.class, st, st);
+        List<AdminOrderItem> items = jdbcTemplate.query("""
                         SELECT id, out_trade_no, payer_user_id, plan_code, amount_fen, duration_days,
                                status, payment_method, created_at, paid_at
                         FROM payment_order
                         WHERE (? = '' OR status = ?)
-                        ORDER BY id DESC LIMIT ?
+                        ORDER BY id DESC LIMIT ? OFFSET ?
                         """,
                 (rs, rowNum) -> new AdminOrderItem(
                         rs.getLong("id"),
@@ -474,7 +511,8 @@ public class AdminService {
                         rs.getString("created_at"),
                         rs.getString("paid_at")
                 ),
-                st, st, safeLimit);
+                st, st, safeSize, (long) safePage * safeSize);
+        return new AdminPage<>(items, total == null ? 0 : total, safePage, safeSize);
     }
 
     /** 人工开通/延长会员（运营补偿、线下付款场景）。写审计。 */
@@ -673,13 +711,23 @@ public class AdminService {
         }, from);
     }
 
-    public List<AdminAuditItem> listAudit(int limit) {
-        int safeLimit = Math.max(1, Math.min(limit, 200));
-        return jdbcTemplate.query("""
+    public AdminPage<AdminAuditItem> listAudit(String keyword, int page, int size) {
+        int safeSize = Math.max(1, Math.min(size, 200));
+        int safePage = Math.max(0, page);
+        String kw = keyword == null ? "" : keyword.trim();
+        String like = "%" + kw + "%";
+        Long total = jdbcTemplate.queryForObject("""
+                SELECT COUNT(*) FROM admin_audit_log
+                WHERE (? = '' OR actor_nickname LIKE ? OR action LIKE ? OR target_type LIKE ?
+                       OR target_id LIKE ? OR detail LIKE ? OR result LIKE ?)
+                """, Long.class, kw, like, like, like, like, like, like);
+        List<AdminAuditItem> items = jdbcTemplate.query("""
                         SELECT id, actor_user_id, actor_nickname, action, target_type, target_id,
                                detail, result, created_at
                         FROM admin_audit_log
-                        ORDER BY id DESC LIMIT ?
+                        WHERE (? = '' OR actor_nickname LIKE ? OR action LIKE ? OR target_type LIKE ?
+                               OR target_id LIKE ? OR detail LIKE ? OR result LIKE ?)
+                        ORDER BY id DESC LIMIT ? OFFSET ?
                         """,
                 (rs, rowNum) -> new AdminAuditItem(
                         rs.getLong("id"),
@@ -692,7 +740,8 @@ public class AdminService {
                         rs.getString("result"),
                         rs.getString("created_at")
                 ),
-                safeLimit);
+                kw, like, like, like, like, like, like, safeSize, (long) safePage * safeSize);
+        return new AdminPage<>(items, total == null ? 0 : total, safePage, safeSize);
     }
 
     private long count(String sql) {

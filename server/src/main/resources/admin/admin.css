@@ -670,9 +670,8 @@ td.clamp { max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-sp
   .main { padding: 16px 14px 48px; }
   .topbar { flex-wrap: wrap; }
   .page-meta { display: none; }
-  .card { padding: 16px; }
+  .card { padding: 16px; overflow-x: auto; }
   .card > table { min-width: 660px; }
-  .card.scroll-x { overflow-x: auto; }
   .toolbar input { min-width: 0; flex: 1 1 150px; }
   td.clamp { max-width: 170px; }
 }

@@ -15,6 +15,7 @@ import com.familymenu.daily.dto.AdminModels.AdminImportItem;
 import com.familymenu.daily.dto.AdminModels.AdminImportStatusRequest;
 import com.familymenu.daily.dto.AdminModels.AdminMetrics;
 import com.familymenu.daily.dto.AdminModels.AdminOrderItem;
+import com.familymenu.daily.dto.AdminModels.AdminPage;
 import com.familymenu.daily.dto.AdminModels.AdminPostItem;
 import com.familymenu.daily.dto.AdminModels.AdminRecipeItem;
 import com.familymenu.daily.dto.AdminModels.AdminUserItem;
@@ -136,9 +137,10 @@ public class AdminController {
     // ---------- 反馈工单 ----------
     @GetMapping("/feedback")
     @RequiresAdmin
-    public List<AdminFeedbackItem> listFeedback(@RequestParam(defaultValue = "") String status,
-                                                @RequestParam(defaultValue = "50") int limit) {
-        return adminService.listFeedback(status, limit);
+    public AdminPage<AdminFeedbackItem> listFeedback(@RequestParam(defaultValue = "") String status,
+                                                     @RequestParam(defaultValue = "0") int page,
+                                                     @RequestParam(defaultValue = "50") int size) {
+        return adminService.listFeedback(status, page, size);
     }
 
     @PostMapping("/feedback/{feedbackId}/handle")
@@ -230,10 +232,11 @@ public class AdminController {
     /** 评论列表（治理用）：可按帖子与审核状态过滤，含已删除评论。 */
     @GetMapping("/comments")
     @RequiresAdmin
-    public List<AdminCommentItem> listComments(@RequestParam(required = false) Long postId,
-                                               @RequestParam(required = false) String auditStatus,
-                                               @RequestParam(defaultValue = "100") int limit) {
-        return adminService.listComments(postId, limit, auditStatus);
+    public AdminPage<AdminCommentItem> listComments(@RequestParam(required = false) Long postId,
+                                                    @RequestParam(required = false) String auditStatus,
+                                                    @RequestParam(defaultValue = "0") int page,
+                                                    @RequestParam(defaultValue = "50") int size) {
+        return adminService.listComments(postId, page, size, auditStatus);
     }
 
     /** 评论审核：通过（APPROVED）/ 驳回（REMOVED）。 */
@@ -273,9 +276,10 @@ public class AdminController {
     // ---------- 订单 / 导入审核 / 审计 ----------
     @GetMapping("/orders")
     @RequiresAdmin
-    public List<AdminOrderItem> listOrders(@RequestParam(defaultValue = "") String status,
-                                           @RequestParam(defaultValue = "50") int limit) {
-        return adminService.listOrders(status, limit);
+    public AdminPage<AdminOrderItem> listOrders(@RequestParam(defaultValue = "") String status,
+                                                @RequestParam(defaultValue = "0") int page,
+                                                @RequestParam(defaultValue = "50") int size) {
+        return adminService.listOrders(status, page, size);
     }
 
     /** 关闭未支付订单（PENDING → CLOSED）。 */
@@ -339,7 +343,9 @@ public class AdminController {
 
     @GetMapping("/audit")
     @RequiresAdmin
-    public List<AdminAuditItem> listAudit(@RequestParam(defaultValue = "100") int limit) {
-        return adminService.listAudit(limit);
+    public AdminPage<AdminAuditItem> listAudit(@RequestParam(defaultValue = "") String keyword,
+                                               @RequestParam(defaultValue = "0") int page,
+                                               @RequestParam(defaultValue = "50") int size) {
+        return adminService.listAudit(keyword, page, size);
     }
 }
