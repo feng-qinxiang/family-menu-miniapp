@@ -12,6 +12,7 @@
     tab: 'dashboard',
     dashboard: null,
     reports: [],
+    reportFilter: 'PENDING',
     users: { items: [], total: 0, page: 0, size: 20 },
     userKeyword: '',
     feedback: [],
@@ -23,9 +24,11 @@
     recipeKeyword: '',
     comments: [],
     commentPostId: '',
+    commentFilter: 'PENDING',
     orders: [],
     orderFilter: '',
     audit: [],
+    auditKeyword: '',
     imports: [],
     importFilter: 'PENDING'
   };
@@ -183,44 +186,80 @@
     request('/api/admin/dashboard')
       .then(function (d) {
         state.dashboard = d;
+        // 待办类指标可点击直达对应页面；有积压时标红提醒
         var cells = [
-          ['用户数', d.userCount], ['家庭数', d.familyCount], ['在线菜谱', d.recipeCount],
-          ['已发布帖子', d.postCount], ['待处理举报', d.pendingReportCount],
-          ['待处理反馈', d.openFeedbackCount], ['已支付订单', d.paidOrderCount], ['有效会员', d.activeVipCount]
+          { label: '用户数', value: d.userCount },
+          { label: '家庭数', value: d.familyCount },
+          { label: '在线菜谱', value: d.recipeCount },
+          { label: '已发布帖子', value: d.postCount },
+          { label: '待审帖子', value: d.pendingPostCount, tab: 'posts', filter: 'PENDING' },
+          { label: '待审评论', value: d.pendingCommentCount, tab: 'comments', filter: 'PENDING' },
+          { label: '待处理举报', value: d.pendingReportCount, tab: 'reports', filter: 'PENDING' },
+          { label: '待处理反馈', value: d.openFeedbackCount, tab: 'feedback', filter: 'OPEN' },
+          { label: '已支付订单', value: d.paidOrderCount, tab: 'orders', filter: 'PAID' },
+          { label: '有效会员', value: d.activeVipCount }
         ];
         $('panelRoot').innerHTML =
           '<div class="card"><h2>运营概览</h2><div class="stat-grid">' +
           cells.map(function (c) {
-            return '<div class="stat"><div class="stat-num">' + escapeHtml(String(c[1])) + '</div>' +
-              '<div class="stat-label">' + escapeHtml(c[0]) + '</div></div>';
+            var alert = c.tab && Number(c.value) > 0;
+            var attrs = c.tab
+              ? ' data-goto="' + c.tab + '" data-gotofilter="' + (c.filter || '') + '" role="button" tabindex="0"'
+              : '';
+            return '<div class="stat' + (alert ? ' stat-alert' : '') + (c.tab ? ' stat-link' : '') + '"' + attrs + '>' +
+              '<div class="stat-num">' + escapeHtml(String(c.value)) + '</div>' +
+              '<div class="stat-label">' + escapeHtml(c.label) + (c.tab ? ' ›' : '') + '</div></div>';
           }).join('') + '</div>' +
-          '<p class="muted" style="margin-top:14px">统计时间：' + escapeHtml(d.generatedAt) + '</p></div>';
+          '<p class="muted" style="margin-top:14px">统计时间：' + escapeHtml(d.generatedAt) +
+          '　·　点击带 › 的指标可直达对应列表</p></div>';
       })
       .catch(errorCard);
+  }
+
+  /** 看板指标 → 跳转到对应标签页并带上筛选条件 */
+  function gotoStat(tab, filter) {
+    state.tab = tab;
+    if (tab === 'posts') state.postFilter = filter || '';
+    if (tab === 'comments') state.commentFilter = filter || '';
+    if (tab === 'reports') state.reportFilter = filter || '';
+    if (tab === 'feedback') state.feedbackFilter = filter || '';
+    if (tab === 'orders') state.orderFilter = filter || '';
+    renderTabs();
+    loadTab();
   }
 
   // ---------------- 举报审核 ----------------
   function loadReports() {
     loadingCard();
-    request('/api/community/reports?status=PENDING')
+    request('/api/community/reports?status=' + encodeURIComponent(state.reportFilter || ''))
       .then(function (list) { state.reports = Array.isArray(list) ? list : []; renderReports(); })
       .catch(errorCard);
   }
 
   function renderReports() {
     var rows = state.reports;
-    if (!rows.length) { $('panelRoot').innerHTML = '<div class="card"><div class="empty">暂无待处理举报</div></div>'; return; }
-    $('panelRoot').innerHTML =
-      '<div class="card"><h2>待处理举报（' + rows.length + '）</h2>' +
-      '<table><thead><tr><th>ID</th><th>帖子</th><th>原因</th><th>说明</th><th>时间</th><th>操作</th></tr></thead><tbody>' +
-      rows.map(function (r) {
-        return '<tr><td>' + escapeHtml(String(r.reportId)) + '</td><td>#' + escapeHtml(String(r.postId)) + '</td>' +
-          '<td>' + escapeHtml(r.reason || '') + '</td><td>' + escapeHtml(r.description || '—') + '</td>' +
-          '<td>' + escapeHtml(r.createdAt || '') + '</td><td class="actions">' +
-          '<button class="btn small danger" data-review="' + escapeHtml(String(r.reportId)) + '" data-status="REMOVED">下架</button> ' +
-          '<button class="btn small" data-review="' + escapeHtml(String(r.reportId)) + '" data-status="IGNORED">忽略</button>' +
-          '</td></tr>';
-      }).join('') + '</tbody></table></div>';
+    var filters = [['PENDING', '待处理'], ['REMOVED', '已下架'], ['IGNORED', '已忽略'], ['', '全部']];
+    var head = '<div class="toolbar">' + filters.map(function (f) {
+      return '<button class="btn small ' + (state.reportFilter === f[0] ? 'primary-sm' : '') +
+        '" data-rptfilter="' + f[0] + '">' + f[1] + '</button>';
+    }).join('') + '<span class="muted" style="align-self:center">共 ' + escapeHtml(String(rows.length)) + ' 条</span></div>';
+    var body = rows.length ? rows.map(function (r) {
+      var pending = r.status === 'PENDING';
+      var pill = pending ? '<span class="pill pending">待处理</span>'
+        : (r.status === 'REMOVED' ? '<span class="pill bad">已下架</span>' : '<span class="pill">已忽略</span>');
+      return '<tr><td>' + escapeHtml(String(r.reportId)) + '</td><td>#' + escapeHtml(String(r.postId)) + '</td>' +
+        '<td>' + escapeHtml(r.reason || '') + '</td><td class="clamp">' + escapeHtml(r.description || '—') + '</td>' +
+        '<td>' + pill + '</td>' +
+        '<td>' + escapeHtml(r.createdAt || '') + '</td><td class="actions">' +
+        (pending
+          ? '<button class="btn small danger" data-review="' + escapeHtml(String(r.reportId)) + '" data-status="REMOVED">下架帖子</button> ' +
+            '<button class="btn small" data-review="' + escapeHtml(String(r.reportId)) + '" data-status="IGNORED">忽略</button>'
+          : escapeHtml(r.reviewNote || '—')) +
+        '</td></tr>';
+    }).join('') : '<tr><td colspan="7"><div class="empty">没有举报记录</div></td></tr>';
+    $('panelRoot').innerHTML = '<div class="card"><h2>举报审核</h2>' + head +
+      '<table><thead><tr><th>ID</th><th>帖子</th><th>原因</th><th>说明</th><th>状态</th><th>时间</th><th>操作</th></tr></thead>' +
+      '<tbody>' + body + '</tbody></table></div>';
   }
 
   function reviewReport(reportId, status) {
@@ -287,6 +326,7 @@
   function loadComments() {
     loadingCard();
     var q = '/api/admin/comments?limit=200' +
+      '&auditStatus=' + encodeURIComponent(state.commentFilter || '') +
       (state.commentPostId ? '&postId=' + encodeURIComponent(state.commentPostId) : '');
     request(q)
       .then(function (list) { state.comments = Array.isArray(list) ? list : []; renderComments(); })
@@ -295,24 +335,52 @@
 
   function renderComments() {
     var rows = state.comments;
-    var head = '<div class="toolbar"><input id="commentPostFilter" type="search" placeholder="按帖子 ID 过滤（留空看全部）" value="' +
+    var filters = [['PENDING', '待审核'], ['APPROVED', '已通过'], ['REMOVED', '已驳回'], ['', '全部']];
+    var head = '<div class="toolbar">' + filters.map(function (f) {
+      return '<button class="btn small ' + (state.commentFilter === f[0] ? 'primary-sm' : '') +
+        '" data-cmtfilter="' + f[0] + '">' + f[1] + '</button>';
+    }).join('') +
+      '<input id="commentPostFilter" type="search" placeholder="按帖子 ID 过滤（留空看全部）" value="' +
       escapeHtml(state.commentPostId) + '" /><button class="btn" id="commentFilterBtn">过滤</button>' +
       '<span class="muted" style="align-self:center">共 ' + escapeHtml(String(rows.length)) + ' 条</span></div>';
     var body = rows.length ? rows.map(function (c) {
-      return '<tr><td>' + escapeHtml(String(c.commentId)) + '</td>' +
+      var pill = c.deleted
+        ? '<span class="pill bad">已删除</span>'
+        : (c.auditStatus === 'PENDING'
+          ? '<span class="pill pending">待审核</span>'
+          : (c.auditStatus === 'REMOVED'
+            ? '<span class="pill bad">已驳回</span>'
+            : '<span class="pill ok">已通过</span>'));
+      var cid = escapeHtml(String(c.commentId));
+      var actions = '';
+      if (c.auditStatus === 'PENDING') {
+        actions += '<button class="btn small primary-sm" data-cmtstatus="' + cid + '" data-on="APPROVED">通过</button> ' +
+          '<button class="btn small danger" data-cmtstatus="' + cid + '" data-on="REMOVED">驳回</button> ';
+      } else if (c.auditStatus === 'REMOVED') {
+        actions += '<button class="btn small" data-cmtstatus="' + cid + '" data-on="APPROVED">恢复可见</button> ';
+      }
+      actions += c.deleted
+        ? '<button class="btn small" data-cmtrestore="' + cid + '">恢复</button>'
+        : '<button class="btn small danger" data-cmtdel="' + cid + '">删除</button>';
+      return '<tr><td>' + cid + '</td>' +
         '<td>#' + escapeHtml(String(c.postId)) + ' ' + escapeHtml(c.postTitle || '') + '</td>' +
         '<td>' + escapeHtml(c.authorNickname || ('用户' + c.authorUserId)) + '</td>' +
         '<td class="clamp">' + escapeHtml(c.content || '') + '</td>' +
-        '<td>' + (c.deleted ? '<span class="pill bad">已删除</span>' : '<span class="pill ok">正常</span>') + '</td>' +
-        '<td>' + escapeHtml(c.createdAt || '') + '</td><td class="actions">' +
-        (c.deleted
-          ? '<button class="btn small" data-cmtrestore="' + escapeHtml(String(c.commentId)) + '">恢复</button>'
-          : '<button class="btn small danger" data-cmtdel="' + escapeHtml(String(c.commentId)) + '">删除</button>') +
-        '</td></tr>';
+        '<td>' + pill + '</td>' +
+        '<td>' + escapeHtml(c.createdAt || '') + '</td><td class="actions">' + actions + '</td></tr>';
     }).join('') : '<tr><td colspan="7"><div class="empty">没有评论</div></td></tr>';
-    $('panelRoot').innerHTML = '<div class="card"><h2>评论管理</h2>' + head +
+    $('panelRoot').innerHTML = '<div class="card"><h2>评论管理</h2>' +
+      '<p class="muted">「待审核」是机审无法判定的评论（游客账号没有真实微信 openid）：作者本人可见，其他人看不到，需要你在这里通过或驳回。</p>' +
+      head +
       '<table><thead><tr><th>ID</th><th>帖子</th><th>作者</th><th>内容</th><th>状态</th><th>时间</th><th>操作</th></tr></thead>' +
       '<tbody>' + body + '</tbody></table></div>';
+  }
+
+  function setCommentStatus(commentId, status) {
+    request('/api/admin/comments/' + encodeURIComponent(commentId) + '/status', {
+      method: 'POST', body: { status: status }
+    }).then(function () { toast(status === 'APPROVED' ? '已通过' : '已驳回'); loadComments(); })
+      .catch(function (err) { toast(err.message); });
   }
 
   function deleteComment(commentId) {
@@ -579,25 +647,49 @@
   }
 
   function renderAudit() {
-    var rows = state.audit;
+    var kw = (state.auditKeyword || '').trim().toLowerCase();
+    var all = state.audit;
+    var rows = kw ? all.filter(function (a) {
+      return [a.actorNickname, a.action, a.targetType, a.targetId, a.detail, a.result]
+        .some(function (v) { return String(v == null ? '' : v).toLowerCase().indexOf(kw) >= 0; });
+    }) : all;
+    var head = '<div class="toolbar"><input id="auditSearch" type="search" placeholder="搜操作人 / 动作 / 对象 / 详情" value="' +
+      escapeHtml(state.auditKeyword) + '" /><button class="btn" id="auditSearchBtn">搜索</button>' +
+      '<span class="muted" style="align-self:center">显示 ' + escapeHtml(String(rows.length)) + ' / ' +
+      escapeHtml(String(all.length)) + ' 条（最近 200 条）</span></div>';
     var body = rows.length ? rows.map(function (a) {
       return '<tr><td>' + escapeHtml(String(a.id)) + '</td>' +
         '<td>' + escapeHtml(a.actorNickname || String(a.actorUserId)) + '</td>' +
         '<td>' + escapeHtml(a.action) + '</td>' +
         '<td>' + escapeHtml(a.targetType + (a.targetId ? '#' + a.targetId : '')) + '</td>' +
-        '<td>' + escapeHtml(a.detail || '—') + '</td>' +
+        '<td class="clamp">' + escapeHtml(a.detail || '—') + '</td>' +
         '<td><span class="pill ' + (a.result === 'OK' ? 'ok' : 'bad') + '">' + escapeHtml(a.result) + '</span></td>' +
         '<td>' + escapeHtml(a.createdAt || '') + '</td></tr>';
-    }).join('') : '<tr><td colspan="7"><div class="empty">暂无操作记录</div></td></tr>';
-    $('panelRoot').innerHTML = '<div class="card"><h2>审计日志</h2>' +
+    }).join('') : '<tr><td colspan="7"><div class="empty">没有匹配的操作记录</div></td></tr>';
+    $('panelRoot').innerHTML = '<div class="card"><h2>审计日志</h2>' + head +
       '<table><thead><tr><th>ID</th><th>操作人</th><th>动作</th><th>对象</th><th>详情</th><th>结果</th><th>时间</th></tr></thead>' +
       '<tbody>' + body + '</tbody></table></div>';
   }
 
   // ---------------- 事件绑定 ----------------
+  // 可点击元素内部常有子节点（如看板卡片的数字/文字），点击时 e.target 是子节点，
+  // 直接读它的 data-* 会拿到 null，所以先向上找到真正带属性的宿主元素。
+  var CLICKABLE = [
+    '[data-tab]', '[data-goto]', '[data-review]', '[data-rptfilter]',
+    '[data-admin]', '[data-vip]', '[data-postfilter]', '[data-poststatus]',
+    '[data-recipefilter]', '[data-recipestatus]', '[data-cmtfilter]', '[data-cmtstatus]',
+    '[data-cmtdel]', '[data-cmtrestore]', '[data-fbfilter]', '[data-fb]',
+    '[data-orderfilter]', '[data-orderclose]', '[data-orderrefund]', '[data-userstatus]',
+    '[data-importfilter]', '[data-import]'
+  ].join(',');
+
   document.addEventListener('click', function (e) {
     var t = e.target;
     if (!(t instanceof HTMLElement)) return;
+    if (t.closest) {
+      var host = t.closest(CLICKABLE);
+      if (host) t = host;
+    }
     var id = t.id;
 
     if (id === 'sendOtpBtn') { sendOtp(); return; }
@@ -614,6 +706,12 @@
 
     var review = t.getAttribute('data-review');
     if (review) { reviewReport(review, t.getAttribute('data-status')); return; }
+
+    var rptf = t.getAttribute('data-rptfilter');
+    if (rptf !== null) { state.reportFilter = rptf; loadReports(); return; }
+
+    var goto = t.getAttribute('data-goto');
+    if (goto) { gotoStat(goto, t.getAttribute('data-gotofilter')); return; }
 
     var adminId = t.getAttribute('data-admin');
     if (adminId) { setAdmin(adminId, t.getAttribute('data-on') === '1'); return; }
@@ -644,6 +742,15 @@
     if (cd) { deleteComment(cd); return; }
     var cr = t.getAttribute('data-cmtrestore');
     if (cr) { restoreComment(cr); return; }
+    var ctf = t.getAttribute('data-cmtfilter');
+    if (ctf !== null) { state.commentFilter = ctf; loadComments(); return; }
+    var cts = t.getAttribute('data-cmtstatus');
+    if (cts) { setCommentStatus(cts, t.getAttribute('data-on')); return; }
+
+    if (id === 'auditSearchBtn') {
+      state.auditKeyword = ($('auditSearch') || {}).value || '';
+      renderAudit(); return;
+    }
 
     var fbf = t.getAttribute('data-fbfilter');
     if (fbf !== null) { state.feedbackFilter = fbf; loadFeedback(); return; }
@@ -683,6 +790,10 @@
     if (e.key === 'Enter' && e.target && e.target.id === 'commentPostFilter') {
       state.commentPostId = e.target.value || '';
       loadComments();
+    }
+    if (e.key === 'Enter' && e.target && e.target.id === 'auditSearch') {
+      state.auditKeyword = e.target.value || '';
+      renderAudit();
     }
   });
 

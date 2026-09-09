@@ -243,6 +243,87 @@ class AdminModulesTests {
         }
     }
 
+    /**
+     * 评论审核闭环：游客（无真实微信 openid，无法机审）发的评论必须先进待审队列，
+     * 只有管理员通过后才对其他人可见；驳回后再次不可见。
+     */
+    @Test
+    void pendingCommentIsInvisibleUntilAdminApproves() throws Exception {
+        long[] id = new long[1];
+        String admin = adminToken(id);
+        Long postId = jdbcTemplate.queryForObject(
+                "SELECT id FROM community_post ORDER BY id LIMIT 1", Long.class);
+        String author = guestLogin();
+        String other = guestLogin();
+        String content = "待审评论-" + System.nanoTime();
+        long commentId = 0;
+        try {
+            MvcResult added = mockMvc.perform(post("/api/community/posts/" + postId + "/comments")
+                            .header("X-Auth-Token", author)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("{\"content\":\"" + content + "\"}"))
+                    .andExpect(status().isOk()).andReturn();
+            commentId = objectMapper.readTree(added.getResponse().getContentAsString()).get("commentId").asLong();
+
+            assertThat(jdbcTemplate.queryForObject(
+                    "SELECT audit_status FROM community_post_comment WHERE id = ?", String.class, commentId))
+                    .as("游客评论应进待审队列").isEqualTo("PENDING");
+
+            // 用 commentId 断言（避免中文字符串在 MockHttpServletResponse 里的编码干扰）
+            String idToken = "\"commentId\":" + commentId;
+
+            assertThat(mockMvc.perform(get("/api/community/posts/" + postId + "/comments")
+                            .header("X-Auth-Token", other))
+                    .andExpect(status().isOk()).andReturn().getResponse().getContentAsString())
+                    .as("待审评论对其他人不可见").doesNotContain(idToken);
+
+            assertThat(mockMvc.perform(get("/api/admin/comments?auditStatus=PENDING")
+                            .header("X-Auth-Token", admin))
+                    .andExpect(status().isOk()).andReturn().getResponse().getContentAsString())
+                    .as("管理台待审列表应包含它").contains(idToken);
+
+            mockMvc.perform(post("/api/admin/comments/" + commentId + "/status")
+                            .header("X-Auth-Token", admin)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("{\"status\":\"APPROVED\"}"))
+                    .andExpect(status().isOk());
+            assertThat(mockMvc.perform(get("/api/community/posts/" + postId + "/comments")
+                            .header("X-Auth-Token", other))
+                    .andExpect(status().isOk()).andReturn().getResponse().getContentAsString())
+                    .as("通过后对其他人可见").contains(idToken);
+
+            mockMvc.perform(post("/api/admin/comments/" + commentId + "/status")
+                            .header("X-Auth-Token", admin)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("{\"status\":\"REMOVED\"}"))
+                    .andExpect(status().isOk());
+            assertThat(mockMvc.perform(get("/api/community/posts/" + postId + "/comments")
+                            .header("X-Auth-Token", other))
+                    .andExpect(status().isOk()).andReturn().getResponse().getContentAsString())
+                    .as("驳回后再次不可见").doesNotContain(idToken);
+        } finally {
+            if (commentId > 0) {
+                jdbcTemplate.update("DELETE FROM community_post_comment WHERE id = ?", commentId);
+            }
+            demote(id[0]);
+        }
+    }
+
+    /** 看板必须暴露待审帖子/待审评论数，否则管理员无从知道有内容卡在队列里。 */
+    @Test
+    void dashboardExposesPendingModerationCounts() throws Exception {
+        long[] id = new long[1];
+        String admin = adminToken(id);
+        try {
+            mockMvc.perform(get("/api/admin/dashboard").header("X-Auth-Token", admin))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.pendingPostCount").isNumber())
+                    .andExpect(jsonPath("$.pendingCommentCount").isNumber());
+        } finally {
+            demote(id[0]);
+        }
+    }
+
     @Test
     void adminCanRemoveAndRestoreRecipe() throws Exception {
         long[] id = new long[1];

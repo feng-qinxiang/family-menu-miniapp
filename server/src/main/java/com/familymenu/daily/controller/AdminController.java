@@ -4,6 +4,7 @@ import com.familymenu.daily.auth.CurrentUser;
 import com.familymenu.daily.auth.RequiresAdmin;
 import com.familymenu.daily.dto.AdminModels.AdminAuditItem;
 import com.familymenu.daily.dto.AdminModels.AdminCommentItem;
+import com.familymenu.daily.dto.AdminModels.AdminCommentStatusRequest;
 import com.familymenu.daily.dto.AdminModels.AdminContentStatusRequest;
 import com.familymenu.daily.dto.AdminModels.AdminDashboard;
 import com.familymenu.daily.dto.AdminModels.AdminFeedbackHandleRequest;
@@ -218,12 +219,32 @@ public class AdminController {
         return adminService.listRecipes(keyword, status, limit);
     }
 
-    /** 评论列表（治理用）：可按帖子过滤，含已删除评论。 */
+    /** 评论列表（治理用）：可按帖子与审核状态过滤，含已删除评论。 */
     @GetMapping("/comments")
     @RequiresAdmin
     public List<AdminCommentItem> listComments(@RequestParam(required = false) Long postId,
+                                               @RequestParam(required = false) String auditStatus,
                                                @RequestParam(defaultValue = "100") int limit) {
-        return adminService.listComments(postId, limit);
+        return adminService.listComments(postId, limit, auditStatus);
+    }
+
+    /** 评论审核：通过（APPROVED）/ 驳回（REMOVED）。 */
+    @PostMapping("/comments/{commentId}/status")
+    @RequiresAdmin
+    public Map<String, Object> setCommentStatus(@PathVariable long commentId,
+                                                @RequestBody(required = false) AdminCommentStatusRequest request,
+                                                @CurrentUser AuthUser actor) {
+        String status = request == null ? null : request.status();
+        try {
+            adminService.setCommentAuditStatus(commentId, status);
+            auditService.record(actor.userId(), actor.nickname(), "REVIEW_COMMENT", "comment", commentId,
+                    status, true);
+            return Map.of("ok", true);
+        } catch (RuntimeException ex) {
+            auditService.record(actor.userId(), actor.nickname(), "REVIEW_COMMENT", "comment", commentId,
+                    ex.getMessage(), false);
+            throw ex;
+        }
     }
 
     /** 恢复被误删的评论。 */

@@ -229,7 +229,7 @@ public class MysqlKitchenStore {
                     GROUP BY post_id
                 ) fav ON fav.post_id = p.id
                 LEFT JOIN community_post_favorite my_fav ON my_fav.post_id = p.id AND my_fav.user_id = ?
-                WHERE p.audit_status = 'APPROVED' OR p.author_user_id = ?
+                WHERE p.audit_status = 'APPROVED' OR (p.audit_status = 'PENDING' AND p.author_user_id = ?)
                 ORDER BY p.like_count DESC, p.id DESC
                 """;
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
@@ -353,7 +353,8 @@ public class MysqlKitchenStore {
                         FROM community_post_comment c
                         JOIN user_account u ON u.id = c.user_id
                         WHERE c.post_id = ? AND c.deleted = 0
-                          AND (c.audit_status = 'APPROVED' OR c.user_id = ?)
+                          AND (c.audit_status = 'APPROVED'
+                               OR (c.audit_status = 'PENDING' AND c.user_id = ?))
                         ORDER BY c.id DESC
                         LIMIT 20
                         """,

@@ -102,6 +102,13 @@ body {
 }
 .stat-num { font-size: 26px; font-weight: 700; line-height: 1.2; }
 .stat-label { font-size: 12px; color: var(--mut); margin-top: 4px; }
+/* 可点击的待办指标（点击直达对应列表） */
+.stat-link { cursor: pointer; transition: border-color .15s, transform .15s; }
+.stat-link:hover { border-color: var(--gold); transform: translateY(-1px); }
+.stat-link:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+/* 有积压时标红，避免管理员漏看待办 */
+.stat-alert { border-color: rgba(179, 38, 30, .45); background: rgba(179, 38, 30, .05); }
+.stat-alert .stat-num { color: var(--danger); }
 
 .msg { margin-top: 14px; font-size: 13px; min-height: 20px; }
 .msg.error { color: var(--danger); }
@@ -191,3 +198,17 @@ td.clamp { max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-sp
 /* hidden 属性必须生效：.login-wrap/.toast 等设置了 display，
    作者样式会覆盖 UA 的 [hidden]{display:none}，导致登录框在登录后仍然显示 */
 [hidden] { display: none !important; }
+
+/* ============ 窄屏（手机/平板）============
+   运营偶尔用手机处理举报，表格改成横向滚动而不是挤压变形 */
+@media (max-width: 760px) {
+  .app-wrap { padding: 16px; }
+  .topbar { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .tabs { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px; }
+  .tab { white-space: nowrap; }
+  .stat-grid { grid-template-columns: repeat(auto-fit, minmax(104px, 1fr)); }
+  .card { overflow-x: auto; }
+  .card > table { min-width: 620px; }
+  .toolbar input { min-width: 0; flex: 1 1 160px; }
+  td.clamp { max-width: 160px; }
+}

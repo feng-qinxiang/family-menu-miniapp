@@ -362,16 +362,19 @@ public class AdminService {
                 kw, like, st, st, safeLimit);
     }
 
-    /** 评论列表（治理用）：可按帖子过滤，包含已软删除的评论（deleted 标记）。 */
-    public List<AdminCommentItem> listComments(Long postId, int limit) {
+    /** 评论列表（治理用）：可按帖子与审核状态过滤，包含已软删除的评论（deleted 标记）。 */
+    public List<AdminCommentItem> listComments(Long postId, int limit, String auditStatus) {
         int safeLimit = Math.max(1, Math.min(limit, 200));
         Long pid = (postId == null || postId <= 0) ? null : postId;
+        String st = auditStatus == null ? "" : auditStatus.trim().toUpperCase();
         return jdbcTemplate.query("""
-                        SELECT c.id, c.post_id, p.title, c.user_id, u.nickname, c.content, c.deleted, c.created_at
+                        SELECT c.id, c.post_id, p.title, c.user_id, u.nickname, c.content, c.audit_status,
+                               c.deleted, c.created_at
                         FROM community_post_comment c
                         JOIN community_post p ON p.id = c.post_id
                         LEFT JOIN user_account u ON u.id = c.user_id
                         WHERE (? IS NULL OR c.post_id = ?)
+                          AND (? = '' OR c.audit_status = ?)
                         ORDER BY c.id DESC LIMIT ?
                         """,
                 (rs, rowNum) -> new AdminCommentItem(
@@ -381,10 +384,53 @@ public class AdminService {
                         rs.getObject("user_id") == null ? null : rs.getLong("user_id"),
                         rs.getString("nickname"),
                         rs.getString("content"),
+                        rs.getString("audit_status"),
                         rs.getBoolean("deleted"),
                         rs.getString("created_at")
                 ),
-                pid, pid, safeLimit);
+                pid, pid, st, st, safeLimit);
+    }
+
+    /**
+     * 评论审核：通过（APPROVED）/ 驳回（REMOVED）。
+     * 与软删除（deleted）分开：驳回是"内容不合规"，删除是"清理垃圾"，
+     * 两者都让评论对公众不可见，但语义不同、可分别追溯。
+     */
+    @Transactional
+    public void setCommentAuditStatus(long commentId, String status) {
+        String target = status == null ? "" : status.trim().toUpperCase();
+        if (!target.equals("APPROVED") && !target.equals("REMOVED")) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "状态只能是 APPROVED/REMOVED");
+        }
+        String previous = jdbcTemplate.query(
+                "SELECT audit_status FROM community_post_comment WHERE id = ?",
+                rs -> rs.next() ? rs.getString(1) : null, commentId);
+        if (previous == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "评论不存在");
+        }
+        if (previous.equals(target)) {
+            return; // 幂等：重复点同一个按钮不重复计数
+        }
+        jdbcTemplate.update(
+                "UPDATE community_post_comment SET audit_status = ? WHERE id = ?", target, commentId);
+        // comment_count 只统计"已通过"的评论：状态在 APPROVED 与非 APPROVED 之间切换时同步增减。
+        boolean wasCounted = previous.equals("APPROVED");
+        boolean nowCounted = target.equals("APPROVED");
+        if (wasCounted && !nowCounted) {
+            jdbcTemplate.update("""
+                    UPDATE community_post p
+                    JOIN community_post_comment c ON c.post_id = p.id
+                    SET p.comment_count = GREATEST(p.comment_count - 1, 0)
+                    WHERE c.id = ?
+                    """, commentId);
+        } else if (!wasCounted && nowCounted) {
+            jdbcTemplate.update("""
+                    UPDATE community_post p
+                    JOIN community_post_comment c ON c.post_id = p.id
+                    SET p.comment_count = p.comment_count + 1
+                    WHERE c.id = ?
+                    """, commentId);
+        }
     }
 
     /** 恢复被误删的评论（软删除的逆操作）。 */
@@ -535,12 +581,14 @@ public class AdminService {
         long families = count("SELECT COUNT(*) FROM family");
         long recipes = count("SELECT COUNT(*) FROM recipe WHERE status = 'ACTIVE'");
         long posts = count("SELECT COUNT(*) FROM community_post WHERE audit_status = 'APPROVED'");
+        long pendingPosts = count("SELECT COUNT(*) FROM community_post WHERE audit_status = 'PENDING'");
+        long pendingComments = count("SELECT COUNT(*) FROM community_post_comment WHERE audit_status = 'PENDING'");
         long pendingReports = count("SELECT COUNT(*) FROM community_post_report WHERE status = 'PENDING'");
         long openFeedback = count("SELECT COUNT(*) FROM feedback_ticket WHERE status = 'OPEN'");
         long paidOrders = count("SELECT COUNT(*) FROM payment_order WHERE status = 'PAID'");
         long activeVip = count("SELECT COUNT(DISTINCT payer_user_id) FROM user_membership WHERE expires_at > NOW()");
-        return new AdminDashboard(users, families, recipes, posts, pendingReports, openFeedback,
-                paidOrders, activeVip, LocalDateTime.now().toString());
+        return new AdminDashboard(users, families, recipes, posts, pendingPosts, pendingComments,
+                pendingReports, openFeedback, paidOrders, activeVip, LocalDateTime.now().toString());
     }
 
     public List<AdminAuditItem> listAudit(int limit) {

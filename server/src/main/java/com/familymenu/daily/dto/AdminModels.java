@@ -98,8 +98,17 @@ public final class AdminModels {
             Long authorUserId,
             String authorNickname,
             String content,
+            /** 审核状态：PENDING 待审核 / APPROVED 已通过 / REMOVED 已驳回 */
+            String auditStatus,
             boolean deleted,
             String createdAt
+    ) {
+    }
+
+    /** 评论审核状态变更请求（APPROVED / REMOVED）。 */
+    public record AdminCommentStatusRequest(
+            String status,
+            String note
     ) {
     }
 
@@ -160,6 +169,10 @@ public final class AdminModels {
             long familyCount,
             long recipeCount,
             long postCount,
+            /** 待人工审核的帖子（机审无法判定时进队列） */
+            long pendingPostCount,
+            /** 待人工审核的评论 */
+            long pendingCommentCount,
             long pendingReportCount,
             long openFeedbackCount,
             long paidOrderCount,
