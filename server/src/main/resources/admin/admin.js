@@ -40,10 +40,11 @@
 
   // ==================== 基础工具 ====================
 
-  function toast(text, ms) {
+  function toast(text, ms, kind) {
     var el = $('toast');
     if (!el) return;
     el.textContent = text;
+    el.className = 'toast' + (kind ? ' ' + kind : '');
     el.hidden = false;
     clearTimeout(toast._t);
     toast._t = setTimeout(function () { el.hidden = true; }, ms || 2200);
@@ -423,7 +424,7 @@
   function closeNav() { $('appView').classList.remove('nav-open'); }
 
   function loadingCard() {
-    $('panelRoot').innerHTML = '<div class="card"><p class="muted">加载中…</p></div>';
+    $('panelRoot').innerHTML = '<div class="card"><div class="loading"><span class="spinner"></span>加载中…</div></div>';
   }
 
   function errorCard(err) {
@@ -616,12 +617,24 @@
   }
 
   function reviewReport(reportId, status) {
-    request('/api/community/reports/' + encodeURIComponent(reportId) + '/review', {
-      method: 'POST', body: { status: status, note: '' }
-    }).then(function () {
-      toast(status === 'REMOVED' ? '已下架' : '已忽略');
-      loadReports();
-    }).catch(function (err) { toast(err.message); });
+    var r = findReport(reportId);
+    var removing = status === 'REMOVED';
+    confirmDialog({
+      title: removing ? '下架该帖子？' : '忽略这条举报？',
+      desc: removing
+        ? '帖子 #' + (r.postId || '') + '「' + (r.postTitle || '') + '」将立即从公开列表消失。举报原因：' + (r.reason || '—')
+        : '举报 #' + reportId + ' 会被标记为已忽略，帖子保持可见。',
+      danger: removing,
+      confirmText: removing ? '确认下架' : '确认忽略'
+    }).then(function (ok) {
+      if (!ok) return;
+      return request('/api/community/reports/' + encodeURIComponent(reportId) + '/review', {
+        method: 'POST', body: { status: status, note: '' }
+      }).then(function () {
+        toast(removing ? '已下架' : '已忽略');
+        loadReports();
+      }).catch(function (err) { toast(err.message, 2600, 'error'); });
+    });
   }
 
   // ==================== 内容治理 ====================
@@ -670,12 +683,22 @@
   }
 
   function setPostStatus(postId, status) {
-    request('/api/admin/posts/' + encodeURIComponent(postId) + '/status', {
-      method: 'POST', body: { status: status }
-    }).then(function () {
-      toast(status === 'REMOVED' ? '已下架' : (status === 'APPROVED' ? '已通过' : '已更新'));
-      loadPosts();
-    }).catch(function (err) { toast(err.message); });
+    var p = findPost(postId);
+    var run = function () {
+      return request('/api/admin/posts/' + encodeURIComponent(postId) + '/status', {
+        method: 'POST', body: { status: status }
+      }).then(function () {
+        toast(status === 'REMOVED' ? '已下架' : (status === 'APPROVED' ? '已通过' : '已更新'));
+        loadPosts();
+      }).catch(function (err) { toast(err.message, 2600, 'error'); });
+    };
+    if (status !== 'REMOVED') { run(); return; }
+    confirmDialog({
+      title: '下架该帖子？',
+      desc: '「' + (p.title || ('帖子 #' + postId)) + '」将立即从公开列表消失，作者自己也看不到。',
+      danger: true,
+      confirmText: '确认下架'
+    }).then(function (ok) { if (ok) run(); });
   }
 
   // ==================== 评论管理 ====================
@@ -734,20 +757,28 @@
     request('/api/admin/comments/' + encodeURIComponent(commentId) + '/status', {
       method: 'POST', body: { status: status }
     }).then(function () { toast(status === 'APPROVED' ? '已通过' : '已驳回'); loadComments(); })
-      .catch(function (err) { toast(err.message); });
+      .catch(function (err) { toast(err.message, 2600, 'error'); });
   }
 
   function deleteComment(commentId) {
-    if (!window.confirm('确认删除该评论？（软删除，可在「已删除」中恢复）')) return;
-    request('/api/admin/comments/' + encodeURIComponent(commentId), { method: 'DELETE' })
-      .then(function () { toast('已删除'); loadComments(); })
-      .catch(function (err) { toast(err.message); });
+    var c = findComment(commentId);
+    confirmDialog({
+      title: '删除该评论？',
+      desc: '「' + (c.content || '评论 #' + commentId) + '」将被软删除，公开列表立即不可见，之后可在「已删除」里恢复。',
+      danger: true,
+      confirmText: '确认删除'
+    }).then(function (ok) {
+      if (!ok) return;
+      request('/api/admin/comments/' + encodeURIComponent(commentId), { method: 'DELETE' })
+        .then(function () { toast('已删除'); loadComments(); })
+        .catch(function (err) { toast(err.message, 2600, 'error'); });
+    });
   }
 
   function restoreComment(commentId) {
     request('/api/admin/comments/' + encodeURIComponent(commentId) + '/restore', { method: 'POST' })
       .then(function () { toast('已恢复'); loadComments(); })
-      .catch(function (err) { toast(err.message); });
+      .catch(function (err) { toast(err.message, 2600, 'error'); });
   }
 
   // ==================== 菜谱治理 ====================
@@ -788,11 +819,20 @@
   }
 
   function setRecipeStatus(recipeId, status) {
-    if (status === 'REMOVED' && !window.confirm('确认下架该菜谱？用户端将不再展示。')) return;
-    request('/api/admin/recipes/' + encodeURIComponent(recipeId) + '/status', {
-      method: 'POST', body: { status: status }
-    }).then(function () { toast(status === 'REMOVED' ? '已下架' : '已恢复'); loadRecipes(); })
-      .catch(function (err) { toast(err.message); });
+    var r = findRecipe(recipeId);
+    var run = function () {
+      return request('/api/admin/recipes/' + encodeURIComponent(recipeId) + '/status', {
+        method: 'POST', body: { status: status }
+      }).then(function () { toast(status === 'REMOVED' ? '已下架' : '已恢复'); loadRecipes(); })
+        .catch(function (err) { toast(err.message, 2600, 'error'); });
+    };
+    if (status !== 'REMOVED') { run(); return; }
+    confirmDialog({
+      title: '下架该菜谱？',
+      desc: '「' + (r.title || ('菜谱 #' + recipeId)) + '」下架后用户端不再展示，已收藏/已加购的用户也会看不到。',
+      danger: true,
+      confirmText: '确认下架'
+    }).then(function (ok) { if (ok) run(); });
   }
 
   // ==================== 反馈工单 ====================
@@ -832,11 +872,27 @@
   }
 
   function handleFeedback(id, status) {
-    var reply = status === 'CLOSED' ? (window.prompt('回复内容（可选）') || '') : '';
+    if (status === 'CLOSED') {
+      promptDialog({
+        title: '关闭工单 #' + id,
+        desc: '可选：填一段回复，用户会在小程序「我的反馈」里看到。',
+        label: '回复内容（可留空）',
+        multiline: true,
+        placeholder: '例如：问题已修复，请更新到最新版本后重试。',
+        confirmText: '确认关闭'
+      }).then(function (reply) {
+        if (reply === null) return;
+        request('/api/admin/feedback/' + encodeURIComponent(id) + '/handle', {
+          method: 'POST', body: { status: 'CLOSED', reply: reply }
+        }).then(function () { toast('已关闭'); loadFeedback(); })
+          .catch(function (err) { toast(err.message, 2600, 'error'); });
+      });
+      return;
+    }
     request('/api/admin/feedback/' + encodeURIComponent(id) + '/handle', {
-      method: 'POST', body: { status: status, reply: reply }
-    }).then(function () { toast('已更新'); loadFeedback(); })
-      .catch(function (err) { toast(err.message); });
+      method: 'POST', body: { status: status, reply: '' }
+    }).then(function () { toast('已受理'); loadFeedback(); })
+      .catch(function (err) { toast(err.message, 2600, 'error'); });
   }
 
   // ==================== 导入源审核 ====================
@@ -875,11 +931,28 @@
   }
 
   function reviewImport(id, status) {
-    var note = status === 'REJECTED' ? (window.prompt('驳回原因（可选）') || '') : '';
-    request('/api/admin/imports/' + encodeURIComponent(id) + '/status', {
-      method: 'POST', body: { status: status, note: note }
-    }).then(function () { toast(status === 'APPROVED' ? '已通过' : '已驳回'); loadImports(); })
-      .catch(function (err) { toast(err.message); });
+    if (status !== 'REJECTED') {
+      request('/api/admin/imports/' + encodeURIComponent(id) + '/status', {
+        method: 'POST', body: { status: 'APPROVED', note: '' }
+      }).then(function () { toast('已通过'); loadImports(); })
+        .catch(function (err) { toast(err.message, 2600, 'error'); });
+      return;
+    }
+    promptDialog({
+      title: '驳回导入源 #' + id,
+      desc: '驳回原因会记录在审核留痕里，方便后续追溯为什么没入库。',
+      label: '驳回原因（可留空）',
+      multiline: true,
+      placeholder: '例如：来源不可靠 / 内容不完整 / 与已有菜谱重复',
+      confirmText: '确认驳回',
+      danger: true
+    }).then(function (note) {
+      if (note === null) return;
+      request('/api/admin/imports/' + encodeURIComponent(id) + '/status', {
+        method: 'POST', body: { status: 'REJECTED', note: note }
+      }).then(function () { toast('已驳回'); loadImports(); })
+        .catch(function (err) { toast(err.message, 2600, 'error'); });
+    });
   }
 
   // ==================== 用户管理 ====================
@@ -931,28 +1004,68 @@
   }
 
   function setUserStatus(userId, status) {
+    var u = findUser(userId);
     var banned = status === 'BANNED';
-    if (banned && !window.confirm('确认封禁该用户？其所有会话将立即失效。')) return;
-    request('/api/admin/users/' + encodeURIComponent(userId) + '/status', {
-      method: 'POST', body: { status: status }
-    }).then(function () { toast(banned ? '已封禁' : '已解封'); loadUsers(); })
-      .catch(function (err) { toast(err.message); });
+    var run = function () {
+      return request('/api/admin/users/' + encodeURIComponent(userId) + '/status', {
+        method: 'POST', body: { status: status }
+      }).then(function () { toast(banned ? '已封禁' : '已解封'); loadUsers(); })
+        .catch(function (err) { toast(err.message, 2600, 'error'); });
+    };
+    if (!banned) { run(); return; }
+    confirmDialog({
+      title: '封禁该账号？',
+      desc: '「' + (u.nickname || ('用户 ' + userId)) + '」的所有登录会话会立即失效，且无法再登录小程序。',
+      danger: true,
+      confirmText: '确认封禁'
+    }).then(function (ok) { if (ok) run(); });
   }
 
   function setAdmin(userId, on) {
-    request('/api/admin/users/' + encodeURIComponent(userId) + '/admin', {
-      method: 'POST', body: { admin: !!on }
-    }).then(function () { toast(on ? '已设为管理员' : '已撤销管理员'); loadUsers(); })
-      .catch(function (err) { toast(err.message); });
+    var u = findUser(userId);
+    confirmDialog({
+      title: on ? '设为管理员？' : '撤销管理员权限？',
+      desc: on
+        ? '「' + (u.nickname || ('用户 ' + userId)) + '」将获得运营后台的全部权限，包括封禁用户和退款。'
+        : '「' + (u.nickname || ('用户 ' + userId)) + '」将立即失去运营后台访问权限。',
+      danger: !on,
+      confirmText: on ? '确认授权' : '确认撤销'
+    }).then(function (ok) {
+      if (!ok) return;
+      request('/api/admin/users/' + encodeURIComponent(userId) + '/admin', {
+        method: 'POST', body: { admin: !!on }
+      }).then(function () { toast(on ? '已设为管理员' : '已撤销管理员'); loadUsers(); })
+        .catch(function (err) { toast(err.message, 2600, 'error'); });
+    });
   }
 
   function grantVip(userId) {
-    var plan = window.prompt('套餐代码（annual / monthly）', 'annual');
-    if (!plan) return;
-    request('/api/admin/users/' + encodeURIComponent(userId) + '/vip', {
-      method: 'POST', body: { planCode: plan.trim() }
-    }).then(function () { toast('已开通会员'); })
-      .catch(function (err) { toast(err.message); });
+    var u = findUser(userId);
+    var plans = [
+      { code: 'annual', name: '家庭年卡', price: '¥99.00', days: '365 天' },
+      { code: 'monthly', name: '家庭月卡', price: '¥19.90', days: '30 天' }
+    ];
+    openModal({
+      title: '人工开通会员',
+      desc: '给「' + (u.nickname || ('用户 ' + userId)) + '」开通或顺延会员。此操作不产生订单流水，但会写入审计日志。',
+      body: '<div class="plan-grid">' + plans.map(function (p, i) {
+        return '<label class="plan-option">' +
+          '<input type="radio" name="vipPlan" value="' + p.code + '"' + (i === 0 ? ' checked' : '') + ' />' +
+          '<span class="plan-name">' + p.name + '</span>' +
+          '<span class="plan-price">' + p.price + '</span>' +
+          '<span class="plan-days">' + p.days + '</span></label>';
+      }).join('') + '</div>',
+      confirmText: '确认开通',
+      read: function (root) {
+        var el = root.querySelector('input[name="vipPlan"]:checked');
+        return { planCode: el ? el.value : 'annual' };
+      },
+      onConfirm: function (v) {
+        return request('/api/admin/users/' + encodeURIComponent(userId) + '/vip', {
+          method: 'POST', body: { planCode: v.planCode }
+        }).then(function () { toast('已开通会员'); loadUsers(); });
+      }
+    });
   }
 
   // ==================== 订单 ====================
@@ -997,17 +1110,35 @@
   }
 
   function closeOrder(outTradeNo) {
-    if (!window.confirm('确认关闭该未支付订单？')) return;
-    request('/api/admin/orders/' + encodeURIComponent(outTradeNo) + '/close', { method: 'POST' })
-      .then(function () { toast('已关单'); loadOrders(); })
-      .catch(function (err) { toast(err.message); });
+    var o = findOrder(outTradeNo);
+    confirmDialog({
+      title: '关闭该订单？',
+      desc: '单号 ' + outTradeNo + '（' + (o.planName || o.planCode || '—') + ' ' + fmtMoney(o.amountFen) +
+        '）将被标记为已关闭，用户无法再继续支付。',
+      danger: true,
+      confirmText: '确认关单'
+    }).then(function (ok) {
+      if (!ok) return;
+      request('/api/admin/orders/' + encodeURIComponent(outTradeNo) + '/close', { method: 'POST' })
+        .then(function () { toast('已关单'); loadOrders(); })
+        .catch(function (err) { toast(err.message, 2600, 'error'); });
+    });
   }
 
   function refundOrder(outTradeNo) {
-    if (!window.confirm('确认退款？将回收该订单对应的会员权益（真实资金退款需在商户平台操作）。')) return;
-    request('/api/admin/orders/' + encodeURIComponent(outTradeNo) + '/refund', { method: 'POST' })
-      .then(function () { toast('已退款'); loadOrders(); })
-      .catch(function (err) { toast(err.message); });
+    var o = findOrder(outTradeNo);
+    confirmDialog({
+      title: '退款并回收会员权益？',
+      desc: '订单 ' + outTradeNo + '（' + fmtMoney(o.amountFen) + '）对应的会员时长会被扣回，' +
+        '这里只做账务与权益处理，真实资金退款仍需到微信商户平台操作。',
+      danger: true,
+      confirmText: '确认退款'
+    }).then(function (ok) {
+      if (!ok) return;
+      request('/api/admin/orders/' + encodeURIComponent(outTradeNo) + '/refund', { method: 'POST' })
+        .then(function () { toast('已退款'); loadOrders(); })
+        .catch(function (err) { toast(err.message, 2600, 'error'); });
+    });
   }
 
   // ==================== 审计 ====================
@@ -1096,6 +1227,148 @@
     var d = new Date();
     var p = function (n) { return String(n).padStart(2, '0'); };
     return d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + '-' + p(d.getHours()) + p(d.getMinutes());
+  }
+
+  // ==================== 站内弹窗 ====================
+  // 全部管理操作都用站内弹窗确认/收集输入，不用原生 confirm/prompt
+  // （原生弹窗样式不可控、无法展示上下文、还会被浏览器拦截）。
+
+  var modalResolve = null;
+
+  function setModalError(root, msg) {
+    var el = root.querySelector('.modal-error');
+    if (!el) {
+      el = document.createElement('p');
+      el.className = 'modal-error';
+      var body = root.querySelector('.modal-body') || root.querySelector('.modal-foot');
+      body.insertBefore(el, body.firstChild);
+    }
+    el.textContent = msg;
+  }
+
+  function closeModal(value) {
+    var root = $('modalRoot');
+    if (!root) return;
+    root.hidden = true;
+    root.innerHTML = '';
+    var resolve = modalResolve;
+    modalResolve = null;
+    if (resolve) resolve(value);
+  }
+
+  /**
+   * 打开弹窗。cfg = { title, desc, body, danger, confirmText, cancelText,
+   *                  read(root) → values, validate(values) → 错误文案|null,
+   *                  onConfirm(values, btn) → false 保持打开 / Promise 成功后关闭 }
+   * 返回 Promise：确认时 resolve(values)，取消时 resolve(null)。
+   */
+  function openModal(cfg) {
+    return new Promise(function (resolve) {
+      var root = $('modalRoot');
+      root.innerHTML =
+        '<div class="modal-backdrop">' +
+          '<div class="modal' + (cfg.danger ? ' danger' : '') + '" role="dialog" aria-modal="true">' +
+            '<div class="modal-head"><h3>' + escapeHtml(cfg.title) + '</h3>' +
+              (cfg.desc ? '<p>' + escapeHtml(cfg.desc) + '</p>' : '') + '</div>' +
+            '<div class="modal-body">' + (cfg.body || '') + '</div>' +
+            '<div class="modal-foot">' +
+              '<button type="button" class="btn" data-modal-cancel>' + escapeHtml(cfg.cancelText || '取消') + '</button>' +
+              '<button type="button" class="btn ' + (cfg.danger ? 'danger-solid' : 'primary') + '" data-modal-confirm>' +
+                escapeHtml(cfg.confirmText || '确定') + '</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      root.hidden = false;
+      modalResolve = resolve;
+
+      var backdrop = root.querySelector('.modal-backdrop');
+      var confirmBtn = root.querySelector('[data-modal-confirm]');
+      var cancelBtn = root.querySelector('[data-modal-cancel]');
+      var first = root.querySelector('input, textarea, select');
+      if (first) setTimeout(function () { first.focus(); if (first.select && first.type !== 'radio') first.select(); }, 40);
+
+      confirmBtn.addEventListener('click', function () {
+        var values = cfg.read ? cfg.read(root) : {};
+        if (cfg.validate) {
+          var err = cfg.validate(values);
+          if (err) { setModalError(root, err); return; }
+        }
+        if (cfg.onConfirm) {
+          var ret;
+          try { ret = cfg.onConfirm(values, confirmBtn); }
+          catch (e) { setModalError(root, e.message); return; }
+          if (ret === false) return;
+          if (ret && typeof ret.then === 'function') {
+            var label = confirmBtn.textContent;
+            confirmBtn.disabled = true;
+            confirmBtn.textContent = '处理中…';
+            ret.then(function () { closeModal(values); })
+              .catch(function (e) {
+                confirmBtn.disabled = false;
+                confirmBtn.textContent = label;
+                setModalError(root, e.message || '操作失败');
+              });
+            return;
+          }
+        }
+        closeModal(values);
+      });
+      cancelBtn.addEventListener('click', function () { closeModal(null); });
+      backdrop.addEventListener('click', function (e) { if (e.target === backdrop) closeModal(null); });
+    });
+  }
+
+  /** 确认框：resolve(true) / resolve(false) */
+  function confirmDialog(opts) {
+    return openModal({
+      title: opts.title,
+      desc: opts.desc,
+      body: opts.body,
+      danger: opts.danger,
+      confirmText: opts.confirmText,
+      cancelText: opts.cancelText
+    }).then(function (v) { return v !== null; });
+  }
+
+  /** 输入框：resolve(值) / resolve(null) */
+  function promptDialog(opts) {
+    var inputId = 'modalInput';
+    var body = '<label for="' + inputId + '">' + escapeHtml(opts.label) + '</label>' +
+      (opts.multiline
+        ? '<textarea id="' + inputId + '" placeholder="' + escapeHtml(opts.placeholder || '') + '">' + escapeHtml(opts.value || '') + '</textarea>'
+        : '<input id="' + inputId + '" type="text" placeholder="' + escapeHtml(opts.placeholder || '') + '" value="' + escapeHtml(opts.value || '') + '" />');
+    return openModal({
+      title: opts.title,
+      desc: opts.desc,
+      body: body,
+      confirmText: opts.confirmText,
+      read: function (root) { return { value: (root.querySelector('#' + inputId) || {}).value || '' }; },
+      validate: function (v) {
+        if (opts.required && !v.value.trim()) return opts.requiredMessage || '此项必填';
+        return null;
+      },
+      onConfirm: function () { return true; }
+    }).then(function (v) { return v === null ? null : v.value; });
+  }
+
+  // 从当前列表里找上下文，让弹窗能显示"正在操作谁"
+  function findUser(userId) {
+    return (state.users.items || []).filter(function (u) { return String(u.userId) === String(userId); })[0] || {};
+  }
+  function findComment(commentId) {
+    return state.comments.filter(function (c) { return String(c.commentId) === String(commentId); })[0] || {};
+  }
+  function findPost(postId) {
+    return state.posts.filter(function (p) { return String(p.id) === String(postId); })[0] || {};
+  }
+  function findRecipe(recipeId) {
+    return state.recipes.filter(function (r) { return String(r.recipeId) === String(recipeId); })[0] || {};
+  }
+  function findOrder(outTradeNo) {
+    return state.orders.filter(function (o) { return o.outTradeNo === outTradeNo; })[0] || {};
+  }
+  function findReport(reportId) {
+    return state.reports.filter(function (r) { return String(r.reportId) === String(reportId); })[0] || {};
   }
 
   // ==================== 事件绑定 ====================
@@ -1212,6 +1485,17 @@
   });
 
   document.addEventListener('keydown', function (e) {
+    // 弹窗优先：ESC 关闭，单行输入回车直接确认
+    if (modalResolve) {
+      if (e.key === 'Escape') { e.preventDefault(); closeModal(null); return; }
+      if (e.key === 'Enter' && e.target && e.target.id === 'modalInput' && e.target.tagName === 'INPUT') {
+        e.preventDefault();
+        var btn = document.querySelector('[data-modal-confirm]');
+        if (btn && !btn.disabled) btn.click();
+        return;
+      }
+      return;
+    }
     if (e.key === 'Enter' && e.target) {
       if (e.target.id === 'userSearch') {
         state.userKeyword = e.target.value || ''; state.users.page = 0; loadUsers();

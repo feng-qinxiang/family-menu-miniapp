@@ -547,6 +547,97 @@ td.clamp { max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-sp
 
 .nav-backdrop { display: none; }
 
+/* ============ 弹窗（替代原生 confirm/prompt） ============ */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(35, 32, 28, .46);
+  backdrop-filter: blur(2px);
+  animation: fade .14s ease;
+}
+.modal {
+  width: 100%;
+  max-width: 420px;
+  background: var(--surface);
+  border-radius: 18px;
+  box-shadow: 0 30px 80px rgba(35, 32, 28, .3);
+  overflow: hidden;
+  animation: pop .16s ease;
+}
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pop { from { opacity: 0; transform: translateY(8px) scale(.985); } to { opacity: 1; transform: none; } }
+
+.modal-head { padding: 22px 24px 0; }
+.modal-head h3 { margin: 0; font-size: 17px; font-weight: 700; }
+.modal-head p { margin: 8px 0 0; font-size: 13px; color: var(--mut); line-height: 1.65; }
+.modal.danger .modal-head h3 { color: var(--danger); }
+.modal-body { padding: 18px 24px 0; }
+.modal-body > label { display: block; font-size: 12.5px; color: var(--ink-2); margin-bottom: 7px; }
+.modal-body input[type="text"],
+.modal-body textarea {
+  width: 100%;
+  border: 1px solid var(--line-2);
+  border-radius: 10px;
+  background: var(--paper-2);
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--ink);
+  outline: none;
+  transition: border-color .15s, box-shadow .15s, background .15s;
+}
+.modal-body textarea { min-height: 92px; resize: vertical; line-height: 1.6; }
+.modal-body input[type="text"]:focus,
+.modal-body textarea:focus { border-color: var(--pop); background: var(--surface); box-shadow: var(--ring); }
+.modal-error { margin: 12px 0 0; font-size: 12.5px; color: var(--danger); }
+.modal-foot { display: flex; justify-content: flex-end; gap: 8px; padding: 20px 24px 22px; }
+.btn.danger-solid {
+  background: linear-gradient(180deg, #c33a30, #9d1f18);
+  border-color: #9d1f18;
+  color: #fff;
+  font-weight: 600;
+}
+.btn.danger-solid:hover { filter: brightness(1.05); box-shadow: 0 6px 16px rgba(179, 38, 30, .3); }
+
+/* 会员套餐选择卡 */
+.plan-grid { display: grid; gap: 10px; }
+.plan-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 15px;
+  border: 1px solid var(--line-2);
+  border-radius: 12px;
+  background: var(--paper-2);
+  cursor: pointer;
+  transition: border-color .15s, background .15s, box-shadow .15s;
+}
+.plan-option:hover { border-color: var(--gold); }
+.plan-option:has(input:checked) { border-color: var(--pop); background: var(--surface); box-shadow: var(--ring); }
+.plan-option input { accent-color: var(--pop); margin: 0; }
+.plan-name { flex: 1; font-size: 14px; font-weight: 600; }
+.plan-price { font-size: 14px; font-weight: 700; color: var(--pop); }
+.plan-days { font-size: 12px; color: var(--mut); min-width: 52px; text-align: right; }
+
+/* 加载态 */
+.loading { display: flex; align-items: center; gap: 10px; color: var(--mut); padding: 8px 0; }
+.spinner {
+  width: 15px;
+  height: 15px;
+  border: 2px solid var(--line-2);
+  border-top-color: var(--pop);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.toast.error { background: var(--danger); }
+
 /* hidden 属性必须生效：.login-wrap/.toast 等设置了 display，
    作者样式会覆盖 UA 的 [hidden]{display:none}，导致登录框在登录后仍然显示 */
 [hidden] { display: none !important; }
