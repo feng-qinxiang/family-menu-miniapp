@@ -531,6 +531,28 @@ public class MysqlKitchenStore {
         return findCommunityReport(reportId);
     }
 
+    /** 批量处置举报：只处理存在的 id，返回实际处理条数。 */
+    @Transactional
+    public int batchReviewCommunityReports(List<Long> ids, long reviewerUserId, String status, String note) {
+        List<Long> clean = ids == null ? List.of() : ids.stream()
+                .filter(java.util.Objects::nonNull)
+                .distinct()
+                .limit(100)
+                .toList();
+        if (clean.isEmpty()) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.BAD_REQUEST, "请先选择要处理的举报");
+        }
+        String placeholders = String.join(",", java.util.Collections.nCopies(clean.size(), "?"));
+        List<Long> existing = jdbcTemplate.queryForList(
+                "SELECT id FROM community_post_report WHERE id IN (" + placeholders + ")",
+                Long.class, clean.toArray());
+        for (Long id : existing) {
+            reviewCommunityReport(id, reviewerUserId, new CommunityReportReviewRequest(status, note));
+        }
+        return existing.size();
+    }
+
     public VipStatus vipStatus(long userId) {
         return membershipService.vipStatus(userId);
     }

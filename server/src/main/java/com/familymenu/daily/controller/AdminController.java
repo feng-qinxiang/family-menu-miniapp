@@ -3,6 +3,7 @@ package com.familymenu.daily.controller;
 import com.familymenu.daily.auth.CurrentUser;
 import com.familymenu.daily.auth.RequiresAdmin;
 import com.familymenu.daily.dto.AdminModels.AdminAuditItem;
+import com.familymenu.daily.dto.AdminModels.AdminBatchStatusRequest;
 import com.familymenu.daily.dto.AdminModels.AdminCommentItem;
 import com.familymenu.daily.dto.AdminModels.AdminCommentStatusRequest;
 import com.familymenu.daily.dto.AdminModels.AdminContentStatusRequest;
@@ -70,9 +71,11 @@ public class AdminController {
     @GetMapping("/users")
     @RequiresAdmin
     public AdminUserPage searchUsers(@RequestParam(defaultValue = "") String keyword,
+                                     @RequestParam(defaultValue = "") String sort,
+                                     @RequestParam(defaultValue = "") String order,
                                      @RequestParam(defaultValue = "0") int page,
                                      @RequestParam(defaultValue = "20") int size) {
-        return adminService.searchUsers(keyword, page, size);
+        return adminService.searchUsers(keyword, sort, order, page, size);
     }
 
     @PostMapping("/users/{userId}/admin")
@@ -170,6 +173,26 @@ public class AdminController {
         return adminService.listPosts(auditStatus, limit);
     }
 
+    /** 批量下架/恢复帖子。 */
+    @PostMapping("/posts/batch-status")
+    @RequiresAdmin
+    public Map<String, Object> batchPostStatus(@RequestBody(required = false) AdminBatchStatusRequest request,
+                                               @CurrentUser AuthUser actor) {
+        List<Long> ids = request == null ? null : request.ids();
+        String status = request == null ? null : request.status();
+        try {
+            int done = adminService.batchPostStatus(ids, status);
+            auditService.record(actor.userId(), actor.nickname(), "BATCH_SET_POST_STATUS", "post",
+                    ids == null ? null : String.valueOf(ids.size()), status + " × " + done, true);
+            return Map.of("ok", true, "changed", done);
+        } catch (RuntimeException ex) {
+            auditService.record(actor.userId(), actor.nickname(), "BATCH_SET_POST_STATUS", "post", null,
+                    ex.getMessage(), false);
+            throw ex;
+        }
+    }
+
+    /** 帖子下架/恢复。 */
     @PostMapping("/posts/{postId}/status")
     @RequiresAdmin
     public Map<String, Object> setPostStatus(@PathVariable long postId,
@@ -239,6 +262,25 @@ public class AdminController {
         return adminService.listComments(postId, page, size, auditStatus);
     }
 
+    /** 批量审核评论：一次通过/驳回多条（内容审核的主要效率来源）。 */
+    @PostMapping("/comments/batch-status")
+    @RequiresAdmin
+    public Map<String, Object> batchCommentStatus(@RequestBody(required = false) AdminBatchStatusRequest request,
+                                                  @CurrentUser AuthUser actor) {
+        List<Long> ids = request == null ? null : request.ids();
+        String status = request == null ? null : request.status();
+        try {
+            int done = adminService.batchCommentStatus(ids, status);
+            auditService.record(actor.userId(), actor.nickname(), "BATCH_REVIEW_COMMENT", "comment",
+                    ids == null ? null : String.valueOf(ids.size()), status + " × " + done, true);
+            return Map.of("ok", true, "changed", done);
+        } catch (RuntimeException ex) {
+            auditService.record(actor.userId(), actor.nickname(), "BATCH_REVIEW_COMMENT", "comment", null,
+                    ex.getMessage(), false);
+            throw ex;
+        }
+    }
+
     /** 评论审核：通过（APPROVED）/ 驳回（REMOVED）。 */
     @PostMapping("/comments/{commentId}/status")
     @RequiresAdmin
@@ -277,9 +319,13 @@ public class AdminController {
     @GetMapping("/orders")
     @RequiresAdmin
     public AdminPage<AdminOrderItem> listOrders(@RequestParam(defaultValue = "") String status,
+                                                @RequestParam(defaultValue = "") String from,
+                                                @RequestParam(defaultValue = "") String to,
+                                                @RequestParam(defaultValue = "") String sort,
+                                                @RequestParam(defaultValue = "") String order,
                                                 @RequestParam(defaultValue = "0") int page,
                                                 @RequestParam(defaultValue = "50") int size) {
-        return adminService.listOrders(status, page, size);
+        return adminService.listOrders(status, from, to, sort, order, page, size);
     }
 
     /** 关闭未支付订单（PENDING → CLOSED）。 */
@@ -344,8 +390,12 @@ public class AdminController {
     @GetMapping("/audit")
     @RequiresAdmin
     public AdminPage<AdminAuditItem> listAudit(@RequestParam(defaultValue = "") String keyword,
+                                               @RequestParam(defaultValue = "") String from,
+                                               @RequestParam(defaultValue = "") String to,
+                                               @RequestParam(defaultValue = "") String sort,
+                                               @RequestParam(defaultValue = "") String order,
                                                @RequestParam(defaultValue = "0") int page,
                                                @RequestParam(defaultValue = "50") int size) {
-        return adminService.listAudit(keyword, page, size);
+        return adminService.listAudit(keyword, from, to, sort, order, page, size);
     }
 }

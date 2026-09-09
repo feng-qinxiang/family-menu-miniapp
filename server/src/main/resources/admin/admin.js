@@ -18,6 +18,8 @@
     reportFilter: 'PENDING',
     users: { items: [], total: 0, page: 0, size: 20 },
     userKeyword: '',
+    userSort: 'id',
+    userOrder: 'desc',
     feedback: [],
     feedbackFilter: 'OPEN',
     feedbackPage: 0,
@@ -39,11 +41,21 @@
     orderPage: 0,
     orderTotal: 0,
     orderSize: 50,
+    orderFrom: '',
+    orderTo: '',
+    orderSort: 'id',
+    orderOrder: 'desc',
     audit: [],
     auditKeyword: '',
     auditPage: 0,
     auditTotal: 0,
     auditSize: 50,
+    auditFrom: '',
+    auditTo: '',
+    auditSort: 'id',
+    auditOrder: 'desc',
+    /** 批量勾选：{ comments: {id:true}, posts: {...}, reports: {...} } */
+    picked: { comments: {}, posts: {}, reports: {} },
     imports: [],
     importFilter: 'PENDING'
   };
@@ -491,6 +503,84 @@
     else if (kind === 'users') { state.users.page = jump(state.users.page); loadUsers(); }
   }
 
+  /** 可排序表头：kind 决定读写哪一组排序状态 */
+  function thSort(label, key, kind, cls) {
+    var cur = state[kind + 'Sort'];
+    var dir = state[kind + 'Order'];
+    var active = cur === key;
+    var arrow = active ? (dir === 'asc' ? '↑' : '↓') : '↕';
+    return '<th class="' + (cls || '') + ' sortable' + (active ? ' sorted' : '') +
+      '" data-sort="' + kind + ':' + key + '" title="点击按此列排序">' +
+      escapeHtml(label) + '<span class="sort-ind">' + arrow + '</span></th>';
+  }
+
+  /** 日期区间控件（下单/操作时间） */
+  function dateRangeHtml(kind, from, to) {
+    return '<span class="date-range">' +
+      '<input type="date" id="' + kind + 'From" value="' + escapeHtml(from || '') + '" aria-label="开始日期" />' +
+      '<span class="dash">至</span>' +
+      '<input type="date" id="' + kind + 'To" value="' + escapeHtml(to || '') + '" aria-label="结束日期" />' +
+      '<button class="btn small" id="' + kind + 'DateBtn">应用</button>' +
+      ((from || to) ? '<button class="btn small" id="' + kind + 'DateClear">清除</button>' : '') +
+      '</span>';
+  }
+
+  // ---- 批量勾选 ----
+  function pickedIds(kind) {
+    return Object.keys(state.picked[kind] || {}).filter(function (k) { return state.picked[kind][k]; });
+  }
+
+  function setPick(spec, on) {
+    var parts = String(spec).split(':');
+    var kind = parts[0], id = parts.slice(1).join(':');
+    state.picked[kind] = state.picked[kind] || {};
+    if (on) state.picked[kind][id] = true;
+    else delete state.picked[kind][id];
+    updateBulkBar(kind);
+  }
+
+  function setPickAll(kind, on) {
+    var rows = kind === 'comments' ? state.comments
+      : kind === 'posts' ? state.posts
+        : kind === 'reports' ? state.reports : [];
+    state.picked[kind] = {};
+    if (on) {
+      rows.forEach(function (r) {
+        var id = kind === 'comments' ? r.commentId : kind === 'posts' ? r.id : r.reportId;
+        state.picked[kind][String(id)] = true;
+      });
+    }
+    renderCurrentList();
+  }
+
+  function renderCurrentList() {
+    if (state.tab === 'comments') renderComments();
+    else if (state.tab === 'posts') renderPosts();
+    else if (state.tab === 'reports') renderReports();
+  }
+
+  function updateBulkBar(kind) {
+    var bar = document.querySelector('[data-bulkbar="' + kind + '"]');
+    if (!bar) return;
+    var ids = pickedIds(kind);
+    bar.innerHTML = bulkBarHtml(kind, ids.length);
+    bar.hidden = ids.length === 0;
+  }
+
+  function bulkBarHtml(kind, count) {
+    if (!count) return '';
+    var actions = kind === 'comments'
+      ? '<button class="btn small primary-sm" data-bulk="comments:APPROVED">批量通过</button>' +
+        '<button class="btn small danger" data-bulk="comments:REMOVED">批量驳回</button>'
+      : kind === 'posts'
+        ? '<button class="btn small primary-sm" data-bulk="posts:APPROVED">批量恢复/通过</button>' +
+          '<button class="btn small danger" data-bulk="posts:REMOVED">批量下架</button>'
+        : '<button class="btn small danger" data-bulk="reports:REMOVED">批量下架帖子</button>' +
+          '<button class="btn small" data-bulk="reports:IGNORED">批量忽略</button>';
+    return '<span class="bulk-count">已选 ' + count + ' 条</span>' + actions +
+      '<button class="btn small" data-bulk="' + kind + ':clear">取消选择</button>';
+  }
+
   /** 把某个列表的全部页拉下来（导出用；cap 防止把浏览器拖死） */
   function fetchAllPages(buildUrl, cap) {
     var size = 200;
@@ -665,21 +755,27 @@
       var pending = r.status === 'PENDING';
       var pill = pending ? '<span class="pill pending">待处理</span>'
         : (r.status === 'REMOVED' ? '<span class="pill bad">已下架</span>' : '<span class="pill">已忽略</span>');
-      return '<tr><td class="num">' + escapeHtml(String(r.reportId)) + '</td>' +
+      return '<tr><td class="pick"><input type="checkbox" data-pick="reports:' + escapeHtml(String(r.reportId)) +
+          '"' + (state.picked.reports[r.reportId] ? ' checked' : '') + ' /></td>' +
+        '<td class="num">' + escapeHtml(String(r.reportId)) + '</td>' +
         '<td>#' + escapeHtml(String(r.postId)) + ' ' + escapeHtml(r.postTitle || '') + '</td>' +
         '<td>' + escapeHtml(r.reason || '') + '</td>' +
         '<td class="clamp" title="' + escapeHtml(r.description || '') + '">' + escapeHtml(r.description || '—') + '</td>' +
         '<td>' + escapeHtml(r.reporter || '—') + '</td>' +
-        '<td>' + pill + '</td><td>' + fmtTime(r.createdAt) + '</td><td class="actions">' +
+        '<td>' + pill + '</td><td title="' + escapeHtml(r.createdAt || '') + '">' + fmtTime(r.createdAt) + '</td><td class="actions">' +
         (pending
           ? '<button class="btn small danger" data-review="' + escapeHtml(String(r.reportId)) + '" data-status="REMOVED">下架帖子</button>' +
             '<button class="btn small" data-review="' + escapeHtml(String(r.reportId)) + '" data-status="IGNORED">忽略</button>'
           : escapeHtml(r.reviewNote || '—')) +
         '</td></tr>';
-    }).join('') : '<tr><td colspan="8"><div class="empty">没有举报记录</div></td></tr>';
+    }).join('') : '<tr><td colspan="9"><div class="empty">没有举报记录</div></td></tr>';
+    var pickedCount = pickedIds('reports').length;
     setPageHeader(rows.length + ' 条');
     $('panelRoot').innerHTML = '<div class="card">' + head +
-      '<table><thead><tr><th class="num">ID</th><th>帖子</th><th>原因</th><th>说明</th><th>举报人</th>' +
+      '<div class="bulk-bar" data-bulkbar="reports"' + (pickedCount ? '' : ' hidden') + '>' +
+      bulkBarHtml('reports', pickedCount) + '</div>' +
+      '<table><thead><tr><th class="pick"><input type="checkbox" data-checkall="reports" aria-label="全选本页" /></th>' +
+      '<th class="num">ID</th><th>帖子</th><th>原因</th><th>说明</th><th>举报人</th>' +
       '<th>状态</th><th>时间</th><th>操作</th></tr></thead><tbody>' + body + '</tbody></table></div>';
   }
 
@@ -736,16 +832,23 @@
         actions = '<button class="btn small danger" data-poststatus="' + escapeHtml(String(p.id)) +
           '" data-on="REMOVED">下架</button>';
       }
-      return '<tr><td class="num">' + escapeHtml(String(p.id)) + '</td>' +
+      return '<tr><td class="pick"><input type="checkbox" data-pick="posts:' + escapeHtml(String(p.id)) +
+          '"' + (state.picked.posts[p.id] ? ' checked' : '') + ' /></td>' +
+        '<td class="num">' + escapeHtml(String(p.id)) + '</td>' +
         '<td>' + escapeHtml(p.title || '') + '</td>' +
         '<td><div class="cell-user">' + avatarHtml(p.author) + '<span class="name">' + escapeHtml(p.author || '—') + '</span></div></td>' +
         '<td>' + pill + '</td>' +
         '<td class="num">' + fmtNum(p.likeCount) + '</td><td class="num">' + fmtNum(p.commentCount) + '</td>' +
-        '<td>' + fmtTime(p.createdAt) + '</td><td class="actions">' + actions + '</td></tr>';
-    }).join('') : '<tr><td colspan="8"><div class="empty">没有内容</div></td></tr>';
+        '<td title="' + escapeHtml(p.createdAt || '') + '">' + fmtTime(p.createdAt) + '</td>' +
+        '<td class="actions">' + actions + '</td></tr>';
+    }).join('') : '<tr><td colspan="9"><div class="empty">没有内容</div></td></tr>';
+    var pickedCount = pickedIds('posts').length;
     setPageHeader(rows.length + ' 条');
     $('panelRoot').innerHTML = '<div class="card">' + head +
-      '<table><thead><tr><th class="num">ID</th><th>标题</th><th>作者</th><th>状态</th><th class="num">赞</th>' +
+      '<div class="bulk-bar" data-bulkbar="posts"' + (pickedCount ? '' : ' hidden') + '>' +
+      bulkBarHtml('posts', pickedCount) + '</div>' +
+      '<table><thead><tr><th class="pick"><input type="checkbox" data-checkall="posts" aria-label="全选本页" /></th>' +
+      '<th class="num">ID</th><th>标题</th><th>作者</th><th>状态</th><th class="num">赞</th>' +
       '<th class="num">评论</th><th>时间</th><th>操作</th></tr></thead><tbody>' + body + '</tbody></table></div>';
   }
 
@@ -811,17 +914,23 @@
       actions += c.deleted
         ? '<button class="btn small" data-cmtrestore="' + cid + '">恢复</button>'
         : '<button class="btn small danger" data-cmtdel="' + cid + '">删除</button>';
-      return '<tr><td class="num">' + cid + '</td>' +
+      var picked = state.picked.comments[c.commentId] ? ' checked' : '';
+      return '<tr><td class="pick"><input type="checkbox" data-pick="comments:' + cid + '"' + picked + ' /></td>' +
+        '<td class="num">' + cid + '</td>' +
         '<td>#' + escapeHtml(String(c.postId)) + ' ' + escapeHtml(c.postTitle || '') + '</td>' +
         '<td><div class="cell-user">' + avatarHtml(c.authorNickname) +
           '<span class="name">' + escapeHtml(c.authorNickname || ('用户' + c.authorUserId)) + '</span></div></td>' +
         '<td class="clamp" title="' + escapeHtml(c.content || '') + '">' + escapeHtml(c.content || '') + '</td>' +
-        '<td>' + pill + '</td><td>' + fmtTime(c.createdAt) + '</td>' +
+        '<td>' + pill + '</td><td title="' + escapeHtml(c.createdAt || '') + '">' + fmtTime(c.createdAt) + '</td>' +
         '<td class="actions">' + actions + '</td></tr>';
-    }).join('') : '<tr><td colspan="7"><div class="empty">没有评论</div></td></tr>';
+    }).join('') : '<tr><td colspan="8"><div class="empty">没有评论</div></td></tr>';
+    var pickedCount = pickedIds('comments').length;
     setPageHeader('共 ' + fmtNum(state.commentTotal) + ' 条');
     $('panelRoot').innerHTML = '<div class="card">' + head +
-      '<table><thead><tr><th class="num">ID</th><th>帖子</th><th>作者</th><th>内容</th><th>状态</th>' +
+      '<div class="bulk-bar" data-bulkbar="comments"' + (pickedCount ? '' : ' hidden') + '>' +
+      bulkBarHtml('comments', pickedCount) + '</div>' +
+      '<table><thead><tr><th class="pick"><input type="checkbox" data-checkall="comments" aria-label="全选本页" /></th>' +
+      '<th class="num">ID</th><th>帖子</th><th>作者</th><th>内容</th><th>状态</th>' +
       '<th>时间</th><th>操作</th></tr></thead><tbody>' + body + '</tbody></table>' +
       pagerHtml('comments', state.commentPage, state.commentSize, state.commentTotal) + '</div>';
   }
@@ -1040,6 +1149,7 @@
   function loadUsers() {
     loadingCard();
     return request('/api/admin/users?keyword=' + encodeURIComponent(state.userKeyword || '') +
+      '&sort=' + encodeURIComponent(state.userSort) + '&order=' + encodeURIComponent(state.userOrder) +
       '&page=' + state.users.page + '&size=' + state.users.size)
       .then(function (page) { state.users = page || { items: [], total: 0, page: 0, size: 20 }; renderUsers(); })
       .catch(errorCard);
@@ -1062,7 +1172,7 @@
         '<td>' + escapeHtml(u.phone || '—') + '</td>' +
         '<td>' + (u.admin ? '<span class="pill info">管理员</span>' : '<span class="pill">普通用户</span>') + '</td>' +
         '<td>' + (banned ? '<span class="pill bad">已封禁</span>' : '<span class="pill ok">正常</span>') + '</td>' +
-        '<td>' + fmtTime(u.createdAt) + '</td><td class="actions">' +
+        '<td title="' + escapeHtml(u.createdAt || '') + '">' + fmtTime(u.createdAt) + '</td><td class="actions">' +
         (u.admin
           ? '<button class="btn small danger" data-admin="' + escapeHtml(String(u.userId)) + '" data-on="0">撤销管理员</button>'
           : '<button class="btn small" data-admin="' + escapeHtml(String(u.userId)) + '" data-on="1">设为管理员</button>') +
@@ -1074,8 +1184,8 @@
     }).join('') : '<tr><td colspan="7"><div class="empty">没有匹配的用户</div></td></tr>';
     setPageHeader('共 ' + fmtNum(p.total) + ' 个账号');
     $('panelRoot').innerHTML = '<div class="card">' + head +
-      '<table><thead><tr><th class="num">ID</th><th>用户</th><th>手机号</th><th>角色</th><th>状态</th>' +
-      '<th>注册时间</th><th>操作</th></tr></thead><tbody>' + body + '</tbody></table>' +
+      '<table><thead><tr>' + thSort('ID', 'id', 'user', 'num') + '<th>用户</th><th>手机号</th><th>角色</th><th>状态</th>' +
+      thSort('注册时间', 'createdAt', 'user') + '<th>操作</th></tr></thead><tbody>' + body + '</tbody></table>' +
       pagerHtml('users', p.page, p.size, p.total) + '</div>';
   }
 
@@ -1151,6 +1261,8 @@
   function loadOrders() {
     loadingCard();
     return request('/api/admin/orders?status=' + encodeURIComponent(state.orderFilter) +
+      '&from=' + encodeURIComponent(state.orderFrom || '') + '&to=' + encodeURIComponent(state.orderTo || '') +
+      '&sort=' + encodeURIComponent(state.orderSort) + '&order=' + encodeURIComponent(state.orderOrder) +
       '&page=' + state.orderPage + '&size=' + state.orderSize)
       .then(function (page) {
         state.orders = (page && page.items) || [];
@@ -1168,6 +1280,7 @@
     var head = pageHead('订单管理',
       '共 ' + fmtNum(state.orderTotal) + ' 笔 · 本页已支付 ' + paid.length + ' 笔 ' + fmtMoney(revenue),
       chips([['', '全部'], ['PENDING', '待支付'], ['PAID', '已支付'], ['CLOSED', '已关闭'], ['REFUNDED', '已退款']], state.orderFilter, 'orderfilter') +
+      dateRangeHtml('order', state.orderFrom, state.orderTo) +
       '<button class="btn small" id="exportOrders">导出 CSV</button>');
     var body = rows.length ? rows.map(function (o) {
       var pill = o.status === 'PAID' ? 'ok' : (o.status === 'PENDING' ? 'pending' : 'bad');
@@ -1178,7 +1291,8 @@
         '<td class="num">' + fmtMoney(o.amountFen) + '</td>' +
         '<td><span class="pill ' + pill + '">' + escapeHtml(ORDER_STATUS[o.status] || o.status) + '</span></td>' +
         '<td>' + escapeHtml(o.paymentMethod || '—') + '</td>' +
-        '<td>' + fmtTime(o.paidAt || o.createdAt) + '</td>' +
+        '<td title="下单 ' + escapeHtml(o.createdAt || '') + (o.paidAt ? ' / 支付 ' + escapeHtml(o.paidAt) : '') + '">' +
+        fmtTime(o.paidAt || o.createdAt) + '</td>' +
         '<td class="actions">' +
         (o.status === 'PENDING'
           ? '<button class="btn small danger" data-orderclose="' + escapeHtml(o.outTradeNo) + '">关单</button>' : '') +
@@ -1188,8 +1302,9 @@
     }).join('') : '<tr><td colspan="9"><div class="empty">没有订单</div></td></tr>';
     setPageHeader('共 ' + fmtNum(state.orderTotal) + ' 笔');
     $('panelRoot').innerHTML = '<div class="card">' + head +
-      '<table><thead><tr><th class="num">ID</th><th>商户单号</th><th class="num">用户</th><th>套餐</th>' +
-      '<th class="num">金额</th><th>状态</th><th>方式</th><th>时间</th><th>操作</th></tr></thead><tbody>' + body + '</tbody></table>' +
+      '<table><thead><tr>' + thSort('ID', 'id', 'order', 'num') + '<th>商户单号</th><th class="num">用户</th><th>套餐</th>' +
+      thSort('金额', 'amount', 'order', 'num') + '<th>状态</th><th>方式</th>' +
+      thSort('时间', 'createdAt', 'order') + '<th>操作</th></tr></thead><tbody>' + body + '</tbody></table>' +
       pagerHtml('orders', state.orderPage, state.orderSize, state.orderTotal) + '</div>';
   }
 
@@ -1230,6 +1345,8 @@
   function loadAudit() {
     loadingCard();
     return request('/api/admin/audit?keyword=' + encodeURIComponent(state.auditKeyword || '') +
+      '&from=' + encodeURIComponent(state.auditFrom || '') + '&to=' + encodeURIComponent(state.auditTo || '') +
+      '&sort=' + encodeURIComponent(state.auditSort) + '&order=' + encodeURIComponent(state.auditOrder) +
       '&page=' + state.auditPage + '&size=' + state.auditSize)
       .then(function (page) {
         state.audit = (page && page.items) || [];
@@ -1248,6 +1365,7 @@
       escapeHtml(state.auditKeyword) + '" style="height:30px;padding:0 10px;border:1px solid var(--line-2);border-radius:9px;font-size:12.5px;width:240px" />' +
       '<button class="btn small" id="auditSearchBtn">搜索</button>' +
       (kw ? '<button class="btn small" id="auditClearBtn">清除</button>' : '') +
+      dateRangeHtml('audit', state.auditFrom, state.auditTo) +
       '<button class="btn small" id="exportAudit">导出 CSV</button>');
     var body = rows.length ? rows.map(function (a) {
       return '<tr><td class="num">' + escapeHtml(String(a.id)) + '</td>' +
@@ -1261,8 +1379,8 @@
     }).join('') : '<tr><td colspan="7"><div class="empty">没有匹配的操作记录</div></td></tr>';
     setPageHeader('共 ' + fmtNum(state.auditTotal) + ' 条');
     $('panelRoot').innerHTML = '<div class="card">' + head +
-      '<table><thead><tr><th class="num">ID</th><th>操作人</th><th>动作</th><th>对象</th><th>详情</th>' +
-      '<th>结果</th><th>时间</th></tr></thead><tbody>' + body + '</tbody></table>' +
+      '<table><thead><tr>' + thSort('ID', 'id', 'audit', 'num') + '<th>操作人</th><th>动作</th><th>对象</th><th>详情</th>' +
+      '<th>结果</th>' + thSort('时间', 'createdAt', 'audit') + '</tr></thead><tbody>' + body + '</tbody></table>' +
       pagerHtml('audit', state.auditPage, state.auditSize, state.auditTotal) + '</div>';
   }
 
@@ -1503,6 +1621,37 @@
     return state.reports.filter(function (r) { return String(r.reportId) === String(reportId); })[0] || {};
   }
 
+  /** 批量审核：评论 / 帖子 / 举报 */
+  function runBulk(spec) {
+    var parts = String(spec).split(':');
+    var kind = parts[0], action = parts[1];
+    if (action === 'clear') { state.picked[kind] = {}; renderCurrentList(); return; }
+    var ids = pickedIds(kind).map(Number).filter(function (n) { return !isNaN(n); });
+    if (!ids.length) { toast('请先勾选要处理的记录'); return; }
+    var label = action === 'APPROVED' ? '通过'
+      : action === 'REMOVED' ? (kind === 'reports' ? '下架帖子' : '驳回/下架') : '忽略';
+    confirmDialog({
+      title: '批量' + label + '？',
+      desc: '将处理已勾选的 ' + ids.length + ' 条记录，操作会写入审计日志。',
+      danger: action === 'REMOVED',
+      confirmText: '确认处理'
+    }).then(function (ok) {
+      if (!ok) return;
+      var url = kind === 'comments' ? '/api/admin/comments/batch-status'
+        : kind === 'posts' ? '/api/admin/posts/batch-status'
+          : '/api/community/reports/batch-review';
+      request(url, { method: 'POST', body: { ids: ids, status: action, note: '' } })
+        .then(function (res) {
+          toast('已处理 ' + (res && res.changed != null ? res.changed : ids.length) + ' 条');
+          state.picked[kind] = {};
+          if (kind === 'comments') loadComments();
+          else if (kind === 'posts') loadPosts();
+          else loadReports();
+        })
+        .catch(function (err) { toast(err.message, 2600, 'error'); });
+    });
+  }
+
   // ==================== 事件绑定 ====================
   // 可点击元素内部常有子节点（卡片数字/文字），点击时 e.target 是子节点，
   // 直接读它的 data-* 会拿到 null，所以先向上找到真正带属性的宿主元素。
@@ -1511,7 +1660,7 @@
     '[data-postfilter]', '[data-poststatus]', '[data-recipefilter]', '[data-recipestatus]',
     '[data-cmtfilter]', '[data-cmtstatus]', '[data-cmtdel]', '[data-cmtrestore]', '[data-fbfilter]',
     '[data-fb]', '[data-orderfilter]', '[data-orderclose]', '[data-orderrefund]', '[data-userstatus]',
-    '[data-importfilter]', '[data-import]', '[data-pager]'
+    '[data-importfilter]', '[data-import]', '[data-pager]', '[data-sort]', '[data-bulk]'
   ].join(',');
 
   document.addEventListener('click', function (e) {
@@ -1594,6 +1743,42 @@
     var pager = t.getAttribute('data-pager');
     if (pager) { changePage(pager); return; }
 
+    var bulk = t.getAttribute('data-bulk');
+    if (bulk) { runBulk(bulk); return; }
+
+    var sortSpec = t.getAttribute('data-sort');
+    if (sortSpec) {
+      var sp = String(sortSpec).split(':');
+      var kind = sp[0], key = sp[1];
+      if (state[kind + 'Sort'] === key) {
+        state[kind + 'Order'] = state[kind + 'Order'] === 'asc' ? 'desc' : 'asc';
+      } else {
+        state[kind + 'Sort'] = key;
+        state[kind + 'Order'] = 'desc';
+      }
+      if (kind === 'order') { state.orderPage = 0; loadOrders(); }
+      else if (kind === 'user') { state.users.page = 0; loadUsers(); }
+      else if (kind === 'audit') { state.auditPage = 0; loadAudit(); }
+      return;
+    }
+
+    if (id === 'orderDateBtn') {
+      state.orderFrom = ($('orderFrom') || {}).value || '';
+      state.orderTo = ($('orderTo') || {}).value || '';
+      state.orderPage = 0; loadOrders(); return;
+    }
+    if (id === 'orderDateClear') {
+      state.orderFrom = ''; state.orderTo = ''; state.orderPage = 0; loadOrders(); return;
+    }
+    if (id === 'auditDateBtn') {
+      state.auditFrom = ($('auditFrom') || {}).value || '';
+      state.auditTo = ($('auditTo') || {}).value || '';
+      state.auditPage = 0; loadAudit(); return;
+    }
+    if (id === 'auditDateClear') {
+      state.auditFrom = ''; state.auditTo = ''; state.auditPage = 0; loadAudit(); return;
+    }
+
     if (id === 'auditClearBtn') {
       state.auditKeyword = ''; state.auditPage = 0; loadAudit(); return;
     }
@@ -1621,6 +1806,16 @@
 
     var orf = t.getAttribute('data-orderrefund');
     if (orf) { refundOrder(orf); return; }
+  });
+
+  // 复选框用 change 事件（键盘空格也能触发）
+  document.addEventListener('change', function (e) {
+    var t = e.target;
+    if (!t || !t.getAttribute) return;
+    var pick = t.getAttribute('data-pick');
+    if (pick) { setPick(pick, t.checked); return; }
+    var all = t.getAttribute('data-checkall');
+    if (all) { setPickAll(all, t.checked); }
   });
 
   document.addEventListener('keydown', function (e) {

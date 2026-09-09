@@ -11,6 +11,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -325,6 +327,100 @@ class AdminModulesTests {
                     .andExpect(jsonPath("$.pendingImportCount").isNumber())
                     .andExpect(jsonPath("$.paidRevenueFen").isNumber());
         } finally {
+            demote(id[0]);
+        }
+    }
+
+    /** 订单列表支持按金额排序，且排序方向真实生效。 */
+    @Test
+    void ordersCanBeSortedByAmount() throws Exception {
+        long[] id = new long[1];
+        String admin = adminToken(id);
+        try {
+            JsonNode desc = objectMapper.readTree(mockMvc.perform(
+                            get("/api/admin/orders?sort=amount&order=desc&size=10").header("X-Auth-Token", admin))
+                    .andExpect(status().isOk()).andReturn().getResponse().getContentAsString()).get("items");
+            JsonNode asc = objectMapper.readTree(mockMvc.perform(
+                            get("/api/admin/orders?sort=amount&order=asc&size=10").header("X-Auth-Token", admin))
+                    .andExpect(status().isOk()).andReturn().getResponse().getContentAsString()).get("items");
+
+            for (int i = 1; i < desc.size(); i++) {
+                assertThat(desc.get(i).get("amountFen").asLong())
+                        .as("降序：后一条不应大于前一条")
+                        .isLessThanOrEqualTo(desc.get(i - 1).get("amountFen").asLong());
+            }
+            for (int i = 1; i < asc.size(); i++) {
+                assertThat(asc.get(i).get("amountFen").asLong())
+                        .as("升序：后一条不应小于前一条")
+                        .isGreaterThanOrEqualTo(asc.get(i - 1).get("amountFen").asLong());
+            }
+            // 非法排序列必须被忽略而不是报 500（白名单兜底）
+            mockMvc.perform(get("/api/admin/orders?sort=amount_fen;DROP+TABLE+x&order=desc")
+                            .header("X-Auth-Token", admin))
+                    .andExpect(status().isOk());
+        } finally {
+            demote(id[0]);
+        }
+    }
+
+    /** 订单支持按日期区间筛选：未来区间应为 0 条，非法日期应 400。 */
+    @Test
+    void ordersSupportDateRangeFilter() throws Exception {
+        long[] id = new long[1];
+        String admin = adminToken(id);
+        try {
+            mockMvc.perform(get("/api/admin/orders?from=2099-01-01&to=2099-12-31").header("X-Auth-Token", admin))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.total").value(0));
+            mockMvc.perform(get("/api/admin/orders?from=2000-01-01&to=2099-12-31").header("X-Auth-Token", admin))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.total").isNumber());
+            mockMvc.perform(get("/api/admin/orders?from=not-a-date").header("X-Auth-Token", admin))
+                    .andExpect(status().isBadRequest());
+        } finally {
+            demote(id[0]);
+        }
+    }
+
+    /** 批量审核评论：一次通过多条，全部生效。 */
+    @Test
+    void adminCanBatchApproveComments() throws Exception {
+        long[] id = new long[1];
+        String admin = adminToken(id);
+        Long postId = jdbcTemplate.queryForObject(
+                "SELECT id FROM community_post ORDER BY id LIMIT 1", Long.class);
+        String author = guestLogin();
+        List<Long> created = new java.util.ArrayList<>();
+        try {
+            for (int i = 0; i < 2; i++) {
+                MvcResult added = mockMvc.perform(post("/api/community/posts/" + postId + "/comments")
+                                .header("X-Auth-Token", author)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"content\":\"批量审核测试-" + i + "\"}"))
+                        .andExpect(status().isOk()).andReturn();
+                created.add(objectMapper.readTree(added.getResponse().getContentAsString()).get("commentId").asLong());
+            }
+            String body = "{\"ids\":[" + created.get(0) + "," + created.get(1) + "],\"status\":\"APPROVED\"}";
+            mockMvc.perform(post("/api/admin/comments/batch-status")
+                            .header("X-Auth-Token", admin)
+                            .contentType(MediaType.APPLICATION_JSON).content(body))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.changed").value(2));
+
+            Integer approved = jdbcTemplate.queryForObject(
+                    "SELECT COUNT(*) FROM community_post_comment WHERE id IN (?, ?) AND audit_status = 'APPROVED'",
+                    Integer.class, created.get(0), created.get(1));
+            assertThat(approved).as("两条都应变成已通过").isEqualTo(2);
+
+            // 普通用户不能调用
+            mockMvc.perform(post("/api/admin/comments/batch-status")
+                            .header("X-Auth-Token", guestLogin())
+                            .contentType(MediaType.APPLICATION_JSON).content(body))
+                    .andExpect(status().isForbidden());
+        } finally {
+            for (Long cid : created) {
+                jdbcTemplate.update("DELETE FROM community_post_comment WHERE id = ?", cid);
+            }
             demote(id[0]);
         }
     }

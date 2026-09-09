@@ -529,6 +529,44 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 
 .pager { display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-top: 14px; font-size: 13px; color: var(--mut); }
 
+/* ---- 可排序表头 ---- */
+th.sortable { cursor: pointer; user-select: none; }
+th.sortable:hover { color: var(--ink); }
+th.sortable.sorted { color: var(--ink); }
+.sort-ind { margin-left: 5px; font-size: 10px; opacity: .45; }
+th.sortable.sorted .sort-ind { opacity: 1; color: var(--pop); }
+
+/* ---- 日期区间 ---- */
+.date-range { display: inline-flex; align-items: center; gap: 6px; }
+.date-range input[type="date"] {
+  height: 30px;
+  padding: 0 8px;
+  border: 1px solid var(--line-2);
+  border-radius: 9px;
+  background: var(--surface);
+  font-size: 12.5px;
+  font-family: inherit;
+  color: var(--ink);
+}
+.date-range input[type="date"]:focus { outline: none; border-color: var(--pop); box-shadow: var(--ring); }
+.date-range .dash { font-size: 12px; color: var(--mut); }
+
+/* ---- 批量操作栏 ---- */
+.bulk-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  border: 1px solid rgba(194, 64, 42, .28);
+  border-radius: var(--radius);
+  background: rgba(194, 64, 42, .05);
+}
+.bulk-count { font-size: 13px; font-weight: 600; color: var(--pop-dark); margin-right: 4px; }
+th.pick, td.pick { width: 34px; padding-right: 0; }
+th.pick input, td.pick input { cursor: pointer; accent-color: var(--pop); }
+
 .toast {
   position: fixed;
   left: 50%;

@@ -26,8 +26,10 @@ import org.springframework.http.HttpStatus;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -87,11 +89,12 @@ public class AdminService {
         return promoted;
     }
 
-    public AdminUserPage searchUsers(String keyword, int page, int size) {
+    public AdminUserPage searchUsers(String keyword, String sort, String order, int page, int size) {
         int safeSize = Math.max(1, Math.min(size, 100));
         int safePage = Math.max(0, page);
         String kw = keyword == null ? "" : keyword.trim();
         String like = "%" + kw + "%";
+        String orderBy = orderByClause(sort, order, USER_SORTABLE, "id");
 
         Long total = jdbcTemplate.queryForObject("""
                 SELECT COUNT(*) FROM user_account
@@ -103,8 +106,7 @@ public class AdminService {
                                current_family_id, created_at
                         FROM user_account
                         WHERE (? = '' OR nickname LIKE ? OR phone_number LIKE ? OR openid LIKE ?)
-                        ORDER BY id DESC LIMIT ? OFFSET ?
-                        """,
+                        """ + orderBy + " LIMIT ? OFFSET ?",
                 (rs, rowNum) -> new AdminUserItem(
                         rs.getLong("id"),
                         maskOpenid(rs.getString("openid")),
@@ -277,6 +279,60 @@ public class AdminService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "工单不存在");
         }
         return feedbackById(feedbackId);
+    }
+
+    /** 批量审核评论：只处理确实存在的 id，返回实际处理条数。 */
+    @Transactional
+    public int batchCommentStatus(List<Long> ids, String status) {
+        String target = status == null ? "" : status.trim().toUpperCase();
+        if (!target.equals("APPROVED") && !target.equals("REMOVED")) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "状态只能是 APPROVED/REMOVED");
+        }
+        List<Long> clean = normalizeIds(ids);
+        if (clean.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "请先选择要处理的评论");
+        }
+        String placeholders = String.join(",", Collections.nCopies(clean.size(), "?"));
+        List<Long> existing = jdbcTemplate.queryForList(
+                "SELECT id FROM community_post_comment WHERE id IN (" + placeholders + ")",
+                Long.class, clean.toArray());
+        for (Long id : existing) {
+            setCommentAuditStatus(id, target);
+        }
+        return existing.size();
+    }
+
+    /** 批量审核帖子：只处理确实存在的 id。 */
+    @Transactional
+    public int batchPostStatus(List<Long> ids, String status) {
+        String target = status == null ? "" : status.trim().toUpperCase();
+        if (!target.equals("APPROVED") && !target.equals("REMOVED")) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "状态只能是 APPROVED/REMOVED");
+        }
+        List<Long> clean = normalizeIds(ids);
+        if (clean.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "请先选择要处理的帖子");
+        }
+        String placeholders = String.join(",", Collections.nCopies(clean.size(), "?"));
+        List<Long> existing = jdbcTemplate.queryForList(
+                "SELECT id FROM community_post WHERE id IN (" + placeholders + ")",
+                Long.class, clean.toArray());
+        for (Long id : existing) {
+            setPostStatus(id, target);
+        }
+        return existing.size();
+    }
+
+    /** 去重 + 限流（一次最多 100 条），防止一个请求打爆数据库。 */
+    private static List<Long> normalizeIds(List<Long> ids) {
+        if (ids == null) {
+            return List.of();
+        }
+        return ids.stream()
+                .filter(java.util.Objects::nonNull)
+                .distinct()
+                .limit(100)
+                .collect(Collectors.toList());
     }
 
     /** 按 id 取单条工单（处理完回显用，不能依赖分页列表里恰好有它）。 */
@@ -485,19 +541,28 @@ public class AdminService {
 
     // ==================== 订单 / 会员 ====================
 
-    public AdminPage<AdminOrderItem> listOrders(String status, int page, int size) {
+    public AdminPage<AdminOrderItem> listOrders(String status, String from, String to,
+                                                String sort, String order, int page, int size) {
         int safeSize = Math.max(1, Math.min(size, 200));
         int safePage = Math.max(0, page);
         String st = status == null ? "" : status.trim().toUpperCase();
-        Long total = jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM payment_order WHERE (? = '' OR status = ?)", Long.class, st, st);
+        Timestamp fromTs = startOfDay(from);
+        Timestamp toTs = endOfDayExclusive(to);
+        String orderBy = orderByClause(sort, order, ORDER_SORTABLE, "id");
+        Long total = jdbcTemplate.queryForObject("""
+                SELECT COUNT(*) FROM payment_order
+                WHERE (? = '' OR status = ?)
+                  AND (? IS NULL OR created_at >= ?)
+                  AND (? IS NULL OR created_at < ?)
+                """, Long.class, st, st, fromTs, fromTs, toTs, toTs);
         List<AdminOrderItem> items = jdbcTemplate.query("""
                         SELECT id, out_trade_no, payer_user_id, plan_code, amount_fen, duration_days,
                                status, payment_method, created_at, paid_at
                         FROM payment_order
                         WHERE (? = '' OR status = ?)
-                        ORDER BY id DESC LIMIT ? OFFSET ?
-                        """,
+                          AND (? IS NULL OR created_at >= ?)
+                          AND (? IS NULL OR created_at < ?)
+                        """ + orderBy + " LIMIT ? OFFSET ?",
                 (rs, rowNum) -> new AdminOrderItem(
                         rs.getLong("id"),
                         rs.getString("out_trade_no"),
@@ -511,7 +576,7 @@ public class AdminService {
                         rs.getString("created_at"),
                         rs.getString("paid_at")
                 ),
-                st, st, safeSize, (long) safePage * safeSize);
+                st, st, fromTs, fromTs, toTs, toTs, safeSize, (long) safePage * safeSize);
         return new AdminPage<>(items, total == null ? 0 : total, safePage, safeSize);
     }
 
@@ -697,7 +762,7 @@ public class AdminService {
                         rs.getString("created_at")
                 ));
 
-        List<AdminUserItem> recentUsers = searchUsers("", 0, 6).items();
+        List<AdminUserItem> recentUsers = searchUsers("", "", "", 0, 6).items();
 
         return new AdminMetrics(LocalDateTime.now().toString(), span, series, hotPosts, recentUsers);
     }
@@ -711,24 +776,31 @@ public class AdminService {
         }, from);
     }
 
-    public AdminPage<AdminAuditItem> listAudit(String keyword, int page, int size) {
+    public AdminPage<AdminAuditItem> listAudit(String keyword, String from, String to,
+                                               String sort, String order, int page, int size) {
         int safeSize = Math.max(1, Math.min(size, 200));
         int safePage = Math.max(0, page);
         String kw = keyword == null ? "" : keyword.trim();
         String like = "%" + kw + "%";
+        Timestamp fromTs = startOfDay(from);
+        Timestamp toTs = endOfDayExclusive(to);
+        String orderBy = orderByClause(sort, order, AUDIT_SORTABLE, "id");
         Long total = jdbcTemplate.queryForObject("""
                 SELECT COUNT(*) FROM admin_audit_log
                 WHERE (? = '' OR actor_nickname LIKE ? OR action LIKE ? OR target_type LIKE ?
                        OR target_id LIKE ? OR detail LIKE ? OR result LIKE ?)
-                """, Long.class, kw, like, like, like, like, like, like);
+                  AND (? IS NULL OR created_at >= ?)
+                  AND (? IS NULL OR created_at < ?)
+                """, Long.class, kw, like, like, like, like, like, like, fromTs, fromTs, toTs, toTs);
         List<AdminAuditItem> items = jdbcTemplate.query("""
                         SELECT id, actor_user_id, actor_nickname, action, target_type, target_id,
                                detail, result, created_at
                         FROM admin_audit_log
                         WHERE (? = '' OR actor_nickname LIKE ? OR action LIKE ? OR target_type LIKE ?
                                OR target_id LIKE ? OR detail LIKE ? OR result LIKE ?)
-                        ORDER BY id DESC LIMIT ? OFFSET ?
-                        """,
+                          AND (? IS NULL OR created_at >= ?)
+                          AND (? IS NULL OR created_at < ?)
+                        """ + orderBy + " LIMIT ? OFFSET ?",
                 (rs, rowNum) -> new AdminAuditItem(
                         rs.getLong("id"),
                         rs.getLong("actor_user_id"),
@@ -740,8 +812,57 @@ public class AdminService {
                         rs.getString("result"),
                         rs.getString("created_at")
                 ),
-                kw, like, like, like, like, like, like, safeSize, (long) safePage * safeSize);
+                kw, like, like, like, like, like, like, fromTs, fromTs, toTs, toTs,
+                safeSize, (long) safePage * safeSize);
         return new AdminPage<>(items, total == null ? 0 : total, safePage, safeSize);
+    }
+
+    // ==================== 列表通用：日期区间 / 排序 ====================
+
+    /** 可排序列白名单：前端传 sort=amount，这里映射成真实列名，绝不拼接用户输入。 */
+    private static final Map<String, String> ORDER_SORTABLE = Map.of(
+            "id", "id",
+            "amount", "amount_fen",
+            "createdAt", "created_at",
+            "paidAt", "paid_at");
+    private static final Map<String, String> USER_SORTABLE = Map.of(
+            "id", "id",
+            "createdAt", "created_at");
+    private static final Map<String, String> AUDIT_SORTABLE = Map.of(
+            "id", "id",
+            "createdAt", "created_at");
+
+    /** yyyy-MM-dd → 当天 00:00:00；空或非法返回 null（不筛）。 */
+    private static Timestamp startOfDay(String date) {
+        LocalDate d = parseDate(date);
+        return d == null ? null : Timestamp.valueOf(d.atStartOfDay());
+    }
+
+    /** yyyy-MM-dd → 次日 00:00:00（左闭右开，避免漏掉当天 23:59）。 */
+    private static Timestamp endOfDayExclusive(String date) {
+        LocalDate d = parseDate(date);
+        return d == null ? null : Timestamp.valueOf(d.plusDays(1).atStartOfDay());
+    }
+
+    private static LocalDate parseDate(String date) {
+        if (date == null || date.isBlank()) {
+            return null;
+        }
+        try {
+            return LocalDate.parse(date.trim());
+        } catch (DateTimeParseException ex) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "日期格式应为 yyyy-MM-dd：" + date);
+        }
+    }
+
+    /** 生成 ORDER BY 子句；列名只可能来自白名单。 */
+    private static String orderByClause(String sort, String order, Map<String, String> allowed, String fallback) {
+        String col = allowed.get(sort == null ? "" : sort.trim());
+        if (col == null) {
+            col = allowed.get(fallback);
+        }
+        boolean asc = "asc".equalsIgnoreCase(order == null ? "" : order.trim());
+        return " ORDER BY " + col + (asc ? " ASC" : " DESC");
     }
 
     private long count(String sql) {

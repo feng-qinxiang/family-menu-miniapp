@@ -41,10 +41,13 @@ public class HomeController {
 
     private final MysqlKitchenStore store;
     private final ContentSecurityService contentSecurity;
+    private final com.familymenu.daily.service.AdminAuditService auditService;
 
-    public HomeController(MysqlKitchenStore store, ContentSecurityService contentSecurity) {
+    public HomeController(MysqlKitchenStore store, ContentSecurityService contentSecurity,
+                          com.familymenu.daily.service.AdminAuditService auditService) {
         this.store = store;
         this.contentSecurity = contentSecurity;
+        this.auditService = auditService;
     }
 
     @GetMapping("/home/dashboard")
@@ -132,7 +135,37 @@ public class HomeController {
     public CommunityReportItem reviewCommunityReport(@PathVariable long reportId,
                                                      @Valid @RequestBody CommunityReportReviewRequest request,
                                                      @CurrentUser AuthUser user) {
-        return store.reviewCommunityReport(reportId, user.userId(), request);
+        try {
+            CommunityReportItem item = store.reviewCommunityReport(reportId, user.userId(), request);
+            auditService.record(user.userId(), user.nickname(), "REVIEW_REPORT", "report", reportId,
+                    request == null ? null : request.status(), true);
+            return item;
+        } catch (RuntimeException ex) {
+            auditService.record(user.userId(), user.nickname(), "REVIEW_REPORT", "report", reportId,
+                    ex.getMessage(), false);
+            throw ex;
+        }
+    }
+
+    /** 批量处置举报：一次下架/忽略多条。 */
+    @PostMapping("/community/reports/batch-review")
+    @RequiresAdmin
+    public java.util.Map<String, Object> batchReviewCommunityReports(
+            @RequestBody(required = false) com.familymenu.daily.dto.AdminModels.AdminBatchStatusRequest request,
+            @CurrentUser AuthUser user) {
+        List<Long> ids = request == null ? null : request.ids();
+        String status = request == null ? null : request.status();
+        String note = request == null ? null : request.note();
+        try {
+            int done = store.batchReviewCommunityReports(ids, user.userId(), status, note);
+            auditService.record(user.userId(), user.nickname(), "BATCH_REVIEW_REPORT", "report",
+                    ids == null ? null : String.valueOf(ids.size()), status + " × " + done, true);
+            return java.util.Map.of("ok", true, "changed", done);
+        } catch (RuntimeException ex) {
+            auditService.record(user.userId(), user.nickname(), "BATCH_REVIEW_REPORT", "report", null,
+                    ex.getMessage(), false);
+            throw ex;
+        }
     }
 
     @PostMapping("/import/preview")

@@ -125,6 +125,14 @@ public final class AdminModels {
     ) {
     }
 
+    /** 批量审核请求：一次处理多条内容（最多 100 条，多余的忽略）。 */
+    public record AdminBatchStatusRequest(
+            List<Long> ids,
+            String status,
+            String note
+    ) {
+    }
+
     /** 订单列表项。 */
     public record AdminOrderItem(
             Long orderId,
