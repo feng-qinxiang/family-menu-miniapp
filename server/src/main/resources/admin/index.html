@@ -56,25 +56,42 @@
     </div>
   </div>
 
-  <!-- 主界面 -->
-  <div id="appView" class="app-wrap" hidden>
-    <header class="topbar">
-      <div class="topbar-left">
-        <span class="topbar-mark" aria-hidden="true">家</span>
+  <!-- 主界面：左侧导航 + 右侧内容 -->
+  <div id="appView" class="app-shell" hidden>
+    <div class="nav-backdrop" id="navBackdrop" hidden></div>
+
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <span class="brand-mark sm" aria-hidden="true">家</span>
         <div>
-          <div class="eyebrow">家庭点菜 · 运营后台</div>
-          <h1>内容与用户管理</h1>
+          <div class="sidebar-title">家庭点菜</div>
+          <div class="sidebar-sub">运营后台</div>
         </div>
       </div>
-      <div class="meta">
+      <nav class="sidebar-nav" id="navList"></nav>
+      <div class="sidebar-foot">
         <span id="adminName" class="badge">管理员</span>
-        <button id="logoutBtn" type="button" class="btn ghost">退出</button>
+        <button id="logoutBtn" type="button" class="btn ghost small">退出</button>
       </div>
-    </header>
+    </aside>
 
-    <nav class="tabs" id="navTabs"></nav>
+    <div class="main">
+      <header class="topbar">
+        <button id="menuBtn" type="button" class="icon-btn" aria-label="展开导航">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+        <div class="topbar-text">
+          <div class="eyebrow" id="pageEyebrow">家庭点菜 · 运营后台</div>
+          <h1 id="pageTitle">运营概览</h1>
+        </div>
+        <div class="meta">
+          <span id="pageMeta" class="page-meta"></span>
+          <button id="refreshBtn" type="button" class="btn small">刷新</button>
+        </div>
+      </header>
 
-    <main id="panelRoot" class="panel-root"></main>
+      <main id="panelRoot" class="panel-root"></main>
+    </div>
 
     <div id="toast" class="toast" hidden></div>
   </div>

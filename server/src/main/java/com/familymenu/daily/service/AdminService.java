@@ -5,6 +5,8 @@ import com.familymenu.daily.dto.AdminModels.AdminCommentItem;
 import com.familymenu.daily.dto.AdminModels.AdminDashboard;
 import com.familymenu.daily.dto.AdminModels.AdminFeedbackItem;
 import com.familymenu.daily.dto.AdminModels.AdminImportItem;
+import com.familymenu.daily.dto.AdminModels.AdminMetricPoint;
+import com.familymenu.daily.dto.AdminModels.AdminMetrics;
 import com.familymenu.daily.dto.AdminModels.AdminOrderItem;
 import com.familymenu.daily.dto.AdminModels.AdminPostItem;
 import com.familymenu.daily.dto.AdminModels.AdminRecipeItem;
@@ -20,10 +22,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -583,12 +589,88 @@ public class AdminService {
         long posts = count("SELECT COUNT(*) FROM community_post WHERE audit_status = 'APPROVED'");
         long pendingPosts = count("SELECT COUNT(*) FROM community_post WHERE audit_status = 'PENDING'");
         long pendingComments = count("SELECT COUNT(*) FROM community_post_comment WHERE audit_status = 'PENDING'");
+        long pendingImports = count("SELECT COUNT(*) FROM import_source WHERE audit_status = 'PENDING'");
         long pendingReports = count("SELECT COUNT(*) FROM community_post_report WHERE status = 'PENDING'");
         long openFeedback = count("SELECT COUNT(*) FROM feedback_ticket WHERE status = 'OPEN'");
         long paidOrders = count("SELECT COUNT(*) FROM payment_order WHERE status = 'PAID'");
+        long paidRevenue = count("SELECT COALESCE(SUM(amount_fen), 0) FROM payment_order WHERE status = 'PAID'");
         long activeVip = count("SELECT COUNT(DISTINCT payer_user_id) FROM user_membership WHERE expires_at > NOW()");
         return new AdminDashboard(users, families, recipes, posts, pendingPosts, pendingComments,
-                pendingReports, openFeedback, paidOrders, activeVip, LocalDateTime.now().toString());
+                pendingImports, pendingReports, openFeedback, paidOrders, paidRevenue, activeVip,
+                LocalDateTime.now().toString());
+    }
+
+    /**
+     * 看板趋势：近 days 天的每日新增（用户/帖子/评论/已支付订单/收入）。
+     * 空日补 0，保证前端 X 轴连续；日期锚点取自数据库 NOW()，避免 JVM 与 DB 时区不一致导致错位。
+     */
+    public AdminMetrics metrics(int days) {
+        int span = Math.max(7, Math.min(days, 60));
+        LocalDate today = jdbcTemplate.queryForObject("SELECT DATE(NOW())", LocalDate.class);
+        if (today == null) {
+            today = LocalDate.now();
+        }
+        LocalDate from = today.minusDays(span - 1L);
+
+        Map<String, long[]> buckets = new LinkedHashMap<>();
+        for (int i = 0; i < span; i++) {
+            buckets.put(from.plusDays(i).toString(), new long[5]);
+        }
+        Timestamp fromTs = Timestamp.valueOf(from.atStartOfDay());
+        fillDaily(buckets, "SELECT DATE(created_at), COUNT(*) FROM user_account WHERE created_at >= ? GROUP BY 1", fromTs, 0);
+        fillDaily(buckets, "SELECT DATE(created_at), COUNT(*) FROM community_post WHERE created_at >= ? GROUP BY 1", fromTs, 1);
+        fillDaily(buckets, "SELECT DATE(created_at), COUNT(*) FROM community_post_comment WHERE created_at >= ? GROUP BY 1", fromTs, 2);
+        jdbcTemplate.query("""
+                        SELECT DATE(paid_at), COUNT(*), COALESCE(SUM(amount_fen), 0)
+                        FROM payment_order
+                        WHERE status = 'PAID' AND paid_at IS NOT NULL AND paid_at >= ?
+                        GROUP BY 1
+                        """,
+                rs -> {
+                    long[] cell = buckets.get(rs.getString(1));
+                    if (cell != null) {
+                        cell[3] = rs.getLong(2);
+                        cell[4] = rs.getLong(3);
+                    }
+                },
+                fromTs);
+
+        List<AdminMetricPoint> series = buckets.entrySet().stream()
+                .map(e -> new AdminMetricPoint(e.getKey(),
+                        e.getValue()[0], e.getValue()[1], e.getValue()[2], e.getValue()[3], e.getValue()[4]))
+                .collect(Collectors.toList());
+
+        List<AdminPostItem> hotPosts = jdbcTemplate.query("""
+                        SELECT p.id, p.title, u.nickname, p.audit_status, p.like_count,
+                               p.comment_count, p.created_at
+                        FROM community_post p
+                        LEFT JOIN user_account u ON u.id = p.author_user_id
+                        WHERE p.audit_status = 'APPROVED'
+                        ORDER BY p.like_count DESC, p.comment_count DESC, p.id DESC
+                        LIMIT 5
+                        """,
+                (rs, rowNum) -> new AdminPostItem(
+                        rs.getLong("id"),
+                        rs.getString("title"),
+                        rs.getString("nickname"),
+                        rs.getString("audit_status"),
+                        rs.getInt("like_count"),
+                        rs.getInt("comment_count"),
+                        rs.getString("created_at")
+                ));
+
+        List<AdminUserItem> recentUsers = searchUsers("", 0, 6).items();
+
+        return new AdminMetrics(LocalDateTime.now().toString(), span, series, hotPosts, recentUsers);
+    }
+
+    private void fillDaily(Map<String, long[]> buckets, String sql, Timestamp from, int index) {
+        jdbcTemplate.query(sql, rs -> {
+            long[] cell = buckets.get(rs.getString(1));
+            if (cell != null) {
+                cell[index] = rs.getLong(2);
+            }
+        }, from);
     }
 
     public List<AdminAuditItem> listAudit(int limit) {

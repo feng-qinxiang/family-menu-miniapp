@@ -13,6 +13,7 @@ import com.familymenu.daily.dto.AdminModels.AdminGrantRequest;
 import com.familymenu.daily.dto.AdminModels.AdminGrantVipRequest;
 import com.familymenu.daily.dto.AdminModels.AdminImportItem;
 import com.familymenu.daily.dto.AdminModels.AdminImportStatusRequest;
+import com.familymenu.daily.dto.AdminModels.AdminMetrics;
 import com.familymenu.daily.dto.AdminModels.AdminOrderItem;
 import com.familymenu.daily.dto.AdminModels.AdminPostItem;
 import com.familymenu.daily.dto.AdminModels.AdminRecipeItem;
@@ -55,6 +56,13 @@ public class AdminController {
     @RequiresAdmin
     public AdminDashboard dashboard() {
         return adminService.dashboard();
+    }
+
+    /** 看板趋势（近 days 天每日新增）+ 热门内容 + 最近注册用户。 */
+    @GetMapping("/metrics")
+    @RequiresAdmin
+    public AdminMetrics metrics(@RequestParam(defaultValue = "14") int days) {
+        return adminService.metrics(days);
     }
 
     // ---------- 用户 ----------

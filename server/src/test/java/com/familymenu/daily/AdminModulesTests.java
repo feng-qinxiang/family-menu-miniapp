@@ -318,7 +318,37 @@ class AdminModulesTests {
             mockMvc.perform(get("/api/admin/dashboard").header("X-Auth-Token", admin))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.pendingPostCount").isNumber())
-                    .andExpect(jsonPath("$.pendingCommentCount").isNumber());
+                    .andExpect(jsonPath("$.pendingCommentCount").isNumber())
+                    .andExpect(jsonPath("$.pendingImportCount").isNumber())
+                    .andExpect(jsonPath("$.paidRevenueFen").isNumber());
+        } finally {
+            demote(id[0]);
+        }
+    }
+
+    /** 趋势接口：日期必须连续升序（前端 X 轴直接按它画），非管理员不可访问。 */
+    @Test
+    void metricsEndpointReturnsContinuousDailySeries() throws Exception {
+        long[] id = new long[1];
+        String admin = adminToken(id);
+        try {
+            MvcResult result = mockMvc.perform(get("/api/admin/metrics?days=14").header("X-Auth-Token", admin))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.days").value(14))
+                    .andExpect(jsonPath("$.series.length()").value(14))
+                    .andReturn();
+            JsonNode series = objectMapper.readTree(result.getResponse().getContentAsString()).get("series");
+            for (int i = 0; i < series.size(); i++) {
+                String date = series.get(i).get("date").asText();
+                assertThat(date).matches("\\d{4}-\\d{2}-\\d{2}");
+                if (i > 0) {
+                    assertThat(date).as("日期必须严格升序").isGreaterThan(series.get(i - 1).get("date").asText());
+                }
+                assertThat(series.get(i).get("revenueFen").asLong()).isGreaterThanOrEqualTo(0L);
+            }
+
+            mockMvc.perform(get("/api/admin/metrics").header("X-Auth-Token", guestLogin()))
+                    .andExpect(status().isForbidden());
         } finally {
             demote(id[0]);
         }

@@ -173,9 +173,13 @@ public final class AdminModels {
             long pendingPostCount,
             /** 待人工审核的评论 */
             long pendingCommentCount,
+            /** 待人工审核的导入源 */
+            long pendingImportCount,
             long pendingReportCount,
             long openFeedbackCount,
             long paidOrderCount,
+            /** 已支付订单累计金额（分） */
+            long paidRevenueFen,
             long activeVipCount,
             String generatedAt
     ) {
@@ -192,6 +196,30 @@ public final class AdminModels {
             String detail,
             String result,
             String createdAt
+    ) {
+    }
+
+    /** 看板趋势图上的一个日桶（date = yyyy-MM-dd，按数据库日期分组）。 */
+    public record AdminMetricPoint(
+            String date,
+            long newUsers,
+            long newPosts,
+            long newComments,
+            long paidOrders,
+            /** 当日已支付订单金额（分），避免浮点误差 */
+            long revenueFen
+    ) {
+    }
+
+    /** 看板趋势与近期动态（与 AdminDashboard 的累计计数互补）。 */
+    public record AdminMetrics(
+            String generatedAt,
+            int days,
+            List<AdminMetricPoint> series,
+            /** 近 30 天互动最高的已发布帖子 */
+            List<AdminPostItem> hotPosts,
+            /** 最近注册的用户 */
+            List<AdminUserItem> recentUsers
     ) {
     }
 }
