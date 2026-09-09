@@ -10,26 +10,61 @@
 <body>
   <!-- 登录态 -->
   <div id="loginView" class="login-wrap">
-    <form id="loginForm" class="login-card" autocomplete="off">
-      <h1>运营后台</h1>
-      <p class="muted">仅限管理员账号登录</p>
-      <label for="phone">手机号</label>
-      <input id="phone" name="phone" type="tel" inputmode="numeric" maxlength="11" placeholder="11 位手机号" required />
-      <div class="otp-row">
-        <input id="code" name="code" type="text" inputmode="numeric" maxlength="6" placeholder="6 位验证码" required />
-        <button id="sendOtpBtn" type="button" class="btn ghost">获取验证码</button>
-      </div>
-      <button id="loginBtn" type="submit" class="btn primary">登录</button>
-      <div id="loginMsg" class="msg" role="alert" aria-live="polite"></div>
-    </form>
+    <div class="login-shell">
+      <!-- 左侧品牌区 -->
+      <aside class="login-brand">
+        <span class="brand-mark" aria-hidden="true">家</span>
+        <h1 class="brand-title">家庭点菜</h1>
+        <p class="brand-sub">运营后台</p>
+        <ul class="brand-points">
+          <li>内容审核 · 举报处置</li>
+          <li>用户与会员管理</li>
+          <li>全量操作审计留痕</li>
+        </ul>
+        <p class="brand-foot">© 2026 家庭点菜 · 内部系统，请勿外传</p>
+      </aside>
+
+      <!-- 右侧表单区 -->
+      <section class="login-panel">
+        <h2>登录</h2>
+        <p class="login-hint">使用已绑定手机号的管理员账号登录</p>
+        <form id="loginForm" autocomplete="off">
+          <label for="phone">手机号</label>
+          <div class="field">
+            <span class="field-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2.6"/><path d="M11 18.4h2"/></svg>
+            </span>
+            <input id="phone" name="phone" type="tel" inputmode="numeric" maxlength="11" placeholder="请输入 11 位手机号" required />
+          </div>
+
+          <label for="code">验证码</label>
+          <div class="field-row">
+            <div class="field">
+              <span class="field-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5.6c0 4.2-2.9 7.9-7 9.4-4.1-1.5-7-5.2-7-9.4V6l7-3z"/><path d="M9.2 12.1l2 2 3.6-3.8"/></svg>
+              </span>
+              <input id="code" name="code" type="text" inputmode="numeric" maxlength="6" placeholder="6 位验证码" required />
+            </div>
+            <button id="sendOtpBtn" type="button" class="btn ghost">获取验证码</button>
+          </div>
+
+          <button id="loginBtn" type="submit" class="btn primary block">登 录</button>
+          <div id="loginMsg" class="msg" role="alert" aria-live="polite"></div>
+        </form>
+        <p class="login-note">登录与所有管理操作都会写入审计日志</p>
+      </section>
+    </div>
   </div>
 
   <!-- 主界面 -->
   <div id="appView" class="app-wrap" hidden>
     <header class="topbar">
-      <div>
-        <div class="eyebrow">家庭点菜 · 运营后台</div>
-        <h1>内容与用户管理</h1>
+      <div class="topbar-left">
+        <span class="topbar-mark" aria-hidden="true">家</span>
+        <div>
+          <div class="eyebrow">家庭点菜 · 运营后台</div>
+          <h1>内容与用户管理</h1>
+        </div>
       </div>
       <div class="meta">
         <span id="adminName" class="badge">管理员</span>
