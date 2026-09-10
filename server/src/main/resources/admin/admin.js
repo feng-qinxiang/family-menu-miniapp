@@ -60,6 +60,8 @@
     auditOrder: 'desc',
     /** 批量勾选：{ comments: {id:true}, posts: {...}, reports: {...} } */
     picked: { comments: {}, posts: {}, reports: {} },
+    /** 快速跳转的键盘高亮下标 */
+    jumpIndex: 0,
     imports: [],
     importFilter: 'PENDING'
   };
@@ -146,6 +148,25 @@
     return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' +
       (ICONS[name] || ICONS.grid) + '</svg>';
   }
+
+  /**
+   * 空状态/错误态的插画图标（线性、单色，跟表格里的图标区分开）
+   * 空列表配一张图 + 一句"下一步该干什么"，比一行灰字专业得多。
+   */
+  var EMPTY_ICONS = {
+    inbox: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 13.5h4l1.4 2.4h6.2l1.4-2.4h4"/><path d="M5.6 5.2h12.8l2.1 8.3v3.9a1.6 1.6 0 0 1-1.6 1.6H5.1a1.6 1.6 0 0 1-1.6-1.6v-3.9z"/></svg>',
+    comment: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 11.5a7.5 7.5 0 0 1-7.5 7.5H8l-4.5 3v-5.6A7.5 7.5 0 0 1 13 4a7.5 7.5 0 0 1 7.5 7.5z"/><path d="M9.5 11.5h.01M13 11.5h.01M16.5 11.5h.01"/></svg>',
+    flag: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21V4h12l-2.2 4.5L18 13H6"/></svg>',
+    users: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8.5" r="3.4"/><path d="M2.8 20c0-3.4 2.8-5.6 6.2-5.6s6.2 2.2 6.2 5.6"/><path d="M16.5 5.6a3.4 3.4 0 0 1 0 6.6M18 14.6c2 .6 3.2 2.2 3.2 4.4"/></svg>',
+    card: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2.6" y="5.2" width="18.8" height="13.6" rx="2.2"/><path d="M2.6 9.8h18.8"/><path d="M6.4 14.6h3.4"/></svg>',
+    file: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 16.5h4"/></svg>',
+    book: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.2A2.2 2.2 0 0 1 6.2 3H19v15.5H6.2A2.2 2.2 0 0 0 4 20.7z"/><path d="M4 20.7A2.2 2.2 0 0 1 6.2 18.5H19"/></svg>',
+    shield: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5.6c0 4.2-2.9 7.9-7 9.4-4.1-1.5-7-5.2-7-9.4V6z"/><path d="M9.2 12.1l2 2 3.6-3.8"/></svg>',
+    search: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/><path d="M8.5 11h5"/></svg>',
+    alert: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.6l9 15.6H3z"/><path d="M12 9.6v4.2M12 16.6h.01"/></svg>',
+    download: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5v11"/><path d="M7.5 10.5L12 15l4.5-4.5"/><path d="M4.5 20.5h15"/></svg>',
+    check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.6"/><path d="M8.4 12.2l2.5 2.5 4.7-5"/></svg>'
+  };
 
   function request(path, options) {
     var opts = options || {};
@@ -442,16 +463,95 @@
     }).join('');
   }
 
+  // ==================== 顶栏：账号菜单 / 快速跳转 ====================
+
+  function renderAccountMenu() {
+    $('accountMenu').innerHTML =
+      '<div class="am-head"><div class="am-name">' + escapeHtml(state.nickname || '管理员') + '</div>' +
+      '<div class="am-role">' + escapeHtml(state.roleName) + ' · ' + state.permissions.length + ' 项权限</div></div>' +
+      '<button class="am-item" type="button" data-account="refresh" role="menuitem">' +
+      icon('grid').replace('viewBox', 'viewBox') + '刷新当前页</button>' +
+      '<button class="am-item danger" type="button" data-account="logout" role="menuitem">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 17l5-5-5-5"/><path d="M20 12H9"/><path d="M12 4H6.5A1.5 1.5 0 0 0 5 5.5v13A1.5 1.5 0 0 0 6.5 20H12"/></svg>' +
+      '退出登录</button>';
+  }
+
+  function toggleAccountMenu(show) {
+    var menu = $('accountMenu');
+    var btn = $('accountBtn');
+    var open = show === undefined ? menu.hidden : show;
+    if (open) renderAccountMenu();
+    menu.hidden = !open;
+    btn.setAttribute('aria-expanded', String(open));
+  }
+
+  /** 快速跳转候选项：当前角色有权限的页面 */
+  function jumpTargets(keyword) {
+    var kw = (keyword || '').trim().toLowerCase();
+    var out = [];
+    NAV.forEach(function (group) {
+      group.items.forEach(function (item) {
+        if (!can(item.perm)) return;
+        var hay = (item.label + ' ' + group.group + ' ' + (item.desc || '')).toLowerCase();
+        if (kw && hay.indexOf(kw) < 0) return;
+        out.push({ key: item.key, label: item.label, icon: item.icon, group: group.group });
+      });
+    });
+    return out;
+  }
+
+  function renderQuickMenu(keyword, hiIndex) {
+    var list = jumpTargets(keyword);
+    var menu = $('quickMenu');
+    if (!list.length) {
+      menu.innerHTML = '<div class="qm-empty">没有匹配的页面</div>';
+    } else {
+      menu.innerHTML = '<div class="qm-hint"><span>↑↓ 选择 · Enter 跳转</span><span>Esc 关闭</span></div>' +
+        list.map(function (t, i) {
+          return '<div class="qm-item' + (i === hiIndex ? ' hi' : '') + '" data-jump="' + t.key + '" role="option">' +
+            icon(t.icon) + '<span>' + escapeHtml(t.label) + '</span>' +
+            '<span class="qm-group">' + escapeHtml(t.group) + '</span></div>';
+        }).join('');
+    }
+    menu.hidden = false;
+    $('quickJump').setAttribute('aria-expanded', 'true');
+    return list;
+  }
+
+  function closeQuickMenu() {
+    var menu = $('quickMenu');
+    if (!menu || menu.hidden) return;
+    menu.hidden = true;
+    var input = $('quickJump');
+    if (input) input.setAttribute('aria-expanded', 'false');
+    state.jumpIndex = 0;
+  }
+
+  /** 面包屑：运营后台 / 分组 / 当前页 */
+  function renderCrumb() {
+    var item = navItem(state.tab);
+    var group = '';
+    for (var i = 0; i < NAV.length; i++) {
+      if (NAV[i].items.indexOf(item) >= 0) { group = NAV[i].group; break; }
+    }
+    var sep = '<span class="crumb-sep">/</span>';
+    $('crumb').innerHTML = '<span>运营后台</span>' + sep +
+      (group ? '<span>' + escapeHtml(group) + '</span>' + sep : '') +
+      '<span aria-current="page">' + escapeHtml(item.label) + '</span>';
+  }
+
   function setPageHeader(meta) {
     var item = navItem(state.tab);
     $('pageTitle').textContent = item.label;
     $('pageMeta').textContent = meta || '';
+    renderCrumb();
   }
 
   function loadTab() {
     var item = navItem(state.tab);
     $('pageTitle').textContent = item.label;
     $('pageMeta').textContent = '';
+    renderCrumb();
     var loaders = {
       dashboard: loadDashboard, reports: loadReports, posts: loadPosts,
       comments: loadComments, recipes: loadRecipes, feedback: loadFeedback,
@@ -460,13 +560,13 @@
     return (loaders[state.tab] || loadDashboard)();
   }
 
-  /** 刷新按钮：给出进行中反馈，而不是点了没反应 */
+  /** 刷新按钮：图标按钮，刷新时旋转并禁止重复点击 */
   function refreshCurrent() {
     var btn = $('refreshBtn');
-    var label = btn.textContent;
+    if (btn.disabled) return;
     btn.disabled = true;
-    btn.textContent = '刷新中…';
-    var done = function () { btn.disabled = false; btn.textContent = label; };
+    btn.classList.add('spinning');
+    var done = function () { btn.disabled = false; btn.classList.remove('spinning'); };
     Promise.resolve(loadTab()).then(done, done);
   }
 
@@ -479,24 +579,63 @@
     if (key === 'imports') state.importFilter = filter || '';
     if (key === 'orders') state.orderFilter = filter || '';
     closeNav();
+    closeQuickMenu();
     renderNav();
     loadTab();
   }
 
   function closeNav() { $('appView').classList.remove('nav-open'); }
 
+  /** 加载态：骨架行，比一行「加载中…」更像正式系统 */
   function loadingCard() {
-    $('panelRoot').innerHTML = '<div class="card"><div class="loading"><span class="spinner"></span>加载中…</div></div>';
+    $('panelRoot').innerHTML = '<div class="card"><div class="skeleton">' +
+      [92, 78, 85, 70, 88, 64, 80].map(function (w) {
+        return '<div class="sk-row"><div class="sk-bar" style="width:' + w + '%"></div>' +
+          '<div class="sk-bar" style="width:' + Math.round(w / 4) + '%"></div></div>';
+      }).join('') + '</div></div>';
   }
 
   function errorCard(err) {
-    $('panelRoot').innerHTML = '<div class="card"><p class="msg error">' + escapeHtml(err.message) + '</p></div>';
+    $('panelRoot').innerHTML = '<div class="card">' + emptyState({
+      icon: 'alert',
+      title: '加载失败',
+      desc: (err && err.message) || '请求没有成功，请检查网络或后端服务后重试。',
+      actions: '<button class="btn small" data-retry="1">重新加载</button>'
+    }) + '</div>';
   }
 
+  /**
+   * 空状态：图标 + 标题 + 说明 +（可选）操作
+   * 列表页用它替代原来一行灰字，空数据时页面才不像没做完。
+   */
+  function emptyState(opts) {
+    var o = opts || {};
+    return '<div class="empty-state">' +
+      '<div class="empty-ico" aria-hidden="true">' + EMPTY_ICONS[o.icon || 'inbox'] + '</div>' +
+      '<h3>' + escapeHtml(o.title || '暂无数据') + '</h3>' +
+      (o.desc ? '<p>' + escapeHtml(o.desc) + '</p>' : '') +
+      (o.actions ? '<div class="empty-actions">' + o.actions + '</div>' : '') +
+      '</div>';
+  }
+
+  /** 表格里的空状态（放进 td，带 colspan） */
+  function tableEmpty(colspan, opts) {
+    return '<tr class="empty-row"><td colspan="' + colspan + '">' + emptyState(opts) + '</td></tr>';
+  }
+
+  /**
+   * 页头：标题 + 说明 + 右侧操作；筛选类控件放第二行（toolbar）
+   * 这样"这是什么页面"和"能做什么操作"层次分明，不会挤成一坨。
+   */
   function pageHead(title, desc, actionsHtml) {
     return '<div class="page-head"><div><h2>' + escapeHtml(title) + '</h2>' +
       (desc ? '<p class="page-desc">' + escapeHtml(desc) + '</p>' : '') + '</div>' +
       (actionsHtml ? '<div class="page-actions">' + actionsHtml + '</div>' : '') + '</div>';
+  }
+
+  /** 工具行：筛选 chips / 搜索框 / 日期区间 / 导出按钮 */
+  function toolbar(html) {
+    return html ? '<div class="toolbar">' + html + '</div>' : '';
   }
 
   function chips(options, current, attr) {
@@ -758,8 +897,8 @@
   function renderReports() {
     var rows = state.reports;
     var head = pageHead('举报审核', '用户举报的帖子在这里处置：下架或忽略',
-      chips([['PENDING', '待处理'], ['REMOVED', '已下架'], ['IGNORED', '已忽略'], ['', '全部']], state.reportFilter, 'rptfilter') +
-      '<button class="btn small" id="exportReports">导出 CSV</button>');
+      '<button class="btn small" id="exportReports">导出 Excel</button>') +
+      toolbar(chips([['PENDING', '待处理'], ['REMOVED', '已下架'], ['IGNORED', '已忽略'], ['', '全部']], state.reportFilter, 'rptfilter'));
     var body = rows.length ? rows.map(function (r) {
       var pending = r.status === 'PENDING';
       var pill = pending ? '<span class="pill pending">待处理</span>'
@@ -777,7 +916,7 @@
             '<button class="btn small" data-review="' + escapeHtml(String(r.reportId)) + '" data-status="IGNORED">忽略</button>'
           : escapeHtml(r.reviewNote || '—')) +
         '</td></tr>';
-    }).join('') : '<tr><td colspan="9"><div class="empty">没有举报记录</div></td></tr>';
+    }).join('') : tableEmpty(9, { icon: 'flag', title: '暂无举报', desc: '用户在小程序里举报帖子后会进入这里。当前筛选条件下没有记录。' });
     var pickedCount = pickedIds('reports').length;
     setPageHeader(rows.length + ' 条');
     $('panelRoot').innerHTML = '<div class="card">' + head +
@@ -821,8 +960,8 @@
   function renderPosts() {
     var rows = state.posts;
     var head = pageHead('内容治理', '先审后发：待审核的帖子只有作者本人可见',
-      chips([['PENDING', '待审核'], ['', '全部'], ['APPROVED', '已发布'], ['REMOVED', '已下架']], state.postFilter, 'postfilter') +
-      '<button class="btn small" id="exportPosts">导出 CSV</button>');
+      '<button class="btn small" id="exportPosts">导出 Excel</button>') +
+      toolbar(chips([['PENDING', '待审核'], ['', '全部'], ['APPROVED', '已发布'], ['REMOVED', '已下架']], state.postFilter, 'postfilter'));
     var body = rows.length ? rows.map(function (p) {
       var removed = p.auditStatus === 'REMOVED';
       var pending = p.auditStatus === 'PENDING';
@@ -850,7 +989,7 @@
         '<td class="num">' + fmtNum(p.likeCount) + '</td><td class="num">' + fmtNum(p.commentCount) + '</td>' +
         '<td title="' + escapeHtml(p.createdAt || '') + '">' + fmtTime(p.createdAt) + '</td>' +
         '<td class="actions">' + actions + '</td></tr>';
-    }).join('') : '<tr><td colspan="9"><div class="empty">没有内容</div></td></tr>';
+    }).join('') : tableEmpty(9, { icon: 'file', title: '暂无帖子', desc: '用户发布的帖子会先进入待审核队列，在这里通过或下架。当前筛选条件下没有记录。' });
     var pickedCount = pickedIds('posts').length;
     setPageHeader(rows.length + ' 条');
     $('panelRoot').innerHTML = '<div class="card">' + head +
@@ -900,10 +1039,12 @@
   function renderComments() {
     var rows = state.comments;
     var head = pageHead('评论管理', '「待审核」是机审无法判定的评论：作者本人可见，其他人看不到，需要你通过或驳回',
-      chips([['PENDING', '待审核'], ['APPROVED', '已通过'], ['REMOVED', '已驳回'], ['', '全部']], state.commentFilter, 'cmtfilter') +
-      '<input id="commentPostFilter" type="search" placeholder="按帖子 ID 过滤" value="' + escapeHtml(state.commentPostId) + '" style="height:30px;padding:0 10px;border:1px solid var(--line-2);border-radius:9px;font-size:12.5px;width:130px" />' +
-      '<button class="btn small" id="commentFilterBtn">过滤</button>' +
-      '<button class="btn small" id="exportComments">导出 CSV</button>');
+      '') +
+      toolbar(chips([['PENDING', '待审核'], ['APPROVED', '已通过'], ['REMOVED', '已驳回'], ['', '全部']], state.commentFilter, 'cmtfilter') +
+        '<input id="commentPostFilter" type="search" placeholder="按帖子 ID 过滤" value="' + escapeHtml(state.commentPostId) + '" class="text-input" style="width:130px" />' +
+        '<button class="btn small" id="commentFilterBtn">过滤</button>' +
+        '<span class="spacer"></span>' +
+        '<button class="btn small" id="exportComments">导出 Excel</button>');
     var body = rows.length ? rows.map(function (c) {
       var pill = c.deleted
         ? '<span class="pill bad">已删除</span>'
@@ -932,7 +1073,7 @@
         '<td class="clamp" title="' + escapeHtml(c.content || '') + '">' + escapeHtml(c.content || '') + '</td>' +
         '<td>' + pill + '</td><td title="' + escapeHtml(c.createdAt || '') + '">' + fmtTime(c.createdAt) + '</td>' +
         '<td class="actions">' + actions + '</td></tr>';
-    }).join('') : '<tr><td colspan="8"><div class="empty">没有评论</div></td></tr>';
+    }).join('') : tableEmpty(8, { icon: 'comment', title: '暂无评论', desc: '机审无法判定的评论会进入待审核队列，作者本人可见、其他人看不到。' });
     var pickedCount = pickedIds('comments').length;
     setPageHeader('共 ' + fmtNum(state.commentTotal) + ' 条');
     $('panelRoot').innerHTML = '<div class="card">' + head +
@@ -985,10 +1126,10 @@
   function renderRecipes() {
     var rows = state.recipes;
     var head = pageHead('菜谱治理', '下架后用户端不再展示该菜谱',
-      chips([['ACTIVE', '在线'], ['REMOVED', '已下架'], ['', '全部']], state.recipeFilter, 'recipefilter') +
-      '<input id="recipeSearch" type="search" placeholder="按标题搜索" value="' + escapeHtml(state.recipeKeyword) +
-      '" style="height:30px;padding:0 10px;border:1px solid var(--line-2);border-radius:9px;font-size:12.5px;width:150px" />' +
-      '<button class="btn small" id="recipeSearchBtn">搜索</button>');
+      '') +
+      toolbar(chips([['ACTIVE', '在线'], ['REMOVED', '已下架'], ['', '全部']], state.recipeFilter, 'recipefilter') +
+        '<input id="recipeSearch" type="search" placeholder="按标题搜索" value="' + escapeHtml(state.recipeKeyword) + '" class="text-input" style="width:180px" />' +
+        '<button class="btn small" id="recipeSearchBtn">搜索</button>');
     var body = rows.length ? rows.map(function (r) {
       var removed = r.status === 'REMOVED';
       return '<tr><td class="num">' + escapeHtml(String(r.recipeId)) + '</td><td>' + escapeHtml(r.title || '') + '</td>' +
@@ -1002,7 +1143,7 @@
           ? '<button class="btn small" data-recipestatus="' + escapeHtml(String(r.recipeId)) + '" data-on="ACTIVE">恢复</button>'
           : '<button class="btn small danger" data-recipestatus="' + escapeHtml(String(r.recipeId)) + '" data-on="REMOVED">下架</button>') +
         '</td></tr>';
-    }).join('') : '<tr><td colspan="8"><div class="empty">没有菜谱</div></td></tr>';
+    }).join('') : tableEmpty(8, { icon: 'book', title: '暂无菜谱', desc: '公共菜谱库为空，或当前搜索词没有匹配到菜谱。' });
     setPageHeader(rows.length + ' 条');
     $('panelRoot').innerHTML = '<div class="card">' + head +
       '<table><thead><tr><th class="num">ID</th><th>标题</th><th>作者</th><th>菜系</th><th class="num">耗时</th>' +
@@ -1046,8 +1187,8 @@
   function renderFeedback() {
     var rows = state.feedback;
     var head = pageHead('反馈工单', '用户提交的 bug / 建议 / 投诉',
-      chips([['OPEN', '待处理'], ['PROCESSING', '处理中'], ['CLOSED', '已关闭'], ['', '全部']], state.feedbackFilter, 'fbfilter') +
-      '<button class="btn small" id="exportFeedback">导出 CSV</button>');
+      '<button class="btn small" id="exportFeedback">导出 Excel</button>') +
+      toolbar(chips([['OPEN', '待处理'], ['PROCESSING', '处理中'], ['CLOSED', '已关闭'], ['', '全部']], state.feedbackFilter, 'fbfilter'));
     var body = rows.length ? rows.map(function (f) {
       var pill = f.status === 'CLOSED' ? 'ok' : (f.status === 'PROCESSING' ? 'pending' : 'bad');
       return '<tr><td class="num">' + escapeHtml(String(f.id)) + '</td>' +
@@ -1061,7 +1202,7 @@
         (f.status === 'OPEN' ? '<button class="btn small" data-fb="' + escapeHtml(String(f.id)) + '" data-on="PROCESSING">受理</button>' : '') +
         (f.status !== 'CLOSED' ? '<button class="btn small primary-sm" data-fb="' + escapeHtml(String(f.id)) + '" data-on="CLOSED">关闭</button>' : '') +
         '</td></tr>';
-    }).join('') : '<tr><td colspan="8"><div class="empty">没有工单</div></td></tr>';
+    }).join('') : tableEmpty(8, { icon: 'inbox', title: '暂无反馈工单', desc: '用户在小程序「我的 → 意见反馈」提交后会出现在这里。' });
     setPageHeader('共 ' + fmtNum(state.feedbackTotal) + ' 条');
     $('panelRoot').innerHTML = '<div class="card">' + head +
       '<table><thead><tr><th class="num">ID</th><th>用户</th><th>类型</th><th>内容</th><th>联系方式</th>' +
@@ -1107,7 +1248,8 @@
   function renderImports() {
     var rows = state.imports;
     var head = pageHead('导入审核', '外部来源（链接 / 图片 OCR）解析出的菜谱，通过后才入库',
-      chips([['PENDING', '待审核'], ['APPROVED', '已通过'], ['REJECTED', '已驳回'], ['', '全部']], state.importFilter, 'importfilter'));
+      '') +
+      toolbar(chips([['PENDING', '待审核'], ['APPROVED', '已通过'], ['REJECTED', '已驳回'], ['', '全部']], state.importFilter, 'importfilter'));
     var body = rows.length ? rows.map(function (im) {
       var pill = im.auditStatus === 'APPROVED' ? 'ok' : (im.auditStatus === 'REJECTED' ? 'bad' : 'pending');
       return '<tr><td class="num">' + escapeHtml(String(im.id)) + '</td>' +
@@ -1121,7 +1263,7 @@
             '<button class="btn small danger" data-import="' + escapeHtml(String(im.id)) + '" data-on="REJECTED">驳回</button>'
           : escapeHtml(im.reviewNote || '—')) +
         '</td></tr>';
-    }).join('') : '<tr><td colspan="7"><div class="empty">没有导入记录</div></td></tr>';
+    }).join('') : tableEmpty(7, { icon: 'download', title: '暂无导入记录', desc: '用户在小程序「导入菜谱」粘贴链接或上传图片，解析结果会先到这里等待审核，通过后才入库。' });
     setPageHeader(rows.length + ' 条');
     $('panelRoot').innerHTML = '<div class="card">' + head +
       '<table><thead><tr><th class="num">ID</th><th>类型</th><th>来源链接</th><th>内容摘要</th><th>状态</th>' +
@@ -1168,10 +1310,11 @@
     var p = state.users;
     var rows = p.items || [];
     var head = pageHead('用户管理', '检索账号、授予权限、封禁、人工开通会员',
-      '<input id="userSearch" type="search" placeholder="搜昵称 / 手机号 / openid" value="' + escapeHtml(state.userKeyword) +
-      '" style="height:30px;padding:0 10px;border:1px solid var(--line-2);border-radius:9px;font-size:12.5px;width:200px" />' +
-      '<button class="btn small" id="userSearchBtn">搜索</button>' +
-      '<button class="btn small" id="exportUsers">导出 CSV</button>');
+      '') +
+      toolbar('<input id="userSearch" type="search" placeholder="搜昵称 / 手机号 / openid" value="' + escapeHtml(state.userKeyword) + '" class="text-input" style="width:240px" />' +
+        '<button class="btn small" id="userSearchBtn">搜索</button>' +
+        '<span class="spacer"></span>' +
+        '<button class="btn small" id="exportUsers">导出 Excel</button>');
     var body = rows.length ? rows.map(function (u) {
       var banned = u.status === 'BANNED';
       return '<tr><td class="num">' + escapeHtml(String(u.userId)) + '</td>' +
@@ -1191,7 +1334,7 @@
               : '<button class="btn small danger" data-userstatus="' + escapeHtml(String(u.userId)) + '" data-on="BANNED">封禁</button>'))
           : '<span class="muted">只读</span>') +
         '</td></tr>';
-    }).join('') : '<tr><td colspan="7"><div class="empty">没有匹配的用户</div></td></tr>';
+    }).join('') : tableEmpty(7, { icon: 'search', title: '没有匹配的账号', desc: '换个昵称、手机号或 openid 关键词再试。' });
     setPageHeader('共 ' + fmtNum(p.total) + ' 个账号');
     $('panelRoot').innerHTML = '<div class="card">' + head +
       '<table><thead><tr>' + thSort('ID', 'id', 'user', 'num') + '<th>用户</th><th>手机号</th><th>角色</th><th>状态</th>' +
@@ -1271,9 +1414,9 @@
     var revenue = paid.reduce(function (a, o) { return a + Number(o.amountFen || 0); }, 0);
     var head = pageHead('订单管理',
       '共 ' + fmtNum(state.orderTotal) + ' 笔 · 本页已支付 ' + paid.length + ' 笔 ' + fmtMoney(revenue),
-      chips([['', '全部'], ['PENDING', '待支付'], ['PAID', '已支付'], ['CLOSED', '已关闭'], ['REFUNDED', '已退款']], state.orderFilter, 'orderfilter') +
-      dateRangeHtml('order', state.orderFrom, state.orderTo) +
-      '<button class="btn small" id="exportOrders">导出 CSV</button>');
+      '<button class="btn small" id="exportOrders">导出 Excel</button>') +
+      toolbar(chips([['', '全部'], ['PENDING', '待支付'], ['PAID', '已支付'], ['CLOSED', '已关闭'], ['REFUNDED', '已退款']], state.orderFilter, 'orderfilter') +
+        dateRangeHtml('order', state.orderFrom, state.orderTo));
     var body = rows.length ? rows.map(function (o) {
       var pill = o.status === 'PAID' ? 'ok' : (o.status === 'PENDING' ? 'pending' : 'bad');
       return '<tr><td class="num">' + escapeHtml(String(o.orderId)) + '</td>' +
@@ -1293,7 +1436,7 @@
               ? '<button class="btn small danger" data-orderrefund="' + escapeHtml(o.outTradeNo) + '">退款</button>' : '')
           : '<span class="muted">只读</span>') +
         '</td></tr>';
-    }).join('') : '<tr><td colspan="9"><div class="empty">没有订单</div></td></tr>';
+    }).join('') : tableEmpty(9, { icon: 'card', title: '暂无订单', desc: '用户下单支付后会出现在这里。可切换状态标签或调整日期区间。' });
     setPageHeader('共 ' + fmtNum(state.orderTotal) + ' 笔');
     $('panelRoot').innerHTML = '<div class="card">' + head +
       '<table><thead><tr>' + thSort('ID', 'id', 'order', 'num') + '<th>商户单号</th><th class="num">用户</th><th>套餐</th>' +
@@ -1355,12 +1498,12 @@
     var rows = state.audit;
     var kw = (state.auditKeyword || '').trim();
     var head = pageHead('审计日志', '所有管理写操作都会留痕' + (kw ? '（已按「' + kw + '」过滤）' : ''),
-      '<input id="auditSearch" type="search" placeholder="搜操作人 / 动作 / 对象 / 详情" value="' +
-      escapeHtml(state.auditKeyword) + '" style="height:30px;padding:0 10px;border:1px solid var(--line-2);border-radius:9px;font-size:12.5px;width:240px" />' +
-      '<button class="btn small" id="auditSearchBtn">搜索</button>' +
-      (kw ? '<button class="btn small" id="auditClearBtn">清除</button>' : '') +
-      dateRangeHtml('audit', state.auditFrom, state.auditTo) +
-      '<button class="btn small" id="exportAudit">导出 CSV</button>');
+      '<button class="btn small" id="exportAudit">导出 Excel</button>') +
+      toolbar('<input id="auditSearch" type="search" placeholder="搜操作人 / 动作 / 对象 / 详情" value="' +
+        escapeHtml(state.auditKeyword) + '" class="text-input" style="width:260px" />' +
+        '<button class="btn small" id="auditSearchBtn">搜索</button>' +
+        (kw ? '<button class="btn small" id="auditClearBtn">清除</button>' : '') +
+        dateRangeHtml('audit', state.auditFrom, state.auditTo));
     var body = rows.length ? rows.map(function (a) {
       return '<tr><td class="num">' + escapeHtml(String(a.id)) + '</td>' +
         '<td><div class="cell-user">' + avatarHtml(a.actorNickname) + '<span class="name">' +
@@ -1370,7 +1513,7 @@
         '<td class="clamp" title="' + escapeHtml(a.detail || '') + '">' + escapeHtml(a.detail || '—') + '</td>' +
         '<td><span class="pill ' + (a.result === 'OK' ? 'ok' : 'bad') + '">' + escapeHtml(a.result) + '</span></td>' +
         '<td title="' + escapeHtml(a.createdAt || '') + '">' + fmtTime(a.createdAt) + '</td></tr>';
-    }).join('') : '<tr><td colspan="7"><div class="empty">没有匹配的操作记录</div></td></tr>';
+    }).join('') : tableEmpty(7, { icon: 'shield', title: '没有匹配的操作记录', desc: '所有管理写操作都会自动留痕。换个关键词或调整日期区间再试。' });
     setPageHeader('共 ' + fmtNum(state.auditTotal) + ' 条');
     $('panelRoot').innerHTML = '<div class="card">' + head +
       '<table><thead><tr>' + thSort('ID', 'id', 'audit', 'num') + '<th>操作人</th><th>动作</th><th>对象</th><th>详情</th>' +
@@ -1655,7 +1798,8 @@
     '[data-postfilter]', '[data-poststatus]', '[data-recipefilter]', '[data-recipestatus]',
     '[data-cmtfilter]', '[data-cmtstatus]', '[data-cmtdel]', '[data-cmtrestore]', '[data-fbfilter]',
     '[data-fb]', '[data-orderfilter]', '[data-orderclose]', '[data-orderrefund]', '[data-userstatus]',
-    '[data-importfilter]', '[data-import]', '[data-pager]', '[data-sort]', '[data-bulk]'
+    '[data-importfilter]', '[data-import]', '[data-pager]', '[data-sort]', '[data-bulk]',
+    '[data-jump]', '[data-account]', '[data-retry]', '[data-clearfilter]'
   ].join(',');
 
   document.addEventListener('click', function (e) {
@@ -1667,11 +1811,28 @@
     }
     var id = t.id;
 
+    // 点空白处收起浮层
+    if (!t.closest('.quick-jump')) closeQuickMenu();
+    if (!t.closest('.account')) toggleAccountMenu(false);
+
     if (id === 'sendOtpBtn') { sendOtp(); return; }
-    if (id === 'logoutBtn') { logout(); return; }
     if (id === 'menuBtn') { $('appView').classList.toggle('nav-open'); return; }
     if (id === 'navBackdrop') { closeNav(); return; }
     if (id === 'refreshBtn') { refreshCurrent(); return; }
+    if (id === 'accountBtn') { toggleAccountMenu(); return; }
+
+    var jump = t.getAttribute('data-jump');
+    if (jump) { goTab(jump); return; }
+
+    var acct = t.getAttribute('data-account');
+    if (acct) {
+      toggleAccountMenu(false);
+      if (acct === 'logout') logout();
+      if (acct === 'refresh') refreshCurrent();
+      return;
+    }
+
+    if (t.getAttribute('data-retry')) { loadTab(); return; }
 
     if (id === 'userSearchBtn') {
       state.userKeyword = ($('userSearch') || {}).value || '';
@@ -1813,6 +1974,36 @@
     if (all) { setPickAll(all, t.checked); }
   });
 
+  // ---- 快速跳转：输入过滤，↑↓ 选择，Enter 跳转，Esc 关闭 ----
+  var quickInput = $('quickJump');
+  if (quickInput) {
+    quickInput.addEventListener('input', function () {
+      state.jumpIndex = 0;
+      renderQuickMenu(this.value, 0);
+    });
+    quickInput.addEventListener('focus', function () {
+      state.jumpIndex = 0;
+      renderQuickMenu(this.value, 0);
+    });
+    quickInput.addEventListener('keydown', function (e) {
+      var list = jumpTargets(this.value);
+      if (e.key === 'Escape') { this.blur(); closeQuickMenu(); return; }
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (!list.length) return;
+        var next = state.jumpIndex + (e.key === 'ArrowDown' ? 1 : -1);
+        state.jumpIndex = (next + list.length) % list.length;
+        renderQuickMenu(this.value, state.jumpIndex);
+        return;
+      }
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        var target = list[state.jumpIndex] || list[0];
+        if (target) { this.value = ''; this.blur(); goTab(target.key); }
+      }
+    });
+  }
+
   document.addEventListener('keydown', function (e) {
     // 弹窗优先：ESC 关闭，单行输入回车直接确认
     if (modalResolve) {
@@ -1842,6 +2033,12 @@
         e.target.classList.contains('nav-item')) {
       e.preventDefault();
       e.target.click();
+      return;
+    }
+    // 「/」快速聚焦跳转框（输入框里打字时不抢）
+    if (e.key === '/' && e.target && !/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) {
+      e.preventDefault();
+      $('quickJump').focus();
       return;
     }
     if (e.key === 'Enter' && e.target) {

@@ -64,18 +64,20 @@
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-brand">
         <span class="brand-mark sm" aria-hidden="true">家</span>
-        <div>
+        <div class="sidebar-brand-text">
           <div class="sidebar-title">家庭点菜</div>
           <div class="sidebar-sub">运营后台</div>
         </div>
       </div>
-      <nav class="sidebar-nav" id="navList"></nav>
+      <nav class="sidebar-nav" id="navList" aria-label="主导航"></nav>
       <div class="sidebar-foot">
         <div class="sidebar-user">
-          <span id="adminName" class="badge">管理员</span>
-          <span id="adminRole" class="role-chip">管理员</span>
+          <span class="avatar-me" id="adminAvatar" aria-hidden="true">管</span>
+          <div class="sidebar-user-text">
+            <span id="adminName" class="me-name">管理员</span>
+            <span id="adminRole" class="me-role">管理员</span>
+          </div>
         </div>
-        <button id="logoutBtn" type="button" class="btn ghost small">退出</button>
       </div>
     </aside>
 
@@ -85,12 +87,28 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
         </button>
         <div class="topbar-text">
-          <div class="eyebrow" id="pageEyebrow">家庭点菜 · 运营后台</div>
+          <nav class="crumb" id="crumb" aria-label="面包屑"></nav>
           <h1 id="pageTitle">运营概览</h1>
         </div>
-        <div class="meta">
+        <div class="topbar-tools">
           <span id="pageMeta" class="page-meta"></span>
-          <button id="refreshBtn" type="button" class="btn small">刷新</button>
+          <div class="quick-jump">
+            <svg class="qj-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg>
+            <input id="quickJump" type="text" placeholder="跳转页面…" autocomplete="off"
+                   aria-label="快速跳转到页面" aria-expanded="false" role="combobox" />
+            <kbd class="qj-kbd">/</kbd>
+            <div id="quickMenu" class="quick-menu" role="listbox" hidden></div>
+          </div>
+          <button id="refreshBtn" type="button" class="icon-btn" aria-label="刷新当前页" title="刷新">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-.6 3"/><path d="M20 5v6h-6"/></svg>
+          </button>
+          <div class="account">
+            <button id="accountBtn" type="button" class="account-btn" aria-haspopup="menu" aria-expanded="false">
+              <span class="account-avatar" id="accountAvatar" aria-hidden="true">管</span>
+              <svg class="account-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div id="accountMenu" class="account-menu" role="menu" hidden></div>
+          </div>
         </div>
       </header>
 
