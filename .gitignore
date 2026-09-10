@@ -33,6 +33,10 @@ Thumbs.db
 /artifacts/_p2_*.png
 /artifacts/_stage.png
 
+# 本地开发覆盖配置（Spring Boot 自动加载工作目录下的 config/，见 server/config/application.yml）
+# 里面放的是「开发模式验证码」这类只应存在于本机的开关，绝不能进仓库
+/server/config/
+
 # 本地工具状态与开发者工具预览产物
 /.workbuddy/
 /preview-qr.png

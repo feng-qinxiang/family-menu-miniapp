@@ -45,6 +45,25 @@ cd server
 > - `DB_USERNAME` / `DB_PASSWORD` 默认 `root` / `123456` 仅为本地零配置启动方便。**上线前必须用环境变量覆盖为最小权限的专用数据库账号，禁用 root 直连**，切勿沿用默认弱口令。
 > - `AUTH_DEV_OTP_ENABLED` 默认已为 `false`。开启后任意手机号请求验证码会拿到固定码 `246810` 且明文回显，等同任意账号接管，**仅限本地联调临时开启**。生产/测试环境务必保持关闭并接入真实短信网关。
 
+### 本地开发怎么开验证码
+
+登录要短信验证码，但本地没接短信网关——不配置的话点「获取验证码」会直接报 503，告诉你去开开发模式。开法二选一：
+
+**推荐：建一个本地配置文件**（一次建好，之后不管用 IDEA、还是 `mvnw spring-boot:run`、还是 `java -jar` 都自动生效，不用改任何启动配置）
+
+```powershell
+# server/config/application.yml
+auth:
+  dev-otp-enabled: true
+```
+
+Spring Boot 会自动加载「工作目录下 `config/application.yml`」，优先级高于 classpath 里的 `application.yml`。该路径已被 `.gitignore` 忽略，**不会进仓库也不会进构建产物**，所以生产仍是安全默认值 `false`。
+
+**或者：设环境变量** `AUTH_DEV_OTP_ENABLED=true`
+（IDEA：Run → Edit Configurations → 选中你的启动配置 → Environment variables 里填；临时用命令行也行，但换个启动方式就失效）
+
+开启后：验证码固定 `246810`，点「获取验证码」后页面上会直接显示这个码。短信网关仍是 noop，不会真发短信。
+
 数据库结构与种子数据见 `server/sql/create-database.sql`、`server/src/main/resources/schema.sql`、`data.sql`。schema 使用 MySQL 专有语法，需 MySQL 8（H2 跑不通）。
 
 `data.sql` 内置了演示数据：多家庭成员、16 道左右菜谱、今日菜单、购物清单、做菜记录、食材库存和通知。新游客/手机号用户首次登录时也会自动补一套当前家庭演示数据，便于直接展示首页、菜单、买菜清单、口味画像和消息联动。
