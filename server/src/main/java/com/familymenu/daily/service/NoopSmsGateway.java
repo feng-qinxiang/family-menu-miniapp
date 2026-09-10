@@ -27,6 +27,18 @@ public class NoopSmsGateway implements SmsGateway {
         log.warn("[SMS] 短信网关未配置，验证码未发送 (phone={})。配置 SMS_PROVIDER 接入真实供应商。", maskedPhone);
     }
 
+    /**
+     * 明确告诉调用方"发不出去"。
+     *
+     * 之前这里只打一条 WARN，接口照样返回"验证码已发送"，
+     * 本地开发没开 AUTH_DEV_OTP_ENABLED 时就是死胡同：
+     * 界面上说发了，短信永远不会来，码又只以哈希形式落库，谁都不知道是多少。
+     */
+    @Override
+    public boolean configured() {
+        return false;
+    }
+
     /** 默认 SMS 网关注册：若已有其他 SmsGateway Bean（如阿里云/腾讯云实现）则跳过。 */
     @Configuration
     static class Config {

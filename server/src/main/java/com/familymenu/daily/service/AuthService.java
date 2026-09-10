@@ -108,6 +108,12 @@ public class AuthService {
             throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "发送过于频繁，请稍后再试");
         }
 
+        // 发不出去就别假装发出去了：空短信网关 + 没开 dev OTP = 用户永远等不到码
+        if (!smsGateway.configured() && !devOtpEnabled) {
+            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
+                    "短信网关未配置，验证码无法发送。本地开发请用 AUTH_DEV_OTP_ENABLED=true 启动（验证码固定 246810）");
+        }
+
         String code = devOtpEnabled ? "246810" : String.format("%06d", ThreadLocalRandom.current().nextInt(0, 1_000_000));
         jdbcTemplate.update("UPDATE phone_otp SET consumed_at = NOW() WHERE phone = ? AND consumed_at IS NULL", phone);
         jdbcTemplate.update(

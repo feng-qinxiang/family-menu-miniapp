@@ -13,4 +13,15 @@ public interface SmsGateway {
      * @param code  6 位数字验证码明文
      */
     void send(String phone, String code);
+
+    /**
+     * 网关是否真的能把短信发出去。
+     *
+     * NoopSmsGateway 返回 false —— 它什么都不发。此时如果又没开 dev OTP，
+     * 用户会一直等一条永远不来的短信，界面上却显示"验证码已发送"。
+     * 调用方据此直接报错，而不是静默假装成功。
+     */
+    default boolean configured() {
+        return true;
+    }
 }
