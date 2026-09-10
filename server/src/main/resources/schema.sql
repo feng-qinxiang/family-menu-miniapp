@@ -53,9 +53,12 @@ CREATE TABLE IF NOT EXISTS family (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(64) NOT NULL,
     owner_user_id BIGINT NOT NULL,
+    -- 邀请令牌：新成员凭链接加入，可重置
+    invite_token VARCHAR(32) NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_family_owner (owner_user_id)
+    INDEX idx_family_owner (owner_user_id),
+    UNIQUE INDEX idx_family_invite (invite_token)
 );
 
 CREATE TABLE IF NOT EXISTS family_member (
@@ -143,6 +146,9 @@ CREATE TABLE IF NOT EXISTS daily_menu_item (
     daily_menu_id BIGINT NOT NULL,
     recipe_id BIGINT NOT NULL,
     meal_type VARCHAR(32) NOT NULL DEFAULT 'dinner',
+    -- 菜单项状态（todo/done）与添加人昵称（列表直接展示）
+    status VARCHAR(16) NOT NULL DEFAULT 'todo',
+    added_by_name VARCHAR(64) NULL,
     INDEX idx_menu_item_menu (daily_menu_id),
     INDEX idx_menu_item_recipe (recipe_id)
 );
@@ -193,6 +199,8 @@ CREATE TABLE IF NOT EXISTS community_post_comment (
     content VARCHAR(500) NOT NULL,
     -- 评论同样需要审核：无法机审时先 PENDING，仅作者本人可见（详见 ContentSecurityService）
     audit_status VARCHAR(16) NOT NULL DEFAULT 'APPROVED',
+    -- 软删除：管理员删除后保留行，支持恢复
+    deleted TINYINT(1) NOT NULL DEFAULT 0,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_comment_post (post_id, id DESC),
     INDEX idx_comment_user (user_id)
@@ -278,6 +286,10 @@ CREATE TABLE IF NOT EXISTS feedback_ticket (
     contact VARCHAR(128) NULL,
     images_json TEXT NOT NULL,
     status VARCHAR(16) NOT NULL DEFAULT 'OPEN',
+    -- 处理留痕：谁处理的、什么时候、回复内容
+    handled_by BIGINT NULL,
+    handled_at DATETIME NULL,
+    reply TEXT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_feedback_family (family_id, created_at DESC),
     INDEX idx_feedback_status (status, id DESC)

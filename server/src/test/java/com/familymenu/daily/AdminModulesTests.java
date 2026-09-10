@@ -553,7 +553,20 @@ class AdminModulesTests {
     void adminCanListOrders() throws Exception {
         long[] id = new long[1];
         String admin = adminToken(id);
+        // 自己造 4 条订单，不依赖环境里恰好有多少数据：
+        // data.sql 只种 1 条，全新库（CI）里如果指望"别人留下的订单"，
+        // 测试顺序一变就会假失败。
+        List<String> tradeNos = new java.util.ArrayList<>();
         try {
+            for (int i = 0; i < 4; i++) {
+                String tradeNo = "ADMIN-LIST-" + System.nanoTime() + "-" + i;
+                tradeNos.add(tradeNo);
+                jdbcTemplate.update("""
+                                INSERT INTO payment_order(out_trade_no, payer_user_id, plan_code, amount_fen,
+                                                          duration_days, status, payment_method)
+                                VALUES (?, 1, 'annual', ?, 365, 'PAID', 'MOCK')
+                                """, tradeNo, 9900 + i);
+            }
             MvcResult first = mockMvc.perform(get("/api/admin/orders?page=0&size=3").header("X-Auth-Token", admin))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.items.length()").value(3))
@@ -562,7 +575,7 @@ class AdminModulesTests {
                     .andExpect(jsonPath("$.size").value(3))
                     .andReturn();
             JsonNode p0 = objectMapper.readTree(first.getResponse().getContentAsString());
-            assertThat(p0.get("total").asLong()).isGreaterThanOrEqualTo(3);
+            assertThat(p0.get("total").asLong()).isGreaterThanOrEqualTo(4);
 
             // 第二页必须是不同的一批，否则分页是假的
             MvcResult second = mockMvc.perform(get("/api/admin/orders?page=1&size=3").header("X-Auth-Token", admin))
@@ -575,6 +588,9 @@ class AdminModulesTests {
             }
             assertThat(p1.get("total").asLong()).isEqualTo(p0.get("total").asLong());
         } finally {
+            for (String tradeNo : tradeNos) {
+                jdbcTemplate.update("DELETE FROM payment_order WHERE out_trade_no = ?", tradeNo);
+            }
             demote(id[0]);
         }
     }
