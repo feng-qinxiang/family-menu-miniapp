@@ -1,5 +1,8 @@
 /.idea/
 /*.iml
+# IDEA 在子模块里也会生成工程元数据（用 IDEA 打开 server/ 就会出现）
+.idea/
+*.iml
 /node_modules/
 /dist/
 /coverage/
