@@ -17,8 +17,6 @@
     "pages/auth/login/index",
     "pages/auth/login-phone/index",
     "pages/auth/verify-otp/index",
-    "pages/auth/register/index",
-    "pages/auth/reset-password/index",
     "pages/auth/wechat-auth/index",
     "pages/family/create/index",
     "pages/family/join/index",

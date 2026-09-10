@@ -52,13 +52,13 @@ public class HomeController {
     }
 
     @GetMapping("/home/dashboard")
-    public HomeDashboard dashboard(@CurrentUser(orGuest = true) AuthUser user) {
+    public HomeDashboard dashboard(@CurrentUser AuthUser user) {
         return store.dashboard(user.userId(), user.familyId());
     }
 
     @GetMapping("/recipes")
     public List<RecipeCard> recipes(@RequestParam(defaultValue = "owned") String source,
-                                    @CurrentUser(orGuest = true) AuthUser user) {
+                                    @CurrentUser AuthUser user) {
         return store.listRecipes(source, user.userId(), user.familyId());
     }
 
@@ -175,7 +175,7 @@ public class HomeController {
     }
 
     @GetMapping("/vip/status")
-    public VipStatus vipStatus(@CurrentUser(orGuest = true) AuthUser user) {
+    public VipStatus vipStatus(@CurrentUser AuthUser user) {
         return store.vipStatus(user.userId());
     }
 
@@ -184,7 +184,7 @@ public class HomeController {
 
     @GetMapping("/recipes/{recipeId}")
     public RecipeDetail recipeDetail(@PathVariable long recipeId,
-                                     @CurrentUser(orGuest = true) AuthUser user) {
+                                     @CurrentUser AuthUser user) {
         return store.getRecipeDetail(recipeId, user.userId(), user.familyId());
     }
 
@@ -202,7 +202,7 @@ public class HomeController {
                                           @RequestParam(required = false) Integer maxTime,
                                           @RequestParam(required = false) Integer minServings,
                                           @RequestParam(required = false) String tag,
-                                          @CurrentUser(orGuest = true) AuthUser user) {
+                                          @CurrentUser AuthUser user) {
         return store.filterRecipes(source, cuisine, maxTime, minServings, tag, user.userId(), user.familyId());
     }
 
@@ -214,7 +214,7 @@ public class HomeController {
     }
 
     @GetMapping("/cook-history")
-    public List<CookHistoryItem> listCookHistory(@CurrentUser(orGuest = true) AuthUser user) {
+    public List<CookHistoryItem> listCookHistory(@CurrentUser AuthUser user) {
         return store.listCookHistory(user.userId());
     }
 }

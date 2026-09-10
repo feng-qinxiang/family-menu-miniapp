@@ -35,12 +35,12 @@ public class FamilyController {
     }
 
     @GetMapping("/profile")
-    public FamilyProfile profile(@CurrentUser(orGuest = true) AuthUser user) {
+    public FamilyProfile profile(@CurrentUser AuthUser user) {
         return familyService.getProfile(user.familyId());
     }
 
     @PostMapping
-    public FamilyProfile create(@CurrentUser(orGuest = true) AuthUser user,
+    public FamilyProfile create(@CurrentUser AuthUser user,
                                 @Valid @RequestBody CreateFamilyRequest request) {
         return familyService.createFamily(user.userId(), user.familyId(), request);
     }
@@ -51,13 +51,13 @@ public class FamilyController {
     }
 
     @PostMapping("/join")
-    public FamilyProfile join(@CurrentUser(orGuest = true) AuthUser user,
+    public FamilyProfile join(@CurrentUser AuthUser user,
                               @Valid @RequestBody JoinFamilyRequest request) {
         return familyService.joinFamily(user.userId(), request);
     }
 
     @GetMapping("/invite-code")
-    public FamilyJoinPreview inviteCode(@CurrentUser(orGuest = true) AuthUser user) {
+    public FamilyJoinPreview inviteCode(@CurrentUser AuthUser user) {
         FamilyProfile profile = familyService.getProfile(user.familyId());
         return new FamilyJoinPreview(familyService.inviteCode(user.familyId()), profile.familyName(), profile.members().size());
     }

@@ -86,11 +86,6 @@
       <view class="ic-wx"></view>
       <text>微信登录</text>
     </view>
-
-    <!-- 注册 -->
-    <view class="lp-reg g-fade-up g-d7" catchtap="onRegister">
-      <text>还没有账号？<text class="lp-reg-pop">注册新账号</text></text>
-    </view>
   </view>
 
   <state-toast

@@ -48,14 +48,20 @@ public class SupportService {
                 ORDER BY id DESC
                 LIMIT 1
                 """, rs -> rs.next() ? rs.getLong("id") : null, user.userId());
-        addNotification(user.userId(), user.familyId(), "sys", "Feedback received",
-                "We have recorded your feedback and will review it with the next product batch.", "feedback");
-        return new FeedbackReceipt(id, "OPEN", "feedback received");
+        addNotification(user.userId(), user.familyId(), "sys", "反馈已收到",
+                "我们已记录你的反馈，会在下一批产品迭代里一起看。", "feedback");
+        return new FeedbackReceipt(id, "OPEN", "已受理");
     }
 
-    @Transactional
+    /**
+     * 通知列表。
+     *
+     * 这里<strong>不再</strong>做"没有通知就补几条演示通知"：那是读接口里的写操作，
+     * 而且绕过了 app.seed-demo-data 开关（曾经每个新用户都会收到 3 条英文演示通知）。
+     * 演示通知统一由启动播种负责（见 MysqlKitchenStore.seedDefaults / AuthService）。
+     */
+    @Transactional(readOnly = true)
     public NotificationSummary listNotifications(AuthUser user) {
-        seedNotificationsIfEmpty(user);
         List<NotificationItem> items = jdbcTemplate.query("""
                         SELECT id, kind, title, body_text, action_type, unread, created_at
                         FROM notification_message
@@ -99,20 +105,6 @@ public class SupportService {
         return listNotifications(user);
     }
 
-    private void seedNotificationsIfEmpty(AuthUser user) {
-        Integer count = jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM notification_message WHERE user_id = ?",
-                Integer.class,
-                user.userId()
-        );
-        if (count != null && count > 0) {
-            return;
-        }
-        addNotification(user.userId(), user.familyId(), "fam", "Family menu", "Your family kitchen is ready. Add dishes to today's menu.", "menu");
-        addNotification(user.userId(), user.familyId(), "sys", "Shopping list", "Shopping list will rebuild automatically after today's menu changes.", "shopping");
-        addNotification(user.userId(), user.familyId(), "com", "Community", "Share a recipe to collect comments and favorites.", "community");
-    }
-
     private void addNotification(long userId, long familyId, String kind, String title, String body, String actionType) {
         jdbcTemplate.update("""
                         INSERT INTO notification_message(user_id, family_id, kind, title, body_text, action_type)
@@ -139,17 +131,18 @@ public class SupportService {
         return value == null || value.isBlank() ? null : value.trim();
     }
 
+    /** 相对时间必须中文：这是直接渲染在消息列表上的用户可见文案。 */
     private String formatRelative(LocalDateTime createdAt) {
         Duration duration = Duration.between(createdAt, LocalDateTime.now());
         if (duration.toMinutes() < 1) {
-            return "just now";
+            return "刚刚";
         }
         if (duration.toHours() < 1) {
-            return duration.toMinutes() + " min ago";
+            return duration.toMinutes() + " 分钟前";
         }
         if (duration.toDays() < 1) {
-            return duration.toHours() + " h ago";
+            return duration.toHours() + " 小时前";
         }
-        return duration.toDays() + " d ago";
+        return duration.toDays() + " 天前";
     }
 }

@@ -24,17 +24,41 @@
 
 ## 已知限制
 
-- 当前小程序仍以接口骨架为主，未接微信真实授权弹窗
-- 社区审核当前是运营端轻量队列，后续再拆成独立管理后台和角色权限
-- 家庭成员添加当前是本地家庭内手动添加，后续替换为邀请链接/邀请码
+（2026-09-10 校正：下面三条旧描述已不成立，逐条替换为当前真实状态）
+
+- ~~小程序未接微信真实授权弹窗~~ → 微信登录已接 `wx.login` + `code2session`（`WECHAT_APP_ID/SECRET` 未配置时降级游客并提示）
+- ~~社区审核是运营端轻量队列，待拆独立管理后台~~ → 已有独立运营后台 `/admin`（RBAC 三角色 + 全量审计 + 批量审核 + xlsx 导出）
+- ~~家庭成员是本地手动添加，待换邀请码~~ → 已改为邀请码加入（`/api/family/join` + `join-preview`）
+- 仍然存在的限制：后台登录只有手机验证码一条路，短信网关未接入时进不去；测试依赖真实 MySQL，无库环境跑不了
+- 架构债（待还）：`MysqlKitchenStore` / `AuthService` 体量偏大，缺 Repository 分层；`ensureTodayMenu` 之类的 get-or-create 会在读接口里建行（有界、可接受，但需知情）
 
 ## 变更历史
+
+### 2026-09-10 - 一致性与职责边界修正（针对"好多不合理的"评审）
+
+**变更内容**:
+
+1. **演示数据归位**：新增/统一 `APP_SEED_DEMO_DATA` 开关（`application-prod.yml` 固定 false）。演示数据原本无条件挂在三条登录路径上，且 `GET /api/notifications` 自己还会插 3 条英文演示通知 —— 真实用户第一屏会出现"别人的"菜单/做菜记录/通知。现在只在开发环境显式开启时播种，读接口保持纯读。
+2. **认证层职责收口**：`AuthService.resolveToken()` 改为纯读（原先每个带 token 的请求都可能建家庭、改 `current_family_id`、续期会话，且无事务）；会话固定 30 天不再滑动续期。
+3. **移除"共享游客账号"**：删除 `SEED_GUEST_OPENID` 回落路径与 `guestCache`。游客会话一律按设备指纹哈希建号，`POST /api/auth/guest` 缺设备标识直接 400；`POST /api/auth/login` 缺 code 不再静默降级为游客；`@CurrentUser` 去掉 `orGuest` 兜底（20 处调用点改为普通 `@CurrentUser`）。默认昵称由开发者人名改为中性值「家人」。
+4. **前端死代码清理**：删除 `pages/auth/register`、`pages/auth/reset-password`（app.json 已注册但后端从来没有注册/改密接口，开关关闭后入口不可达）。
+5. **首页推荐稳定化**：`shuffle()` 随机排序改为「库存匹配率 > 评分 > id」的稳定序，`_heroOffset` 只在用户点「换一个」或切菜系时变化 —— 随机推荐与"首页固定为今天做什么"的决策冲突，且 `matchedRatio` 已算好却没用上。补齐 `showWishModal/wishInput/fontScale/slotDoneCount` 的 data 声明，`confirmMenu` 不再伪造事件对象调 `pickForWish`。
+6. **TabBar 单一数据源**：新增 `miniapp/utils/tabs.js`，静态自检新增"app.json tabBar 与 tabs.js 一致 + tab 页已在 pages 声明"校验，并补上分包页面四件套检查。
+7. **文案中文化**：通知相对时间（just now / min ago）、反馈回执、上传与全局异常提示、认证错误提示全部改中文（有测试断言同步更新）。
+
+**影响范围**: server（AuthService / SupportService / CurrentUser / AuthInterceptor / UploadController / GlobalExceptionHandler / application.yml / application-prod.yml）、miniapp（auth 页面删除、home、custom-tab-bar、utils/tabs.js、test/static-check.js）、README、DESIGN。
+
+**验证**: 后端 74 项测试全绿（新增 `DemoSeedDisabledTests` 2 项，锁住"关掉开关就不播种"）；`node miniapp/test/static-check.js` 通过，并已用反例验证能捕捉 tabBar 漂移。
+
+**决策依据**: 用户反馈"管理后端和小程序前端好多不合理的"。评审发现工程质量本身不差（RBAC/审计/限流/排序白名单/Token 哈希都在），问题集中在职责分层（读路径写库、上帝类）与产品一致性（死页面、随机推荐、文档漂移）。
 
 ### 2026-08-06 - UI 优化五阶段交付（计划书 v2.0）
 
 **变更内容**:
 1. P0 设计纪律收敛：色值 token 化（页面硬编码 57→豁免级）、字号标尺 12 级（新增 --fs-lg/--fs-btn/hero 三档）、照片 hero 统一 862rpx、返回键统一 88rpx、空态收敛到 state-empty（删除 empty-state 组件）
 2. P1 组件与导航：TabBar 改 warm 定稿四 tab「今日/菜谱/冰箱/我的」，menu 降级二级页、pantry 升级 tab 页；闲置 SVG 清零；recipe-card 组件封面兼容多字段
+   （2026-09-10 校正：社区页随后也进了 TabBar，当前实际为五 tab「今日/菜谱/社区/冰箱/我的」，
+   定义以 `miniapp/utils/tabs.js` 为准，app.json 一致性由静态自检保证。）
 3. P2 设计稿缺口：全站英文 eyebrow 中文化（品牌名保留）、home hero 镂空描边标题+暖光层、家庭成员忌口筛选闭环（后端 avoid_tags_json + 成员编辑 + recipes 自动过滤）、state-sheet/state-loading 组件、tap-scale 弹性回弹、me 数字滚动
 4. P3 体验健壮性：失败/空态全站解耦（5 页错误态+重试）、community 加载态、弹窗滚动锁、--mut 对比度收敛 AA、大字模式开关（6 主页面）
 5. P4 深色模式（theme.json darkmode + token 主题化）、UI 设计规范文档
@@ -56,6 +80,7 @@
 **变更理由**: 针对“程序不完整、AI 味重”的反馈，把页面从静态展示改成家庭做饭真实流程：选菜 → 菜单 → 买菜 → 做菜记录 → 家庭协作。
 
 **影响范围**: shopping/me/vip/recipe-edit/community 页面，api.js 和 mock.js。
+（2026-09-10 校正：`utils/mock.js` 此后已随离线降级方案重构删除，当前无此文件。）
 
 **决策依据**: 参考主流菜谱/meal planner 产品的信息架构，优先补菜单、grocery list、pantry、profile workflow 的产品闭环，而不是继续堆推荐话术。
 

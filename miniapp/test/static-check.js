@@ -10,7 +10,8 @@
  * 排查花了很久。这类错误机器一眼就能看出来，不该靠人。
  *
  * 检查项：
- *   1. app.json 声明的页面，四件套（js/json/wxml/wxss）是否齐全
+ *   1. app.json 声明的页面（含分包），四件套（js/json/wxml/wxss）是否齐全
+ *   1b. tabBar 声明与 utils/tabs.js 是否一致（数量/顺序/路径），tab 页是否已在 pages 里
  *   2. 所有 .json 能否解析
  *   3. 所有 .wxss 花括号是否配平、是否误用了 // 注释（WXSS 不支持）
  *   4. .wxml 里引用的本地图片是否存在
@@ -38,17 +39,62 @@ const walk = (dir, out = []) => {
 /** 去掉 /* *\/ 注释，避免注释里的花括号干扰配平统计 */
 const stripComments = (src) => src.replace(/\/\*[\s\S]*?\*\//g, '');
 
-// ---- 1. app.json 页面文件齐全 ----
+// ---- 1. app.json 页面文件齐全（主包 + 分包） ----
 const appJsonPath = path.join(ROOT, 'app.json');
 if (!fs.existsSync(appJsonPath)) {
   console.error('✘ 找不到 app.json');
   process.exit(1);
 }
 const app = JSON.parse(fs.readFileSync(appJsonPath, 'utf8'));
-for (const page of app.pages || []) {
+
+/** 主包页面 + 分包页面，统一成可用于拼接文件路径的相对路径。 */
+const declaredPages = [
+  ...(app.pages || []),
+  ...(app.subpackages || []).flatMap((sp) =>
+    (sp.pages || []).map((p) => `${sp.root}/${p}`)
+  )
+];
+
+for (const page of declaredPages) {
   for (const ext of ['js', 'json', 'wxml', 'wxss']) {
     if (!fs.existsSync(path.join(ROOT, page + '.' + ext))) {
       problems.push(`页面文件缺失: ${page}.${ext}`);
+    }
+  }
+}
+
+// ---- 1b. tabBar 声明与 utils/tabs.js 一致 ----
+// tab 定义分散在 app.json 和自定义 tabBar 组件里时，很容易只改一边。
+// 这里以 utils/tabs.js 为准做双向校验：顺序、数量、路径都要一致，且 tab 页必须在 pages 里。
+{
+  const tabsPath = path.join(ROOT, 'utils', 'tabs.js');
+  if (!fs.existsSync(tabsPath)) {
+    problems.push('缺少 utils/tabs.js（TabBar 的唯一数据源）');
+  } else {
+    let allTabs = null;
+    try {
+      allTabs = require(tabsPath).ALL_TABS;
+    } catch (err) {
+      problems.push(`utils/tabs.js 加载失败: ${err.message}`);
+    }
+    if (Array.isArray(allTabs)) {
+      // app.json 的 pagePath 不带前导斜杠，tabs.js 里带（switchTab 与 route 匹配需要），比较时统一
+      const norm = (p) => String(p).replace(/^\//, '');
+      const declared = (app.tabBar && app.tabBar.list) || [];
+      const declaredPaths = declared.map((t) => norm(t.pagePath));
+      const canonicalPaths = allTabs.map((t) => norm(t.pagePath));
+      if (declaredPaths.join('|') !== canonicalPaths.join('|')) {
+        problems.push(
+          `tabBar 与 utils/tabs.js 不一致: app.json=[${declaredPaths.join(', ')}] ` +
+          `tabs.js=[${canonicalPaths.join(', ')}]`
+        );
+      }
+      for (const tab of allTabs) {
+        const page = tab.pagePath.replace(/^\//, '');
+        if (!(app.pages || []).includes(page)) {
+          problems.push(`tab 页未在 app.json pages 中声明: ${tab.pagePath}`);
+        }
+      }
     }
   }
 }

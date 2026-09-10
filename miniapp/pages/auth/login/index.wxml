@@ -36,10 +36,6 @@
         手机号登录
       </view>
 
-      <view class="authlinks" wx:if="{{features.PHONE_LOGIN}}">
-        <text class="authlink" bindtap="onRegister">注册新账号</text>
-      </view>
-
       <view class="guest">
         <text class="guest-link tap-scale" bindtap="onGuest">先随便逛逛 ›</text>
       </view>

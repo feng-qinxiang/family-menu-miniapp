@@ -41,7 +41,7 @@ public class UploadController {
     public UploadResult upload(@CurrentUser AuthUser user,
                                @RequestParam("file") MultipartFile file) {
         if (file == null || file.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "file required");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "请选择要上传的文件");
         }
         if (file.getSize() > MAX_FILE_SIZE) {
             throw new ResponseStatusException(HttpStatus.PAYLOAD_TOO_LARGE, "文件不能超过 20MB");
@@ -61,11 +61,11 @@ public class UploadController {
             Files.createDirectories(uploadDir);
             Path target = uploadDir.resolve(stored).normalize();
             if (!target.startsWith(uploadDir)) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid file path");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "文件路径不合法");
             }
             file.transferTo(target);
         } catch (IOException ex) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "upload failed");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "文件上传失败，请稍后重试");
         }
         String url = "/uploads/" + stored;
         jdbcTemplate.update("""

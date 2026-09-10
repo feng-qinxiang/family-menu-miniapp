@@ -27,7 +27,10 @@ Thumbs.db
 /artifacts/ui-baseline/
 /artifacts/_probe_shot.png
 /artifacts/_ui_home_after*.png
-/.tools/
+# 本地工具目录。mvn.sh 是给 Git Bash 用的 Maven 绕过脚本（mvnw 在该环境下会报 classworlds 找不到），
+# 需要随仓库分发，所以只忽略目录内其它内容。
+/.tools/*
+!/.tools/mvn.sh
 /*.ps1
 /artifacts/p2/
 /artifacts/_p2_*.png
@@ -40,3 +43,6 @@ Thumbs.db
 # 本地工具状态与开发者工具预览产物
 /.workbuddy/
 /preview-qr.png
+
+# Claude Code 本地（个人）设置，不应共享
+/.claude/settings.local.json

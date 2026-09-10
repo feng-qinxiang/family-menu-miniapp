@@ -167,21 +167,6 @@
 }
 .phone-glyph { font-size: 32rpx; color: var(--ink-deep); }
 
-/* 注册 / 忘记密码 */
-.authlinks {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 38rpx;
-}
-.authlink {
-  font-size: 26rpx;
-  font-weight: 700;
-  color: var(--ink-deep);
-  padding: 15rpx 31rpx;
-}
-.authlinks .sep { width: 2rpx; height: 25rpx; background: var(--line-deep); }
-
 /* 游客 */
 .guest { text-align: center; margin-top: 15rpx; }
 .guest-link {

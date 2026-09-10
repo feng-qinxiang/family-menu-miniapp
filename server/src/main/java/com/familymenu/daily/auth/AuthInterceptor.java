@@ -19,10 +19,13 @@ import java.util.Set;
  * 为什么改成"默认拒绝"而不是"按注解开放"：
  * 之前只有在方法上加了 @RequiresAuth 的端点才校验，漏加注解 = 静默公开。
  * 结果 /api/family、/api/feedback、/api/notifications 等一批端点没有 token
- * 也能读写，且会落回同一个共享游客账号（见 AuthService.resolveGuestAccount）。
+ * 也能读写，且会落回同一个共享游客账号（该共享账号机制已移除）。
  * 默认拒绝可以保证"新加的端点默认是安全的"，忘记加注解的代价从"数据泄露"变成"多一次 401"。
  *
  * 小程序每次启动都会调 /api/auth/guest 拿游客会话，因此默认拒绝不影响正常使用。
+ *
+ * 注意：这里对公开端点只做<b>纯读</b>解析（resolveToken 不写库），
+ * 未带 token 时 ATTR_USER 保持为空，由控制器自己决定匿名语义。
  */
 @Component
 public class AuthInterceptor implements HandlerInterceptor {

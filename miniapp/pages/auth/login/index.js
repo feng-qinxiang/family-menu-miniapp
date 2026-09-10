@@ -129,18 +129,10 @@ Page({
     }, 300);
   },
 
-  // 手机号登录 → 二级页
+  // 手机号登录 → 二级页（验证码登录即注册，没有独立的注册/改密流程）
   onPhoneLogin() {
     if (!this.ensureAgreed()) return;
     wx.navigateTo({ url: '/pages/auth/login-phone/index' });
-  },
-
-  onRegister() {
-    wx.navigateTo({ url: '/pages/auth/register/index' });
-  },
-
-  onReset() {
-    wx.navigateTo({ url: '/pages/auth/reset-password/index' });
   },
 
   onTerms() {

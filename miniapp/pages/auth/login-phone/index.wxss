@@ -255,18 +255,3 @@
   width: 12rpx; height: 6rpx;
   right: 8rpx; bottom: 13rpx;
 }
-
-/* —— 注册 —— */
-.lp-reg {
-  text-align: center;
-  margin-top: 40rpx;
-  font-size: var(--fs-cap);
-  font-weight: 600;
-  color: var(--ink-deep);
-}
-.lp-reg-pop {
-  color: var(--pop);
-  font-weight: 800;
-  border-bottom: 3rpx solid var(--pop);
-  padding-bottom: 3rpx;
-}

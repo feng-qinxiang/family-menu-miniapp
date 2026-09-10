@@ -1,0 +1,16 @@
+# 统一换行：Windows 下 core.autocrlf=true 会在检出时把文本转成 CRLF，
+# 这会给 shell 脚本的 shebang 插入 CR，导致 .tools/mvn.sh 等无法执行。
+# 因此强制脚本类文件在仓库与工作区都保持 LF。
+*.sh text eol=lf
+
+# 二进制/运行产物不做换行转换
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.jar  binary
+*.class binary
+*.woff binary
+*.woff2 binary
+*.ttf  binary

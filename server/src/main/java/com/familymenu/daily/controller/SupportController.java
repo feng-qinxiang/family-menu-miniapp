@@ -26,18 +26,18 @@ public class SupportController {
     }
 
     @PostMapping("/feedback")
-    public FeedbackReceipt submitFeedback(@CurrentUser(orGuest = true) AuthUser user,
+    public FeedbackReceipt submitFeedback(@CurrentUser AuthUser user,
                                           @Valid @RequestBody FeedbackRequest request) {
         return supportService.submitFeedback(user, request);
     }
 
     @GetMapping("/notifications")
-    public NotificationSummary notifications(@CurrentUser(orGuest = true) AuthUser user) {
+    public NotificationSummary notifications(@CurrentUser AuthUser user) {
         return supportService.listNotifications(user);
     }
 
     @PatchMapping("/notifications/read")
-    public NotificationSummary markNotificationsRead(@CurrentUser(orGuest = true) AuthUser user,
+    public NotificationSummary markNotificationsRead(@CurrentUser AuthUser user,
                                                      @RequestBody(required = false) MarkNotificationsReadRequest request) {
         return supportService.markRead(user, request);
     }

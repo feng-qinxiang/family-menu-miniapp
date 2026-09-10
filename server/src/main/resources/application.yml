@@ -57,6 +57,14 @@ auth:
   # 生产/默认环境必须保持 false，避免任意手机号被未授权登录。本地联调用 AUTH_DEV_OTP_ENABLED=true 显式开启。
   dev-otp-enabled: ${AUTH_DEV_OTP_ENABLED:false}
 
+app:
+  # 演示数据总开关，同时管两件事：
+  #   1) 启动时播种种子用户/社区帖子（SeedRunner.seedDefaults）
+  #   2) 新账号首次登录时补一套演示菜单/购物清单/做菜记录/通知（AuthService）
+  # 默认 true 便于本地开发与联调；生产由 application-prod.yml 固定 false，
+  # 否则真实用户第一屏会出现"别人的"假菜单和假做菜记录。
+  seed-demo-data: ${APP_SEED_DEMO_DATA:true}
+
 upload:
   dir: ${UPLOAD_DIR:uploads}
 

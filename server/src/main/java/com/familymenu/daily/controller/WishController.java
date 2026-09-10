@@ -33,7 +33,7 @@ public class WishController {
     }
 
     @GetMapping
-    public List<WishItem> listWishes(@CurrentUser(orGuest = true) AuthUser user,
+    public List<WishItem> listWishes(@CurrentUser AuthUser user,
                                      @RequestParam(required = false) String date,
                                      @RequestParam(required = false) String slot) {
         return wishService.listWishes(user.familyId(), date, slot);

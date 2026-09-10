@@ -36,7 +36,7 @@ public class TodayController {
     }
 
     @GetMapping("/daily-menu/today")
-    public DailyMenuView todayMenu(@CurrentUser(orGuest = true) AuthUser user) {
+    public DailyMenuView todayMenu(@CurrentUser AuthUser user) {
         return todayService.getTodayMenu(user.familyId());
     }
 
@@ -77,7 +77,7 @@ public class TodayController {
     }
 
     @GetMapping("/shopping-list/today")
-    public ShoppingListView shoppingList(@CurrentUser(orGuest = true) AuthUser user) {
+    public ShoppingListView shoppingList(@CurrentUser AuthUser user) {
         return todayService.getShoppingList(user.familyId());
     }
 

@@ -174,9 +174,9 @@ Page({
           .catch((err) => {
             wx.hideLoading();
             this.setData({ submitting: false });
-            // 后端未配置微信凭据时返回 503，引导用验证码登录
+            // 后端未配置微信凭据（503）：用户此刻就在手机号登录页，直接指回上面的验证码表单
             const msg = err && err.status === 503
-              ? '微信登录暂未开通，请用验证码登录'
+              ? '微信登录未开通，请用上方手机号验证码登录'
               : (err && err.message ? err.message : '微信登录失败');
             this._toast(msg);
           });
@@ -186,13 +186,6 @@ Page({
         this.setData({ submitting: false });
         this._toast('微信登录失败，请重试');
       },
-    });
-  },
-
-  onRegister() {
-    wx.navigateTo({
-      url: '/pages/auth/register/index',
-      fail: () => this._toast('注册页暂不可用'),
     });
   },
 

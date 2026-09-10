@@ -43,14 +43,12 @@ public class MysqlKitchenStore {
 
     private final JdbcTemplate jdbcTemplate;
     private final ObjectMapper objectMapper;
-    private final AuthService authService;
     private final com.familymenu.daily.payment.MembershipService membershipService;
 
-    public MysqlKitchenStore(JdbcTemplate jdbcTemplate, ObjectMapper objectMapper, AuthService authService,
+    public MysqlKitchenStore(JdbcTemplate jdbcTemplate, ObjectMapper objectMapper,
                              com.familymenu.daily.payment.MembershipService membershipService) {
         this.jdbcTemplate = jdbcTemplate;
         this.objectMapper = objectMapper;
-        this.authService = authService;
         this.membershipService = membershipService;
     }
 
@@ -957,7 +955,8 @@ public class MysqlKitchenStore {
         Long gongbaoPostId = findCommunityPostIdByTitle("周末家常三菜一汤");
         Long tomatoPostId = findCommunityPostIdByTitle("下班 20 分钟快手餐");
         Long broccoliPostId = findCommunityPostIdByTitle("我把西兰花步骤改顺手了");
-        Long ownerId = authService.resolveUserIdOrGuest(null);
+        // 评论作者用固定的种子用户，不再借用"共享游客账号"（那个机制已移除）
+        Long ownerId = seedUser("seed-family-chef", "小满");
         if (gongbaoPostId != null) {
             seedComment(gongbaoPostId, ownerId, "这套搭配稳，适合周末。");
             seedComment(gongbaoPostId, ownerId, "我会把辣度稍微调低一点。");

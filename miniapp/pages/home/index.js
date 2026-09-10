@@ -75,13 +75,20 @@ function greetingText() {
   return '晚上好';
 }
 
-function shuffle(list) {
-  const arr = list.slice();
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
+/**
+ * 推荐排序：库存匹配率 > 评分 > id。
+ *
+ * 之前这里用的是 Math.random 打乱，结果每次进首页、每切一次菜系看到的推荐都不一样，
+ * 和 DESIGN 决策 1「首页固定为今天做什么」直接冲突——随机推荐等于没有推荐。
+ * 现在改用可解释的稳定序（匹配率是后端 pantry/match 已经算好的，之前只是没拿来排序）。
+ */
+function compareRecipes(a, b) {
+  const mr = (b.matchedRatio || 0) - (a.matchedRatio || 0);
+  if (mr !== 0) return mr;
+  const ra = Number(a.rating) || 0;
+  const rb = Number(b.rating) || 0;
+  if (rb !== ra) return rb - ra;
+  return (Number(b.id) || 0) - (Number(a.id) || 0);
 }
 
 Page({
@@ -100,6 +107,10 @@ Page({
     todayKey: '',
     wishes: [],            // 当前 (date,slot) 下的许愿数组
     wishExpanded: false,   // 许愿池默认折叠一行，点击展开（DEC-UI1）
+    showWishModal: false,  // 许愿弹窗（原先只在 setData 时才出现，未在 data 里声明）
+    wishInput: '',
+    fontScale: 'normal',   // 大字模式档位，onShow 从本地存储读取
+    slotDoneCount: 0,      // 当前餐次已上桌的数量，updateSlotMenu 里算
     role: 'cook',          // 简化：默认本人=做饭人；接入后端后由 family.members[me].role 决定
     canConfirm: true,      // role∈{admin,cook} 时为 true（§6）
 
@@ -320,13 +331,26 @@ Page({
     }
   },
 
-  // 心愿条目「待挑菜」→ 带心愿文本直达菜谱搜索；wishId/slot 一路透传，
-  // 详情页加菜成功后自动销愿（点菜闭环：许愿 → 挑菜 → 入菜单 → 愿望达成）
+  // 心愿条目「待挑菜」→ 带心愿文本直达菜谱搜索。事件只负责取 dataset，
+  // 真正的跳转逻辑在 pickDishForWish（confirmMenu 也复用它，不用再伪造事件对象）。
   pickForWish(e) {
     const ds = e.currentTarget.dataset;
-    const text = (ds.text || '').trim();
-    const wishId = ds.id || '';
-    const slot = ds.slot || this.data.currentSlot || 'dinner';
+    this.pickDishForWish({
+      text: ds.text,
+      id: ds.id,
+      slot: ds.slot || this.data.currentSlot
+    });
+  },
+
+  // 许愿 → 挑菜 → 入菜单：wishId/slot 一路透传，详情页加菜成功后自动销愿
+  pickDishForWish(wish) {
+    const text = ((wish && wish.text) || '').trim();
+    if (!text) {
+      wx.showToast({ title: '这条心愿还没有内容', icon: 'none' });
+      return;
+    }
+    const wishId = (wish && wish.id) || '';
+    const slot = (wish && wish.slot) || this.data.currentSlot || 'dinner';
     wx.navigateTo({
       url: `/pages/recipes/search/index?keyword=${encodeURIComponent(text)}&wishId=${encodeURIComponent(wishId)}&slot=${slot}`,
       fail: () => wx.switchTab({ url: '/pages/recipes/index' })
@@ -346,15 +370,7 @@ Page({
       return;
     }
     const first = list[0];
-    this.pickForWish({
-      currentTarget: {
-        dataset: {
-          text: first.text || '',
-          id: first.id || '',
-          slot: first.slot || this.data.currentSlot
-        }
-      }
-    });
+    this.pickDishForWish({ text: first.text, id: first.id, slot: first.slot });
   },
 
   async loadAll() {
@@ -546,15 +562,23 @@ Page({
     return tiles;
   },
 
+  /**
+   * 首屏推荐：稳定排序 + 可轮转。
+   * _heroOffset 只在用户主动点「换一个」或切菜系时变化，所以同一天反复进出首页看到的是同一批推荐。
+   */
   applyFilters(cuisine, recipesSource) {
     const recipes = recipesSource || this.data.allRecipes;
-    const filtered = cuisine === 'all'
+    const filtered = (cuisine === 'all'
       ? recipes
-      : recipes.filter(r => r.cuisine === cuisine);
+      : recipes.filter(r => r.cuisine === cuisine))
+      .slice()
+      .sort(compareRecipes);
 
-    const shuffled = shuffle(filtered);
-    const hero = shuffled[0] || null;
-    const visible = shuffled.slice(1, 11);
+    const total = filtered.length;
+    const offset = total ? ((this._heroOffset || 0) % total) : 0;
+    const list = total ? filtered.slice(offset).concat(filtered.slice(0, offset)) : [];
+    const hero = list[0] || null;
+    const visible = list.slice(1, 11);
 
     this.setData({
       activeCuisine: cuisine,
@@ -565,10 +589,14 @@ Page({
 
   selectCuisine(e) {
     const { cuisine } = e.currentTarget.dataset;
+    // 换菜系＝换一批推荐，从头看起；否则会带着上一个菜系的轮转位串味
+    this._heroOffset = 0;
     this.applyFilters(cuisine);
   },
 
+  // 「换一个」：整体轮转一位，结果可预期（不会像随机那样每次都跳成完全不同的一道菜）
   shuffleHero() {
+    this._heroOffset = (this._heroOffset || 0) + 1;
     this.applyFilters(this.data.activeCuisine);
   },
 

@@ -62,7 +62,7 @@ class AdminSecurityTests {
         String token = guestLogin("admin-test-plain-" + System.nanoTime());
         mockMvc.perform(get("/api/admin/users").header("X-Auth-Token", token))
                 .andExpect(status().isForbidden())
-                .andExpect(jsonPath("$.error").value("admin role required"));
+                .andExpect(jsonPath("$.error").value("需要管理员权限"));
     }
 
     @Test

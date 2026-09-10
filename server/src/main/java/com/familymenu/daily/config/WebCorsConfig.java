@@ -4,6 +4,7 @@ import com.familymenu.daily.auth.AuthInterceptor;
 import com.familymenu.daily.auth.CurrentUserArgumentResolver;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.CacheControl;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -68,8 +69,15 @@ public class WebCorsConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         String location = Paths.get(uploadDir).toAbsolutePath().normalize().toUri().toString();
         registry.addResourceHandler("/uploads/**").addResourceLocations(location);
-        // 运营后台静态资源（classpath:/admin/），与 C 端 static/ 隔离
+        // 运营后台静态资源（classpath:/admin/），与 C 端 static/ 隔离。
+        //
+        // 必须显式设 no-cache：这里注册的自定义处理器**不会**继承
+        // spring.web.resources.cache.cachecontrol 那套配置（那只作用于默认处理器），
+        // 默认只发 Last-Modified，浏览器会按启发式缓存直接用旧副本 ——
+        // 结果就是「新 HTML + 旧 CSS」，页面上新加的图标没有宽高约束被撑成巨图。
+        // no-cache 不是不缓存，而是每次回服务器校验，没变照样 304，代价极小。
         registry.addResourceHandler("/admin/**")
-                .addResourceLocations("classpath:/admin/");
+                .addResourceLocations("classpath:/admin/")
+                .setCacheControl(CacheControl.noCache().mustRevalidate());
     }
 }

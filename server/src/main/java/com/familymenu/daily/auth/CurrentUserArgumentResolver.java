@@ -1,7 +1,6 @@
 package com.familymenu.daily.auth;
 
 import com.familymenu.daily.dto.AuthModels.AuthUser;
-import com.familymenu.daily.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
@@ -10,14 +9,12 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+/**
+ * 只负责把 {@link AuthInterceptor} 解析好的 AuthUser 交给控制器。
+ * 不在这里做任何兜底解析——兜底会在读路径上建号建家庭。
+ */
 @Component
 public class CurrentUserArgumentResolver implements HandlerMethodArgumentResolver {
-
-    private final AuthService authService;
-
-    public CurrentUserArgumentResolver(AuthService authService) {
-        this.authService = authService;
-    }
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -34,17 +31,6 @@ public class CurrentUserArgumentResolver implements HandlerMethodArgumentResolve
         if (request == null) {
             return null;
         }
-        AuthUser user = (AuthUser) request.getAttribute(AuthInterceptor.ATTR_USER);
-        if (user != null) {
-            return user;
-        }
-        CurrentUser anno = parameter.getParameterAnnotation(CurrentUser.class);
-        if (anno != null && anno.orGuest()) {
-            String token = (String) request.getAttribute(AuthInterceptor.ATTR_TOKEN);
-            AuthUser resolved = authService.resolveOrGuest(token);
-            request.setAttribute(AuthInterceptor.ATTR_USER, resolved);
-            return resolved;
-        }
-        return null;
+        return request.getAttribute(AuthInterceptor.ATTR_USER);
     }
 }

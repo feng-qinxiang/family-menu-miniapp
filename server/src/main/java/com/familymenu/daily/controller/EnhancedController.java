@@ -31,17 +31,17 @@ public class EnhancedController {
     }
 
     @GetMapping("/weekly-menu/current")
-    public WeeklyMenuView currentWeeklyMenu(@CurrentUser(orGuest = true) AuthUser user) {
+    public WeeklyMenuView currentWeeklyMenu(@CurrentUser AuthUser user) {
         return enhancedService.generateWeeklyMenu(user.familyId(), user.userId());
     }
 
     @GetMapping("/preference/profile")
-    public PreferenceProfile preferenceProfile(@CurrentUser(orGuest = true) AuthUser user) {
+    public PreferenceProfile preferenceProfile(@CurrentUser AuthUser user) {
         return enhancedService.getPreferenceProfile(user.userId());
     }
 
     @GetMapping("/pantry")
-    public List<PantryItem> listPantry(@CurrentUser(orGuest = true) AuthUser user) {
+    public List<PantryItem> listPantry(@CurrentUser AuthUser user) {
         return enhancedService.listPantry(user.familyId());
     }
 
@@ -59,7 +59,7 @@ public class EnhancedController {
     }
 
     @GetMapping("/pantry/match")
-    public List<PantryMatchResult> pantryMatch(@CurrentUser(orGuest = true) AuthUser user) {
+    public List<PantryMatchResult> pantryMatch(@CurrentUser AuthUser user) {
         return enhancedService.matchRecipesWithPantry(user.familyId(), user.userId());
     }
 }

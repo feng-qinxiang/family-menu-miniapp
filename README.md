@@ -9,14 +9,14 @@
 ## 技术栈与架构
 
 - 后端：Spring Boot 3.2 / Java 17 / Spring JDBC / MySQL 8（Maven Wrapper 自举，无本机 Maven 依赖）
-- 前端：微信小程序原生（41 页面、自定义 TabBar、设计 token 主题化、深色模式）
+- 前端：微信小程序原生（39 页面、自定义 TabBar、设计 token 主题化、深色模式）
 - 测试：`@SpringBootTest` 集成测试连真实 MySQL，覆盖登录→菜单→清单→家庭协作主链路
 - 架构：小程序 ⇄ REST API（`AuthInterceptor` 统一鉴权）⇄ Spring Boot ⇄ MySQL 8；无密码登录（微信 code2session / OTP / 游客会话）
 
 ## 项目结构
 
 - `server/` Spring Boot 3.2 / Java 17 后端 API（包名 `com.familymenu.daily`）
-- `miniapp/` 微信小程序原生前端（41 个页面）
+- `miniapp/` 微信小程序原生前端（39 个页面，含 8 个分包页）
 - `docs/` 产品方案、MVP、数据模型、开发路线
 - `spec/` 上线清单（`LAUNCH-CHECKLIST.md`）与历史评审产物
 
@@ -39,6 +39,7 @@ cd server
 | `DB_USERNAME` / `DB_PASSWORD` | `root` / `123456` | 数据库账号（仅本地默认，生产必须覆盖，见下方安全须知） |
 | `WECHAT_APP_ID` / `WECHAT_APP_SECRET` | 空 | 微信登录凭据，留空则微信登录不可用并引导手机验证码 |
 | `AUTH_DEV_OTP_ENABLED` | `false` | 开发态固定验证码 `246810` 并回显 devCode，仅供本地联调；**默认关闭**，生产严禁开启 |
+| `APP_SEED_DEMO_DATA` | `true` | 演示数据总开关：启动播种（种子用户/社区帖子）+ 新账号首登补演示菜单/清单/记录/通知。生产由 `application-prod.yml` 固定 `false`，否则真实用户第一屏会出现别人的假数据 |
 | `UPLOAD_DIR` | `uploads` | 上传文件落盘目录 |
 
 > ⚠️ **生产安全须知**
@@ -66,7 +67,18 @@ Spring Boot 会自动加载「工作目录下 `config/application.yml`」，优�
 
 数据库结构与种子数据见 `server/sql/create-database.sql`、`server/src/main/resources/schema.sql`、`data.sql`。schema 使用 MySQL 专有语法，需 MySQL 8（H2 跑不通）。
 
-`data.sql` 内置了演示数据：多家庭成员、16 道左右菜谱、今日菜单、购物清单、做菜记录、食材库存和通知。新游客/手机号用户首次登录时也会自动补一套当前家庭演示数据，便于直接展示首页、菜单、买菜清单、口味画像和消息联动。
+`data.sql` 内置了公共种子数据：16 道左右菜谱、社区帖子与评论。这些是**所有人共享的菜谱库**，与账号无关。
+
+### 演示数据（`APP_SEED_DEMO_DATA`）
+
+除了上面的公共菜谱库，项目还有一套"个人演示数据"：演示菜单、买菜清单、做菜记录、食材库存、通知。
+它同时受 `APP_SEED_DEMO_DATA` 控制，**默认只有开发/测试开启，生产固定关闭**（`application-prod.yml`）：
+
+- 本地联调、截图、评审时保持 `true`，新账号登录后首页立刻有内容可看
+- 生产保持 `false`：真实用户的第一屏必须是空的，不能出现"别人的菜单和做菜记录"
+- 关闭后不影响公共菜谱库，只是个人状态从零开始
+
+改这个开关请只改环境变量，不要把它做成"按用户判断"的逻辑——历史上演示数据曾经无条件挂在登录路径上，是真实的线上数据污染源。
 
 ## 运行测试
 
@@ -77,11 +89,15 @@ cd server
 
 主链路集成测试在 `server/src/test/java/com/familymenu/daily/CoreFlowTests.java`，覆盖：游客登录 → 首页看板 → 菜谱 → 今日菜单 → 购物清单重建 → OTP 下发与登录 → 家庭创建/邀请码/加入/移除 → 反馈提交 → 通知已读。测试用 `@SpringBootTest` 连真实 MySQL，需本机 3306 可用。
 
-全量 **59 项测试**（10 个测试类），含管理台权限、支付回调验签、手机号绑定安全、会话 token 等专项。
+全量 **74 项测试**（13 个测试类），含管理台权限、支付回调验签、手机号绑定安全、会话 token、演示数据开关等专项。
+
+> 本地用 Git Bash 时 `./mvnw` 会因路径未转换报 `ClassNotFoundException: plexus.classworlds.launcher.Launcher`，
+> 用 `../.tools/mvn.sh test`（基于自带 wrapper 的绕过脚本）代替。
 
 前端纯逻辑单测（零依赖，node 直接跑）：
 
 ```powershell
+node miniapp/test/static-check.js      # 静态自检：页面四件套 / JSON / WXSS 配平 / TabBar 与 tabs.js 一致
 node test/dish-logic.test.js
 node test/recipe-steps.test.js
 ```
@@ -99,7 +115,11 @@ node test/recipe-steps.test.js
 3. **游客会话** — 免凭据临时会话，每次启动自动获取，按设备隔离
 
 鉴权走 `X-Auth-Token` 请求头。`AuthInterceptor` 采用**默认拒绝**策略：`/api/**` 除少数白名单端点外一律要求有效会话（游客会话也算），
-公开白名单只有登录/注册、管理台登录、价目表、支付回调、社区只读浏览。
+公开白名单只有登录、管理台登录、价目表、支付回调、社区只读浏览。
+
+身份模型：一个 openid / 设备指纹对应一个账号，账号必然属于一个家庭。不存在"所有人共用的游客账号"——
+游客会话按设备指纹哈希落库，同一台设备反复进入拿到的是同一个账号，不同设备互不可见。
+会话 30 天固定有效（不做滑动续期：续期会让每个读请求都变成写请求），过期后由前端重新获取游客会话或引导登录。
 
 ## 能力状态
 
@@ -118,4 +138,5 @@ node test/recipe-steps.test.js
 | VIP 权益页 | 🟡 代码完整，开关关闭 | 个人主体无支付资质，`features.PAYMENT=false` 时入口全隐藏 |
 | 广告位 | 🟡 演示态 | 社区页底部自运营位（非微信广告 SDK） |
 | 支付 | 🟡 代码完整，开关关闭 | 下单→预下单→`wx.requestPayment`→回调 RSA 验签/AES 解密已实现；个人主体无资质，`PAYMENT=false` 时整条链路不可达 |
-| 管理台 `/admin` | 🟡 代码完整，需前置条件 | 需 `ADMIN_OPENIDS` + 管理员手机号；**登录依赖短信网关，当前为 noop，接真实网关前登不进** |
+| 管理台 `/admin` | 🟡 代码完整，需前置条件 | 需 `ADMIN_OPENIDS`（把已绑定手机号的账号提为管理员）+ 能收到验证码。**后台唯一入口是手机验证码，而短信网关当前是 noop**：本地联调请开 `AUTH_DEV_OTP_ENABLED=true`（固定码 `246810`），生产必须接入真实短信供应商，否则后台登不进去 |
+| 演示数据 | 🟡 开关控制 | `APP_SEED_DEMO_DATA`：开发默认开、生产固定关，详见上文「演示数据」 |
