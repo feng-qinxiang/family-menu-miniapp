@@ -872,7 +872,7 @@
     var auditCard = '<div class="card"><h2>最近管理操作</h2><p class="card-sub">谁在什么时候改了什么</p>' +
       '<div class="row-list">' + (acts.length ? acts.map(function (a) {
         return '<div class="row-item">' +
-          '<span class="pill ' + (a.result === 'OK' ? 'ok' : 'bad') + '">' + escapeHtml(a.action) + '</span>' +
+          '<span class="pill ' + (a.result === 'OK' ? 'ok' : 'bad') + '">' + escapeHtml(AUDIT_ACTION[a.action] || a.action) + '</span>' +
           '<div class="grow"><div class="title">' + escapeHtml(a.detail || (a.targetType + (a.targetId ? '#' + a.targetId : ''))) + '</div>' +
           '<div class="sub">' + escapeHtml(a.actorNickname || ('用户' + a.actorUserId)) + '</div></div>' +
           '<div class="side">' + fmtTime(a.createdAt) + '</div></div>';
@@ -1170,6 +1170,8 @@
   // ==================== 反馈工单 ====================
 
   var FB_STATUS = { OPEN: '待处理', PROCESSING: '处理中', CLOSED: '已关闭' };
+  // 反馈类型枚举 → 中文（后端存的是原始枚举值，直接展示会露出英文）
+  var FB_TYPE = { bug: 'Bug 反馈', feature: '功能建议', complaint: '投诉', other: '其它' };
 
   function loadFeedback() {
     loadingCard();
@@ -1194,7 +1196,7 @@
       return '<tr><td class="num">' + escapeHtml(String(f.id)) + '</td>' +
         '<td><div class="cell-user">' + avatarHtml(f.nickname) + '<span class="name">' +
           escapeHtml(f.nickname || ('用户' + f.userId)) + '</span></div></td>' +
-        '<td>' + escapeHtml((f.types || []).join('、')) + '</td>' +
+        '<td>' + escapeHtml((f.types || []).map(function (t) { return FB_TYPE[t] || t; }).join('、') || '—') + '</td>' +
         '<td class="clamp" title="' + escapeHtml(f.content || '') + '">' + escapeHtml(f.content || '') + '</td>' +
         '<td>' + escapeHtml(f.contact || '—') + '</td>' +
         '<td><span class="pill ' + pill + '">' + escapeHtml(FB_STATUS[f.status] || f.status) + '</span></td>' +
@@ -1392,6 +1394,34 @@
   // ==================== 订单 ====================
 
   var ORDER_STATUS = { PENDING: '待支付', PAID: '已支付', CLOSED: '已关闭', REFUNDED: '已退款' };
+  // 支付方式枚举 → 中文
+  var PAY_METHOD = { MOCK: '模拟支付', WECHAT: '微信支付', JSAPI: '微信支付', NATIVE: '微信支付', H5: '微信支付' };
+
+  // 审计动作 / 结果 / 对象类型 → 中文（审计日志目前直接吐英文枚举，运营看不懂）
+  var AUDIT_ACTION = {
+    SET_POST_STATUS: '帖子状态变更',
+    SET_RECIPE_STATUS: '菜谱上下架',
+    REVIEW_COMMENT: '审核评论',
+    BATCH_REVIEW_COMMENT: '批量审核评论',
+    DELETE_COMMENT: '删除评论',
+    RESTORE_COMMENT: '恢复评论',
+    REVIEW_IMPORT: '导入审核',
+    HANDLE_FEEDBACK: '处理反馈工单',
+    GRANT_ADMIN: '授予管理员',
+    REVOKE_ADMIN: '撤销管理员',
+    SET_ADMIN_ROLE: '调整管理员角色',
+    BAN_USER: '封禁用户',
+    UNBAN_USER: '解封用户',
+    GRANT_VIP: '人工开通会员',
+    CLOSE_ORDER: '关闭订单',
+    REFUND_ORDER: '订单退款',
+    EXPORT_XLSX: '导出 Excel'
+  };
+  var AUDIT_RESULT = { OK: '成功', FAIL: '失败' };
+  var AUDIT_TARGET = {
+    post: '帖子', recipe: '菜谱', comment: '评论', user: '用户',
+    order: '订单', orders: '订单', feedback: '反馈', import_source: '导入来源'
+  };
 
   function loadOrders() {
     loadingCard();
@@ -1421,11 +1451,13 @@
       var pill = o.status === 'PAID' ? 'ok' : (o.status === 'PENDING' ? 'pending' : 'bad');
       return '<tr><td class="num">' + escapeHtml(String(o.orderId)) + '</td>' +
         '<td>' + escapeHtml(o.outTradeNo) + '</td>' +
-        '<td class="num">' + escapeHtml(String(o.payerUserId)) + '</td>' +
+        '<td><div class="cell-user">' + avatarHtml(o.payerNickname) +
+          '<div><div class="name">' + escapeHtml(o.payerNickname || ('用户 #' + o.payerUserId)) + '</div>' +
+          '<div class="sub">#' + escapeHtml(String(o.payerUserId)) + '</div></div></div></td>' +
         '<td>' + escapeHtml(o.planName || o.planCode) + '</td>' +
         '<td class="num">' + fmtMoney(o.amountFen) + '</td>' +
         '<td><span class="pill ' + pill + '">' + escapeHtml(ORDER_STATUS[o.status] || o.status) + '</span></td>' +
-        '<td>' + escapeHtml(o.paymentMethod || '—') + '</td>' +
+        '<td>' + escapeHtml(o.paymentMethod ? (PAY_METHOD[o.paymentMethod] || o.paymentMethod) : '—') + '</td>' +
         '<td title="下单 ' + escapeHtml(o.createdAt || '') + (o.paidAt ? ' / 支付 ' + escapeHtml(o.paidAt) : '') + '">' +
         fmtTime(o.paidAt || o.createdAt) + '</td>' +
         '<td class="actions">' +
@@ -1439,7 +1471,7 @@
     }).join('') : tableEmpty(9, { icon: 'card', title: '暂无订单', desc: '用户下单支付后会出现在这里。可切换状态标签或调整日期区间。' });
     setPageHeader('共 ' + fmtNum(state.orderTotal) + ' 笔');
     $('panelRoot').innerHTML = '<div class="card">' + head +
-      '<table><thead><tr>' + thSort('ID', 'id', 'order', 'num') + '<th>商户单号</th><th class="num">用户</th><th>套餐</th>' +
+      '<table><thead><tr>' + thSort('ID', 'id', 'order', 'num') + '<th>商户单号</th><th>用户</th><th>套餐</th>' +
       thSort('金额', 'amount', 'order', 'num') + '<th>状态</th><th>方式</th>' +
       thSort('时间', 'createdAt', 'order') + '<th>操作</th></tr></thead><tbody>' + body + '</tbody></table>' +
       pagerHtml('orders', state.orderPage, state.orderSize, state.orderTotal) + '</div>';
@@ -1508,10 +1540,10 @@
       return '<tr><td class="num">' + escapeHtml(String(a.id)) + '</td>' +
         '<td><div class="cell-user">' + avatarHtml(a.actorNickname) + '<span class="name">' +
           escapeHtml(a.actorNickname || String(a.actorUserId)) + '</span></div></td>' +
-        '<td><span class="pill">' + escapeHtml(a.action) + '</span></td>' +
-        '<td>' + escapeHtml(a.targetType + (a.targetId ? '#' + a.targetId : '')) + '</td>' +
+        '<td><span class="pill">' + escapeHtml(AUDIT_ACTION[a.action] || a.action) + '</span></td>' +
+        '<td>' + escapeHtml((AUDIT_TARGET[a.targetType] || a.targetType) + (a.targetId ? ' #' + a.targetId : '')) + '</td>' +
         '<td class="clamp" title="' + escapeHtml(a.detail || '') + '">' + escapeHtml(a.detail || '—') + '</td>' +
-        '<td><span class="pill ' + (a.result === 'OK' ? 'ok' : 'bad') + '">' + escapeHtml(a.result) + '</span></td>' +
+        '<td><span class="pill ' + (a.result === 'OK' ? 'ok' : 'bad') + '">' + escapeHtml(AUDIT_RESULT[a.result] || a.result) + '</span></td>' +
         '<td title="' + escapeHtml(a.createdAt || '') + '">' + fmtTime(a.createdAt) + '</td></tr>';
     }).join('') : tableEmpty(7, { icon: 'shield', title: '没有匹配的操作记录', desc: '所有管理写操作都会自动留痕。换个关键词或调整日期区间再试。' });
     setPageHeader('共 ' + fmtNum(state.auditTotal) + ' 条');

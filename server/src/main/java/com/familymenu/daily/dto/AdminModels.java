@@ -157,6 +157,7 @@ public final class AdminModels {
             Long orderId,
             String outTradeNo,
             Long payerUserId,
+            String payerNickname,
             String planCode,
             String planName,
             long amountFen,

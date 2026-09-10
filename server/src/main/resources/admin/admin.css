@@ -857,8 +857,8 @@ td.id-cell { color: var(--mut); font-variant-numeric: tabular-nums; }
 .avatar.c3 { background: #2b5d8a; }
 .avatar.c4 { background: #a8792c; }
 .avatar.c5 { background: #6b4a7a; }
-.cell-user .name { font-weight: 500; }
-.cell-user .sub { font-size: 11.5px; color: var(--mut); }
+.cell-user .name { font-weight: 500; white-space: nowrap; }
+.cell-user .sub { font-size: 11.5px; color: var(--mut); white-space: nowrap; }
 
 .row-list { display: flex; flex-direction: column; }
 .row-item {

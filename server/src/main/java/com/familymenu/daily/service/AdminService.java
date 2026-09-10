@@ -636,17 +636,20 @@ public class AdminService {
                   AND (? IS NULL OR created_at < ?)
                 """, Long.class, st, st, fromTs, fromTs, toTs, toTs);
         List<AdminOrderItem> items = jdbcTemplate.query("""
-                        SELECT id, out_trade_no, payer_user_id, plan_code, amount_fen, duration_days,
-                               status, payment_method, created_at, paid_at
-                        FROM payment_order
-                        WHERE (? = '' OR status = ?)
-                          AND (? IS NULL OR created_at >= ?)
-                          AND (? IS NULL OR created_at < ?)
+                        SELECT o.id, o.out_trade_no, o.payer_user_id, u.nickname AS payer_nickname,
+                               o.plan_code, o.amount_fen, o.duration_days,
+                               o.status, o.payment_method, o.created_at, o.paid_at
+                        FROM payment_order o
+                        LEFT JOIN user_account u ON u.id = o.payer_user_id
+                        WHERE (? = '' OR o.status = ?)
+                          AND (? IS NULL OR o.created_at >= ?)
+                          AND (? IS NULL OR o.created_at < ?)
                         """ + orderBy + " LIMIT ? OFFSET ?",
                 (rs, rowNum) -> new AdminOrderItem(
                         rs.getLong("id"),
                         rs.getString("out_trade_no"),
                         rs.getLong("payer_user_id"),
+                        rs.getString("payer_nickname"),
                         rs.getString("plan_code"),
                         PlanCatalog.displayName(rs.getString("plan_code")),
                         rs.getLong("amount_fen"),
@@ -739,13 +742,17 @@ public class AdminService {
     @Transactional
     public void refundOrder(long actorUserId, String outTradeNo) {
         List<AdminOrderItem> found = jdbcTemplate.query("""
-                        SELECT out_trade_no, payer_user_id, plan_code, amount_fen, duration_days
-                        FROM payment_order WHERE out_trade_no = ? AND status = 'PAID'
+                        SELECT o.out_trade_no, o.payer_user_id, u.nickname AS payer_nickname,
+                               o.plan_code, o.amount_fen, o.duration_days
+                        FROM payment_order o
+                        LEFT JOIN user_account u ON u.id = o.payer_user_id
+                        WHERE o.out_trade_no = ? AND o.status = 'PAID'
                         """,
                 (rs, rowNum) -> new AdminOrderItem(
                         null, rs.getString("out_trade_no"), rs.getLong("payer_user_id"),
-                        rs.getString("plan_code"), null, rs.getLong("amount_fen"),
-                        rs.getInt("duration_days"), "PAID", null, null, null),
+                        rs.getString("payer_nickname"), rs.getString("plan_code"), null,
+                        rs.getLong("amount_fen"), rs.getInt("duration_days"), "PAID",
+                        null, null, null),
                 outTradeNo);
         if (found.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "订单不存在或不是已支付状态，无法退款");
@@ -899,12 +906,13 @@ public class AdminService {
 
     // ==================== 列表通用：日期区间 / 排序 ====================
 
-    /** 可排序列白名单：前端传 sort=amount，这里映射成真实列名，绝不拼接用户输入。 */
+    /** 可排序列白名单：前端传 sort=amount，这里映射成真实列名，绝不拼接用户输入。
+     *  订单列表现在 LEFT JOIN 了 user_account（带出付款人昵称），列名必须带 o. 前缀避免歧义。 */
     private static final Map<String, String> ORDER_SORTABLE = Map.of(
-            "id", "id",
-            "amount", "amount_fen",
-            "createdAt", "created_at",
-            "paidAt", "paid_at");
+            "id", "o.id",
+            "amount", "o.amount_fen",
+            "createdAt", "o.created_at",
+            "paidAt", "o.paid_at");
     private static final Map<String, String> USER_SORTABLE = Map.of(
             "id", "id",
             "createdAt", "created_at");
