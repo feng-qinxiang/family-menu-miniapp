@@ -1,0 +1,31 @@
+name: miniapp-ci
+
+# 小程序没有构建工具链，也没有编译器把关：
+# WXSS 里多一个 `}` 之类的问题，git、编辑器都不报，只有微信开发者工具会白屏。
+# 这个工作流把「机器能一眼看出来的错误」挡在合并之前。
+on:
+  push:
+    paths:
+      - 'miniapp/**'
+      - '.github/workflows/miniapp-ci.yml'
+  pull_request:
+    paths:
+      - 'miniapp/**'
+      - '.github/workflows/miniapp-ci.yml'
+
+jobs:
+  static-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 静态自检（WXSS 配平 / 页面文件齐全 / 引用路径）
+        run: node miniapp/test/static-check.js
+
+      - name: 纯逻辑单测
+        run: node miniapp/test/dish-logic.test.js

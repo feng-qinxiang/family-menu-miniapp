@@ -89,9 +89,6 @@
   background: var(--pop);
   border: 2rpx solid var(--paper);
 }
-  font-weight: 600;
-  line-height: 1.4;
-}
 .rx-dietbar-x {
   flex: none;
   padding: 8rpx 0 8rpx 16rpx;
