@@ -50,7 +50,7 @@ Page({
     loadError: false
   },
 
-  onLoad() {
+  onLoad(options) {
     let sbh = 0;
     try {
       if (typeof wx.getWindowInfo === 'function') {
@@ -59,6 +59,8 @@ Page({
         sbh = wx.getSystemInfoSync().statusBarHeight || 0;
       }
     } catch (e) { sbh = 0; }
+    // cook-mode 完成跳转携带 recipeId/title：高亮定位刚做完的那道菜
+    this._highlightRecipeId = options && options.recipeId ? String(options.recipeId) : '';
     this.setData({ statusBarHeight: sbh });
     this.loadHistory();
   },
@@ -86,7 +88,7 @@ Page({
   buildView(records) {
     const enriched = records.map((r, i) => {
       const date = parseDate(r.cookedAt);
-      const cookName = r.cookName || r.cookedBy || r.author || '家人';
+      const cookName = r.cookedByName || r.cookName || r.cookedBy || r.author || '家人';
       const score = Math.max(0, Math.min(5, Number(r.score) || 0));
       const stars = [];
       for (let s = 0; s < 5; s++) stars.push(s < score);
@@ -101,6 +103,7 @@ Page({
         cookTone: TONES[i % TONES.length],
         cookInitial: String(cookName).charAt(0) || '家',
         remark: r.remark || '',
+        highlight: !!this._highlightRecipeId && String(r.recipeId) === this._highlightRecipeId,
         dateMs: date.getTime(),
         dateLabel: pad2(date.getMonth() + 1) + '.' + pad2(date.getDate()) + ' ' + mealOf(date, i),
         ymKey: date.getFullYear() + '-' + pad2(date.getMonth() + 1),

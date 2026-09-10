@@ -530,3 +530,14 @@
 
 
 
+
+/* 最近导入加载失败的重试入口 */
+.recent-failed {
+  margin: 24rpx 0;
+  padding: 28rpx;
+  text-align: center;
+  font-size: 26rpx;
+  color: var(--ink-3, #857a68);
+  background: var(--card, #fff);
+  border-radius: 20rpx;
+}

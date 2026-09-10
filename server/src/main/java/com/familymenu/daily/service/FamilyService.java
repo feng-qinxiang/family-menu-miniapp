@@ -92,7 +92,12 @@ public class FamilyService {
     public FamilyJoinPreview previewJoin(String inviteCode) {
         long familyId = parseInviteCode(inviteCode);
         FamilyProfile profile = getExistingProfile(familyId);
-        return new FamilyJoinPreview(toInviteCode(profile.familyId()), profile.familyName(), profile.members().size());
+        List<String> nicknames = profile.members().stream()
+                .map(FamilyMemberItem::nickname)
+                .filter(n -> n != null && !n.isBlank())
+                .limit(3)
+                .toList();
+        return new FamilyJoinPreview(toInviteCode(profile.familyId()), profile.familyName(), profile.members().size(), nicknames);
     }
 
     @Transactional

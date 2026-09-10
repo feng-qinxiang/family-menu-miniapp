@@ -337,7 +337,9 @@ public class TodayService {
                                 rs.getDouble("rating"),
                                 rs.getString("source_url"),
                                 rs.getString("summary"),
-                                rs.getString("cover_image")
+                                rs.getString("cover_image"),
+                                null,
+                                null
                         )
                 ),
                 menuId
@@ -362,18 +364,29 @@ public class TodayService {
     }
 
     private List<ShoppingListItemView> loadShoppingItems(long shoppingListId) {
+        // 子查询把每条食材回溯到今日菜单中使用它的菜谱（手动补充的条目为 NULL）
         return jdbcTemplate.query("""
-                        SELECT id, ingredient_name, amount, unit, purchased
-                        FROM shopping_list_item
-                        WHERE shopping_list_id = ?
-                        ORDER BY purchased ASC, ingredient_name ASC
+                        SELECT sli.id, sli.ingredient_name, sli.amount, sli.unit, sli.purchased,
+                               (SELECT GROUP_CONCAT(DISTINCT r.title ORDER BY r.title SEPARATOR '、')
+                                FROM daily_menu_item dmi
+                                JOIN recipe r ON r.id = dmi.recipe_id
+                                JOIN recipe_ingredient ri ON ri.recipe_id = r.id
+                                JOIN shopping_list sl ON sl.daily_menu_id = dmi.daily_menu_id
+                                WHERE sl.id = sli.shopping_list_id
+                                      AND ri.ingredient_name = sli.ingredient_name) AS source_recipes
+                        FROM shopping_list_item sli
+                        WHERE sli.shopping_list_id = ?
+                        ORDER BY sli.purchased ASC, sli.ingredient_name ASC
                         """,
                 (rs, rowNum) -> new ShoppingListItemView(
                         rs.getLong("id"),
                         rs.getString("ingredient_name"),
                         rs.getString("amount"),
                         rs.getString("unit"),
-                        rs.getBoolean("purchased")
+                        rs.getBoolean("purchased"),
+                        rs.getString("source_recipes") == null
+                                ? List.of()
+                                : List.of(rs.getString("source_recipes").split("、"))
                 ),
                 shoppingListId
         );

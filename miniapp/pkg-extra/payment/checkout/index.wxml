@@ -80,7 +80,7 @@
     <!-- 安全提示 -->
     <view class="seccard g-fade-up g-d4">
       <view class="sec-shield"></view>
-      <text>当前不发起真实扣款 · 仅写入会员状态</text>
+      <text>{{mockMode ? '联调模式：不发起真实扣款 · 仅写入会员状态' : '支付安全由微信支付保障'}}</text>
     </view>
 
     <view class="biometric g-fade-up g-d5">

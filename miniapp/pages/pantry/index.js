@@ -204,13 +204,29 @@ Page({
     return { key: 'other', label: '其他', icon: 'other' };
   },
 
+  // 「现在就能做」匹配卡 → 菜谱详情
+  onMatchTap(e) {
+    const id = e.currentTarget.dataset.id;
+    if (!id) return;
+    wx.navigateTo({
+      url: `/pages/recipe-detail/index?id=${id}`,
+      fail: () => wx.showToast({ title: '页面打开失败', icon: 'none' })
+    });
+  },
+
   normalizeMatches(matches) {
     return (matches || []).map((item) => {
       const recipe = item.recipe || {};
-      const ingredients = Array.isArray(recipe.ingredients) ? recipe.ingredients : [];
-      const total = ingredients.length || 0;
+      // 后端已返回权威 matchedCount/totalCount，直接采用；
+      // 仅旧响应缺字段时才退回 recipe.ingredients 估算
       const rate = item.matchRate || 0;
-      const have = total ? Math.round(rate * total) : 0;
+      let total = Number(item.totalCount) || 0;
+      let have = Number(item.matchedCount) || 0;
+      if (!total) {
+        const ingredients = Array.isArray(recipe.ingredients) ? recipe.ingredients : [];
+        total = ingredients.length || 0;
+        have = total ? Math.round(rate * total) : 0;
+      }
       const full = total > 0 && have >= total;
       const missingList = item.missingIngredients && item.missingIngredients.length
         ? item.missingIngredients

@@ -123,7 +123,13 @@ Page({
         image: stepDishImg(recipe, i, decoded.image),
         tip: (rawSteps[i] && rawSteps[i].tip) || ''
       }));
-      const reviews = Array.isArray(recipe.reviews) ? recipe.reviews : [];
+      // 后端评价结构 {nickname, score, remark, cookedAt} → 视图结构 {author, when, score, content}
+      const reviews = (Array.isArray(recipe.reviews) ? recipe.reviews : []).map((r) => ({
+        author: r.nickname || '家人',
+        when: r.cookedAt || '',
+        score: r.score || 0,
+        content: r.remark || ''
+      }));
       const baseServings = Number(recipe.servings) > 0 ? Number(recipe.servings) : 2;
       const heroChar = (recipe.title || '菜').trim().charAt(0);
 
@@ -140,7 +146,7 @@ Page({
           steps,
           videoUrl,
           reviews,
-          cookCount: recipe.cookCount || reviews.length,
+          cookCount: recipe.cookCount != null ? recipe.cookCount : reviews.length,
           rating: recipe.rating || '',
           summary: recipe.summary || '',
           difficulty: recipe.difficulty || 'medium',
@@ -267,33 +273,35 @@ Page({
   writeReview() {
     if (!this.data.recipe) return;
     const recipe = this.data.recipe;
-    wx.showModal({
-      title: '写评价',
-      editable: true,
-      placeholderText: '我也做了，写两句给家人看看…',
-      success: async (res) => {
-        if (!res.confirm) return;
-        const content = (res.content || '').trim();
-        if (!content) {
-          wx.showToast({ title: '说点什么吧', icon: 'none' });
-          return;
-        }
-        wx.showLoading({ title: '提交中', mask: true });
-        try {
-          await addCookHistory({ recipeId: recipe.id, score: 5, remark: content });
-          wx.hideLoading();
-          // 乐观更新本地评价列表
-          const reviews = (this.data.recipe.reviews || []).slice();
-          reviews.unshift({ author: '我', when: '刚刚', score: 5, content });
-          this.setData({
-            'recipe.reviews': reviews,
-            'recipe.cookCount': (this.data.recipe.cookCount || 0) + 1
-          });
-          wx.showToast({ title: '已发布', icon: 'success' });
-        } catch (err) {
-          wx.hideLoading();
-          wx.showToast({ title: '提交失败', icon: 'none' });
-        }
+    // 先选真实评分（1~5 星），再写文字；不再默认写死 5 分
+    wx.showActionSheet({
+      itemList: ['⭐⭐⭐⭐⭐ 5 分', '⭐⭐⭐⭐ 4 分', '⭐⭐⭐ 3 分', '⭐⭐ 2 分', '⭐ 1 分'],
+      success: (sheet) => {
+        const score = 5 - sheet.tapIndex;
+        wx.showModal({
+          title: `写评价 · ${score} 分`,
+          editable: true,
+          placeholderText: '我也做了，写两句给家人看看…',
+          success: async (res) => {
+            if (!res.confirm) return;
+            const content = (res.content || '').trim();
+            if (!content) {
+              wx.showToast({ title: '说点什么吧', icon: 'none' });
+              return;
+            }
+            wx.showLoading({ title: '提交中', mask: true });
+            try {
+              await addCookHistory({ recipeId: recipe.id, score, remark: content });
+              wx.hideLoading();
+              wx.showToast({ title: '已发布', icon: 'success' });
+              // 重新拉详情，拿到服务端权威的评价列表与做过次数
+              this.loadRecipe(recipe.id);
+            } catch (err) {
+              wx.hideLoading();
+              wx.showToast({ title: '提交失败', icon: 'none' });
+            }
+          }
+        });
       }
     });
   },
@@ -322,14 +330,16 @@ Page({
   recordCook() {
     if (!this.data.recipe) return;
     const recipe = this.data.recipe;
+    // 「记录做过」不带评分（做了≠满分），评分走「写评价」流程
     wx.showModal({
       title: '记录做菜',
       content: `确认已做了「${recipe.title}」？`,
       success: async (res) => {
         if (res.confirm) {
           try {
-            await addCookHistory({ recipeId: recipe.id, score: 5, remark: '' });
+            await addCookHistory({ recipeId: recipe.id, remark: '' });
             wx.showToast({ title: '已记录', icon: 'success' });
+            this.loadRecipe(recipe.id);
           } catch (err) {
             wx.showToast({ title: '记录失败', icon: 'none' });
           }

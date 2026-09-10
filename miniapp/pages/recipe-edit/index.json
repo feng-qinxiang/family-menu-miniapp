@@ -3,6 +3,7 @@
   "navigationStyle": "custom",
   "usingComponents": {
     "nav-bar": "/components/nav-bar/index",
-    "state-sheet": "/components/state-sheet/index"
+    "state-sheet": "/components/state-sheet/index",
+    "state-loading": "/components/state-loading/index"
   }
 }

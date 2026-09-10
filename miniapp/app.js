@@ -1,4 +1,4 @@
-const { guestLogin, getVipStatus } = require('./utils/api');
+const { guestLogin, getVipStatus, getAuthToken } = require('./utils/api');
 const { resolveConfig } = require('./utils/env');
 const features = require('./utils/features');
 
@@ -13,10 +13,13 @@ App({
   async onLaunch() {
     // 首屏先用本地缓存兜底，避免黑屏切换；最终以服务器返回为准。
     this.globalData.isVip = wx.getStorageSync('vip_status') === true;
-    try {
-      await guestLogin();
-    } catch (error) {
-      console.warn('guest login failed', error);
+    // 已有登录态（手机/微信/游客）时不要再用新游客 token 覆盖，否则会降级为游客
+    if (!getAuthToken()) {
+      try {
+        await guestLogin();
+      } catch (error) {
+        console.warn('guest login failed', error);
+      }
     }
     this.refreshVipStatus();
   },

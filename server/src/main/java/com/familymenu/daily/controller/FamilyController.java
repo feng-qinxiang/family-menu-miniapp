@@ -59,7 +59,12 @@ public class FamilyController {
     @GetMapping("/invite-code")
     public FamilyJoinPreview inviteCode(@CurrentUser AuthUser user) {
         FamilyProfile profile = familyService.getProfile(user.familyId());
-        return new FamilyJoinPreview(familyService.inviteCode(user.familyId()), profile.familyName(), profile.members().size());
+        java.util.List<String> nicknames = profile.members().stream()
+                .map(FamilyMemberItem::nickname)
+                .filter(n -> n != null && !n.isBlank())
+                .limit(3)
+                .toList();
+        return new FamilyJoinPreview(familyService.inviteCode(user.familyId()), profile.familyName(), profile.members().size(), nicknames);
     }
 
     @PostMapping("/members")

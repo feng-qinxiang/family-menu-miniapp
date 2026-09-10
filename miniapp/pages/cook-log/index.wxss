@@ -423,3 +423,8 @@
 
 
 
+
+/* 刚做完的菜高亮（从烹饪模式完成跳转定位） */
+.tcard.is-new {
+  box-shadow: 0 0 0 4rpx var(--tomato, #e8472a);
+}

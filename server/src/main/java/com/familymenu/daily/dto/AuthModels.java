@@ -45,7 +45,9 @@ public final class AuthModels {
             boolean admin,
             /** 管理端角色：SUPER / MODERATOR / SUPPORT；非管理员为 null */
             String adminRole,
-            boolean phoneBound
+            boolean phoneBound,
+            /** 微信绑定：openid 存在且非游客（guest- 前缀）即为已绑定 */
+            boolean wechatBound
     ) {
     }
 

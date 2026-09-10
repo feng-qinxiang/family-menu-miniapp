@@ -215,6 +215,6 @@ public class HomeController {
 
     @GetMapping("/cook-history")
     public List<CookHistoryItem> listCookHistory(@CurrentUser AuthUser user) {
-        return store.listCookHistory(user.userId());
+        return store.listCookHistory(user.familyId());
     }
 }

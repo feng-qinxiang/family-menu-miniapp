@@ -378,7 +378,11 @@ Page({
     const menuItems = context.todayMenu && Array.isArray(context.todayMenu.items) ? context.todayMenu.items : [];
     const pantryItems = Array.isArray(context.pantryItems) ? context.pantryItems : [];
     return items.map((item) => {
-      const sourceRecipes = this.findSourceRecipes(item.ingredientName, menuItems);
+      // 后端已在清单条目上返回来源菜谱（今日菜单回溯），优先使用；本地匹配仅作旧数据兜底
+      const backendSources = Array.isArray(item.sourceRecipes) ? item.sourceRecipes.filter(Boolean) : [];
+      const sourceRecipes = backendSources.length
+        ? backendSources.slice(0, 2)
+        : this.findSourceRecipes(item.ingredientName, menuItems);
       const inPantry = pantryItems.some((pantryItem) => this.sameIngredient(pantryItem.ingredientName, item.ingredientName));
       const category = this.resolveCategory(item.ingredientName);
       return {
@@ -387,18 +391,21 @@ Page({
         pantryText: inPantry ? '库存里已有' : '',
         categoryKey: category.key,
         categoryLabel: category.label,
-        cover: this.resolveItemCover(item.ingredientName, menuItems),
+        cover: this.resolveItemCover(item.ingredientName, menuItems, sourceRecipes),
         initial: String(item.ingredientName || '菜').slice(0, 1)
       };
     });
   },
 
-  resolveItemCover(ingredientName, menuItems) {
-    for (let i = 0; i < menuItems.length; i++) {
-      const recipe = menuItems[i].recipe || {};
-      const ingredients = Array.isArray(recipe.ingredients) ? recipe.ingredients : [];
-      const matched = ingredients.some((ingredient) => this.sameIngredient(ingredient.name || ingredient.ingredientName, ingredientName));
-      if (matched) return recipeDishImg(recipe);
+  resolveItemCover(ingredientName, menuItems, sourceRecipes) {
+    // 有来源菜谱时直接用该菜谱封面（菜单项的 recipe 含 title/coverImage）
+    if (Array.isArray(sourceRecipes) && sourceRecipes.length) {
+      for (let i = 0; i < menuItems.length; i++) {
+        const recipe = menuItems[i].recipe || {};
+        if (recipe.title && sourceRecipes.indexOf(recipe.title) !== -1) {
+          return recipeDishImg(recipe);
+        }
+      }
     }
     return localDishByIngredient(ingredientName);
   },

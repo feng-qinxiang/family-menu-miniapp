@@ -60,8 +60,6 @@ function removePending(id) {
   savePending(loadPending().filter((w) => w.id !== id));
 }
 
-const memberTones = ['tone-a', 'tone-b', 'tone-c', 'tone-d', 'tone-e'];
-
 function getCuisineClass(cuisine) {
   return cuisinePinyin[cuisine] || '';
 }
@@ -97,9 +95,6 @@ Page({
     greeting: '你好',
     currentUser: {},
     familyProfile: { members: [] },
-    cookCandidates: [],
-    activeCookKey: '',
-    activeCook: null,
 
     // 餐次 & 许愿池（§3 / §5）
     slots: SLOTS,
@@ -111,8 +106,8 @@ Page({
     wishInput: '',
     fontScale: 'normal',   // 大字模式档位，onShow 从本地存储读取
     slotDoneCount: 0,      // 当前餐次已上桌的数量，updateSlotMenu 里算
-    role: 'cook',          // 简化：默认本人=做饭人；接入后端后由 family.members[me].role 决定
-    canConfirm: true,      // role∈{admin,cook} 时为 true（§6）
+    role: '',              // 本人在家庭中的角色（owner/admin/member），loadAll 时由后端数据填充
+    canConfirm: true,      // owner/admin 可确认菜单；无家庭数据时不阻断（§6）
 
     activeCuisine: 'all',
     heroRecipe: null,
@@ -421,7 +416,7 @@ Page({
 
       const allRecipes = this.collectRecipes(dashboard, matchedMap);
       const cuisineTiles = this.buildCuisineTiles(allRecipes);
-      const cookCandidates = this.buildCookCandidates(user, family);
+      const myRole = this._resolveMyRole(user, family);
 
       // 写缓存供离线兜底
       writeCache(CACHE_KEY_MENU, normalizedItems);
@@ -433,9 +428,9 @@ Page({
         greeting: greetingText(),
         currentUser: user || {},
         familyProfile: family || { members: [] },
-        cookCandidates,
-        activeCookKey: cookCandidates[0] ? cookCandidates[0].key : '',
-        activeCook: cookCandidates[0] || null,
+        role: myRole || '',
+        // owner/admin 是「做饭人」可确认菜单；普通 member 需等待；查不到角色（无家庭）不阻断
+        canConfirm: myRole ? ['owner', 'admin', 'cook'].indexOf(myRole) !== -1 : true,
         todayMenu: normalizedItems,
         shoppingPending,
         allRecipes,
@@ -489,34 +484,27 @@ Page({
       const patch = {};
       if (family) patch.familyProfile = family;
       if (user) patch.currentUser = user;
+      if (family || user) {
+        const myRole = this._resolveMyRole(
+          user || this.data.currentUser,
+          family || this.data.familyProfile
+        );
+        patch.role = myRole || '';
+        patch.canConfirm = myRole ? ['owner', 'admin', 'cook'].indexOf(myRole) !== -1 : true;
+      }
       if (Object.keys(patch).length) this.setData(patch);
     } catch (err) {
       console.warn('home refreshLight profile', err);
     }
   },
 
-  buildCookCandidates(user, family) {
-    const list = [];
-    if (user && user.nickname) {
-      list.push({
-        key: user.userId ? `u-${user.userId}` : 'u-me',
-        nickname: user.nickname,
-        initial: user.nickname.slice(0, 1),
-        tone: memberTones[0]
-      });
-    }
+  // 本人在家庭中的角色：owner/admin/member（后端 FamilyMemberItem.role）
+  _resolveMyRole(user, family) {
     const members = (family && Array.isArray(family.members)) ? family.members : [];
-    members.forEach((m, i) => {
-      if (!m || !m.nickname) return;
-      if (user && m.userId === user.userId) return;
-      list.push({
-        key: `m-${m.userId || i}`,
-        nickname: m.nickname,
-        initial: m.nickname.slice(0, 1),
-        tone: memberTones[(i + 1) % memberTones.length]
-      });
-    });
-    return list;
+    const uid = user && user.userId;
+    if (uid == null || !members.length) return '';
+    const me = members.find((m) => m && String(m.userId) === String(uid));
+    return me && me.role ? String(me.role) : '';
   },
 
   collectRecipes(dashboard, matchedMap) {

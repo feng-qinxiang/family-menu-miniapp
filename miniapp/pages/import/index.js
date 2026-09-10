@@ -52,7 +52,7 @@ Page({
           srcType: isXhs ? 'link' : (url ? 'link' : 'text')
         };
       });
-      this.setData({ recentImports: recent });
+      this.setData({ recentImports: recent, recentLoadFailed: false });
     } catch (e) {
       this.setData({ recentImports: [] });
     }
@@ -108,7 +108,12 @@ Page({
       return;
     }
     const localResult = parseRecipeText(rawText);
-    if (localResult) {
+    // 本地能解析出食材或步骤就够用了；否则再走远端解析（后端 /api/import/preview）
+    const localUsable = localResult && (
+      (Array.isArray(localResult.ingredients) && localResult.ingredients.length > 0) ||
+      (Array.isArray(localResult.steps) && localResult.steps.length > 0)
+    );
+    if (localUsable) {
       this.setData({ preview: localResult });
       return;
     }
@@ -151,8 +156,11 @@ Page({
 
   async chooseCover() {
     const urls = await chooseAndUpload(1);
-    if (urls.length) {
+    // 上传失败时 chooseAndUpload 返回 ['']，空串视为失败并提示
+    if (urls.length && urls[0]) {
       this.setData({ 'preview.coverImage': urls[0] });
+    } else if (urls.length) {
+      wx.showToast({ title: '封面上传失败，请重试', icon: 'none' });
     }
   },
 
@@ -163,8 +171,10 @@ Page({
   async chooseStepImage(e) {
     const { index } = e.currentTarget.dataset;
     const urls = await chooseAndUpload(1);
-    if (urls.length) {
+    if (urls.length && urls[0]) {
       this.setData({ [`preview.steps[${index}].image`]: urls[0] });
+    } else if (urls.length) {
+      wx.showToast({ title: '图片上传失败，请重试', icon: 'none' });
     }
   },
 

@@ -31,7 +31,18 @@ public final class ApiModels {
             Double rating,
             String sourceUrl,
             String summary,
-            String coverImage
+            String coverImage,
+            // 当前家庭的烹饪统计（不涉及的语境为 null）
+            Integer cookCount,
+            String lastCookedAt
+    ) {
+    }
+
+    public record RecipeReviewItem(
+            String nickname,
+            Integer score,
+            String remark,
+            String cookedAt
     ) {
     }
 
@@ -207,7 +218,9 @@ public final class ApiModels {
     public record FamilyJoinPreview(
             String inviteCode,
             String familyName,
-            int memberCount
+            int memberCount,
+            // 前 3 位成员昵称（加入前预览用，不暴露敏感信息）
+            List<String> memberNicknames
     ) {
     }
 
@@ -246,7 +259,9 @@ public final class ApiModels {
             String ingredientName,
             String amount,
             String unit,
-            boolean purchased
+            boolean purchased,
+            // 该食材来自今日菜单中的哪些菜谱（手动补充的条目为空列表）
+            List<String> sourceRecipes
     ) {
     }
 
@@ -279,7 +294,10 @@ public final class ApiModels {
             List<IngredientItem> ingredients,
             String createdAt,
             String coverImage,
-            String difficulty
+            String difficulty,
+            // 当前家庭做过次数与家人评价（取自 cook_history）
+            Integer cookCount,
+            List<RecipeReviewItem> reviews
     ) {
     }
 
@@ -303,7 +321,8 @@ public final class ApiModels {
             String recipeTitle,
             String cookedAt,
             Integer score,
-            String remark
+            String remark,
+            String cookedByName
     ) {
     }
 

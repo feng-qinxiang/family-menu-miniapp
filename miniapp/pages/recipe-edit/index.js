@@ -2,6 +2,7 @@ const { getRecipeDetail, saveRecipe, updateRecipe } = require('../../utils/api')
 const { chooseAndUpload, chooseVideo, uploadFile } = require('../../utils/upload');
 const { decodeStep, encodeStep, hoistVideo } = require('../../utils/recipe-steps');
 const { LOCAL_DISHES, recipeDishImg } = require('../../utils/image');
+const { cuisineList } = require('../../utils/constants');
 
 const PICKER_IMAGES = LOCAL_DISHES.map((file) => `/assets/dishes/${file}.jpg`);
 
@@ -11,7 +12,8 @@ const DIFFICULTY_OPTIONS = [
   { key: 'hard', label: '困难' }
 ];
 
-const CUISINE_OPTIONS = ['家常', '川菜', '粤菜', '湘菜', '面点'];
+// 与全站 constants.cuisineList 保持一致（家常排最前），避免编辑鲁菜/西餐/日料时无原值可选
+const CUISINE_OPTIONS = ['家常'].concat(cuisineList.filter((c) => c !== '家常'));
 
 Page({
   data: {
@@ -64,7 +66,8 @@ Page({
 
   onLoad(options) {
     if (options.id) {
-      this.setData({ isEdit: true, recipeId: options.id });
+      // 编辑模式：先遮罩加载，避免空表单闪变后被数据覆盖
+      this.setData({ isEdit: true, recipeId: options.id, pageLoading: true });
       this.loadRecipe(options.id);
     } else {
       this.refreshQuality();
@@ -76,10 +79,14 @@ Page({
     try {
       recipe = await getRecipeDetail(id);
     } catch (err) {
+      this.setData({ pageLoading: false });
       wx.showToast({ title: '菜谱加载失败', icon: 'none' });
       return;
     }
-    if (!recipe) return;
+    if (!recipe) {
+      this.setData({ pageLoading: false });
+      return;
+    }
     const steps = (recipe.steps && recipe.steps.length)
       ? recipe.steps.map((s) => decodeStep(s))
       : [{ text: '', image: '' }];
@@ -102,7 +109,8 @@ Page({
       form,
       tasteTagsText: form.tasteTags.join(','),
       tagsLabel: this.labelForTags(form.tasteTags),
-      commonTags: this.buildCommonTags(form.tasteTags)
+      commonTags: this.buildCommonTags(form.tasteTags),
+      pageLoading: false
     });
     this.refreshQuality();
   },

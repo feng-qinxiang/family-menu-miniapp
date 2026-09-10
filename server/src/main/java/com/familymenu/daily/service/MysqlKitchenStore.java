@@ -155,8 +155,14 @@ public class MysqlKitchenStore {
     public List<RecipeCard> listRecipes(String source, long userId, long familyId) {
         String normalized = Optional.ofNullable(source).orElse("owned").trim().toLowerCase(Locale.ROOT);
         String sql = """
-                SELECT id, title, source_type, source_url, cuisine, taste_tags_json, time_cost, servings, rating, summary, cover_image
+                SELECT id, title, source_type, source_url, cuisine, taste_tags_json, time_cost, servings, rating, summary, cover_image,
+                       ch.cook_count, ch.last_cooked_at
                 FROM recipe
+                LEFT JOIN (
+                    SELECT recipe_id, COUNT(*) AS cook_count,
+                           DATE_FORMAT(MAX(cooked_at), '%Y-%m-%d %H:%i') AS last_cooked_at
+                    FROM cook_history WHERE family_id = ? GROUP BY recipe_id
+                ) ch ON ch.recipe_id = recipe.id
                 WHERE status = 'ACTIVE' AND (? = 'all' OR source_type = ?)
                           AND (source_type = 'community' OR family_id = ? OR is_public = 1 OR family_id IS NULL OR owner_user_id = ?)
                 ORDER BY rating DESC, id DESC
@@ -172,8 +178,10 @@ public class MysqlKitchenStore {
                 rs.getDouble("rating"),
                 rs.getString("source_url"),
                 rs.getString("summary"),
-                rs.getString("cover_image")
-        ), normalized, normalized, familyId, userId);
+                rs.getString("cover_image"),
+                rs.getObject("cook_count", Integer.class),
+                rs.getString("last_cooked_at")
+        ), familyId, normalized, normalized, familyId, userId);
     }
 
     @Transactional
@@ -245,7 +253,9 @@ public class MysqlKitchenStore {
                         rs.getDouble("rating"),
                         rs.getString("source_url"),
                         rs.getString("summary"),
-                        rs.getString("cover_image")
+                        rs.getString("cover_image"),
+                        null,
+                        null
                 );
             }
             return new CommunityPost(
@@ -297,7 +307,9 @@ public class MysqlKitchenStore {
                         rs.getDouble("rating"),
                         rs.getString("source_url"),
                         rs.getString("summary"),
-                        rs.getString("cover_image")
+                        rs.getString("cover_image"),
+                        null,
+                        null
                 );
             }
             return new CommunityPost(
@@ -593,7 +605,9 @@ public class MysqlKitchenStore {
                             loadIngredients(recipeId),
                             rs.getString("created_at"),
                             rs.getString("cover_image"),
-                            rs.getString("difficulty")
+                            rs.getString("difficulty"),
+                            countFamilyCooks(recipeId, familyId),
+                            loadFamilyReviews(recipeId, familyId)
                     );
                 },
                 recipeId, familyId, userId
@@ -674,11 +688,17 @@ public class MysqlKitchenStore {
     public List<RecipeCard> filterRecipes(String source, String cuisine, Integer maxTime, Integer minServings, String tag,
                                           long userId, long familyId) {
         StringBuilder sql = new StringBuilder("""
-                SELECT id, title, source_type, source_url, cuisine, taste_tags_json, time_cost, servings, rating, summary, cover_image
+                SELECT id, title, source_type, source_url, cuisine, taste_tags_json, time_cost, servings, rating, summary, cover_image,
+                       ch.cook_count, ch.last_cooked_at
                 FROM recipe
+                LEFT JOIN (
+                    SELECT recipe_id, COUNT(*) AS cook_count,
+                           DATE_FORMAT(MAX(cooked_at), '%Y-%m-%d %H:%i') AS last_cooked_at
+                    FROM cook_history WHERE family_id = ? GROUP BY recipe_id
+                ) ch ON ch.recipe_id = recipe.id
                 WHERE status = 'ACTIVE' AND (source_type = 'community' OR family_id = ? OR is_public = 1 OR family_id IS NULL OR owner_user_id = ?)
                 """);
-        List<Object> params = new ArrayList<>(List.of(familyId, userId));
+        List<Object> params = new ArrayList<>(List.of(familyId, familyId, userId));
         String normalizedSource = normalizeSourceType(source);
         if (!"all".equals(normalizedSource)) {
             sql.append(" AND source_type = ?");
@@ -712,7 +732,9 @@ public class MysqlKitchenStore {
                 rs.getDouble("rating"),
                 rs.getString("source_url"),
                 rs.getString("summary"),
-                rs.getString("cover_image")
+                rs.getString("cover_image"),
+                rs.getObject("cook_count", Integer.class),
+                rs.getString("last_cooked_at")
         ), params.toArray());
     }
 
@@ -754,9 +776,10 @@ public class MysqlKitchenStore {
         return jdbcTemplate.queryForObject("""
                         SELECT ch.id, ch.recipe_id, r.title AS recipe_title,
                                DATE_FORMAT(ch.cooked_at, '%Y-%m-%d %H:%i') AS cooked_at,
-                               ch.score, ch.remark
+                               ch.score, ch.remark, u.nickname AS cooked_by_name
                         FROM cook_history ch
                         JOIN recipe r ON r.id = ch.recipe_id
+                        JOIN user_account u ON u.id = ch.user_id
                         WHERE ch.id = ?
                         """,
                 (rs, rowNum) -> new CookHistoryItem(
@@ -765,20 +788,23 @@ public class MysqlKitchenStore {
                         rs.getString("recipe_title"),
                         rs.getString("cooked_at"),
                         rs.getObject("score", Integer.class),
-                        rs.getString("remark")
+                        rs.getString("remark"),
+                        rs.getString("cooked_by_name")
                 ),
                 key.longValue()
         );
     }
 
-    public List<CookHistoryItem> listCookHistory(long userId) {
+    /** 烹饪记录按家庭维度返回（家人做过什么都可见），前端按掌勺人筛选。 */
+    public List<CookHistoryItem> listCookHistory(long familyId) {
         return jdbcTemplate.query("""
                         SELECT ch.id, ch.recipe_id, r.title AS recipe_title,
                                DATE_FORMAT(ch.cooked_at, '%Y-%m-%d %H:%i') AS cooked_at,
-                               ch.score, ch.remark
+                               ch.score, ch.remark, u.nickname AS cooked_by_name
                         FROM cook_history ch
                         JOIN recipe r ON r.id = ch.recipe_id
-                        WHERE ch.user_id = ?
+                        JOIN user_account u ON u.id = ch.user_id
+                        WHERE ch.family_id = ?
                         ORDER BY ch.cooked_at DESC
                         LIMIT 50
                         """,
@@ -788,9 +814,10 @@ public class MysqlKitchenStore {
                         rs.getString("recipe_title"),
                         rs.getString("cooked_at"),
                         rs.getObject("score", Integer.class),
-                        rs.getString("remark")
+                        rs.getString("remark"),
+                        rs.getString("cooked_by_name")
                 ),
-                userId
+                familyId
         );
     }
 
@@ -799,6 +826,36 @@ public class MysqlKitchenStore {
                 "SELECT step_text FROM recipe_step WHERE recipe_id = ? ORDER BY step_no ASC",
                 (rs, rowNum) -> rs.getString("step_text"),
                 recipeId
+        );
+    }
+
+    /** 当前家庭做过该菜谱的次数。 */
+    private Integer countFamilyCooks(long recipeId, long familyId) {
+        Integer count = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM cook_history WHERE recipe_id = ? AND family_id = ?",
+                Integer.class, recipeId, familyId);
+        return count == null ? 0 : count;
+    }
+
+    /** 家人评价：取自 cook_history 中带文字备注的记录（含评分与昵称）。 */
+    private List<ApiModels.RecipeReviewItem> loadFamilyReviews(long recipeId, long familyId) {
+        return jdbcTemplate.query("""
+                        SELECT u.nickname, ch.score, ch.remark,
+                               DATE_FORMAT(ch.cooked_at, '%Y-%m-%d %H:%i') AS cooked_at
+                        FROM cook_history ch
+                        JOIN user_account u ON u.id = ch.user_id
+                        WHERE ch.recipe_id = ? AND ch.family_id = ?
+                              AND ch.remark IS NOT NULL AND ch.remark <> ''
+                        ORDER BY ch.cooked_at DESC
+                        LIMIT 20
+                        """,
+                (rs, rowNum) -> new ApiModels.RecipeReviewItem(
+                        rs.getString("nickname"),
+                        rs.getObject("score", Integer.class),
+                        rs.getString("remark"),
+                        rs.getString("cooked_at")
+                ),
+                recipeId, familyId
         );
     }
 
@@ -1014,7 +1071,9 @@ public class MysqlKitchenStore {
                         rs.getDouble("rating"),
                         rs.getString("source_url"),
                         rs.getString("summary"),
-                        rs.getString("cover_image")
+                        rs.getString("cover_image"),
+                        null,
+                        null
                 ),
                 recipeId
         );
@@ -1079,7 +1138,9 @@ public class MysqlKitchenStore {
                         rs.getDouble("rating"),
                         rs.getString("source_url"),
                         rs.getString("summary"),
-                        rs.getString("cover_image")
+                        rs.getString("cover_image"),
+                        null,
+                        null
                 );
             }
             return new CommunityPost(

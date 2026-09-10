@@ -11,13 +11,13 @@ Page({
     // 账号安全分组（手机号项随 PHONE_LOGIN 开关裁剪）
     accountList: [
       ...(features.PHONE_LOGIN ? [{ key: 'phone', name: '手机号', icon: 'phone', value: '未绑定' }] : []),
-      { key: 'wechat', name: '微信绑定', icon: 'wechat', value: '未知' },
+      { key: 'wechat', name: '微信绑定', icon: 'wechat', value: '加载中…' },
     ],
     // ponytail: 消息通知开关已下线（原来只写 storage，没人读也没有 wx.requestSubscribeMessage）；重做需 requestSubscribeMessage + 后端订阅推送
     // 通用分组
     generalList: [
       { key: 'font', name: '字体大小', icon: 'font', value: '标准' },
-      { key: 'cache', name: '清除缓存', icon: 'cache', value: '23.6 MB' },
+      { key: 'cache', name: '清除缓存', icon: 'cache', value: '计算中…' },
     ],
     // 关于分组
     aboutList: [
@@ -92,9 +92,13 @@ Page({
         const masked = phone && phone.length >= 7
           ? phone.slice(0, 3) + '****' + phone.slice(-4)
           : '未绑定';
-        const list = this.data.accountList.map((it) =>
-          it.key === 'phone' ? { ...it, value: masked } : it
-        );
+        // 微信绑定态由后端 wechatBound 给出（游客账号=未绑定）
+        const wechatText = user.wechatBound === true ? '已绑定' : (user.wechatBound === false ? '未绑定（游客）' : '未知');
+        const list = this.data.accountList.map((it) => {
+          if (it.key === 'phone') return { ...it, value: masked };
+          if (it.key === 'wechat') return { ...it, value: wechatText };
+          return it;
+        });
         this.setData({ accountList: list });
       })
       .catch(() => {

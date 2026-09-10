@@ -1,5 +1,8 @@
 <nav-bar title="{{isEdit ? '编辑菜谱' : '新建菜谱'}}"></nav-bar>
 
+<state-loading wx:if="{{pageLoading}}" text="加载菜谱中…"></state-loading>
+
+<block wx:else>
 <view class="rc-seg">
   <view class="rc-seg-item {{editTab === 'info' ? 'on' : ''}}" data-tab="info" bindtap="switchTab">介绍</view>
   <view class="rc-seg-item {{editTab === 'ings' ? 'on' : ''}}" data-tab="ings" bindtap="switchTab">用料</view>
@@ -174,3 +177,4 @@
     </view>
   </view>
 </state-sheet>
+</block>

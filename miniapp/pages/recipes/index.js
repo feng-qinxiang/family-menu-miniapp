@@ -249,8 +249,12 @@ Page({
       return true;
     });
 
-    // hero: 优先宫保鸡丁，否则首道菜
-    const hero = filteredRecipes.find((r) => /宫保鸡丁/.test(r.title || '')) || filteredRecipes[0] || null;
+    // hero: 优先「家里常做」做过次数最多的一道（与推荐口径一致）；
+    // 都没做过则取列表首道（后端已按评分降序）
+    const cooked = filteredRecipes.filter((r) => (r.cookCount || 0) > 0);
+    const hero = (cooked.length
+      ? cooked.sort((a, b) => (b.cookCount || 0) - (a.cookCount || 0))[0]
+      : null) || filteredRecipes[0] || null;
 
     const displayed = filteredRecipes.slice(0, PAGE_SIZE);
     this.setData({

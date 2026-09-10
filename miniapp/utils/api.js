@@ -317,7 +317,7 @@ function addTodayMenuRecipe(recipeId, mealType) {
 }
 
 function removeTodayMenuRecipe(recipeId) {
-  return requestStrict(`/api/daily-menu/today/items/${recipeId}`, {
+  return requestStrict(`/api/daily-menu/today/items/${encodeURIComponent(recipeId)}`, {
     method: 'DELETE'
   });
 }

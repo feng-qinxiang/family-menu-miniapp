@@ -29,12 +29,12 @@ Page({
     const patch = {
       planKey: key,
       planId: plan.planId,
-      planName: plan.planName,
+      productName: plan.planName,
       payAmount: plan.priceFull,
       originAmount: (plan.original || plan.priceFull),
     };
     // 允许 upgrade 页传入 planName/amount 覆盖
-    if (query && query.planName) patch.planName = decodeURIComponent(query.planName);
+    if (query && query.planName) patch.productName = decodeURIComponent(query.planName);
     if (query && query.amount) {
       const amt = Number(query.amount);
       if (!isNaN(amt) && amt > 0) patch.payAmount = Number(amt).toFixed(2);
@@ -46,7 +46,7 @@ Page({
     this.showToast('当前套餐：' + this.data.productName);
   },
   onPayMethodTap() {
-    this.showToast('当前为微信支付演示通道');
+    this.showToast('当前使用微信支付');
   },
   onBankTap() {
     this.showToast('未绑定银行卡');
@@ -86,6 +86,7 @@ Page({
           });
         });
         if (!confirmed) return;
+        this.setData({ mockMode: true });
         wx.showLoading({ title: '开通中', mask: true });
         await api.mockPayOrder(orderId);
         wx.hideLoading();
@@ -115,7 +116,7 @@ Page({
       }
 
       // 跳成功页：redirectTo 替换当前页，防返回栈回到 checkout 重复下单
-      const planName = encodeURIComponent(this.data.planName);
+      const planName = encodeURIComponent(this.data.productName);
       wx.redirectTo({
         url: `/pkg-extra/payment/success/index?orderId=${orderId}&amount=${this.data.payAmount}&planName=${planName}`,
         fail: () => this.showToast('已开通，请在"我的"查看会员状态'),

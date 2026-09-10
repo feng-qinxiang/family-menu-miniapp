@@ -1,7 +1,5 @@
 const {
-  addCommunityComment,
   createCommunityPost,
-  getCommunityComments,
   getCommunityPosts,
   reportCommunityPost,
   toggleCommunityFavorite
@@ -38,11 +36,6 @@ Page({
     loading: true,
     loadError: false,
     communitySummary: { postCount: 0, commentCount: 0, favoriteCount: 0 },
-    selectedPostId: '',
-    selectedPost: null,
-    comments: [],
-    commentDraft: '',
-    commentSubmitting: false,
     postSubmitting: false,
     favoriting: false,
     reportReasons,
@@ -109,19 +102,12 @@ Page({
       });
       return;
     }
-    const selectedPostId = this.data.selectedPostId || (posts[0] ? posts[0].id : '');
-    const selectedPost = posts.find((post) => String(post.id) === String(selectedPostId)) || null;
     this.setData({
       loadError: false,
       loading: false,
       posts,
-      communitySummary: this.buildCommunitySummary(posts),
-      selectedPostId,
-      selectedPost
+      communitySummary: this.buildCommunitySummary(posts)
     });
-    if (selectedPostId) {
-      await this.loadComments(selectedPostId);
-    }
   },
 
   buildCommunitySummary(posts) {
@@ -146,31 +132,6 @@ Page({
         tags: Array.isArray(post.tags) ? post.tags : []
       };
     });
-  },
-
-  async loadComments(postId) {
-    if (!postId) {
-      this.setData({ comments: [], selectedPost: null });
-      return;
-    }
-    let comments = [];
-    try {
-      comments = await getCommunityComments(postId) || [];
-    } catch (err) {
-      console.error('community loadComments failed', err);
-      comments = [];
-    }
-    const selectedPost = this.data.posts.find((post) => String(post.id) === String(postId)) || null;
-    this.setData({
-      selectedPostId: postId,
-      selectedPost,
-      comments
-    });
-  },
-
-  selectPost(event) {
-    const { id } = event.currentTarget.dataset;
-    this.loadComments(id);
   },
 
   // 话题 chip → 菜谱搜索页（keyword 命中菜名/菜系/标签）
@@ -218,44 +179,8 @@ Page({
     const posts = this.data.posts.map((post) => (
       String(post.id) === String(normalizedUpdated.id) ? normalizedUpdated : post
     ));
-    const selectedPost = String(this.data.selectedPostId) === String(normalizedUpdated.id)
-      ? normalizedUpdated
-      : this.data.selectedPost;
-    this.setData({
-      posts,
-      selectedPost
-    });
+    this.setData({ posts });
     wx.showToast({ title: updated.favorited ? '已收藏' : '已取消收藏', icon: 'none' });
-  },
-
-  onCommentInput(event) {
-    this.setData({
-      commentDraft: event.detail.value || ''
-    });
-  },
-
-  async submitComment() {
-    if (this.data.commentSubmitting) return;
-    const content = (this.data.commentDraft || '').trim();
-    if (!this.data.selectedPostId) {
-      wx.showToast({ title: '先选一条帖子', icon: 'none' });
-      return;
-    }
-    if (!content) {
-      wx.showToast({ title: '先写评论内容', icon: 'none' });
-      return;
-    }
-    this.setData({ commentSubmitting: true });
-    try {
-      await addCommunityComment(this.data.selectedPostId, { content });
-    } catch (err) {
-      this.setData({ commentSubmitting: false });
-      wx.showToast({ title: '评论失败，请重试', icon: 'none' });
-      return;
-    }
-    this.setData({ commentDraft: '', commentSubmitting: false });
-    await this.loadPosts();
-    wx.showToast({ title: '评论已发布', icon: 'success' });
   },
 
   setReportReason(event) {
@@ -267,11 +192,10 @@ Page({
 
   openReportSheet(event) {
     const { id } = event.currentTarget.dataset;
-    const postId = id || this.data.selectedPostId;
-    if (!postId) {
+    if (!id) {
       return;
     }
-    this.setData({ reportTargetId: postId, showReportSheet: true });
+    this.setData({ reportTargetId: id, showReportSheet: true });
   },
 
   closeReportSheet() {

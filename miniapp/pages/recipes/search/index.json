@@ -4,6 +4,7 @@
   "backgroundColor": "#fbf8f3",
   "usingComponents": {
     "state-empty": "/components/state-empty/index",
+    "state-loading": "/components/state-loading/index",
     "back-top": "/components/back-top/index"
   }
 }

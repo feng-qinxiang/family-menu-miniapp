@@ -117,7 +117,7 @@
               wx:for="{{group.items}}"
               wx:key="id"
               wx:for-item="rec"
-              class="tcard tap-scale g-fade-up"
+              class="tcard tap-scale g-fade-up {{rec.highlight ? 'is-new' : ''}}"
               bindtap="onCardTap"
               data-id="{{rec.id}}"
               data-recipe-id="{{rec.recipeId}}"

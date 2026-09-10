@@ -84,6 +84,19 @@
         </view>
       </view>
 
+      <!-- 加载中 -->
+      <state-loading wx:if="{{loading}}" text="搜索中…" />
+
+      <!-- 加载失败：错误态 + 重试，不伪装成无结果 -->
+      <state-empty
+        wx:elif="{{loadError}}"
+        type="search"
+        title="加载失败"
+        desc="网络似乎不太顺，检查一下再试"
+        cta="重新加载"
+        bind:action="onRetry"
+      />
+
       <!-- 空状态 -->
       <state-empty
         wx:elif="{{loaded}}"

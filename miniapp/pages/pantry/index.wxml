@@ -121,10 +121,12 @@
     </view>
 
     <view
-      class="mcard g-fade-up g-d{{midx + 1}}"
+      class="mcard g-fade-up g-d{{midx + 1}} tap-scale"
       wx:for="{{matchResults}}"
       wx:for-index="midx"
       wx:key="id"
+      bindtap="onMatchTap"
+      data-id="{{item.id}}"
     >
       <view class="mc-top">
         <image class="mc-ph" src="{{item.coverImage}}" mode="aspectFill" />

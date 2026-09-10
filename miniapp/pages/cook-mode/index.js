@@ -23,6 +23,17 @@ function detectSeconds(text) {
   return 0;
 }
 
+// 份量缩放：数值按比例换算，非数值（适量/少许）原样保留（与菜谱详情页同规则）
+function scaleAmount(amount, ratio) {
+  if (amount == null || amount === '') return '';
+  const num = Number(amount);
+  if (!isFinite(num) || String(amount).trim() === '') {
+    return String(amount);
+  }
+  const rounded = Math.round(num * ratio * 10) / 10;
+  return String(rounded);
+}
+
 Page({
   data: {
     statusBarHeight: 0,
@@ -72,6 +83,8 @@ Page({
     const recipeId = (options && (options.recipeId || options.id)) || '';
     // 从菜单页「开做」进入时带 menuItemId，完成烹饪自动把该菜标记「已上桌」
     this._menuItemId = (options && options.menuItemId) || '';
+    // 详情页带入的人数（份量已按其换算），>0 时按比例缩放食材用量
+    this._servings = Number(options && options.servings) || 0;
     this.setData({ statusBarHeight: sbh, capsulePad, recipeId });
     this.loadDetail(recipeId);
   },
@@ -145,12 +158,16 @@ Page({
       };
     });
 
+    // 详情页带入了人数时按比例缩放用量（与详情页 scaleAmount 同一规则）
+    const baseServings = Number(recipe.servings) || 0;
+    const ratio = (this._servings > 0 && baseServings > 0) ? this._servings / baseServings : 1;
     const ingredients = (Array.isArray(recipe.ingredients) ? recipe.ingredients : []).map((it) => {
       if (typeof it === 'string') return { name: it, label: it };
       const name = it.name || '';
       const amount = it.amount != null ? it.amount : '';
       const unit = it.unit || '';
-      const label = [name, `${amount}${unit}`.trim()].filter(Boolean).join(' ');
+      const scaled = ratio === 1 ? amount : scaleAmount(amount, ratio);
+      const label = [name, `${scaled}${unit}`.trim()].filter(Boolean).join(' ');
       return { name, label: label || name };
     });
 
@@ -317,8 +334,8 @@ Page({
     this.loadDetail(this.data.recipeId);
   },
 
-  // 完成 → 写做菜记录 + 回做菜记录页
-  async onFinish() {
+  // 完成 → 先请用户打个真实评分，再写做菜记录 + 回做菜记录页
+  onFinish() {
     this.clearTimer();
     this._hiddenRunning = false;
     this.setData({ running: false });
@@ -329,20 +346,38 @@ Page({
     }
     const { recipeId, recipe } = this.data;
     const title = recipe ? recipe.title : '';
-    // 记一笔做菜历史：按钮承诺「记一笔」，失败不阻塞跳转但要提示
-    if (recipeId) {
-      try {
-        await api.addCookHistory({ recipeId, score: 5, remark: '' });
-      } catch (err) {
-        wx.showToast({ title: '记录保存失败', icon: 'none' });
-      }
+    const gotoLog = () => {
+      const url = `/pages/cook-log/index?recipeId=${encodeURIComponent(recipeId)}&title=${encodeURIComponent(title)}`;
+      wx.navigateTo({
+        url,
+        fail: () => {
+          wx.showToast({ title: '完成本次烹饪', icon: 'success' });
+          setTimeout(() => this.onClose(), 800);
+        }
+      });
+    };
+    if (!recipeId) {
+      gotoLog();
+      return;
     }
-    const url = `/pages/cook-log/index?recipeId=${encodeURIComponent(recipeId)}&title=${encodeURIComponent(title)}`;
-    wx.navigateTo({
-      url,
+    // 真实评分（含「不评分」），不再默认写死 5 分
+    wx.showActionSheet({
+      itemList: ['⭐⭐⭐⭐⭐ 超好吃', '⭐⭐⭐⭐ 不错', '⭐⭐⭐ 一般', '先不评分'],
+      success: async (sheet) => {
+        const score = [5, 4, 3, null][sheet.tapIndex];
+        try {
+          const payload = { recipeId, remark: '' };
+          if (score != null) payload.score = score;
+          await api.addCookHistory(payload);
+        } catch (err) {
+          wx.showToast({ title: '记录保存失败', icon: 'none' });
+        }
+        gotoLog();
+      },
       fail: () => {
-        wx.showToast({ title: '完成本次烹饪', icon: 'success' });
-        setTimeout(() => this.onClose(), 800);
+        // 用户取消评分也记录一笔（不带分）
+        api.addCookHistory({ recipeId, remark: '' }).catch(() => {});
+        gotoLog();
       }
     });
   },

@@ -26,6 +26,8 @@ Page({
     list: [],
     total: 0,
     loaded: false,
+    loading: false,
+    loadError: false,
     capsuleRight: 96
   },
 
@@ -54,17 +56,22 @@ Page({
     this._fetch(kw);
   },
 
-  // 拉全量菜谱，失败兜底空数组
+  // 拉全量菜谱；失败进错误态（可重试），不伪装成"没有结果"
   _fetch(kw) {
+    this.setData({ loading: true, loadError: false });
     api.getRecipes('all')
       .then((res) => {
         const all = Array.isArray(res) ? res : (res && res.list) || [];
-        this.setData({ allRecipes: all, loaded: true });
+        this.setData({ allRecipes: all, loaded: true, loading: false });
         this._apply(kw, this.data.activeSort);
       })
       .catch(() => {
-        this.setData({ allRecipes: [], loaded: true, list: [], total: 0 });
+        this.setData({ allRecipes: [], loaded: true, loading: false, loadError: true, list: [], total: 0 });
       });
+  },
+
+  onRetry() {
+    this._fetch(this.data.keyword);
   },
 
   // 关键词过滤 + 排序/筛选 + 高亮分段

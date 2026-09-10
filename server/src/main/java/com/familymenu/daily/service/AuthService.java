@@ -233,7 +233,7 @@ public class AuthService {
         // 库里存的是 token 的 SHA-256 摘要，不存明文；封禁（status=BANNED）账号的会话即时失效
         String tokenHash = sha256Hex(token.trim());
         String sql = """
-                SELECT u.id, u.nickname, u.avatar_url, u.is_admin, u.admin_role, u.phone_number
+                SELECT u.id, u.nickname, u.avatar_url, u.is_admin, u.admin_role, u.phone_number, u.openid
                 FROM user_session s
                 JOIN user_account u ON u.id = s.user_id
                 WHERE s.token = ? AND s.expires_at > NOW() AND u.status = 'ACTIVE'
@@ -260,7 +260,8 @@ public class AuthService {
                     com.familymenu.daily.payment.PlanCatalog.displayName(coverage.planCode()),
                     rs.getBoolean("is_admin"),
                     roleName(rs.getBoolean("is_admin"), rs.getString("admin_role")),
-                    rs.getString("phone_number") != null && !rs.getString("phone_number").isBlank()
+                    rs.getString("phone_number") != null && !rs.getString("phone_number").isBlank(),
+                    isWechatBound(rs.getString("openid"))
             ));
         }, tokenHash);
     }
@@ -535,7 +536,7 @@ public class AuthService {
         com.familymenu.daily.payment.MembershipService.Coverage coverage =
                 membershipService.resolveCoverage(userId);
         return jdbcTemplate.queryForObject("""
-                        SELECT id, nickname, avatar_url, is_admin, admin_role, phone_number
+                        SELECT id, nickname, avatar_url, is_admin, admin_role, phone_number, openid
                         FROM user_account
                         WHERE id = ?
                         """,
@@ -548,10 +549,16 @@ public class AuthService {
                         com.familymenu.daily.payment.PlanCatalog.displayName(coverage.planCode()),
                         rs.getBoolean("is_admin"),
                         roleName(rs.getBoolean("is_admin"), rs.getString("admin_role")),
-                        rs.getString("phone_number") != null && !rs.getString("phone_number").isBlank()
+                        rs.getString("phone_number") != null && !rs.getString("phone_number").isBlank(),
+                        isWechatBound(rs.getString("openid"))
                 ),
                 userId
         );
+    }
+
+    /** 微信绑定判定：openid 存在且非游客占位（guest- 前缀）。 */
+    private static boolean isWechatBound(String openid) {
+        return openid != null && !openid.isBlank() && !openid.startsWith(GUEST_OPENID_PREFIX);
     }
 
     /** 有效角色名；非管理员返回 null（AdminRole.of 对历史 is_admin=1 的账号回退为 SUPER）。 */

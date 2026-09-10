@@ -168,6 +168,9 @@
           </view>
         </view>
       </block>
+      <view wx:elif="{{recentLoadFailed}}" class="recent-failed" bindtap="loadRecent">
+        最近导入加载失败，点这里重试
+      </view>
     </view>
 
     <view class="safe-bottom imp-botspace"></view>

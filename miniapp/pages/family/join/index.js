@@ -119,10 +119,13 @@ Page({
 
   buildFamily(profile, code) {
     const total = profile && profile.memberCount ? profile.memberCount : 0;
-    const display = [{ nickname: '家' }, { nickname: '庭' }, { nickname: '厨' }]
-      .slice(0, Math.max(1, Math.min(3, total || 1)));
+    // 真实成员昵称（后端预览接口返回前 3 位）；无数据时退化为按人数的通用圆点
+    const nicknames = profile && Array.isArray(profile.memberNicknames) ? profile.memberNicknames : [];
+    const display = nicknames.length
+      ? nicknames.map((n) => ({ nickname: n }))
+      : new Array(Math.max(1, Math.min(3, total || 1))).fill({ nickname: '' });
     const avatars = display.map((m, i) => ({
-      text: (m.nickname || '家').slice(0, 1),
+      text: (m.nickname || '').slice(0, 1) || '·',
       color: AV_COLORS[i % AV_COLORS.length],
     }));
     return {

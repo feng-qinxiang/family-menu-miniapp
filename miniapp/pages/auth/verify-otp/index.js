@@ -5,7 +5,7 @@ Page({
   data: {
     statusBarHeight: 0,
     phone: '',
-    maskedPhone: '138****6666',
+    maskedPhone: '',
     code: '',
     cells: ['', '', '', '', '', ''],
     focused: false,
