@@ -4,11 +4,22 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="noindex, nofollow" />
+  <meta name="color-scheme" content="light" />
   <title>运营后台 · 家庭点菜</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232f4a3a'/%3E%3Ctext x='16' y='22' font-size='17' font-family='sans-serif' font-weight='700' fill='%23fff' text-anchor='middle'%3E%E5%AE%B6%3C/text%3E%3C/svg%3E" />
   <link rel="stylesheet" href="/admin/admin.css" />
 </head>
 <body>
+  <!-- JS 关闭时的兜底提示（后台完全依赖 JS，白屏会让人以为是故障） -->
+  <noscript>
+    <div class="login-wrap">
+      <div class="card" style="max-width:440px;margin:0;text-align:center">
+        <h2>需要开启 JavaScript</h2>
+        <p class="card-sub" style="margin-bottom:0">运营后台依赖 JavaScript 运行，请在浏览器设置中启用后重新打开本页。</p>
+      </div>
+    </div>
+  </noscript>
+
   <!-- 登录态 -->
   <div id="loginView" class="login-wrap">
     <div class="login-shell">
