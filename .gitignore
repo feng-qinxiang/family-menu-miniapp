@@ -50,3 +50,5 @@ Thumbs.db
 # 端到端测试证据截图（体积大、可随时重新生成）：仓库只保留报告 md
 /artifacts/**/*.png
 /artifacts/**/*.jpg
+# 数据库备份（含全量业务数据，绝不进仓库）
+/artifacts/**/*.sql
