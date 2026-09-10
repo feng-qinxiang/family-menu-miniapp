@@ -9,6 +9,11 @@ Component({
       type: String,
       value: 'pop'
     },
+    // 底色主题：light(默认，浅色页) | dark(深色页，如烹饪模式)——dark 下文字转浅，避免深字压深底
+    theme: {
+      type: String,
+      value: 'light'
+    },
     title: {
       type: String,
       value: '这里还空着'

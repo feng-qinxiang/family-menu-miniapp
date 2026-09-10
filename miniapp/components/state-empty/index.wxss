@@ -72,3 +72,18 @@
   color: var(--gold-deep);
   border: 3rpx solid var(--c-border);
 }
+
+/* ============ 深色页变体（theme="dark"，如烹饪模式） ============
+   本组件的文字用浅色主题 token（--ink/--mut-strong 都是深色），在深色页面上会
+   变成「深字压深底」而完全看不见。以下仅覆盖文字/描边按钮，**不动 .se-illu 圆形底色**
+   —— 圆形保持浅色，图标（深色描边 SVG）才看得清，同时在暗底上像一枚徽章。 */
+.se--dark .se-title {
+  color: var(--c-border-light);
+}
+.se--dark .se-desc {
+  color: rgba(241, 236, 226, 0.62);
+}
+.se--dark .se-btn--ghost {
+  color: var(--gold);
+  border-color: rgba(241, 236, 226, 0.24);
+}

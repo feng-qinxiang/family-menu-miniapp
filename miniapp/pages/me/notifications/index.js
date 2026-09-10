@@ -112,8 +112,8 @@ Page({
     const earlierItems = filtered.filter((n) => n.group === 'earlier');
 
     const groups = [
-      { label: 'Today · 今天', items: todayItems },
-      { label: 'Earlier · 更早', items: earlierItems }
+      { label: '今天', items: todayItems },
+      { label: '更早', items: earlierItems }
     ];
 
     this.setData({

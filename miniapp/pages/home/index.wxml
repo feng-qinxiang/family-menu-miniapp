@@ -20,13 +20,18 @@
 
   <!-- ============ LOAD ERROR ============ -->
   <view class="mh-load-error {{hasHomeData ? 'mh-load-error--soft' : 'mh-load-error--full'}}" wx:if="{{!loading && loadError}}">
-    <view class="mh-load-error-mark" aria-hidden="true">
-      <view class="mh-load-error-cloud"></view>
-      <view class="mh-load-error-bolt"></view>
-    </view>
-    <view class="mh-load-error-title">连不上厨房了</view>
-    <view class="mh-load-error-desc">网络开小差了，检查后再试一次</view>
-    <view class="mh-load-error-btn tap-scale" bindtap="loadAll">重新加载</view>
+    <!-- 整页错误态：与其它 13 个页面统一走 state-empty（原来是自己画「空碗」） -->
+    <state-empty wx:if="{{!hasHomeData}}" type="offline" title="连不上厨房了" desc="网络开小差了，检查后再试一次" cta="重新加载" bind:action="loadAll" />
+    <!-- 软提示（已有缓存数据、仅刷新失败）：保持紧凑行内样式 -->
+    <block wx:else>
+      <view class="mh-load-error-mark" aria-hidden="true">
+        <view class="mh-load-error-cloud"></view>
+        <view class="mh-load-error-bolt"></view>
+      </view>
+      <view class="mh-load-error-title">连不上厨房了</view>
+      <view class="mh-load-error-desc">网络开小差了，检查后再试一次</view>
+      <view class="mh-load-error-btn tap-scale" bindtap="loadAll">重新加载</view>
+    </block>
   </view>
 
   <!-- ============ HERO ============ -->
