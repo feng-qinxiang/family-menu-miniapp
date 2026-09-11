@@ -1930,20 +1930,30 @@
   }
 
   // ==================== 事件绑定 ====================
-  // 可点击元素内部常有子节点（卡片数字/文字），点击时 e.target 是子节点，
-  // 直接读它的 data-* 会拿到 null，所以先向上找到真正带属性的宿主元素。
+  // 可点击元素内部常有子节点（卡片数字/文字/图标），点击时 e.target 是子节点，
+  // 直接读它的 id / data-* 会拿到空值，所以先向上找到真正带属性的宿主元素。
+  //
+  // 末尾三个顶栏按钮是靠 id 识别（见下方 if (id === ...) 分支）且内部只有 <svg> 的图标按钮，
+  // 必须一并列进来：否则点到图标上时 closest 找不到宿主，id 检查落空，
+  // 表现为「点图标完全没反应、点按钮边缘却有反应」—— 这种只坏一半的按钮极难复现。
+  // 以后新增靠 id 识别的图标按钮，同样要加到这里。
   var CLICKABLE = [
     '[data-tab]', '[data-goto]', '[data-review]', '[data-rptfilter]', '[data-role]', '[data-vip]',
     '[data-postfilter]', '[data-poststatus]', '[data-recipefilter]', '[data-recipestatus]', '[data-recipedetail]',
     '[data-cmtfilter]', '[data-cmtstatus]', '[data-cmtdel]', '[data-cmtrestore]', '[data-fbfilter]',
     '[data-fb]', '[data-orderfilter]', '[data-orderclose]', '[data-orderrefund]', '[data-userstatus]',
     '[data-importfilter]', '[data-import]', '[data-pager]', '[data-sort]', '[data-bulk]',
-    '[data-jump]', '[data-account]', '[data-retry]', '[data-clearfilter]'
+    '[data-jump]', '[data-account]', '[data-retry]', '[data-clearfilter]',
+    '#menuBtn', '#refreshBtn', '#accountBtn'
   ].join(',');
 
   document.addEventListener('click', function (e) {
     var t = e.target;
-    if (!(t instanceof HTMLElement)) return;
+    // 这里必须判断 Element 而不是 HTMLElement：图标按钮内部点到的往往是 <svg>/<path>，
+    // 而 SVG 元素不属于 HTMLElement，用 HTMLElement 判断会把这类点击整个吞掉。
+    // 后果是「图标几乎占满整颗按钮」的那类按钮等于点不动 —— 顶栏刷新、窄屏汉堡菜单、
+    // 弹窗关闭 × 都是这样，且点按钮边缘（没压到图标）时又是好的，所以极难发现。
+    if (!(t instanceof Element)) return;
     if (t.closest) {
       var host = t.closest(CLICKABLE);
       if (host) t = host;
