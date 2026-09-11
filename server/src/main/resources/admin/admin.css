@@ -772,6 +772,12 @@ tr.empty-row > td {
   transition: border-color .15s, box-shadow .15s;
 }
 .kpi:hover { border-color: var(--line-2); box-shadow: var(--shadow-md); }
+/* 可下钻的 KPI：整张卡片可点，键盘也能进（看板数字不再是死数字） */
+.kpi.link { cursor: pointer; }
+.kpi.link:hover { border-color: var(--line-strong); }
+.kpi.link:focus-visible { outline: 2px solid var(--pine); outline-offset: 2px; }
+.kpi-go { font-size: 11.5px; color: var(--mut); opacity: 0; transition: opacity .15s; }
+.kpi.link:hover .kpi-go, .kpi.link:focus-visible .kpi-go { opacity: 1; }
 .kpi-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .kpi-label { font-size: 12.5px; color: var(--mut); }
 .kpi-num {

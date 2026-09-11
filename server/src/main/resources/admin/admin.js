@@ -63,7 +63,21 @@
     /** 快速跳转的键盘高亮下标 */
     jumpIndex: 0,
     imports: [],
-    importFilter: 'PENDING'
+    importFilter: 'PENDING',
+    /** 家庭与成员（只读） */
+    families: { items: [], total: 0, page: 0, size: 20 },
+    familyKeyword: '',
+    /** 今日菜单（只读）：menuDate 为空表示不限日期 */
+    menus: { items: [], total: 0, page: 0, size: 50 },
+    menuDate: '',
+    menuKeyword: '',
+    /** 购物清单（只读） */
+    shopping: { items: [], total: 0, page: 0, size: 50 },
+    shoppingDate: '',
+    shoppingFilter: '',
+    /** 家庭库存（只读） */
+    pantry: { items: [], total: 0, page: 0, size: 50 },
+    pantryKeyword: ''
   };
 
   var $ = function (id) { return document.getElementById(id); };
@@ -141,7 +155,10 @@
     card: '<rect x="2.5" y="5" width="19" height="14" rx="2.6"/><path d="M2.5 9.8h19"/><path d="M6.5 14.5h4"/>',
     inbox: '<path d="M4 5.5h16v13H9l-5 3.5v-3.5H4z"/>',
     book: '<path d="M4 5.6A2.6 2.6 0 0 1 6.6 3H19v15H6.6A2.6 2.6 0 0 0 4 20.6z"/><path d="M19 18v3H6.6A2.6 2.6 0 0 1 4 18.4"/>',
-    shield: '<path d="M12 3l7 3v5.6c0 4.2-2.9 7.9-7 9.4-4.1-1.5-7-5.2-7-9.4V6l7-3z"/><path d="M9.2 12.1l2 2 3.6-3.8"/>'
+    shield: '<path d="M12 3l7 3v5.6c0 4.2-2.9 7.9-7 9.4-4.1-1.5-7-5.2-7-9.4V6l7-3z"/><path d="M9.2 12.1l2 2 3.6-3.8"/>',
+    home: '<path d="M4 10.4L12 4l8 6.4V20H4z"/><path d="M9.6 20v-5.4h4.8V20"/>',
+    cart: '<circle cx="9.6" cy="19" r="1.5"/><circle cx="17" cy="19" r="1.5"/><path d="M3 4h2.3l2.2 10.3h10.3L20.5 7H6.1"/>',
+    box: '<path d="M3.6 8.4L12 5l8.4 3.4v7.2L12 19l-8.4-3.4z"/><path d="M3.6 8.4L12 11.8l8.4-3.4M12 11.8V19"/>'
   };
 
   function icon(name) {
@@ -165,7 +182,10 @@
     search: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/><path d="M8.5 11h5"/></svg>',
     alert: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.6l9 15.6H3z"/><path d="M12 9.6v4.2M12 16.6h.01"/></svg>',
     download: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5v11"/><path d="M7.5 10.5L12 15l4.5-4.5"/><path d="M4.5 20.5h15"/></svg>',
-    check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.6"/><path d="M8.4 12.2l2.5 2.5 4.7-5"/></svg>'
+    check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.6"/><path d="M8.4 12.2l2.5 2.5 4.7-5"/></svg>',
+    home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.4L12 4l8 6.4V20H4z"/><path d="M9.6 20v-5.4h4.8V20"/></svg>',
+    cart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="9.6" cy="19" r="1.5"/><circle cx="17" cy="19" r="1.5"/><path d="M3 4h2.3l2.2 10.3h10.3L20.5 7H6.1"/></svg>',
+    box: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3.6 8.4L12 5l8.4 3.4v7.2L12 19l-8.4-3.4z"/><path d="M3.6 8.4L12 11.8l8.4-3.4M12 11.8V19"/></svg>'
   };
 
   function request(path, options) {
@@ -462,6 +482,15 @@
       items: [{ key: 'users', label: '用户管理', icon: 'users', perm: 'USER_VIEW', desc: '检索、权限、封禁、会员' }]
     },
     {
+      group: '家庭数据',
+      items: [
+        { key: 'families', label: '家庭与成员', icon: 'home', perm: 'USER_VIEW', desc: '家庭、成员、菜单与库存总览（只读）' },
+        { key: 'menus', label: '今日菜单', icon: 'book', perm: 'USER_VIEW', desc: '各家庭每天点了什么菜（只读）' },
+        { key: 'shopping', label: '购物清单', icon: 'cart', perm: 'USER_VIEW', desc: '各家庭买菜进度（只读）' },
+        { key: 'pantry', label: '家庭库存', icon: 'box', perm: 'USER_VIEW', desc: '各家庭现有食材（只读）' }
+      ]
+    },
+    {
       group: '运营',
       items: [
         { key: 'orders', label: '订单管理', icon: 'card', perm: 'ORDER_VIEW', desc: '支付订单与退款' },
@@ -596,7 +625,8 @@
     var loaders = {
       dashboard: loadDashboard, reports: loadReports, posts: loadPosts,
       comments: loadComments, recipes: loadRecipes, feedback: loadFeedback,
-      imports: loadImports, users: loadUsers, orders: loadOrders, audit: loadAudit
+      imports: loadImports, users: loadUsers, orders: loadOrders, audit: loadAudit,
+      families: loadFamilies, menus: loadMenus, shopping: loadShopping, pantry: loadPantry
     };
     return (loaders[state.tab] || loadDashboard)();
   }
@@ -708,6 +738,10 @@
     else if (kind === 'feedback') { state.feedbackPage = jump(state.feedbackPage); loadFeedback(); }
     else if (kind === 'audit') { state.auditPage = jump(state.auditPage); loadAudit(); }
     else if (kind === 'users') { state.users.page = jump(state.users.page); loadUsers(); }
+    else if (kind === 'families') { state.families.page = jump(state.families.page); loadFamilies(); }
+    else if (kind === 'menus') { state.menus.page = jump(state.menus.page); loadMenus(); }
+    else if (kind === 'shopping') { state.shopping.page = jump(state.shopping.page); loadShopping(); }
+    else if (kind === 'pantry') { state.pantry.page = jump(state.pantry.page); loadPantry(); }
   }
 
   /** 可排序表头：kind 决定读写哪一组排序状态 */
@@ -831,18 +865,27 @@
         (money ? fmtMoney(prev) : prev) + '</div>';
     }
 
-    function kpi(label, value, sparkKey, deltaKey, money) {
+    // 每张 KPI 都能点进对应列表（filter 为空即该列表的全部），
+    // 否则看板上"用户总数 128"是个死数字，运营想知道是谁还得自己去搜。
+    function kpi(label, value, sparkKey, deltaKey, money, goto, gotoFilter) {
       var spark = sparkKey ? sparkline(series.map(function (p) { return Number(p[sparkKey] || 0); }), '#2f4a3a') : '';
-      return '<div class="kpi"><div class="kpi-top"><span class="kpi-label">' + escapeHtml(label) + '</span></div>' +
+      var jump = goto
+        ? ' data-goto="' + goto + '" data-gotofilter="' + (gotoFilter || '') + '"' +
+          ' role="button" tabindex="0" title="点击查看明细"'
+        : '';
+      return '<div class="kpi' + (goto ? ' link' : '') + '"' + jump + '>' +
+        '<div class="kpi-top"><span class="kpi-label">' + escapeHtml(label) + '</span>' +
+        (goto ? '<span class="kpi-go">明细 ›</span>' : '') + '</div>' +
         '<div class="kpi-num">' + escapeHtml(value) + '</div>' +
         '<div class="kpi-foot">' + (deltaKey ? delta(deltaKey, money) : '<span></span>') + spark + '</div></div>';
     }
 
     var kpis = '<div class="kpi-grid">' +
-      kpi('用户总数', fmtNum(d.userCount), 'newUsers', 'newUsers') +
-      kpi('已发布帖子', fmtNum(d.postCount), 'newPosts', 'newPosts') +
-      kpi('已支付订单', fmtNum(d.paidOrderCount), 'paidOrders', 'paidOrders') +
-      kpi('累计收入', fmtMoney(d.paidRevenueFen), 'revenueFen', 'revenueFen', true) +
+      kpi('用户总数', fmtNum(d.userCount), 'newUsers', 'newUsers', false, 'users') +
+      kpi('家庭总数', fmtNum(d.familyCount), '', '', false, 'families') +
+      kpi('已发布帖子', fmtNum(d.postCount), 'newPosts', 'newPosts', false, 'posts', 'APPROVED') +
+      kpi('已支付订单', fmtNum(d.paidOrderCount), 'paidOrders', 'paidOrders', false, 'orders', 'PAID') +
+      kpi('累计收入', fmtMoney(d.paidRevenueFen), 'revenueFen', 'revenueFen', true, 'orders', 'PAID') +
       '</div>';
 
     function todo(label, value, tab, filter) {
@@ -930,7 +973,7 @@
 
   function loadReports() {
     loadingCard();
-    return request('/api/community/reports?status=' + encodeURIComponent(state.reportFilter || ''))
+    return request('/api/admin/reports?status=' + encodeURIComponent(state.reportFilter || ''))
       .then(function (list) { state.reports = Array.isArray(list) ? list : []; renderReports(); })
       .catch(errorCard);
   }
@@ -980,7 +1023,7 @@
       confirmText: removing ? '确认下架' : '确认忽略'
     }).then(function (ok) {
       if (!ok) return;
-      return request('/api/community/reports/' + encodeURIComponent(reportId) + '/review', {
+      return request('/api/admin/reports/' + encodeURIComponent(reportId) + '/review', {
         method: 'POST', body: { status: status, note: '' }
       }).then(function () {
         toast(removing ? '已下架' : '已忽略');
@@ -1010,16 +1053,19 @@
         : (pending ? '<span class="pill pending">待审核</span>' : '<span class="pill ok">已发布</span>');
       var actions = '';
       if (pending) {
-        actions = '<button class="btn small primary-sm" data-poststatus="' + escapeHtml(String(p.id)) +
+        actions = '<button class="btn small" data-postdetail="' + escapeHtml(String(p.id)) + '">详情</button>' +
+          '<button class="btn small primary-sm" data-poststatus="' + escapeHtml(String(p.id)) +
             '" data-on="APPROVED">通过</button>' +
           '<button class="btn small danger" data-poststatus="' + escapeHtml(String(p.id)) +
             '" data-on="REMOVED">下架</button>';
       } else if (removed) {
-        actions = '<button class="btn small" data-poststatus="' + escapeHtml(String(p.id)) +
+        actions = '<button class="btn small" data-postdetail="' + escapeHtml(String(p.id)) + '">详情</button>' +
+          '<button class="btn small" data-poststatus="' + escapeHtml(String(p.id)) +
           '" data-on="APPROVED">恢复</button>';
       } else {
-        actions = '<button class="btn small danger" data-poststatus="' + escapeHtml(String(p.id)) +
-          '" data-on="REMOVED">下架</button>';
+        actions = '<button class="btn small" data-postdetail="' + escapeHtml(String(p.id)) + '">详情</button>' +
+          '<button class="btn small danger" data-poststatus="' + escapeHtml(String(p.id)) +
+            '" data-on="REMOVED">下架</button>';
       }
       return '<tr><td class="pick"><input type="checkbox" data-pick="posts:' + escapeHtml(String(p.id)) +
           '"' + (state.picked.posts[p.id] ? ' checked' : '') + ' /></td>' +
@@ -1235,6 +1281,40 @@
       });
   }
 
+  /** 帖子详情弹窗：审核/下架前核对完整正文与标签（之前只能看到列表标题） */
+  function showPostDetail(postId) {
+    infoDialog({
+      title: '帖子详情 #' + postId,
+      desc: '加载中…',
+      body: '<div class="muted">正在读取帖子内容…</div>'
+    });
+    request('/api/admin/posts/' + encodeURIComponent(postId))
+      .then(function (p) {
+        var statusLabel = p.auditStatus === 'REMOVED' ? '已下架'
+          : (p.auditStatus === 'PENDING' ? '待审核' : '已发布');
+        var tags = (p.tags || []).map(function (t) {
+          return '<span class="pill">' + escapeHtml(t) + '</span>';
+        }).join(' ');
+        var paras = String(p.content || '').split(/\n+/).map(function (s) {
+          return s.trim() ? '<p style="margin:0 0 8px">' + escapeHtml(s.trim()) + '</p>' : '';
+        }).join('') || '<div class="muted">无正文</div>';
+        var body =
+          (tags ? '<div class="rd-tags">' + tags + '</div>' : '') +
+          '<div class="rd-sec"><h4>正文</h4>' + paras + '</div>' +
+          '<div class="rd-meta">赞 ' + fmtNum(p.likeCount) + ' · 评 ' + fmtNum(p.commentCount) +
+          (p.recipeId ? ' · 关联菜谱 #' + escapeHtml(String(p.recipeId)) : '') +
+          ' · ' + escapeHtml(statusLabel) + '</div>';
+        infoDialog({
+          title: '帖子详情 · ' + (p.title || ('#' + postId)),
+          desc: (p.author ? '作者 ' + p.author + ' · ' : '') + statusLabel + ' · ' + fmtTime(p.createdAt),
+          body: body
+        });
+      })
+      .catch(function (err) {
+        infoDialog({ title: '帖子详情', desc: '加载失败', body: '<div class="muted">' + escapeHtml(err.message) + '</div>' });
+      });
+  }
+
   function difficultyLabel(key) {
     return ({ easy: '简单', medium: '中等', hard: '困难' })[key] || key || '—';
   }
@@ -1384,6 +1464,291 @@
       }).then(function () { toast('已驳回'); loadImports(); })
         .catch(function (err) { toast(err.message, 2600, 'error'); });
     });
+  }
+
+  // ==================== 家庭数据：家庭与成员 / 今日菜单 / 购物清单 / 库存 ====================
+  // 这四页对应小程序里的家庭侧数据，此前后台完全看不到：用户来问"我家菜单怎么没了"
+  // 只能靠猜。全部**只读** —— 运营要干预就引导用户在小程序里操作，
+  // 后台不提供改写用户菜单/清单/库存的入口（那属于替用户改数据，风险远大于便利）。
+
+  /** 本地时区的今天（yyyy-MM-dd），用 toISOString 会因 UTC 偏移差一天 */
+  function todayIso() {
+    var d = new Date();
+    var m = d.getMonth() + 1;
+    var day = d.getDate();
+    return d.getFullYear() + '-' + (m < 10 ? '0' + m : m) + '-' + (day < 10 ? '0' + day : day);
+  }
+
+  /** 单日筛选控件：应用 / 今天 / 清除 */
+  function dayFilterHtml(kind, value) {
+    return '<span class="date-range">' +
+      '<input type="date" id="' + kind + 'Day" value="' + escapeHtml(value || '') + '" aria-label="按日期筛选" />' +
+      '<button class="btn small" id="' + kind + 'DayBtn">应用</button>' +
+      '<button class="btn small" id="' + kind + 'DayToday">今天</button>' +
+      (value ? '<button class="btn small" id="' + kind + 'DayClear">清除</button>' : '') +
+      '</span>';
+  }
+
+  function searchBoxHtml(id, placeholder, value, btnId) {
+    return '<input id="' + id + '" type="search" placeholder="' + escapeHtml(placeholder) + '" value="' +
+      escapeHtml(value || '') + '" class="text-input" style="width:240px" />' +
+      '<button class="btn small" id="' + btnId + '">搜索</button>';
+  }
+
+  // ---- 家庭与成员 ----
+
+  function loadFamilies() {
+    loadingCard();
+    return request('/api/admin/families?keyword=' + encodeURIComponent(state.familyKeyword || '') +
+      '&page=' + state.families.page + '&size=' + state.families.size)
+      .then(function (page) {
+        state.families = page || { items: [], total: 0, page: 0, size: 20 };
+        renderFamilies();
+      })
+      .catch(errorCard);
+  }
+
+  function renderFamilies() {
+    var p = state.families;
+    var rows = p.items || [];
+    var head = pageHead('家庭与成员', '每个家庭有多少人、多少菜谱与菜单；点「查看」看成员、菜单与库存',
+      '<button class="btn small" id="exportFamilies">导出 Excel</button>') +
+      toolbar(searchBoxHtml('familySearch', '搜家庭名 / 创建者昵称', state.familyKeyword, 'familySearchBtn'));
+    var body = rows.length ? rows.map(function (f) {
+      return '<tr><td class="num">' + escapeHtml(String(f.familyId)) + '</td>' +
+        '<td><div class="name">' + escapeHtml(f.name || '—') + '</div></td>' +
+        '<td><div class="cell-user">' + avatarHtml(f.ownerNickname) +
+          '<div><div class="name">' + escapeHtml(f.ownerNickname || '—') + '</div>' +
+          '<div class="sub">#' + escapeHtml(String(f.ownerUserId == null ? '' : f.ownerUserId)) + '</div></div></div></td>' +
+        '<td class="num">' + fmtNum(f.memberCount) + '</td>' +
+        '<td class="num">' + fmtNum(f.recipeCount) + '</td>' +
+        '<td class="num">' + fmtNum(f.menuCount) + '</td>' +
+        '<td title="' + escapeHtml(f.createdAt || '') + '">' + fmtTime(f.createdAt) + '</td>' +
+        '<td class="actions"><button class="btn small" data-famdetail="' + escapeHtml(String(f.familyId)) +
+          '">查看</button></td></tr>';
+    }).join('') : tableEmpty(8, {
+      icon: 'home',
+      title: '没有匹配的家庭',
+      desc: '用户在小程序里创建或加入家庭后会出现在这里；也可以换个关键词再试。'
+    });
+    setPageHeader('共 ' + fmtNum(p.total) + ' 个家庭');
+    $('panelRoot').innerHTML = '<div class="card">' + head +
+      '<table><thead><tr><th class="num">ID</th><th>家庭</th><th>创建者</th><th class="num">成员</th>' +
+      '<th class="num">菜谱</th><th class="num">菜单</th><th>创建时间</th><th>操作</th></tr></thead><tbody>' + body +
+      '</tbody></table>' + pagerHtml('families', p.page, p.size, p.total) + '</div>';
+  }
+
+  var MEMBER_ROLE = { owner: '创建者', admin: '管理员', member: '成员' };
+  var MEMBER_STATUS = { ACTIVE: '在家庭中', REMOVED: '已退出' };
+  var LIST_STATUS = { OPEN: '进行中', CLOSED: '已结束' };
+
+  /** 家庭详情弹窗：成员 + 最近菜单 + 购物清单 + 库存（只读，一次看全） */
+  function showFamilyDetail(familyId) {
+    infoDialog({
+      title: '家庭详情 #' + familyId,
+      desc: '加载中…',
+      body: '<div class="muted">正在读取家庭数据…</div>'
+    });
+    request('/api/admin/families/' + encodeURIComponent(familyId))
+      .then(function (d) {
+        var f = d.family || {};
+        var groups = f.memberCount || 0;
+        var members = (d.members || []).map(function (m) {
+          return '<div class="row-item">' + avatarHtml(m.nickname) +
+            '<div class="grow"><div class="title">' + escapeHtml(m.nickname || ('用户 #' + m.userId)) + '</div>' +
+            '<div class="sub">' + escapeHtml(m.phone || '未绑定手机号') + ' · #' + escapeHtml(String(m.userId)) + '</div></div>' +
+            '<div class="side">' + escapeHtml(MEMBER_ROLE[m.role] || m.role || '成员') + ' · ' +
+            escapeHtml(MEMBER_STATUS[m.status] || m.status || '') + '<br>' + fmtTime(m.joinedAt) + '</div></div>';
+        }).join('') || '<div class="empty">没有成员记录</div>';
+
+        var menus = (d.recentMenus || []).map(function (m) {
+          return '<div class="row-item">' +
+            '<div class="grow"><div class="title">' + escapeHtml(m.dishes || '（空菜单）') + '</div>' +
+            '<div class="sub">' + escapeHtml(String(m.menuDate || '')) + ' · ' + fmtNum(m.itemCount) + ' 道菜</div></div>' +
+            '<div class="side">' + escapeHtml(m.status || '') + '<br>' + fmtTime(m.updatedAt) + '</div></div>';
+        }).join('') || '<div class="empty">还没有菜单</div>';
+
+        var shopping = (d.shoppingLists || []).map(function (s) {
+          return '<div class="row-item">' +
+            '<div class="grow"><div class="title">' + escapeHtml(String(s.menuDate || '未关联菜单')) + ' 的清单</div>' +
+            '<div class="sub">已购 ' + fmtNum(s.purchasedCount) + ' / ' + fmtNum(s.totalCount) + ' 项</div></div>' +
+            '<div class="side">' + escapeHtml(LIST_STATUS[s.status] || s.status || '') + '<br>' + fmtTime(s.createdAt) + '</div></div>';
+        }).join('') || '<div class="empty">还没有购物清单</div>';
+
+        var pantry = (d.pantry || []).map(function (i) {
+          var exp = pantryExpiry(i.expiresAt);
+          return '<div class="row-item">' +
+            '<span class="pill' + exp.cls + '">' + escapeHtml(exp.text) + '</span>' +
+            '<div class="grow"><div class="title">' + escapeHtml(i.ingredientName || '') + '</div>' +
+            '<div class="sub">' + escapeHtml(((i.amount || '') + (i.unit || '')) || '适量') + '</div></div>' +
+            '<div class="side">' + fmtDate(i.addedAt) + '</div></div>';
+        }).join('') || '<div class="empty">库存是空的</div>';
+
+        infoDialog({
+          title: '家庭 · ' + (f.name || ('#' + familyId)),
+          desc: '创建者 ' + (f.ownerNickname || '—') + ' · 创建于 ' + fmtTime(f.createdAt) +
+            ' · ' + fmtNum(f.memberCount) + ' 位成员 · ' + fmtNum(f.recipeCount) + ' 条家庭菜谱 · ' +
+            fmtNum(f.menuCount) + ' 张菜单',
+          body:
+            '<div class="rd-sec"><h4>成员（' + fmtNum(groups) + '）</h4><div class="row-list">' + members + '</div></div>' +
+            '<div class="rd-sec"><h4>最近菜单</h4><div class="row-list">' + menus + '</div></div>' +
+            '<div class="rd-sec"><h4>购物清单</h4><div class="row-list">' + shopping + '</div></div>' +
+            '<div class="rd-sec"><h4>库存</h4><div class="row-list">' + pantry + '</div></div>' +
+            '<p class="muted" style="margin-top:16px">本页只读：需要改动请让用户在小程序里操作。</p>'
+        });
+      })
+      .catch(function (err) {
+        infoDialog({ title: '家庭详情', desc: '加载失败', body: '<div class="muted">' + escapeHtml(err.message) + '</div>' });
+      });
+  }
+
+  /** 库存过期状态：已过期 / 3 天内到期 / 正常 / 未记录保质期 */
+  function pantryExpiry(expiresAt) {
+    if (!expiresAt) return { text: '无保质期', cls: '' };
+    var days = daysUntil(expiresAt);
+    if (days == null) return { text: '无保质期', cls: '' };
+    if (days < 0) return { text: '已过期 ' + (-days) + ' 天', cls: ' bad' };
+    if (days <= 3) return { text: days + ' 天内到期', cls: ' pending' };
+    return { text: '剩 ' + days + ' 天', cls: ' ok' };
+  }
+
+  /** 距离某日还有几天（本地日期差，避免时区把结果挪一天） */
+  function daysUntil(dateStr) {
+    var m = String(dateStr || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (!m) return null;
+    var target = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+    var now = new Date();
+    var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    return Math.round((target - today) / 86400000);
+  }
+
+  // ---- 今日菜单 ----
+
+  function loadMenus() {
+    loadingCard();
+    return request('/api/admin/menus?date=' + encodeURIComponent(state.menuDate || '') +
+      '&keyword=' + encodeURIComponent(state.menuKeyword || '') +
+      '&page=' + state.menus.page + '&size=' + state.menus.size)
+      .then(function (page) {
+        state.menus = page || { items: [], total: 0, page: 0, size: 50 };
+        renderMenus();
+      })
+      .catch(errorCard);
+  }
+
+  function renderMenus() {
+    var p = state.menus;
+    var rows = p.items || [];
+    var head = pageHead('今日菜单', '各家庭每天点了哪些菜。默认按日期倒序，可用日期筛选某一天',
+      '<button class="btn small" id="exportMenus">导出 Excel</button>') +
+      toolbar(dayFilterHtml('menu', state.menuDate) +
+        searchBoxHtml('menuSearch', '搜家庭名', state.menuKeyword, 'menuSearchBtn'));
+    var body = rows.length ? rows.map(function (m) {
+      return '<tr><td class="num">' + escapeHtml(String(m.menuId)) + '</td>' +
+        '<td><button class="btn small" data-famdetail="' + escapeHtml(String(m.familyId)) + '">' +
+          escapeHtml(m.familyName || ('家庭 #' + m.familyId)) + '</button></td>' +
+        '<td class="num">' + escapeHtml(String(m.menuDate || '')) + '</td>' +
+        '<td><span class="pill ' + (m.status === 'READY' ? 'ok' : '') + '">' + escapeHtml(m.status || '') + '</span></td>' +
+        '<td class="num">' + fmtNum(m.itemCount) + '</td>' +
+        '<td class="clamp" title="' + escapeHtml(m.dishes || '') + '">' + escapeHtml(m.dishes || '—') + '</td>' +
+        '<td title="' + escapeHtml(m.updatedAt || '') + '">' + fmtTime(m.updatedAt) + '</td></tr>';
+    }).join('') : tableEmpty(7, {
+      icon: 'book',
+      title: '这几天没有菜单',
+      desc: '家庭在小程序「今天吃什么」里加菜后会出现在这里。可以清除日期筛选看全部，或换个家庭名再搜。'
+    });
+    setPageHeader('共 ' + fmtNum(p.total) + ' 张菜单');
+    $('panelRoot').innerHTML = '<div class="card">' + head +
+      '<table><thead><tr><th class="num">ID</th><th>家庭</th><th class="num">日期</th><th>状态</th>' +
+      '<th class="num">菜品数</th><th>菜品</th><th>更新时间</th></tr></thead><tbody>' + body + '</tbody></table>' +
+      pagerHtml('menus', p.page, p.size, p.total) + '</div>';
+  }
+
+  // ---- 购物清单 ----
+
+  function loadShopping() {
+    loadingCard();
+    return request('/api/admin/shopping?date=' + encodeURIComponent(state.shoppingDate || '') +
+      '&status=' + encodeURIComponent(state.shoppingFilter || '') +
+      '&page=' + state.shopping.page + '&size=' + state.shopping.size)
+      .then(function (page) {
+        state.shopping = page || { items: [], total: 0, page: 0, size: 50 };
+        renderShopping();
+      })
+      .catch(errorCard);
+  }
+
+  function renderShopping() {
+    var p = state.shopping;
+    var rows = p.items || [];
+    var head = pageHead('购物清单', '清单由当天菜单的食材自动汇总，家庭在买菜时逐项勾选',
+      '<button class="btn small" id="exportShopping">导出 Excel</button>') +
+      toolbar(dayFilterHtml('shop', state.shoppingDate) +
+        chips([['', '全部'], ['OPEN', '进行中'], ['CLOSED', '已结束']], state.shoppingFilter, 'shopfilter'));
+    var body = rows.length ? rows.map(function (s) {
+      var total = Number(s.totalCount || 0);
+      var bought = Number(s.purchasedCount || 0);
+      var done = total > 0 && bought >= total;
+      return '<tr><td class="num">' + escapeHtml(String(s.listId)) + '</td>' +
+        '<td><button class="btn small" data-famdetail="' + escapeHtml(String(s.familyId)) + '">' +
+          escapeHtml(s.familyName || ('家庭 #' + s.familyId)) + '</button></td>' +
+        '<td class="num">' + escapeHtml(String(s.menuDate || '—')) + '</td>' +
+        '<td><span class="pill ' + (done ? 'ok' : 'pending') + '">' + (done ? '已买齐' : '待购买') + '</span></td>' +
+        '<td class="num">' + fmtNum(bought) + ' / ' + fmtNum(total) + '</td>' +
+        '<td><span class="pill ' + (s.status === 'OPEN' ? 'info' : '') + '">' +
+          escapeHtml(LIST_STATUS[s.status] || s.status || '') + '</span></td>' +
+        '<td title="' + escapeHtml(s.createdAt || '') + '">' + fmtTime(s.createdAt) + '</td></tr>';
+    }).join('') : tableEmpty(7, {
+      icon: 'cart',
+      title: '没有购物清单',
+      desc: '家庭在小程序「买菜清单」页里生成清单后会出现在这里。清除日期筛选可以看全部。'
+    });
+    setPageHeader('共 ' + fmtNum(p.total) + ' 张清单');
+    $('panelRoot').innerHTML = '<div class="card">' + head +
+      '<table><thead><tr><th class="num">ID</th><th>家庭</th><th class="num">菜单日期</th><th>购买进度</th>' +
+      '<th class="num">已购 / 总数</th><th>清单状态</th><th>创建时间</th></tr></thead><tbody>' + body +
+      '</tbody></table>' + pagerHtml('shopping', p.page, p.size, p.total) + '</div>';
+  }
+
+  // ---- 家庭库存 ----
+
+  function loadPantry() {
+    loadingCard();
+    return request('/api/admin/pantry?keyword=' + encodeURIComponent(state.pantryKeyword || '') +
+      '&page=' + state.pantry.page + '&size=' + state.pantry.size)
+      .then(function (page) {
+        state.pantry = page || { items: [], total: 0, page: 0, size: 50 };
+        renderPantry();
+      })
+      .catch(errorCard);
+  }
+
+  function renderPantry() {
+    var p = state.pantry;
+    var rows = p.items || [];
+    var head = pageHead('家庭库存', '家庭现有食材与保质期；过期的会标红，方便解释"为什么推荐里没有这道菜"',
+      '<button class="btn small" id="exportPantry">导出 Excel</button>') +
+      toolbar(searchBoxHtml('pantrySearch', '搜食材 / 家庭名', state.pantryKeyword, 'pantrySearchBtn'));
+    var body = rows.length ? rows.map(function (i) {
+      var exp = pantryExpiry(i.expiresAt);
+      return '<tr><td class="num">' + escapeHtml(String(i.id)) + '</td>' +
+        '<td><button class="btn small" data-famdetail="' + escapeHtml(String(i.familyId)) + '">' +
+          escapeHtml(i.familyName || ('家庭 #' + i.familyId)) + '</button></td>' +
+        '<td>' + escapeHtml(i.ingredientName || '') + '</td>' +
+        '<td class="num">' + escapeHtml(((i.amount || '') + (i.unit || '')) || '适量') + '</td>' +
+        '<td class="num">' + (i.expiresAt ? escapeHtml(String(i.expiresAt)) : '—') + '</td>' +
+        '<td><span class="pill' + exp.cls + '">' + escapeHtml(exp.text) + '</span></td>' +
+        '<td title="' + escapeHtml(i.addedAt || '') + '">' + fmtTime(i.addedAt) + '</td></tr>';
+    }).join('') : tableEmpty(7, {
+      icon: 'box',
+      title: '没有库存记录',
+      desc: '家庭在小程序「库存」页里登记食材后会出现在这里；也可以换个关键词再搜。'
+    });
+    setPageHeader('共 ' + fmtNum(p.total) + ' 项食材');
+    $('panelRoot').innerHTML = '<div class="card">' + head +
+      '<table><thead><tr><th class="num">ID</th><th>家庭</th><th>食材</th><th class="num">数量</th>' +
+      '<th class="num">保质期至</th><th>状态</th><th>登记时间</th></tr></thead><tbody>' + body + '</tbody></table>' +
+      pagerHtml('pantry', p.page, p.size, p.total) + '</div>';
   }
 
   // ==================== 用户管理 ====================
@@ -1671,6 +2036,16 @@
     if (t === 'feedback') return 'feedback?status=' + encodeURIComponent(state.feedbackFilter || '');
     if (t === 'posts') return 'posts?auditStatus=' + encodeURIComponent(state.postFilter || '');
     if (t === 'reports') return 'reports?status=' + encodeURIComponent(state.reportFilter || '');
+    if (t === 'families') return 'families?keyword=' + encodeURIComponent(state.familyKeyword || '');
+    if (t === 'menus') {
+      return 'menus?date=' + encodeURIComponent(state.menuDate || '') +
+        '&keyword=' + encodeURIComponent(state.menuKeyword || '');
+    }
+    if (t === 'shopping') {
+      return 'shopping?date=' + encodeURIComponent(state.shoppingDate || '') +
+        '&status=' + encodeURIComponent(state.shoppingFilter || '');
+    }
+    if (t === 'pantry') return 'pantry?keyword=' + encodeURIComponent(state.pantryKeyword || '');
     return null;
   }
 
@@ -1874,7 +2249,7 @@
       if (!ok) return;
       var url = kind === 'comments' ? '/api/admin/comments/batch-status'
         : kind === 'posts' ? '/api/admin/posts/batch-status'
-          : '/api/community/reports/batch-review';
+          : '/api/admin/reports/batch-review';
       request(url, { method: 'POST', body: { ids: ids, status: action, note: '' } })
         .then(function (res) {
           toast('已处理 ' + (res && res.changed != null ? res.changed : ids.length) + ' 条');
@@ -1939,11 +2314,12 @@
   // 以后新增靠 id 识别的图标按钮，同样要加到这里。
   var CLICKABLE = [
     '[data-tab]', '[data-goto]', '[data-review]', '[data-rptfilter]', '[data-role]', '[data-vip]',
-    '[data-postfilter]', '[data-poststatus]', '[data-recipefilter]', '[data-recipestatus]', '[data-recipedetail]',
+    '[data-postfilter]', '[data-postdetail]', '[data-poststatus]', '[data-recipefilter]', '[data-recipestatus]', '[data-recipedetail]',
     '[data-cmtfilter]', '[data-cmtstatus]', '[data-cmtdel]', '[data-cmtrestore]', '[data-fbfilter]',
     '[data-fb]', '[data-orderfilter]', '[data-orderclose]', '[data-orderrefund]', '[data-userstatus]',
     '[data-importfilter]', '[data-import]', '[data-pager]', '[data-sort]', '[data-bulk]',
-    '[data-jump]', '[data-account]', '[data-retry]', '[data-clearfilter]',
+    '[data-jump]', '[data-account]', '[data-retry]', '[data-clearfilter]', '[data-famdetail]',
+    '[data-shopfilter]',
     '#menuBtn', '#refreshBtn', '#accountBtn'
   ].join(',');
 
@@ -1988,9 +2364,38 @@
       state.users.page = 0; loadUsers(); return;
     }
 
+    // ---- 家庭数据四页的筛选与下钻（全部只读） ----
+    if (id === 'familySearchBtn') {
+      state.familyKeyword = ($('familySearch') || {}).value || '';
+      state.families.page = 0; loadFamilies(); return;
+    }
+    if (id === 'menuSearchBtn') {
+      state.menuKeyword = ($('menuSearch') || {}).value || '';
+      state.menus.page = 0; loadMenus(); return;
+    }
+    if (id === 'menuDayBtn' || id === 'menuDayToday') {
+      state.menuDate = id === 'menuDayToday' ? todayIso() : (($('menuDay') || {}).value || '');
+      state.menus.page = 0; loadMenus(); return;
+    }
+    if (id === 'menuDayClear') { state.menuDate = ''; state.menus.page = 0; loadMenus(); return; }
+    if (id === 'shopDayBtn' || id === 'shopDayToday') {
+      state.shoppingDate = id === 'shopDayToday' ? todayIso() : (($('shopDay') || {}).value || '');
+      state.shopping.page = 0; loadShopping(); return;
+    }
+    if (id === 'shopDayClear') { state.shoppingDate = ''; state.shopping.page = 0; loadShopping(); return; }
+    if (id === 'pantrySearchBtn') {
+      state.pantryKeyword = ($('pantrySearch') || {}).value || '';
+      state.pantry.page = 0; loadPantry(); return;
+    }
+    var shf = t.getAttribute('data-shopfilter');
+    if (shf !== null) { state.shoppingFilter = shf; state.shopping.page = 0; loadShopping(); return; }
+    var famd = t.getAttribute('data-famdetail');
+    if (famd) { showFamilyDetail(famd); return; }
+
     if (id === 'exportUsers' || id === 'exportOrders' || id === 'exportAudit' ||
         id === 'exportPosts' || id === 'exportComments' || id === 'exportFeedback' ||
-        id === 'exportReports') { exportCurrent(); return; }
+        id === 'exportReports' || id === 'exportFamilies' || id === 'exportMenus' ||
+        id === 'exportShopping' || id === 'exportPantry') { exportCurrent(); return; }
 
     var tab = t.getAttribute('data-tab');
     if (tab) { state.tab = tab; closeNav(); renderNav(); loadTab(); return; }
@@ -2015,6 +2420,9 @@
 
     var ps = t.getAttribute('data-poststatus');
     if (ps) { setPostStatus(ps, t.getAttribute('data-on')); return; }
+
+    var pd = t.getAttribute('data-postdetail');
+    if (pd) { showPostDetail(pd); return; }
 
     if (id === 'recipeSearchBtn') {
       state.recipeKeyword = ($('recipeSearch') || {}).value || '';
@@ -2201,6 +2609,12 @@
         state.commentPostId = e.target.value || ''; state.commentPage = 0; loadComments();
       } else if (e.target.id === 'auditSearch') {
         state.auditKeyword = e.target.value || ''; state.auditPage = 0; loadAudit();
+      } else if (e.target.id === 'familySearch') {
+        state.familyKeyword = e.target.value || ''; state.families.page = 0; loadFamilies();
+      } else if (e.target.id === 'menuSearch') {
+        state.menuKeyword = e.target.value || ''; state.menus.page = 0; loadMenus();
+      } else if (e.target.id === 'pantrySearch') {
+        state.pantryKeyword = e.target.value || ''; state.pantry.page = 0; loadPantry();
       }
     }
   });

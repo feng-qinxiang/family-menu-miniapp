@@ -35,8 +35,22 @@ public final class ApiModels {
             String coverImage,
             // 当前家庭的烹饪统计（不涉及的语境为 null）
             Integer cookCount,
-            String lastCookedAt
+            String lastCookedAt,
+            /**
+             * 是否由当前用户本人创建。
+             * 列表接口（菜谱库）必须显式传值：菜谱库里除了自家菜谱，还有对所有人可见的公共菜谱库
+             * （recipe.is_public = 1，历史种子数据），只靠 sourceType 分不开这两者——
+             * 公共菜谱的 source_type 也是 owned，会被误当成"自建"。
+             */
+            boolean mine
     ) {
+        /** 兼容构造器：不关心归属的语境（今日菜单、帖子内嵌卡片等）默认按"非本人"处理。 */
+        public RecipeCard(Long id, String title, String sourceType, String cuisine, List<String> tasteTags,
+                          Integer timeCost, Integer servings, Double rating, String sourceUrl, String summary,
+                          String coverImage, Integer cookCount, String lastCookedAt) {
+            this(id, title, sourceType, cuisine, tasteTags, timeCost, servings, rating, sourceUrl, summary,
+                    coverImage, cookCount, lastCookedAt, false);
+        }
     }
 
     public record RecipeReviewItem(

@@ -194,10 +194,15 @@ java -Duser.timezone=Asia/Shanghai -jar target/family-menu-daily-server-0.1.0-SN
 
 - `SPRING_SQL_INIT_MODE=never`：生产**不会**自动执行 schema.sql / data.sql。
 - `AUTH_DEV_OTP_ENABLED=false` / `WECHAT_PAY_MOCK_ENABLED=false`：已硬钉，环境变量改不动。
-- `app.seed-demo-data=false`：生产不注入任何演示用户/家庭/帖子。
+- `app.seed-demo-data=false`：生产不注入任何演示用户/家庭/帖子（本地默认也已改为 false；
+  演示数据在 `data-demo.sql`，由该开关控制，见 `server/CONTEXT.md` 的「演示数据」一节）。
+- 公共菜谱库（`data.sql`）与演示数据（`data-demo.sql`）是两个文件：前者是产品能力，后者才是演示内容。
+  生产如需自带示例菜谱，手动执行一次 `data.sql`。
 - 建库/迁移：
   - 新库：`sql/create-database.sql` + `src/main/resources/schema.sql`（后者可重复执行）
   - 旧库补列：`sql/migrate-legacy.sql`（一次性，列已存在会报错，可加 `--force`）
+- 老库如需清理历史演示数据（多个重名"周末厨房"、种子账号）：
+  `mysql -u<user> -p <库名> < server/sql/cleanup-demo-data.sql`（先备份，脚本只删明确的演示账号）
 - 老库如需清理废弃会员列，手动执行一次：
   `ALTER TABLE user_account DROP COLUMN vip_status;`
   `ALTER TABLE user_account DROP COLUMN plan_name;`
@@ -235,4 +240,8 @@ java -Duser.timezone=Asia/Shanghai -jar target/family-menu-daily-server-0.1.0-SN
 因此：**配好 `WECHAT_APP_ID`/`WECHAT_APP_SECRET` 之前，游客发的帖子和评论都会进待审队列**，
 需要在 `/admin` → 帖子治理 → 「待审核」里点「通过」才会公开。
 这是为了满足微信对 UGC 的审核要求，不是 bug。
+
+举报处置与内容审核**只在运营后台**（`/admin`）：小程序里的「社区审核」入口已下线，
+对应的 `/api/community/reports**` 也已迁到 `/api/admin/reports**`。运营的日常动线是
+`/admin` → 举报审核 / 内容治理 / 评论管理（另见 `server/CONTEXT.md` 的「举报处置入口唯一」）。
 

@@ -1,18 +1,27 @@
--- Seed data: default guest user + family + sample recipes
+-- ============================================================================
+-- 公共菜谱库 + 历史数据修正（启动时无条件幂等执行）
+--
+-- 这里只放两类东西：
+--   1. 公共菜谱库：平台自带的 16 道示例菜谱（is_public = 1，对所有家庭可见）。
+--      它是产品能力，不是演示数据 —— 新用户的菜谱页靠它起步，关掉演示开关也必须存在。
+--   2. 历史数据的幂等修正（老库的默认昵称/家庭名、示例外链、来源标签收口）。
+--
+-- 演示用的账号、家庭、会员、订单、菜单、购物清单、库存、做菜记录、通知、社区帖子，
+-- 一律放在 data-demo.sql，由 app.seed-demo-data 控制（默认关，生产固定关）。
+-- 若把演示数据塞回本文件，每个部署都会凭空冒出"别人家的"账号与家庭，
+-- 后台管理端看到的数据会和小程序里对不上 —— 这正是当初分裂成两个文件的起因。
+-- ============================================================================
+
+-- 公共菜谱库的持有账号与归属家庭。
+-- 它不是一个能登录的用户（openid 不是 guest-<hash> 格式），只是让菜谱有归属、后台有作者可显示。
 INSERT IGNORE INTO user_account (id, openid, nickname, avatar_url)
-VALUES (1, 'guest_default', '阿昊', '');
+VALUES (1, 'guest_default', '平台菜谱库', '');
 
 INSERT IGNORE INTO family (id, name, owner_user_id)
-VALUES (1, '周末厨房', 1);
+VALUES (1, '平台菜谱库', 1);
 
 INSERT IGNORE INTO family_member (id, family_id, user_id, member_role, member_status)
 VALUES (1, 1, 1, 'owner', 'ACTIVE');
-
-INSERT IGNORE INTO user_account (openid, nickname, avatar_url)
-VALUES
-('seed-aunt-ning', '阿宁', ''),
-('seed-zhou', '小周', ''),
-('seed-mao', '猫猫', '');
 
 -- Sample recipes
 INSERT IGNORE INTO recipe (id, title, source_type, owner_user_id, family_id, cuisine, taste_tags_json, time_cost, servings, rating, summary, cover_image, status)
@@ -100,75 +109,7 @@ INSERT IGNORE INTO recipe_step (id, recipe_id, step_no, step_text) VALUES
 (213, 8, 3, '锅中调糖醋汁（糖:醋:水约 2:3:4），下排骨翻炒'),
 (214, 8, 4, '大火收汁，汁浓挂油即可');
 
--- Community posts
-INSERT IGNORE INTO community_post (id, recipe_id, author_user_id, title, content, like_count, comment_count, tags_json, audit_status)
-VALUES
-(1, 6, 1, '分享我的麻婆豆腐做法', '用嫩豆腐口感更好，关键是最后勾芡要薄，让汤汁裹住豆腐。花椒粉一定要最后撒，香气才足。', 12, 3, '["川菜","下饭","辣"]', 'APPROVED'),
-(2, 8, 1, '糖醋排骨的秘诀', '排骨先炸后炒是关键，糖醋汁比例 2:3:4（糖:醋:水），最后大火收汁挂上亮油。', 8, 1, '["粤菜","宴客","酸甜"]', 'APPROVED');
-
-UPDATE user_account
-SET nickname = '阿昊'
-WHERE openid IN ('guest_default', 'guest-family-menu-user') OR nickname IN ('家庭用户', '默认用户');
-
-UPDATE family
-SET name = '周末厨房'
-WHERE name IN ('我的家庭', '默认家庭') OR id = 1;
-
-UPDATE recipe
-SET source_url = NULL
-WHERE source_url LIKE '%example.com%';
-
-UPDATE recipe
-SET summary = '饭点讨论最多的下饭菜，适合能吃辣的晚上'
-WHERE title = '麻婆豆腐' AND summary LIKE '%社区热度%';
-
-UPDATE recipe
-SET summary = '从家里常做步骤整理出来的清爽配菜'
-WHERE title = '蒜蓉西兰花' AND source_type = 'imported';
-
-UPDATE recipe
-SET taste_tags_json = '["自家录入","待复核"]'
-WHERE source_type = 'imported' AND taste_tags_json = '["导入","待确认"]';
-
-UPDATE recipe
-SET summary = '从导入页面整理保存'
-WHERE source_type = 'imported' AND summary LIKE '%导入保存%';
-
-UPDATE community_post
-SET title = '我把西兰花步骤改顺手了',
-    content = '蒜末不要炒太久，西兰花焯完沥干再下锅，最后只要快炒几下。',
-    tags_json = '["家常","配菜","经验"]'
-WHERE title = '外链导入后我改了三个步骤';
-
-UPDATE community_post p
-JOIN user_account u ON u.openid = 'seed-aunt-ning'
-SET p.author_user_id = u.id
-WHERE p.title = '周末家常三菜一汤';
-
-UPDATE community_post p
-JOIN user_account u ON u.openid = 'seed-zhou'
-SET p.author_user_id = u.id
-WHERE p.title = '下班 20 分钟快手餐';
-
-UPDATE community_post p
-JOIN user_account u ON u.openid = 'seed-mao'
-SET p.author_user_id = u.id
-WHERE p.title = '我把西兰花步骤改顺手了';
-
--- Demo expansion: richer data for linkage and presentation
-UPDATE user_account SET phone_number = '13800138000', current_family_id = 1 WHERE id = 1;
-UPDATE user_account SET current_family_id = 1 WHERE openid IN ('seed-aunt-ning', 'seed-zhou', 'seed-mao');
-
--- Demo membership: user 1 持一份年卡，共享给家庭，演示用未来到期日（见 ADR-0002/0005）
-INSERT IGNORE INTO user_membership (id, payer_user_id, current_plan, expires_at, share_scope)
-VALUES (1, 1, 'annual', DATE_ADD(NOW(), INTERVAL 365 DAY), 'FAMILY');
-
-INSERT IGNORE INTO payment_order (id, out_trade_no, payer_user_id, family_id, plan_code, amount_fen, duration_days, status, payment_method, paid_at)
-VALUES (1, 'SEED-DEMO-ANNUAL-0001', 1, 1, 'annual', 9900, 365, 'PAID', 'MOCK', NOW());
-
-INSERT IGNORE INTO family_member (family_id, user_id, member_role, member_status)
-SELECT 1, id, 'member', 'ACTIVE' FROM user_account WHERE openid IN ('seed-aunt-ning', 'seed-zhou', 'seed-mao');
-
+-- 第二批示例菜谱（同上，属公共菜谱库）
 INSERT IGNORE INTO recipe (id, title, source_type, owner_user_id, family_id, cuisine, taste_tags_json, time_cost, servings, rating, summary, cover_image, status)
 VALUES
   (101, '紫菜蛋花汤', 'owned', 1, 1, '汤羹', '["清淡","快手","晚餐"]', 8, 3, 4.6, '晚饭收尾的清爽热汤', '/assets/dishes/egg-drop-soup.jpg', 'ACTIVE'),
@@ -213,53 +154,34 @@ INSERT IGNORE INTO recipe_step (id, recipe_id, step_no, step_text) VALUES
   (115, 108, 1, '面条煮熟过温水，黄瓜切丝'),
   (116, 108, 2, '花生酱、生抽和辣油调汁拌匀');
 
-INSERT IGNORE INTO daily_menu (id, family_id, menu_date, status)
-VALUES (1001, 1, CURRENT_DATE, 'READY');
+-- ==================== 历史数据修正（幂等） ====================
 
-INSERT IGNORE INTO daily_menu_item (id, daily_menu_id, recipe_id, meal_type)
-VALUES
-  (1001, 1001, 1, 'lunch'),
-  (1002, 1001, 101, 'lunch'),
-  (1003, 1001, 105, 'dinner'),
-  (1004, 1001, 104, 'dinner');
+-- 老库的默认昵称收口成"平台菜谱库"：公共菜谱的持有者不是真人，
+-- 后台菜谱列表的"作者"列不该显示成一个像真实用户的昵称。
+-- 只按 openid 匹配，绝不按昵称批量改 —— 那会误伤真实用户的自定义昵称。
+UPDATE user_account SET nickname = '平台菜谱库' WHERE openid = 'guest_default';
+UPDATE user_account SET nickname = '平台菜谱库' WHERE openid = 'guest-family-menu-user';
 
-INSERT IGNORE INTO shopping_list (id, family_id, daily_menu_id, status)
-VALUES (1001, 1, 1001, 'OPEN');
+-- 平台家庭与用户默认家庭区分开：id = 1 是公共菜谱库的归属家庭，其余默认名统一为"周末厨房"
+UPDATE family SET name = '平台菜谱库' WHERE id = 1;
+UPDATE family SET name = '周末厨房' WHERE name IN ('我的家庭', '默认家庭');
 
-INSERT IGNORE INTO shopping_list_item (id, shopping_list_id, ingredient_name, amount, unit, purchased, is_manual)
-VALUES
-  (1001, 1001, '番茄', '2', '个', 0, 0),
-  (1002, 1001, '鸡蛋', '5', '个', 1, 0),
-  (1003, 1001, '牛肉', '250', 'g', 0, 0),
-  (1004, 1001, '西兰花', '1', '颗', 0, 0),
-  (1005, 1001, '豆腐', '200', 'g', 0, 0),
-  (1006, 1001, '紫菜', '8', 'g', 1, 0),
-  (1007, 1001, '水果', '1', '袋', 0, 1);
+UPDATE recipe
+SET source_url = NULL
+WHERE source_url LIKE '%example.com%';
 
-INSERT IGNORE INTO cook_history (id, recipe_id, user_id, family_id, cooked_at, score, remark)
-VALUES
-  (1001, 1, 1, 1, DATE_SUB(NOW(), INTERVAL 1 DAY), 5, '孩子拌饭吃光了'),
-  (1002, 6, 1, 1, DATE_SUB(NOW(), INTERVAL 2 DAY), 4, '下次少放一点辣'),
-  (1003, 101, 1, 1, DATE_SUB(NOW(), INTERVAL 3 DAY), 5, '八分钟出汤，很稳'),
-  (1004, 105, 1, 1, DATE_SUB(NOW(), INTERVAL 4 DAY), 5, '适合带饭'),
-  (1005, 107, 1, 1, DATE_SUB(NOW(), INTERVAL 6 DAY), 4, '剩饭改造成功'),
-  (1006, 2, 1, 1, DATE_SUB(NOW(), INTERVAL 8 DAY), 5, '周末硬菜担当'),
-  (1007, 104, 1, 1, DATE_SUB(NOW(), INTERVAL 10 DAY), 4, '雨天喝很舒服'),
-  (1008, 7, 1, 1, DATE_SUB(NOW(), INTERVAL 14 DAY), 4, '少油版也够香'),
-  (1009, 106, 1, 1, DATE_SUB(NOW(), INTERVAL 21 DAY), 5, '冷冻早餐储备'),
-  (1010, 5, 1, 1, DATE_SUB(NOW(), INTERVAL 30 DAY), 5, '全家都喜欢');
+UPDATE recipe
+SET summary = '饭点讨论最多的下饭菜，适合能吃辣的晚上'
+WHERE title = '麻婆豆腐' AND summary LIKE '%社区热度%';
 
-INSERT IGNORE INTO pantry_item (id, family_id, ingredient_name, amount, unit, expires_at)
-VALUES
-  (1001, 1, '鸡蛋', '8', '个', DATE_ADD(CURRENT_DATE, INTERVAL 10 DAY)),
-  (1002, 1, '番茄', '3', '个', DATE_ADD(CURRENT_DATE, INTERVAL 3 DAY)),
-  (1003, 1, '西兰花', '1', '颗', DATE_ADD(CURRENT_DATE, INTERVAL 2 DAY)),
-  (1004, 1, '猪肉末', '300', 'g', DATE_ADD(CURRENT_DATE, INTERVAL 5 DAY)),
-  (1005, 1, '紫菜', '1', '包', DATE_ADD(CURRENT_DATE, INTERVAL 90 DAY)),
-  (1006, 1, '米饭', '2', '碗', DATE_ADD(CURRENT_DATE, INTERVAL 1 DAY));
+UPDATE recipe
+SET summary = '从家里常做步骤整理出来的清爽配菜'
+WHERE title = '蒜蓉西兰花' AND source_type = 'imported';
 
-INSERT IGNORE INTO notification_message (id, user_id, family_id, kind, title, body_text, action_type, unread, created_at)
-VALUES
-  (1001, 1, 1, 'fam', '今晚菜单已生成', '午餐有番茄炒蛋和紫菜蛋花汤，晚餐安排牛肉炒西兰花。', 'menu', 1, DATE_SUB(NOW(), INTERVAL 20 MINUTE)),
-  (1002, 1, 1, 'sys', '买菜清单待确认', '还有 5 项食材未购买，出门前可以再核对一次。', 'shopping', 1, DATE_SUB(NOW(), INTERVAL 2 HOUR)),
-  (1003, 1, 1, 'com', '社区菜谱有新评论', '有人收藏了你的番茄炒蛋做法。', 'community', 0, DATE_SUB(NOW(), INTERVAL 1 DAY));
+UPDATE recipe
+SET taste_tags_json = '["自家录入","待复核"]'
+WHERE source_type = 'imported' AND taste_tags_json = '["导入","待确认"]';
+
+UPDATE recipe
+SET summary = '从导入页面整理保存'
+WHERE source_type = 'imported' AND summary LIKE '%导入保存%';

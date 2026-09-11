@@ -26,9 +26,13 @@ spring:
   sql:
     init:
       # 默认 always 便于本地开发与测试；生产必须设 SPRING_SQL_INIT_MODE=never，
-      # 否则每次启动都会执行 schema.sql 并注入 data.sql 的演示数据（含免费年卡会员）。
+      # 否则每次启动都会执行 schema.sql（含 ALTER）与 data.sql。
       # 见 application-prod.yml。
       mode: ${SPRING_SQL_INIT_MODE:always}
+      # 只执行 data.sql —— 它只含「公共菜谱库 + 历史数据修正」，是产品能力，不是演示数据。
+      # 演示数据（种子账号、演示家庭/菜单/购物清单/库存/做菜记录/通知/社区帖子）在 data-demo.sql，
+      # 由 SeedRunner 按 app.seed-demo-data 决定是否执行（见下方 app.seed-demo-data）。
+      data-locations: classpath:data.sql
       encoding: UTF-8
       continue-on-error: true
 
@@ -70,12 +74,14 @@ auth:
   dev-otp-enabled: ${AUTH_DEV_OTP_ENABLED:false}
 
 app:
-  # 演示数据总开关，同时管两件事：
-  #   1) 启动时播种种子用户/社区帖子（SeedRunner.seedDefaults）
-  #   2) 新账号首次登录时补一套演示菜单/购物清单/做菜记录/通知（AuthService）
-  # 默认 true 便于本地开发与联调；生产由 application-prod.yml 固定 false，
-  # 否则真实用户第一屏会出现"别人的"假菜单和假做菜记录。
-  seed-demo-data: ${APP_SEED_DEMO_DATA:true}
+  # 演示数据总开关（默认关）：种子账号、演示家庭、演示会员/订单、菜单、购物清单、库存、
+  # 做菜记录、通知、社区帖子，以及 data-demo.sql 的整份脚本。
+  #
+  # 为什么默认关：这些数据会在后台管理端变成"凭空出现的账号与家庭"，
+  # 与小程序里用户自己看到的东西对不上（典型症状：后台用户数/家庭数远大于预期、
+  # 多个重名"周末厨房"、菜谱作者是个没登录过的账号）。
+  # 本地想造演示数据时显式设 APP_SEED_DEMO_DATA=true，生产由 application-prod.yml 固定 false。
+  seed-demo-data: ${APP_SEED_DEMO_DATA:false}
 
 upload:
   dir: ${UPLOAD_DIR:uploads}

@@ -87,9 +87,9 @@ public class AuthService {
                        @Value("${wechat.app-secret:}") String appSecret,
                        // 默认 false：只有显式配置才开启固定验证码，避免任何配置缺失导致 246810 生效
                        @Value("${auth.dev-otp-enabled:false}") boolean devOtpEnabled,
-                       // 演示数据总开关（与 SeedRunner 同一个 app.seed-demo-data）：
-                       // 生产固定 false，否则真实用户的第一屏会出现别人的假菜单/假做菜记录。
-                       @Value("${app.seed-demo-data:true}") boolean seedDemoData) {
+                       // 演示数据总开关（与 SeedRunner 同一个 app.seed-demo-data），默认关：
+                       // 打开后新账号会凭空多出菜单/购物清单/做菜记录，运营后台看到的数也就不是真实用户数。
+                       @Value("${app.seed-demo-data:false}") boolean seedDemoData) {
         this.jdbcTemplate = jdbcTemplate;
         this.membershipService = membershipService;
         this.smsGateway = smsGateway;
@@ -532,10 +532,11 @@ public class AuthService {
     }
 
     /**
-     * 演示数据播种总闸（与 SeedRunner 共用 app.seed-demo-data）。
+     * 演示数据播种总闸（与 SeedRunner 共用 app.seed-demo-data，默认关）。
      *
-     * 为什么必须走开关：把假菜单、假购物清单、假做菜记录、假通知塞进真实新用户的账号是数据污染，
-     * 不是"演示"。开发/测试库默认开启（方便本地联调与截图），生产固定 false（application-prod.yml）。
+     * 为什么必须有这个开关：把假菜单、假购物清单、假做菜记录、假通知塞进真实新用户的账号是数据污染，
+     * 不是"演示"——同时会让运营后台的账号/家庭数量与小程序里看到的东西对不上。
+     * 本地想造演示数据时显式设 APP_SEED_DEMO_DATA=true，生产固定 false（application-prod.yml）。
      */
     private void maybeSeedDemoData(long userId, long familyId) {
         if (!seedDemoData) {

@@ -104,6 +104,21 @@ public final class AdminModels {
     ) {
     }
 
+    /** 帖子详情（治理用）：运营在审核/下架前查看完整正文与标签。 */
+    public record AdminPostDetail(
+            Long id,
+            String title,
+            String content,
+            List<String> tags,
+            String author,
+            String auditStatus,
+            Integer likeCount,
+            Integer commentCount,
+            Long recipeId,
+            String createdAt
+    ) {
+    }
+
     /** 内容下架/恢复请求：status = ACTIVE / REMOVED。 */
     public record AdminContentStatusRequest(
             String status
@@ -290,6 +305,86 @@ public final class AdminModels {
             List<AdminPostItem> hotPosts,
             /** 最近注册的用户 */
             List<AdminUserItem> recentUsers
+    ) {
+    }
+
+    // ==================== 家庭侧只读数据（家庭与成员 / 今日菜单 / 购物清单 / 库存） ====================
+    // 这四类数据此前只能在小程序里看到，运营在后台完全看不到，出问题时无法定位。
+    // 约定：全部只读（运营不代用户改菜单/清单），且一律带家庭名，避免出现一堆无主数据。
+
+    /** 家庭列表项。 */
+    public record AdminFamilyItem(
+            Long familyId,
+            String name,
+            Long ownerUserId,
+            String ownerNickname,
+            /** 家庭成员数（含已退出） */
+            int memberCount,
+            int recipeCount,
+            int menuCount,
+            String createdAt
+    ) {
+    }
+
+    /** 家庭成员项（含已退出成员，便于排查"为什么这个人不在家里"）。 */
+    public record AdminFamilyMember(
+            Long userId,
+            String nickname,
+            /** 手机号已脱敏 */
+            String phone,
+            String role,
+            String status,
+            String joinedAt
+    ) {
+    }
+
+    /** 今日菜单行：一个家庭一天的一张菜单。 */
+    public record AdminMenuRow(
+            Long menuId,
+            Long familyId,
+            String familyName,
+            String menuDate,
+            String status,
+            int itemCount,
+            /** 菜名，用「、」连接，列表里直接展示 */
+            String dishes,
+            String updatedAt
+    ) {
+    }
+
+    /** 购物清单行：一个家庭一张清单（按今日菜单生成）。 */
+    public record AdminShoppingRow(
+            Long listId,
+            Long familyId,
+            String familyName,
+            String menuDate,
+            String status,
+            int totalCount,
+            int purchasedCount,
+            String createdAt
+    ) {
+    }
+
+    /** 库存行。 */
+    public record AdminPantryRow(
+            Long id,
+            Long familyId,
+            String familyName,
+            String ingredientName,
+            String amount,
+            String unit,
+            String expiresAt,
+            String addedAt
+    ) {
+    }
+
+    /** 家庭详情：成员 + 最近菜单 + 购物清单 + 库存，一次拉全供后台下钻。 */
+    public record AdminFamilyDetail(
+            AdminFamilyItem family,
+            List<AdminFamilyMember> members,
+            List<AdminMenuRow> recentMenus,
+            List<AdminShoppingRow> shoppingLists,
+            List<AdminPantryRow> pantry
     ) {
     }
 }

@@ -5,8 +5,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.stereotype.Component;
+
+import javax.sql.DataSource;
 
 @Component
 public class SeedRunner implements ApplicationRunner {
@@ -16,21 +20,24 @@ public class SeedRunner implements ApplicationRunner {
     private final MysqlKitchenStore kitchenStore;
     private final AdminService adminService;
     private final JdbcTemplate jdbcTemplate;
+    private final DataSource dataSource;
 
     /**
-     * 是否注入演示数据（种子用户、社区帖子、演示家庭等）。
-     * 默认 true 便于本地开发与测试；生产（application-prod.yml）固定 false，
-     * 否则每次启动都会往真实库里塞演示内容。
+     * 是否注入演示数据（种子账号、社区帖子、演示家庭与菜单等）。
+     * 默认 false：演示数据会在运营后台里变成一堆"凭空出现的账号与家庭"，与小程序对不上。
+     * 本地需要造演示数据时显式设 APP_SEED_DEMO_DATA=true；生产（application-prod.yml）固定 false。
      */
     private final boolean seedDemoData;
 
     public SeedRunner(MysqlKitchenStore kitchenStore,
                       AdminService adminService,
                       JdbcTemplate jdbcTemplate,
-                      @Value("${app.seed-demo-data:true}") boolean seedDemoData) {
+                      DataSource dataSource,
+                      @Value("${app.seed-demo-data:false}") boolean seedDemoData) {
         this.kitchenStore = kitchenStore;
         this.adminService = adminService;
         this.jdbcTemplate = jdbcTemplate;
+        this.dataSource = dataSource;
         this.seedDemoData = seedDemoData;
     }
 
@@ -42,8 +49,9 @@ public class SeedRunner implements ApplicationRunner {
             } catch (RuntimeException ex) {
                 log.warn("seedDefaults skipped: {}", ex.getMessage());
             }
+            runDemoSql();
         } else {
-            log.info("演示数据播种已关闭 (app.seed-demo-data=false)");
+            log.info("演示数据播种已关闭 (app.seed-demo-data=false)：只保留公共菜谱库");
         }
 
         // 管理员白名单播种：只升权不降权；白名单为空时不做任何事（默认安全）。
@@ -55,6 +63,25 @@ public class SeedRunner implements ApplicationRunner {
         }
 
         verifySchema();
+    }
+
+    /**
+     * 执行 data-demo.sql（种子账号、演示会员/订单、演示菜单与购物清单等）。
+     *
+     * 必须排在 seedDefaults() 之后：脚本里有靠 openid 关联种子账号（阿宁/小周/猫猫）的 UPDATE。
+     * 脚本自身用 INSERT IGNORE / UPDATE，可重复执行。
+     */
+    private void runDemoSql() {
+        try {
+            ResourceDatabasePopulator populator =
+                    new ResourceDatabasePopulator(new ClassPathResource("data-demo.sql"));
+            populator.setSqlScriptEncoding("UTF-8");
+            // 幂等脚本：个别语句在已有数据上重复执行失败（如主键冲突）不该阻断启动
+            populator.setContinueOnError(true);
+            populator.execute(dataSource);
+        } catch (RuntimeException ex) {
+            log.warn("data-demo.sql skipped: {}", ex.getMessage());
+        }
     }
 
     /**

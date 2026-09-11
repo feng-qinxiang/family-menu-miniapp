@@ -4,15 +4,22 @@ import com.familymenu.daily.auth.AdminRole;
 import com.familymenu.daily.dto.AdminModels.AdminAuditItem;
 import com.familymenu.daily.dto.AdminModels.AdminCommentItem;
 import com.familymenu.daily.dto.AdminModels.AdminDashboard;
+import com.familymenu.daily.dto.AdminModels.AdminFamilyDetail;
+import com.familymenu.daily.dto.AdminModels.AdminFamilyItem;
+import com.familymenu.daily.dto.AdminModels.AdminFamilyMember;
 import com.familymenu.daily.dto.AdminModels.AdminFeedbackItem;
 import com.familymenu.daily.dto.AdminModels.AdminImportItem;
+import com.familymenu.daily.dto.AdminModels.AdminMenuRow;
 import com.familymenu.daily.dto.AdminModels.AdminMetricPoint;
 import com.familymenu.daily.dto.AdminModels.AdminMetrics;
 import com.familymenu.daily.dto.AdminModels.AdminOrderItem;
 import com.familymenu.daily.dto.AdminModels.AdminPage;
+import com.familymenu.daily.dto.AdminModels.AdminPantryRow;
+import com.familymenu.daily.dto.AdminModels.AdminPostDetail;
 import com.familymenu.daily.dto.AdminModels.AdminPostItem;
 import com.familymenu.daily.dto.AdminModels.AdminRecipeItem;
 import com.familymenu.daily.dto.AdminModels.AdminRecipeDetail;
+import com.familymenu.daily.dto.AdminModels.AdminShoppingRow;
 import com.familymenu.daily.dto.AdminModels.AdminIngredient;
 import com.familymenu.daily.dto.AdminModels.AdminUserItem;
 import com.familymenu.daily.dto.AdminModels.AdminUserPage;
@@ -468,6 +475,46 @@ public class AdminService {
                         rs.getString("created_at")
                 ),
                 st, st, safeLimit);
+    }
+
+    /** 帖子详情（治理用）：运营在审核/下架前查看完整正文与标签。 */
+    public AdminPostDetail getPostDetail(long postId) {
+        return jdbcTemplate.query("""
+                        SELECT p.id, p.title, p.content, p.tags_json, u.nickname,
+                               p.audit_status, p.like_count, p.comment_count, p.recipe_id, p.created_at
+                        FROM community_post p
+                        LEFT JOIN user_account u ON u.id = p.author_user_id
+                        WHERE p.id = ?
+                        """,
+                rs -> {
+                    if (!rs.next()) {
+                        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "帖子不存在");
+                    }
+                    List<String> tags = new ArrayList<>();
+                    String rawTags = rs.getString("tags_json");
+                    if (rawTags != null && !rawTags.isBlank()) {
+                        try {
+                            tags = JSON.readValue(rawTags,
+                                    new com.fasterxml.jackson.core.type.TypeReference<List<String>>() {});
+                        } catch (Exception ignored) {
+                            // 脏数据（非法 JSON）时降级为空标签，不影响详情展示
+                        }
+                    }
+                    return new AdminPostDetail(
+                            rs.getLong("id"),
+                            rs.getString("title"),
+                            rs.getString("content"),
+                            tags,
+                            rs.getString("nickname"),
+                            rs.getString("audit_status"),
+                            rs.getInt("like_count"),
+                            rs.getInt("comment_count"),
+                            rs.getObject("recipe_id") != null ? rs.getLong("recipe_id") : null,
+                            rs.getString("created_at")
+                    );
+                },
+                postId
+        );
     }
 
     /** 帖子下架/恢复：audit_status = REMOVED / APPROVED。 */
@@ -1049,5 +1096,215 @@ public class AdminService {
                 .map(s -> s.trim().replaceAll("^\"|\"$", ""))
                 .filter(s -> !s.isEmpty())
                 .collect(Collectors.toList());
+    }
+
+    // ==================== 家庭侧只读数据 ====================
+    // 家庭与成员 / 今日菜单 / 购物清单 / 库存。
+    //
+    // 这四类数据此前只存在于小程序里，运营在后台看不到：用户来问"我家的菜单怎么没了"
+    // 只能靠猜。这里全部只读——运营不代用户改菜单与清单，需要干预时走家庭/用户侧功能。
+    // 每条记录都带家庭名，否则后台就是一屏无主的数字。
+
+    /** 家庭列表（按家庭名或 owner 昵称搜索）。 */
+    public AdminPage<AdminFamilyItem> listFamilies(String keyword, int page, int size) {
+        int safeSize = Math.max(1, Math.min(size, 200));
+        int safePage = Math.max(0, page);
+        String kw = keyword == null ? "" : keyword.trim();
+        String like = "%" + kw + "%";
+        Long total = jdbcTemplate.queryForObject("""
+                SELECT COUNT(*) FROM family f
+                LEFT JOIN user_account u ON u.id = f.owner_user_id
+                WHERE (? = '' OR f.name LIKE ? OR u.nickname LIKE ?)
+                """, Long.class, kw, like, like);
+        List<AdminFamilyItem> items = jdbcTemplate.query(FAMILY_SELECT + """
+                WHERE (? = '' OR f.name LIKE ? OR u.nickname LIKE ?)
+                ORDER BY f.id DESC LIMIT ? OFFSET ?
+                """,
+                (rs, rowNum) -> mapFamily(rs),
+                kw, like, like, safeSize, (long) safePage * safeSize);
+        return new AdminPage<>(items, total == null ? 0 : total, safePage, safeSize);
+    }
+
+    /** 家庭详情（下钻用）：成员、最近菜单、购物清单、库存一次取全。 */
+    public AdminFamilyDetail familyDetail(long familyId) {
+        AdminFamilyItem family = jdbcTemplate.query(FAMILY_SELECT + "WHERE f.id = ? LIMIT 1",
+                rs -> rs.next() ? mapFamily(rs) : null, familyId);
+        if (family == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "家庭不存在");
+        }
+        List<AdminFamilyMember> members = jdbcTemplate.query("""
+                        SELECT m.user_id, u.nickname, u.phone_number, m.member_role, m.member_status, m.created_at
+                        FROM family_member m
+                        LEFT JOIN user_account u ON u.id = m.user_id
+                        WHERE m.family_id = ?
+                        ORDER BY m.id
+                        """,
+                (rs, rowNum) -> new AdminFamilyMember(
+                        rs.getObject("user_id") == null ? null : rs.getLong("user_id"),
+                        rs.getString("nickname"),
+                        maskPhone(rs.getString("phone_number")),
+                        rs.getString("member_role"),
+                        rs.getString("member_status"),
+                        rs.getString("created_at")
+                ),
+                familyId);
+        return new AdminFamilyDetail(
+                family,
+                members,
+                listMenus(null, null, familyId, 0, 5).items(),
+                listShoppingLists(null, null, familyId, 0, 5).items(),
+                listPantry(null, familyId, 0, 50).items());
+    }
+
+    /** 今日菜单列表：按日期（yyyy-MM-dd）与家庭名筛选，familyId 非空时只看指定家庭。 */
+    public AdminPage<AdminMenuRow> listMenus(String date, String keyword, Long familyId, int page, int size) {
+        int safeSize = Math.max(1, Math.min(size, 200));
+        int safePage = Math.max(0, page);
+        // 日期必须是真正的 DATE 参数：拿空字符串去和 DATE 列比较，MySQL 严格模式会直接报
+        // "Incorrect DATE value: ''"（而且 OR 不短路，空值也会被求值）。空 = null = 不筛。
+        java.sql.Date day = sqlDate(date);
+        String kw = keyword == null ? "" : keyword.trim();
+        String like = "%" + kw + "%";
+        Long fid = familyId == null || familyId <= 0 ? null : familyId;
+        Long total = jdbcTemplate.queryForObject("""
+                SELECT COUNT(*) FROM daily_menu dm
+                LEFT JOIN family f ON f.id = dm.family_id
+                WHERE (? IS NULL OR dm.menu_date = ?)
+                  AND (? = '' OR f.name LIKE ?)
+                  AND (? IS NULL OR dm.family_id = ?)
+                """, Long.class, day, day, kw, like, fid, fid);
+        List<AdminMenuRow> items = jdbcTemplate.query("""
+                        SELECT dm.id, dm.family_id, f.name AS family_name, dm.menu_date, dm.status, dm.updated_at,
+                               (SELECT COUNT(*) FROM daily_menu_item i WHERE i.daily_menu_id = dm.id) AS item_count,
+                               (SELECT GROUP_CONCAT(r.title ORDER BY i.recipe_id SEPARATOR '、')
+                                  FROM daily_menu_item i
+                                  JOIN recipe r ON r.id = i.recipe_id
+                                 WHERE i.daily_menu_id = dm.id) AS dishes
+                        FROM daily_menu dm
+                        LEFT JOIN family f ON f.id = dm.family_id
+                        WHERE (? IS NULL OR dm.menu_date = ?)
+                          AND (? = '' OR f.name LIKE ?)
+                          AND (? IS NULL OR dm.family_id = ?)
+                        ORDER BY dm.menu_date DESC, dm.id DESC LIMIT ? OFFSET ?
+                        """,
+                (rs, rowNum) -> new AdminMenuRow(
+                        rs.getLong("id"),
+                        rs.getLong("family_id"),
+                        rs.getString("family_name"),
+                        rs.getString("menu_date"),
+                        rs.getString("status"),
+                        rs.getInt("item_count"),
+                        rs.getString("dishes"),
+                        rs.getString("updated_at")
+                ),
+                day, day, kw, like, fid, fid, safeSize, (long) safePage * safeSize);
+        return new AdminPage<>(items, total == null ? 0 : total, safePage, safeSize);
+    }
+
+    /** 购物清单列表：按菜单日期与清单状态筛选，familyId 非空时只看指定家庭。 */
+    public AdminPage<AdminShoppingRow> listShoppingLists(String date, String status, Long familyId, int page, int size) {
+        int safeSize = Math.max(1, Math.min(size, 200));
+        int safePage = Math.max(0, page);
+        java.sql.Date day = sqlDate(date);
+        String st = status == null ? "" : status.trim().toUpperCase();
+        Long fid = familyId == null || familyId <= 0 ? null : familyId;
+        Long total = jdbcTemplate.queryForObject("""
+                SELECT COUNT(*) FROM shopping_list s
+                LEFT JOIN daily_menu dm ON dm.id = s.daily_menu_id
+                WHERE (? IS NULL OR dm.menu_date = ?)
+                  AND (? = '' OR s.status = ?)
+                  AND (? IS NULL OR s.family_id = ?)
+                """, Long.class, day, day, st, st, fid, fid);
+        List<AdminShoppingRow> items = jdbcTemplate.query("""
+                        SELECT s.id, s.family_id, f.name AS family_name, dm.menu_date, s.status, s.created_at,
+                               (SELECT COUNT(*) FROM shopping_list_item i WHERE i.shopping_list_id = s.id) AS total_count,
+                               (SELECT COUNT(*) FROM shopping_list_item i
+                                 WHERE i.shopping_list_id = s.id AND i.purchased = 1) AS purchased_count
+                        FROM shopping_list s
+                        LEFT JOIN family f ON f.id = s.family_id
+                        LEFT JOIN daily_menu dm ON dm.id = s.daily_menu_id
+                        WHERE (? IS NULL OR dm.menu_date = ?)
+                          AND (? = '' OR s.status = ?)
+                          AND (? IS NULL OR s.family_id = ?)
+                        ORDER BY s.id DESC LIMIT ? OFFSET ?
+                        """,
+                (rs, rowNum) -> new AdminShoppingRow(
+                        rs.getLong("id"),
+                        rs.getLong("family_id"),
+                        rs.getString("family_name"),
+                        rs.getString("menu_date"),
+                        rs.getString("status"),
+                        rs.getInt("total_count"),
+                        rs.getInt("purchased_count"),
+                        rs.getString("created_at")
+                ),
+                day, day, st, st, fid, fid, safeSize, (long) safePage * safeSize);
+        return new AdminPage<>(items, total == null ? 0 : total, safePage, safeSize);
+    }
+
+    /** 库存列表：按食材名或家庭名搜索，familyId 非空时只看指定家庭。 */
+    public AdminPage<AdminPantryRow> listPantry(String keyword, Long familyId, int page, int size) {
+        int safeSize = Math.max(1, Math.min(size, 200));
+        int safePage = Math.max(0, page);
+        String kw = keyword == null ? "" : keyword.trim();
+        String like = "%" + kw + "%";
+        Long fid = familyId == null || familyId <= 0 ? null : familyId;
+        Long total = jdbcTemplate.queryForObject("""
+                SELECT COUNT(*) FROM pantry_item p
+                LEFT JOIN family f ON f.id = p.family_id
+                WHERE (? = '' OR p.ingredient_name LIKE ? OR f.name LIKE ?)
+                  AND (? IS NULL OR p.family_id = ?)
+                """, Long.class, kw, like, like, fid, fid);
+        List<AdminPantryRow> items = jdbcTemplate.query("""
+                        SELECT p.id, p.family_id, f.name AS family_name, p.ingredient_name, p.amount, p.unit,
+                               p.expires_at, p.created_at
+                        FROM pantry_item p
+                        LEFT JOIN family f ON f.id = p.family_id
+                        WHERE (? = '' OR p.ingredient_name LIKE ? OR f.name LIKE ?)
+                          AND (? IS NULL OR p.family_id = ?)
+                        ORDER BY p.id DESC LIMIT ? OFFSET ?
+                        """,
+                (rs, rowNum) -> new AdminPantryRow(
+                        rs.getLong("id"),
+                        rs.getLong("family_id"),
+                        rs.getString("family_name"),
+                        rs.getString("ingredient_name"),
+                        rs.getString("amount"),
+                        rs.getString("unit"),
+                        rs.getString("expires_at"),
+                        rs.getString("created_at")
+                ),
+                kw, like, like, fid, fid, safeSize, (long) safePage * safeSize);
+        return new AdminPage<>(items, total == null ? 0 : total, safePage, safeSize);
+    }
+
+    /** yyyy-MM-dd → java.sql.Date；空返回 null（不筛），格式非法抛 400。
+     *  绝不能拿空字符串去和 DATE 列比较：MySQL 严格模式会报 "Incorrect DATE value: ''"。 */
+    private static java.sql.Date sqlDate(String date) {
+        LocalDate parsed = parseDate(date);
+        return parsed == null ? null : java.sql.Date.valueOf(parsed);
+    }
+
+    /** 家庭列表的基础投影（列表与详情共用，避免两处列名漂移）。 */
+    private static final String FAMILY_SELECT = """
+            SELECT f.id, f.name, f.owner_user_id, u.nickname AS owner_nickname, f.created_at,
+                   (SELECT COUNT(*) FROM family_member m WHERE m.family_id = f.id) AS member_count,
+                   (SELECT COUNT(*) FROM recipe r WHERE r.family_id = f.id AND r.status = 'ACTIVE') AS recipe_count,
+                   (SELECT COUNT(*) FROM daily_menu dm WHERE dm.family_id = f.id) AS menu_count
+            FROM family f
+            LEFT JOIN user_account u ON u.id = f.owner_user_id
+            """;
+
+    private static AdminFamilyItem mapFamily(java.sql.ResultSet rs) throws java.sql.SQLException {
+        return new AdminFamilyItem(
+                rs.getLong("id"),
+                rs.getString("name"),
+                rs.getObject("owner_user_id") == null ? null : rs.getLong("owner_user_id"),
+                rs.getString("owner_nickname"),
+                rs.getInt("member_count"),
+                rs.getInt("recipe_count"),
+                rs.getInt("menu_count"),
+                rs.getString("created_at")
+        );
     }
 }

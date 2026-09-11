@@ -300,7 +300,7 @@ class EndpointCoverageTests {
     @Test
     void reportQueueIsAdminOnly() throws Exception {
         String token = guestLogin();
-        mockMvc.perform(get("/api/community/reports").header("X-Auth-Token", token))
+        mockMvc.perform(get("/api/admin/reports").header("X-Auth-Token", token))
                 .andExpect(status().isForbidden());
     }
 

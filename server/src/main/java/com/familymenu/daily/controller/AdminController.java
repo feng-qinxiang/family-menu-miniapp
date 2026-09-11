@@ -11,23 +11,31 @@ import com.familymenu.daily.dto.AdminModels.AdminCommentItem;
 import com.familymenu.daily.dto.AdminModels.AdminCommentStatusRequest;
 import com.familymenu.daily.dto.AdminModels.AdminContentStatusRequest;
 import com.familymenu.daily.dto.AdminModels.AdminDashboard;
+import com.familymenu.daily.dto.AdminModels.AdminFamilyDetail;
+import com.familymenu.daily.dto.AdminModels.AdminFamilyItem;
 import com.familymenu.daily.dto.AdminModels.AdminFeedbackHandleRequest;
 import com.familymenu.daily.dto.AdminModels.AdminFeedbackItem;
 import com.familymenu.daily.dto.AdminModels.AdminGrantRequest;
 import com.familymenu.daily.dto.AdminModels.AdminGrantVipRequest;
 import com.familymenu.daily.dto.AdminModels.AdminImportItem;
 import com.familymenu.daily.dto.AdminModels.AdminImportStatusRequest;
+import com.familymenu.daily.dto.AdminModels.AdminMenuRow;
 import com.familymenu.daily.dto.AdminModels.AdminMetrics;
 import com.familymenu.daily.dto.AdminModels.AdminOrderItem;
 import com.familymenu.daily.dto.AdminModels.AdminPage;
+import com.familymenu.daily.dto.AdminModels.AdminPantryRow;
+import com.familymenu.daily.dto.AdminModels.AdminPostDetail;
 import com.familymenu.daily.dto.AdminModels.AdminPostItem;
 import com.familymenu.daily.dto.AdminModels.AdminProfile;
 import com.familymenu.daily.dto.AdminModels.AdminRecipeItem;
 import com.familymenu.daily.dto.AdminModels.AdminRecipeDetail;
 import com.familymenu.daily.dto.AdminModels.AdminRoleRequest;
+import com.familymenu.daily.dto.AdminModels.AdminShoppingRow;
 import com.familymenu.daily.dto.AdminModels.AdminUserItem;
 import com.familymenu.daily.dto.AdminModels.AdminUserPage;
 import com.familymenu.daily.dto.AdminModels.AdminUserStatusRequest;
+import com.familymenu.daily.dto.ApiModels.CommunityReportItem;
+import com.familymenu.daily.dto.ApiModels.CommunityReportReviewRequest;
 import com.familymenu.daily.dto.AuthModels.AuthUser;
 import com.familymenu.daily.service.AdminAuditService;
 import com.familymenu.daily.service.AdminService;
@@ -217,6 +225,13 @@ public class AdminController {
     public List<AdminPostItem> listPosts(@RequestParam(defaultValue = "") String auditStatus,
                                          @RequestParam(defaultValue = "50") int limit) {
         return adminService.listPosts(auditStatus, limit);
+    }
+
+    /** 帖子详情（治理用）：运营在审核/下架前查看完整正文与标签。 */
+    @GetMapping("/posts/{postId}")
+    @RequiresPermission(AdminPermission.CONTENT_MODERATE)
+    public AdminPostDetail postDetail(@PathVariable long postId) {
+        return adminService.getPostDetail(postId);
     }
 
     /** 批量下架/恢复帖子。 */
@@ -413,6 +428,97 @@ public class AdminController {
         }
     }
 
+    // ---------- 家庭侧只读数据 ----------
+    // 家庭与成员 / 今日菜单 / 购物清单 / 库存。运营只读：需要干预时走家庭侧功能，后台不代用户改数据。
+    // 权限沿用 USER_VIEW（与用户管理同域）：超管与客服可见，内容审核员看不到。
+
+    @GetMapping("/families")
+    @RequiresPermission(AdminPermission.USER_VIEW)
+    public AdminPage<AdminFamilyItem> listFamilies(@RequestParam(defaultValue = "") String keyword,
+                                                   @RequestParam(defaultValue = "0") int page,
+                                                   @RequestParam(defaultValue = "20") int size) {
+        return adminService.listFamilies(keyword, page, size);
+    }
+
+    /** 家庭详情下钻：成员 + 最近菜单 + 购物清单 + 库存。 */
+    @GetMapping("/families/{familyId}")
+    @RequiresPermission(AdminPermission.USER_VIEW)
+    public AdminFamilyDetail familyDetail(@PathVariable long familyId) {
+        return adminService.familyDetail(familyId);
+    }
+
+    @GetMapping("/menus")
+    @RequiresPermission(AdminPermission.USER_VIEW)
+    public AdminPage<AdminMenuRow> listMenus(@RequestParam(defaultValue = "") String date,
+                                             @RequestParam(defaultValue = "") String keyword,
+                                             @RequestParam(defaultValue = "0") int page,
+                                             @RequestParam(defaultValue = "50") int size) {
+        return adminService.listMenus(date, keyword, null, page, size);
+    }
+
+    @GetMapping("/shopping")
+    @RequiresPermission(AdminPermission.USER_VIEW)
+    public AdminPage<AdminShoppingRow> listShopping(@RequestParam(defaultValue = "") String date,
+                                                     @RequestParam(defaultValue = "") String status,
+                                                     @RequestParam(defaultValue = "0") int page,
+                                                     @RequestParam(defaultValue = "50") int size) {
+        return adminService.listShoppingLists(date, status, null, page, size);
+    }
+
+    @GetMapping("/pantry")
+    @RequiresPermission(AdminPermission.USER_VIEW)
+    public AdminPage<AdminPantryRow> listPantry(@RequestParam(defaultValue = "") String keyword,
+                                                @RequestParam(defaultValue = "0") int page,
+                                                @RequestParam(defaultValue = "50") int size) {
+        return adminService.listPantry(keyword, null, page, size);
+    }
+
+    // ---------- 举报处置 ----------
+    // 举报队列只有运营后台一个入口（小程序里的审核页已下线），所以路径统一收在 /api/admin 下。
+
+    @GetMapping("/reports")
+    @RequiresPermission(AdminPermission.REPORT_REVIEW)
+    public List<CommunityReportItem> listReports(@RequestParam(defaultValue = "") String status) {
+        return store.communityReports(status);
+    }
+
+    @PostMapping("/reports/{reportId}/review")
+    @RequiresPermission(AdminPermission.REPORT_REVIEW)
+    public CommunityReportItem reviewReport(@PathVariable long reportId,
+                                            @RequestBody(required = false) CommunityReportReviewRequest request,
+                                            @CurrentUser AuthUser actor) {
+        try {
+            CommunityReportItem item = store.reviewCommunityReport(reportId, actor.userId(), request);
+            auditService.record(actor.userId(), actor.nickname(), "REVIEW_REPORT", "report", reportId,
+                    request == null ? null : request.status(), true);
+            return item;
+        } catch (RuntimeException ex) {
+            auditService.record(actor.userId(), actor.nickname(), "REVIEW_REPORT", "report", reportId,
+                    ex.getMessage(), false);
+            throw ex;
+        }
+    }
+
+    /** 批量处置举报：一次下架/忽略多条。 */
+    @PostMapping("/reports/batch-review")
+    @RequiresPermission(AdminPermission.REPORT_REVIEW)
+    public Map<String, Object> batchReviewReports(@RequestBody(required = false) AdminBatchStatusRequest request,
+                                                  @CurrentUser AuthUser actor) {
+        List<Long> ids = request == null ? null : request.ids();
+        String status = request == null ? null : request.status();
+        String note = request == null ? null : request.note();
+        try {
+            int done = store.batchReviewCommunityReports(ids, actor.userId(), status, note);
+            auditService.record(actor.userId(), actor.nickname(), "BATCH_REVIEW_REPORT", "report",
+                    ids == null ? null : String.valueOf(ids.size()), status + " × " + done, true);
+            return Map.of("ok", true, "changed", done);
+        } catch (RuntimeException ex) {
+            auditService.record(actor.userId(), actor.nickname(), "BATCH_REVIEW_REPORT", "report", null,
+                    ex.getMessage(), false);
+            throw ex;
+        }
+    }
+
     // ---------- 导入源审核 ----------
     @GetMapping("/imports")
     @RequiresPermission(AdminPermission.IMPORT_REVIEW)
@@ -455,6 +561,9 @@ public class AdminController {
     /** 导出上限：再大就该走离线任务了，别让一次导出把内存和数据库拖垮。 */
     private static final int EXPORT_MAX_ROWS = 5000;
 
+    /** 购物清单状态 → 中文：导出是给运营看的表，直接吐英文枚举没人看得懂。 */
+    private static final Map<String, String> LIST_STATUS_LABEL = Map.of("OPEN", "进行中", "CLOSED", "已结束");
+
     /**
      * 导出 xlsx（真正的 Excel 文件，不是改后缀的 CSV）。
      * 支持 users / orders / audit / comments / feedback / posts / reports，导出的是当前筛选条件下的全量数据。
@@ -462,13 +571,14 @@ public class AdminController {
     @GetMapping("/export/{kind}")
     @RequiresPermission(AdminPermission.EXPORT)
     public ResponseEntity<byte[]> export(@PathVariable String kind,
-                                         @RequestParam(defaultValue = "") String status,
-                                         @RequestParam(defaultValue = "") String keyword,
-                                         @RequestParam(defaultValue = "") String from,
-                                         @RequestParam(defaultValue = "") String to,
-                                         @RequestParam(defaultValue = "") String auditStatus,
-                                         @RequestParam(required = false) Long postId,
-                                         @CurrentUser AuthUser actor) {
+                                        @RequestParam(defaultValue = "") String status,
+                                        @RequestParam(defaultValue = "") String keyword,
+                                        @RequestParam(defaultValue = "") String date,
+                                        @RequestParam(defaultValue = "") String from,
+                                        @RequestParam(defaultValue = "") String to,
+                                        @RequestParam(defaultValue = "") String auditStatus,
+                                        @RequestParam(required = false) Long postId,
+                                        @CurrentUser AuthUser actor) {
         String sheetName;
         List<String> headers;
         List<List<Object>> rows;
@@ -541,6 +651,43 @@ public class AdminController {
                 rows = store.communityReports(status).stream().map(r -> List.<Object>of(
                         nz(r.reportId()), nz(r.postId()), nz(r.postTitle()), nz(r.reporter()),
                         nz(r.reason()), nz(r.description()), nz(r.status()), nz(r.createdAt()))).toList();
+            }
+            case "families" -> {
+                sheetName = "家庭";
+                headers = List.of("ID", "家庭名", "创建者", "创建者ID", "成员数", "菜谱数", "菜单数", "创建时间");
+                List<AdminFamilyItem> all = collectAll((page, size) ->
+                        adminService.listFamilies(keyword, page, size));
+                rows = all.stream().map(f -> List.<Object>of(
+                        nz(f.familyId()), nz(f.name()), nz(f.ownerNickname()), nz(f.ownerUserId()),
+                        f.memberCount(), f.recipeCount(), f.menuCount(), nz(f.createdAt()))).toList();
+            }
+            case "menus" -> {
+                sheetName = "菜单";
+                headers = List.of("ID", "家庭", "日期", "状态", "菜品数", "菜品", "更新时间");
+                List<AdminMenuRow> all = collectAll((page, size) ->
+                        adminService.listMenus(date, keyword, null, page, size));
+                rows = all.stream().map(m -> List.<Object>of(
+                        nz(m.menuId()), nz(m.familyName()), nz(m.menuDate()), nz(m.status()),
+                        m.itemCount(), nz(m.dishes()), nz(m.updatedAt()))).toList();
+            }
+            case "shopping" -> {
+                sheetName = "购物清单";
+                headers = List.of("ID", "家庭", "菜单日期", "状态", "已购", "总项数", "创建时间");
+                List<AdminShoppingRow> all = collectAll((page, size) ->
+                        adminService.listShoppingLists(date, status, null, page, size));
+                rows = all.stream().map(s -> List.<Object>of(
+                        nz(s.listId()), nz(s.familyName()), nz(s.menuDate()),
+                        nz(LIST_STATUS_LABEL.getOrDefault(s.status(), s.status())),
+                        s.purchasedCount(), s.totalCount(), nz(s.createdAt()))).toList();
+            }
+            case "pantry" -> {
+                sheetName = "库存";
+                headers = List.of("ID", "家庭", "食材", "数量", "单位", "保质期至", "登记时间");
+                List<AdminPantryRow> all = collectAll((page, size) ->
+                        adminService.listPantry(keyword, null, page, size));
+                rows = all.stream().map(p -> List.<Object>of(
+                        nz(p.id()), nz(p.familyName()), nz(p.ingredientName()), nz(p.amount()),
+                        nz(p.unit()), nz(p.expiresAt()), nz(p.addedAt()))).toList();
             }
             default -> throw new org.springframework.web.server.ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "不支持的导出类型: " + kind);

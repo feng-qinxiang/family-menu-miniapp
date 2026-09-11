@@ -156,7 +156,7 @@ public class MysqlKitchenStore {
         String normalized = Optional.ofNullable(source).orElse("owned").trim().toLowerCase(Locale.ROOT);
         String sql = """
                 SELECT id, title, source_type, source_url, cuisine, taste_tags_json, time_cost, servings, rating, summary, cover_image,
-                       ch.cook_count, ch.last_cooked_at
+                       owner_user_id, ch.cook_count, ch.last_cooked_at
                 FROM recipe
                 LEFT JOIN (
                     SELECT recipe_id, COUNT(*) AS cook_count,
@@ -180,7 +180,9 @@ public class MysqlKitchenStore {
                 rs.getString("summary"),
                 rs.getString("cover_image"),
                 rs.getObject("cook_count", Integer.class),
-                rs.getString("last_cooked_at")
+                rs.getString("last_cooked_at"),
+                // 公共菜谱库的 owner 是种子账号，这里必须和当前用户比对，前端才知道"这条是不是我建的"
+                rs.getLong("owner_user_id") == userId
         ), familyId, normalized, normalized, familyId, userId);
     }
 
@@ -743,7 +745,7 @@ public class MysqlKitchenStore {
                                           long userId, long familyId) {
         StringBuilder sql = new StringBuilder("""
                 SELECT id, title, source_type, source_url, cuisine, taste_tags_json, time_cost, servings, rating, summary, cover_image,
-                       ch.cook_count, ch.last_cooked_at
+                       owner_user_id, ch.cook_count, ch.last_cooked_at
                 FROM recipe
                 LEFT JOIN (
                     SELECT recipe_id, COUNT(*) AS cook_count,
@@ -788,7 +790,8 @@ public class MysqlKitchenStore {
                 rs.getString("summary"),
                 rs.getString("cover_image"),
                 rs.getObject("cook_count", Integer.class),
-                rs.getString("last_cooked_at")
+                rs.getString("last_cooked_at"),
+                rs.getLong("owner_user_id") == userId
         ), params.toArray());
     }
 

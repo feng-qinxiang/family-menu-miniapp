@@ -70,7 +70,8 @@ class AdminModulesTests {
         String token = guestLogin();
         String[] paths = {
                 "/api/admin/dashboard", "/api/admin/feedback", "/api/admin/posts",
-                "/api/admin/orders", "/api/admin/audit", "/api/admin/users", "/api/admin/imports",
+                "/api/admin/posts/1", "/api/admin/orders", "/api/admin/audit",
+                "/api/admin/users", "/api/admin/imports",
                 "/api/admin/recipes", "/api/admin/comments"
         };
         for (String path : paths) {
@@ -185,6 +186,25 @@ class AdminModulesTests {
                     .isEqualTo("APPROVED");
         } finally {
             jdbcTemplate.update("UPDATE community_post SET audit_status = 'APPROVED' WHERE id = ?", postId);
+            demote(id[0]);
+        }
+    }
+
+    @Test
+    void postDetailReturnsFullContent() throws Exception {
+        long[] id = new long[1];
+        String admin = adminToken(id);
+        Long postId = jdbcTemplate.queryForObject(
+                "SELECT id FROM community_post ORDER BY id LIMIT 1", Long.class);
+        try {
+            mockMvc.perform(get("/api/admin/posts/" + postId).header("X-Auth-Token", admin))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.id").value(postId))
+                    .andExpect(jsonPath("$.title").isNotEmpty())
+                    .andExpect(jsonPath("$.content").isNotEmpty())
+                    .andExpect(jsonPath("$.auditStatus").isNotEmpty())
+                    .andExpect(jsonPath("$.author").isNotEmpty());
+        } finally {
             demote(id[0]);
         }
     }

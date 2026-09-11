@@ -1,9 +1,7 @@
 package com.familymenu.daily.controller;
 
-import com.familymenu.daily.auth.AdminPermission;
 import com.familymenu.daily.auth.CurrentUser;
 import com.familymenu.daily.auth.RequiresAuth;
-import com.familymenu.daily.auth.RequiresPermission;
 import com.familymenu.daily.dto.ApiModels;
 import com.familymenu.daily.dto.ApiModels.AddCookHistoryRequest;
 import com.familymenu.daily.dto.ApiModels.CommunityPost;
@@ -16,8 +14,6 @@ import com.familymenu.daily.dto.ApiModels.ImportPreview;
 import com.familymenu.daily.dto.ApiModels.ParseImportRequest;
 import com.familymenu.daily.dto.ApiModels.RecipeCard;
 import com.familymenu.daily.dto.ApiModels.RecipeDetail;
-import com.familymenu.daily.dto.ApiModels.CommunityReportItem;
-import com.familymenu.daily.dto.ApiModels.CommunityReportReviewRequest;
 import com.familymenu.daily.dto.ApiModels.CommunityReportRequest;
 import com.familymenu.daily.dto.ApiModels.UpdateRecipeRequest;
 import com.familymenu.daily.dto.ApiModels.VipStatus;
@@ -42,13 +38,10 @@ public class HomeController {
 
     private final MysqlKitchenStore store;
     private final ContentSecurityService contentSecurity;
-    private final com.familymenu.daily.service.AdminAuditService auditService;
 
-    public HomeController(MysqlKitchenStore store, ContentSecurityService contentSecurity,
-                          com.familymenu.daily.service.AdminAuditService auditService) {
+    public HomeController(MysqlKitchenStore store, ContentSecurityService contentSecurity) {
         this.store = store;
         this.contentSecurity = contentSecurity;
-        this.auditService = auditService;
     }
 
     @GetMapping("/home/dashboard")
@@ -132,49 +125,8 @@ public class HomeController {
         store.reportCommunityPost(postId, user.userId(), request);
     }
 
-    @GetMapping("/community/reports")
-    @RequiresPermission(AdminPermission.REPORT_REVIEW)
-    public List<CommunityReportItem> communityReports(@RequestParam(defaultValue = "PENDING") String status) {
-        return store.communityReports(status);
-    }
-
-    @PostMapping("/community/reports/{reportId}/review")
-    @RequiresPermission(AdminPermission.REPORT_REVIEW)
-    public CommunityReportItem reviewCommunityReport(@PathVariable long reportId,
-                                                     @Valid @RequestBody CommunityReportReviewRequest request,
-                                                     @CurrentUser AuthUser user) {
-        try {
-            CommunityReportItem item = store.reviewCommunityReport(reportId, user.userId(), request);
-            auditService.record(user.userId(), user.nickname(), "REVIEW_REPORT", "report", reportId,
-                    request == null ? null : request.status(), true);
-            return item;
-        } catch (RuntimeException ex) {
-            auditService.record(user.userId(), user.nickname(), "REVIEW_REPORT", "report", reportId,
-                    ex.getMessage(), false);
-            throw ex;
-        }
-    }
-
-    /** 批量处置举报：一次下架/忽略多条。 */
-    @PostMapping("/community/reports/batch-review")
-    @RequiresPermission(AdminPermission.REPORT_REVIEW)
-    public java.util.Map<String, Object> batchReviewCommunityReports(
-            @RequestBody(required = false) com.familymenu.daily.dto.AdminModels.AdminBatchStatusRequest request,
-            @CurrentUser AuthUser user) {
-        List<Long> ids = request == null ? null : request.ids();
-        String status = request == null ? null : request.status();
-        String note = request == null ? null : request.note();
-        try {
-            int done = store.batchReviewCommunityReports(ids, user.userId(), status, note);
-            auditService.record(user.userId(), user.nickname(), "BATCH_REVIEW_REPORT", "report",
-                    ids == null ? null : String.valueOf(ids.size()), status + " × " + done, true);
-            return java.util.Map.of("ok", true, "changed", done);
-        } catch (RuntimeException ex) {
-            auditService.record(user.userId(), user.nickname(), "BATCH_REVIEW_REPORT", "report", null,
-                    ex.getMessage(), false);
-            throw ex;
-        }
-    }
+    // 举报队列的读取与处置已统一收进 /api/admin/reports（运营后台是唯一入口，
+    // 小程序里的审核页已下线）。用户提交举报仍走上面的 /community/posts/{id}/report。
 
     @PostMapping("/import/preview")
     public ImportPreview previewImport(@Valid @RequestBody ParseImportRequest request) {

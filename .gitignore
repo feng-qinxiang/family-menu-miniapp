@@ -52,3 +52,4 @@ Thumbs.db
 /artifacts/**/*.jpg
 # 数据库备份（含全量业务数据，绝不进仓库）
 /artifacts/**/*.sql
+/demo-cleanup-backup-*.sql

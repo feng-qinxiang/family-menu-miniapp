@@ -8,8 +8,9 @@ spring:
     init:
       # 生产绝不允许自动执行 schema.sql / data.sql：
       # - schema.sql 含 ALTER 语句，且历史上曾有 DROP COLUMN（破坏性）
-      # - data.sql 会注入演示家庭 + 免费年卡会员
-      # 建库/迁移请用 sql/create-database.sql + src/main/resources/schema.sql（一次性执行）。
+      # - data.sql 仍会写入平台自带的公共菜谱库，生产环境应由部署方决定何时注入
+      # 建库/迁移请用 sql/create-database.sql + src/main/resources/schema.sql（一次性执行）；
+      # 公共菜谱库按需执行 data.sql。演示数据在 data-demo.sql，已由 app.seed-demo-data 关闭。
       mode: never
 
 # 生产固定关闭的两个调试开关：不随环境变量漂移。

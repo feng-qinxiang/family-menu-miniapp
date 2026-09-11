@@ -233,63 +233,6 @@ class CoreFlowTests {
     }
 
     @Test
-    void demoSeedDataSupportsLinkedPresentationPages() throws Exception {
-        String token = guestLogin();
-
-        MvcResult recipesResult = mockMvc.perform(get("/api/recipes?source=all")
-                        .header("X-Auth-Token", token))
-                .andExpect(status().isOk())
-                .andReturn();
-        JsonNode recipes = objectMapper.readTree(recipesResult.getResponse().getContentAsString());
-        assertThat(recipes.size()).isGreaterThanOrEqualTo(12);
-
-        MvcResult menuResult = mockMvc.perform(get("/api/daily-menu/today")
-                        .header("X-Auth-Token", token))
-                .andExpect(status().isOk())
-                .andReturn();
-        JsonNode menu = objectMapper.readTree(menuResult.getResponse().getContentAsString());
-        assertThat(menu.get("items").size()).isGreaterThanOrEqualTo(2);
-
-        MvcResult shoppingResult = mockMvc.perform(get("/api/shopping-list/today")
-                        .header("X-Auth-Token", token))
-                .andExpect(status().isOk())
-                .andReturn();
-        JsonNode shopping = objectMapper.readTree(shoppingResult.getResponse().getContentAsString());
-        assertThat(shopping.get("items").size()).isGreaterThanOrEqualTo(4);
-
-        MvcResult historyResult = mockMvc.perform(get("/api/cook-history")
-                        .header("X-Auth-Token", token))
-                .andExpect(status().isOk())
-                .andReturn();
-        JsonNode history = objectMapper.readTree(historyResult.getResponse().getContentAsString());
-        assertThat(history.size()).isGreaterThanOrEqualTo(8);
-
-        mockMvc.perform(get("/api/preference/profile")
-                        .header("X-Auth-Token", token))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.totalCooks").isNumber())
-                .andExpect(jsonPath("$.cuisinePrefs").isArray())
-                .andExpect(jsonPath("$.tagPrefs").isArray());
-
-        MvcResult pantryResult = mockMvc.perform(get("/api/pantry")
-                        .header("X-Auth-Token", token))
-                .andExpect(status().isOk())
-                .andReturn();
-        JsonNode pantry = objectMapper.readTree(pantryResult.getResponse().getContentAsString());
-        assertThat(pantry.size()).isGreaterThanOrEqualTo(5);
-
-        mockMvc.perform(get("/api/pantry/match")
-                        .header("X-Auth-Token", token))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray());
-
-        mockMvc.perform(get("/api/notifications")
-                        .header("X-Auth-Token", token))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.items").isArray());
-    }
-
-    @Test
     void protectedEndpointRejectsMissingToken() throws Exception {
         mockMvc.perform(post("/api/shopping-list/today/rebuild"))
                 .andExpect(status().isUnauthorized());
