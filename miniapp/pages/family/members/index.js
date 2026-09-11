@@ -183,11 +183,16 @@ Page({
 
   saveAvoid() {
     const member = this.data.editingMember;
-    this.setData({ avoidSheetVisible: false });
     if (!member) return;
+    // 保存期间保持弹层并给出 loading：此前先关弹层再发请求，慢网络下像没保存成功
+    if (this.__avoidBusy) return;
+    this.__avoidBusy = true;
+    wx.showLoading({ title: '保存中', mask: true });
     const avoidTags = this.data.avoidDraft.slice();
     updateMemberAvoidTags(member.userId, avoidTags)
       .then((updated) => {
+        wx.hideLoading();
+        this.setData({ avoidSheetVisible: false });
         const tags = updated && Array.isArray(updated.avoidTags) ? updated.avoidTags : avoidTags;
         const members = this.data.members.map((m) =>
           m.userId === member.userId
@@ -198,9 +203,10 @@ Page({
         this.showToast(tags.length ? '忌口已保存，点菜时会避开' : '已清除忌口');
       })
       .catch(() => {
-        this.setData({ editingMember: null });
+        wx.hideLoading();
         this.showToast('保存失败，请稍后再试');
-      });
+      })
+      .then(() => { this.__avoidBusy = false; });
   },
 
   // 点击移除 → 打开确认弹窗
@@ -220,10 +226,14 @@ Page({
 
   onRemoveConfirm() {
     const target = this.data.pendingRemove;
-    this.setData({ removeDialogVisible: false });
     if (!target) return;
+    if (this.__removeBusy) return;
+    this.__removeBusy = true;
+    this.setData({ removeDialogVisible: false });
+    wx.showLoading({ title: '移除中', mask: true });
     removeFamilyMember(target.userId)
       .then(() => {
+        wx.hideLoading();
         const members = this.data.members.filter((m) => m.userId !== target.userId);
         this.setData({
           members,
@@ -233,9 +243,11 @@ Page({
         this.showToast('已移除「' + target.nickname + '」');
       })
       .catch(() => {
+        wx.hideLoading();
         this.setData({ pendingRemove: null });
         this.showToast('移除失败，请稍后再试');
-      });
+      })
+      .then(() => { this.__removeBusy = false; });
   },
 
   // 邀请新成员：跳转到邀请码页面，由对方扫码/输码加入

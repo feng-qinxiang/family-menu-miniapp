@@ -395,7 +395,8 @@
 }
 .mn-seg-item {
   flex: 1;
-  height: 66rpx;
+  /* 分段 tab 高度 88rpx：低于此值手指容易点偏（尤其在移动中） */
+  height: 88rpx;
   display: flex;
   align-items: center;
   justify-content: center;

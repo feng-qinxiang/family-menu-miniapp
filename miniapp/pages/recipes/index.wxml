@@ -40,7 +40,7 @@
       <scroll-view scroll-x class="rx-chips" enhanced="{{true}}" show-scrollbar="{{false}}">
         <view class="rx-chips-inner">
           <view wx:for="{{sourceTabs}}" wx:key="key"
-            class="chip rx-chip {{activeSource === item.key ? 'on' : ''}}"
+            class="tap-scale chip rx-chip {{activeSource === item.key ? 'on' : ''}}"
             data-source="{{item.key}}" bindtap="selectSource">
             <view class="rx-sdot rx-sdot--{{item.key}}"></view>
             {{item.label}}
@@ -69,9 +69,9 @@
         <text class="rx-qf-label">菜系</text>
         <scroll-view scroll-x class="rx-qf-scroll" enhanced="{{true}}" show-scrollbar="{{false}}">
           <view class="rx-qf-chips">
-            <view class="rx-qf-chip {{!advFilter.cuisine ? 'on' : ''}}" data-val="" bindtap="setFilterCuisine">全部</view>
+            <view class="tap-scale rx-qf-chip {{!advFilter.cuisine ? 'on' : ''}}" data-val="" bindtap="setFilterCuisine">全部</view>
             <view wx:for="{{cuisineList}}" wx:key="*this"
-              class="rx-qf-chip {{advFilter.cuisine === item ? 'on' : ''}}"
+              class="tap-scale rx-qf-chip {{advFilter.cuisine === item ? 'on' : ''}}"
               data-val="{{item}}" bindtap="setFilterCuisine">{{item}}</view>
           </view>
         </scroll-view>
@@ -80,19 +80,19 @@
       <view class="rx-qf-row">
         <text class="rx-qf-label">耗时</text>
         <view class="rx-qf-chips">
-          <view class="rx-qf-chip {{advFilter.maxTime === 0 ? 'on' : ''}}" data-val="0" bindtap="setFilterTime">不限</view>
-          <view class="rx-qf-chip {{advFilter.maxTime === 15 ? 'on' : ''}}" data-val="15" bindtap="setFilterTime">15分钟</view>
-          <view class="rx-qf-chip {{advFilter.maxTime === 30 ? 'on' : ''}}" data-val="30" bindtap="setFilterTime">30分钟</view>
-          <view class="rx-qf-chip {{advFilter.maxTime === 60 ? 'on' : ''}}" data-val="60" bindtap="setFilterTime">60分钟</view>
+          <view class="tap-scale rx-qf-chip {{advFilter.maxTime === 0 ? 'on' : ''}}" data-val="0" bindtap="setFilterTime">不限</view>
+          <view class="tap-scale rx-qf-chip {{advFilter.maxTime === 15 ? 'on' : ''}}" data-val="15" bindtap="setFilterTime">15分钟</view>
+          <view class="tap-scale rx-qf-chip {{advFilter.maxTime === 30 ? 'on' : ''}}" data-val="30" bindtap="setFilterTime">30分钟</view>
+          <view class="tap-scale rx-qf-chip {{advFilter.maxTime === 60 ? 'on' : ''}}" data-val="60" bindtap="setFilterTime">60分钟</view>
         </view>
       </view>
       <!-- 人份 -->
       <view class="rx-qf-row">
         <text class="rx-qf-label">人份</text>
         <view class="rx-qf-chips">
-          <view class="rx-qf-chip {{advFilter.minServings === 0 ? 'on' : ''}}" data-val="0" bindtap="setFilterServings">不限</view>
-          <view class="rx-qf-chip {{advFilter.minServings === 2 ? 'on' : ''}}" data-val="2" bindtap="setFilterServings">2人+</view>
-          <view class="rx-qf-chip {{advFilter.minServings === 4 ? 'on' : ''}}" data-val="4" bindtap="setFilterServings">4人+</view>
+          <view class="tap-scale rx-qf-chip {{advFilter.minServings === 0 ? 'on' : ''}}" data-val="0" bindtap="setFilterServings">不限</view>
+          <view class="tap-scale rx-qf-chip {{advFilter.minServings === 2 ? 'on' : ''}}" data-val="2" bindtap="setFilterServings">2人+</view>
+          <view class="tap-scale rx-qf-chip {{advFilter.minServings === 4 ? 'on' : ''}}" data-val="4" bindtap="setFilterServings">4人+</view>
         </view>
       </view>
       <!-- 一键清空 -->
@@ -154,7 +154,7 @@
     </view>
 
     <!-- 上拉加载 -->
-    <view wx:if="{{!loading && hasMore}}" class="rx-loadmore" bindtap="loadMore">
+    <view wx:if="{{!loading && hasMore}}" class="tap-scale rx-loadmore" bindtap="loadMore">
       <view class="rx-loadmore-chev"></view>
       上拉加载更多 · 还有 {{remainCount}} 道
     </view>
@@ -177,8 +177,8 @@
 
   <!-- ===== 餐盘 tray ===== -->
   <view class="rx-tray" wx:if="{{!loading}}">
-    <view class="rx-tray-badge" bindtap="goMenu">{{menuTray.count}}</view>
-    <view class="rx-tray-copy" bindtap="goMenu">
+    <view class="tap-scale rx-tray-badge" bindtap="goMenu">{{menuTray.count}}</view>
+    <view class="tap-scale rx-tray-copy" bindtap="goMenu">
       <view class="rx-tray-t">今日餐盘</view>
       <view class="rx-tray-s">{{menuTray.names}}</view>
     </view>

@@ -24,7 +24,7 @@
     <image class="rc-ph-img" src="{{cover}}" mode="aspectFill" />
     <view wx:if="{{label}}" class="rc-lbl">{{label}}</view>
     <view wx:if="{{badgeText}}" class="rc-badge {{selected ? 'is-hot' : ''}}">{{badgeText}}</view>
-    <view wx:if="{{showFav}}" class="rc-fav {{favorited ? 'on' : ''}}" catchtap="onFav">
+    <view wx:if="{{showFav}}" class="rc-fav tap-scale {{favorited ? 'on' : ''}}" catchtap="onFav">
       <view class="rc-fav-dot"></view>
     </view>
     <view

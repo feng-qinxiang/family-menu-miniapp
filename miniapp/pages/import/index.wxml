@@ -76,8 +76,8 @@
           <view class="res-cover">
             <image wx:if="{{preview.coverImage}}" class="res-cover-img" src="{{preview.coverImage}}" mode="aspectFill" />
             <image wx:else class="res-cover-img" src="/assets/dishes/orange-chicken.jpg" mode="aspectFill" />
-            <view wx:if="{{!preview.coverImage}}" class="res-cover-add" bindtap="chooseCover">+ 封面</view>
-            <view wx:else class="res-cover-del" catchtap="removeCover">×</view>
+            <view wx:if="{{!preview.coverImage}}" class="tap-scale res-cover-add" bindtap="chooseCover">+ 封面</view>
+            <view wx:else class="tap-scale res-cover-del" catchtap="removeCover">×</view>
           </view>
           <view class="res-info">
             <text class="res-tag">已解析</text>
@@ -99,7 +99,7 @@
             <view
               wx:for="{{difficultyOptions}}"
               wx:key="key"
-              class="chip diff-chip {{preview.difficulty === item.key ? 'on' : ''}}"
+              class="tap-scale chip diff-chip {{preview.difficulty === item.key ? 'on' : ''}}"
               data-key="{{item.key}}"
               bindtap="selectDifficulty"
             >{{item.label}}</view>
@@ -126,10 +126,10 @@
             <view class="sno">{{index + 1}}</view>
             <view class="step-main">
               <view class="stext">{{item.text}}</view>
-              <view class="step-img-add" wx:if="{{!item.image}}" data-index="{{index}}" bindtap="chooseStepImage">+ 配图</view>
+              <view class="tap-scale step-img-add" wx:if="{{!item.image}}" data-index="{{index}}" bindtap="chooseStepImage">+ 配图</view>
               <view class="step-img-wrap" wx:else>
                 <image class="step-img" src="{{item.image}}" mode="aspectFill" />
-                <view class="step-img-del" data-index="{{index}}" catchtap="removeStepImage">×</view>
+                <view class="tap-scale step-img-del" data-index="{{index}}" catchtap="removeStepImage">×</view>
               </view>
             </view>
           </view>
@@ -168,7 +168,7 @@
           </view>
         </view>
       </block>
-      <view wx:elif="{{recentLoadFailed}}" class="recent-failed" bindtap="loadRecent">
+      <view wx:elif="{{recentLoadFailed}}" class="tap-scale recent-failed" bindtap="loadRecent">
         最近导入加载失败，点这里重试
       </view>
     </view>

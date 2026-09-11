@@ -10,7 +10,7 @@
       <view class="dn ellipsis">{{dishName || '烹饪模式'}}</view>
       <view class="prog" wx:if="{{total}}">{{steps[current].cn}} · {{current + 1}}/{{total}}</view>
     </view>
-    <view class="nbtn keep {{running ? 'on' : ''}}" catchtap="toggleTimer">
+    <view class="tap-scale nbtn keep {{running ? 'on' : ''}}" catchtap="toggleTimer">
       <view class="ic-clock-sm keep-ic"></view>
       <text class="keep-tx">计时</text>
     </view>
@@ -77,7 +77,7 @@
 
       <!-- 计时卡 -->
       <view wx:if="{{hasTimer}}" class="timer">
-        <view class="tl" catchtap="pickDuration">
+        <view class="tap-scale tl" catchtap="pickDuration">
           <view class="cap">这一步计时 <text class="cap-pick">换时长 ›</text></view>
           <view class="num">{{timerText[0]}}{{timerText[1]}}<text class="pop">:</text>{{timerText[3]}}{{timerText[4]}}</view>
         </view>

@@ -74,10 +74,14 @@
 
 .notice-action {
   display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font-size: 22rpx;
   color: var(--c-surface);
   margin-top: 12rpx;
-  padding: 8rpx 18rpx;
+  /* 触控高度 88rpx：原 8rpx 上下内边距只有约 50rpx 高，容易点空 */
+  min-height: 88rpx;
+  padding: 0 30rpx;
   border-radius: var(--r-pill);
   background: var(--c-primary);
   font-weight: var(--w-semi);

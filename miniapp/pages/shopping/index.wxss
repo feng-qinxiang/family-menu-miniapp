@@ -409,7 +409,8 @@
 }
 .sp-seg-item {
   flex: 1;
-  height: 66rpx;
+  /* 分段 tab 高度 88rpx */
+  height: 88rpx;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -176,17 +176,25 @@ Page({
     const action = this.data._pendingAction;
     this.setData({ dialogVisible: false });
     if (!action) return;
+    // 处置是敏感操作，请求期间必须有进行中反馈且不能重复点
+    if (this._reviewing) return;
+    this._reviewing = true;
+    wx.showLoading({ title: '处理中', mask: true });
     try {
       await reviewCommunityReport(action.reportId, {
         status: action.status,
         note: action.note
       });
+      wx.hideLoading();
       this.showToast(action.status === 'IGNORED' ? '已忽略' : '已删除');
       this.setData({ _pendingAction: null });
       await this.loadReports();
     } catch (e) {
+      wx.hideLoading();
       this.setData({ _pendingAction: null });
       this.showToast('操作失败，请重试');
+    } finally {
+      this._reviewing = false;
     }
   },
 

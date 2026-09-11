@@ -57,8 +57,9 @@
 .mh-iconbtn {
   position: relative;
   box-sizing: border-box;
-  width: 80rpx;
-  height: 80rpx;
+  /* 触控 88rpx（原 80rpx，顶部图标按钮偏小） */
+  width: 88rpx;
+  height: 88rpx;
   border-radius: 50%;
   background: rgba(20, 14, 8, 0.48);
   border: 2rpx solid rgba(255, 255, 255, 0.55);
@@ -173,7 +174,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 80rpx;
+  height: 88rpx;
   border-radius: var(--r-pill);
   background: var(--pop);
   color: var(--c-surface);
@@ -511,7 +512,8 @@
 }
 .fp-wish-caret.up { transform: rotate(-135deg); }
 .fp-wish-add {
-  height: 60rpx;
+  /* 触控 88rpx：原 60rpx，是许愿池的主操作 */
+  height: 88rpx;
   padding: 0 22rpx;
   display: flex;
   align-items: center;
@@ -547,13 +549,24 @@
 }
 .fp-wish-by { font-size: 22rpx; color: var(--mut-strong); font-weight: 600; }
 .fp-wish-del {
-  width: 64rpx;   /* 适老触点 ≥64rpx（原 44rpx 偏小） */
+  position: relative;
+  width: 64rpx;   /* 视觉 64rpx，热区由 ::after 撑到 88rpx */
   height: 64rpx;
   border-radius: 50%;
   background: var(--c-surface);
   display: flex; align-items: center; justify-content: center;
   font-size: 32rpx; color: var(--mut);
   border: 2rpx solid var(--c-border);
+}
+
+.fp-wish-del::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 88rpx;
+  height: 88rpx;
+  transform: translate(-50%, -50%);
 }
 .fp-wish-confirm {
   margin-top: 22rpx;

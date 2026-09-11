@@ -4,20 +4,20 @@
 
 <block wx:else>
 <view class="rc-seg">
-  <view class="rc-seg-item {{editTab === 'info' ? 'on' : ''}}" data-tab="info" bindtap="switchTab">介绍</view>
-  <view class="rc-seg-item {{editTab === 'ings' ? 'on' : ''}}" data-tab="ings" bindtap="switchTab">用料</view>
-  <view class="rc-seg-item {{editTab === 'steps' ? 'on' : ''}}" data-tab="steps" bindtap="switchTab">步骤</view>
+  <view class="tap-scale rc-seg-item {{editTab === 'info' ? 'on' : ''}}" data-tab="info" bindtap="switchTab">介绍</view>
+  <view class="tap-scale rc-seg-item {{editTab === 'ings' ? 'on' : ''}}" data-tab="ings" bindtap="switchTab">用料</view>
+  <view class="tap-scale rc-seg-item {{editTab === 'steps' ? 'on' : ''}}" data-tab="steps" bindtap="switchTab">步骤</view>
 </view>
 
 <view class="rc-body">
   <text class="rc-tip" wx:if="{{tipText}}">{{tipText}}</text>
 
   <block wx:if="{{editTab === 'info'}}">
-    <view class="rc-cover" wx:if="{{form.coverImage}}" bindtap="chooseCover">
+    <view class="tap-scale rc-cover" wx:if="{{form.coverImage}}" bindtap="chooseCover">
       <image class="rc-cover-img" src="{{form.coverImage}}" mode="aspectFill" />
-      <view class="rc-cover-x" catchtap="removeCover">×</view>
+      <view class="tap-scale rc-cover-x" catchtap="removeCover">×</view>
     </view>
-    <view class="rc-addcover" wx:else bindtap="chooseCover">添加封面</view>
+    <view class="tap-scale rc-addcover" wx:else bindtap="chooseCover">添加封面</view>
 
     <input
       class="rc-title"
@@ -71,7 +71,7 @@
 
     <view class="rc-dseg">
       <view
-        class="rc-dseg-i {{form.difficulty === item.key ? 'on' : ''}}"
+        class="tap-scale rc-dseg-i {{form.difficulty === item.key ? 'on' : ''}}"
         wx:for="{{difficultyOptions}}"
         wx:key="key"
         data-key="{{item.key}}"
@@ -85,7 +85,7 @@
       <input class="rc-ing-name" placeholder="食材" placeholder-class="rc-ph" value="{{item.name}}" bindinput="onIngredientInput" data-index="{{index}}" data-field="name" />
       <input class="rc-ing-amt" placeholder="用量" placeholder-class="rc-ph" value="{{item.amount}}" bindinput="onIngredientInput" data-index="{{index}}" data-field="amount" />
       <input class="rc-ing-unit" placeholder=" " placeholder-class="rc-ph" value="{{item.unit}}" bindinput="onIngredientInput" data-index="{{index}}" data-field="unit" />
-      <text class="rc-ing-x" data-index="{{index}}" bindtap="removeIngredient">×</text>
+      <text class="tap-scale rc-ing-x" data-index="{{index}}" bindtap="removeIngredient">×</text>
     </view>
     <view class="rc-more tap-scale" bindtap="addIngredient">再加一行</view>
   </block>
@@ -94,18 +94,18 @@
     <view class="rc-video-line tap-scale" wx:if="{{!form.videoUrl}}" bindtap="chooseLessonVideo">添加教学视频</view>
     <view class="rc-video" wx:else>
       <video class="rc-video-player" src="{{form.videoUrl}}" controls object-fit="cover" />
-      <view class="rc-cover-x" catchtap="removeLessonVideo">×</view>
+      <view class="tap-scale rc-cover-x" catchtap="removeLessonVideo">×</view>
     </view>
 
     <view class="rc-step" wx:for="{{form.steps}}" wx:key="index">
       <view class="rc-step-bar">
         <text class="rc-step-n">{{index + 1}}</text>
-        <text class="rc-step-del" data-index="{{index}}" bindtap="removeStep">删除</text>
+        <text class="tap-scale rc-step-del" data-index="{{index}}" bindtap="removeStep">删除</text>
       </view>
-      <view class="rc-shot" wx:if="{{!item.image}}" data-index="{{index}}" bindtap="chooseStepImage">加一张图</view>
-      <view class="rc-shot has" wx:else>
+      <view class="tap-scale rc-shot" wx:if="{{!item.image}}" data-index="{{index}}" bindtap="chooseStepImage">加一张图</view>
+      <view class="tap-scale rc-shot has" wx:else>
         <image class="rc-shot-img" src="{{item.image}}" mode="aspectFill" data-index="{{index}}" bindtap="chooseStepImage" />
-        <view class="rc-cover-x" data-index="{{index}}" catchtap="removeStepImage">×</view>
+        <view class="tap-scale rc-cover-x" data-index="{{index}}" catchtap="removeStepImage">×</view>
       </view>
       <textarea
         wx:if="{{editingStep === index}}"
@@ -132,14 +132,14 @@
 </view>
 
 <view class="rc-footbar">
-  <view class="btn btn-pop btn-block tap-scale" bindtap="submit">保存</view>
+  <view class="btn btn-pop btn-block tap-scale {{saving ? 'is-busy' : ''}}" bindtap="submit">{{saving ? '保存中…' : '保存'}}</view>
 </view>
 
 <state-sheet visible="{{pickSheet.visible}}" title="{{pickSheet.mode === 'cuisine' ? '菜系' : '标签'}}" bind:close="closePickSheet">
   <view class="rc-pick-list">
     <block wx:if="{{pickSheet.mode === 'cuisine'}}">
       <view
-        class="rc-pick-opt {{form.cuisine === item ? 'on' : ''}}"
+        class="tap-scale rc-pick-opt {{form.cuisine === item ? 'on' : ''}}"
         wx:for="{{cuisineOptions}}"
         wx:key="*this"
         data-value="{{item}}"
@@ -148,7 +148,7 @@
     </block>
     <block wx:else>
       <view
-        class="rc-pick-opt {{item.active ? 'on' : ''}}"
+        class="tap-scale rc-pick-opt {{item.active ? 'on' : ''}}"
         wx:for="{{commonTags}}"
         wx:key="name"
         data-tag="{{item.name}}"
@@ -168,7 +168,7 @@
       <image
         wx:for="{{pickerImages}}"
         wx:key="*this"
-        class="rc-pick-cell"
+        class="tap-scale rc-pick-cell"
         src="{{item}}"
         mode="aspectFill"
         data-url="{{item}}"

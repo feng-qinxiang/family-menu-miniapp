@@ -12,7 +12,7 @@
   <view
     wx:if="{{more || hint}}"
     class="seeall {{more ? 'tap-scale' : ''}}"
-    bindtap="onMore"
+    bindtap="{{more ? 'onMore' : ''}}"
   >
     <text class="seeall-hint">{{hint || '全部'}}</text>
     <text wx:if="{{more}}" class="seeall-chev"> ›</text>

@@ -16,6 +16,7 @@
  *   3. 所有 .wxss 花括号是否配平、是否误用了 // 注释（WXSS 不支持）
  *   4. .wxml 里引用的本地图片是否存在
  *   5. .json 里 usingComponents 指向的组件是否存在
+ *   6. .wxml 里 bind / catch 绑定的处理函数是否真实存在（点了没反应的头号原因）
  *
  * 退出码：有问题返回 1（可直接用于 CI）
  */
@@ -100,6 +101,37 @@ for (const page of declaredPages) {
 }
 
 const files = walk(ROOT);
+
+// ---- 6. 事件处理函数存在性 ----
+// 点了没反应 = 用户直接判定"这个页面坏了"。绑定名与实现名拼错（navigateTo vs navigateto、
+// 删了 js 方法忘了删 wxml）在编辑器里都不会报错，所以放进静态检查。
+// 处理函数可能定义在：页面 js 本体、behaviors/、app.js（全局方法）。
+const behaviorsDir = path.join(ROOT, 'behaviors');
+const sharedSources = [];
+if (fs.existsSync(behaviorsDir)) {
+  for (const f of walk(behaviorsDir)) if (f.endsWith('.js')) sharedSources.push(fs.readFileSync(f, 'utf8'));
+}
+const appJsPath = path.join(ROOT, 'app.js');
+if (fs.existsSync(appJsPath)) sharedSources.push(fs.readFileSync(appJsPath, 'utf8'));
+
+const EVENT_ATTR = /\b(?:bind|catch|mut-bind)(?::)?([a-zA-Z-]+)\s*=\s*"([^"{}]+)"/g;
+for (const file of files) {
+  if (!file.endsWith('.wxml')) continue;
+  const src = fs.readFileSync(file, 'utf8');
+  const jsPath = file.replace(/\.wxml$/, '.js');
+  if (!fs.existsSync(jsPath)) continue;   // 组件根 wxml 等情况，另有检查
+  const js = fs.readFileSync(jsPath, 'utf8');
+  const seen = new Set();
+  for (const m of src.matchAll(EVENT_ATTR)) {
+    const handler = m[2].trim();
+    if (!handler || seen.has(handler)) continue;
+    seen.add(handler);
+    const pattern = new RegExp(`(^|[^\\w$])${handler.replace(/[$]/g, '\\$')}\\s*[(:]`);
+    if (pattern.test(js)) continue;
+    if (sharedSources.some((s) => pattern.test(s))) continue;
+    problems.push(`点击无响应 ${rel(file)} -> ${m[1]}="${handler}" 在 js / behaviors / app.js 中找不到实现`);
+  }
+}
 
 for (const file of files) {
   const r = rel(file);

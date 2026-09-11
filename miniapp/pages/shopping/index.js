@@ -93,7 +93,7 @@ Page({
     let fontScale = 'normal';
     try { fontScale = wx.getStorageSync('font_scale') || 'normal'; } catch (e) { fontScale = 'normal'; }
     if (fontScale !== this.data.fontScale) this.setData({ fontScale });
-    this.loadShoppingList();
+    Promise.resolve(this.loadShoppingList(this._hasLoaded === true)).then(() => { this._hasLoaded = true; });
   },
 
   onPageScroll(e) {
@@ -109,7 +109,8 @@ Page({
     }
   },
 
-  async loadShoppingList() {
+  async loadShoppingList(silent) {
+    if (!silent) this.setData({ loading: true });
     this.setData({ loadError: false });
     try {
       const [shoppingList, todayMenu, pantryItems] = await Promise.all([
@@ -208,7 +209,18 @@ Page({
     }
   },
 
+  // 「按今日菜单重新整理」会覆盖当前清单（手动补充的条目会被重算），属破坏性操作
   async refreshList() {
+    const res = await wx.showModal({
+      title: '按今日菜单重新整理？',
+      content: '会按今天的菜单重算食材，清单里手动添加的条目将被覆盖。',
+      confirmText: '重新整理',
+      cancelText: '取消'
+    });
+    if (!res.confirm) return;
+    if (this.data.refreshingList) return;
+    this.setData({ refreshingList: true });
+    wx.showLoading({ title: '整理中', mask: true });
     try {
       const [shoppingList, todayMenu, pantryItems] = await Promise.all([
         rebuildShoppingList(),
@@ -217,9 +229,13 @@ Page({
       ]);
       this._lastContext = { todayMenu, pantryItems };
       this.applyShoppingList(shoppingList, { todayMenu, pantryItems });
+      wx.hideLoading();
       wx.showToast({ title: '已按菜单整理', icon: 'success' });
     } catch (err) {
+      wx.hideLoading();
       wx.showToast({ title: '整理失败，请重试', icon: 'none' });
+    } finally {
+      this.setData({ refreshingList: false });
     }
   },
 
@@ -273,6 +289,8 @@ Page({
     }
     let result;
     this.setData({ addItemSubmitting: true });
+    // 添加后还会串行补拉菜单与库存明细，全程没有反馈会让用户以为没点上
+    wx.showLoading({ title: '添加中', mask: true });
     try {
       result = await addShoppingItem({
         ingredientName,
@@ -280,6 +298,7 @@ Page({
         unit: payload.unit || ''
       });
     } catch (err) {
+      wx.hideLoading();
       this.setData({ addItemSubmitting: false });
       wx.showToast({ title: '添加失败，请重试', icon: 'none' });
       return;
@@ -292,6 +311,7 @@ Page({
       } catch (err) {
         wx.showToast({ title: '清单已更新，明细刷新失败', icon: 'none' });
       }
+      wx.hideLoading();
       const nextState = this.buildShoppingState(result, context);
       if (shouldClearInput) {
         nextState.newItem = { ingredientName: '', amount: '', unit: '' };

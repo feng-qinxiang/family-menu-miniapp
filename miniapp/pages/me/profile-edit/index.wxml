@@ -32,9 +32,9 @@
         <view class="pe-fic"><view class="pe-ic-dot"></view></view>
         <text class="pe-flabel">性别</text>
         <view class="pe-pillrow">
-          <view class="chip pe-pill {{form.gender === 'male' ? 'on' : ''}}"
+          <view class="tap-scale chip pe-pill {{form.gender === 'male' ? 'on' : ''}}"
             data-g="male" catchtap="onGender">男</view>
-          <view class="chip pe-pill {{form.gender === 'female' ? 'on' : ''}}"
+          <view class="tap-scale chip pe-pill {{form.gender === 'female' ? 'on' : ''}}"
             data-g="female" catchtap="onGender">女</view>
         </view>
       </view>
@@ -68,7 +68,7 @@
         </view>
         <view class="pe-tagwrap">
           <view wx:for="{{tasteOptions}}" wx:key="*this"
-            class="chip pe-tag {{form.tasteTags.indexOf(item) >= 0 ? 'on' : ''}}"
+            class="tap-scale chip pe-tag {{form.tasteTags.indexOf(item) >= 0 ? 'on' : ''}}"
             data-tag="{{item}}" catchtap="onToggleTaste">{{item}}</view>
         </view>
       </view>

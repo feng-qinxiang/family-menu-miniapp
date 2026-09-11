@@ -65,10 +65,12 @@ Page({
     let fontScale = 'normal';
     try { fontScale = wx.getStorageSync('font_scale') || 'normal'; } catch (e) { fontScale = 'normal'; }
     if (fontScale !== this.data.fontScale) this.setData({ fontScale });
-    this.loadProfile();
+    // 首次进页面给骨架；之后切回来静默刷新即可
+    Promise.resolve(this.loadProfile(this._hasLoaded === true)).then(() => { this._hasLoaded = true; });
   },
 
-  async loadProfile() {
+  async loadProfile(silent) {
+    if (!silent) this.setData({ loading: true, loadError: '' });
     try {
       const [currentUser, vipStatus, familyProfile, todayMenu, cookHistory, preference, dashboard] = await Promise.all([
         getCurrentUser(),

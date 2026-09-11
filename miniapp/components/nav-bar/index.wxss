@@ -25,6 +25,17 @@
   border-radius: 50%;
   background: var(--ink-deep);
   flex: none;
+  position: relative;
+}
+/* 触控热区扩到 88rpx：图标仍是 64rpx，但手指更容易点中 */
+.navbar-back::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 88rpx;
+  height: 88rpx;
+  transform: translate(-50%, -50%);
 }
 .navbar-back--hover { opacity: 0.85; }
 .navbar-side { width: 64rpx; height: 64rpx; flex: none; }

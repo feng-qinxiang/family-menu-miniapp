@@ -298,7 +298,7 @@
   font-size: var(--fs-cap);
   font-weight: 800;
   padding: 0 40rpx;
-  min-height: 84rpx;
+  min-height: 88rpx;
   border-radius: var(--r-pill);
   box-shadow: var(--sh-pop);
 }
@@ -358,6 +358,8 @@
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.5);
   color: var(--c-surface);
+  /* 触控热区 88rpx（视觉仍是 40rpx 的圆） */
+  position: absolute;
   font-size: 28rpx;
   line-height: 40rpx;
   text-align: center;
@@ -457,6 +459,17 @@
 }
 .step-img-wrap { position: relative; margin-top: 14rpx; width: 160rpx; height: 160rpx; border-radius: 20rpx; overflow: hidden; }
 .step-img { width: 100%; height: 100%; }
+.step-img-del::after,
+.res-cover-del::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 88rpx;
+  height: 88rpx;
+  transform: translate(-50%, -50%);
+}
+
 .step-img-del {
   position: absolute;
   right: 6rpx;

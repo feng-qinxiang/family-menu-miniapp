@@ -88,7 +88,19 @@
   color: var(--mut-2);
   font-weight: 500;
 }
+.clr::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 88rpx;
+  height: 88rpx;
+  transform: translate(-50%, -50%);
+}
+
 .clr {
+  /* 点击区域 88rpx（视觉圆点 38rpx 不变） */
+  position: relative;
   width: 38rpx;
   height: 38rpx;
   border-radius: 50%;

@@ -68,6 +68,14 @@ Page({
 
   async regenerate() {
     if (this._regenerating) return;
+    // 重新排菜会整体覆盖本周菜单，先确认，避免误触把已排好的菜换掉
+    const res = await wx.showModal({
+      title: '重新排一版本周菜单？',
+      content: '会按全家口味重新生成七天安排，覆盖当前这一版。',
+      confirmText: '重新排',
+      cancelText: '取消'
+    });
+    if (!res.confirm) return;
     this._regenerating = true;
     wx.showLoading({ title: '排菜中', mask: true });
     try {

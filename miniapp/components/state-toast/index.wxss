@@ -78,8 +78,9 @@
 
 .st-close {
   margin-left: auto;
-  width: 52rpx;
-  height: 52rpx;
+  /* 关闭键触控区域 88rpx（视觉图标不变） */
+  width: 88rpx;
+  height: 88rpx;
   border-radius: 50%;
   background: var(--paper-2);
   display: flex;
@@ -165,6 +166,10 @@
   white-space: nowrap;
 }
 .st-retry {
+  min-height: 88rpx;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   margin-left: 8rpx;
   flex: none;
   font-size: var(--fs-sub);
@@ -219,6 +224,10 @@
   background: var(--gold);
 }
 .st-undo {
+  min-height: 88rpx;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   flex: none;
   font-size: var(--fs-sub);
   font-weight: 800;

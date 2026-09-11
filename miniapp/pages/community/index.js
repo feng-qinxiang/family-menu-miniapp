@@ -5,6 +5,7 @@ const {
   toggleCommunityFavorite,
   toggleCommunityLike
 } = require('../../utils/api');
+const { runGuarded, guard, release } = require('../../utils/interaction');
 const { withTabSelect } = require('../../behaviors/tab-select');
 
 const reportReasons = ['内容不实', '步骤不全', '疑似搬运', '其他'];
@@ -38,6 +39,7 @@ Page({
     loadError: false,
     communitySummary: { postCount: 0, commentCount: 0, favoriteCount: 0 },
     postSubmitting: false,
+    reportSubmitting: false,
     favoriting: false,
     reportReasons,
     activeReportReason: '内容不实',
@@ -65,7 +67,7 @@ Page({
       let fontScale = 'normal';
       try { fontScale = wx.getStorageSync('font_scale') || 'normal'; } catch (e) { fontScale = 'normal'; }
       if (fontScale !== this.data.fontScale) this.setData({ fontScale });
-      this.loadPosts();
+      Promise.resolve(this.loadPosts(this._hasLoaded === true)).then(() => { this._hasLoaded = true; });
     },
 
     // 页面滚动在内层 scroll-view，页面级 onPullDownRefresh 不会触发；
@@ -88,8 +90,10 @@ Page({
     this.setData({ scrollTopTo: this.data.scrollTopTo === 0 ? 0.1 : 0 });
   },
 
-  async loadPosts() {
-    this.setData({ loading: true, loadError: false });
+    // silent=true：已有数据时的「回页刷新」，不显示整页骨架（避免切 tab 闪一下）
+  async loadPosts(silent) {
+    if (!silent) this.setData({ loading: true });
+    this.setData({ loadError: false });
     let posts = [];
     try {
       posts = this.normalizePosts(await getCommunityPosts() || []);
@@ -160,13 +164,18 @@ Page({
     wx.navigateTo({ url: `/pages/recipe-detail/index?id=${recipeId}` });
   },
 
-  // 点赞：先本地乐观翻转（跟手），失败回滚
+  // 点赞：先本地乐观翻转（跟手），失败回滚；在途期间忽略重复点击
   async toggleLike(event) {
     const { id } = event.currentTarget.dataset;
     if (!id) return;
+    const key = `like-${id}`;
+    if (!guard(this, key)) return;
     const before = this.data.posts;
     const target = before.find((p) => String(p.id) === String(id));
-    if (!target) return;
+    if (!target) {
+      release(this, key);
+      return;
+    }
     const optimistic = before.map((p) => (
       String(p.id) === String(id)
         ? {
@@ -179,7 +188,11 @@ Page({
     this.setData({ posts: optimistic });
     try {
       const updated = await toggleCommunityLike(id);
-      if (!updated) return;
+      if (!updated) {
+        // 服务端没返回可用数据时同样要回滚，否则本地与服务端不一致
+        this.setData({ posts: before });
+        return;
+      }
       const normalizedUpdated = this.normalizePosts([updated])[0];
       this.setData({
         posts: this.data.posts.map((p) => (
@@ -189,6 +202,8 @@ Page({
     } catch (err) {
       this.setData({ posts: before });
       wx.showToast({ title: '点赞失败，请重试', icon: 'none' });
+    } finally {
+      release(this, key);
     }
   },
 
@@ -244,16 +259,24 @@ Page({
     if (!postId) {
       return;
     }
-    try {
+    // 防重：弹层到成功之间可反复点，此前会重复提交同一举报
+    this.setData({ reportSubmitting: true });
+    let ok = false;
+    await runGuarded(this, `report-${postId}`, async () => {
       await reportCommunityPost(postId, {
         reason: this.data.activeReportReason,
         description: (this.data.reportDesc || '').trim()
       });
-      this.setData({ showReportSheet: false, reportDesc: '' });
-      wx.showToast({ title: '已提交举报，感谢反馈', icon: 'none' });
-    } catch (err) {
-      wx.showToast({ title: '举报失败，请重试', icon: 'none' });
-    }
+      ok = true;
+    }, {
+      loading: '提交中',
+      success: '',
+      fail: '举报失败，请重试'
+    });
+    this.setData({ reportSubmitting: false });
+    if (!ok) return;
+    this.setData({ showReportSheet: false, reportDesc: '' });
+    wx.showToast({ title: '已提交举报，感谢反馈', icon: 'none' });
   },
 
   togglePostForm() {

@@ -132,6 +132,9 @@ Page({
 
   // 全部已读：真调接口（空 ids = 全部）
   onReadAll() {
+    // 防重：乐观更新 + 请求在途时再点会重复提交
+    if (this.__readAllBusy) return;
+    this.__readAllBusy = true;
     const all = (this.data.all || []).map((n) => ({ ...n, unread: false }));
     this.setData({ all }, () => this.recompute());
     markNotificationsRead([])
@@ -139,7 +142,8 @@ Page({
       .catch(() => {
         this.showToast('操作失败，请稍后重试');
         this.loadData();
-      });
+      })
+      .then(() => { this.__readAllBusy = false; });
   },
 
   // 点击卡片 → 标记已读
@@ -164,7 +168,12 @@ Page({
     if (!changed) return;
     this.setData({ all }, () => this.recompute());
     markNotificationsRead([id]).catch(() => {
-      // 失败回滚由下次进入页面重新拉取纠正
+      // 失败要回滚本地状态：此前只在下次进页面时才纠正，
+      // 用户会看到"已读"却仍收到未读计数，两处不一致
+      const rolled = (this.data.all || []).map((n) => (
+        n.id === id ? { ...n, unread: true } : n
+      ));
+      this.setData({ all: rolled }, () => this.recompute());
     });
   },
 

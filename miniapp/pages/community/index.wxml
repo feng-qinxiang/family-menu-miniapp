@@ -81,7 +81,7 @@
             <!-- 关联菜谱 -->
             <view
               wx:if="{{item.recipe}}"
-              class="precipe"
+              class="tap-scale precipe"
               catchtap="openRecipe"
               data-recipe-id="{{item.recipe.id}}"
             >
@@ -102,24 +102,24 @@
             <!-- 操作栏 -->
             <view class="pactions">
               <view
-                class="pa-btn {{item.liked ? 'on' : ''}}"
+                class="tap-scale pa-btn {{item.liked ? 'on' : ''}}"
                 catchtap="toggleLike"
                 data-id="{{item.id}}"
               >
                 <view class="pa-ico ico-heart {{item.liked ? 'on' : ''}}"></view>{{item.likeCount}} 赞
               </view>
               <view
-                class="pa-btn {{item.favorited ? 'on' : ''}}"
+                class="tap-scale pa-btn {{item.favorited ? 'on' : ''}}"
                 catchtap="toggleFavorite"
                 data-id="{{item.id}}"
               >
                 <view class="pa-ico ico-star {{item.favorited ? 'on' : ''}}"></view>{{item.favorited ? '已收藏' : '收藏'}}
               </view>
-              <view class="pa-btn" catchtap="openPost" data-id="{{item.id}}">
+              <view class="tap-scale pa-btn" catchtap="openPost" data-id="{{item.id}}">
                 <view class="pa-ico ico-chat"></view>评论
               </view>
               <view class="pa-spacer"></view>
-              <view class="pa-report" catchtap="openReportSheet" data-id="{{item.id}}">
+              <view class="tap-scale pa-report" catchtap="openReportSheet" data-id="{{item.id}}">
                   <view class="pa-ico ico-warn"></view>举报
                 </view>
             </view>
@@ -187,7 +187,7 @@
     />
     <view class="pf-actions">
       <view class="btn btn-ghost pf-cancel tap-scale" catchtap="togglePostForm">取消</view>
-      <view class="btn btn-pop pf-submit tap-scale" catchtap="submitPost">发布</view>
+      <view class="btn btn-pop pf-submit tap-scale {{postSubmitting ? 'is-busy' : ''}}" catchtap="submitPost">{{postSubmitting ? '发布中…' : '发布'}}</view>
     </view>
   </state-sheet>
 
@@ -211,7 +211,7 @@
     />
     <view class="pf-actions">
       <view class="btn btn-ghost pf-cancel tap-scale" catchtap="closeReportSheet">取消</view>
-      <view class="btn btn-pop pf-submit tap-scale" catchtap="submitReport">提交举报</view>
+      <view class="btn btn-pop pf-submit tap-scale {{reportSubmitting ? 'is-busy' : ''}}" catchtap="submitReport">{{reportSubmitting ? '提交中…' : '提交举报'}}</view>
     </view>
   </state-sheet>
 </view>

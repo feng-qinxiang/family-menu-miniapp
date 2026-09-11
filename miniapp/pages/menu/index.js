@@ -12,6 +12,7 @@ const {
 } = require('../../utils/api');
 const { mealTypeLabels, mealOrder } = require('../../utils/constants');
 const { fallbackDishImg, recipeDishImg, LOCAL_DISHES } = require('../../utils/image');
+const { runGuarded } = require('../../utils/interaction');
 
 function buildToday() {
   const d = new Date();
@@ -99,15 +100,19 @@ Page({
     if (label !== this.data.todayLabel) {
       this.setData({ todayLabel: label });
     }
-    this.loadData();
+    // 首次进页面给骨架，之后回页只静默刷新
+    const first = this._hasLoaded !== true;
+    Promise.resolve(this.loadData(!first)).then(() => { this._hasLoaded = true; });
   },
 
   onPullDownRefresh() {
     Promise.resolve(this.loadData()).catch(() => {}).then(() => setTimeout(() => wx.stopPullDownRefresh(), 300));
   },
 
-  async loadData() {
-    this.setData({ loading: true, loadError: '' });
+    // silent=true：已有数据时的「回页刷新」，不显示整页骨架（避免切 tab 闪一下）
+  async loadData(silent) {
+    if (!silent) this.setData({ loading: true });
+    this.setData({ loadError: '' });
     try {
       const [todayMenu, shoppingList, weeklyMenu, pantry] = await Promise.all([
         getTodayMenu(),
@@ -221,12 +226,17 @@ Page({
       cancelText: '保留'
     });
     if (!res.confirm) return;
-    try {
+    // 防重 + 反馈：确认后到结果之间此前完全没有反馈，慢网络下像没点上
+    let removed = false;
+    await runGuarded(this, `remove-${id}`, async () => {
       await removeTodayMenuRecipe(id);
-    } catch (err) {
-      wx.showToast({ title: '移除失败', icon: 'none' });
-      return;
-    }
+      removed = true;
+    }, {
+      loading: '撤菜中',
+      success: '',
+      fail: '移除失败'
+    });
+    if (!removed) return;
     await this.loadData();
   },
 
@@ -267,9 +277,20 @@ Page({
   async startCook(e) {
     const { id, item } = e.currentTarget.dataset;
     if (!id) return;
-    // 标记「烧着呢」：乐观发出不阻塞跳转，回到本页 onShow 会刷新出状态
-    if (item) updateMenuItemStatus(item, 'cooking').catch(() => {});
-    wx.navigateTo({ url: `/pages/cook-mode/index?id=${id}&menuItemId=${item || ''}` });
+    // 先写入「烧着呢」再跳转：此前是 fire-and-forget，跳到烹饪模式后立刻返回菜单
+    // 会读到旧状态（onShow 重拉早于写入完成）。写入很快，等一下换来状态一致。
+    if (item) {
+      try {
+        await updateMenuItemStatus(item, 'cooking');
+      } catch (err) {
+        // 写入失败不拦住做菜：返回本页 onShow 会重新拉取真实状态
+        console.warn('mark cooking failed', err);
+      }
+    }
+    wx.navigateTo({
+      url: `/pages/cook-mode/index?id=${id}&menuItemId=${item || ''}`,
+      fail: () => wx.showToast({ title: '页面打开失败，请重试', icon: 'none' })
+    });
   },
 
   async markCooked(e) {
@@ -283,16 +304,19 @@ Page({
       editable: false
     });
     if (!res.confirm) return;
-    try {
+    let done = false;
+    await runGuarded(this, `cooked-${id}`, async () => {
       await Promise.all([
         item ? updateMenuItemStatus(item, 'done') : Promise.resolve(),
         addCookHistory({ recipeId: id }).catch(() => {})
       ]);
-      wx.showToast({ title: '已上桌', icon: 'success' });
-    } catch (err) {
-      wx.showToast({ title: '操作失败', icon: 'none' });
-      return;
-    }
+      done = true;
+    }, {
+      loading: '处理中',
+      success: '已上桌',
+      fail: '操作失败'
+    });
+    if (!done) return;
     await this.loadData();
   },
 
@@ -321,17 +345,22 @@ Page({
       wx.showToast({ title: '菜单还是空的', icon: 'none' });
       return;
     }
-    wx.showLoading({ title: '生成中', mask: true });
-    try {
-      await rebuildShoppingList();
-      wx.hideLoading();
-      wx.showToast({ title: '已生成', icon: 'success' });
-      if (this._navTimer) clearTimeout(this._navTimer);
-      this._navTimer = setTimeout(() => wx.navigateTo({ url: '/pages/shopping/index' }), 400);
-    } catch (err) {
-      wx.hideLoading();
-      wx.showToast({ title: '生成失败', icon: 'none' });
-    }
+    // 重建会覆盖当前清单（手动补充的条目会重算），属于破坏性操作，先确认
+    const res = await wx.showModal({
+      title: '按今日菜单重新生成清单？',
+      content: '会按当前菜单重算食材，之前在清单里手动添加的条目将被覆盖。',
+      confirmText: '重新生成',
+      cancelText: '取消'
+    });
+    if (!res.confirm) return;
+    const ok = await runGuarded(this, 'rebuild-shopping', () => rebuildShoppingList(), {
+      loading: '生成中',
+      success: '已生成',
+      fail: '生成失败'
+    });
+    if (ok === undefined) return;
+    if (this._navTimer) clearTimeout(this._navTimer);
+    this._navTimer = setTimeout(() => wx.navigateTo({ url: '/pages/shopping/index' }), 400);
   },
 
   onUnload() {

@@ -127,12 +127,21 @@ Page({
       this._toast('无法定位收藏来源');
       return;
     }
+    // 防重：连点会多次切换收藏态，本地状态来回漂
+    if (this.__favBusy) return;
+    this.__favBusy = true;
+    wx.showLoading({ title: '处理中', mask: true });
     toggleCommunityFavorite(postId)
       .then(() => {
+        wx.hideLoading();
         this._toast('已取消收藏');
         this.loadData();
       })
-      .catch(() => this._toast('操作失败，请稍后重试'));
+      .catch(() => {
+        wx.hideLoading();
+        this._toast('操作失败，请稍后重试');
+      })
+      .then(() => { this.__favBusy = false; });
   },
 
   // 帖子点击 → 帖子详情（二级页）

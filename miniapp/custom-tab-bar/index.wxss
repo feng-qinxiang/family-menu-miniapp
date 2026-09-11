@@ -33,6 +33,16 @@
   color: var(--pop);
 }
 
+/* 按下反馈：图标整体轻微下沉，补上"点到了"的即时确认 */
+.tab-item:active .tab-icon-wrap {
+  transform: scale(0.92);
+  transition-duration: 0.08s;
+}
+
+.tab-item .tab-icon-wrap {
+  transition: transform 0.18s ease;
+}
+
 .tab-item.active::before {
   position: absolute;
   top: 0;

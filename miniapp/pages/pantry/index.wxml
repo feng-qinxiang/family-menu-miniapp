@@ -103,7 +103,7 @@
         <input class="af-input af-sm" placeholder="单位" placeholder-class="af-ph" value="{{newItem.unit}}" bindinput="onNewInput" data-field="unit" />
       </view>
       <input class="af-input af-date" placeholder="到期日 如 2026-06-20（选填）" placeholder-class="af-ph" value="{{newItem.expiresAt}}" bindinput="onNewInput" data-field="expiresAt" />
-      <view class="btn btn-pop btn-block af-submit" bindtap="addItem">记入冰箱</view>
+      <view class="tap-scale btn btn-pop btn-block af-submit {{adding ? 'is-busy' : ''}}" bindtap="addItem">{{adding ? '保存中…' : '记入冰箱'}}</view>
     </view>
 
     <!-- 现在就能做 -->

@@ -26,6 +26,9 @@ Page({
   },
 
   async loadFamily() {
+    // 防重：失败态下的「点此重试」连点会打出多个并发请求
+    if (this._loadingCode) return;
+    this._loadingCode = true;
     this.setData({ codeFailed: false });
     try {
       const info = await getFamilyInviteCode();
@@ -43,6 +46,8 @@ Page({
     } catch (e) {
       this.setData({ inviteCode: '', codeDigits: ['', '', '', '', '', '', '', ''], codeFailed: true });
       this.showToast('邀请码加载失败，请重试');
+    } finally {
+      this._loadingCode = false;
     }
   },
 

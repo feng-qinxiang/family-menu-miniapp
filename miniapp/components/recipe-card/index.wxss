@@ -86,6 +86,7 @@
 
 /* 收藏：圆点，不用 emoji 心形 */
 .rc-fav {
+  /* 热区 88rpx（视觉圆点仍是内部 .rc-fav-dot），避免小星标点不中 */
   position: absolute;
   top: 19rpx;
   right: 19rpx;
@@ -97,6 +98,17 @@
   height: 64rpx;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.92);
+}
+
+/* 触控热区 88rpx：白色圆点保持 64rpx，手指更容易点中 */
+.rc-fav::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 88rpx;
+  height: 88rpx;
+  transform: translate(-50%, -50%);
 }
 
 .rc-fav-dot {

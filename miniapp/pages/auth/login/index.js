@@ -38,6 +38,8 @@ Page({
     if (!this.ensureAgreed()) return;
     if (this.data.submitting) return;
     this.setData({ submitting: true });
+    // wx.login + 后端换取会话，最长数秒；没有反馈用户会反复点
+    wx.showLoading({ title: '登录中', mask: true });
 
     wx.login({
       success: (loginRes) => {
@@ -49,6 +51,7 @@ Page({
         }
         api.wechatLogin({ code })
           .then((res) => {
+            wx.hideLoading();
             if (res && res.token) {
               try { wx.setStorageSync('auth_token', res.token); } catch (e) {}
             }
@@ -56,6 +59,7 @@ Page({
             this.goHome();
           })
           .catch((err) => {
+            wx.hideLoading();
             // 后端未配置微信凭据（503）时降级游客登录，不打断体验
             if (err && err.status === 503) {
               this._fallbackGuest('微信登录暂不可用，已用游客身份进入');
@@ -66,6 +70,7 @@ Page({
           });
       },
       fail: () => {
+        wx.hideLoading();
         this.setData({ submitting: false });
         this.toast('微信登录失败，请重试');
       },

@@ -27,7 +27,7 @@
     <!-- 权益网格 -->
     <section-head eyebrow="权益一览" title="开通后" popPart="解锁" titleTail="这些" />
     <view class="vip-bgrid">
-      <view class="vip-bcard tap-scale g-fade-up g-d{{index % 6 + 1}}" wx:for="{{benefits}}" wx:key="title">
+      <view class="vip-bcard g-fade-up g-d{{index % 6 + 1}}" wx:for="{{benefits}}" wx:key="title">
         <view class="vip-bic">{{item.icon}}</view>
         <view class="vip-bc-title">{{item.title}}</view>
         <view class="vip-bc-desc">{{item.desc}}</view>

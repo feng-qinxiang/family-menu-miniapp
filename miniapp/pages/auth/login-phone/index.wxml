@@ -1,7 +1,7 @@
 <!-- pages/auth/login-phone · 手机号登录(二级页) -->
 <view class="lp safe-bottom">
   <nav-bar title="手机号登录" show-back="{{true}}">
-    <text class="lp-help" catchtap="onHelp">帮助</text>
+    <text class="tap-scale lp-help" catchtap="onHelp">帮助</text>
   </nav-bar>
 
   <view class="lp-body">
@@ -71,7 +71,7 @@
       <view class="lp-box tap-scale {{agreed ? 'is-on' : ''}}" catchtap="onToggleAgree">
         <view wx:if="{{agreed}}" class="lp-check"></view>
       </view>
-      <text class="lp-agree-tx" catchtap="onToggleAgree">我已阅读并同意<text class="lp-link" catchtap="onProtocol">用户协议</text>与<text class="lp-link" catchtap="onProtocol">隐私政策</text>，验证码仅用于登录验证你的身份。</text>
+      <text class="tap-dim lp-agree-tx" catchtap="onToggleAgree">我已阅读并同意<text class="tap-dim lp-link" catchtap="onProtocol">用户协议</text>与<text class="tap-dim lp-link" catchtap="onProtocol">隐私政策</text>，验证码仅用于登录验证你的身份。</text>
     </view>
 
     <!-- 分隔 -->

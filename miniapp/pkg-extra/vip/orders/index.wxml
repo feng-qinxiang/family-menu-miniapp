@@ -45,7 +45,7 @@
     <view
       wx:for="{{orders}}"
       wx:key="orderNo"
-      class="ocard card tap-scale g-fade-up {{'g-d' + (index + 2 < 8 ? index + 2 : 8)}}"
+      class="ocard card g-fade-up {{'g-d' + (index + 2 < 8 ? index + 2 : 8)}}"
     >
       <!-- 状态 badge -->
       <view class="badge badge--{{item.status}}">

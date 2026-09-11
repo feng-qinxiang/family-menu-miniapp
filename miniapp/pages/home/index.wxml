@@ -45,18 +45,18 @@
         <view class="mh-hi">{{greeting}}</view>
         <view class="mh-name">{{currentUser.nickname || '朋友'}}，今晚想吃点啥</view>
       </view>
-      <view class="mh-iconbtns">
-        <view class="mh-iconbtn" catchtap="goShopping" aria-label="买菜">
+      <view class="tap-scale mh-iconbtns">
+        <view class="tap-scale mh-iconbtn" catchtap="goShopping" aria-label="买菜">
           <view class="mh-ico-glyph">买</view>
           <view class="mh-cart-dot" wx:if="{{shoppingPending}}"></view>
         </view>
-        <view class="mh-iconbtn" catchtap="goRecipes" aria-label="菜谱库">
+        <view class="tap-scale mh-iconbtn" catchtap="goRecipes" aria-label="菜谱库">
           <view class="mh-ico-glyph">谱</view>
         </view>
       </view>
     </view>
 
-    <view class="mh-hero-body g-fade-up g-d2" data-id="{{heroRecipe.id}}" bindtap="goDetail">
+    <view class="tap-scale mh-hero-body g-fade-up g-d2" data-id="{{heroRecipe.id}}" bindtap="goDetail">
       <text class="mh-pill-tag">今晚主打</text>
       <view class="mh-hero-title title-stroke {{heroRecipe.titleClass}}">
         {{heroRecipe.title}}
@@ -98,16 +98,16 @@
     <view
       wx:for="{{slots}}"
       wx:key="key"
-      class="fp-slot {{currentSlot === item.key ? 'on' : ''}}"
+      class="tap-scale fp-slot {{currentSlot === item.key ? 'on' : ''}}"
       data-slot="{{item.key}}"
       bindtap="selectSlot"
     >今日·{{item.label}}</view>
-    <view class="fp-slot fp-slot-week" bindtap="goWeek">本周 ›</view>
+    <view class="tap-scale fp-slot fp-slot-week" bindtap="goWeek">本周 ›</view>
   </view>
 
   <!-- 许愿池：默认折叠一行，点击展开；避免低频功能占位（DEC-UI1） -->
   <view class="fp-wish {{wishExpanded ? 'expanded' : ''}}" wx:if="{{!loading && !(loadError && !hasHomeData)}}">
-    <view class="fp-wish-head fp-wish-head--toggle" bindtap="toggleWishExpand">
+    <view class="tap-scale fp-wish-head fp-wish-head--toggle" bindtap="toggleWishExpand">
       <view class="fp-wish-title">
         <text class="fp-wish-eyebrow">许愿池</text>
         <text class="fp-wish-slot">{{currentSlot === 'breakfast' ? '今日早餐' : currentSlot === 'lunch' ? '今日午餐' : '今日晚餐'}}</text>
@@ -121,7 +121,7 @@
       <view class="fp-wish-list" wx:if="{{wishes.length}}">
         <view class="fp-wish-item" wx:for="{{wishes}}" wx:key="id">
           <view class="fp-wish-text ellipsis">{{item.text}}</view>
-          <view class="fp-wish-pending" wx:if="{{!item.recipeId}}" catchtap="pickForWish" data-text="{{item.text}}" data-id="{{item.id}}" data-slot="{{item.slot}}">待挑菜 ›</view>
+          <view class="tap-scale fp-wish-pending" wx:if="{{!item.recipeId}}" catchtap="pickForWish" data-text="{{item.text}}" data-id="{{item.id}}" data-slot="{{item.slot}}">待挑菜 ›</view>
           <view class="fp-wish-by">{{item.by}}</view>
           <view class="fp-wish-del tap-scale" catchtap="removeWish" data-id="{{item.id}}">×</view>
         </view>
@@ -141,7 +141,7 @@
 
     <!-- 今日菜单 暗卡：提到首屏区域，进页第一眼看到（DEC-UI1） -->
     <view class="mh-pad">
-      <view class="mh-menucard card-dark g-fade-up g-d3" wx:if="{{slotMenu.length}}" bindtap="goMenu">
+      <view class="tap-scale mh-menucard card-dark g-fade-up g-d3" wx:if="{{slotMenu.length}}" bindtap="goMenu">
         <view class="deco-circle"></view>
         <view class="mh-mc-eyebrow">今天这一桌 <text class="mh-mc-slot">{{currentSlot === 'breakfast' ? '早餐' : currentSlot === 'lunch' ? '午餐' : '晚餐'}}</text></view>
         <view class="mh-mc-title">今日菜单</view>

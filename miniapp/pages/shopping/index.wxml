@@ -36,8 +36,8 @@
   <view class="mkt-sheet">
     <!-- 顶部 tab：待买 / 家里已有 -->
     <view class="sp-seg">
-      <view class="sp-seg-item {{tab === 'shopping' ? 'on' : ''}}" data-tab="shopping" bindtap="switchTab">待买清单</view>
-      <view class="sp-seg-item {{tab === 'pantry' ? 'on' : ''}}" data-tab="pantry" bindtap="switchTab">家里已有 {{pantryCount ? '(' + pantryCount + ')' : ''}}</view>
+      <view class="tap-scale sp-seg-item {{tab === 'shopping' ? 'on' : ''}}" data-tab="shopping" bindtap="switchTab">待买清单</view>
+      <view class="tap-scale sp-seg-item {{tab === 'pantry' ? 'on' : ''}}" data-tab="pantry" bindtap="switchTab">家里已有 {{pantryCount ? '(' + pantryCount + ')' : ''}}</view>
     </view>
 
     <!-- 待买清单视图 -->
@@ -83,7 +83,7 @@
           <text class="mkt-gcount">{{group.items.length}} 样</text>
         </view>
 
-        <view class="mkt-item g-fade-up g-d{{idx % 5 + 1}}" wx:for="{{group.items}}" wx:for-item="food" wx:for-index="idx" wx:key="itemId" data-id="{{food.itemId}}" data-purchased="{{food.purchased}}" bindtap="toggleItem">
+        <view class="tap-scale mkt-item g-fade-up g-d{{idx % 5 + 1}}" wx:for="{{group.items}}" wx:for-item="food" wx:for-index="idx" wx:key="itemId" data-id="{{food.itemId}}" data-purchased="{{food.purchased}}" bindtap="toggleItem">
           <view class="mkt-check"></view>
           <image wx:if="{{food.cover}}" class="mkt-thumb" src="{{food.cover}}" mode="aspectFill" />
           <view wx:else class="mkt-thumb mkt-thumb--letter {{food.categoryKey}}">{{food.initial}}</view>
@@ -110,7 +110,7 @@
         </view>
 
         <block wx:for="{{groupedPurchased}}" wx:key="key" wx:for-item="group">
-          <view class="mkt-item done" wx:for="{{group.items}}" wx:for-item="food" wx:key="itemId" data-id="{{food.itemId}}" data-purchased="{{food.purchased}}" bindtap="toggleItem">
+          <view class="tap-scale mkt-item done" wx:for="{{group.items}}" wx:for-item="food" wx:key="itemId" data-id="{{food.itemId}}" data-purchased="{{food.purchased}}" bindtap="toggleItem">
             <view class="mkt-check done">
               <view class="mkt-tick"></view>
             </view>
@@ -140,12 +140,12 @@
         <input class="mkt-add-input" placeholder="食材名" placeholder-class="mkt-ph" value="{{newItem.ingredientName}}" data-field="ingredientName" bindinput="onNewItemInput" />
         <input class="mkt-add-input sm" placeholder="量" placeholder-class="mkt-ph" value="{{newItem.amount}}" data-field="amount" bindinput="onNewItemInput" />
         <input class="mkt-add-input sm" placeholder="单位" placeholder-class="mkt-ph" value="{{newItem.unit}}" data-field="unit" bindinput="onNewItemInput" />
-        <view class="mkt-addbtn tap-scale" bindtap="addItem">添加</view>
+        <view class="mkt-addbtn tap-scale {{addItemSubmitting ? 'is-busy' : ''}}" bindtap="addItem">添加</view>
       </view>
 
       <scroll-view class="mkt-quicks" scroll-x enhanced show-scrollbar="{{false}}">
         <view class="mkt-quicks-inner">
-          <view class="mkt-quick tap-scale" wx:for="{{quickItems}}" wx:key="ingredientName" data-name="{{item.ingredientName}}" data-amount="{{item.amount}}" data-unit="{{item.unit}}" bindtap="addQuickItem">
+          <view class="mkt-quick tap-scale {{addItemSubmitting ? 'is-busy' : ''}}" wx:for="{{quickItems}}" wx:key="ingredientName" data-name="{{item.ingredientName}}" data-amount="{{item.amount}}" data-unit="{{item.unit}}" bindtap="addQuickItem">
             <text class="plus">＋</text>{{item.ingredientName}}
           </view>
         </view>

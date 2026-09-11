@@ -329,9 +329,12 @@ page.font-lg, .font-lg {
   box-sizing: border-box;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8rpx;
   flex: none;
-  padding: 16rpx 32rpx;
+  /* 触控规范：可点元素高度不低于 88rpx（约 44pt），低于此值手指容易点空 */
+  min-height: 88rpx;
+  padding: 0 32rpx;
   border-radius: var(--r-chip);
   background: var(--paper-2);
   color: var(--mut-strong);
@@ -358,6 +361,40 @@ page.font-lg, .font-lg {
 .tap-scale:active {
   transform: scale(0.95);
   transition-duration: 0.08s;
+}
+
+/* 文字型链接的按下反馈：缩放会显得怪，改成压暗 */
+.tap-dim {
+  transition: opacity 0.15s ease, color 0.15s ease;
+}
+.tap-dim:active {
+  opacity: 0.55;
+}
+
+/* 图标按钮热区扩展：视觉尺寸保持不变，点击区域撑到 88rpx。
+   仅用于「独立、周围没有紧邻可点元素」的小图标（关闭 ×、返回、星标等）；
+   相邻小按钮之间不要用，会互相抢点击。 */
+.hit-88 {
+  position: relative;
+}
+.hit-88::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 88rpx;
+  height: 88rpx;
+  transform: translate(-50%, -50%);
+}
+
+/* 提交中：按钮进入不可重复点击的视觉态 */
+.is-busy {
+  opacity: 0.6;
+  pointer-events: none;
+}
+.btn[disabled],
+button[disabled] {
+  opacity: 0.5;
 }
 
 /* ============ 标签 chip（小）============ */

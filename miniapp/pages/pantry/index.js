@@ -45,7 +45,7 @@ Page({
 
   onShow() {
     withTabSelect(this, 2);
-    this.loadPantry();
+    Promise.resolve(this.loadPantry(this._hasLoaded === true)).then(() => { this._hasLoaded = true; });
   },
 
   onPullDownRefresh() {
@@ -57,8 +57,10 @@ Page({
     this.loadPantry();
   },
 
-  async loadPantry() {
-    this.setData({ loading: true, loadError: false });
+    // silent=true：已有数据时的「回页刷新」，不显示整页骨架（避免切 tab 闪一下）
+  async loadPantry(silent) {
+    if (!silent) this.setData({ loading: true });
+    this.setData({ loadError: false });
     let pantryItems = [];
     let weeklyMenu = null;
     let failed = false;
@@ -148,15 +150,22 @@ Page({
 
   async matchRecipes(silent) {
     let matchResults = [];
+    let failed = false;
     try {
       matchResults = (await getPantryMatch()) || [];
     } catch (e) {
+      // 匹配接口失败时置空会让用户以为"家里什么都做不了"，必须区分失败与真空
       matchResults = [];
+      failed = true;
     }
     this.setData({
       matchResults: this.normalizeMatches(matchResults),
-      showMatch: true
+      showMatch: true,
+      matchFailed: failed
     });
+    if (failed && !silent) {
+      wx.showToast({ title: '匹配失败，下拉可重试', icon: 'none' });
+    }
     if (!silent) {
       wx.pageScrollTo && wx.pageScrollTo({ scrollTop: 99999, duration: 300 });
     }

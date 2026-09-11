@@ -23,8 +23,8 @@
   <view class="m-sheet">
     <!-- segment: 今日 / 本周 (§3) -->
     <view class="mn-seg">
-      <view class="mn-seg-item {{view === 'today' ? 'on' : ''}}" data-view="today" bindtap="switchView">今日三餐</view>
-      <view class="mn-seg-item {{view === 'week' ? 'on' : ''}}" data-view="week" bindtap="switchView">本周</view>
+      <view class="tap-scale mn-seg-item {{view === 'today' ? 'on' : ''}}" data-view="today" bindtap="switchView">今日三餐</view>
+      <view class="tap-scale mn-seg-item {{view === 'week' ? 'on' : ''}}" data-view="week" bindtap="switchView">本周</view>
     </view>
 
     <block wx:if="{{view === 'today'}}">
@@ -140,8 +140,8 @@
               <text class="m-rby" wx:if="{{dish.addedByName}}">{{dish.addedByName}} 点的</text>
             </view>
           </view>
-          <view class="m-remove" data-id="{{dish.recipeId}}" catchtap="removeItem">撤</view>
-          <view class="m-acts" wx:if="{{dish.status !== 'done'}}">
+          <view class="tap-scale m-remove" data-id="{{dish.recipeId}}" catchtap="removeItem">撤</view>
+          <view class="tap-scale m-acts" wx:if="{{dish.status !== 'done'}}">
             <view class="m-act m-act-cook tap-scale" data-id="{{dish.recipeId}}" data-item="{{dish.itemId}}" catchtap="startCook">{{dish.status === 'cooking' ? '继续做' : '开始做'}}</view>
             <view class="m-act m-act-done tap-scale" data-id="{{dish.recipeId}}" data-item="{{dish.itemId}}" catchtap="markCooked">上桌</view>
           </view>
@@ -172,7 +172,7 @@
           <view class="m-week-eyebrow">本周前瞻</view>
           <view class="m-week-title">未来几天<text class="pop">吃什么</text></view>
         </view>
-        <text class="m-week-link" bindtap="genWeekly">重排 ›</text>
+        <text class="tap-scale m-week-link" bindtap="genWeekly">重排 ›</text>
       </view>
       <view class="m-week-list">
         <view class="m-wk-item tap-scale" wx:for="{{weeklyDays}}" wx:key="date" bindtap="goWeekly">

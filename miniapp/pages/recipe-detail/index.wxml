@@ -68,7 +68,7 @@
       <section-head eyebrow="跟着做" title="做法" popPart="步骤" hint="按顺序出菜" />
 
       <view class="card rd-card" wx:if="{{recipe.steps.length}}">
-        <view class="rd-video" bindtap="onTapVideo">
+        <view class="tap-scale rd-video" bindtap="onTapVideo">
           <video
             wx:if="{{playingVideo && recipe.videoUrl}}"
             class="rd-video-player"
@@ -127,7 +127,7 @@
         </block>
 
         <!-- 写评价入口 -->
-        <view class="rd-rev-entry {{recipe.reviews.length ? '' : 'no-top'}}" bindtap="writeReview">
+        <view class="tap-scale rd-rev-entry {{recipe.reviews.length ? '' : 'no-top'}}" bindtap="writeReview">
           <view class="rd-meav">我</view>
           <view class="rd-fakein ellipsis">我也做了 · 写两句给家人看看…</view>
           <view class="rd-gobtn tap-scale">写评价</view>

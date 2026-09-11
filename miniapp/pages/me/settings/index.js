@@ -156,19 +156,37 @@ Page({
     }
   },
 
-  // 清除缓存：只清业务缓存，保留游客身份锚点（device_id）与登录态，避免"数据全丢"
+  // 清除缓存：弹确认后再清。此前直接 clearStorageSync() 会把本地口味偏好、
+  // 心愿缓存一并清掉（用户会以为"我的设置被重置了"），改为一律保留这些业务键。
   _clearCache() {
+    wx.showModal({
+      title: '清除缓存？',
+      content: '将清理本地缓存数据（图片、列表缓存），你的账号、家庭与菜谱都在云端，不受影响。',
+      confirmText: '清除',
+      cancelText: '取消',
+      success: (res) => {
+        if (res.confirm) this._doClearCache();
+      }
+    });
+  },
+
+  _doClearCache() {
+    // 需要保留的本地键：身份锚点、登录态、显示偏好、口味偏好、心愿缓存
+    const KEEP_KEYS = ['device_id', 'auth_token', 'font_scale', 'profile_prefs_v1', 'family_wishes_v1'];
     try {
-      const deviceId = wx.getStorageSync('device_id');
-      const token = wx.getStorageSync('auth_token');
-      let fontScale = '';
-      try { fontScale = wx.getStorageSync('font_scale') || ''; } catch (e) { fontScale = ''; }
+      const kept = {};
+      KEEP_KEYS.forEach((key) => {
+        try {
+          const v = wx.getStorageSync(key);
+          if (v !== '' && v !== null && v !== undefined) kept[key] = v;
+        } catch (e) { /* 读不到就跳过 */ }
+      });
       if (typeof wx.clearStorageSync === 'function') {
         wx.clearStorageSync();
       }
-      if (deviceId) wx.setStorageSync('device_id', deviceId);
-      if (token) wx.setStorageSync('auth_token', token);
-      if (fontScale) wx.setStorageSync('font_scale', fontScale);
+      Object.keys(kept).forEach((key) => {
+        try { wx.setStorageSync(key, kept[key]); } catch (e) { /* 忽略 */ }
+      });
     } catch (e) {
       // 忽略清理失败
     }
@@ -209,9 +227,15 @@ Page({
   },
   // 确认退出：清登录态但保留游客身份锚点 device_id，避免下次进入变成全新游客账号
   onLogoutConfirm() {
+    if (this.__logoutBusy) return;
+    this.__logoutBusy = true;
     this.setData({ logoutVisible: false });
-    // 先吊销服务端会话，再清本地；失败也不阻塞（本地清完用户已无 token 可用）
+    // 先吊销服务端会话，再清本地；失败也不阻塞（本地清完用户已无 token 可用）。
+    // 接口有 10s 超时，期间必须给反馈，否则像卡死。
+    wx.showLoading({ title: '正在退出', mask: true });
     api.logout().catch(() => {}).then(() => {
+      wx.hideLoading();
+      this.__logoutBusy = false;
       try {
         const deviceId = wx.getStorageSync('device_id');
         let fontScale = '';

@@ -4,6 +4,7 @@ const { fallbackDishImg, recipeDishImg, onImgError } = require('../../utils/imag
 const { debounce } = require('../../utils/debounce');
 const { withTabSelect } = require('../../behaviors/tab-select');
 const { recipesFromPosts } = require('../../utils/dish-logic');
+const { runGuarded } = require('../../utils/interaction');
 
 const PAGE_SIZE = 6;
 
@@ -84,15 +85,17 @@ Page({
 
   onShow() {
       withTabSelect(this, 1);
-      this.loadRecipes();
+      // 首次进页面需要骨架；之后切回来只静默刷新，避免整页闪一下
+      Promise.resolve(this.loadRecipes(this._hasLoaded === true)).then(() => { this._hasLoaded = true; });
     },
 
     onPullDownRefresh() {
       Promise.resolve(this.loadRecipes()).catch(() => {}).then(() => setTimeout(() => wx.stopPullDownRefresh(), 300));
     },
 
-  async loadRecipes() {
-    this.setData({ loading: true });
+    // silent=true：已有数据时的「回页刷新」，不显示整页骨架（避免切 tab 闪一下）
+  async loadRecipes(silent) {
+    if (!silent) this.setData({ loading: true });
     try {
       const source = this.data.activeSource;
       const [rawList, todayMenu, shoppingList, familyProfile] = await Promise.all([
@@ -347,14 +350,18 @@ Page({
       wx.navigateTo({ url: '/pages/menu/index' });
       return;
     }
-    try {
+    const meal = mealOptions.find((item) => item.key === this.data.activeMealType);
+    let added = false;
+    // 防重（每个菜一个 key：允许并发加不同的菜，但同一道菜连点只发一次）
+    await runGuarded(this, `add-${id}`, async () => {
       await addTodayMenuRecipe(id, this.data.activeMealType || 'dinner');
-      this.markRecipeSelected(id);
-      const meal = mealOptions.find((item) => item.key === this.data.activeMealType);
-      wx.showToast({ title: `已加入${meal ? meal.label : '今日菜单'}`, icon: 'success' });
-    } catch (err) {
-      wx.showToast({ title: '加入失败', icon: 'none' });
-    }
+      added = true;
+    }, {
+      loading: '加入中',
+      success: `已加入${meal ? meal.label : '今日菜单'}`,
+      fail: '加入失败'
+    });
+    if (added) this.markRecipeSelected(id);
   },
 
   goMenu() {

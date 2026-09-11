@@ -56,15 +56,15 @@
         </view>
       </view>
 
-      <view class="agree" bindtap="onToggleAgree">
-        <view class="box {{agreed ? 'on' : ''}}">
+      <view class="tap-scale agree" bindtap="onToggleAgree">
+        <view class="tap-scale box {{agreed ? 'on' : ''}}">
           <text wx:if="{{agreed}}" class="check">✓</text>
         </view>
         <view class="tx">
           登录即表示你已阅读并同意
-          <text class="lk" catchtap="onTerms">用户协议</text>
+          <text class="tap-scale lk" catchtap="onTerms">用户协议</text>
           与
-          <text class="lk" catchtap="onPrivacy">隐私政策</text>
+          <text class="tap-scale lk" catchtap="onPrivacy">隐私政策</text>
           ，我们仅用微信昵称和头像帮你和家人互相认出。
         </view>
       </view>

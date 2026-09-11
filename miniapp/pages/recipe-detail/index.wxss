@@ -68,7 +68,7 @@
 
 /* nav-bar 右侧编辑入口（仅自建菜谱）：压在 hero 暗底上，用半透明描边胶囊 */
 .rd-navedit {
-  height: 56rpx;
+  height: 72rpx;
   padding: 0 28rpx;
   display: flex;
   align-items: center;
@@ -112,8 +112,9 @@
   padding: 6rpx;
 }
 .rd-sbtn {
-  width: 58rpx;
-  height: 58rpx;
+  /* 步进器 ± 按钮放大到 72rpx，便于连续点按 */
+  width: 72rpx;
+  height: 72rpx;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.18);
   display: flex;

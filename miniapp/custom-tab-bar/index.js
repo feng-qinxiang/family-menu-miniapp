@@ -29,9 +29,25 @@ Component({
       }
     },
     switchTab(e) {
-      const index = e.currentTarget.dataset.index;
+      const index = Number(e.currentTarget.dataset.index);
       const item = this.data.list[index];
-      wx.switchTab({ url: item.pagePath });
+      if (!item) return;
+      // 点当前 tab：不做重复跳转（重复 switchTab 会重建页面栈，用户看到闪一下）
+      if (index === this.data.selected) return;
+      // 防抖：切换动画期间连点会发出多次 switchTab
+      if (this.__switching) return;
+      this.__switching = true;
+      const previous = this.data.selected;
+      // 即时反馈：先置选中态，不等 pageLifetimes.show（否则点击到高亮之间有肉眼可见延迟）
+      this.setData({ selected: index });
+      wx.switchTab({
+        url: item.pagePath,
+        fail: () => {
+          // 跳转失败要回退选中态，避免"高亮在新 tab 但页面没变"
+          this.setData({ selected: previous });
+        },
+        complete: () => { this.__switching = false; }
+      });
     }
   }
 });

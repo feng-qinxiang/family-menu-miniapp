@@ -10,6 +10,7 @@ const {
   addWish,
   removeWish: removeWishApi
 } = require('../../utils/api');
+const { runGuarded } = require('../../utils/interaction');
 const { sourceLabels, mealTypeLabels, SLOTS, cuisinePinyin } = require('../../utils/constants');
 const { fallbackDishImg, recipeDishImg, onImgError } = require('../../utils/image');
 const { decorateHero, filterBySlot, todayDateKey } = require('../../utils/dish-logic');
@@ -598,13 +599,13 @@ Page({
     }
     const slot = this.data.currentSlot || 'dinner';
     const slotLabel = mealTypeLabels[slot] || '晚餐';
-    try {
-      await addTodayMenuRecipe(id, slot);
-      wx.showToast({ title: `已加入今日${slotLabel}`, icon: 'success' });
-      if (this._inited) this.refreshLight();
-    } catch (err) {
-      wx.showToast({ title: '加入失败，请重试', icon: 'none' });
-    }
+    // 防重 + 即时反馈：joined 在途时重复点击被忽略（此前连点会重复 POST）
+    await runGuarded(this, `add-${id}`, () => addTodayMenuRecipe(id, slot), {
+      loading: '加入中',
+      success: `已加入今日${slotLabel}`,
+      fail: '加入失败，请重试'
+    });
+    if (this._inited) this.refreshLight();
   },
 
   goDetail(e) {

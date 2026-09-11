@@ -10,7 +10,7 @@ page { background: var(--paper); }
 }
 .rc-seg-item {
   flex: 1;
-  height: 66rpx;
+  height: 88rpx;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -114,13 +114,14 @@ page { background: var(--paper); }
 }
 .rc-stepper { display: flex; align-items: center; gap: 12rpx; }
 .rc-sbtn {
-  width: 52rpx;
-  height: 52rpx;
+  /* 步进器 ± 按钮：52rpx 偏小，放大到 72rpx 便于连续点按 */
+  width: 72rpx;
+  height: 72rpx;
   border-radius: 50%;
   background: var(--c-surface);
   color: var(--ink);
   font-size: 32rpx;
-  line-height: 50rpx;
+  line-height: 70rpx;
   text-align: center;
 }
 .rc-fact-v {
@@ -142,7 +143,7 @@ page { background: var(--paper); }
 }
 .rc-dseg-i {
   flex: 1;
-  height: 64rpx;
+  height: 88rpx;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -199,7 +200,12 @@ page { background: var(--paper); }
 .rc-ing-unit { width: 64rpx; }
 .rc-ing-x {
   flex: none;
-  width: 40rpx;
+  /* 删除键热区 88rpx：原 40rpx 宽，手指很难点中 */
+  width: 88rpx;
+  min-height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: var(--mut-2);
   font-size: 30rpx;
   text-align: center;
