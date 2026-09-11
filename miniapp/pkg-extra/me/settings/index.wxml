@@ -31,7 +31,7 @@
   <view class="set-group g-fade-up g-d2" wx:if="{{subscribeAvailable}}">
     <view class="set-gtitle">通知</view>
     <view class="card set-card">
-      <view class="set-item" bindtap="onToggleNotify">
+      <view class="set-item tap-scale" bindtap="onToggleNotify">
         <view class="set-ic"><text class="set-glyph">铃</text></view>
         <view class="set-mid">
           <view class="set-name">消息通知</view>

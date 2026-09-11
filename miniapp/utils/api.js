@@ -195,20 +195,6 @@ function reportCommunityPost(postId, payload) {
   });
 }
 
-function getCommunityReports(status) {
-  // silent：页面 catch 自带提示，避免双重 toast；失败 reject 由 audit 页处理
-  return request(`/api/community/reports?status=${encodeURIComponent(status || 'PENDING')}`, {
-    silent: true
-  });
-}
-
-function reviewCommunityReport(reportId, payload) {
-  return requestStrict(`/api/community/reports/${encodeURIComponent(reportId)}/review`, {
-    method: 'POST',
-    data: payload
-  });
-}
-
 function getMyFavorites() {
   return request('/api/me/favorites', { silent: true });
 }
@@ -592,7 +578,6 @@ module.exports = {
   generateWeeklyMenu,
   getCommunityPosts,
   getCommunityComments,
-  getCommunityReports,
   getMyFavorites,
   createFamily,
   getCookHistory,
@@ -622,7 +607,6 @@ module.exports = {
   rebuildShoppingList,
   toggleShoppingPurchased,
   reportCommunityPost,
-  reviewCommunityReport,
   toggleCommunityFavorite,
   toggleCommunityLike,
   previewJoinFamily,

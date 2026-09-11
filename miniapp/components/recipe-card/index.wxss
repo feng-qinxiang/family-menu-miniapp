@@ -266,6 +266,7 @@
 }
 
 .rc-row-add {
+  position: relative;
   display: flex;
   flex: none;
   align-items: center;
@@ -275,6 +276,17 @@
   border-radius: var(--r-md);
   background: var(--pop);
   box-shadow: var(--sh-pop);
+}
+
+/* 视觉保持 80rpx，热区撑到 88rpx 触控规范 */
+.rc-row-add::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 88rpx;
+  height: 88rpx;
+  transform: translate(-50%, -50%);
 }
 
 .rc-row-add .rc-plus {

@@ -109,6 +109,15 @@
   align-items: center;
   justify-content: center;
 }
+.up-img .del::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 88rpx;
+  height: 88rpx;
+  transform: translate(-50%, -50%);
+}
 .del-x {
   position: relative;
   width: 20rpx;

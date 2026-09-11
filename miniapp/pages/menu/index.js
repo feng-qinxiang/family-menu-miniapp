@@ -117,12 +117,15 @@ Page({
     if (!silent) this.setData({ loading: true });
     this.setData({ loadError: '' });
     try {
-      const [todayMenu, shoppingList, weeklyMenu, pantry] = await Promise.all([
+      // 禁用数组解构：该语法编译后依赖 @babel/runtime 辅助模块，未打包进小程序会整页白屏
+      const loaded = await Promise.all([
         getTodayMenu(),
         getShoppingList(),
         getWeeklyMenu(),
         getPantryItems()
       ]);
+      const todayMenu = loaded[0], shoppingList = loaded[1];
+      const weeklyMenu = loaded[2], pantry = loaded[3];
 
       const items = todayMenu && Array.isArray(todayMenu.items) ? todayMenu.items : [];
       const shoppingItems = shoppingList && Array.isArray(shoppingList.items) ? shoppingList.items : [];

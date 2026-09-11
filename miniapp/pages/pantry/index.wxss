@@ -213,6 +213,7 @@
   flex: none;
 }
 .pi-del {
+  position: relative;
   width: 77rpx;
   height: 77rpx;
   border-radius: 23rpx;
@@ -221,6 +222,15 @@
   align-items: center;
   justify-content: center;
   flex: none;
+}
+.pi-del::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 88rpx;
+  height: 88rpx;
+  transform: translate(-50%, -50%);
 }
 .pi-del-x {
   width: 24rpx;

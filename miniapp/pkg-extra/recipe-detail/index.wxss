@@ -419,7 +419,7 @@
 .rd-gobtn {
   flex: none;
   min-width: 100rpx;
-  height: 84rpx;
+  height: 88rpx;
   border-radius: 26rpx;
   background: var(--ink-deep);
   color: var(--gold);

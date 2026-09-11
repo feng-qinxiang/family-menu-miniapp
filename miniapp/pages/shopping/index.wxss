@@ -447,6 +447,7 @@
 .sp-pitem-name { flex: 1; min-width: 0; font-size: 28rpx; font-weight: 700; color: var(--ink); }
 .sp-pitem-qty { font-size: 24rpx; color: var(--mut-strong); font-weight: 600; }
 .sp-pitem-del {
+  position: relative;
   width: 64rpx; height: 64rpx;   /* 适老触点 ≥64rpx（原 48rpx 偏小） */
   display: flex; align-items: center; justify-content: center;
   border-radius: 50%;
@@ -454,10 +455,17 @@
   font-size: 28rpx; color: var(--mut);
   border: 2rpx solid var(--c-border);
 }
+.sp-pitem-del::after {
+  content: '';
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 88rpx; height: 88rpx;
+  transform: translate(-50%, -50%);
+}
 .sp-pantry-empty { padding: 40rpx 0; }
 .sp-pantry-add-btn {
   margin-top: 24rpx;
-  height: 80rpx;
+  height: 88rpx;
   border-radius: var(--r-pill);
   background: var(--ink-deep);
   color: var(--c-surface);

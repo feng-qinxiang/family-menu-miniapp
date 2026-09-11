@@ -393,7 +393,8 @@ Page({
       });
     }, 8000);
     try {
-      const [dashboard, todayMenu, shopping, family, user, match] = await Promise.all([
+      // 禁用数组解构：该语法编译后依赖 @babel/runtime 辅助模块，未打包进小程序会整页白屏
+      const loaded = await Promise.all([
         getDashboard(),
         getTodayMenu(),
         getShoppingList(),
@@ -401,6 +402,8 @@ Page({
         getCurrentUser(),
         getPantryMatch()
       ]);
+      const dashboard = loaded[0], todayMenu = loaded[1], shopping = loaded[2];
+      const family = loaded[3], user = loaded[4], match = loaded[5];
 
       const items = todayMenu && Array.isArray(todayMenu.items) ? todayMenu.items : [];
       const normalizedItems = items.map(item => ({
@@ -470,7 +473,8 @@ Page({
 
   async refreshLight() {
     try {
-      const [todayMenu, shopping] = await Promise.all([getTodayMenu(), getShoppingList()]);
+      const loaded = await Promise.all([getTodayMenu(), getShoppingList()]);
+      const todayMenu = loaded[0], shopping = loaded[1];
       const items = todayMenu && Array.isArray(todayMenu.items) ? todayMenu.items : [];
       const shoppingItems = shopping && Array.isArray(shopping.items) ? shopping.items : [];
       const normalizedItems = items.map(item => ({
@@ -488,7 +492,8 @@ Page({
       return;
     }
     try {
-      const [family, user] = await Promise.all([getFamilyProfile(), getCurrentUser()]);
+      const loaded = await Promise.all([getFamilyProfile(), getCurrentUser()]);
+      const family = loaded[0], user = loaded[1];
       const patch = {};
       if (family) patch.familyProfile = family;
       if (user) patch.currentUser = user;

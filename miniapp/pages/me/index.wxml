@@ -121,12 +121,8 @@
           <view class="mag-tmid"><view class="mag-tname">我的收藏</view><view class="mag-tdesc">收藏的菜谱和帖子都在这儿</view></view>
           <view class="mag-tarrow">›</view>
         </view>
-        <!-- 运营入口：仅管理员可见（后端 admin 字段） -->
-        <view wx:if="{{isAdmin}}" class="mag-trow tap-scale" bindtap="goCommunityAudit">
-          <view class="mag-ticon ti-3">审</view>
-          <view class="mag-tmid"><view class="mag-tname">社区审核</view><view class="mag-tdesc">处理举报，下架违规内容</view></view>
-          <view class="mag-tarrow">›</view>
-        </view>
+        <!-- 举报处置已统一收进运营后台（/admin），小程序里不再保留审核入口：
+             同一件事有两个入口时，运营不知道该看哪个，处置记录也会分散在两处。 -->
       </view>
     </view>
 

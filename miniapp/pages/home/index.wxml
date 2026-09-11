@@ -174,25 +174,25 @@
       </view>
 
       <!-- 空态 1：当前餐次还没点菜（但全天有其他餐次） -->
-      <view class="mh-empty-menu card-dark g-fade-up g-d3" wx:elif="{{todayMenu.length}}">
+      <view class="mh-empty-menu card-dark g-fade-up g-d3 tap-dim" wx:elif="{{todayMenu.length}}" catchtap="goRecipes">
         <view class="deco-circle"></view>
-        <view class="mh-mc-eyebrow">今天这一桌 <text class="mh-mc-slot">{{currentSlot === 'breakfast' ? '早餐' : currentSlot === 'lunch' ? '午餐' : '晚餐'}}</text></view>
-        <view class="mh-mc-title">今日{{currentSlot === 'breakfast' ? '早餐' : currentSlot === 'lunch' ? '午餐' : '晚餐'}}还没点菜</view>
+        <view class="mh-mc-eyebrow">今天这一桌</view>
+        <view class="mh-mc-title">{{currentSlot === 'breakfast' ? '早餐' : currentSlot === 'lunch' ? '午餐' : '晚餐'}}还没点菜</view>
         <view class="mh-mc-names">从下面挑几道，凑齐今晚的桌</view>
         <view class="mh-mc-bot">
-          <view class="mh-mc-empty-hint">点 + 加入菜单</view>
+          <view class="mh-mc-empty-hint">看中哪道，点 ＋ 上桌</view>
           <view class="mh-mc-go tap-scale" catchtap="goRecipes">逛菜谱 ›</view>
         </view>
       </view>
 
       <!-- 空态 2：全天都没成单 -->
-      <view class="mh-empty-menu card-dark g-fade-up g-d3" wx:else>
+      <view class="mh-empty-menu card-dark g-fade-up g-d3 tap-dim" wx:else catchtap="goRecipes">
         <view class="deco-circle"></view>
         <view class="mh-mc-eyebrow">今天这一桌</view>
-        <view class="mh-mc-title">今日还没点菜</view>
+        <view class="mh-mc-title">还没点菜</view>
         <view class="mh-mc-names">从下面挑几道，凑齐今晚的桌</view>
         <view class="mh-mc-bot">
-          <view class="mh-mc-empty-hint">点 + 加入菜单</view>
+          <view class="mh-mc-empty-hint">看中哪道，点 ＋ 上桌</view>
           <view class="mh-mc-go tap-scale" catchtap="goRecipes">逛菜谱 ›</view>
         </view>
       </view>

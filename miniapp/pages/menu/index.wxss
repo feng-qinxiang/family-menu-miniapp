@@ -78,7 +78,8 @@
   color: var(--c-surface);
   font-size: 26rpx;
   font-weight: 800;
-  min-height: 64rpx;
+  box-sizing: border-box;
+  min-height: 88rpx;
   display: flex;
   align-items: center;
 }
@@ -418,7 +419,7 @@
   margin-left: 12rpx;
 }
 .m-act {
-  height: 80rpx;
+  height: 88rpx;
   min-width: 100rpx;
   padding: 0 18rpx;
   display: flex;
@@ -539,7 +540,7 @@
   font-weight: 600;
 }
 .m-fab-btn {
-  height: 82rpx;
+  height: 88rpx;
   padding: 0 40rpx;
   display: flex;
   align-items: center;
@@ -574,7 +575,7 @@
 .m-load-error-btn {
   margin: 32rpx auto 0;
   width: 240rpx;
-  height: 76rpx;
+  height: 88rpx;
   display: flex;
   align-items: center;
   justify-content: center;

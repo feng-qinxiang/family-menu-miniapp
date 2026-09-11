@@ -113,11 +113,13 @@ Page({
     if (!silent) this.setData({ loading: true });
     this.setData({ loadError: false });
     try {
-      const [shoppingList, todayMenu, pantryItems] = await Promise.all([
+      // 禁用数组解构：该语法编译后依赖 @babel/runtime 辅助模块，未打包进小程序会整页白屏
+      const loaded = await Promise.all([
         getShoppingList(),
         getTodayMenu(),
         getPantryItems()
       ]);
+      const shoppingList = loaded[0], todayMenu = loaded[1], pantryItems = loaded[2];
       this._lastContext = { todayMenu, pantryItems };
       this.applyShoppingList(shoppingList, { todayMenu, pantryItems, loading: false });
       this.setPantryView(pantryItems);
@@ -222,11 +224,12 @@ Page({
     this.setData({ refreshingList: true });
     wx.showLoading({ title: '整理中', mask: true });
     try {
-      const [shoppingList, todayMenu, pantryItems] = await Promise.all([
+      const loaded = await Promise.all([
         rebuildShoppingList(),
         getTodayMenu(),
         getPantryItems()
       ]);
+      const shoppingList = loaded[0], todayMenu = loaded[1], pantryItems = loaded[2];
       this._lastContext = { todayMenu, pantryItems };
       this.applyShoppingList(shoppingList, { todayMenu, pantryItems });
       wx.hideLoading();
@@ -306,7 +309,8 @@ Page({
     if (result) {
       let context = this._lastContext || {};
       try {
-        const [todayMenu, pantryItems] = await Promise.all([getTodayMenu(), getPantryItems()]);
+        const loaded = await Promise.all([getTodayMenu(), getPantryItems()]);
+        const todayMenu = loaded[0], pantryItems = loaded[1];
         context = this._lastContext = { todayMenu, pantryItems };
       } catch (err) {
         wx.showToast({ title: '清单已更新，明细刷新失败', icon: 'none' });
@@ -348,7 +352,8 @@ Page({
     if (result) {
       let context = this._lastContext || {};
       try {
-        const [todayMenu, pantryItems] = await Promise.all([getTodayMenu(), getPantryItems()]);
+        const loaded = await Promise.all([getTodayMenu(), getPantryItems()]);
+        const todayMenu = loaded[0], pantryItems = loaded[1];
         context = this._lastContext = { todayMenu, pantryItems };
       } catch (err) {
         wx.showToast({ title: '清单已更新，明细刷新失败', icon: 'none' });

@@ -121,14 +121,28 @@
       hint="点 + 加入今日"
     />
 
-    <!-- 点到下拉 picker：不占单独行 -->
+    <!-- 点到下拉：自定义面板替代原生 picker（原生白滚轮与整体风格不符，且样式不可定制） -->
     <view class="rx-meal-picker" wx:if="{{!loading && displayedRecipes.length}}">
-      <picker class="rx-meal-pk" value="{{mealIndex}}" range="{{mealOptionLabels}}" bindchange="onMealPicker">
-        <view class="rx-meal-pk-btn tap-scale">
-          <text class="rx-meal-pk-l">点到</text>
-          <text class="rx-meal-pk-v">{{mealOptionLabels[mealIndex]}} ▾</text>
+      <view class="rx-meal-pk-btn tap-scale" catchtap="toggleMealDrop">
+        <text class="rx-meal-pk-l">点到</text>
+        <text class="rx-meal-pk-v">{{mealOptionLabels[mealIndex]}} ▾</text>
+      </view>
+      <view class="rx-drop-mask" wx:if="{{mealDropOpen}}" catchtap="closeMealDrop"></view>
+      <view class="rx-meal-drop" wx:if="{{mealDropOpen}}">
+        <view
+          class="rx-meal-opt {{mealIndex === idx ? 'on' : ''}}"
+          wx:for="{{mealOptionLabels}}"
+          wx:for-item="label"
+          wx:for-index="idx"
+          wx:key="*this"
+          data-idx="{{idx}}"
+          hover-class="rx-meal-opt-hov"
+          catchtap="onMealPick"
+        >
+          <text>{{label}}</text>
+          <text class="rx-meal-opt-x">✓</text>
         </view>
-      </picker>
+      </view>
     </view>
 
     <!-- 菜卡网格 -->

@@ -104,9 +104,8 @@
 .rx-search-input { flex: 1; font-size: 28rpx; color: var(--ink); font-weight: 500; }
 .rx-search-ph { color: var(--mut); font-weight: 500; }
 
-/* ===== 点到 picker（不单独占行） ===== */
-.rx-meal-picker { margin: 0 46rpx 24rpx; display: flex; }
-.rx-meal-pk { display: flex; }
+/* ===== 点到下拉（自定义面板，替代原生 picker 的系统白滚轮） ===== */
+.rx-meal-picker { position: relative; margin: 0 46rpx 24rpx; display: flex; }
 .rx-meal-pk-btn {
   display: flex; align-items: center; gap: 10rpx;
   padding: 10rpx 18rpx;
@@ -116,6 +115,43 @@
 }
 .rx-meal-pk-l { font-size: var(--fs-mini); color: var(--mut-strong); font-weight: 700; }
 .rx-meal-pk-v { font-size: var(--fs-sub); color: var(--ink); font-weight: 800; }
+/* 透明全屏遮罩：点外部收起；z 要压过底部"今日餐盘"横条（fixed z52），否则下拉被盖 */
+.rx-drop-mask {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 53;
+}
+.rx-meal-drop {
+  position: absolute;
+  /* 向上展开：下方紧邻 fixed 的"今日餐盘"横条（z52），向下会被物理遮挡 */
+  bottom: calc(100% + 10rpx);
+  left: 0;
+  z-index: 54;
+  min-width: 264rpx;
+  padding: 10rpx;
+  background: var(--c-surface);
+  border: 2rpx solid var(--c-border);
+  border-radius: var(--r-md);
+  box-shadow: 0 18rpx 48rpx rgba(40, 30, 20, 0.16);
+  animation: rx-drop-in 0.18s ease-out;
+}
+@keyframes rx-drop-in {
+  from { opacity: 0; transform: translateY(-8rpx); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.rx-meal-opt {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 30rpx;
+  min-height: 88rpx;
+  padding: 0 26rpx;
+  border-radius: var(--r-sm);
+  font-size: var(--fs-sub);
+  font-weight: 700;
+  color: var(--ink);
+}
+.rx-meal-opt.on { color: var(--pop); background: rgba(232, 71, 42, 0.08); }
+.rx-meal-opt-hov { background: var(--paper-2); }
+.rx-meal-opt-x { font-weight: 800; opacity: 0; }
+.rx-meal-opt.on .rx-meal-opt-x { opacity: 1; }
 
 /* 来源 chips */
 .rx-chips { width: 100%; white-space: nowrap; padding: 32rpx 0 8rpx; }

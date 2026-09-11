@@ -83,12 +83,14 @@ Page({
 
   async loadRecipe(id) {
     try {
-      const [recipe, pantryItems, todayMenu] = await Promise.all([
+      // 禁用数组解构：该语法编译后依赖 @babel/runtime 辅助模块，未打包进小程序会整页白屏
+      const loaded = await Promise.all([
         getRecipeDetail(id),
         getPantryItems(),
         // 今日菜单拉取失败不阻断详情展示，按钮回退为可点击态
         getTodayMenu().catch(() => null)
       ]);
+      const recipe = loaded[0], pantryItems = loaded[1], todayMenu = loaded[2];
       const menuItems = (todayMenu && Array.isArray(todayMenu.items)) ? todayMenu.items : [];
       const inTodayMenu = menuItems.some((it) => String(it.recipeId) === String(id));
       if (!recipe) {

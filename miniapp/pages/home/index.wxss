@@ -415,12 +415,14 @@
   font-size: 26rpx;
   font-weight: 800;
   padding: 22rpx 36rpx;
+  min-height: 88rpx;
+  box-sizing: border-box;
   border-radius: var(--r-pill);
   box-shadow: var(--sh-pop);
 }
 .mh-mc-empty-hint {
   font-size: var(--fs-sub);
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.72);
   font-weight: 600;
 }
 

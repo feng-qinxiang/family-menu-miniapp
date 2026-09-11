@@ -36,7 +36,6 @@ Page({
   data: {
     features,
     currentUser: {},
-    isAdmin: false,
     vipStatus: { vip: false, planName: '' },
     familyProfile: { familyId: 1, familyName: '', members: [] },
     memberCount: 0,
@@ -72,7 +71,8 @@ Page({
   async loadProfile(silent) {
     if (!silent) this.setData({ loading: true, loadError: '' });
     try {
-      const [currentUser, vipStatus, familyProfile, todayMenu, cookHistory, preference, dashboard] = await Promise.all([
+      // 禁用数组解构：该语法编译后依赖 @babel/runtime 辅助模块，未打包进小程序会整页白屏
+      const loaded = await Promise.all([
         getCurrentUser(),
         // 支付关闭时跳过会员状态请求
         features.PAYMENT ? getVipStatus() : Promise.resolve({ vip: false }),
@@ -82,6 +82,9 @@ Page({
         getPreferenceProfile(),
         getDashboard()
       ]);
+      const currentUser = loaded[0], vipStatus = loaded[1], familyProfile = loaded[2];
+      const todayMenu = loaded[3], cookHistory = loaded[4];
+      const preference = loaded[5], dashboard = loaded[6];
 
       const rawMembers = (familyProfile && Array.isArray(familyProfile.members)) ? familyProfile.members : [];
       const members = rawMembers.map((m, i) => ({
@@ -129,8 +132,6 @@ Page({
 
       this.setData({
         currentUser: currentUser || {},
-        // 管理入口可见性：后端 AuthUser.admin 字段（仅管理员为 true）
-        isAdmin: !!(currentUser && currentUser.admin),
         vipStatus: vipStatus || { vip: false },
         familyProfile: {
           ...(familyProfile || { familyName: '' }),
@@ -167,7 +168,6 @@ Page({
   goWeekly() { wx.navigateTo({ url: '/pkg-extra/weekly-menu/index' }); },
   goImport() { wx.navigateTo({ url: '/pkg-extra/import/index' }); },
   goFavorites() { wx.navigateTo({ url: '/pkg-extra/favorites/index' }); },
-  goCommunityAudit() { wx.navigateTo({ url: '/pkg-extra/community/audit/index' }); },
   goRecipes() { wx.switchTab({ url: '/pages/recipes/index' }); },
   goPreference() { wx.navigateTo({ url: '/pkg-extra/me/preference-profile/index' }); },
   goSettings() { wx.navigateTo({ url: '/pkg-extra/me/settings/index' }); },

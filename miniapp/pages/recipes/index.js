@@ -40,6 +40,7 @@ Page({
     mealOptions,
     mealOptionLabels: mealOptions.map(m => m.label),
     mealIndex: 2,                                    // 默认 'dinner'
+    mealDropOpen: false,
     activeMealType: 'dinner',
     loading: true,
     loadError: false,
@@ -86,12 +87,15 @@ Page({
     if (!silent) this.setData({ loading: true });
     try {
       const source = this.data.activeSource;
-      const [rawList, todayMenu, shoppingList, familyProfile] = await Promise.all([
+      // 禁用数组解构：该语法编译后依赖 @babel/runtime 辅助模块，未打包进小程序会整页白屏
+      const loaded = await Promise.all([
         source === 'favorites' ? getMyFavorites() : getRecipes('all'),
         getTodayMenu(),
         getShoppingList(),
         getFamilyProfile()
       ]);
+      const rawList = loaded[0], todayMenu = loaded[1];
+      const shoppingList = loaded[2], familyProfile = loaded[3];
       const tray = this.buildMenuTray(todayMenu, shoppingList);
       // 收藏接口返回 CommunityPost[]，须先提取关联菜谱，否则 id 是帖子 id（详情 404 / 加菜失败）
       const recipes = source === 'favorites' ? recipesFromPosts(rawList) : rawList;
@@ -126,13 +130,18 @@ Page({
   normalizeRecipe(recipe, selectedIds) {
     const id = String(recipe.id || '');
     const ids = selectedIds || this.data.todayDishIds;
+    // 公共菜谱库（后端 is_public，不是本人建的 owned 菜谱）单独给标签：
+    // 它们和自家菜谱的 sourceType 都是 owned，共用"自建"会让人以为是自己建的。
+    const isSharedLibrary = recipe.sourceType === 'owned' && recipe.mine === false;
     return {
       ...recipe,
       selected: ids.includes(id),
       tasteTags: Array.isArray(recipe.tasteTags) ? recipe.tasteTags : [],
       summary: recipe.summary || '',
       cover: recipeDishImg(recipe),
-      sourceLabel: recipeSourceLabels[recipe.sourceType] || '自家菜谱'
+      sourceLabel: isSharedLibrary
+        ? '公共菜谱'
+        : (recipeSourceLabels[recipe.sourceType] || '自家菜谱')
     };
   },
 
@@ -221,9 +230,13 @@ Page({
     const avoidHiddenCount = (this.data.recipes || []).length - avoidFiltered.length;
     const filteredRecipes = avoidFiltered.filter((recipe) => {
       // 收藏源：列表本身已是收藏结果，不再按 sourceType 过滤
+      // 「自建」只认本人创建的（后端 RecipeCard.mine）：公共菜谱库的 source_type 也是 owned，
+      // 只按 sourceType 过滤会把平台示例菜谱混进"自家菜谱"，用户会以为那不是自己建的菜凭空出现。
       const sourceMatch = this.data.activeSource === 'all'
         || this.data.activeSource === 'favorites'
-        || recipe.sourceType === this.data.activeSource;
+        || (this.data.activeSource === 'owned'
+          ? recipe.mine === true
+          : recipe.sourceType === this.data.activeSource);
       if (!sourceMatch) return false;
       if (keyword) {
         const searchTarget = [
@@ -292,11 +305,19 @@ Page({
     this.applyFilter();
   },
 
-  onMealPicker(e) {
-    const idx = Number(e.detail.value);
+  toggleMealDrop() {
+    this.setData({ mealDropOpen: !this.data.mealDropOpen });
+  },
+
+  closeMealDrop() {
+    if (this.data.mealDropOpen) this.setData({ mealDropOpen: false });
+  },
+
+  onMealPick(e) {
+    const idx = Number(e.currentTarget.dataset.idx);
     const key = mealOptions[idx] && mealOptions[idx].key;
     if (!key) return;
-    this.setData({ mealIndex: idx, activeMealType: key });
+    this.setData({ mealIndex: idx, activeMealType: key, mealDropOpen: false });
   },
 
   clearFilter() {

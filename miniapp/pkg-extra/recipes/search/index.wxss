@@ -45,7 +45,7 @@
   display: flex;
   align-items: center;
   gap: 17rpx;
-  height: 85rpx;
+  height: 88rpx;
   padding: 0 31rpx;
   background: var(--paper-2);
   border-radius: var(--r-chip);

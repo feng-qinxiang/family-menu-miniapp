@@ -54,6 +54,15 @@ page { background: var(--paper); }
   line-height: 46rpx;
   text-align: center;
 }
+.rc-cover-x::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 88rpx;
+  height: 88rpx;
+  transform: translate(-50%, -50%);
+}
 .rc-addcover {
   display: inline-block;
   margin-bottom: 8rpx;
