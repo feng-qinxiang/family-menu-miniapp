@@ -1,0 +1,97 @@
+<!-- pages/me/profile-edit · 编辑资料（二级页）文字头像 + 表单 -->
+<view class="pe-page">
+  <nav-bar title="编辑资料" show-back="{{true}}">
+    <text class="pe-navsave tap-scale" catchtap="onSave">保存</text>
+  </nav-bar>
+
+  <scroll-view class="pe-scroll" scroll-y enhanced show-scrollbar="{{false}}">
+    <!-- 文字头像 -->
+    <view class="pe-avatar-wrap g-fade-up g-d1">
+      <text class="pe-eyebrow">个人资料</text>
+      <view class="pe-avatar tap-scale" catchtap="onChangeAvatar">
+        <image wx:if="{{form.avatarUrl}}" class="pe-ava-img" src="{{form.avatarUrl}}" mode="aspectFill"></image>
+        <view wx:else class="pe-ava-txt">{{avatarInitial}}</view>
+        <view class="pe-cam">
+          <view class="pe-cam-icon"></view>
+        </view>
+      </view>
+      <text class="pe-avatar-hint">{{uploading ? '上传中...' : '更换头像'}}</text>
+    </view>
+
+    <!-- 基本信息 -->
+    <view class="pe-grlabel g-fade-up g-d2">基本信息</view>
+    <view class="card pe-group g-fade-up g-d2">
+      <view class="pe-frow">
+        <view class="pe-fic"><view class="pe-ic-dot"></view></view>
+        <text class="pe-flabel">昵称</text>
+        <input class="pe-finput" type="text" maxlength="16" placeholder="填写昵称"
+          placeholder-class="pe-ph" value="{{form.nickname}}" bindinput="onNickname" />
+      </view>
+
+      <view class="pe-frow">
+        <view class="pe-fic"><view class="pe-ic-dot"></view></view>
+        <text class="pe-flabel">性别</text>
+        <view class="pe-pillrow">
+          <view class="tap-scale chip pe-pill {{form.gender === 'male' ? 'on' : ''}}"
+            data-g="male" catchtap="onGender">男</view>
+          <view class="tap-scale chip pe-pill {{form.gender === 'female' ? 'on' : ''}}"
+            data-g="female" catchtap="onGender">女</view>
+        </view>
+      </view>
+
+      <view class="pe-frow tap-scale" wx:if="{{features.PHONE_LOGIN}}" catchtap="onEditPhone">
+        <view class="pe-fic"><view class="pe-ic-dot"></view></view>
+        <text class="pe-flabel pe-flabel-wide">手机号</text>
+        <text class="pe-fval {{form.phone ? '' : 'pe-ph'}}">{{form.phone || '未绑定'}}</text>
+        <view class="pe-chev"></view>
+      </view>
+
+      <view class="pe-frow">
+        <view class="pe-fic"><view class="pe-ic-dot"></view></view>
+        <text class="pe-flabel">生日</text>
+        <picker mode="date" value="{{form.birthday}}" start="1940-01-01" end="{{today}}" bindchange="onBirthday">
+          <view class="pe-picker">
+            <text class="pe-fval {{form.birthday ? '' : 'pe-ph'}}">{{birthdayLabel}}</text>
+            <view class="pe-chev"></view>
+          </view>
+        </picker>
+      </view>
+    </view>
+
+    <!-- 关于口味：口味偏好存个人资料，忌口存家庭成员记录（与「家庭 → 成员」页同一份） -->
+    <view class="pe-grlabel g-fade-up g-d3">关于口味</view>
+    <view class="card pe-group g-fade-up g-d3">
+      <view class="pe-frow pe-frow-col">
+        <view class="pe-frow-head">
+          <view class="pe-fic"><view class="pe-ic-dot"></view></view>
+          <text class="pe-flabel pe-flabel-wide">口味偏好</text>
+        </view>
+        <view class="pe-tagwrap">
+          <view wx:for="{{tasteOptions}}" wx:key="*this"
+            class="tap-scale chip pe-tag {{form.tasteTags.indexOf(item) >= 0 ? 'on' : ''}}"
+            data-tag="{{item}}" catchtap="onToggleTaste">{{item}}</view>
+        </view>
+      </view>
+
+      <view class="pe-frow pe-frow-col">
+        <view class="pe-frow-head">
+          <view class="pe-fic"><view class="pe-ic-dot"></view></view>
+          <text class="pe-flabel pe-flabel-wide">忌口</text>
+        </view>
+        <view class="pe-tagwrap">
+          <view wx:for="{{avoidOptions}}" wx:key="*this"
+            class="tap-scale chip pe-tag {{form.avoid.indexOf(item) >= 0 ? 'on' : ''}}"
+            data-tag="{{item}}" catchtap="onToggleAvoid">{{item}}</view>
+        </view>
+        <text class="pe-hint">选中后点菜与周菜单会主动避开相关菜品，家人也看得到</text>
+      </view>
+    </view>
+
+    <view class="pe-savebar safe-bottom">
+      <view class="btn btn-pop btn-block tap-scale" catchtap="onSave">
+        <view class="pe-save-check"></view>
+        <text>{{saving ? '保存中...' : '保存修改'}}</text>
+      </view>
+    </view>
+  </scroll-view>
+</view>

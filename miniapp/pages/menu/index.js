@@ -13,6 +13,7 @@ const {
 const { mealTypeLabels, mealOrder } = require('../../utils/constants');
 const { fallbackDishImg, recipeDishImg, LOCAL_DISHES } = require('../../utils/image');
 const { runGuarded } = require('../../utils/interaction');
+const subscribe = require('../../utils/subscribe');
 
 function buildToday() {
   const d = new Date();
@@ -89,6 +90,8 @@ Page({
       const mb = wx.getMenuButtonBoundingClientRect();
       if (mb && mb.bottom) this.setData({ heroMetaTop: (mb.bottom + 8) + 'px' });
     } catch (e) {}
+    // 预热订阅消息配置：喊开饭时要在点击手势里同步申请授权，不能临时去等网络
+    subscribe.preload();
   },
 
   onShow() {
@@ -243,7 +246,7 @@ Page({
   goDetail(e) {
     const { id } = e.currentTarget.dataset;
     if (!id) return;
-    wx.navigateTo({ url: `/pages/recipe-detail/index?id=${id}` });
+    wx.navigateTo({ url: `/pkg-extra/recipe-detail/index?id=${id}` });
   },
 
   goShopping() {
@@ -251,7 +254,7 @@ Page({
   },
 
   goWeekly() {
-    wx.navigateTo({ url: '/pages/weekly-menu/index' });
+    wx.navigateTo({ url: '/pkg-extra/weekly-menu/index' });
   },
 
   goPantry() {
@@ -288,7 +291,7 @@ Page({
       }
     }
     wx.navigateTo({
-      url: `/pages/cook-mode/index?id=${id}&menuItemId=${item || ''}`,
+      url: `/pkg-extra/cook-mode/index?id=${id}&menuItemId=${item || ''}`,
       fail: () => wx.showToast({ title: '页面打开失败，请重试', icon: 'none' })
     });
   },
@@ -333,6 +336,9 @@ Page({
       cancelText: '先不用',
       success: (res) => {
         if (!res.confirm) return;
+        // 顺带补一次「开饭提醒」订阅授权（一次性订阅：同意一次才够发一条）。
+        // 若基础库不认弹窗回调里的手势，这里只会拿不到授权、静默返回 false，不影响下面发通知。
+        subscribe.apply('meal');
         announceMeal()
           .then(() => wx.showToast({ title: '已通知家人', icon: 'success' }))
           .catch(() => wx.showToast({ title: '通知没发出去', icon: 'none' }));

@@ -15,6 +15,7 @@ const { sourceLabels, mealTypeLabels, SLOTS, cuisinePinyin } = require('../../ut
 const { fallbackDishImg, recipeDishImg, onImgError } = require('../../utils/image');
 const { decorateHero, filterBySlot, todayDateKey } = require('../../utils/dish-logic');
 const { withTabSelect } = require('../../behaviors/tab-select');
+const subscribe = require('../../utils/subscribe');
 const WISH_STORAGE_KEY = 'family_wishes_v1';
 const WISH_PENDING_KEY = 'wish_pending_v1';
 const CACHE_KEY_MENU = 'home_cache_todayMenu';
@@ -168,6 +169,8 @@ Page({
     });
     this.refreshWishes();
     this.loadAll();
+    // 预热订阅消息配置：申请授权必须在点击手势里同步调用，不能等网络回来再申请
+    subscribe.preload();
   },
 
   onShow() {
@@ -245,7 +248,7 @@ Page({
   },
 
   goWeek() {
-    wx.navigateTo({ url: '/pages/weekly-menu/index' });
+    wx.navigateTo({ url: '/pkg-extra/weekly-menu/index' });
   },
 
   addWish() {
@@ -265,6 +268,10 @@ Page({
     if (!text) return;
     const me = this.data.currentUser || {};
     this.setData({ showWishModal: false, wishInput: '' });
+    // 顺带要一次「家人许愿」订阅授权：一次性订阅是"同意一次才能发一条"，
+    // 只靠设置页开关的话，家人收过一条就再也收不到了。
+    // 这里在点击手势内同步调用（见 utils/subscribe.js 的说明），拿不到授权也不影响许愿。
+    subscribe.apply('wish');
     this.persistWish({
       id: `w-${Date.now()}`,
       text,
@@ -348,7 +355,7 @@ Page({
     const wishId = (wish && wish.id) || '';
     const slot = (wish && wish.slot) || this.data.currentSlot || 'dinner';
     wx.navigateTo({
-      url: `/pages/recipes/search/index?keyword=${encodeURIComponent(text)}&wishId=${encodeURIComponent(wishId)}&slot=${slot}`,
+      url: `/pkg-extra/recipes/search/index?keyword=${encodeURIComponent(text)}&wishId=${encodeURIComponent(wishId)}&slot=${slot}`,
       fail: () => wx.switchTab({ url: '/pages/recipes/index' })
     });
   },
@@ -611,7 +618,7 @@ Page({
   goDetail(e) {
     const id = (e.detail && e.detail.id) || (e.currentTarget && e.currentTarget.dataset && e.currentTarget.dataset.id);
     if (!id) return;
-    wx.navigateTo({ url: `/pages/recipe-detail/index?id=${id}` });
+    wx.navigateTo({ url: `/pkg-extra/recipe-detail/index?id=${id}` });
   },
 
   goMenu() {

@@ -2,6 +2,8 @@
 const { resolveBaseUrl } = require('./env');
 // 请求头与 api.js 保持一致：上传同样带设备标识，便于后端排查与限流
 const { getAuthToken, getDeviceId } = require('./api');
+// 相册/相机属微信隐私接口，调用前必须先取得授权
+const { ensurePrivacy } = require('./privacy');
 
 function isCancel(err) {
   return !!(err && err.errMsg && /cancel/i.test(err.errMsg));
@@ -9,22 +11,25 @@ function isCancel(err) {
 
 function chooseImage(count) {
   return new Promise((resolve) => {
-    wx.chooseMedia({
-      count: count || 1,
-      mediaType: ['image'],
-      sourceType: ['album', 'camera'],
-      sizeType: ['compressed'],
-      success(res) {
-        const paths = (res.tempFiles || []).map((f) => f.tempFilePath);
-        resolve(paths);
-      },
-      fail(err) {
-        if (!isCancel(err)) {
-          wx.showToast({ title: '选图失败', icon: 'none' });
+    // 全站相册入口：菜谱封面、头像、反馈截图、导入图片都走这里，授权收在这一处即可
+    ensurePrivacy(() => {
+      wx.chooseMedia({
+        count: count || 1,
+        mediaType: ['image'],
+        sourceType: ['album', 'camera'],
+        sizeType: ['compressed'],
+        success(res) {
+          const paths = (res.tempFiles || []).map((f) => f.tempFilePath);
+          resolve(paths);
+        },
+        fail(err) {
+          if (!isCancel(err)) {
+            wx.showToast({ title: '选图失败', icon: 'none' });
+          }
+          resolve([]);
         }
-        resolve([]);
-      }
-    });
+      });
+    }, () => resolve([]));
   });
 }
 
@@ -69,22 +74,24 @@ function chooseAndUpload(count) {
 
 function chooseVideo() {
   return new Promise((resolve) => {
-    wx.chooseMedia({
-      count: 1,
-      mediaType: ['video'],
-      sourceType: ['album', 'camera'],
-      maxDuration: 60,
-      success(res) {
-        const file = (res.tempFiles || [])[0];
-        resolve(file ? file.tempFilePath : '');
-      },
-      fail(err) {
-        if (!isCancel(err)) {
-          wx.showToast({ title: '选视频失败', icon: 'none' });
+    ensurePrivacy(() => {
+      wx.chooseMedia({
+        count: 1,
+        mediaType: ['video'],
+        sourceType: ['album', 'camera'],
+        maxDuration: 60,
+        success(res) {
+          const file = (res.tempFiles || [])[0];
+          resolve(file ? file.tempFilePath : '');
+        },
+        fail(err) {
+          if (!isCancel(err)) {
+            wx.showToast({ title: '选视频失败', icon: 'none' });
+          }
+          resolve('');
         }
-        resolve('');
-      }
-    });
+      });
+    }, () => resolve(''));
   });
 }
 

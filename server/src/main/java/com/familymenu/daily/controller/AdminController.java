@@ -381,14 +381,14 @@ public class AdminController {
         return adminService.listOrders(status, from, to, sort, order, page, size);
     }
 
-    /** 关闭未支付订单（PENDING → CLOSED）。 */
+    /** 关闭未支付订单（PENDING → CLOSED）。仅站内状态，不会同步关闭微信侧支付单。 */
     @PostMapping("/orders/{outTradeNo}/close")
     @RequiresPermission(AdminPermission.ORDER_MANAGE)
     public Map<String, Object> closeOrder(@PathVariable String outTradeNo, @CurrentUser AuthUser actor) {
         try {
             adminService.closeOrder(actor.userId(), outTradeNo);
             auditService.record(actor.userId(), actor.nickname(), "CLOSE_ORDER", "order", null,
-                    "outTradeNo=" + outTradeNo, true);
+                    "outTradeNo=" + outTradeNo + " note=仅站内标记，未同步微信侧支付单", true);
             return Map.of("ok", true);
         } catch (RuntimeException ex) {
             auditService.record(actor.userId(), actor.nickname(), "CLOSE_ORDER", "order", null,
@@ -397,14 +397,14 @@ public class AdminController {
         }
     }
 
-    /** 退款（PAID → REFUNDED，回收会员权益）。真实资金退款在商户平台操作。 */
+    /** 退款（PAID → REFUNDED，回收会员权益）。真实资金退款需在微信商户平台人工操作。 */
     @PostMapping("/orders/{outTradeNo}/refund")
     @RequiresPermission(AdminPermission.ORDER_MANAGE)
     public Map<String, Object> refundOrder(@PathVariable String outTradeNo, @CurrentUser AuthUser actor) {
         try {
             adminService.refundOrder(actor.userId(), outTradeNo);
             auditService.record(actor.userId(), actor.nickname(), "REFUND_ORDER", "order", null,
-                    "outTradeNo=" + outTradeNo, true);
+                    "outTradeNo=" + outTradeNo + " note=仅站内标记并回收权益，真实资金未退回，需商户平台操作", true);
             return Map.of("ok", true);
         } catch (RuntimeException ex) {
             auditService.record(actor.userId(), actor.nickname(), "REFUND_ORDER", "order", null,

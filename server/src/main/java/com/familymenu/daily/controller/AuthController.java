@@ -68,7 +68,8 @@ public class AuthController {
             return user;
         }
         return authService.updateProfile(user, request.nickname(), request.avatarUrl(),
-                request.phone(), request.phoneCode());
+                request.phone(), request.phoneCode(),
+                request.gender(), request.birthday(), request.tasteTags());
     }
 
     /** 登出：吊销当前会话 token（幂等）。 */

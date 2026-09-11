@@ -9,6 +9,9 @@ import java.util.List;
  * 站内通知：把业务事件写入 notification_message，通知页（/api/me/notifications）读取展示。
  * 定位是家庭内广播（排除触发者本人）；写入失败只吞掉——通知是旁路，不允许影响业务主流程。
  *
+ * 这里是全站唯一的通知出口：写站内信的同时，顺带尝试一次微信订阅消息推送。
+ * 好处是新增一类通知不需要再记得去接推送——只要 kind 配了模板，它就会发。
+ *
  * 现有 kind 约定：fam / sys / com（见 SupportService 种子数据）。
  * 本服务新增两类业务事件：
  *   wish —— 家人许愿（"XX 想吃糖醋排骨"），action_type=home，跳首页许愿池
@@ -18,9 +21,11 @@ import java.util.List;
 public class NotificationService {
 
     private final JdbcTemplate jdbcTemplate;
+    private final SubscribeMessageService subscribeMessageService;
 
-    public NotificationService(JdbcTemplate jdbcTemplate) {
+    public NotificationService(JdbcTemplate jdbcTemplate, SubscribeMessageService subscribeMessageService) {
         this.jdbcTemplate = jdbcTemplate;
+        this.subscribeMessageService = subscribeMessageService;
     }
 
     /** 给家庭内除 excludeUserId 外的所有活跃成员各写一条通知。 */
@@ -35,9 +40,20 @@ public class NotificationService {
                         "INSERT INTO notification_message(user_id, family_id, kind, title, body_text, action_type) VALUES (?, ?, ?, ?, ?, ?)",
                         uid, familyId, kind, title, body, actionType
                 );
+                // 订阅消息是异步的，且失败只记日志：站内信已经写成功了，推送少一条不影响用户看得到
+                subscribeMessageService.sendAsync(uid, kind, title, body, pageFor(actionType));
             }
         } catch (Exception ignored) {
             // 通知失败不影响主流程（例如成员表异常、单条插入失败）
         }
+    }
+
+    /** 站内动作类型 → 订阅消息被点击后跳转的小程序页面（微信要求不带前导斜杠）。 */
+    private static String pageFor(String actionType) {
+        return switch (actionType == null ? "" : actionType) {
+            case "home" -> "pages/home/index";
+            case "menu" -> "pages/menu/index";
+            default -> "";
+        };
     }
 }

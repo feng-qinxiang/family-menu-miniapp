@@ -63,6 +63,26 @@
           <button id="loginBtn" type="submit" class="btn primary block">登 录</button>
           <div id="loginMsg" class="msg" role="alert" aria-live="polite"></div>
         </form>
+
+        <!-- 引导登录：仅在服务端设置了 ADMIN_BOOTSTRAP_TOKEN 时可用（否则接口返回 404）。
+             短信网关未接入时这是唯一能进后台的入口，进去后应立刻移除该环境变量。 -->
+        <details class="login-bootstrap">
+          <summary>收不到验证码？用引导登录</summary>
+          <p class="login-bootstrap-tip">
+            服务端设置了 <code>ADMIN_BOOTSTRAP_TOKEN</code> 时可用。
+            登录成功后请立刻从环境变量移除该令牌并重启应用。
+          </p>
+          <label for="bootstrapToken">引导令牌</label>
+          <div class="field">
+            <span class="field-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="12" r="4"/><path d="M12.5 12H21"/><path d="M18.4 12v3.2"/><path d="M15.6 12v2.2"/></svg>
+            </span>
+            <input id="bootstrapToken" name="bootstrapToken" type="password" placeholder="粘贴引导令牌" autocomplete="off" />
+          </div>
+          <button id="bootstrapBtn" type="button" class="btn ghost">引导登录</button>
+          <div id="bootstrapMsg" class="msg" role="alert" aria-live="polite"></div>
+        </details>
+
         <p class="login-note">登录与所有管理操作都会写入审计日志</p>
       </section>
     </div>

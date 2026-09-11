@@ -24,6 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *  - POST /api/auth/guest        —— 每个新设备指纹会建用户+家庭+演示数据，防批量刷库
  *  - POST /api/auth/otp/request  —— 防短信轰炸（接真实网关后直接等于烧钱）
  *  - POST /api/admin/auth/otp    —— 同上
+ *  - POST /api/admin/auth/bootstrap —— 引导令牌等同后台钥匙，防在线爆破
  *  - GET  /api/family/join-preview —— 防邀请码暴力枚举
  *  - POST /api/feedback          —— 防工单刷屏
  *  - POST /api/import/preview    —— 解析是纯 CPU 活，防滥用
@@ -45,6 +46,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
             new Rule("POST", "/api/auth/guest", 30, 60_000L),
             new Rule("POST", "/api/auth/otp/request", 10, 60_000L),
             new Rule("POST", "/api/admin/auth/otp", 10, 60_000L),
+            new Rule("POST", "/api/admin/auth/bootstrap", 5, 60_000L),
             new Rule("GET", "/api/family/join-preview", 20, 60_000L),
             new Rule("POST", "/api/feedback", 5, 60_000L),
             new Rule("POST", "/api/import/preview", 20, 60_000L)

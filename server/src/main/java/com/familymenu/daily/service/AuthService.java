@@ -6,6 +6,7 @@ import com.familymenu.daily.dto.AuthModels.LoginResponse;
 import com.familymenu.daily.dto.AuthModels.OtpChallenge;
 import com.familymenu.daily.dto.AuthModels.OtpLoginRequest;
 import com.familymenu.daily.dto.AuthModels.OtpRequest;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,9 +22,13 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.HexFormat;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
@@ -55,6 +60,7 @@ public class AuthService {
     private final RestClient restClient;
     private final com.familymenu.daily.payment.MembershipService membershipService;
     private final SmsGateway smsGateway;
+    private final com.fasterxml.jackson.databind.ObjectMapper objectMapper;
     private final String appId;
     private final String appSecret;
     private final boolean devOtpEnabled;
@@ -66,9 +72,17 @@ public class AuthService {
     private static final int OTP_MAX_FAILURES = 5;
     private static final long OTP_LOCK_MILLIS = 15 * 60 * 1000L;
 
+    // ---- 口味画像（个人资料）----
+    /** 口味标签上限：这些值每次 /api/auth/me 都会返回，不能让用户塞进超长数组 */
+    private static final int MAX_TASTE_TAGS = 20;
+    private static final int MAX_TAG_LENGTH = 16;
+    private static final Set<String> GENDERS = Set.of("male", "female", "other");
+    private static final TypeReference<List<String>> STRING_LIST = new TypeReference<>() {};
+
     public AuthService(JdbcTemplate jdbcTemplate,
                        com.familymenu.daily.payment.MembershipService membershipService,
                        SmsGateway smsGateway,
+                       com.fasterxml.jackson.databind.ObjectMapper objectMapper,
                        @Value("${wechat.app-id:}") String appId,
                        @Value("${wechat.app-secret:}") String appSecret,
                        // 默认 false：只有显式配置才开启固定验证码，避免任何配置缺失导致 246810 生效
@@ -79,6 +93,7 @@ public class AuthService {
         this.jdbcTemplate = jdbcTemplate;
         this.membershipService = membershipService;
         this.smsGateway = smsGateway;
+        this.objectMapper = objectMapper;
         this.restClient = RestClient.create();
         this.appId = appId == null ? "" : appId.trim();
         this.appSecret = appSecret == null ? "" : appSecret.trim();
@@ -88,12 +103,13 @@ public class AuthService {
         if (!this.wechatConfigured) {
             log.warn("WeChat credentials not configured. /api/auth/login will reject real WeChat codes; only /api/auth/guest is available.");
         }
-        // 管理后台的唯一入口是「手机号验证码」，所以短信网关没接 + 没开 dev OTP = 后台进不去。
-        // 这不是运行时才发现的坑，启动时就说清楚。
+        // 管理后台的常规入口是「手机号验证码」，所以短信网关没接 + 没开 dev OTP = 后台进不去。
+        // 这不是运行时才发现的坑，启动时就说清楚（应急入口见 ADMIN_BOOTSTRAP_TOKEN）。
         if (!smsGateway.configured() && !this.devOtpEnabled) {
-            log.warn("短信网关未配置（SMS_PROVIDER=noop）且未开启 dev OTP：管理后台 /admin 无法登录"
-                    + "（/api/admin/auth/otp 会返回 503）。小程序端不受影响（游客/微信）。"
-                    + "本地联调请用 AUTH_DEV_OTP_ENABLED=true 启动，生产请接入真实短信供应商。");
+            log.warn("短信网关未配置（SMS_PROVIDER=noop）且未开启 dev OTP：管理后台 /admin 无法用验证码登录"
+                    + "（/api/admin/auth/otp 会返回 503）。"
+                    + "应急入口：设置 ADMIN_BOOTSTRAP_TOKEN + ADMIN_BOOTSTRAP_PHONE 后用「引导登录」进后台。"
+                    + "本地联调也可用 AUTH_DEV_OTP_ENABLED=true。小程序端不受影响（游客/微信）。");
         }
     }
 
@@ -204,17 +220,50 @@ public class AuthService {
     @Transactional
     public LoginResponse adminLoginByPhoneOtp(String rawPhone, String rawCode) {
         String phone = normalizePhone(rawPhone);
-        // 先确认该手机号属于管理员，再校验验证码：避免对非管理员账号做无意义的验证码消耗
-        Long adminUserId = jdbcTemplate.query(
-                "SELECT id FROM user_account WHERE phone_number = ? AND is_admin = 1 AND status = 'ACTIVE' ORDER BY id LIMIT 1",
-                rs -> rs.next() ? rs.getLong("id") : null, phone);
+        Long adminUserId = findActiveAdminIdByPhone(phone);
         if (adminUserId == null) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "该账号不是管理员");
         }
         consumePhoneOtp(phone, rawCode);
+        log.info("admin login: userId={}", adminUserId);
+        return issueAdminSession(adminUserId);
+    }
+
+    /**
+     * 引导登录：跳过验证码，直接为「服务端指定的那个管理员账号」签发会话。
+     *
+     * 存在意义：短信网关未接入（SMS_PROVIDER=noop）时验证码根本发不出去，
+     * 而 /admin 的唯一入口就是验证码登录 —— 结果是谁也进不了后台。
+     * 令牌来自环境变量 ADMIN_BOOTSTRAP_TOKEN，账号由 ADMIN_BOOTSTRAP_PHONE 指定。
+     *
+     * 安全约束：目标账号必须本来就是 is_admin=1 且 ACTIVE —— 持有令牌不等于可以提权，
+     * 想引导登录必须先用 ADMIN_OPENIDS 把账号提为管理员。
+     */
+    @Transactional
+    public LoginResponse adminLoginByBootstrap(String rawPhone) {
+        String phone = normalizePhone(rawPhone);
+        Long adminUserId = findActiveAdminIdByPhone(phone);
+        if (adminUserId == null) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "没有找到「该手机号 + 管理员」的账号：请先用 ADMIN_OPENIDS 把账号提为管理员，"
+                            + "并确认该账号绑定的手机号与 ADMIN_BOOTSTRAP_PHONE 一致");
+        }
+        log.warn("admin bootstrap login: userId={} —— 进去后请立刻移除环境变量 ADMIN_BOOTSTRAP_TOKEN 并重启", adminUserId);
+        return issueAdminSession(adminUserId);
+    }
+
+    /** 按手机号找 ACTIVE 管理员账号 id（验证码登录与引导登录共用）。 */
+    private Long findActiveAdminIdByPhone(String phone) {
+        // 先确认该手机号属于管理员，再校验验证码：避免对非管理员账号做无意义的验证码消耗
+        return jdbcTemplate.query(
+                "SELECT id FROM user_account WHERE phone_number = ? AND is_admin = 1 AND status = 'ACTIVE' ORDER BY id LIMIT 1",
+                rs -> rs.next() ? rs.getLong("id") : null, phone);
+    }
+
+    /** 为管理员账号补家庭（会话解析要求存在 ACTIVE 家庭）并签发 admin 会话。 */
+    private LoginResponse issueAdminSession(long adminUserId) {
         long familyId = ensureFamilyForUser(adminUserId);
         String token = createSession(adminUserId, "admin");
-        log.info("admin login: userId={}", adminUserId);
         return new LoginResponse(token, loadUser(adminUserId, familyId));
     }
 
@@ -233,7 +282,8 @@ public class AuthService {
         // 库里存的是 token 的 SHA-256 摘要，不存明文；封禁（status=BANNED）账号的会话即时失效
         String tokenHash = sha256Hex(token.trim());
         String sql = """
-                SELECT u.id, u.nickname, u.avatar_url, u.is_admin, u.admin_role, u.phone_number, u.openid
+                SELECT u.id, u.nickname, u.avatar_url, u.is_admin, u.admin_role, u.phone_number, u.openid,
+                       u.gender, DATE_FORMAT(u.birthday, '%Y-%m-%d') AS birthday, u.taste_tags_json
                 FROM user_session s
                 JOIN user_account u ON u.id = s.user_id
                 WHERE s.token = ? AND s.expires_at > NOW() AND u.status = 'ACTIVE'
@@ -261,7 +311,10 @@ public class AuthService {
                     rs.getBoolean("is_admin"),
                     roleName(rs.getBoolean("is_admin"), rs.getString("admin_role")),
                     rs.getString("phone_number") != null && !rs.getString("phone_number").isBlank(),
-                    isWechatBound(rs.getString("openid"))
+                    isWechatBound(rs.getString("openid")),
+                    rs.getString("gender"),
+                    rs.getString("birthday"),
+                    readStringList(rs.getString("taste_tags_json"))
             ));
         }, tokenHash);
     }
@@ -295,7 +348,8 @@ public class AuthService {
     }
 
     @Transactional
-    public AuthUser updateProfile(AuthUser current, String nickname, String avatarUrl, String phone, String phoneCode) {
+    public AuthUser updateProfile(AuthUser current, String nickname, String avatarUrl, String phone, String phoneCode,
+                                  String gender, String birthday, java.util.List<String> tasteTags) {
         long userId = current.userId();
         if (nickname != null && !nickname.isBlank()) {
             jdbcTemplate.update("UPDATE user_account SET nickname = ? WHERE id = ?", nickname.trim(), userId);
@@ -325,6 +379,22 @@ public class AuthService {
                 }
                 jdbcTemplate.update("UPDATE user_account SET phone_number = ? WHERE id = ?", normalized, userId);
             }
+        }
+        // ---- 口味画像：只处理显式传了的字段，null = 不改动，空串/空数组 = 清空 ----
+        String normalizedGender = normalizeGender(gender);
+        if (normalizedGender != null) {
+            jdbcTemplate.update("UPDATE user_account SET gender = ? WHERE id = ?",
+                    normalizedGender.isEmpty() ? null : normalizedGender, userId);
+        }
+        String normalizedBirthday = normalizeBirthday(birthday);
+        if (normalizedBirthday != null) {
+            Object value = normalizedBirthday.isEmpty() ? null : LocalDate.parse(normalizedBirthday);
+            jdbcTemplate.update("UPDATE user_account SET birthday = ? WHERE id = ?", value, userId);
+        }
+        java.util.List<String> cleanedTags = sanitizeTags(tasteTags);
+        if (cleanedTags != null) {
+            jdbcTemplate.update("UPDATE user_account SET taste_tags_json = ? WHERE id = ?",
+                    writeStringList(cleanedTags), userId);
         }
         return loadUser(userId, current.familyId());
     }
@@ -536,7 +606,8 @@ public class AuthService {
         com.familymenu.daily.payment.MembershipService.Coverage coverage =
                 membershipService.resolveCoverage(userId);
         return jdbcTemplate.queryForObject("""
-                        SELECT id, nickname, avatar_url, is_admin, admin_role, phone_number, openid
+                        SELECT id, nickname, avatar_url, is_admin, admin_role, phone_number, openid,
+                               gender, DATE_FORMAT(birthday, '%Y-%m-%d') AS birthday, taste_tags_json
                         FROM user_account
                         WHERE id = ?
                         """,
@@ -550,7 +621,10 @@ public class AuthService {
                         rs.getBoolean("is_admin"),
                         roleName(rs.getBoolean("is_admin"), rs.getString("admin_role")),
                         rs.getString("phone_number") != null && !rs.getString("phone_number").isBlank(),
-                        isWechatBound(rs.getString("openid"))
+                        isWechatBound(rs.getString("openid")),
+                        rs.getString("gender"),
+                        rs.getString("birthday"),
+                        readStringList(rs.getString("taste_tags_json"))
                 ),
                 userId
         );
@@ -712,6 +786,101 @@ public class AuthService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "手机号格式不正确");
         }
         return normalized;
+    }
+
+    // ==================== 口味画像（个人资料） ====================
+
+    /**
+     * 归一化性别。null = 不改动；空串 = 清空；其余只接受 male / female / other。
+     */
+    private static String normalizeGender(String gender) {
+        if (gender == null) {
+            return null;
+        }
+        String value = gender.trim().toLowerCase(Locale.ROOT);
+        if (value.isEmpty()) {
+            return "";
+        }
+        if (!GENDERS.contains(value)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "性别取值不合法");
+        }
+        return value;
+    }
+
+    /**
+     * 归一化生日。null = 不改动；空串 = 清空；其余必须是 yyyy-MM-dd 且不能是未来日期。
+     */
+    private static String normalizeBirthday(String birthday) {
+        if (birthday == null) {
+            return null;
+        }
+        String value = birthday.trim();
+        if (value.isEmpty()) {
+            return "";
+        }
+        LocalDate date;
+        try {
+            date = LocalDate.parse(value);
+        } catch (DateTimeParseException ex) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "生日格式应为 yyyy-MM-dd");
+        }
+        if (date.isAfter(LocalDate.now())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "生日不能是未来日期");
+        }
+        return value;
+    }
+
+    /**
+     * 清洗口味标签。null = 不改动；空数组 = 清空。
+     * 去空白、去重，并拒绝超长/超量 —— 这些值会随每次 /api/auth/me 返回。
+     */
+    private static List<String> sanitizeTags(List<String> tags) {
+        if (tags == null) {
+            return null;
+        }
+        List<String> cleaned = tags.stream()
+                .filter(t -> t != null)
+                .map(String::trim)
+                .filter(t -> !t.isBlank())
+                .distinct()
+                .toList();
+        if (cleaned.size() > MAX_TASTE_TAGS) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "口味标签最多 " + MAX_TASTE_TAGS + " 个");
+        }
+        for (String tag : cleaned) {
+            if (tag.length() > MAX_TAG_LENGTH) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "单个口味标签不能超过 " + MAX_TAG_LENGTH + " 个字");
+            }
+        }
+        return cleaned;
+    }
+
+    /** 反序列化 JSON 字符串数组；脏数据一律当空列表，不让页面因历史数据崩掉。 */
+    private List<String> readStringList(String json) {
+        if (json == null || json.isBlank()) {
+            return List.of();
+        }
+        try {
+            List<String> values = objectMapper.readValue(json, STRING_LIST);
+            return values == null ? List.of() : values;
+        } catch (Exception ex) {
+            log.warn("taste_tags_json 解析失败，按空处理: {}", ex.getMessage());
+            return List.of();
+        }
+    }
+
+    /** 序列化字符串数组为 JSON；空列表写 null（与 FamilyService 的忌口存法保持一致）。 */
+    private String writeStringList(List<String> values) {
+        if (values == null || values.isEmpty()) {
+            return null;
+        }
+        try {
+            return objectMapper.writeValueAsString(values);
+        } catch (Exception ex) {
+            log.warn("taste_tags_json 序列化失败: {}", ex.getMessage());
+            return null;
+        }
     }
 
     private boolean isBlank(String value) {

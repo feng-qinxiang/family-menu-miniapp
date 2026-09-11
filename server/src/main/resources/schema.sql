@@ -13,6 +13,16 @@ CREATE TABLE IF NOT EXISTS user_account (
     session_key VARCHAR(64) NULL,
     phone_number VARCHAR(20) NULL,
     current_family_id BIGINT NULL,
+    -- 个人资料：性别 / 生日 / 口味偏好标签。
+    -- 口味偏好是用户自己声明的，与 GET /api/preference/profile 从做菜记录"推断"出来的画像是两回事。
+    -- 忌口不在这里：它按「家庭 + 成员」存于 family_member.avoid_tags_json，资料页编辑的是同一个字段，
+    -- 不另开一列以免出现两处真相。
+    gender VARCHAR(16) NULL,
+    birthday DATE NULL,
+    taste_tags_json TEXT NULL,
+    -- 微信订阅消息开关（默认关：不打扰是默认值）。
+    -- 这一列只表示"用户愿不愿意收"，不代表配额——能发几条由微信按用户授权次数决定，服务端查不到。
+    subscribe_enabled TINYINT(1) NOT NULL DEFAULT 0,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     UNIQUE KEY uk_user_phone (phone_number)

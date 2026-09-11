@@ -2,10 +2,8 @@ package com.familymenu.daily.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.server.ResponseStatusException;
@@ -41,27 +39,13 @@ public class ContentSecurityService {
     /** msgSecCheck 单次内容上限 2500 字，超长取前段（标题+正文拼接一般不会超） */
     private static final int MAX_CONTENT_LENGTH = 2500;
 
-    private final JdbcTemplate jdbcTemplate;
+    /** 微信凭据与 access_token 统一从这里取（全站只有一份 token 缓存，见 WechatClient） */
+    private final WechatClient wechatClient;
     private final RestClient restClient;
-    private final String appId;
-    private final String appSecret;
-    private final boolean configured;
 
-    // 小程序全局 access_token 内存缓存（本服务是该 appid 唯一后端，无互踢问题）
-    private volatile String cachedToken = "";
-    private volatile long tokenExpiresAt = 0L;
-
-    public ContentSecurityService(JdbcTemplate jdbcTemplate,
-                                  @Value("${wechat.app-id:}") String appId,
-                                  @Value("${wechat.app-secret:}") String appSecret) {
-        this.jdbcTemplate = jdbcTemplate;
+    public ContentSecurityService(WechatClient wechatClient) {
+        this.wechatClient = wechatClient;
         this.restClient = RestClient.create();
-        this.appId = appId == null ? "" : appId.trim();
-        this.appSecret = appSecret == null ? "" : appSecret.trim();
-        this.configured = !this.appId.isEmpty() && !this.appSecret.isEmpty();
-        if (!this.configured) {
-            log.warn("ContentSecurity disabled: wechat app-id/app-secret not configured. UGC text will not be machine-checked.");
-        }
     }
 
     /**
@@ -83,18 +67,18 @@ public class ContentSecurityService {
         if (content == null || content.isBlank()) {
             return STATUS_APPROVED;
         }
-        if (!configured) {
+        if (!wechatClient.configured()) {
             log.info("ContentSecurity not configured: content queued for manual review");
             return STATUS_PENDING;
         }
-        String openid = findRealOpenid(userId);
+        String openid = wechatClient.realOpenid(userId);
         if (openid == null) {
             log.info("ContentSecurity skip: user {} has no real wechat openid, queued for manual review", userId);
             return STATUS_PENDING;
         }
         String text = content.length() > MAX_CONTENT_LENGTH ? content.substring(0, MAX_CONTENT_LENGTH) : content;
         try {
-            String token = accessToken();
+            String token = wechatClient.accessToken();
             @SuppressWarnings("unchecked")
             Map<String, Object> response = restClient.post()
                     .uri("https://api.weixin.qq.com/wxa/msg_sec_check?access_token=" + token)
@@ -133,53 +117,6 @@ public class ContentSecurityService {
             // 网络等异常：转人工审核，不阻断发布也不直接公开
             log.warn("ContentSecurity: check failed ({}), queued for manual review", ex.getMessage());
             return STATUS_PENDING;
-        }
-    }
-
-    /** 查用户 openid；guest-/phone-/invite- 等伪 openid 返回 null（无法机审）。 */
-    private String findRealOpenid(long userId) {
-        String openid = jdbcTemplate.query(
-                "SELECT openid FROM user_account WHERE id = ?",
-                rs -> rs.next() ? rs.getString("openid") : null,
-                userId
-        );
-        if (openid == null || openid.isBlank()
-                || openid.startsWith("guest-") || openid.startsWith("phone-") || openid.startsWith("invite-")) {
-            return null;
-        }
-        return openid;
-    }
-
-    /** 获取小程序全局 access_token，内存缓存提前 5 分钟过期。 */
-    private String accessToken() {
-        long now = System.currentTimeMillis();
-        if (!cachedToken.isEmpty() && now < tokenExpiresAt) {
-            return cachedToken;
-        }
-        synchronized (this) {
-            if (!cachedToken.isEmpty() && System.currentTimeMillis() < tokenExpiresAt) {
-                return cachedToken;
-            }
-            @SuppressWarnings("unchecked")
-            Map<String, Object> response = restClient.get()
-                    .uri(uriBuilder -> uriBuilder
-                            .scheme("https")
-                            .host("api.weixin.qq.com")
-                            .path("/cgi-bin/token")
-                            .queryParam("grant_type", "client_credential")
-                            .queryParam("appid", appId)
-                            .queryParam("secret", appSecret)
-                            .build())
-                    .retrieve()
-                    .body(Map.class);
-            if (response == null || response.get("access_token") == null) {
-                throw new IllegalStateException("wechat access_token failed: "
-                        + (response == null ? "empty response" : response.get("errmsg")));
-            }
-            cachedToken = response.get("access_token").toString();
-            long expiresIn = response.get("expires_in") instanceof Number n ? n.longValue() : 7200L;
-            tokenExpiresAt = System.currentTimeMillis() + (expiresIn - 300) * 1000L;
-            return cachedToken;
         }
     }
 }

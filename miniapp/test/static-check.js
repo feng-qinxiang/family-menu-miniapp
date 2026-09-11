@@ -102,6 +102,27 @@ for (const page of declaredPages) {
 
 const files = walk(ROOT);
 
+// ---- 7. 页面跳转路径必须指向已声明的页面 ----
+// 分包重构最怕的就是漏改一处 url：开发者工具不会报错，只有点进去才白屏。
+// 这里把所有字面量跳转路径与 app.json 声明做一次对账（带 ${} 的动态路径不做校验）。
+const NAV_URL = /(?:url|path)\s*:\s*['"]([^'"]+)['"]/g;
+for (const file of files) {
+  if (!file.endsWith('.js')) continue;
+  const src = fs.readFileSync(file, 'utf8');
+  const seen = new Set();
+  for (const m of src.matchAll(NAV_URL)) {
+    let target = m[1];
+    if (!target.startsWith('/') || target.includes('${')) continue;   // 只校验绝对路径字面量
+    target = target.split('?')[0].replace(/\/+$/, '');
+    if (seen.has(target)) continue;
+    seen.add(target);
+    const bare = target.replace(/^\//, '');
+    if (!declaredPages.includes(bare) && !declaredPages.includes(bare + '/index')) {
+      problems.push(`跳转路径没有对应页面 ${rel(file)} -> ${m[1]}`);
+    }
+  }
+}
+
 // ---- 6. 事件处理函数存在性 ----
 // 点了没反应 = 用户直接判定"这个页面坏了"。绑定名与实现名拼错（navigateTo vs navigateto、
 // 删了 js 方法忘了删 wxml）在编辑器里都不会报错，所以放进静态检查。

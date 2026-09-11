@@ -50,6 +50,10 @@ services:
       DB_PASSWORD: ${DB_PASSWORD:?必须设置 DB_PASSWORD}
       WECHAT_APP_ID: ${WECHAT_APP_ID:-}
       WECHAT_APP_SECRET: ${WECHAT_APP_SECRET:-}
+      # 订阅消息模板（留空 = 功能关闭，小程序里不显示开关）；用法见 .env.example
+      WECHAT_SUBSCRIBE_TEMPLATE_WISH: ${WECHAT_SUBSCRIBE_TEMPLATE_WISH:-}
+      WECHAT_SUBSCRIBE_TEMPLATE_MEAL: ${WECHAT_SUBSCRIBE_TEMPLATE_MEAL:-}
+      WECHAT_SUBSCRIBE_STATE: ${WECHAT_SUBSCRIBE_STATE:-formal}
       # 微信支付（未开通留空即可；留空时 prepay 返回 mockMode，不会真实扣款）
       WECHAT_MCH_ID: ${WECHAT_MCH_ID:-}
       WECHAT_PAY_API_V3_KEY: ${WECHAT_PAY_API_V3_KEY:-}
@@ -58,6 +62,10 @@ services:
       WECHAT_PAY_PLATFORM_CERT_PATH: ${WECHAT_PAY_PLATFORM_CERT_PATH:-}
       WECHAT_PAY_NOTIFY_URL: ${WECHAT_PAY_NOTIFY_URL:-}
       ADMIN_OPENIDS: ${ADMIN_OPENIDS:-}
+      # 引导登录（进不去后台时的临时钥匙）：留空 = 功能关闭（端点 404）。
+      # 用法见 .env.example；用完请立刻删掉并重启容器。
+      ADMIN_BOOTSTRAP_PHONE: ${ADMIN_BOOTSTRAP_PHONE:-}
+      ADMIN_BOOTSTRAP_TOKEN: ${ADMIN_BOOTSTRAP_TOKEN:-}
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-}
       UPLOAD_DIR: /app/uploads
       LOG_LEVEL: ${LOG_LEVEL:-info}

@@ -2,6 +2,8 @@ package com.familymenu.daily.dto;
 
 import jakarta.validation.constraints.NotBlank;
 
+import java.util.List;
+
 public final class AuthModels {
 
     private AuthModels() {
@@ -47,7 +49,13 @@ public final class AuthModels {
             String adminRole,
             boolean phoneBound,
             /** 微信绑定：openid 存在且非游客（guest- 前缀）即为已绑定 */
-            boolean wechatBound
+            boolean wechatBound,
+            /** 个人资料：性别 male/female/other，未填为 null */
+            String gender,
+            /** 个人资料：生日 yyyy-MM-dd，未填为 null */
+            String birthday,
+            /** 口味偏好标签（用户自己声明的，非 /api/preference/profile 的推断结果） */
+            List<String> tasteTags
     ) {
     }
 

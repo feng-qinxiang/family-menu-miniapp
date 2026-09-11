@@ -1,5 +1,5 @@
 const { addTodayMenuRecipe, getMyFavorites, getRecipes, getShoppingList, getTodayMenu, getFamilyProfile } = require('../../utils/api');
-const { recipeSourceLabels, cuisineList, mealOptions, sourceTabs } = require('../../utils/constants');
+const { recipeSourceLabels, cuisineList, mealOptions, sourceTabs, AVOID_KEYWORDS } = require('../../utils/constants');
 const { fallbackDishImg, recipeDishImg, onImgError } = require('../../utils/image');
 const { debounce } = require('../../utils/debounce');
 const { withTabSelect } = require('../../behaviors/tab-select');
@@ -7,18 +7,6 @@ const { recipesFromPosts } = require('../../utils/dish-logic');
 const { runGuarded } = require('../../utils/interaction');
 
 const PAGE_SIZE = 6;
-
-// 忌口标签 → 关键词（匹配菜名/菜系/口味标签；MVP 级映射，后续可由数据驱动）
-const AVOID_KEYWORDS = {
-  '辣': ['辣', '麻婆', '水煮', '川菜', '香辣', '麻辣'],
-  '香菜': ['香菜', '芫荽'],
-  '猪肉': ['猪', '红烧肉', '回锅肉', '小炒肉', '肉末', '排骨', '五花'],
-  '牛肉': ['牛'],
-  '羊肉': ['羊'],
-  '海鲜': ['虾', '鱼', '蟹', '贝', '海鲜', '鱿鱼', '蚝'],
-  '花生': ['花生', '宫保'],
-  '鸡蛋': ['蛋']
-};
 
 function matchesAvoid(recipe, avoidTags) {
   if (!avoidTags || !avoidTags.length) return false;
@@ -336,11 +324,11 @@ Page({
   goDetail(event) {
     const id = (event.detail && event.detail.id) || (event.currentTarget && event.currentTarget.dataset && event.currentTarget.dataset.id);
     if (!id) return;
-    wx.navigateTo({ url: `/pages/recipe-detail/index?id=${id}` });
+    wx.navigateTo({ url: `/pkg-extra/recipe-detail/index?id=${id}` });
   },
 
   goCreate() {
-    wx.navigateTo({ url: '/pages/recipe-edit/index' });
+    wx.navigateTo({ url: '/pkg-extra/recipe-edit/index' });
   },
 
   async addRecipeToToday(e) {

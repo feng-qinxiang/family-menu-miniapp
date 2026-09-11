@@ -143,7 +143,7 @@ Page({
   onTopicTap(event) {
     const { tag } = event.currentTarget.dataset;
     if (!tag) return;
-    wx.navigateTo({ url: `/pages/recipes/search/index?keyword=${encodeURIComponent(tag)}` });
+    wx.navigateTo({ url: `/pkg-extra/recipes/search/index?keyword=${encodeURIComponent(tag)}` });
   },
 
   // 帖子卡 → 详情页
@@ -161,7 +161,7 @@ Page({
     if (!recipeId) {
       return;
     }
-    wx.navigateTo({ url: `/pages/recipe-detail/index?id=${recipeId}` });
+    wx.navigateTo({ url: `/pkg-extra/recipe-detail/index?id=${recipeId}` });
   },
 
   // 点赞：先本地乐观翻转（跟手），失败回滚；在途期间忽略重复点击

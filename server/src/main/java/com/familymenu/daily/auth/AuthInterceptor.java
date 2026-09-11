@@ -47,9 +47,11 @@ public class AuthInterceptor implements HandlerInterceptor {
             "POST /api/auth/otp/login",
             // 登出必须幂等：token 已失效时再调也应返回 200，不能 401
             "POST /api/auth/logout",
-            // 管理后台登录（后台静态页 + 这两个接口必须能匿名访问才能登录）
+            // 管理后台登录（后台静态页 + 这几个接口必须能匿名访问才能登录）
             "POST /api/admin/auth/otp",
             "POST /api/admin/auth/login",
+            // 引导登录：令牌本身就是凭据，靠服务端常量时间比对校验
+            "POST /api/admin/auth/bootstrap",
             // 价目表：不含用户数据
             "GET /api/payment/plans",
             // 微信支付异步回调：微信服务器不会带我们的 token，鉴权靠 RSA 验签 + AES 解密

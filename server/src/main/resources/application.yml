@@ -35,6 +35,18 @@ spring:
 wechat:
   app-id: ${WECHAT_APP_ID:}
   app-secret: ${WECHAT_APP_SECRET:}
+  subscribe:
+    # 订阅消息模板 ID：先去小程序后台「订阅消息」申请模板，审核通过后把 ID 填在这里。
+    # 留空 = 该事件不推送（前端也不会显示"消息通知"开关），配上即生效，不需要改代码。
+    #
+    # 申请模板时注意：本代码按「事项 + 说明」两个字段发送，
+    # 所以要选字段为 thing1 / thing2 的模板（thing 类型单字段上限 20 个字符）。
+    # 若后台给的字段名不同，改 SubscribeMessageService 里的 FIELD_SUBJECT / FIELD_DETAIL。
+    template-wish: ${WECHAT_SUBSCRIBE_TEMPLATE_WISH:}   # 家人许愿（"XX 想吃糖醋排骨"）
+    template-meal: ${WECHAT_SUBSCRIBE_TEMPLATE_MEAL:}   # 开饭提醒（"今天的菜都做好了"）
+    # 消息里跳转的小程序版本：formal=正式版，trial=体验版，developer=开发版。
+    # 上线后用 formal；只有体验版时可临时改 trial，否则用户点消息会跳不动。
+    miniprogram-state: ${WECHAT_SUBSCRIBE_STATE:formal}
   pay:
     # 微信支付 v3 JSAPI 商户配置。任一关键项留空 → prepay 接口返回 mockMode:true 优雅降级，绝不崩溃。
     mch-id: ${WECHAT_MCH_ID:}                    # 商户号
@@ -72,6 +84,12 @@ admin:
   # 首次管理员的 openid 白名单（逗号分隔），仅用于启动时升权，只升不降。
   # 必须通过环境变量注入，禁止把真实 openid 写进代码或配置默认值；留空 = 不播种任何管理员。
   bootstrap-openids: ${ADMIN_OPENIDS:}
+  # 引导登录：短信网关未接入（SMS_PROVIDER=noop）时 /admin 的唯一入口。
+  # 令牌留空 = 功能关闭（端点返回 404）。两个都配上即可免验证码登录后台，
+  # 登录目标由 bootstrap-phone 在服务端指定，浏览器端只需提交令牌。
+  # 因此它等同于一把不过期的后台钥匙：只在进不去后台时临时设置，进去后立刻删掉并重启。
+  bootstrap-token: ${ADMIN_BOOTSTRAP_TOKEN:}
+  bootstrap-phone: ${ADMIN_BOOTSTRAP_PHONE:}
 
 cors:
   allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:9088,http://127.0.0.1:9088}

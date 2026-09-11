@@ -159,26 +159,26 @@ Page({
   },
 
   goMemberManage() {
-    wx.navigateTo({ url: '/pages/family/members/index' });
+    wx.navigateTo({ url: '/pkg-extra/family/members/index' });
   },
 
   goVip() { wx.navigateTo({ url: '/pkg-extra/vip/index' }); },
-  goPhoneBind() { wx.navigateTo({ url: '/pages/auth/login-phone/index' }); },
-  goWeekly() { wx.navigateTo({ url: '/pages/weekly-menu/index' }); },
-  goImport() { wx.navigateTo({ url: '/pages/import/index' }); },
+  goPhoneBind() { wx.navigateTo({ url: '/pkg-extra/auth/login-phone/index' }); },
+  goWeekly() { wx.navigateTo({ url: '/pkg-extra/weekly-menu/index' }); },
+  goImport() { wx.navigateTo({ url: '/pkg-extra/import/index' }); },
   goFavorites() { wx.navigateTo({ url: '/pkg-extra/favorites/index' }); },
   goCommunityAudit() { wx.navigateTo({ url: '/pkg-extra/community/audit/index' }); },
   goRecipes() { wx.switchTab({ url: '/pages/recipes/index' }); },
-  goPreference() { wx.navigateTo({ url: '/pages/me/preference-profile/index' }); },
-  goSettings() { wx.navigateTo({ url: '/pages/me/settings/index' }); },
-  goCookLog() { wx.navigateTo({ url: '/pages/cook-log/index' }); },
-  goProfileEdit() { wx.navigateTo({ url: '/pages/me/profile-edit/index' }); },
-  goNotifications() { wx.navigateTo({ url: '/pages/me/notifications/index' }); },
-  goFeedback() { wx.navigateTo({ url: '/pages/me/feedback/index' }); },
-  goAbout() { wx.navigateTo({ url: '/pages/me/about/index' }); },
-  goPrivacy() { wx.navigateTo({ url: '/pages/legal/privacy/index' }); },
-  goTerms() { wx.navigateTo({ url: '/pages/legal/terms/index' }); },
-  goFamilyMembers() { wx.navigateTo({ url: '/pages/family/members/index' }); },
+  goPreference() { wx.navigateTo({ url: '/pkg-extra/me/preference-profile/index' }); },
+  goSettings() { wx.navigateTo({ url: '/pkg-extra/me/settings/index' }); },
+  goCookLog() { wx.navigateTo({ url: '/pkg-extra/cook-log/index' }); },
+  goProfileEdit() { wx.navigateTo({ url: '/pkg-extra/me/profile-edit/index' }); },
+  goNotifications() { wx.navigateTo({ url: '/pkg-extra/me/notifications/index' }); },
+  goFeedback() { wx.navigateTo({ url: '/pkg-extra/me/feedback/index' }); },
+  goAbout() { wx.navigateTo({ url: '/pkg-extra/me/about/index' }); },
+  goPrivacy() { wx.navigateTo({ url: '/pkg-extra/legal/privacy/index' }); },
+  goTerms() { wx.navigateTo({ url: '/pkg-extra/legal/terms/index' }); },
+  goFamilyMembers() { wx.navigateTo({ url: '/pkg-extra/family/members/index' }); },
   onShareAppMessage() {
     return {
       title: '家庭点菜 · 全家一起用',

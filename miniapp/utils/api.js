@@ -552,6 +552,22 @@ function getNotifications() {
   return request('/api/notifications', { silent: true });
 }
 
+// 订阅消息设置：后端同时把模板 ID 下发过来（见 utils/subscribe.js）
+// 始终 silent：这是页面预加载，失败时由调用方回退成"功能未开启"，不该弹错误提示打扰用户
+function getSubscribeSetting(options) {
+  return request('/api/notifications/subscribe', {
+    ...(options || {}),
+    silent: true
+  });
+}
+
+function updateSubscribe(enabled) {
+  return requestStrict('/api/notifications/subscribe', {
+    method: 'PATCH',
+    data: { enabled: !!enabled }
+  });
+}
+
 function markNotificationsRead(ids) {
   return requestStrict('/api/notifications/read', {
     method: 'PATCH',
@@ -620,6 +636,8 @@ module.exports = {
   loginWithOtp,
   previewImport,
   markNotificationsRead,
+  getSubscribeSetting,
+  updateSubscribe,
   saveRecipe,
   setAuthToken,
   submitFeedback,

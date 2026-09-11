@@ -45,6 +45,13 @@ ALTER TABLE community_post_comment ADD COLUMN audit_status VARCHAR(16) NOT NULL 
 -- ---- user_account ----
 -- 管理端角色分级：历史 is_admin=1 的账号保持 admin_role=NULL，代码按 SUPER 处理，无需回填。
 ALTER TABLE user_account ADD COLUMN admin_role VARCHAR(16) NULL AFTER is_admin;
+-- 个人资料（口味画像）：性别 / 生日 / 口味偏好标签。
+-- 忌口不加列：已有 family_member.avoid_tags_json 承担该职责。
+ALTER TABLE user_account ADD COLUMN gender VARCHAR(16) NULL;
+ALTER TABLE user_account ADD COLUMN birthday DATE NULL;
+ALTER TABLE user_account ADD COLUMN taste_tags_json TEXT NULL;
+-- 微信订阅消息开关（默认关）。只表示用户愿不愿意收，不代表可发条数。
+ALTER TABLE user_account ADD COLUMN subscribe_enabled TINYINT(1) NOT NULL DEFAULT 0;
 
 -- ---- daily_menu_item ----
 ALTER TABLE daily_menu_item ADD COLUMN status VARCHAR(16) NOT NULL DEFAULT 'todo';

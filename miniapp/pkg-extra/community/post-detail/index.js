@@ -222,7 +222,7 @@ Page({
       return;
     }
     wx.navigateTo({
-      url: '/pages/recipe-detail/index?id=' + encodeURIComponent(recipe.id),
+      url: '/pkg-extra/recipe-detail/index?id=' + encodeURIComponent(recipe.id),
       fail: () => this.showToast('暂无法打开菜谱', 'error')
     });
   },

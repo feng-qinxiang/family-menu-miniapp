@@ -803,14 +803,14 @@ public class AdminService {
 
     // ==================== 订单关单 / 退款 ====================
 
-    /** 关闭未支付订单：仅 PENDING → CLOSED。 */
+    /** 关闭未支付订单：仅 PENDING → CLOSED（站内状态，不同步微信侧）。 */
     @Transactional
     public void closeOrder(long actorUserId, String outTradeNo) {
         int updated = jdbcTemplate.update(
                 "UPDATE payment_order SET status = 'CLOSED' WHERE out_trade_no = ? AND status = 'PENDING'",
                 outTradeNo);
         if (updated == 0) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "订单不存在或不是待支付状态，无法关闭");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "订单不存在或不是待支付状态，无法标记关闭");
         }
         log.info("admin close order: actor={} order={}", actorUserId, outTradeNo);
     }
@@ -835,7 +835,7 @@ public class AdminService {
                         null, null, null),
                 outTradeNo);
         if (found.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "订单不存在或不是已支付状态，无法退款");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "订单不存在或不是已支付状态，无法标记退款");
         }
         AdminOrderItem order = found.get(0);
         jdbcTemplate.update("UPDATE payment_order SET status = 'REFUNDED' WHERE out_trade_no = ?", outTradeNo);

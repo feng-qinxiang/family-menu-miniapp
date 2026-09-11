@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 public final class ApiModels {
 
@@ -213,7 +214,14 @@ public final class ApiModels {
             String avatarUrl,
             String phone,
             // 绑定/换绑手机号必须同时提供验证码，防止把他人手机号绑到自己账号（账号接管）
-            String phoneCode
+            String phoneCode,
+            // ---- 个人资料（口味画像）：只传要改的项，null 表示不动 ----
+            /** 性别 male / female / other；传空串表示清空 */
+            String gender,
+            /** 生日 yyyy-MM-dd；传空串表示清空 */
+            String birthday,
+            /** 口味偏好标签（整体替换）；null 表示不动，空数组表示清空 */
+            List<String> tasteTags
     ) {
     }
 
@@ -554,6 +562,27 @@ public final class ApiModels {
             @NotBlank @Size(max = 16) String slot,
             @NotBlank @Size(max = 128) String text,
             Long recipeId
+    ) {
+    }
+
+    // ===== 微信订阅消息（设置页的"消息通知"开关）=====
+    /**
+     * 订阅设置。模板 ID 由后端下发，客户端调 wx.requestSubscribeMessage 时需要它
+     * —— 这样模板只维护在后端配置一处，不必在小程序里再写一份。
+     *
+     * @param available 服务端是否配了模板；false 时前端不显示开关（配了才显示，避免点了没反应）
+     * @param enabled   用户自己的开关；默认 false，不打扰是默认值
+     * @param templates 事件类型 → 模板 ID，只含已配置的
+     */
+    public record SubscribeSetting(
+            boolean available,
+            boolean enabled,
+            Map<String, String> templates
+    ) {
+    }
+
+    public record UpdateSubscribeRequest(
+            @NotNull Boolean enabled
     ) {
     }
 }

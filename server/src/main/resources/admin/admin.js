@@ -177,14 +177,19 @@
       headers: headers,
       body: opts.body ? JSON.stringify(opts.body) : undefined
     }).then(function (res) {
-      if (res.status === 401) {
+      if (res.status === 401 && !opts.allow401) {
         logout(true);
         throw new Error('登录已失效，请重新登录');
       }
       return res.text().then(function (text) {
         var data = null;
         try { data = text ? JSON.parse(text) : null; } catch (e) { data = null; }
-        if (!res.ok) throw new Error((data && data.error) || ('请求失败 ' + res.status));
+        if (!res.ok) {
+          var err = new Error((data && data.error) || ('请求失败 ' + res.status));
+          // 调用方需要按状态码分流时用（如引导登录把 404 解释成「服务端未开启」）
+          err.status = res.status;
+          throw err;
+        }
         return data;
       });
     });
@@ -349,7 +354,43 @@
     $('appView').hidden = true;
     $('loginView').hidden = false;
     $('loginBtn').disabled = false;
+    var bootBtn = $('bootstrapBtn');
+    if (bootBtn) bootBtn.disabled = false;
     if (!silent) setLoginMsg('已退出', 'ok');
+  }
+
+  /**
+   * 引导登录：短信网关未接入（验证码发不出去）时进后台的唯一入口。
+   * 令牌与登录目标都在服务端（ADMIN_BOOTSTRAP_TOKEN / ADMIN_BOOTSTRAP_PHONE），
+   * 前端只负责把令牌提交上去，页面里不含任何账号信息。
+   */
+  function bootstrapLogin() {
+    var input = $('bootstrapToken');
+    var msgEl = $('bootstrapMsg');
+    var token = (input.value || '').trim();
+    var setMsg = function (text, kind) { msgEl.textContent = text || ''; msgEl.className = 'msg' + (kind ? ' ' + kind : ''); };
+    if (!token) { setMsg('请输入引导令牌', 'error'); return; }
+    var btn = $('bootstrapBtn');
+    btn.disabled = true;
+    setMsg('');
+    // allow401：令牌错误时不该触发「登录已失效」的全局登出逻辑
+    request('/api/admin/auth/bootstrap', { method: 'POST', body: { token: token }, allow401: true })
+      .then(function (res) {
+        input.value = '';
+        setMsg('');
+        state.token = res.token;
+        state.nickname = res.nickname || '管理员';
+        try { sessionStorage.setItem(TOKEN_KEY, res.token); } catch (e) {}
+        showApp();
+        toast('引导登录成功。请尽快从服务端移除 ADMIN_BOOTSTRAP_TOKEN 并重启应用', 6000, 'error');
+      })
+      .catch(function (err) {
+        // 404 = 服务端没配令牌（端点视同不存在），翻译成可执行的提示，而不是「请求失败 404」
+        setMsg(err.status === 404
+          ? '服务端未开启引导登录：请设置环境变量 ADMIN_BOOTSTRAP_TOKEN 与 ADMIN_BOOTSTRAP_PHONE 后重启'
+          : err.message, 'error');
+        btn.disabled = false;
+      });
   }
 
   function showApp() {
@@ -1511,9 +1552,9 @@
         '<td class="actions">' +
         (can('ORDER_MANAGE')
           ? (o.status === 'PENDING'
-              ? '<button class="btn small danger" data-orderclose="' + escapeHtml(o.outTradeNo) + '">关单</button>' : '') +
+              ? '<button class="btn small danger" data-orderclose="' + escapeHtml(o.outTradeNo) + '" title="仅标记本地状态，不会同步关闭微信侧订单">标记关单</button>' : '') +
             (o.status === 'PAID'
-              ? '<button class="btn small danger" data-orderrefund="' + escapeHtml(o.outTradeNo) + '">退款</button>' : '')
+              ? '<button class="btn small danger" data-orderrefund="' + escapeHtml(o.outTradeNo) + '" title="仅标记本地状态与回收权益，真实资金退款需在微信商户平台操作">标记退款</button>' : '')
           : '<span class="muted">只读</span>') +
         '</td></tr>';
     }).join('') : tableEmpty(9, { icon: 'card', title: '暂无订单', desc: '用户下单支付后会出现在这里。可切换状态标签或调整日期区间。' });
@@ -1528,15 +1569,16 @@
   function closeOrder(outTradeNo) {
     var o = findOrder(outTradeNo);
     confirmDialog({
-      title: '关闭该订单？',
+      title: '标记该订单为已关闭？',
       desc: '单号 ' + outTradeNo + '（' + (o.planName || o.planCode || '—') + ' ' + fmtMoney(o.amountFen) +
-        '）将被标记为已关闭，用户无法再继续支付。',
+        '）在站内会被标记为已关闭，用户无法再从这里继续支付。' +
+        '注意：这不会同步关闭微信侧的支付单，若该单已有真实预下单，用户在微信侧仍可能付款成功。',
       danger: true,
       confirmText: '确认关单'
     }).then(function (ok) {
       if (!ok) return;
       request('/api/admin/orders/' + encodeURIComponent(outTradeNo) + '/close', { method: 'POST' })
-        .then(function () { toast('已关单'); loadOrders(); })
+        .then(function () { toast('已标记关单（未同步微信侧）', 3000); loadOrders(); })
         .catch(function (err) { toast(err.message, 2600, 'error'); });
     });
   }
@@ -1544,15 +1586,19 @@
   function refundOrder(outTradeNo) {
     var o = findOrder(outTradeNo);
     confirmDialog({
-      title: '退款并回收会员权益？',
+      title: '标记为已退款并回收会员权益？',
       desc: '订单 ' + outTradeNo + '（' + fmtMoney(o.amountFen) + '）对应的会员时长会被扣回，' +
-        '这里只做账务与权益处理，真实资金退款仍需到微信商户平台操作。',
+        '订单状态在站内标记为已退款。注意：这里不会真的退钱 —— ' +
+        '真实资金退款必须到微信商户平台手动操作。',
       danger: true,
-      confirmText: '确认退款'
+      confirmText: '确认标记退款'
     }).then(function (ok) {
       if (!ok) return;
       request('/api/admin/orders/' + encodeURIComponent(outTradeNo) + '/refund', { method: 'POST' })
-        .then(function () { toast('已退款'); loadOrders(); })
+        .then(function () {
+          toast('已标记退款并回收权益 · 真实资金请到微信商户平台退回', 4200, 'error');
+          loadOrders();
+        })
         .catch(function (err) { toast(err.message, 2600, 'error'); });
     });
   }
@@ -2150,6 +2196,11 @@
   });
 
   $('loginForm').addEventListener('submit', login);
+  // 引导登录：短信网关未接入时的后台入口（服务端未配令牌时点击会提示未开启）
+  $('bootstrapBtn').addEventListener('click', bootstrapLogin);
+  $('bootstrapToken').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') { e.preventDefault(); bootstrapLogin(); }
+  });
 
   // 恢复会话（刷新页面时）
   try {

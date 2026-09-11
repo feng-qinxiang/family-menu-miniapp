@@ -17,6 +17,15 @@ public final class AdminAuthModels {
     public record AdminLoginRequest(String phone, String code) {
     }
 
+    /**
+     * 引导登录（短信网关未接入时的应急入口）。
+     *
+     * 只提交令牌，不提交手机号：要登录哪个账号由服务端环境变量 ADMIN_BOOTSTRAP_PHONE 指定，
+     * 浏览器端既不需要知道、也改不动登录目标。
+     */
+    public record AdminBootstrapRequest(String token) {
+    }
+
     public record AdminLoginResponse(String token, String nickname, long userId) {
     }
 }

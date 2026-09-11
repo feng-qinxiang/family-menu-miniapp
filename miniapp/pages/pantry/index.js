@@ -218,7 +218,7 @@ Page({
     const id = e.currentTarget.dataset.id;
     if (!id) return;
     wx.navigateTo({
-      url: `/pages/recipe-detail/index?id=${id}`,
+      url: `/pkg-extra/recipe-detail/index?id=${id}`,
       fail: () => wx.showToast({ title: '页面打开失败', icon: 'none' })
     });
   },
