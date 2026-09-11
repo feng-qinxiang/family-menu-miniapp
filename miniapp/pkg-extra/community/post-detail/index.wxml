@@ -69,8 +69,8 @@
 
       <!-- 操作栏 -->
       <view class="react-bar g-fade-up g-d4">
-        <view class="react liked">
-          <view class="ricon ricon-heart on"></view>
+        <view class="react tap-scale {{post.liked ? 'liked' : ''}}" bindtap="onToggleLike">
+          <view class="ricon ricon-heart {{post.liked ? 'on' : ''}}"></view>
           <text class="n">{{post.likeCount}}</text>
         </view>
         <view

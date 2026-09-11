@@ -46,6 +46,7 @@ function normalizePost(post) {
     paragraphs: paragraphs.length ? paragraphs : [post.content || '暂无正文'],
     cover,
     likeCount: post.likeCount || 0,
+    liked: !!post.liked,
     favoriteCount: post.favoriteCount || 0,
     commentCount: post.commentCount || 0,
     favorited: !!post.favorited,
@@ -163,6 +164,31 @@ Page({
   },
 
   // 收藏切换
+  // 点赞：先本地翻转，失败回滚（与列表页一致）
+  onToggleLike() {
+    if (!this.data.postId || !this.data.post) return;
+    const before = this.data.post;
+    const liked = !before.liked;
+    const likeCount = Math.max(0, (before.likeCount || 0) + (liked ? 1 : -1));
+    this.setData({ post: Object.assign({}, before, { liked, likeCount }) });
+    api
+      .toggleCommunityLike(this.data.postId)
+      .then((res) => {
+        if (res && typeof res.liked === 'boolean') {
+          const post = Object.assign({}, this.data.post, {
+            liked: res.liked,
+            likeCount: typeof res.likeCount === 'number' ? res.likeCount : this.data.post.likeCount
+          });
+          this.setData({ post });
+        }
+        this.showToast(liked ? '已点赞' : '已取消点赞', 'top');
+      })
+      .catch(() => {
+        this.setData({ post: before });
+        this.showToast('点赞失败，请重试', 'error');
+      });
+  },
+
   onToggleFavorite() {
     if (this.data.favoriting || !this.data.postId || !this.data.post) return;
     this.setData({ favoriting: true });

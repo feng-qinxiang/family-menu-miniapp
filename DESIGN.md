@@ -34,6 +34,36 @@
 
 ## 变更历史
 
+### 2026-09-11 - 遗留项清零（点赞落地、死页清理、套餐单一数据源、后台菜谱详情）
+
+**变更内容**:
+
+1. **社区点赞落地**：新增 `community_post_like` 表（`UNIQUE(post_id,user_id)`）+ `POST /api/community/posts/{id}/like`（切换语义）。
+   `CommunityPost` 新增 `liked` 字段，三处查询（信息流 / 我的收藏 / 帖子详情）改为 `LEFT JOIN community_post_like` 带出。
+   点赞与收藏语义分离：点赞表达喜欢并参与 `ORDER BY like_count DESC` 排序，收藏用于「我的收藏」列表。
+   取消点赞用 `GREATEST(like_count - 1, 0)` 兜底 —— 历史 `like_count` 是演示种子里的展示数，可能大于真实点赞行数。
+2. **死页清理**：删除 `pages/auth/verify-otp`、`pages/auth/wechat-auth`。二者是 `login-phone`（自带验证码输入 + 短信校验）与 `login`（自带 `wx.login` 一键登录）的冗余副本，
+   全站无任何入口，属开关关闭后遗留的死代码（与 2026-09-10 删 `register`/`reset-password` 同一类问题）。
+3. **套餐单一数据源**：新增 `miniapp/utils/plans.js`，套餐名与价格统一从 `GET /api/payment/plans` 取（后端 `PlanCatalog` 权威），
+   `vip/index`、`vip/upgrade`、`payment/checkout` 三处硬编码的价格常量全部移除。
+   此前同一份年卡被写成「家庭同步年卡 / 家庭年卡 / 家庭云同步年卡」三种名字，改价还要改三处前端，属典型漂移。
+   年卡「折合每月」「省 N%」改为由后端价格算出，不再写死营销数字。会员页「家里这几口」的头像改用真实家庭成员（原为写死的「张/妈/爸 +2」）。
+4. **后台菜谱详情**：新增 `GET /api/admin/recipes/{id}`（`RECIPE_MODERATE` 权限）返回完整食材与步骤，
+   菜谱治理页操作列补「查看详情」只读弹窗 —— 此前运营只能看到列表摘要，想核对内容得去小程序里翻，是真实的功能缺口。
+   顺带给 `openModal` 增加 `wide` / `singleAction` 两个选项（宽弹窗 + 单按钮），供只读详情复用。
+5. **上线配置收口**：运营者信息（隐私政策/用户协议）抽到 `miniapp/utils/legal-config.js` 单一来源，改一处即可；
+   `utils/env.js` 增加占位域名哨兵 —— 体验版/正式版仍指向 `example.com` 时在控制台打醒目 error（此前是静默全站接口失败，排查成本高）；
+   `utils/upload.js` 补 `X-Device-Id` 头，与 `api.js` 请求头一致。
+
+**影响范围**: server（`schema.sql`、`ApiModels`、`MysqlKitchenStore`、`HomeController`、`AdminModels`、`AdminService`、`AdminController`、admin 静态页 admin.js/admin.css、AdminModulesTests、CoreFlowTests）、
+miniapp（utils/api.js、utils/upload.js、utils/env.js、utils/plans.js 新增、utils/legal-config.js 新增、app.json、community、post-detail、vip、vip/upgrade、payment/checkout、legal/privacy、auth 页面删除）、DESIGN。
+
+**验证**: 后端 76 项测试全绿（新增「点赞切换且计数同步」「后台菜谱详情 + 非管理员 403」2 项）；
+接口冒烟：点赞 liked/likeCount 双向切换正确、信息流 `liked` 字段按用户返回、后台详情返回食材步骤且游客 403；
+浏览器实拍菜谱治理页「查看详情」弹窗正常；`node miniapp/test/static-check.js` 通过（274 文件）。
+
+**决策依据**: 用户要求「把遗留的问题全部解决」。上一轮收尾时明确留下的三项（点赞只读、两个登录死页、上线配置占位）+ 评审中记录的套餐三处硬编码、后台缺菜谱详情一并处理。
+
 ### 2026-09-10 - 一致性与职责边界修正（针对"好多不合理的"评审）
 
 **变更内容**:

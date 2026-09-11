@@ -117,6 +117,13 @@ public class HomeController {
         return store.toggleCommunityFavorite(postId, user.userId());
     }
 
+    /** 点赞 / 取消点赞（切换语义，返回最新帖子视图）。 */
+    @PostMapping("/community/posts/{postId}/like")
+    @RequiresAuth
+    public CommunityPost toggleCommunityLike(@PathVariable long postId, @CurrentUser AuthUser user) {
+        return store.toggleCommunityLike(postId, user.userId());
+    }
+
     @PostMapping("/community/posts/{postId}/report")
     @RequiresAuth
     public void reportCommunityPost(@PathVariable long postId,

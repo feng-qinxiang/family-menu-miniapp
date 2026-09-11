@@ -122,6 +122,35 @@ public final class AdminModels {
     ) {
     }
 
+    /** 菜谱详情（治理用）：运营查看完整食材与步骤，判断是否需要下架。 */
+    public record AdminRecipeDetail(
+            Long recipeId,
+            String title,
+            String ownerNickname,
+            String sourceType,
+            String sourceUrl,
+            String cuisine,
+            Integer timeCost,
+            Integer servings,
+            String difficulty,
+            String summary,
+            String coverImage,
+            List<String> tasteTags,
+            String status,
+            String createdAt,
+            List<String> steps,
+            List<AdminIngredient> ingredients
+    ) {
+    }
+
+    /** 菜谱食材项（治理用）。 */
+    public record AdminIngredient(
+            String name,
+            String amount,
+            String unit
+    ) {
+    }
+
     /** 帖子评论项（治理用，含已软删除的评论以便追溯/恢复）。 */
     public record AdminCommentItem(
             Long commentId,

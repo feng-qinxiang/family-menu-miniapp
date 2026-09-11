@@ -23,6 +23,7 @@ import com.familymenu.daily.dto.AdminModels.AdminPage;
 import com.familymenu.daily.dto.AdminModels.AdminPostItem;
 import com.familymenu.daily.dto.AdminModels.AdminProfile;
 import com.familymenu.daily.dto.AdminModels.AdminRecipeItem;
+import com.familymenu.daily.dto.AdminModels.AdminRecipeDetail;
 import com.familymenu.daily.dto.AdminModels.AdminRoleRequest;
 import com.familymenu.daily.dto.AdminModels.AdminUserItem;
 import com.familymenu.daily.dto.AdminModels.AdminUserPage;
@@ -295,6 +296,13 @@ public class AdminController {
                                              @RequestParam(defaultValue = "") String status,
                                              @RequestParam(defaultValue = "50") int limit) {
         return adminService.listRecipes(keyword, status, limit);
+    }
+
+    /** 菜谱详情（治理用）：运营在下架前查看完整食材与步骤。 */
+    @GetMapping("/recipes/{recipeId}")
+    @RequiresPermission(AdminPermission.RECIPE_MODERATE)
+    public AdminRecipeDetail recipeDetail(@PathVariable long recipeId) {
+        return adminService.getRecipeDetail(recipeId);
     }
 
     /** 评论列表（治理用）：可按帖子与审核状态过滤，含已删除评论。 */

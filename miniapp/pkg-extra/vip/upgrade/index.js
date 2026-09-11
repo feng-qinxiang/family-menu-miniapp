@@ -1,9 +1,25 @@
 const { getVipStatus } = require('../../../utils/api');
+const { loadPlans, FALLBACK, trimYuan } = require('../../../utils/plans');
 
-const PLAN_MAP = {
-  yearly: { planCode: 'annual', planName: '家庭年卡', price: '99', priceFull: '99.00', original: '138.00', discount: '39.00', off: '7.2' },
-  monthly: { planCode: 'monthly', planName: '家庭月卡', price: '19.9', priceFull: '19.90', original: '', discount: '', off: '' }
-};
+// 后端套餐 → 本页展示结构（价格/折数由后端金额算出，不写死营销数字）
+function toViewPlan(plan) {
+  const priceNumber = plan.priceNumber;
+  const originalNumber = Number(plan.original);
+  const hasOriginal = isFinite(originalNumber) && originalNumber > priceNumber;
+  return {
+    planCode: plan.planCode,
+    planName: plan.planName,
+    price: trimYuan(plan.priceFull),
+    priceFull: plan.priceFull,
+    original: hasOriginal ? plan.original : '',
+    discount: hasOriginal ? (originalNumber - priceNumber).toFixed(2) : '',
+    off: hasOriginal ? String(Math.round((priceNumber / originalNumber) * 100) / 10) : ''
+  };
+}
+
+function fallbackPlanMap() {
+  return { yearly: toViewPlan(FALLBACK.yearly), monthly: toViewPlan(FALLBACK.monthly) };
+}
 
 Page({
   data: {
@@ -11,7 +27,7 @@ Page({
     isVip: false,
     planName: '',
     selectedPlan: 'yearly',
-    plan: PLAN_MAP.yearly,
+    plan: toViewPlan(FALLBACK.yearly),
     benefits: [
       { icon: '家', title: '最多 8 位家人共享', desc: '邀请全家加入，菜单清单实时同步' },
       { icon: '藏', title: '无限收藏菜谱', desc: '家庭菜谱库不限数量，随时回看' },
@@ -33,7 +49,18 @@ Page({
       sbh = 0;
     }
     this.setData({ statusBarHeight: sbh });
+    this.loadPlanCatalog();
     this.loadVipStatus();
+  },
+
+  // 套餐价格走后端权威目录（/api/payment/plans），失败回退本地默认
+  async loadPlanCatalog() {
+    const plans = await loadPlans();
+    this._planMap = {
+      yearly: toViewPlan(plans.yearly),
+      monthly: toViewPlan(plans.monthly)
+    };
+    this.setData({ plan: this._planMap[this.data.selectedPlan] || this._planMap.yearly });
   },
 
   onShow() {
@@ -69,8 +96,9 @@ Page({
 
   selectPlan(e) {
     const key = e.currentTarget.dataset.plan;
-    if (!PLAN_MAP[key] || key === this.data.selectedPlan) return;
-    this.setData({ selectedPlan: key, plan: PLAN_MAP[key] });
+    const map = this._planMap || fallbackPlanMap();
+    if (!map[key] || key === this.data.selectedPlan) return;
+    this.setData({ selectedPlan: key, plan: map[key] });
   },
 
   goCheckout() {

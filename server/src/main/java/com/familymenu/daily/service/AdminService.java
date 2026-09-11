@@ -12,6 +12,8 @@ import com.familymenu.daily.dto.AdminModels.AdminOrderItem;
 import com.familymenu.daily.dto.AdminModels.AdminPage;
 import com.familymenu.daily.dto.AdminModels.AdminPostItem;
 import com.familymenu.daily.dto.AdminModels.AdminRecipeItem;
+import com.familymenu.daily.dto.AdminModels.AdminRecipeDetail;
+import com.familymenu.daily.dto.AdminModels.AdminIngredient;
 import com.familymenu.daily.dto.AdminModels.AdminUserItem;
 import com.familymenu.daily.dto.AdminModels.AdminUserPage;
 import com.familymenu.daily.payment.PlanCatalog;
@@ -47,6 +49,9 @@ import java.util.stream.Collectors;
 public class AdminService {
 
     private static final Logger log = LoggerFactory.getLogger(AdminService.class);
+
+    /** 解析 taste_tags_json（历史脏数据可能非法，调用处已做降级）。 */
+    private static final com.fasterxml.jackson.databind.ObjectMapper JSON = new com.fasterxml.jackson.databind.ObjectMapper();
 
     private final JdbcTemplate jdbcTemplate;
     private final List<String> bootstrapOpenids;
@@ -529,6 +534,81 @@ public class AdminService {
                         rs.getString("created_at")
                 ),
                 kw, like, st, st, safeLimit);
+    }
+
+    /**
+     * 菜谱详情（治理用）：运营在下架前需要看到完整食材与步骤。
+     * 与用户端接口不同，这里不做可见性过滤（管理端需要看任意菜谱，含已下架）。
+     */
+    public AdminRecipeDetail getRecipeDetail(long recipeId) {
+        return jdbcTemplate.query("""
+                        SELECT r.id, r.title, u.nickname, r.source_type, r.source_url, r.cuisine,
+                               r.time_cost, r.servings, r.difficulty, r.summary, r.cover_image,
+                               r.taste_tags_json, r.status, r.created_at
+                        FROM recipe r
+                        LEFT JOIN user_account u ON u.id = r.owner_user_id
+                        WHERE r.id = ?
+                        """,
+                rs -> {
+                    if (!rs.next()) {
+                        throw new org.springframework.web.server.ResponseStatusException(
+                                org.springframework.http.HttpStatus.NOT_FOUND, "recipe not found");
+                    }
+                    List<String> tags = new ArrayList<>();
+                    String rawTags = rs.getString("taste_tags_json");
+                    if (rawTags != null && !rawTags.isBlank()) {
+                        try {
+                            tags = JSON.readValue(rawTags,
+                                    new com.fasterxml.jackson.core.type.TypeReference<List<String>>() {});
+                        } catch (Exception ignored) {
+                            // 脏数据（非法 JSON）时降级为空标签，不影响详情展示
+                        }
+                    }
+                    return new AdminRecipeDetail(
+                            rs.getLong("id"),
+                            rs.getString("title"),
+                            rs.getString("nickname"),
+                            rs.getString("source_type"),
+                            rs.getString("source_url"),
+                            rs.getString("cuisine"),
+                            rs.getInt("time_cost"),
+                            rs.getInt("servings"),
+                            rs.getString("difficulty"),
+                            rs.getString("summary"),
+                            rs.getString("cover_image"),
+                            tags,
+                            rs.getString("status"),
+                            rs.getString("created_at"),
+                            loadRecipeSteps(recipeId),
+                            loadRecipeIngredients(recipeId)
+                    );
+                },
+                recipeId
+        );
+    }
+
+    private List<String> loadRecipeSteps(long recipeId) {
+        return jdbcTemplate.query(
+                "SELECT step_text FROM recipe_step WHERE recipe_id = ? ORDER BY step_no ASC",
+                (rs, rowNum) -> rs.getString("step_text"),
+                recipeId
+        );
+    }
+
+    private List<AdminIngredient> loadRecipeIngredients(long recipeId) {
+        return jdbcTemplate.query("""
+                        SELECT ingredient_name, amount, unit
+                        FROM recipe_ingredient
+                        WHERE recipe_id = ?
+                        ORDER BY id ASC
+                        """,
+                (rs, rowNum) -> new AdminIngredient(
+                        rs.getString("ingredient_name"),
+                        rs.getString("amount"),
+                        rs.getString("unit")
+                ),
+                recipeId
+        );
     }
 
     /** 评论列表（治理用）：可按帖子与审核状态过滤，包含已软删除的评论（deleted 标记）。 */

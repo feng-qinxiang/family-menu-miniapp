@@ -1139,6 +1139,7 @@
         '<td class="num">' + escapeHtml(r.timeCost != null ? r.timeCost + ' 分钟' : '—') + '</td>' +
         '<td>' + (removed ? '<span class="pill bad">已下架</span>' : '<span class="pill ok">在线</span>') + '</td>' +
         '<td>' + fmtTime(r.createdAt) + '</td><td class="actions">' +
+        '<button class="btn small" data-recipedetail="' + escapeHtml(String(r.recipeId)) + '">查看详情</button>' +
         (removed
           ? '<button class="btn small" data-recipestatus="' + escapeHtml(String(r.recipeId)) + '" data-on="ACTIVE">恢复</button>'
           : '<button class="btn small danger" data-recipestatus="' + escapeHtml(String(r.recipeId)) + '" data-on="REMOVED">下架</button>') +
@@ -1148,6 +1149,53 @@
     $('panelRoot').innerHTML = '<div class="card">' + head +
       '<table><thead><tr><th class="num">ID</th><th>标题</th><th>作者</th><th>菜系</th><th class="num">耗时</th>' +
       '<th>状态</th><th>创建时间</th><th>操作</th></tr></thead><tbody>' + body + '</tbody></table></div>';
+  }
+
+  /** 菜谱详情弹窗：运营下架前核对完整食材与步骤（之前只能看到列表摘要） */
+  function showRecipeDetail(recipeId) {
+    infoDialog({
+      title: '菜谱详情 #' + recipeId,
+      desc: '加载中…',
+      body: '<div class="muted">正在读取菜谱内容…</div>'
+    });
+    request('/api/admin/recipes/' + encodeURIComponent(recipeId))
+      .then(function (r) {
+        var meta = [
+          r.cuisine ? escapeHtml(r.cuisine) : null,
+          r.timeCost != null ? r.timeCost + ' 分钟' : null,
+          r.servings != null ? r.servings + ' 人份' : null,
+          r.difficulty ? escapeHtml(difficultyLabel(r.difficulty)) : null
+        ].filter(Boolean).join(' · ');
+        var ings = (r.ingredients || []).map(function (i) {
+          return '<li><span>' + escapeHtml(i.name || '') + '</span><em>' +
+            escapeHtml(((i.amount || '') + (i.unit || '')) || '适量') + '</em></li>';
+        }).join('') || '<li class="muted">未填写食材</li>';
+        var steps = (r.steps || []).map(function (s, i) {
+          return '<li><b>' + (i + 1) + '</b><span>' + escapeHtml(s) + '</span></li>';
+        }).join('') || '<li class="muted">未填写步骤</li>';
+        var tags = (r.tasteTags || []).map(function (t) {
+          return '<span class="pill">' + escapeHtml(t) + '</span>';
+        }).join(' ');
+        var body =
+          '<div class="rd-meta">' + meta + '</div>' +
+          (tags ? '<div class="rd-tags">' + tags + '</div>' : '') +
+          '<div class="rd-sec"><h4>食材</h4><ul class="rd-ings">' + ings + '</ul></div>' +
+          '<div class="rd-sec"><h4>步骤</h4><ol class="rd-steps">' + steps + '</ol></div>' +
+          (r.summary ? '<div class="rd-sec"><h4>简介</h4><p class="rd-sum">' + escapeHtml(r.summary) + '</p></div>' : '');
+        infoDialog({
+          title: '菜谱详情 · ' + (r.title || ('#' + recipeId)),
+          desc: (r.ownerNickname ? '作者 ' + r.ownerNickname + ' · ' : '') +
+            (r.status === 'REMOVED' ? '已下架' : '在线') + ' · ' + fmtTime(r.createdAt),
+          body: body
+        });
+      })
+      .catch(function (err) {
+        infoDialog({ title: '菜谱详情', desc: '加载失败', body: '<div class="muted">' + escapeHtml(err.message) + '</div>' });
+      });
+  }
+
+  function difficultyLabel(key) {
+    return ({ easy: '简单', medium: '中等', hard: '困难' })[key] || key || '—';
   }
 
   function setRecipeStatus(recipeId, status) {
@@ -1645,12 +1693,12 @@
       var root = $('modalRoot');
       root.innerHTML =
         '<div class="modal-backdrop">' +
-          '<div class="modal' + (cfg.danger ? ' danger' : '') + '" role="dialog" aria-modal="true">' +
+          '<div class="modal' + (cfg.danger ? ' danger' : '') + (cfg.wide ? ' wide' : '') + '" role="dialog" aria-modal="true">' +
             '<div class="modal-head"><h3>' + escapeHtml(cfg.title) + '</h3>' +
               (cfg.desc ? '<p>' + escapeHtml(cfg.desc) + '</p>' : '') + '</div>' +
             '<div class="modal-body">' + (cfg.body || '') + '</div>' +
             '<div class="modal-foot">' +
-              '<button type="button" class="btn" data-modal-cancel>' + escapeHtml(cfg.cancelText || '取消') + '</button>' +
+              (cfg.singleAction ? '' : '<button type="button" class="btn" data-modal-cancel>' + escapeHtml(cfg.cancelText || '取消') + '</button>') +
               '<button type="button" class="btn ' + (cfg.danger ? 'danger-solid' : 'primary') + '" data-modal-confirm>' +
                 escapeHtml(cfg.confirmText || '确定') + '</button>' +
             '</div>' +
@@ -1691,8 +1739,21 @@
         }
         closeModal(values);
       });
-      cancelBtn.addEventListener('click', function () { closeModal(null); });
+      if (cancelBtn) cancelBtn.addEventListener('click', function () { closeModal(null); });
       backdrop.addEventListener('click', function (e) { if (e.target === backdrop) closeModal(null); });
+    });
+  }
+
+  /** 只读详情弹窗（单个「关闭」按钮，无取消）：用于菜谱详情等纯展示场景 */
+  function infoDialog(opts) {
+    return openModal({
+      title: opts.title,
+      desc: opts.desc,
+      body: opts.body,
+      wide: true,
+      singleAction: true,
+      confirmText: opts.confirmText || '关闭',
+      onConfirm: function () { return true; }
     });
   }
 
@@ -1827,7 +1888,7 @@
   // 直接读它的 data-* 会拿到 null，所以先向上找到真正带属性的宿主元素。
   var CLICKABLE = [
     '[data-tab]', '[data-goto]', '[data-review]', '[data-rptfilter]', '[data-role]', '[data-vip]',
-    '[data-postfilter]', '[data-poststatus]', '[data-recipefilter]', '[data-recipestatus]',
+    '[data-postfilter]', '[data-poststatus]', '[data-recipefilter]', '[data-recipestatus]', '[data-recipedetail]',
     '[data-cmtfilter]', '[data-cmtstatus]', '[data-cmtdel]', '[data-cmtrestore]', '[data-fbfilter]',
     '[data-fb]', '[data-orderfilter]', '[data-orderclose]', '[data-orderrefund]', '[data-userstatus]',
     '[data-importfilter]', '[data-import]', '[data-pager]', '[data-sort]', '[data-bulk]',
@@ -1907,6 +1968,8 @@
     if (rf !== null) { state.recipeFilter = rf; loadRecipes(); return; }
     var rs = t.getAttribute('data-recipestatus');
     if (rs) { setRecipeStatus(rs, t.getAttribute('data-on')); return; }
+    var rd = t.getAttribute('data-recipedetail');
+    if (rd) { showRecipeDetail(rd); return; }
 
     if (id === 'commentFilterBtn') {
       state.commentPostId = ($('commentPostFilter') || {}).value || '';

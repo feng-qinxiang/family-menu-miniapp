@@ -2,7 +2,8 @@ const {
   createCommunityPost,
   getCommunityPosts,
   reportCommunityPost,
-  toggleCommunityFavorite
+  toggleCommunityFavorite,
+  toggleCommunityLike
 } = require('../../utils/api');
 const { withTabSelect } = require('../../behaviors/tab-select');
 
@@ -157,6 +158,38 @@ Page({
       return;
     }
     wx.navigateTo({ url: `/pages/recipe-detail/index?id=${recipeId}` });
+  },
+
+  // 点赞：先本地乐观翻转（跟手），失败回滚
+  async toggleLike(event) {
+    const { id } = event.currentTarget.dataset;
+    if (!id) return;
+    const before = this.data.posts;
+    const target = before.find((p) => String(p.id) === String(id));
+    if (!target) return;
+    const optimistic = before.map((p) => (
+      String(p.id) === String(id)
+        ? {
+          ...p,
+          liked: !p.liked,
+          likeCount: Math.max(0, (p.likeCount || 0) + (p.liked ? -1 : 1))
+        }
+        : p
+    ));
+    this.setData({ posts: optimistic });
+    try {
+      const updated = await toggleCommunityLike(id);
+      if (!updated) return;
+      const normalizedUpdated = this.normalizePosts([updated])[0];
+      this.setData({
+        posts: this.data.posts.map((p) => (
+          String(p.id) === String(normalizedUpdated.id) ? normalizedUpdated : p
+        ))
+      });
+    } catch (err) {
+      this.setData({ posts: before });
+      wx.showToast({ title: '点赞失败，请重试', icon: 'none' });
+    }
   },
 
   async toggleFavorite(event) {

@@ -237,6 +237,9 @@
 .pa-ico { font-size: 28rpx; line-height: 1; }
 .ico-star::before { content: "\2606"; }
 .ico-star.on::before { content: "\2605"; }
+.ico-heart::before { content: "\2661"; }
+.ico-heart.on::before { content: "\2665"; }
+.pa-btn.like-on { color: var(--pop); }
 .ico-chat::before { content: "\1F4AC"; }
 .ico-warn::before { content: "\26A0"; }
 .pa-spacer { flex: 1; }

@@ -102,6 +102,13 @@
             <!-- 操作栏 -->
             <view class="pactions">
               <view
+                class="pa-btn {{item.liked ? 'on' : ''}}"
+                catchtap="toggleLike"
+                data-id="{{item.id}}"
+              >
+                <view class="pa-ico ico-heart {{item.liked ? 'on' : ''}}"></view>{{item.likeCount}} 赞
+              </view>
+              <view
                 class="pa-btn {{item.favorited ? 'on' : ''}}"
                 catchtap="toggleFavorite"
                 data-id="{{item.id}}"

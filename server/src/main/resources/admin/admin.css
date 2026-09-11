@@ -1177,3 +1177,18 @@ td.clamp { max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-sp
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+
+/* ===================== 只读详情弹窗（菜谱详情等） ===================== */
+.modal.wide { width: min(720px, calc(100vw - 48px)); }
+.modal.wide .modal-body { max-height: 62vh; overflow-y: auto; }
+.rd-meta { font-size: 13px; color: var(--mut); margin-bottom: 10px; }
+.rd-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+.rd-sec { margin-top: 16px; }
+.rd-sec h4 { margin: 0 0 8px; font-size: 13.5px; font-weight: 700; color: var(--ink-2); }
+.rd-ings { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 6px 18px; }
+.rd-ings li { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; padding: 5px 0; border-bottom: 1px dashed var(--line); }
+.rd-ings li em { font-style: normal; color: var(--mut); }
+.rd-steps { margin: 0; padding: 0; list-style: none; }
+.rd-steps li { display: flex; gap: 10px; font-size: 13px; line-height: 1.7; padding: 6px 0; }
+.rd-steps li b { flex: none; width: 20px; height: 20px; border-radius: 50%; background: rgba(194, 64, 42, 0.1); color: var(--pop); font-size: 12px; display: flex; align-items: center; justify-content: center; }
+.rd-sum { font-size: 13px; line-height: 1.75; color: var(--ink-2); margin: 0; }

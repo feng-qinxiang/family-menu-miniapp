@@ -35,7 +35,25 @@ const ENV_CONFIG = {
 
 function resolveConfig() {
   const env = getEnv();
-  return ENV_CONFIG[env] || ENV_CONFIG.develop;
+  const config = ENV_CONFIG[env] || ENV_CONFIG.develop;
+  assertNotPlaceholder(env, config);
+  return config;
+}
+
+// 占位域名哨兵：体验版/正式版仍指向 example.com 时，全站接口会静默失败，
+// 排查成本很高。这里在解析配置时打一条醒目的 error（每个环境只打一次）。
+const PLACEHOLDER_PATTERN = /example\.com/i;
+const warnedEnvs = {};
+
+function assertNotPlaceholder(env, config) {
+  if (env === 'develop' || warnedEnvs[env]) return;
+  if (!config || !PLACEHOLDER_PATTERN.test(config.apiBaseUrl || '')) return;
+  warnedEnvs[env] = true;
+  console.error(
+    `[env] ${env} 环境的 apiBaseUrl 仍是占位域名（${config.apiBaseUrl}）。` +
+    '请替换为真实 HTTPS 域名，并同步微信后台 request 合法域名，否则该版本所有接口都会失败。' +
+    '清单见 spec/LAUNCH-CHECKLIST.md。'
+  );
 }
 
 /**

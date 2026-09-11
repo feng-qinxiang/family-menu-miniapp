@@ -504,6 +504,30 @@ class AdminModulesTests {
     }
 
     @Test
+    void adminCanReadRecipeDetailAndGuestIsForbidden() throws Exception {
+        long[] id = new long[1];
+        String admin = adminToken(id);
+        Long recipeId = jdbcTemplate.queryForObject(
+                "SELECT id FROM recipe WHERE status = 'ACTIVE' ORDER BY id LIMIT 1", Long.class);
+        try {
+            // 运营侧详情必须带完整食材与步骤（下架前核对用）
+            mockMvc.perform(get("/api/admin/recipes/" + recipeId).header("X-Auth-Token", admin))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.recipeId").value(recipeId))
+                    .andExpect(jsonPath("$.title").exists())
+                    .andExpect(jsonPath("$.steps").isArray())
+                    .andExpect(jsonPath("$.ingredients").isArray());
+
+            // 非管理员（普通游客）不得读取治理详情
+            String guest = guestLogin();
+            mockMvc.perform(get("/api/admin/recipes/" + recipeId).header("X-Auth-Token", guest))
+                    .andExpect(status().isForbidden());
+        } finally {
+            demote(id[0]);
+        }
+    }
+
+    @Test
     void adminCanListAndRestoreComments() throws Exception {
         long[] id = new long[1];
         String admin = adminToken(id);

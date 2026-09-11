@@ -55,6 +55,8 @@ public final class ApiModels {
             Integer commentCount,
             Integer favoriteCount,
             boolean favorited,
+            /** 当前用户是否点过赞（每人每帖一次） */
+            boolean liked,
             List<String> tags,
             RecipeCard recipe
     ) {

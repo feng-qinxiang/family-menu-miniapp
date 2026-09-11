@@ -175,6 +175,12 @@ function toggleCommunityFavorite(postId) {
   });
 }
 
+function toggleCommunityLike(postId) {
+  return requestStrict(`/api/community/posts/${encodeURIComponent(postId)}/like`, {
+    method: 'POST'
+  });
+}
+
 function addCommunityComment(postId, payload) {
   return requestStrict(`/api/community/posts/${encodeURIComponent(postId)}/comments`, {
     method: 'POST',
@@ -480,6 +486,11 @@ function getPantryMatch() {
 
 // ===== Payment =====
 
+/** 套餐目录（后端权威，见 utils/plans.js）。失败静默返回 null，由调用方兜底。 */
+function getPaymentPlans() {
+  return request('/api/payment/plans', { silent: true, fallback: () => null });
+}
+
 function createPaymentOrder(planId) {
   // 后端 CreateOrderRequest 需要 planCode 字段；响应用 outTradeNo 作为订单号
   return requestStrict('/api/payment/orders', {
@@ -550,6 +561,7 @@ function markNotificationsRead(ids) {
 
 module.exports = {
   getAuthToken,
+  getDeviceId,
   createPaymentOrder,
   prepayOrder,
   mockPayOrder,
@@ -579,6 +591,7 @@ module.exports = {
   getRecipeDetail,
   getRecipes,
   getVipStatus,
+  getPaymentPlans,
   logout,
   getWeeklyMenu,
   getTodayMenu,
@@ -595,6 +608,7 @@ module.exports = {
   reportCommunityPost,
   reviewCommunityReport,
   toggleCommunityFavorite,
+  toggleCommunityLike,
   previewJoinFamily,
   joinFamily,
   addFamilyMember,

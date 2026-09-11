@@ -1,4 +1,10 @@
-const { getVipStatus } = require('../../utils/api');
+const { getVipStatus, getFamilyProfile } = require('../../utils/api');
+const { loadPlans, FALLBACK } = require('../../utils/plans');
+
+// _plans 尚未返回时的同步兜底（仅本地默认值，不发起请求）
+function loadPlansFallback() {
+  return FALLBACK;
+}
 
 Page({
   data: {
@@ -21,16 +27,14 @@ Page({
       { feat: '智能周菜单', free: false, vip: true },
       { feat: '去除广告', free: false, vip: true }
     ],
+    // 套餐展示由 utils/plans.js 统一注入（后端权威价），此处仅占位避免首屏空白
     plans: [
-      { key: 'monthly', name: '月卡', price: '¥19.9', per: '每月，随时可停', recommend: false },
-      { key: 'yearly', name: '年卡', price: '¥99', unit: '/年', per: '折合每月 ¥8.3', save: '省 83%', recommend: true }
+      { key: 'monthly', name: '月卡', price: '¥--', per: '每月，随时可停', recommend: false },
+      { key: 'yearly', name: '年卡', price: '¥--', unit: '/年', per: '', save: '', recommend: true }
     ],
-    familyAvatars: [
-      { initial: '张', tone: '#e8472a' },
-      { initial: '妈', tone: '#b08949' },
-      { initial: '爸', tone: '#2f4a3a' }
-    ],
-    familyMore: '+2',
+    // 真实家庭成员头像（最多 3 个 + 剩余人数）
+    familyAvatars: [],
+    familyMore: '',
     navPad: '51px'
   },
 
@@ -39,6 +43,62 @@ Page({
       const mb = wx.getMenuButtonBoundingClientRect();
       if (mb && mb.top) this.setData({ navPad: mb.top + 'px' });
     } catch (e) {}
+    this.loadPlans();
+    this.loadFamily();
+  },
+
+  // 套餐与价格一律来自后端（改价只改后端 PlanCatalog）
+  async loadPlans() {
+    const plans = await loadPlans();
+    const monthly = plans.monthly;
+    const yearly = plans.yearly;
+    this._plans = plans;
+    // 年卡折合月价与省幅：由后端价格算出，避免写死营销数字
+    const monthsOfYear = 12;
+    const perMonth = yearly.priceNumber ? (yearly.priceNumber / monthsOfYear) : 0;
+    const saveRate = (yearly.original && yearly.priceNumber)
+      ? Math.round((1 - yearly.priceNumber / Number(yearly.original)) * 100)
+      : 0;
+    this.setData({
+      plans: [
+        {
+          key: 'monthly',
+          name: '月卡',
+          price: '¥' + monthly.priceNumber,
+          per: '每月，随时可停',
+          recommend: false
+        },
+        {
+          key: 'yearly',
+          name: '年卡',
+          price: '¥' + yearly.priceNumber,
+          unit: '/年',
+          per: perMonth ? `折合每月 ¥${Math.round(perMonth * 10) / 10}` : '',
+          save: saveRate > 0 ? `省 ${saveRate}%` : '',
+          recommend: true
+        }
+      ]
+    });
+  },
+
+  // 家人头像用真实成员（此前写死「张/妈/爸 +2」）
+  async loadFamily() {
+    try {
+      const family = await getFamilyProfile();
+      const members = (family && Array.isArray(family.members)) ? family.members : [];
+      const tones = ['#e8472a', '#b08949', '#2f4a3a', '#3a2e23'];
+      const shown = members.slice(0, 3).map((m, i) => ({
+        initial: String(m.nickname || '家').slice(0, 1),
+        tone: tones[i % tones.length]
+      }));
+      const rest = members.length - shown.length;
+      this.setData({
+        familyAvatars: shown,
+        familyMore: rest > 0 ? `+${rest}` : ''
+      });
+    } catch (e) {
+      // 拿不到家庭成员时保持空数组（不展示假头像）
+    }
   },
 
   onShow() {
@@ -51,7 +111,7 @@ Page({
       this.applyStatus(status);
     } catch (err) {
       console.error('vip status load failed', err);
-      wx.showToast({ title: '会员状态加载失败，当前为演示数据', icon: 'none' });
+      wx.showToast({ title: '会员状态加载失败，请下拉重试', icon: 'none' });
     }
   },
 
@@ -74,10 +134,11 @@ Page({
     if (this.data.activating) return;
     this.setData({ activating: true });
     const planKey = this.data.selectedPlan === 'monthly' ? 'monthly' : 'yearly';
-    const amount = planKey === 'monthly' ? '19.90' : '99.00';
-    const planName = planKey === 'monthly' ? '家庭同步月卡' : '家庭同步年卡';
+    // 套餐名与金额取后端权威值（loadPlans 未回来时由 utils/plans 本地兜底）
+    const plans = this._plans || loadPlansFallback();
+    const plan = plans[planKey] || plans.yearly;
     wx.navigateTo({
-      url: `/pkg-extra/payment/checkout/index?plan=${planKey}&planName=${encodeURIComponent(planName)}&amount=${amount}`,
+      url: `/pkg-extra/payment/checkout/index?plan=${planKey}&planName=${encodeURIComponent(plan.planName)}&amount=${plan.priceFull}`,
       complete: () => this.setData({ activating: false })
     });
   },

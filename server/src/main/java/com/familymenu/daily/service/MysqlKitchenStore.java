@@ -224,6 +224,7 @@ public class MysqlKitchenStore {
                 SELECT p.id, p.title, u.nickname AS author, p.content, p.like_count, p.comment_count, p.tags_json,
                        COALESCE(fav.favorite_count, 0) AS favorite_count,
                        CASE WHEN my_fav.user_id IS NULL THEN 0 ELSE 1 END AS favorited,
+                       CASE WHEN my_like.user_id IS NULL THEN 0 ELSE 1 END AS liked,
                        r.id AS recipe_id, r.title AS recipe_title, r.source_type, r.source_url, r.cuisine,
                        r.taste_tags_json, r.time_cost, r.servings, r.rating, r.summary, r.cover_image
                 FROM community_post p
@@ -235,6 +236,7 @@ public class MysqlKitchenStore {
                     GROUP BY post_id
                 ) fav ON fav.post_id = p.id
                 LEFT JOIN community_post_favorite my_fav ON my_fav.post_id = p.id AND my_fav.user_id = ?
+                LEFT JOIN community_post_like my_like ON my_like.post_id = p.id AND my_like.user_id = ?
                 WHERE p.audit_status = 'APPROVED' OR (p.audit_status = 'PENDING' AND p.author_user_id = ?)
                 ORDER BY p.like_count DESC, p.id DESC
                 """;
@@ -267,10 +269,11 @@ public class MysqlKitchenStore {
                     rs.getInt("comment_count"),
                     rs.getInt("favorite_count"),
                     rs.getBoolean("favorited"),
+                    rs.getBoolean("liked"),
                     readStringList(rs.getString("tags_json")),
                     recipe
             );
-        }, userId, userId);
+        }, userId, userId, userId);
     }
 
     public List<CommunityPost> myFavoritePosts(long userId) {
@@ -278,6 +281,7 @@ public class MysqlKitchenStore {
                 SELECT p.id, p.title, u.nickname AS author, p.content, p.like_count, p.comment_count, p.tags_json,
                        COALESCE(fav.favorite_count, 0) AS favorite_count,
                        1 AS favorited,
+                       CASE WHEN my_like.user_id IS NULL THEN 0 ELSE 1 END AS liked,
                        r.id AS recipe_id, r.title AS recipe_title, r.source_type, r.source_url, r.cuisine,
                        r.taste_tags_json, r.time_cost, r.servings, r.rating, r.summary, r.cover_image
                 FROM community_post_favorite my_fav
@@ -289,6 +293,7 @@ public class MysqlKitchenStore {
                     FROM community_post_favorite
                     GROUP BY post_id
                 ) fav ON fav.post_id = p.id
+                LEFT JOIN community_post_like my_like ON my_like.post_id = p.id AND my_like.user_id = ?
                 WHERE my_fav.user_id = ?
                 ORDER BY my_fav.id DESC
                 """;
@@ -321,10 +326,11 @@ public class MysqlKitchenStore {
                     rs.getInt("comment_count"),
                     rs.getInt("favorite_count"),
                     true,
+                    rs.getBoolean("liked"),
                     readStringList(rs.getString("tags_json")),
                     recipe
             );
-        }, userId);
+        }, userId, userId);
     }
 
     @Transactional
@@ -449,6 +455,54 @@ public class MysqlKitchenStore {
                             """,
                     postId,
                     userId
+            );
+        }
+        return findCommunityPost(postId, userId);
+    }
+
+    /**
+     * 点赞 / 取消点赞（每人每帖一次）。同步维护 community_post.like_count，
+     * 保证排序（ORDER BY like_count DESC）与列表计数一致。
+     */
+    @Transactional
+    public CommunityPost toggleCommunityLike(long postId, long userId) {
+        ensureCommunityPostExists(postId);
+        Integer existing = jdbcTemplate.query("""
+                        SELECT 1
+                        FROM community_post_like
+                        WHERE post_id = ? AND user_id = ?
+                        LIMIT 1
+                        """,
+                rs -> rs.next() ? 1 : null,
+                postId,
+                userId
+        );
+        if (existing == null) {
+            jdbcTemplate.update("""
+                            INSERT INTO community_post_like(post_id, user_id)
+                            VALUES (?, ?)
+                            """,
+                    postId,
+                    userId
+            );
+            jdbcTemplate.update("""
+                            UPDATE community_post SET like_count = like_count + 1 WHERE id = ?
+                            """,
+                    postId
+            );
+        } else {
+            jdbcTemplate.update("""
+                            DELETE FROM community_post_like
+                            WHERE post_id = ? AND user_id = ?
+                            """,
+                    postId,
+                    userId
+            );
+            // GREATEST 兜底：历史数据 like_count 可能大于真实点赞行数，避免减成负数
+            jdbcTemplate.update("""
+                            UPDATE community_post SET like_count = GREATEST(like_count - 1, 0) WHERE id = ?
+                            """,
+                    postId
             );
         }
         return findCommunityPost(postId, userId);
@@ -1105,6 +1159,7 @@ public class MysqlKitchenStore {
                 SELECT p.id, p.title, u.nickname AS author, p.content, p.like_count, p.comment_count, p.tags_json,
                        COALESCE(fav.favorite_count, 0) AS favorite_count,
                        CASE WHEN my_fav.user_id IS NULL THEN 0 ELSE 1 END AS favorited,
+                       CASE WHEN my_like.user_id IS NULL THEN 0 ELSE 1 END AS liked,
                        r.id AS recipe_id, r.title AS recipe_title, r.source_type, r.source_url, r.cuisine,
                        r.taste_tags_json, r.time_cost, r.servings, r.rating, r.summary, r.cover_image
                 FROM community_post p
@@ -1117,6 +1172,7 @@ public class MysqlKitchenStore {
                     GROUP BY post_id
                 ) fav ON fav.post_id = p.id
                 LEFT JOIN community_post_favorite my_fav ON my_fav.post_id = p.id AND my_fav.user_id = ?
+                LEFT JOIN community_post_like my_like ON my_like.post_id = p.id AND my_like.user_id = ?
                 WHERE p.id = ?
                 LIMIT 1
                 """;
@@ -1152,10 +1208,11 @@ public class MysqlKitchenStore {
                     rs.getInt("comment_count"),
                     rs.getInt("favorite_count"),
                     rs.getBoolean("favorited"),
+                    rs.getBoolean("liked"),
                     readStringList(rs.getString("tags_json")),
                     recipe
             );
-        }, postId, userId, postId);
+        }, postId, userId, userId, postId);
     }
 
     private void ensureCommunityPostExists(long postId) {

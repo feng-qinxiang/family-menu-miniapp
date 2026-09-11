@@ -1,39 +1,51 @@
 // payment/checkout · 会员开通结算页
 // 流程：createPaymentOrder → prepayOrder → wx.requestPayment（真实支付）
 //        若后端返回 mockMode=true（商户未配置），提示后走 mock-pay 联调开通
+// 套餐名与金额一律来自 utils/plans（后端权威），页面内不再写死价格。
 const api = require('../../../utils/api');
+const { loadPlans, FALLBACK } = require('../../../utils/plans');
 
-const PLAN_MAP = {
-  yearly:  { planId: 'annual',  planName: '家庭年卡',  priceFull: '99.00', priceFen: 9900, original: '138.00' },
-  monthly: { planId: 'monthly', planName: '家庭月卡', priceFull: '19.90',  priceFen: 1990, original:  '29.90'  },
-};
+// UI key（yearly/monthly）→ 兜底套餐；真实值由 loadPlans 覆盖
+function fallbackPlans() {
+  return FALLBACK;
+}
 
 Page({
   data: {
     merchantName: '家庭点菜',
     coverImage: 'kungpao-chicken.jpg',
-    productName: '家庭云同步年卡',
-    payAmount: '99.00',
-    originAmount: '138.00',
+    productName: FALLBACK.yearly.planName,
+    payAmount: FALLBACK.yearly.priceFull,
+    originAmount: FALLBACK.yearly.original,
     payMethod: { name: '微信支付', balance: '0.00' },
     bankText: '未绑定银行卡',
     couponText: '暂无可用优惠',
+    mockMode: false,
     paying: false,
     orderId: null,
     toast: { visible: false, type: 'center', text: '' }
   },
 
-  onLoad(query) {
-    const key = (query && query.plan && PLAN_MAP[query.plan]) ? query.plan : 'yearly';
-    const plan = PLAN_MAP[key];
+  async onLoad(query) {
+    const key = (query && query.plan === 'monthly') ? 'monthly' : 'yearly';
+    // 先用本地兜底出首屏，再用后端权威套餐覆盖
+    this._plans = fallbackPlans();
+    this._applyPlan(key, query);
+    const plans = await loadPlans();
+    this._plans = plans;
+    this._applyPlan(key, query);
+  },
+
+  // query 显式传入的 planName/amount 优先（来自上一页已确认的展示值），其次取套餐目录
+  _applyPlan(key, query) {
+    const plan = (this._plans && this._plans[key]) || FALLBACK[key] || FALLBACK.yearly;
     const patch = {
       planKey: key,
-      planId: plan.planId,
+      planId: plan.planCode,
       productName: plan.planName,
       payAmount: plan.priceFull,
-      originAmount: (plan.original || plan.priceFull),
+      originAmount: plan.original || plan.priceFull,
     };
-    // 允许 upgrade 页传入 planName/amount 覆盖
     if (query && query.planName) patch.productName = decodeURIComponent(query.planName);
     if (query && query.amount) {
       const amt = Number(query.amount);

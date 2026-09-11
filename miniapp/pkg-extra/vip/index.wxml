@@ -81,8 +81,8 @@
     <section-head eyebrow="家里人" title="家里" popPart="这几口" />
     <view class="vip-members">
       <view class="vip-pile">
-        <view class="vip-av" wx:for="{{familyAvatars}}" wx:key="initial" style="background: {{item.tone}};">{{item.initial}}</view>
-        <view class="vip-av vip-more">{{familyMore}}</view>
+        <view class="vip-av" wx:for="{{familyAvatars}}" wx:key="index" style="background: {{item.tone}};">{{item.initial}}</view>
+        <view class="vip-av vip-more" wx:if="{{familyMore}}">{{familyMore}}</view>
       </view>
       <view class="vip-synced"><view class="vip-sdot"></view>{{isVip ? '已同步' : '开通后同步'}}</view>
     </view>

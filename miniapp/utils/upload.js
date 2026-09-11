@@ -1,5 +1,7 @@
 // 全站 baseURL 唯一来源（见 utils/env.js），不再维护第二套逻辑
 const { resolveBaseUrl } = require('./env');
+// 请求头与 api.js 保持一致：上传同样带设备标识，便于后端排查与限流
+const { getAuthToken, getDeviceId } = require('./api');
 
 function isCancel(err) {
   return !!(err && err.errMsg && /cancel/i.test(err.errMsg));
@@ -28,12 +30,15 @@ function chooseImage(count) {
 
 function uploadFile(tempFilePath) {
   return new Promise((resolve) => {
-    const token = wx.getStorageSync('auth_token') || '';
+    const token = getAuthToken();
     wx.uploadFile({
       url: `${resolveBaseUrl()}/api/upload`,
       filePath: tempFilePath,
       name: 'file',
-      header: { 'X-Auth-Token': token },
+      header: {
+        'X-Auth-Token': token,
+        'X-Device-Id': getDeviceId()
+      },
       timeout: 30000,
       success(res) {
         if (res.statusCode >= 200 && res.statusCode < 300) {

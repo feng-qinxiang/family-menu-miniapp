@@ -199,6 +199,40 @@ class CoreFlowTests {
     }
 
     @Test
+    void communityPostLikeTogglesAndKeepsCountInSync() throws Exception {
+        String token = guestLogin();
+        MvcResult feed = mockMvc.perform(get("/api/community/posts").header("X-Auth-Token", token))
+                .andExpect(status().isOk())
+                .andReturn();
+        JsonNode posts = objectMapper.readTree(
+                feed.getResponse().getContentAsString(java.nio.charset.StandardCharsets.UTF_8));
+        assertThat(posts.size()).isGreaterThan(0);
+        long postId = posts.get(0).get("id").asLong();
+        int before = posts.get(0).get("likeCount").asInt();
+        assertThat(posts.get(0).get("liked").asBoolean()).isFalse();
+
+        // 点赞：liked=true 且计数 +1
+        MvcResult liked = mockMvc.perform(post("/api/community/posts/" + postId + "/like")
+                        .header("X-Auth-Token", token))
+                .andExpect(status().isOk())
+                .andReturn();
+        JsonNode after = objectMapper.readTree(
+                liked.getResponse().getContentAsString(java.nio.charset.StandardCharsets.UTF_8));
+        assertThat(after.get("liked").asBoolean()).isTrue();
+        assertThat(after.get("likeCount").asInt()).isEqualTo(before + 1);
+
+        // 再点一次取消：liked=false 且计数回到原值
+        MvcResult unliked = mockMvc.perform(post("/api/community/posts/" + postId + "/like")
+                        .header("X-Auth-Token", token))
+                .andExpect(status().isOk())
+                .andReturn();
+        JsonNode back = objectMapper.readTree(
+                unliked.getResponse().getContentAsString(java.nio.charset.StandardCharsets.UTF_8));
+        assertThat(back.get("liked").asBoolean()).isFalse();
+        assertThat(back.get("likeCount").asInt()).isEqualTo(before);
+    }
+
+    @Test
     void demoSeedDataSupportsLinkedPresentationPages() throws Exception {
         String token = guestLogin();
 

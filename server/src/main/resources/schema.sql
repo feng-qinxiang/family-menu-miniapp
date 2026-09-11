@@ -215,6 +215,16 @@ CREATE TABLE IF NOT EXISTS community_post_favorite (
     INDEX idx_fav_user (user_id)
 );
 
+-- 帖子点赞：与收藏分离（点赞表达喜欢，收藏用于「我的收藏」列表）
+CREATE TABLE IF NOT EXISTS community_post_like (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    post_id BIGINT NOT NULL,
+    user_id BIGINT NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uk_like_post_user (post_id, user_id),
+    INDEX idx_like_user (user_id)
+);
+
 CREATE TABLE IF NOT EXISTS community_post_report (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     post_id BIGINT NOT NULL,
