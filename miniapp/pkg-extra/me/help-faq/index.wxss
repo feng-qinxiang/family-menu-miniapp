@@ -57,7 +57,7 @@
 }
 .search-input {
   flex: 1;
-  font-size: 28rpx;
+  font-size: calc(28rpx * var(--fs-mul, 1));
   color: var(--ink);
 }
 .search-ph {
@@ -69,7 +69,7 @@
   padding: 40rpx 8rpx 8rpx;
   font-family: var(--serif);
   font-style: italic;
-  font-size: 24rpx;
+  font-size: calc(24rpx * var(--fs-mul, 1));
   letter-spacing: 1rpx;
   color: var(--gold-deep);
   font-weight: 700;
@@ -98,13 +98,13 @@
   flex: none;
   width: 46rpx;
   font-family: var(--serif);
-  font-size: 36rpx;
+  font-size: calc(36rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: var(--gold-deep);
 }
 .q-title {
   flex: 1;
-  font-size: 28rpx;
+  font-size: calc(28rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--ink);
   letter-spacing: -0.5rpx;
@@ -186,12 +186,12 @@
   text-align: center;
 }
 .nr-emoji {
-  font-size: 72rpx;
+  font-size: calc(72rpx * var(--fs-mul, 1));
   color: var(--mut);
 }
 .nr-txt {
   margin-top: 20rpx;
-  font-size: 28rpx;
+  font-size: calc(28rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--ink);
 }
@@ -219,7 +219,7 @@
 }
 .contact-h {
   margin-top: 10rpx;
-  font-size: 42rpx;
+  font-size: calc(42rpx * var(--fs-mul, 1));
   font-weight: 900;
   letter-spacing: -1rpx;
   color: var(--anchor-contrast);
@@ -227,7 +227,7 @@
 .contact-p {
   display: block;
   margin-top: 12rpx;
-  font-size: 24rpx;
+  font-size: calc(24rpx * var(--fs-mul, 1));
   line-height: 1.55;
   color: rgba(255, 255, 255, 0.62);
 }

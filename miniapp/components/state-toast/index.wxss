@@ -57,7 +57,7 @@
 
 .st-tx { flex: 1; min-width: 0; }
 .st-h5 {
-  font-size: 28rpx;
+  font-size: calc(28rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--ink);
   letter-spacing: -0.4rpx;
@@ -67,7 +67,7 @@
 }
 .st-h5-light { color: var(--anchor-contrast); font-weight: 700; }
 .st-p {
-  font-size: 24rpx;
+  font-size: calc(24rpx * var(--fs-mul, 1));
   color: var(--mut-strong);
   margin-top: 4rpx;
   overflow: hidden;
@@ -126,7 +126,7 @@
 }
 .st-ring .st-check-lg { margin-top: -8rpx; }
 .st-center-tx {
-  font-size: 28rpx;
+  font-size: calc(28rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: var(--anchor-contrast);
   letter-spacing: 1rpx;
@@ -154,7 +154,7 @@
   align-items: center;
   justify-content: center;
   color: var(--anchor-contrast);
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 900;
   line-height: 1;
 }

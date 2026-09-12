@@ -16,7 +16,7 @@
   align-items: center;
   gap: 10rpx;
   padding: 14rpx 8rpx;
-  font-size: 24rpx;
+  font-size: calc(24rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: var(--gold-deep);
 }
@@ -240,7 +240,7 @@
   gap: 16rpx;
 }
 .nt-h3 {
-  font-size: 29rpx;
+  font-size: calc(29rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--ink);
   letter-spacing: -0.5rpx;

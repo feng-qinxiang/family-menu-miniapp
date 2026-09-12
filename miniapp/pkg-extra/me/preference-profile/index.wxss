@@ -39,7 +39,7 @@
   right: 20rpx;
   z-index: 2;
   font-family: var(--serif);
-  font-size: 250rpx;
+  font-size: calc(250rpx * var(--fs-mul, 1));
   font-weight: 700;
   line-height: 1;
   color: rgba(255, 255, 255, 0.09);
@@ -61,7 +61,7 @@
 }
 .ov-stat:not(:last-child) { padding-right: 26rpx; }
 .ov-n {
-  font-size: 54rpx;
+  font-size: calc(54rpx * var(--fs-mul, 1));
   font-weight: 900;
   color: var(--anchor-contrast);
   letter-spacing: -2rpx;
@@ -70,7 +70,7 @@
 .ov-n.red { color: var(--pop); }
 .ov-u { font-size: var(--fs-sub); font-weight: 700; margin-left: 4rpx; }
 .ov-c {
-  font-size: 22rpx;
+  font-size: calc(22rpx * var(--fs-mul, 1));
   color: rgba(255, 255, 255, 0.78);
   margin-top: 6rpx;
   font-weight: 600;
@@ -80,7 +80,7 @@
 .empty-mini {
   text-align: center;
   color: var(--mut);
-  font-size: 26rpx;
+  font-size: calc(26rpx * var(--fs-mul, 1));
   padding: 48rpx 28rpx;
 }
 
@@ -93,7 +93,7 @@
   align-items: baseline;
   margin-bottom: 14rpx;
 }
-.bar-nm { font-size: 28rpx; font-weight: 800; color: var(--ink); }
+.bar-nm { font-size: calc(28rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--ink); }
 .bar-pc {
   font-size: var(--fs-cap);
   font-weight: 900;
@@ -129,20 +129,20 @@
 }
 .tcl-ct { font-size: 0.62em; font-weight: 700; opacity: 0.7; }
 .tcl-xl {
-  font-size: 48rpx;
+  font-size: calc(48rpx * var(--fs-mul, 1));
   padding: 25rpx 38rpx;
   background: var(--pop);
   color: var(--anchor-contrast);
   box-shadow: var(--sh-pop);
 }
 .tcl-lg {
-  font-size: 38rpx;
+  font-size: calc(38rpx * var(--fs-mul, 1));
   padding: 21rpx 33rpx;
   background: var(--pop-soft);
   color: var(--pop);
 }
 .tcl-md {
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   padding: 17rpx 29rpx;
   background: var(--anchor);
   color: var(--anchor-contrast);
@@ -166,7 +166,7 @@
 .trow:first-child { padding-top: 0; }
 .rk {
   font-family: var(--serif);
-  font-size: 42rpx;
+  font-size: calc(42rpx * var(--fs-mul, 1));
   font-weight: 700;
   font-style: italic;
   color: var(--gold-deep);
@@ -184,7 +184,7 @@
 }
 .mid { flex: 1; min-width: 0; }
 .mid-h {
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--ink);
   letter-spacing: -0.5rpx;
@@ -192,7 +192,7 @@
 .mid-sb { font-size: var(--fs-cap); color: var(--mut-strong); margin-top: 8rpx; }
 .cnt { flex: none; text-align: right; }
 .cnt-v {
-  font-size: 38rpx;
+  font-size: calc(38rpx * var(--fs-mul, 1));
   font-weight: 900;
   color: var(--ink-deep);
   font-family: var(--serif);

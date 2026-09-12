@@ -37,7 +37,7 @@
   top: 142rpx;
   right: -4rpx;
   font-family: var(--serif);
-  font-size: 442rpx;
+  font-size: calc(442rpx * var(--fs-mul, 1));
   font-weight: 700;
   line-height: 1;
   color: rgba(255, 255, 255, 0.07);
@@ -65,7 +65,7 @@
 }
 .brandbar .logo-glyph {
   color: var(--anchor-contrast);
-  font-size: 38rpx;
+  font-size: calc(38rpx * var(--fs-mul, 1));
   font-weight: 900;
 }
 .brandbar .bt { color: var(--anchor-contrast); display: flex; flex-direction: column; }
@@ -77,7 +77,7 @@
   opacity: 0.85;
 }
 .brandbar .bt .cn {
-  font-size: 29rpx;
+  font-size: calc(29rpx * var(--fs-mul, 1));
   font-weight: 800;
   letter-spacing: -0.6rpx;
   margin-top: 2rpx;
@@ -113,7 +113,7 @@
 }
 .hero-title .br { display: block; height: 0; }
 .slogan {
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 500;
   color: rgba(255, 255, 255, 0.9);
   letter-spacing: 1rpx;
@@ -135,7 +135,7 @@
   width: 100%;
   border-radius: 35rpx;
   padding: 33rpx;
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
   letter-spacing: 1rpx;
   display: flex;
@@ -145,7 +145,7 @@
   box-shadow: 0 4rpx 12rpx rgba(7, 140, 70, 0.3), 0 27rpx 58rpx rgba(7, 193, 96, 0.32);
 }
 .login-wx::after { border: none; }
-.wx-glyph { font-size: 36rpx; }
+.wx-glyph { font-size: calc(36rpx * var(--fs-mul, 1)); }
 
 /* 手机号登录次按钮 */
 .btn-phone {
@@ -157,7 +157,7 @@
   border: 3rpx solid var(--paper-2);
   border-radius: 35rpx;
   padding: 31rpx;
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
   display: flex;
   align-items: center;
@@ -165,7 +165,7 @@
   gap: 19rpx;
   box-shadow: var(--sh-soft);
 }
-.phone-glyph { font-size: 32rpx; color: var(--ink-deep); }
+.phone-glyph { font-size: calc(32rpx * var(--fs-mul, 1)); color: var(--ink-deep); }
 
 /* 游客 */
 .guest { text-align: center; margin-top: 15rpx; }
@@ -207,10 +207,10 @@
   justify-content: center;
   background: var(--pop-soft);
 }
-.trust .tic-glyph { font-size: 36rpx; }
+.trust .tic-glyph { font-size: calc(36rpx * var(--fs-mul, 1)); }
 .trust .ttx { display: flex; flex-direction: column; }
 .trust .ttx .th {
-  font-size: 28rpx;
+  font-size: calc(28rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--ink);
   letter-spacing: -0.6rpx;
@@ -245,9 +245,9 @@
   background: var(--pop);
   border-color: var(--pop);
 }
-.agree .box .check { color: var(--anchor-contrast); font-size: 24rpx; font-weight: 900; }
+.agree .box .check { color: var(--anchor-contrast); font-size: calc(24rpx * var(--fs-mul, 1)); font-weight: 900; }
 .agree .tx {
-  font-size: 22rpx;
+  font-size: calc(22rpx * var(--fs-mul, 1));
   color: var(--mut-strong);
   line-height: 1.6;
 }

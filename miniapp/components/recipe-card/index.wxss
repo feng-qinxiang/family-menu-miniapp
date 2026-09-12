@@ -62,7 +62,7 @@
   top: 17rpx;
   left: 17rpx;
   padding: var(--r-xs) 15rpx;
-  font-size: 18rpx;
+  font-size: calc(18rpx * var(--fs-mul, 1));
 }
 
 .rc-badge {
@@ -74,7 +74,7 @@
   border-radius: var(--r-pill);
   background: rgba(40, 30, 20, 0.5);
   color: var(--anchor-contrast);
-  font-size: 18rpx;
+  font-size: calc(18rpx * var(--fs-mul, 1));
   font-weight: 800;
   line-height: 1.2;
 }
@@ -176,7 +176,7 @@
 
 .rc-name {
   color: var(--ink);
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
   letter-spacing: -0.6rpx;
   line-height: 1.25;
@@ -191,7 +191,7 @@
 
 .rc-d-grid .rc-meta {
   margin-top: 12rpx;
-  font-size: 22rpx;
+  font-size: calc(22rpx * var(--fs-mul, 1));
   font-weight: 600;
 }
 
@@ -213,7 +213,7 @@
 
 .rc-add-mark {
   color: var(--anchor-contrast);
-  font-size: 38rpx;
+  font-size: calc(38rpx * var(--fs-mul, 1));
   font-weight: 700;
   line-height: 1;
 }
@@ -246,7 +246,7 @@
 
 .rc-row-title {
   color: var(--ink);
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
   letter-spacing: -0.6rpx;
   line-height: 1.25;
@@ -261,7 +261,7 @@
 
 .rc-row-sub-i {
   color: var(--mut);
-  font-size: 24rpx;
+  font-size: calc(24rpx * var(--fs-mul, 1));
   line-height: 1.3;
 }
 
@@ -291,7 +291,7 @@
 
 .rc-row-add .rc-plus {
   color: var(--anchor-contrast);
-  font-size: 40rpx;
+  font-size: calc(40rpx * var(--fs-mul, 1));
   font-weight: 600;
   line-height: 1;
 }

@@ -66,7 +66,7 @@
   width: 100%;
   height: 100%;
   color: var(--ink-deep);
-  font-size: 44rpx;
+  font-size: calc(44rpx * var(--fs-mul, 1));
   font-weight: 900;
 }
 .fam-feyebrow {
@@ -79,7 +79,7 @@
 }
 .fam-name {
   margin-top: 6rpx;
-  font-size: 48rpx;
+  font-size: calc(48rpx * var(--fs-mul, 1));
   font-weight: 900;
   letter-spacing: -1rpx;
   color: var(--anchor-contrast);
@@ -105,7 +105,7 @@
 }
 .fam-code {
   margin-top: 6rpx;
-  font-size: 42rpx;
+  font-size: calc(42rpx * var(--fs-mul, 1));
   font-weight: 900;
   letter-spacing: 8rpx;
   color: var(--anchor-contrast);
@@ -152,7 +152,7 @@
   align-items: center;
   justify-content: center;
   color: var(--anchor-contrast);
-  font-size: 37rpx;
+  font-size: calc(37rpx * var(--fs-mul, 1));
   font-weight: 800;
   font-family: var(--sans);
 }
@@ -172,7 +172,7 @@
 }
 .mname-txt {
   max-width: 280rpx;
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--ink);
   letter-spacing: -0.5rpx;
@@ -254,7 +254,7 @@
   text-align: center;
 }
 .mem-empty-txt {
-  font-size: 26rpx;
+  font-size: calc(26rpx * var(--fs-mul, 1));
   color: var(--mut);
 }
 
@@ -333,7 +333,7 @@
 .mem-invbtn {
   height: 108rpx;
   gap: 17rpx;
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
 }
 .mem-invbtn-icon {
   position: relative;

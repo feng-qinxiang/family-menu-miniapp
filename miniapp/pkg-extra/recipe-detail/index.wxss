@@ -38,7 +38,7 @@
   position: absolute;
   top: 230rpx;
   right: 18rpx;
-  font-size: 384rpx;
+  font-size: calc(384rpx * var(--fs-mul, 1));
   font-weight: 700;
   line-height: 1;
   color: rgba(255, 255, 255, 0.08);
@@ -162,7 +162,7 @@
 
 .rd-empty-mini {
   color: var(--mut);
-  font-size: 26rpx;
+  font-size: calc(26rpx * var(--fs-mul, 1));
   text-align: center;
   padding: 48rpx 28rpx;
 }
@@ -186,13 +186,13 @@
 .rd-dot.miss { background: var(--pop); }
 .rd-iname { flex: 1; }
 .rd-iname-h {
-  font-size: 28rpx;
+  font-size: calc(28rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--ink);
   letter-spacing: -0.4rpx;
 }
 .rd-note {
-  font-size: 22rpx;
+  font-size: calc(22rpx * var(--fs-mul, 1));
   color: var(--mut-strong);
   margin-top: 4rpx;
 }
@@ -216,7 +216,7 @@
   border-radius: 28rpx;
   background: var(--pop);
   color: var(--anchor-contrast);
-  font-size: 28rpx;
+  font-size: calc(28rpx * var(--fs-mul, 1));
   font-weight: 800;
   box-shadow: var(--sh-pop);
 }
@@ -229,7 +229,7 @@
   padding: 0 12rpx;
   border-radius: 21rpx;
   background: rgba(255, 255, 255, 0.25);
-  font-size: 24rpx;
+  font-size: calc(24rpx * var(--fs-mul, 1));
   font-weight: 900;
 }
 
@@ -279,14 +279,14 @@
 }
 .rd-video-kicker {
   display: block;
-  font-size: 22rpx;
+  font-size: calc(22rpx * var(--fs-mul, 1));
   font-weight: 700;
   opacity: 0.86;
 }
 .rd-video-sub {
   display: block;
   margin-top: 4rpx;
-  font-size: 28rpx;
+  font-size: calc(28rpx * var(--fs-mul, 1));
   font-weight: 800;
 }
 
@@ -304,7 +304,7 @@
   border-radius: 21rpx;
   background: var(--anchor);
   color: var(--gold);
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 700;
   flex: none;
   display: flex;
@@ -318,7 +318,7 @@
 }
 .rd-stx { flex: 1; padding-top: 6rpx; }
 .rd-stx-p {
-  font-size: 28rpx;
+  font-size: calc(28rpx * var(--fs-mul, 1));
   line-height: 1.55;
   color: var(--ink);
 }
@@ -334,7 +334,7 @@
   align-items: center;
   gap: 10rpx;
   margin-top: 16rpx;
-  font-size: 22rpx;
+  font-size: calc(22rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: var(--gold-deep);
   background: var(--paper-2);
@@ -357,7 +357,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28rpx;
+  font-size: calc(28rpx * var(--fs-mul, 1));
   font-weight: 900;
   color: var(--anchor-contrast);
   font-family: var(--serif);
@@ -368,7 +368,7 @@
   align-items: center;
   justify-content: space-between;
 }
-.rd-who { font-size: 28rpx; font-weight: 800; color: var(--ink); }
+.rd-who { font-size: calc(28rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--ink); }
 .rd-when { font-size: var(--fs-mini); color: var(--mut); }
 .rd-stars { display: flex; gap: 4rpx; margin: 8rpx 0 12rpx; }
 .rd-star {
@@ -398,7 +398,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28rpx;
+  font-size: calc(28rpx * var(--fs-mul, 1));
   font-weight: 900;
   color: var(--anchor-contrast);
   font-family: var(--serif);
@@ -448,7 +448,7 @@
   border-radius: var(--r-chip);
   background: var(--paper-2);
   color: var(--ink-deep);
-  font-size: 24rpx;
+  font-size: calc(24rpx * var(--fs-mul, 1));
   font-weight: 800;
   display: flex;
   flex-direction: column;
@@ -464,7 +464,7 @@
   border-radius: var(--r-chip);
   background: var(--pop);
   color: var(--anchor-contrast);
-  font-size: 30rpx;
+  font-size: calc(30rpx * var(--fs-mul, 1));
   font-weight: 900;
   letter-spacing: 2rpx;
   display: flex;
@@ -481,7 +481,7 @@
   border-radius: var(--r-chip);
   background: var(--anchor);
   color: var(--gold);
-  font-size: 24rpx;
+  font-size: calc(24rpx * var(--fs-mul, 1));
   font-weight: 800;
   display: flex;
   flex-direction: column;

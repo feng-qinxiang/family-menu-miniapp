@@ -80,7 +80,7 @@
 }
 .sbox-input {
   flex: 1;
-  font-size: 29rpx;
+  font-size: calc(29rpx * var(--fs-mul, 1));
   font-weight: 600;
   color: var(--ink);
 }
@@ -131,7 +131,7 @@
 
 .cancel {
   flex: none;
-  font-size: 28rpx;
+  font-size: calc(28rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: var(--gold-deep);
 }
@@ -147,19 +147,19 @@
 .rhead { margin: 35rpx 0 0; }
 .rtitle {
   margin-top: 8rpx;
-  font-size: 48rpx;
+  font-size: calc(48rpx * var(--fs-mul, 1));
   font-weight: 900;
   letter-spacing: -2rpx;
   line-height: 1.05;
 }
 .rtitle .title-shadow,
 .rtitle .rtitle-kw {
-  font-size: 48rpx;
+  font-size: calc(48rpx * var(--fs-mul, 1));
   font-weight: 900;
 }
 .rtitle-t {
   color: var(--ink);
-  font-size: 48rpx;
+  font-size: calc(48rpx * var(--fs-mul, 1));
   font-weight: 900;
 }
 .rtitle-kw { color: var(--pop); }
@@ -224,7 +224,7 @@
 }
 .gc-info { padding: 23rpx 25rpx 27rpx; }
 .gc-name {
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--ink);
   letter-spacing: -0.6rpx;
@@ -238,7 +238,7 @@
   margin-top: 15rpx;
 }
 .gc-meta-i {
-  font-size: 22rpx;
+  font-size: calc(22rpx * var(--fs-mul, 1));
   font-weight: 500;
   color: var(--mut-strong);
 }

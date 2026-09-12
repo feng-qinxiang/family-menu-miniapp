@@ -18,7 +18,7 @@
   padding: 50rpx 0 0;
 }
 .hero-title {
-  font-size: 92rpx;
+  font-size: calc(92rpx * var(--fs-mul, 1));
   line-height: 0.92;
   letter-spacing: -5rpx;
   margin-top: 16rpx;
@@ -38,7 +38,7 @@
   padding: 56rpx 0 0;
 }
 .code-label-tx {
-  font-size: 22rpx;
+  font-size: calc(22rpx * var(--fs-mul, 1));
   letter-spacing: 2rpx;
   font-weight: 800;
   text-transform: uppercase;
@@ -48,7 +48,7 @@
   display: flex;
   align-items: center;
   gap: 10rpx;
-  font-size: 24rpx;
+  font-size: calc(24rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: var(--mut-strong);
 }
@@ -74,7 +74,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 36rpx;
+  font-size: calc(36rpx * var(--fs-mul, 1));
   font-weight: 900;
   color: var(--ink);
   box-shadow: var(--sh-soft);
@@ -117,7 +117,7 @@
   border: 3rpx solid var(--paper-2);
   border-radius: var(--r-md);
   padding: 28rpx;
-  font-size: 28rpx;
+  font-size: calc(28rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--ink-deep);
   display: flex;
@@ -161,7 +161,7 @@
 .ln-tx {
   font-family: var(--serif);
   font-style: italic;
-  font-size: 24rpx;
+  font-size: calc(24rpx * var(--fs-mul, 1));
   letter-spacing: 1rpx;
   color: var(--gold-deep);
   font-weight: 700;
@@ -229,7 +229,7 @@
   min-width: 0;
 }
 .fc-name {
-  font-size: 40rpx;
+  font-size: calc(40rpx * var(--fs-mul, 1));
   font-weight: 900;
   color: var(--ink);
   letter-spacing: -1rpx;
@@ -239,7 +239,7 @@
   align-items: center;
   gap: 10rpx;
   margin-top: 10rpx;
-  font-size: 24rpx;
+  font-size: calc(24rpx * var(--fs-mul, 1));
   color: var(--mut-strong);
 }
 .home-ic {
@@ -297,7 +297,7 @@
   color: var(--mut-strong);
 }
 .count {
-  font-size: 24rpx;
+  font-size: calc(24rpx * var(--fs-mul, 1));
   color: var(--mut-strong);
   font-weight: 700;
 }
@@ -310,7 +310,7 @@
 .applybtn {
   margin-top: 46rpx;
   gap: 16rpx;
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   letter-spacing: 1rpx;
 }
 .applybtn.is-disabled {

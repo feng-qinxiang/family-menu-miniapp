@@ -9,7 +9,9 @@
   },
   {
     "name": "d03-community",
-    "logs": []
+    "logs": [
+      "[object Object]"
+    ]
   },
   {
     "name": "d04-pantry",
@@ -37,7 +39,9 @@
   },
   {
     "name": "d10-wish-modal-dark",
-    "logs": []
+    "logs": [
+      "[object Object]"
+    ]
   },
   {
     "name": "d11-recipe-edit",

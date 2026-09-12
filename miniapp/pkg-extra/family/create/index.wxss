@@ -35,7 +35,7 @@
   top: 80rpx;
   right: 12rpx;
   font-family: var(--serif);
-  font-size: 366rpx;
+  font-size: calc(366rpx * var(--fs-mul, 1));
   font-weight: 700;
   line-height: 1;
   color: rgba(255, 255, 255, 0.07);
@@ -183,13 +183,13 @@
 }
 .fc-input {
   flex: 1;
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: var(--ink);
 }
 .fc-inp-txt {
   flex: 1;
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: var(--ink);
 }
@@ -219,7 +219,7 @@
   color: var(--anchor-contrast);
   border-radius: var(--r-sm);
   padding: 33rpx;
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
   letter-spacing: 1rpx;
   box-shadow: var(--sh-pop);
@@ -236,7 +236,7 @@
   padding: 27rpx 29rpx;
 }
 .fc-tip-tx {
-  font-size: 24rpx;
+  font-size: calc(24rpx * var(--fs-mul, 1));
   color: var(--ink-deep);
   line-height: 1.55;
   font-weight: 500;

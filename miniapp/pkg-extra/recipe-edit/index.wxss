@@ -29,7 +29,7 @@ page { background: var(--paper); }
 .rc-tip {
   display: block;
   margin-bottom: 12rpx;
-  font-size: 24rpx;
+  font-size: calc(24rpx * var(--fs-mul, 1));
   color: var(--pop);
 }
 
@@ -50,7 +50,7 @@ page { background: var(--paper); }
   border-radius: 50%;
   background: rgba(40, 30, 20, 0.45);
   color: #fff;
-  font-size: 30rpx;
+  font-size: calc(30rpx * var(--fs-mul, 1));
   line-height: 46rpx;
   text-align: center;
 }
@@ -66,7 +66,7 @@ page { background: var(--paper); }
 .rc-addcover {
   display: inline-block;
   margin-bottom: 8rpx;
-  font-size: 26rpx;
+  font-size: calc(26rpx * var(--fs-mul, 1));
   font-weight: 600;
   color: var(--gold-deep);
 }
@@ -77,7 +77,7 @@ page { background: var(--paper); }
   min-height: 88rpx;
   line-height: 88rpx;
   padding: 0;
-  font-size: 44rpx;
+  font-size: calc(44rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--ink);
   background: transparent;
@@ -86,7 +86,7 @@ page { background: var(--paper); }
   width: 100%;
   min-height: 64rpx;
   padding: 0 0 16rpx;
-  font-size: 26rpx;
+  font-size: calc(26rpx * var(--fs-mul, 1));
   color: var(--mut-strong);
   line-height: 1.5;
   background: transparent;
@@ -100,8 +100,8 @@ page { background: var(--paper); }
   gap: 20rpx;
   padding: 14rpx 0;
 }
-.rc-pickline-k { flex: none; font-size: 24rpx; color: var(--mut); }
-.rc-pickline-v { font-size: 28rpx; font-weight: 700; color: var(--ink); }
+.rc-pickline-k { flex: none; font-size: calc(24rpx * var(--fs-mul, 1)); color: var(--mut); }
+.rc-pickline-v { font-size: calc(28rpx * var(--fs-mul, 1)); font-weight: 700; color: var(--ink); }
 
 .rc-facts {
   display: flex;
@@ -117,7 +117,7 @@ page { background: var(--paper); }
   align-items: center;
 }
 .rc-fact-k {
-  font-size: 22rpx;
+  font-size: calc(22rpx * var(--fs-mul, 1));
   color: var(--mut);
   margin-bottom: 12rpx;
 }
@@ -129,18 +129,18 @@ page { background: var(--paper); }
   border-radius: 50%;
   background: var(--c-surface);
   color: var(--ink);
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   line-height: 70rpx;
   text-align: center;
 }
 .rc-fact-v {
   min-width: 48rpx;
-  font-size: 40rpx;
+  font-size: calc(40rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--ink);
   text-align: center;
 }
-.rc-fact-u { margin-top: 6rpx; font-size: 22rpx; color: var(--mut); }
+.rc-fact-u { margin-top: 6rpx; font-size: calc(22rpx * var(--fs-mul, 1)); color: var(--mut); }
 
 .rc-dseg {
   display: flex;
@@ -156,7 +156,7 @@ page { background: var(--paper); }
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24rpx;
+  font-size: calc(24rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: var(--mut-strong);
   border-radius: var(--r-pill);
@@ -171,7 +171,7 @@ page { background: var(--paper); }
   height: 88rpx;
   display: flex;
   align-items: center;
-  font-size: 30rpx;
+  font-size: calc(30rpx * var(--fs-mul, 1));
   color: var(--ink);
   border-bottom: 2rpx solid var(--paper-2);
 }
@@ -190,7 +190,7 @@ page { background: var(--paper); }
   height: 72rpx;
   min-height: 72rpx;
   line-height: 72rpx;
-  font-size: 30rpx;
+  font-size: calc(30rpx * var(--fs-mul, 1));
   color: var(--ink);
   background: transparent;
 }
@@ -201,7 +201,7 @@ page { background: var(--paper); }
   height: 72rpx;
   min-height: 72rpx;
   line-height: 72rpx;
-  font-size: 28rpx;
+  font-size: calc(28rpx * var(--fs-mul, 1));
   color: var(--mut-strong);
   text-align: right;
   background: transparent;
@@ -216,20 +216,20 @@ page { background: var(--paper); }
   align-items: center;
   justify-content: center;
   color: var(--mut-2);
-  font-size: 30rpx;
+  font-size: calc(30rpx * var(--fs-mul, 1));
   text-align: center;
 }
 
 .rc-more {
   padding: 28rpx 0 8rpx;
-  font-size: 26rpx;
+  font-size: calc(26rpx * var(--fs-mul, 1));
   font-weight: 600;
   color: var(--gold-deep);
 }
 
 .rc-video-line {
   margin-bottom: 24rpx;
-  font-size: 26rpx;
+  font-size: calc(26rpx * var(--fs-mul, 1));
   font-weight: 600;
   color: var(--gold-deep);
 }
@@ -251,18 +251,18 @@ page { background: var(--paper); }
   margin-bottom: 12rpx;
 }
 .rc-step-n {
-  font-size: 28rpx;
+  font-size: calc(28rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--ink);
 }
-.rc-step-del { font-size: 24rpx; color: var(--mut-2); }
+.rc-step-del { font-size: calc(24rpx * var(--fs-mul, 1)); color: var(--mut-2); }
 
 .rc-shot {
   height: 168rpx;
   margin-bottom: 16rpx;
   background: var(--paper-2);
   color: var(--mut);
-  font-size: 26rpx;
+  font-size: calc(26rpx * var(--fs-mul, 1));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -275,14 +275,14 @@ page { background: var(--paper); }
 .rc-shot-img { width: 100%; height: 100%; display: block; }
 
 .rc-stx-p {
-  font-size: 28rpx;
+  font-size: calc(28rpx * var(--fs-mul, 1));
   line-height: 1.6;
   color: var(--ink);
 }
 .rc-steptext {
   width: 100%;
   min-height: 80rpx;
-  font-size: 28rpx;
+  font-size: calc(28rpx * var(--fs-mul, 1));
   color: var(--ink);
   line-height: 1.6;
   background: transparent;
@@ -294,7 +294,7 @@ page { background: var(--paper); }
   border-radius: var(--r-card);
   background: var(--anchor);
   color: var(--gold);
-  font-size: 28rpx;
+  font-size: calc(28rpx * var(--fs-mul, 1));
   font-weight: 700;
   display: flex;
   align-items: center;

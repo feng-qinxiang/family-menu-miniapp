@@ -19,23 +19,27 @@
 
 | Token | 浅色值 | 深色值 | 用途 |
 |-------|--------|--------|------|
-| `--paper` | #fbf8f3 | #1b1713 | 页面底色 |
-| `--paper-2` | #f0ebe2 | #26201a | 次级底色/输入底 |
-| `--ink` | #2c241b | #efe8dc | 主文字 |
-| `--ink-deep` | #3a2e23 | #e0d5c4 | 深墨文字/暗卡底 |
-| `--mut` | #7a6e5d | #b5a896 | 次要文字（≥AA 4.5:1） |
-| `--mut-2` | #b3a795 | #8a7f6e | 弱提示（仅装饰） |
-| `--mut-strong` | #6b5f50 | #6b5f50 | 强调次要文字 |
+| `--paper` | #fbf8f3 | #1c1c1c | 页面底色 |
+| `--paper-2` | #f0ebe2 | #262626 | 次级底色/输入底 |
+| `--ink` | #2c241b | #efefef | 主文字 |
+| `--ink-deep` | #3a2e23 | #e2e2e2 | 深墨文字（深色档翻转为浅字色；暗卡底用 `--anchor`） |
+| `--mut` | #7a6e5d | #9a9a96 | 次要文字（≥AA 4.5:1） |
+| `--mut-2` | #b3a795 | #757570 | 弱提示（仅装饰） |
+| `--mut-strong` | #6b5f50 | #c4c0b8 | 强调次要文字 |
 | `--pop` | #e8472a | #ff6a4d | 主色/CTA/点睛 |
 | `--pop-soft` | #fdece6 | #3a2218 | 主色浅底 |
 | `--gold` / `--gold-deep` | #f4d9a8 / #b08949 | #8a6a3a / #c9a35c | eyebrow/徽章 |
 | `--pine` | #2f4a3a | #4e6b58 | 墨绿点缀 |
-| `--surface` | #ffffff | #241e18 | 卡片/输入框底 |
-| `--line` / `--line-deep` | #e8e0d0 / #d5c9b8 | #3a3228 / #4a4034 | 分隔线/描边 |
-| `--skeleton` | #efe4d7 | #2c251e | 骨架屏 |
-| `--cook-bg` | #1a1410 | #0f0c0a | 烹饪模式沉浸底 |
+| `--surface` | #ffffff | #242424 | 卡片/输入框底 |
+| `--line` / `--line-deep` | #e8e0d0 / #d5c9b8 | #333333 / #3a3a3a | 分隔线/描边 |
+| `--skeleton` | #efe4d7 | #2a2a2a | 骨架屏 |
+| `--anchor` | #3a2e23（两主题恒定） | 同左 | 深色锚点卡恒定底（今日菜单卡/餐盘托/激活片） |
+| `--anchor-contrast` | #fbf8f3（两主题恒定） | 同左 | 锚点卡/彩底/照片上的恒定浅字 |
+| `--cook-bg` | #1a1410 | #111111 | 烹饪模式沉浸底 |
 
-- 深色模式由 `theme.json`（`darkmode: true` + `themeLocation`）自动注入，页面无需感知主题
+- 深色模式真实机制（2026-09-12 实证修订）：**theme.json 变量只对 app.json/页面 json 的 `@` 引用生效，不注入 WXSS**。
+  WXSS 深色由 `app.wxss` 的 `@media (prefers-color-scheme: dark)` 块实现（覆盖裸 `--themeX` 层 + 字面量 token 深色档）。
+  **改深色值必须同步两处：theme.json dark 段 + app.wxss media 块。**
 - **铁律**：页面 WXSS 禁止新增十六进制色值；必须用 token。特殊场景（遮罩 mask、root-portal 变量副本）允许并在注释中说明
 
 ## 三、字号标尺
@@ -55,6 +59,7 @@
 | `--fs-mini` | 21rpx | 角标/统计 |
 | `--fs-tiny` | 19rpx | 极弱提示（尽量不用） |
 
+- 大字模式：`.font-lg` 覆盖全部 `--fs-*`（token 值直接换档）；静态 rpx 字号经 `calc(NNrpx * var(--fs-mul, 1))` 统一 ×1.15（`.font-lg` 定义 `--fs-mul`），标准档 ×1 逐像素不变
 - 禁止使用标尺外的字号（历史遗留的 22/24/26rpx 只允许出现在全局类 `.tag/.section-desc/.chip` 中）
 - hero 标题三档按页面类型选择，不按心情
 
@@ -155,4 +160,4 @@ retryLoad() { this.setData({ loading: true, loadError: false }); this.loadData()
 2. 截图基线：`smoke-all/` 目录（43 页全覆盖目标），UI 改动前后逐页对比
 3. 自动化冒烟：`probe-mcp.mjs`（MCP 浏览器自动化，需开发者工具联动），覆盖 4 tab 切换、menu/pantry 跳转、忌口编辑、失败重试路径
 4. 深浅色：模拟器切换系统主题，重点检查 5 主页面 + recipe-detail + cook-mode
-5. 大字模式：设置 → 字体大小 → 大，抽查 6 主页面无溢出
+5. 大字模式：设置 → 字体大小 → 大，全站 36 页根节点已接 `.font-lg`（重点走查 hero 标题 / chip 横滑 / 统计卡无溢出）

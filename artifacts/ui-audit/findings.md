@@ -99,3 +99,22 @@ recipe-detail/cook-mode/recipe-edit/notifications/许愿弹窗；浅色回归 4 
 - app.json window 导航栏色未配 @ 深色引用（全站 custom nav，影响≈0）
 - legal-config.js 运营者占位符（提审前运营项）
 - theme.json dark 为中性灰、与设计规范文档的暖棕不一致：按 theme.json 实际值执行，规范文档待更新
+
+## 残留项清缴（2026-09-12 第二轮）
+1. **@media 深色触发真实验证 ✓**：找到 devtools 每项目模拟器设置（WeappLocalData/localstorage_d0fd5e0…=
+   toolbar_E:\cx\…\miniapp，键 darkmode），置 true 重开项目 → systemInfo.theme=dark，
+   **12 页经真实 @media 触发渲染深色全部正常**，home 许愿弹窗 theme 走真实 getAppBaseInfo 管道
+   拿到 dark（非强制 setData）。已还原 false。复抓 3 轮 console 无 error（先前 1 条瞬时无法复现）
+2. **静态字号大字档缩放 ✓**：469 处 `font-size: NNrpx` → `calc(NNrpx * var(--fs-mul, 1))`（44 文件），
+   `.font-lg` 定义 `--fs-mul: 1.15`。标准档 ×1 逐像素不变（home/recipes/recipe-detail 与基线一致），
+   大字档全站文本统一放大且无溢出（home/help-faq/menu/recipes/shopping 实拍）。
+   比 token 迁移更优：零浅色回归风险
+3. **设计规范文档修订 ✓**：docs/UI设计规范.md 深色值列改为 theme.json 实际值（中性灰）、
+   更正「theme.json 自动注入 WXSS」的错误说法为 @media 机制（含双处同步提醒）、
+   补 --anchor/--anchor-contrast/--fs-mul 说明、大字覆盖面更新为全站 36 页
+4. **legal-config 运营者信息 ✋ 唯一遗留**：operatorName / operatorContact 是微信提审核对的
+   运营者实名信息（个人开发者=本人姓名+邮箱/手机号），只有项目所有者能填，代填即造假必被驳回。
+   utils/legal-config.js 顶部已有醒目标注，填两行字符串即可
+
+工程备注：批量改 wxss 后 IDE 会把半程状态编译缓存（help-faq 曾整页样式丢失），**重启项目
+（cli quit + cli auto）即恢复**——大批量改动后必须重启验证。

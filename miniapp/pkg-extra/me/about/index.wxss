@@ -36,7 +36,7 @@
   position: relative;
   z-index: 1;
   color: var(--anchor-contrast);
-  font-size: 96rpx;
+  font-size: calc(96rpx * var(--fs-mul, 1));
   font-weight: 900;
   font-family: var(--serif);
   line-height: 1;
@@ -47,7 +47,7 @@
 }
 .appname {
   margin-top: 10rpx;
-  font-size: 66rpx;
+  font-size: calc(66rpx * var(--fs-mul, 1));
   font-weight: 900;
   letter-spacing: -3rpx;
   line-height: 1.05;
@@ -97,7 +97,7 @@
 }
 .st-v {
   color: var(--anchor-contrast);
-  font-size: 48rpx;
+  font-size: calc(48rpx * var(--fs-mul, 1));
   font-weight: 900;
   letter-spacing: -2rpx;
 }
@@ -107,7 +107,7 @@
 .st-l {
   margin-top: 10rpx;
   color: rgba(255, 255, 255, 0.62);
-  font-size: 20rpx;
+  font-size: calc(20rpx * var(--fs-mul, 1));
   font-weight: 700;
   letter-spacing: 1rpx;
 }
@@ -123,7 +123,7 @@
   top: 28rpx;
   right: 34rpx;
   font-family: var(--serif);
-  font-size: 116rpx;
+  font-size: calc(116rpx * var(--fs-mul, 1));
   line-height: 0.6;
   color: var(--pop-soft);
   pointer-events: none;
@@ -131,7 +131,7 @@
 .story-h {
   margin: 8rpx 0 22rpx;
   color: var(--ink);
-  font-size: 37rpx;
+  font-size: calc(37rpx * var(--fs-mul, 1));
   font-weight: 900;
   letter-spacing: -1rpx;
 }
@@ -188,7 +188,7 @@
 .team-s {
   margin-top: 8rpx;
   color: var(--mut-strong);
-  font-size: 22rpx;
+  font-size: calc(22rpx * var(--fs-mul, 1));
   line-height: 1.5;
 }
 
@@ -232,7 +232,7 @@
 }
 .item-nm {
   color: var(--ink);
-  font-size: 28rpx;
+  font-size: calc(28rpx * var(--fs-mul, 1));
   font-weight: 700;
   letter-spacing: -0.4rpx;
 }

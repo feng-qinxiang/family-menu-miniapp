@@ -13,7 +13,7 @@
 /* —— Hero —— */
 .fb-head { padding: 16rpx 0 8rpx; }
 .fb-h1 {
-  font-size: 78rpx;
+  font-size: calc(78rpx * var(--fs-mul, 1));
   line-height: 0.95;
   letter-spacing: -4rpx;
   margin-top: 8rpx;
@@ -32,13 +32,13 @@
   align-items: center;
   gap: 12rpx;
   margin-bottom: 24rpx;
-  font-size: 24rpx;
+  font-size: calc(24rpx * var(--fs-mul, 1));
   font-weight: 800;
   letter-spacing: 2rpx;
   color: var(--ink-deep);
   text-transform: uppercase;
 }
-.fb-label .star { color: var(--pop); font-size: 26rpx; }
+.fb-label .star { color: var(--pop); font-size: calc(26rpx * var(--fs-mul, 1)); }
 .fb-label .label-tip {
   font-weight: 600;
   letter-spacing: 0;
@@ -71,7 +71,7 @@
 .ta {
   width: 100%;
   height: 240rpx;
-  font-size: 29rpx;
+  font-size: calc(29rpx * var(--fs-mul, 1));
   line-height: 1.6;
   color: var(--ink);
 }
@@ -80,7 +80,7 @@
   position: absolute;
   right: 30rpx;
   bottom: 24rpx;
-  font-size: 22rpx;
+  font-size: calc(22rpx * var(--fs-mul, 1));
   font-weight: 600;
   color: var(--mut);
 }
@@ -197,7 +197,7 @@
   border-top: 3rpx solid var(--gold-deep);
   border-radius: 0 0 var(--r-xs) var(--r-xs);
 }
-.contact-input { flex: 1; font-size: 28rpx; color: var(--ink); }
+.contact-input { flex: 1; font-size: calc(28rpx * var(--fs-mul, 1)); color: var(--ink); }
 .contact-ph { color: var(--mut); }
 
 /* —— 提交 —— */
@@ -206,7 +206,7 @@
 .submit-area .btn-pop {
   gap: 14rpx;
   min-height: 104rpx;
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   letter-spacing: 1rpx;
 }
 .submit-area .btn-pop.is-busy { opacity: 0.7; }
@@ -221,6 +221,6 @@
 .hint {
   margin-top: 26rpx;
   text-align: center;
-  font-size: 22rpx;
+  font-size: calc(22rpx * var(--fs-mul, 1));
   color: var(--mut-strong);
 }

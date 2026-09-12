@@ -44,7 +44,7 @@
   display: block;
 }
 .mname {
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 600;
   color: var(--ink);
   letter-spacing: 0.4rpx;
@@ -61,14 +61,14 @@
   padding: 0 0 56rpx;
 }
 .amount .sym {
-  font-size: 56rpx;
+  font-size: calc(56rpx * var(--fs-mul, 1));
   font-weight: 600;
   color: var(--ink);
   vertical-align: 26rpx;
   margin-right: 4rpx;
 }
 .amount .big {
-  font-size: 119rpx;
+  font-size: calc(119rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: var(--ink);
   letter-spacing: -4rpx;
@@ -87,14 +87,14 @@
   border-bottom: 2rpx solid var(--paper-2);
 }
 .row .lbl {
-  font-size: 29rpx;
+  font-size: calc(29rpx * var(--fs-mul, 1));
   color: var(--ink);
 }
 .row .val {
   display: flex;
   align-items: center;
   gap: 18rpx;
-  font-size: 29rpx;
+  font-size: calc(29rpx * var(--fs-mul, 1));
   color: var(--ink);
   font-weight: 500;
   max-width: 60%;
@@ -148,11 +148,11 @@
 }
 .pm-icon-glyph {
   color: var(--anchor-contrast);
-  font-size: 28rpx;
+  font-size: calc(28rpx * var(--fs-mul, 1));
   font-weight: 700;
 }
 .pm-name {
-  font-size: 29rpx;
+  font-size: calc(29rpx * var(--fs-mul, 1));
   color: var(--ink);
 }
 .pm-bal {
@@ -198,7 +198,7 @@
   border: none;
   border-radius: var(--r-sm);
   padding: 28rpx;
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 600;
   letter-spacing: 1rpx;
   line-height: 1.2;
@@ -252,11 +252,11 @@
   box-sizing: border-box;
 }
 .biometric .bm-txt {
-  font-size: 26rpx;
+  font-size: calc(26rpx * var(--fs-mul, 1));
   color: var(--mut);
 }
 .biometric .bm-alt {
-  font-size: 26rpx;
+  font-size: calc(26rpx * var(--fs-mul, 1));
   color: var(--wx);
   font-weight: 500;
   margin-top: 26rpx;

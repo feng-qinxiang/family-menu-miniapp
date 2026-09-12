@@ -53,7 +53,7 @@
 }
 .strip .strip-n {
   margin-top: 8rpx;
-  font-size: 42rpx;
+  font-size: calc(42rpx * var(--fs-mul, 1));
   font-weight: 900;
   letter-spacing: -1rpx;
 }
@@ -61,7 +61,7 @@
   text-align: right;
 }
 .strip .strip-v {
-  font-size: 42rpx;
+  font-size: calc(42rpx * var(--fs-mul, 1));
   font-weight: 900;
   letter-spacing: -1rpx;
 }
@@ -98,7 +98,7 @@
   gap: 9rpx;
   padding: 9rpx 21rpx;
   border-radius: var(--r-pill);
-  font-size: 20rpx;
+  font-size: calc(20rpx * var(--fs-mul, 1));
   font-weight: 800;
   letter-spacing: 1rpx;
 }
@@ -159,14 +159,14 @@
   padding-top: 4rpx;
 }
 .ocard-name {
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--ink);
   letter-spacing: -0.6rpx;
 }
 .ocard-tag {
   margin-top: 8rpx;
-  font-size: 22rpx;
+  font-size: calc(22rpx * var(--fs-mul, 1));
   color: var(--mut-strong);
 }
 .ocard-price {
@@ -175,7 +175,7 @@
   padding-top: 4rpx;
 }
 .ocard-amt {
-  font-size: 40rpx;
+  font-size: calc(40rpx * var(--fs-mul, 1));
   font-weight: 900;
   color: var(--pop);
   letter-spacing: -1rpx;
@@ -200,7 +200,7 @@
   border-left: 2rpx solid var(--paper-2);
 }
 .dlab {
-  font-size: 20rpx;
+  font-size: calc(20rpx * var(--fs-mul, 1));
   letter-spacing: 1.4rpx;
   font-weight: 800;
   text-transform: uppercase;

@@ -50,7 +50,7 @@
   right: 30rpx;
   z-index: 2;
   font-family: var(--serif);
-  font-size: 420rpx;
+  font-size: calc(420rpx * var(--fs-mul, 1));
   font-weight: 700;
   line-height: 1;
   color: rgba(255, 255, 255, 0.07);
@@ -76,7 +76,7 @@
   border-radius: var(--r-pill);
   background: var(--pop);
   color: var(--anchor-contrast);
-  font-size: 26rpx;
+  font-size: calc(26rpx * var(--fs-mul, 1));
   font-weight: 800;
   box-sizing: border-box;
   min-height: 88rpx;
@@ -142,14 +142,14 @@
   background: var(--paper-2);
 }
 .m-stat-num {
-  font-size: 72rpx;
+  font-size: calc(72rpx * var(--fs-mul, 1));
   font-weight: 900;
   color: var(--ink);
   letter-spacing: -4rpx;
   line-height: 1;
 }
 .m-stat-u { font-size: var(--fs-cap); font-weight: 700; color: var(--mut); margin-left: 4rpx; letter-spacing: 0; }
-.m-stat-label { font-size: 22rpx; color: var(--mut-strong); font-weight: 600; margin-top: 16rpx; }
+.m-stat-label { font-size: calc(22rpx * var(--fs-mul, 1)); color: var(--mut-strong); font-weight: 600; margin-top: 16rpx; }
 .m-shop-progress {
   margin: 34rpx 26rpx 0;
   padding-top: 30rpx;
@@ -159,7 +159,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 24rpx;
+  font-size: calc(24rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: var(--ink);
 }
@@ -199,8 +199,8 @@
   justify-content: center;
   margin: 0 auto 18rpx;
 }
-.m-quick-title { font-size: 26rpx; font-weight: 800; color: var(--ink); letter-spacing: -0.5rpx; }
-.m-quick-sub { font-size: 20rpx; color: var(--mut-strong); margin-top: 8rpx; font-weight: 500; }
+.m-quick-title { font-size: calc(26rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--ink); letter-spacing: -0.5rpx; }
+.m-quick-sub { font-size: calc(20rpx * var(--fs-mul, 1)); color: var(--mut-strong); margin-top: 8rpx; font-weight: 500; }
 
 /* 入口图标（WXSS 描边几何，不用 svg/背景图） */
 .m-ic-basket {
@@ -287,7 +287,7 @@
 }
 .m-rmid { flex: 1; min-width: 0; }
 .m-rname {
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--ink);
   letter-spacing: -0.5rpx;
@@ -309,7 +309,7 @@
 .m-rsub .cz { color: var(--gold-deep); font-weight: 700; }
 .m-rsub .dot { width: 6rpx; height: 6rpx; border-radius: 50%; background: var(--mut-2); }
 .m-remove {
-  font-size: 24rpx;
+  font-size: calc(24rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: var(--mut);
   flex: none;
@@ -345,14 +345,14 @@
   font-weight: 700;
 }
 .m-week-title {
-  font-size: 42rpx;
+  font-size: calc(42rpx * var(--fs-mul, 1));
   font-weight: 900;
   margin-top: 10rpx;
   letter-spacing: -1rpx;
   color: var(--anchor-contrast);
 }
 .m-week-title .pop { color: var(--pop); }
-.m-week-link { font-size: 24rpx; color: var(--gold); font-weight: 700; flex: none; padding-top: 12rpx; }
+.m-week-link { font-size: calc(24rpx * var(--fs-mul, 1)); color: var(--gold); font-weight: 700; flex: none; padding-top: 12rpx; }
 .m-week-list { margin-top: 30rpx; position: relative; z-index: 2; }
 .m-wk-item {
   display: flex;
@@ -363,8 +363,8 @@
 }
 .m-wk-item:last-child { border-bottom: none; }
 .m-wk-day { width: 92rpx; flex: none; }
-.m-wk-day .d1 { font-size: 29rpx; font-weight: 900; color: var(--anchor-contrast); }
-.m-wk-day .d2 { font-size: 20rpx; color: rgba(255, 255, 255, 0.5); font-weight: 600; margin-top: 4rpx; }
+.m-wk-day .d1 { font-size: calc(29rpx * var(--fs-mul, 1)); font-weight: 900; color: var(--anchor-contrast); }
+.m-wk-day .d2 { font-size: calc(20rpx * var(--fs-mul, 1)); color: rgba(255, 255, 255, 0.5); font-weight: 600; margin-top: 4rpx; }
 .m-wk-recipe {
   flex: 1;
   font-size: var(--fs-cap);
@@ -377,7 +377,7 @@
 }
 .m-wk-count {
   flex: none;
-  font-size: 22rpx;
+  font-size: calc(22rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: var(--gold);
   background: rgba(244, 217, 168, 0.13);
@@ -426,7 +426,7 @@
   align-items: center;
   justify-content: center;
   border-radius: var(--r-pill);
-  font-size: 22rpx;
+  font-size: calc(22rpx * var(--fs-mul, 1));
   font-weight: 800;
 }
 .m-act-cook {
@@ -464,7 +464,7 @@
 .m-state {
   display: inline-block;
   vertical-align: 4rpx;
-  font-size: 20rpx;
+  font-size: calc(20rpx * var(--fs-mul, 1));
   font-weight: 800;
   border-radius: var(--r-pill);
   padding: 4rpx 14rpx;
@@ -486,7 +486,7 @@
   border-radius: 50%;
   background: var(--paper-2);
   color: var(--gold-deep);
-  font-size: 30rpx;
+  font-size: calc(30rpx * var(--fs-mul, 1));
   font-weight: 800;
   display: flex;
   align-items: center;
@@ -505,7 +505,7 @@
 }
 .m-co-tag {
   flex: none;
-  font-size: 20rpx;
+  font-size: calc(20rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--anchor-contrast);
   background: var(--pop);
@@ -514,7 +514,7 @@
   letter-spacing: 1rpx;
 }
 .m-co-text {
-  font-size: 22rpx;
+  font-size: calc(22rpx * var(--fs-mul, 1));
   font-weight: 600;
   color: var(--ink);
   line-height: 1.6;
@@ -535,7 +535,7 @@
   z-index: 100;
 }
 .m-fab-tip {
-  font-size: 26rpx;
+  font-size: calc(26rpx * var(--fs-mul, 1));
   color: var(--mut-strong);
   font-weight: 600;
 }
@@ -547,7 +547,7 @@
   border-radius: var(--r-pill);
   background: var(--anchor);
   color: var(--anchor-contrast);
-  font-size: 28rpx;
+  font-size: calc(28rpx * var(--fs-mul, 1));
   font-weight: 800;
   box-shadow: var(--sh-card);
 }
@@ -562,13 +562,13 @@
   text-align: center;
 }
 .m-load-error-title {
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--ink-deep);
 }
 .m-load-error-desc {
   margin-top: 12rpx;
-  font-size: 24rpx;
+  font-size: calc(24rpx * var(--fs-mul, 1));
   color: var(--mut-strong);
   word-break: break-all;
 }
@@ -582,7 +582,7 @@
   border-radius: var(--r-pill);
   background: var(--anchor);
   color: var(--anchor-contrast);
-  font-size: 26rpx;
+  font-size: calc(26rpx * var(--fs-mul, 1));
   font-weight: 700;
 }
 

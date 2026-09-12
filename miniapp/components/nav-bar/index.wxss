@@ -66,7 +66,7 @@
 .navbar-title {
   max-width: 56%;
   text-align: center;
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--ink);
   letter-spacing: -1rpx;

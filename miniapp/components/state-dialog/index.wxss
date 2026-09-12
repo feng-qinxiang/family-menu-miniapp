@@ -55,12 +55,12 @@
 .sd-ic--danger::after { border: 3rpx solid rgba(232, 71, 42, 0.18); }
 .sd-ic--warn { background: var(--pop-soft); }
 .sd-ic--warn::after { border: 3rpx solid rgba(176, 137, 73, 0.2); }
-.sd-ic-glyph { font-size: 70rpx; font-weight: 900; line-height: 1; }
+.sd-ic-glyph { font-size: calc(70rpx * var(--fs-mul, 1)); font-weight: 900; line-height: 1; }
 .sd-ic--danger .sd-ic-glyph { color: var(--pop); }
 .sd-ic--warn .sd-ic-glyph { color: var(--gold-deep); }
 
 .sd-title {
-  font-size: 40rpx;
+  font-size: calc(40rpx * var(--fs-mul, 1));
   font-weight: 900;
   color: var(--ink);
   letter-spacing: -1rpx;
@@ -68,7 +68,7 @@
 }
 .sd-desc {
   margin-top: 18rpx;
-  font-size: 28rpx;
+  font-size: calc(28rpx * var(--fs-mul, 1));
   color: var(--mut-strong);
   line-height: 1.55;
 }
@@ -79,7 +79,7 @@
   box-sizing: border-box;
   height: 100rpx;
   border-radius: 28rpx;
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
   letter-spacing: 0.6rpx;
   display: flex;

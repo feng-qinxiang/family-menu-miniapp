@@ -47,7 +47,7 @@
   text-shadow: 0 2rpx 10rpx rgba(20, 14, 8, 0.65);
 }
 .mh-name {
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 600;
   margin-top: 6rpx;
   color: var(--anchor-contrast);
@@ -80,7 +80,7 @@
   z-index: 2;
 }
 .mh-ico-glyph {
-  font-size: 26rpx;
+  font-size: calc(26rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--anchor-contrast);
   line-height: 26rpx;
@@ -110,7 +110,7 @@
   box-shadow: 0 4rpx 12rpx rgba(20, 14, 8, 0.3);
 }
 .mh-hero-title {
-  font-size: 84rpx;
+  font-size: calc(84rpx * var(--fs-mul, 1));
   font-weight: 900;
   line-height: 0.98;
   letter-spacing: -3rpx;
@@ -127,10 +127,10 @@
   text-shadow: 0 2rpx 8rpx rgba(20, 14, 8, 0.7), 0 10rpx 28rpx rgba(20, 14, 8, 0.45);
 }
 /* 长菜名分档缩字号（titleClass 由 dish-logic.decorateHero 输出），随基准 84rpx 等比降档 */
-.mh-hero-title.t6 { font-size: 76rpx; }
-.mh-hero-title.t7 { font-size: 66rpx; }
-.mh-hero-title.t9 { font-size: 56rpx; }
-.mh-hero-title.t11 { font-size: 52rpx; }
+.mh-hero-title.t6 { font-size: calc(76rpx * var(--fs-mul, 1)); }
+.mh-hero-title.t7 { font-size: calc(66rpx * var(--fs-mul, 1)); }
+.mh-hero-title.t9 { font-size: calc(56rpx * var(--fs-mul, 1)); }
+.mh-hero-title.t11 { font-size: calc(52rpx * var(--fs-mul, 1)); }
 
 /* 暖光叠层：底部暖金 radial 提亮，对标 home-final.html */
 .mh-hero-glow {
@@ -178,7 +178,7 @@
   border-radius: var(--r-pill);
   background: var(--pop);
   color: var(--anchor-contrast);
-  font-size: 29rpx;
+  font-size: calc(29rpx * var(--fs-mul, 1));
   font-weight: 800;
   box-shadow: var(--sh-pop);
 }
@@ -197,7 +197,7 @@
   border: 2rpx solid rgba(255, 255, 255, 0.55);
 }
 .mh-shuffle-tx {
-  font-size: 26rpx;
+  font-size: calc(26rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: var(--anchor-contrast);
   letter-spacing: 1rpx;
@@ -279,8 +279,8 @@
   justify-content: center;
   box-shadow: var(--sh-soft);
 }
-.mh-sa-t { font-size: 28rpx; font-weight: 800; color: var(--ink); }
-.mh-sa-s { font-size: 22rpx; color: var(--mut-strong); font-weight: 600; }
+.mh-sa-t { font-size: calc(28rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--ink); }
+.mh-sa-s { font-size: calc(22rpx * var(--fs-mul, 1)); color: var(--mut-strong); font-weight: 600; }
 
 /* + 图标（菜单暗卡等仍用） */
 .mh-ico-plus, .mh-ico-plus-dark {
@@ -343,7 +343,7 @@
 .mh-mc-title {
   position: relative;
   z-index: 2;
-  font-size: 46rpx;
+  font-size: calc(46rpx * var(--fs-mul, 1));
   font-weight: 900;
   margin-top: 10rpx;
   letter-spacing: -1rpx;
@@ -389,7 +389,7 @@
 }
 .mh-mc-stats { display: flex; gap: 50rpx; }
 .mh-mc-num {
-  font-size: 46rpx;
+  font-size: calc(46rpx * var(--fs-mul, 1));
   font-weight: 900;
   color: var(--anchor-contrast);
   line-height: 1;
@@ -412,7 +412,7 @@
   gap: 8rpx;
   background: var(--pop);
   color: var(--anchor-contrast);
-  font-size: 26rpx;
+  font-size: calc(26rpx * var(--fs-mul, 1));
   font-weight: 800;
   padding: 22rpx 36rpx;
   min-height: 88rpx;
@@ -448,7 +448,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 26rpx;
+  font-size: calc(26rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: var(--mut-strong);
   background: var(--paper-2);
@@ -486,20 +486,20 @@
 }
 .fp-wish-head--toggle { cursor: pointer; }
 .fp-wish-eyebrow {
-  font-size: 22rpx;
+  font-size: calc(22rpx * var(--fs-mul, 1));
   font-weight: 800;
   letter-spacing: 2rpx;
   color: var(--gold-deep);
   margin-right: 14rpx;
 }
 .fp-wish-slot {
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 900;
   color: var(--ink);
 }
 .fp-wish-count {
   margin-left: 16rpx;
-  font-size: 22rpx;
+  font-size: calc(22rpx * var(--fs-mul, 1));
   color: var(--mut-strong);
   font-weight: 600;
 }
@@ -522,7 +522,7 @@
   border-radius: var(--r-pill);
   background: var(--pop);
   color: var(--anchor-contrast);
-  font-size: 24rpx;
+  font-size: calc(24rpx * var(--fs-mul, 1));
   font-weight: 800;
   box-shadow: var(--sh-pop);
 }
@@ -538,18 +538,18 @@
   background: var(--paper-2);
   border-radius: var(--r-md);
 }
-.fp-wish-text { flex: 1; min-width: 0; font-size: 28rpx; font-weight: 700; color: var(--ink); }
+.fp-wish-text { flex: 1; min-width: 0; font-size: calc(28rpx * var(--fs-mul, 1)); font-weight: 700; color: var(--ink); }
 /* 待挑菜标记：纯文本心愿点击直达按关键词搜菜 */
 .fp-wish-pending {
   flex: none;
-  font-size: 20rpx;
+  font-size: calc(20rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: var(--gold-deep);
   background: rgba(176, 137, 73, 0.12);
   border-radius: 20rpx;
   padding: 6rpx 14rpx;
 }
-.fp-wish-by { font-size: 22rpx; color: var(--mut-strong); font-weight: 600; }
+.fp-wish-by { font-size: calc(22rpx * var(--fs-mul, 1)); color: var(--mut-strong); font-weight: 600; }
 .fp-wish-del {
   position: relative;
   width: 64rpx;   /* 视觉 64rpx，热区由 ::after 撑到 88rpx */
@@ -557,7 +557,7 @@
   border-radius: 50%;
   background: var(--c-surface);
   display: flex; align-items: center; justify-content: center;
-  font-size: 32rpx; color: var(--mut);
+  font-size: calc(32rpx * var(--fs-mul, 1)); color: var(--mut);
   border: 2rpx solid var(--c-border);
 }
 
@@ -577,7 +577,7 @@
   border-radius: var(--r-pill);
   background: var(--anchor);
   color: var(--anchor-contrast);
-  font-size: 28rpx;
+  font-size: calc(28rpx * var(--fs-mul, 1));
   font-weight: 800;
   line-height: 1.4;
   text-align: center;
@@ -619,24 +619,24 @@
 }
 .mh-hero--empty .mh-greet .mh-hi {
   color: var(--gold);
-  font-size: 24rpx;
+  font-size: calc(24rpx * var(--fs-mul, 1));
 }
 .mh-hero--empty .mh-greet .mh-name {
   color: var(--anchor-contrast);
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 700;
 }
 .mh-empty-eyebrow {
   font-family: var(--serif);
   font-style: italic;
-  font-size: 24rpx;
+  font-size: calc(24rpx * var(--fs-mul, 1));
   color: var(--gold);
   font-weight: 700;
   letter-spacing: 1rpx;
   margin-bottom: 12rpx;
 }
 .mh-empty-headline {
-  font-size: 56rpx;
+  font-size: calc(56rpx * var(--fs-mul, 1));
   font-weight: 900;
   color: var(--anchor-contrast);
   line-height: 1.15;
@@ -645,7 +645,7 @@
 }
 .mh-empty-headline .pop { color: var(--pop); }
 .mh-empty-sub {
-  font-size: 26rpx;
+  font-size: calc(26rpx * var(--fs-mul, 1));
   color: rgba(255,255,255,0.55);
   line-height: 1.55;
   margin-bottom: 36rpx;
@@ -661,7 +661,7 @@
   border-radius: var(--r-pill);
   background: var(--pop);
   color: var(--anchor-contrast);
-  font-size: 28rpx;
+  font-size: calc(28rpx * var(--fs-mul, 1));
   font-weight: 800;
   box-shadow: var(--sh-pop);
 }
@@ -756,16 +756,16 @@
   border-radius: 50%;
   border: 3rpx solid rgba(232, 71, 42, 0.18);
 }
-.wish-modal-ic-glyph { font-size: 70rpx; font-weight: 900; line-height: 1; color: var(--pop); }
-.wish-modal-title { font-size: 40rpx; font-weight: 900; color: var(--ink); letter-spacing: -1rpx; line-height: 1.25; }
-.wish-modal-sub { margin-top: 14rpx; font-size: 28rpx; color: var(--mut-strong); line-height: 1.55; }
+.wish-modal-ic-glyph { font-size: calc(70rpx * var(--fs-mul, 1)); font-weight: 900; line-height: 1; color: var(--pop); }
+.wish-modal-title { font-size: calc(40rpx * var(--fs-mul, 1)); font-weight: 900; color: var(--ink); letter-spacing: -1rpx; line-height: 1.25; }
+.wish-modal-sub { margin-top: 14rpx; font-size: calc(28rpx * var(--fs-mul, 1)); color: var(--mut-strong); line-height: 1.55; }
 .wish-modal-bd { padding: 44rpx 52rpx 0; }
 .wish-modal-input {
   width: 100%;
   box-sizing: border-box;
   height: 96rpx;
   padding: 0 28rpx;
-  font-size: 29rpx;
+  font-size: calc(29rpx * var(--fs-mul, 1));
   color: var(--ink);
   background: var(--paper-2);
   border: none;
@@ -786,7 +786,7 @@
   flex: 1;
   height: 100rpx;
   border-radius: 28rpx;
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
   letter-spacing: 0.6rpx;
   display: flex;
@@ -895,7 +895,7 @@
   background: var(--pop);
 }
 .mh-load-error-title {
-  font-size: 36rpx;
+  font-size: calc(36rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--ink-deep);
   letter-spacing: -0.5rpx;
@@ -903,7 +903,7 @@
 .mh-load-error-desc {
   margin-top: 14rpx;
   max-width: 480rpx;
-  font-size: 26rpx;
+  font-size: calc(26rpx * var(--fs-mul, 1));
   line-height: 1.5;
   color: var(--mut-strong);
 }

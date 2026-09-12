@@ -44,7 +44,7 @@
   font-weight: 700;
 }
 .vu-h1 {
-  font-size: 60rpx;
+  font-size: calc(60rpx * var(--fs-mul, 1));
   font-weight: 900;
   letter-spacing: -3rpx;
   line-height: 1.04;
@@ -93,7 +93,7 @@
   font-weight: 700;
 }
 .vu-hero-ht {
-  font-size: 40rpx;
+  font-size: calc(40rpx * var(--fs-mul, 1));
   font-weight: 900;
   letter-spacing: -1rpx;
   margin-top: 8rpx;
@@ -132,7 +132,7 @@
   right: 27rpx;
   font-family: var(--serif);
   font-style: italic;
-  font-size: 20rpx;
+  font-size: calc(20rpx * var(--fs-mul, 1));
   letter-spacing: 1rpx;
   font-weight: 700;
   color: var(--anchor-contrast);
@@ -152,7 +152,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24rpx;
+  font-size: calc(24rpx * var(--fs-mul, 1));
   font-weight: 900;
   color: var(--anchor-contrast);
 }
@@ -168,7 +168,7 @@
   letter-spacing: -1rpx;
 }
 .vu-pprice {
-  font-size: 58rpx;
+  font-size: calc(58rpx * var(--fs-mul, 1));
   font-weight: 900;
   color: var(--ink);
   letter-spacing: -3rpx;
@@ -177,7 +177,7 @@
 }
 .vu-plan.on .vu-pprice { color: var(--pop); }
 .vu-yuan {
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
   vertical-align: top;
   margin-right: 2rpx;
@@ -189,7 +189,7 @@
   letter-spacing: 0;
 }
 .vu-pnote {
-  font-size: 22rpx;
+  font-size: calc(22rpx * var(--fs-mul, 1));
   color: var(--mut-strong);
   margin-top: 13rpx;
 }
@@ -220,12 +220,12 @@
   align-items: flex-end;
 }
 .vu-drow.total .vu-k {
-  font-size: 29rpx;
+  font-size: calc(29rpx * var(--fs-mul, 1));
   color: var(--ink);
   font-weight: 800;
 }
 .vu-v-big {
-  font-size: 58rpx;
+  font-size: calc(58rpx * var(--fs-mul, 1));
   color: var(--pop);
   font-weight: 900;
   letter-spacing: -2rpx;
@@ -279,13 +279,13 @@
 }
 .vu-bm { flex: 1; min-width: 0; }
 .vu-bh {
-  font-size: 28rpx;
+  font-size: calc(28rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--ink);
   letter-spacing: -0.5rpx;
 }
 .vu-bp {
-  font-size: 22rpx;
+  font-size: calc(22rpx * var(--fs-mul, 1));
   color: var(--mut-strong);
   margin-top: 6rpx;
   line-height: 1.4;
@@ -299,7 +299,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24rpx;
+  font-size: calc(24rpx * var(--fs-mul, 1));
   font-weight: 900;
   color: var(--anchor-contrast);
   box-shadow: 0 12rpx 27rpx rgba(232, 71, 42, 0.32);
@@ -328,18 +328,18 @@
   font-weight: 600;
 }
 .vu-big {
-  font-size: 52rpx;
+  font-size: calc(52rpx * var(--fs-mul, 1));
   font-weight: 900;
   color: var(--pop);
   letter-spacing: -2rpx;
   line-height: 1.05;
 }
-.vu-big .vu-yuan { font-size: 32rpx; }
+.vu-big .vu-yuan { font-size: calc(32rpx * var(--fs-mul, 1)); }
 .vu-paybtn {
   flex: 1;
   min-height: 104rpx;
   height: 104rpx;
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
   letter-spacing: 1rpx;
   gap: 17rpx;

@@ -17,7 +17,7 @@
   font-weight: 700;
 }
 .fi-title {
-  font-size: 58rpx;
+  font-size: calc(58rpx * var(--fs-mul, 1));
   font-weight: 900;
   color: var(--ink);
   letter-spacing: -2rpx;
@@ -63,7 +63,7 @@
   align-items: center;
   justify-content: center;
   font-family: var(--serif);
-  font-size: 62rpx;
+  font-size: calc(62rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: var(--anchor-contrast);
 }
@@ -83,7 +83,7 @@
   background: rgba(255, 255, 255, 0.1);
   border: 2rpx solid rgba(255, 255, 255, 0.2);
   color: var(--anchor-contrast);
-  font-size: 26rpx;
+  font-size: calc(26rpx * var(--fs-mul, 1));
   font-weight: 700;
 }
 /* 拉取失败态：重试按钮（金色描边突出可点） */
@@ -118,7 +118,7 @@
   z-index: 2;
   text-align: center;
   margin-top: 25rpx;
-  font-size: 22rpx;
+  font-size: calc(22rpx * var(--fs-mul, 1));
   letter-spacing: 1rpx;
   color: rgba(255, 255, 255, 0.6);
 }
@@ -127,7 +127,7 @@
 .fi-wxbtn {
   margin-top: 50rpx;
   gap: 17rpx;
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
   border-radius: 35rpx;
   box-shadow: 0 20rpx 46rpx rgba(7, 193, 96, 0.32);
@@ -173,7 +173,7 @@
   border-radius: 35rpx;
   background: var(--c-surface);
   color: var(--ink);
-  font-size: 29rpx;
+  font-size: calc(29rpx * var(--fs-mul, 1));
   font-weight: 700;
   border: var(--bd-card);
   box-shadow: var(--sh-soft);
@@ -238,7 +238,7 @@
   box-shadow: 0 -10rpx 0 var(--pop);
 }
 .fi-note-text {
-  font-size: 24rpx;
+  font-size: calc(24rpx * var(--fs-mul, 1));
   line-height: 1.6;
   color: var(--mut-strong);
 }

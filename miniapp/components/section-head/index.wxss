@@ -5,7 +5,7 @@
   flex: none;
   margin-left: 2rpx;
   color: var(--gold-deep);
-  font-size: 34rpx;
+  font-size: calc(34rpx * var(--fs-mul, 1));
   font-weight: 500;
   line-height: 1;
   transform: translateY(-1rpx);

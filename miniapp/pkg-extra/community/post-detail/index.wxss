@@ -27,11 +27,11 @@
   border-radius: 50%;
   font-family: var(--serif);
   font-weight: 700;
-  font-size: 38rpx;
+  font-size: calc(38rpx * var(--fs-mul, 1));
   color: var(--anchor-contrast);
   box-shadow: 0 4rpx 12rpx rgba(60, 40, 20, 0.12);
 }
-.ava-sm { width: 72rpx; height: 72rpx; font-size: 32rpx; }
+.ava-sm { width: 72rpx; height: 72rpx; font-size: calc(32rpx * var(--fs-mul, 1)); }
 .ava-lin { background: linear-gradient(135deg, var(--pop), var(--orange)); }
 .ava-lan { background: linear-gradient(135deg, var(--pine), var(--cat-green)); }
 .ava-zhao { background: linear-gradient(135deg, var(--cat-purple-deep), var(--cat-purple-light)); }
@@ -46,7 +46,7 @@
 }
 .acol { flex: 1; min-width: 0; }
 .aname {
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--ink);
   letter-spacing: -0.4rpx;
@@ -70,7 +70,7 @@
 /* ===== 正文 ===== */
 .post-text { margin-top: 26rpx; }
 .ptext-p {
-  font-size: 29rpx;
+  font-size: calc(29rpx * var(--fs-mul, 1));
   line-height: 1.75;
   color: var(--ink-deep);
   margin-bottom: 22rpx;
@@ -139,7 +139,7 @@
 }
 .rc-name {
   margin-top: 6rpx;
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--ink);
   letter-spacing: -0.6rpx;
@@ -188,7 +188,7 @@
   font-size: var(--fs-sub);
   font-weight: 700;
 }
-.react .ricon { font-size: 28rpx; line-height: 1; }
+.react .ricon { font-size: calc(28rpx * var(--fs-mul, 1)); line-height: 1; }
 /* 几何心/星，不用 emoji */
 .ricon-heart,
 .ricon-star {
@@ -223,7 +223,7 @@
   gap: 16rpx;
 }
 .cs-title {
-  font-size: 38rpx;
+  font-size: calc(38rpx * var(--fs-mul, 1));
   font-weight: 900;
   color: var(--ink);
   letter-spacing: -0.8rpx;
@@ -249,7 +249,7 @@
   gap: 16rpx;
 }
 .cname {
-  font-size: 26rpx;
+  font-size: calc(26rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--ink);
   flex: 1;
@@ -262,7 +262,7 @@
 }
 .ctext {
   margin-top: 10rpx;
-  font-size: 26rpx;
+  font-size: calc(26rpx * var(--fs-mul, 1));
   line-height: 1.6;
   color: var(--ink-deep);
 }
@@ -285,7 +285,7 @@
   background: var(--paper-2);
   border: 2rpx solid var(--c-border);
   padding: 0 34rpx;
-  font-size: 26rpx;
+  font-size: calc(26rpx * var(--fs-mul, 1));
   color: var(--ink);
 }
 .field-ph { color: var(--mut); }

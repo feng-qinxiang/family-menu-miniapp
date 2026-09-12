@@ -155,7 +155,7 @@ page {
   min-height: 100%;
   background: var(--paper);
   color: var(--ink);
-  font-size: 28rpx;
+  font-size: calc(28rpx * var(--fs-mul, 1));
   line-height: 1.55;
   font-family: var(--sans);
   -webkit-font-smoothing: antialiased;
@@ -235,6 +235,7 @@ page {
 /* ============ 大字模式（设置页开关，全站 36 页根节点挂 .font-lg）============ */
 /* 覆盖字号 token：用 var() 引用的文字按档位放大；页面静态 rpx 不受影响（已知局限）。 */
 page.font-lg, .font-lg {
+  --fs-mul: 1.15;   /* 静态 rpx 字号的统一放大系数（token 字号有自己的 lg 值） */
   --fs-hero-xl: 110rpx;
   --fs-hero-lg: 82rpx;
   --fs-hero-sm: 64rpx;
@@ -313,7 +314,7 @@ page.font-lg, .font-lg {
   font-weight: 700;
 }
 .shead h2, .shead .shead-title {
-  font-size: 50rpx;
+  font-size: calc(50rpx * var(--fs-mul, 1));
   font-weight: 900;
   color: var(--ink);
   letter-spacing: -2rpx;
@@ -412,7 +413,7 @@ page.font-lg, .font-lg {
   border-radius: var(--r-chip);
   background: var(--paper-2);
   color: var(--mut-strong);
-  font-size: 26rpx;
+  font-size: calc(26rpx * var(--fs-mul, 1));
   font-weight: 600;
   white-space: nowrap;
   border: 2rpx solid transparent;
@@ -477,7 +478,7 @@ button[disabled] {
   align-items: center;
   padding: 6rpx 16rpx;
   border-radius: 8rpx;
-  font-size: 22rpx;
+  font-size: calc(22rpx * var(--fs-mul, 1));
   font-weight: 700;
 }
 .tag-pop { background: var(--pop); color: #fff; }
@@ -504,7 +505,7 @@ button[disabled] {
 .field-error-msg {
   display: block;
   margin-top: 8rpx;
-  font-size: 22rpx;
+  font-size: calc(22rpx * var(--fs-mul, 1));
   font-weight: 600;
   color: #d8342c;
 }
@@ -516,10 +517,10 @@ button[disabled] {
 }
 
 /* ============ 兼容：现有页面在用的通用类 ============ */
-.page-title { color: var(--ink); font-size: 50rpx; font-weight: 900; line-height: 1.1; letter-spacing: -2rpx; }
+.page-title { color: var(--ink); font-size: calc(50rpx * var(--fs-mul, 1)); font-weight: 900; line-height: 1.1; letter-spacing: -2rpx; }
 .page-subtitle { margin-top: 10rpx; color: var(--mut-strong); font-size: var(--fs-sub); line-height: 1.5; }
-.section-title { color: var(--ink); font-size: 36rpx; font-weight: 800; line-height: 1.2; }
-.section-desc { margin-top: 6rpx; color: var(--mut); font-size: 24rpx; line-height: 1.45; }
+.section-title { color: var(--ink); font-size: calc(36rpx * var(--fs-mul, 1)); font-weight: 800; line-height: 1.2; }
+.section-desc { margin-top: 6rpx; color: var(--mut); font-size: calc(24rpx * var(--fs-mul, 1)); line-height: 1.45; }
 .section { margin-top: 48rpx; }
 .muted { color: var(--mut); }
 .title { color: var(--ink); font-weight: 800; }
@@ -531,9 +532,9 @@ button[disabled] {
 .accent-btn { box-sizing: border-box; display: flex; align-items: center; justify-content: center; min-height: 88rpx; border-radius: var(--r-card); background: var(--pine); color: #fff; font-size: var(--fs-btn); font-weight: 700; }
 .primary-btn::after, .ghost-btn::after, .accent-btn::after { border: none; }
 .primary-btn:active, .ghost-btn:active, .accent-btn:active { transform: scale(0.98); }
-.textarea { box-sizing: border-box; width: 100%; min-height: 220rpx; padding: 24rpx; border: var(--bd-card); border-radius: var(--r-card); background: var(--c-surface); color: var(--ink); font-size: 28rpx; line-height: 1.5; }
+.textarea { box-sizing: border-box; width: 100%; min-height: 220rpx; padding: 24rpx; border: var(--bd-card); border-radius: var(--r-card); background: var(--c-surface); color: var(--ink); font-size: calc(28rpx * var(--fs-mul, 1)); line-height: 1.5; }
 .empty-state { display: flex; flex-direction: column; align-items: center; padding: 96rpx 28rpx; color: var(--mut); text-align: center; }
-.empty-text { margin-top: 16rpx; color: var(--mut); font-size: 26rpx; }
+.empty-text { margin-top: 16rpx; color: var(--mut); font-size: calc(26rpx * var(--fs-mul, 1)); }
 .skeleton { overflow: hidden; border-radius: var(--r-card); background: var(--skeleton); }
 
 /* ============================================================

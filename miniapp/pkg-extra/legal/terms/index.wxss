@@ -31,7 +31,7 @@
 /* ============ Hero ============ */
 .hero-title {
   margin-top: 12rpx;
-  font-size: 66rpx;
+  font-size: calc(66rpx * var(--fs-mul, 1));
   line-height: 1.05;
   letter-spacing: -3rpx;
   color: var(--ink);
@@ -43,7 +43,7 @@
   align-items: center;
   gap: 14rpx;
   margin-top: 24rpx;
-  font-size: 24rpx;
+  font-size: calc(24rpx * var(--fs-mul, 1));
   color: var(--mut-strong);
 }
 .effdate-ico {
@@ -89,12 +89,12 @@
   flex: none;
   font-family: var(--serif);
   font-style: italic;
-  font-size: 28rpx;
+  font-size: calc(28rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: var(--pop);
 }
 .clause-tx {
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
   letter-spacing: -0.6rpx;
   color: var(--ink-deep);
@@ -103,7 +103,7 @@
 .clause-p {
   display: block;
   margin-top: 20rpx;
-  font-size: 28rpx;
+  font-size: calc(28rpx * var(--fs-mul, 1));
   line-height: 1.75;
   color: var(--mut-strong);
 }
@@ -123,14 +123,14 @@
 }
 .clause-li-tx {
   flex: 1;
-  font-size: 28rpx;
+  font-size: calc(28rpx * var(--fs-mul, 1));
   line-height: 1.75;
   color: var(--mut-strong);
 }
 
 .footnote {
   margin-top: 58rpx;
-  font-size: 24rpx;
+  font-size: calc(24rpx * var(--fs-mul, 1));
   line-height: 1.75;
   color: var(--mut);
   text-align: center;
@@ -158,7 +158,7 @@
   border-radius: var(--r-pill);
   background: var(--pop);
   color: var(--anchor-contrast);
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
   letter-spacing: 1rpx;
   box-shadow: var(--sh-pop);

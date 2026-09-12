@@ -54,7 +54,7 @@
 .fav-tab {
   position: relative;
   padding-bottom: 24rpx;
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
   letter-spacing: -0.4rpx;
   color: var(--mut-strong);
@@ -133,7 +133,7 @@
 }
 .fav-ptitle {
   margin-top: 6rpx;
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
   line-height: 1.25;
   letter-spacing: -0.6rpx;

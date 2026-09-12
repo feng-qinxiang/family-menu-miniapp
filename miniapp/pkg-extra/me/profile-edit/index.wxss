@@ -57,7 +57,7 @@
   align-items: center;
   justify-content: center;
   color: var(--anchor-contrast);
-  font-size: 88rpx;
+  font-size: calc(88rpx * var(--fs-mul, 1));
   font-weight: 900;
   letter-spacing: 2rpx;
   box-shadow: var(--sh-card);
@@ -169,7 +169,7 @@
   opacity: 0.85;
 }
 .pe-flabel {
-  font-size: 29rpx;
+  font-size: calc(29rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: var(--ink);
   flex: none;
@@ -181,14 +181,14 @@
 .pe-finput {
   flex: 1;
   text-align: right;
-  font-size: 29rpx;
+  font-size: calc(29rpx * var(--fs-mul, 1));
   font-weight: 600;
   color: var(--ink-deep);
 }
 .pe-fval {
   flex: 1;
   text-align: right;
-  font-size: 29rpx;
+  font-size: calc(29rpx * var(--fs-mul, 1));
   font-weight: 600;
   color: var(--ink-deep);
 }
@@ -221,7 +221,7 @@
 }
 .pe-pill {
   padding: 14rpx 30rpx;
-  font-size: 26rpx;
+  font-size: calc(26rpx * var(--fs-mul, 1));
   border-radius: var(--r-pill);
 }
 /* 选中态：番茄红软底 + 红字红框（区别于全局 .chip.on 的深墨底） */
@@ -249,7 +249,7 @@
 }
 .pe-tag {
   padding: 14rpx 30rpx;
-  font-size: 26rpx;
+  font-size: calc(26rpx * var(--fs-mul, 1));
   border-radius: var(--r-pill);
 }
 .pe-tag.on {

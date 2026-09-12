@@ -60,7 +60,7 @@
   top: 150rpx;
   right: 26rpx;
   font-family: var(--serif);
-  font-size: 408rpx;
+  font-size: calc(408rpx * var(--fs-mul, 1));
   font-weight: 700;
   line-height: 1;
   color: rgba(255, 255, 255, 0.07);
@@ -107,7 +107,7 @@
 }
 .ach .a { flex: 1; }
 .ach .num {
-  font-size: 58rpx;
+  font-size: calc(58rpx * var(--fs-mul, 1));
   font-weight: 900;
   color: var(--anchor-contrast);
   letter-spacing: -3rpx;
@@ -176,7 +176,7 @@
   gap: 12rpx;
 }
 .cal-day .dw {
-  font-size: 20rpx;
+  font-size: calc(20rpx * var(--fs-mul, 1));
   color: rgba(255, 255, 255, 0.65);
   font-weight: 600;
 }
@@ -187,7 +187,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24rpx;
+  font-size: calc(24rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: rgba(255, 255, 255, 0.4);
   background: rgba(255, 255, 255, 0.06);
@@ -212,7 +212,7 @@
   color: var(--anchor-contrast);
 }
 .cal-day .fix {
-  font-size: 17rpx;
+  font-size: calc(17rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: var(--gold);
   margin-top: -4rpx;
@@ -230,7 +230,7 @@
   height: 36rpx;
   border-radius: 50%;
   color: var(--anchor-contrast);
-  font-size: 18rpx;
+  font-size: calc(18rpx * var(--fs-mul, 1));
   font-weight: 800;
   display: flex;
   align-items: center;
@@ -295,7 +295,7 @@
   position: absolute;
   bottom: 12rpx;
   left: 12rpx;
-  font-size: 18rpx;
+  font-size: calc(18rpx * var(--fs-mul, 1));
   font-weight: 800;
   letter-spacing: 1rpx;
   color: var(--anchor-contrast);
@@ -311,7 +311,7 @@
   gap: 16rpx;
 }
 .tcard .th4 {
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--ink);
   letter-spacing: -0.6rpx;
@@ -336,20 +336,20 @@
   height: 42rpx;
   border-radius: 50%;
   color: var(--anchor-contrast);
-  font-size: 20rpx;
+  font-size: calc(20rpx * var(--fs-mul, 1));
   font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
   flex: none;
 }
-.cook .cn { font-size: 24rpx; color: var(--mut); font-weight: 600; }
+.cook .cn { font-size: calc(24rpx * var(--fs-mul, 1)); color: var(--mut); font-weight: 600; }
 .cook .cn-b { color: var(--ink-deep); font-weight: 700; }
 /* 再来一单：右对齐胶囊按钮 */
 .cook .redo {
   margin-left: auto;
   flex: none;
-  font-size: 22rpx;
+  font-size: calc(22rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--pop);
   background: var(--pop-soft);
@@ -359,7 +359,7 @@
 
 .note {
   margin-top: 18rpx;
-  font-size: 24rpx;
+  font-size: calc(24rpx * var(--fs-mul, 1));
   line-height: 1.5;
   color: var(--ink-deep);
   background: var(--pop-soft);

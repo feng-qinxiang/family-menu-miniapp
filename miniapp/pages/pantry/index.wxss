@@ -45,7 +45,7 @@
   right: 26rpx;
   z-index: 2;
   font-family: var(--serif);
-  font-size: 404rpx;
+  font-size: calc(404rpx * var(--fs-mul, 1));
   font-weight: 700;
   line-height: 1;
   color: rgba(255, 255, 255, 0.07);
@@ -77,7 +77,7 @@
   margin: 30rpx 0 22rpx;
 }
 .phero-sub {
-  font-size: 26rpx;
+  font-size: calc(26rpx * var(--fs-mul, 1));
   color: rgba(255, 255, 255, 0.85);
   font-weight: 400;
 }
@@ -104,7 +104,7 @@
   background: rgba(255, 255, 255, 0.2);
 }
 .phstat-n {
-  font-size: 50rpx;
+  font-size: calc(50rpx * var(--fs-mul, 1));
   font-weight: 900;
   color: var(--anchor-contrast);
   letter-spacing: -2rpx;
@@ -158,13 +158,13 @@
 .cat-ic-season::after { background: var(--pop); border-radius: 6rpx 6rpx 10rpx 10rpx; }
 .cat-ic-other::after { background: var(--mut); border-radius: var(--r-xs); }
 .cat-h3 {
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--ink);
   letter-spacing: -0.6rpx;
 }
 .cat-qty {
-  font-size: 22rpx;
+  font-size: calc(22rpx * var(--fs-mul, 1));
   color: var(--mut-strong);
   font-weight: 600;
 }
@@ -195,7 +195,7 @@
 .pitem.warn .pi-dot { background: var(--pop); }
 .pi-mid { flex: 1; min-width: 0; }
 .pi-nm {
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--ink);
   letter-spacing: -0.4rpx;
@@ -288,7 +288,7 @@
 .add-plus::before { left: 14rpx; top: 0; width: 5rpx; height: 32rpx; }
 .add-plus::after { left: 0; top: 14rpx; width: 32rpx; height: 5rpx; }
 .add-at { flex: 1; }
-.add-t { font-size: 29rpx; font-weight: 800; color: var(--ink); }
+.add-t { font-size: calc(29rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--ink); }
 .add-s { font-size: var(--fs-cap); color: var(--mut); margin-top: 4rpx; }
 .add-arrow {
   width: 18rpx;
@@ -344,7 +344,7 @@
 }
 .mc-mi { flex: 1; min-width: 0; }
 .mc-h4 {
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--ink);
   letter-spacing: -0.6rpx;
@@ -363,13 +363,13 @@
 .mc-miss.full { color: var(--pine); }
 .mc-badge { flex: none; text-align: right; }
 .mc-pct {
-  font-size: 40rpx;
+  font-size: calc(40rpx * var(--fs-mul, 1));
   font-weight: 900;
   color: var(--ink-deep);
   letter-spacing: -2rpx;
 }
 .mc-lab {
-  font-size: 20rpx;
+  font-size: calc(20rpx * var(--fs-mul, 1));
   color: var(--mut);
   font-weight: 600;
 }
