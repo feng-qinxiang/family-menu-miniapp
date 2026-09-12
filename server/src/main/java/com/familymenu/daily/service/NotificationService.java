@@ -48,6 +48,22 @@ public class NotificationService {
         }
     }
 
+    /**
+     * 给单个用户写一条通知，用于跨家庭的场景（如社区互动：被赞/被评的是帖子作者本人）。
+     * familyId 仅作归属记录，作者没有活跃家庭时传 0（列 NOT NULL 的哨兵值）。
+     */
+    public void notifyUser(long userId, long familyId, String kind, String title, String body, String actionType) {
+        try {
+            jdbcTemplate.update(
+                    "INSERT INTO notification_message(user_id, family_id, kind, title, body_text, action_type) VALUES (?, ?, ?, ?, ?, ?)",
+                    userId, familyId, kind, title, body, actionType
+            );
+            subscribeMessageService.sendAsync(userId, kind, title, body, pageFor(actionType));
+        } catch (Exception ignored) {
+            // 同 notifyFamily：通知是旁路，失败不影响业务主流程
+        }
+    }
+
     /** 站内动作类型 → 订阅消息被点击后跳转的小程序页面（微信要求不带前导斜杠）。 */
     private static String pageFor(String actionType) {
         return switch (actionType == null ? "" : actionType) {

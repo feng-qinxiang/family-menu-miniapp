@@ -292,6 +292,22 @@
   background: var(--pop);
   flex: none;
 }
+/* 勾选态：圆点变对勾、文字划线变淡（暗底沉浸式下的"备齐"反馈） */
+.ing.checked {
+  opacity: 0.55;
+}
+.ing.checked text {
+  text-decoration: line-through;
+}
+.ing.checked .dotmark {
+  width: 26rpx;
+  height: 14rpx;
+  border-radius: 2rpx;
+  background: transparent;
+  border-left: 4rpx solid var(--pop);
+  border-bottom: 4rpx solid var(--pop);
+  transform: rotate(-45deg) translateX(2rpx);
+}
 
 /* 计时卡 */
 .timer {

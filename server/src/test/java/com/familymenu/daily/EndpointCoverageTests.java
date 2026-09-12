@@ -336,6 +336,97 @@ class EndpointCoverageTests {
                 .andExpect(status().isOk());
     }
 
+    // ==================== 社区详情 / 作者删除 / 互动通知 ====================
+
+    /**
+     * 详情端点可见性：游客发帖无法机审 → PENDING，仅作者本人可见（mine=true），
+     * 匿名访问与"帖子不存在"同语义（400），不能借详情接口探测未过审内容。
+     */
+    @Test
+    void communityPostDetailRespectsVisibility() throws Exception {
+        String token = guestLogin();
+        MvcResult created = postJson("/api/community/posts", token, Map.of(
+                "title", "详情测试帖子 " + System.nanoTime(),
+                "content", "详情可见性覆盖"));
+        long postId = json(created).get("id").asLong();
+
+        MvcResult mine = mockMvc.perform(get("/api/community/posts/" + postId)
+                        .header("X-Auth-Token", token))
+                .andExpect(status().isOk())
+                .andReturn();
+        assertThat(json(mine).get("mine").asBoolean()).isTrue();
+        assertThat(json(mine).get("id").asLong()).isEqualTo(postId);
+
+        mockMvc.perform(get("/api/community/posts/" + postId))
+                .andExpect(status().isBadRequest());
+    }
+
+    /** 作者能删自己的帖子和评论；别人删不动（403 语义下统一 400）。删除后详情/列表立即不可见。 */
+    @Test
+    void authorCanDeleteOwnPostAndComment() throws Exception {
+        String token = guestLogin();
+        MvcResult created = postJson("/api/community/posts", token, Map.of(
+                "title", "删帖测试帖子 " + System.nanoTime(),
+                "content", "作者删除覆盖"));
+        long postId = json(created).get("id").asLong();
+
+        MvcResult commented = postJson("/api/community/posts/" + postId + "/comments", token,
+                Map.of("content", "将被作者删除的评论"));
+        long commentId = json(commented).get("commentId").asLong();
+
+        String other = guestLogin();
+        mockMvc.perform(delete("/api/community/posts/" + postId).header("X-Auth-Token", other))
+                .andExpect(status().isBadRequest());
+        mockMvc.perform(delete("/api/community/posts/" + postId + "/comments/" + commentId)
+                        .header("X-Auth-Token", other))
+                .andExpect(status().isBadRequest());
+
+        mockMvc.perform(delete("/api/community/posts/" + postId + "/comments/" + commentId)
+                        .header("X-Auth-Token", token))
+                .andExpect(status().isOk());
+        // 软删后评论列表（作者本人视角）也不再返回
+        MvcResult comments = mockMvc.perform(get("/api/community/posts/" + postId + "/comments")
+                        .header("X-Auth-Token", token))
+                .andExpect(status().isOk())
+                .andReturn();
+        assertThat(json(comments).isEmpty()).isTrue();
+
+        mockMvc.perform(delete("/api/community/posts/" + postId).header("X-Auth-Token", token))
+                .andExpect(status().isOk());
+        mockMvc.perform(get("/api/community/posts/" + postId).header("X-Auth-Token", token))
+                .andExpect(status().isBadRequest());
+        // 重复删除同语义拒绝
+        mockMvc.perform(delete("/api/community/posts/" + postId).header("X-Auth-Token", token))
+                .andExpect(status().isBadRequest());
+    }
+
+    /** 互动通知：他人点赞后，作者消息中心出现 kind=com 的站内信。 */
+    @Test
+    void likeNotifiesPostAuthor() throws Exception {
+        String author = guestLogin();
+        MvcResult created = postJson("/api/community/posts", author, Map.of(
+                "title", "通知测试帖子 " + System.nanoTime(),
+                "content", "被赞通知覆盖"));
+        long postId = json(created).get("id").asLong();
+
+        String liker = guestLogin();
+        mockMvc.perform(post("/api/community/posts/" + postId + "/like")
+                        .header("X-Auth-Token", liker))
+                .andExpect(status().isOk());
+
+        MvcResult notes = mockMvc.perform(get("/api/notifications").header("X-Auth-Token", author))
+                .andExpect(status().isOk())
+                .andReturn();
+        boolean notified = false;
+        for (JsonNode item : json(notes).get("items")) {
+            if ("com".equals(item.get("kind").asText())
+                    && "你的帖子收到新点赞".equals(item.get("title").asText())) {
+                notified = true;
+            }
+        }
+        assertThat(notified).as("作者应收到点赞站内信").isTrue();
+    }
+
     // ==================== 导入 ====================
 
     @Test

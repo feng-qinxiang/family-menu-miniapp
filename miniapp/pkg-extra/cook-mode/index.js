@@ -162,13 +162,13 @@ Page({
     const baseServings = Number(recipe.servings) || 0;
     const ratio = (this._servings > 0 && baseServings > 0) ? this._servings / baseServings : 1;
     const ingredients = (Array.isArray(recipe.ingredients) ? recipe.ingredients : []).map((it) => {
-      if (typeof it === 'string') return { name: it, label: it };
+      if (typeof it === 'string') return { name: it, label: it, checked: false };
       const name = it.name || '';
       const amount = it.amount != null ? it.amount : '';
       const unit = it.unit || '';
       const scaled = ratio === 1 ? amount : scaleAmount(amount, ratio);
       const label = [name, `${scaled}${unit}`.trim()].filter(Boolean).join(' ');
-      return { name, label: label || name };
+      return { name, label: label || name, checked: false };
     });
 
     this.setData({
@@ -182,8 +182,37 @@ Page({
     });
 
     if (steps.length) {
-      this.gotoStep(0);
+      this.resumeOrStart(recipeId, steps);
     }
+  },
+
+  // —— 步骤进度本地续做：同一道菜中途退出，再进来回到上次步骤 ——
+  progressKey(recipeId) {
+    return `cook_progress_${recipeId}`;
+  },
+
+  resumeOrStart(recipeId, steps) {
+    let startAt = 0;
+    try {
+      const saved = Number(wx.getStorageSync(this.progressKey(recipeId))) || 0;
+      // 停在哪一步（含最后一步）都续做；完成时会清进度，能读到就说明没走完
+      if (saved > 0 && saved < steps.length) {
+        startAt = saved;
+        wx.showToast({ title: `已回到上次进度（${steps[saved].cn}）`, icon: 'none' });
+      }
+    } catch (e) {
+      // 本地存储不可用则从头开始，不影响烹饪
+    }
+    this.gotoStep(startAt);
+  },
+
+  // 备菜清单勾选：备齐一样勾一样（纯本地状态，不做持久化）
+  toggleIng(event) {
+    const idx = Number(event.currentTarget.dataset.idx);
+    const item = this.data.ingredients[idx];
+    if (!item) return;
+    this.setData({ [`ingredients[${idx}].checked`]: !item.checked });
+    wx.vibrateShort && wx.vibrateShort({ type: 'light' });
   },
 
   // 切换到指定步骤
@@ -207,6 +236,14 @@ Page({
       running: false,
       hasTimer: seconds > 0
     });
+    // 记录进度：中途退出（onClose/切走被杀）再进可续做；走完 onFinish 会清掉
+    try {
+      if (this.data.recipeId) {
+        wx.setStorageSync(this.progressKey(this.data.recipeId), i);
+      }
+    } catch (e) {
+      // 存不上就算了，续做是锦上添花
+    }
   },
 
   fmt(sec) {
@@ -339,6 +376,14 @@ Page({
     this.clearTimer();
     this._hiddenRunning = false;
     this.setData({ running: false });
+    // 烹饪走完，清掉本地续做进度
+    try {
+      if (this.data.recipeId) {
+        wx.removeStorageSync(this.progressKey(this.data.recipeId));
+      }
+    } catch (e) {
+      // 清不掉无碍，下次进来至多回到末步再点一次完成
+    }
     // 菜单联动：走完烹饪流程即视为这道菜上桌，静默回写菜单状态
     if (this._menuItemId) {
       api.updateMenuItemStatus(this._menuItemId, 'done').catch(() => {});

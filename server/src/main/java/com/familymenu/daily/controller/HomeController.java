@@ -20,7 +20,9 @@ import com.familymenu.daily.dto.ApiModels.VipStatus;
 import com.familymenu.daily.dto.AuthModels.AuthUser;
 import com.familymenu.daily.service.ContentSecurityService;
 import com.familymenu.daily.service.MysqlKitchenStore;
+import com.familymenu.daily.service.NotificationService;
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -38,10 +40,31 @@ public class HomeController {
 
     private final MysqlKitchenStore store;
     private final ContentSecurityService contentSecurity;
+    private final NotificationService notificationService;
 
-    public HomeController(MysqlKitchenStore store, ContentSecurityService contentSecurity) {
+    public HomeController(MysqlKitchenStore store, ContentSecurityService contentSecurity,
+                          NotificationService notificationService) {
         this.store = store;
         this.contentSecurity = contentSecurity;
+        this.notificationService = notificationService;
+    }
+
+    /** 社区互动通知：给帖子作者写一条站内信（kind=com，通知页"去社区"直达）。旁路失败不影响主响应。 */
+    private void notifyPostAuthor(long postId, AuthUser actor, boolean notify, String verb, String title) {
+        if (!notify) {
+            return;
+        }
+        try {
+            MysqlKitchenStore.CommunityPostInfo info = store.communityPostInfo(postId);
+            if (info == null || info.authorUserId() == actor.userId()) {
+                return;
+            }
+            notificationService.notifyUser(info.authorUserId(), info.familyId(), "com", title,
+                    (actor.nickname() == null || actor.nickname().isBlank() ? "有厨友" : actor.nickname())
+                            + verb + "《" + info.title() + "》", "community");
+        } catch (Exception ignored) {
+            // 通知是旁路
+        }
     }
 
     @GetMapping("/home/dashboard")
@@ -66,6 +89,13 @@ public class HomeController {
     public List<CommunityPost> communityPosts(@CurrentUser AuthUser user) {
         // 只读公开接口：未带 token 也能浏览（user 为 null 时不返回"我收藏的"标记）
         return store.communityPosts(user == null ? 0L : user.userId());
+    }
+
+    /** C 端帖子详情：分享直达用。公开可读（APPROVED），PENDING 仅作者本人可见。 */
+    @GetMapping("/community/posts/{postId}")
+    public CommunityPost communityPostDetail(@PathVariable long postId,
+                                             @CurrentUser AuthUser user) {
+        return store.communityPostDetail(postId, user == null ? 0L : user.userId());
     }
 
     @GetMapping("/me/favorites")
@@ -101,7 +131,27 @@ public class HomeController {
         // UGC 机审：评论文本送微信 msgSecCheck，违规直接 400，无法机审转人工审核
         String auditStatus = contentSecurity.auditStatus(user.userId(), request.content(),
                 ContentSecurityService.SCENE_COMMENT);
-        return store.addCommunityComment(postId, user.userId(), request, auditStatus);
+        CommunityCommentItem item = store.addCommunityComment(postId, user.userId(), request, auditStatus);
+        // 只有公开发布的评论才打扰作者；自己评论自己不通知
+        notifyPostAuthor(postId, user, ContentSecurityService.STATUS_APPROVED.equals(auditStatus),
+                "评论了", "你的帖子收到新评论");
+        return item;
+    }
+
+    /** 作者删自己的帖子：与运营下架同走 REMOVED。 */
+    @DeleteMapping("/community/posts/{postId}")
+    @RequiresAuth
+    public void deleteCommunityPost(@PathVariable long postId, @CurrentUser AuthUser user) {
+        store.deleteCommunityPost(postId, user.userId());
+    }
+
+    /** 评论者删自己的评论（软删）。 */
+    @DeleteMapping("/community/posts/{postId}/comments/{commentId}")
+    @RequiresAuth
+    public void deleteCommunityComment(@PathVariable long postId,
+                                       @PathVariable long commentId,
+                                       @CurrentUser AuthUser user) {
+        store.deleteCommunityComment(postId, commentId, user.userId());
     }
 
     @PostMapping("/community/posts/{postId}/favorite")
@@ -114,7 +164,10 @@ public class HomeController {
     @PostMapping("/community/posts/{postId}/like")
     @RequiresAuth
     public CommunityPost toggleCommunityLike(@PathVariable long postId, @CurrentUser AuthUser user) {
-        return store.toggleCommunityLike(postId, user.userId());
+        CommunityPost updated = store.toggleCommunityLike(postId, user.userId());
+        // 只在"新增点赞"这一跳通知作者；自己赞自己不通知
+        notifyPostAuthor(postId, user, updated.liked(), "赞了", "你的帖子收到新点赞");
+        return updated;
     }
 
     @PostMapping("/community/posts/{postId}/report")

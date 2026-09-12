@@ -63,12 +63,14 @@
       <view class="stepeyebrow">正在烹饪</view>
       <view class="steptext">{{steps[current].text}}</view>
 
-      <!-- 食材 tags -->
+      <!-- 食材 tags（点一下勾选：备齐一样勾一样） -->
       <view wx:if="{{ingredients.length}}" class="ings">
         <view
           wx:for="{{ingredients}}"
           wx:key="name"
-          class="ing"
+          class="ing tap-scale {{item.checked ? 'checked' : ''}}"
+          data-idx="{{index}}"
+          catchtap="toggleIng"
         >
           <view class="dotmark"></view>
           <text>{{item.label}}</text>

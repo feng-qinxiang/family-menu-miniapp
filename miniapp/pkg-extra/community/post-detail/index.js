@@ -51,18 +51,22 @@ function normalizePost(post) {
     commentCount: post.commentCount || 0,
     favorited: !!post.favorited,
     tags: Array.isArray(post.tags) ? post.tags : [],
-    recipe: post.recipe || null
+    recipe: post.recipe || null,
+    // 是否作者本人（作者才显示删帖入口）
+    mine: !!post.mine
   };
 }
 
 function normalizeComment(c) {
   return {
+    // 无真实 commentId 的兜底数据不可删（mine 也不会为 true）
     commentId: c.commentId || ('c-' + Math.random().toString(36).slice(2)),
     author: c.author || '匿名厨友',
     avaTheme: avaTheme(c.author),
     avaText: avaText(c.author),
     content: c.content || '',
-    createdAt: c.createdAt || '刚刚'
+    createdAt: c.createdAt || '刚刚',
+    mine: !!c.mine
   };
 }
 
@@ -96,16 +100,15 @@ Page({
   loadAll(postId) {
     this.setData({ loading: true, loadError: false });
     Promise.all([
-      api.getCommunityPosts().catch(() => []),
+      // 详情端点直取单帖；拉不到（已删/未过审/失效）与列表兜底失败同语义 → loadError
+      postId ? api.getCommunityPost(postId).catch(() => null) : Promise.resolve(null),
       postId ? api.getCommunityComments(postId).catch(() => []) : Promise.resolve([])
     ])
       // 禁用回调参数数组解构：编译依赖 @babel/runtime 辅助模块，未打包会整页白屏
       .then((loaded) => {
-        const posts = loaded[0];
+        const raw = loaded[0];
         const comments = loaded[1];
-        const list = Array.isArray(posts) ? posts : [];
-        const raw = list.find((p) => String(p.id) === String(postId)) || null;
-        // 找不到 = 帖子已删除/链接失效 → 走 loadError 空态，禁止静默换第一条
+        // 拿不到帖子 = 帖子已删除/链接失效 → 走 loadError 空态，禁止静默换第一条
         const post = normalizePost(raw);
         const cmts = (Array.isArray(comments) ? comments : []).map(normalizeComment);
         this.setData({
@@ -231,6 +234,64 @@ Page({
     wx.navigateTo({
       url: '/pkg-extra/recipe-detail/index?id=' + encodeURIComponent(recipe.id),
       fail: () => this.showToast('暂无法打开菜谱', 'error')
+    });
+  },
+
+  // 作者删自己的帖子：确认后软删，返回上一页（列表页 onShow 会自动刷新）
+  onDeletePost() {
+    if (!this.data.postId) return;
+    wx.showModal({
+      title: '删除这篇分享？',
+      content: '删除后其他人将无法看到，自己也不能恢复',
+      confirmText: '删除',
+      confirmColor: '#e8472a',
+      success: (res) => {
+        if (!res.confirm) return;
+        api
+          .deleteCommunityPost(this.data.postId)
+          .then(() => {
+            this.showToast('已删除', 'top');
+            setTimeout(() => {
+              const pages = getCurrentPages();
+              if (pages && pages.length > 1) {
+                wx.navigateBack({ delta: 1, fail: () => {} });
+              } else {
+                wx.switchTab({ url: '/pages/community/index', fail: () => {} });
+              }
+            }, 600);
+          })
+          .catch(() => this.showToast('删除失败，请重试', 'error'));
+      }
+    });
+  },
+
+  // 评论者删自己的评论：确认后软删，本地同步移除并回补计数
+  onDeleteComment(event) {
+    const commentId = event.currentTarget.dataset.commentId;
+    if (!commentId || /^c-/.test(String(commentId))) return;
+    wx.showModal({
+      title: '删除这条评论？',
+      content: '删除后不可恢复',
+      confirmText: '删除',
+      confirmColor: '#e8472a',
+      success: (res) => {
+        if (!res.confirm) return;
+        api
+          .deleteCommunityComment(this.data.postId, commentId)
+          .then(() => {
+            const post = this.data.post
+              ? Object.assign({}, this.data.post, {
+                  commentCount: Math.max(0, (this.data.post.commentCount || 0) - 1)
+                })
+              : this.data.post;
+            this.setData({
+              comments: this.data.comments.filter((c) => String(c.commentId) !== String(commentId)),
+              post
+            });
+            this.showToast('评论已删除', 'top');
+          })
+          .catch(() => this.showToast('删除失败，请重试', 'error'));
+      }
     });
   },
 

@@ -73,7 +73,9 @@ public final class ApiModels {
             /** 当前用户是否点过赞（每人每帖一次） */
             boolean liked,
             List<String> tags,
-            RecipeCard recipe
+            RecipeCard recipe,
+            /** 当前用户是否是作者（作者本人才显示删帖入口） */
+            boolean mine
     ) {
     }
 
@@ -82,7 +84,9 @@ public final class ApiModels {
             Long postId,
             String author,
             String content,
-            String createdAt
+            String createdAt,
+            /** 当前用户是否是评论者（作者本人才显示删评论入口） */
+            boolean mine
     ) {
     }
 

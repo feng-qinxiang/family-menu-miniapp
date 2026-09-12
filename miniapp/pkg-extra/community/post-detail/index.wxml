@@ -30,6 +30,7 @@
           <view class="aname ellipsis">{{post.author}}</view>
           <view class="atime ellipsis">{{post.authorMeta}}</view>
         </view>
+        <view wx:if="{{post.mine}}" class="adel tap-scale" catchtap="onDeletePost">删除</view>
       </view>
 
       <!-- 标题 -->
@@ -100,6 +101,12 @@
               <view class="crow">
                 <text class="cname ellipsis">{{item.author}}</text>
                 <text class="ctime">{{item.createdAt}}</text>
+                <text
+                  wx:if="{{item.mine}}"
+                  class="cdel tap-scale"
+                  catchtap="onDeleteComment"
+                  data-comment-id="{{item.commentId}}"
+                >删除</text>
               </view>
               <view class="ctext">{{item.content}}</view>
             </view>

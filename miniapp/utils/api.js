@@ -158,6 +158,26 @@ function getCommunityPosts() {
   return request('/api/community/posts', { silent: true });
 }
 
+// 帖子详情：分享/直达单帖用，不再拉全量信息流再 find
+function getCommunityPost(postId) {
+  return request(`/api/community/posts/${encodeURIComponent(postId)}`, { silent: true });
+}
+
+// 作者删自己的帖子（服务端软删为 REMOVED，与运营下架同语义）
+function deleteCommunityPost(postId) {
+  return requestStrict(`/api/community/posts/${encodeURIComponent(postId)}`, {
+    method: 'DELETE'
+  });
+}
+
+// 评论者删自己的评论（服务端软删）
+function deleteCommunityComment(postId, commentId) {
+  return requestStrict(
+    `/api/community/posts/${encodeURIComponent(postId)}/comments/${encodeURIComponent(commentId)}`,
+    { method: 'DELETE' }
+  );
+}
+
 function createCommunityPost(payload) {
   return requestStrict('/api/community/posts', {
     method: 'POST',
@@ -573,10 +593,13 @@ module.exports = {
   addPantryItem,
   addShoppingItem,
   createCommunityPost,
+  deleteCommunityPost,
+  deleteCommunityComment,
   deletePantryItem,
   deleteShoppingItem,
   generateWeeklyMenu,
   getCommunityPosts,
+  getCommunityPost,
   getCommunityComments,
   getMyFavorites,
   createFamily,

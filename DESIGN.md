@@ -34,6 +34,22 @@
 
 ## 变更历史
 
+### 2026-09-12 - 社区收尾（详情端点、作者删除、互动通知）与烹饪体验补全
+
+**变更内容**:
+
+1. **C 端帖子详情端点**：新增 `GET /api/community/posts/{id}`（公开可读，鉴权白名单沿用 `GET /api/community/posts/` 前缀规则）。可见性与信息流同规则——APPROVED 公开、PENDING 仅作者本人、REMOVED 一律按不存在（400）。帖子详情页改为直连该端点，不再拉全量信息流再 `find`，分享直达成立。`CommunityPost` / `CommunityCommentItem` 新增 `mine` 字段（三处查询 SQL 各加一列 `CASE WHEN author_user_id = ?`）。
+2. **作者删除**：`DELETE /api/community/posts/{id}`（作者本人，软删为 REMOVED，与运营下架同语义）、`DELETE /api/community/posts/{id}/comments/{commentId}`（评论者本人，软删 `deleted=1`，APPROVED 评论同步 `GREATEST(comment_count-1,0)` 回收计数）。详情页作者块与评论行各加「删除」入口（`mine` 才渲染），删帖后返回列表页靠 onShow 自动刷新。
+3. **互动通知**：`NotificationService.notifyUser`（单用户版，跨家庭场景；family_id 无家庭时哨兵 0）。他人点赞（仅在"新增点赞"这一跳）与公开评论（仅 APPROVED——PENDING 评论作者还看不见，不能提前打扰）时给帖主写 kind=com 站内信，通知页"去社区"按钮直达。
+4. **信息流护栏**：`communityPosts` 查询加 `LIMIT 100`（此前无上限）；分页留给真有量级时再加。
+5. **烹饪模式补全**（cook-mode）：食材清单可逐项点选勾账（纯本地状态，暗底下划线+变淡反馈）；步骤进度本地续做——`wx.storage` 按 recipeId 记录当前步，中途退出再进自动恢复并 toast 提示，完成时清除。
+
+**变更理由**: 用户反馈"点菜基本完善，但做菜和社区要补"。盘点后做菜链路（开做→分步→计时→评分→记录）此前已建成，本次补烹饪过程中的两个真实断点（备菜勾账、中断续做）；社区发帖/浏览/互动闭环已在，但详情页拉全量列表、作者无法删自己的内容、被赞被评无感知，属于上线前应还的账。
+
+**影响范围**: `HomeController`（+3 端点 + 通知接线）、`MysqlKitchenStore`（详情/删除/`mine`/LIMIT）、`NotificationService`（notifyUser）、`miniapp`（api.js +3 接口、post-detail 改造、cook-mode 食材勾选与进度续做）、`EndpointCoverageTests`（+3 用例）。
+
+**决策依据**: 删除走与运营处置相同的软删语义（REMOVED / deleted=1），行保留可审计；评论通知只对 APPROVED 发，避免作者收到看不见的评论提醒；烹饪进度用本地存储而非后端会话——单机单人的烹饪过程没有跨端需求，不值得加表。
+
 ### 2026-09-11 - 遗留项清零（点赞落地、死页清理、套餐单一数据源、后台菜谱详情）
 
 **变更内容**:

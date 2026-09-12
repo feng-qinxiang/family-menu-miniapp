@@ -327,3 +327,18 @@
   height: 360rpx;
   margin: 12rpx 0 28rpx;
 }
+
+/* ===== 作者/评论删除入口（仅 mine 可见） ===== */
+.adel {
+  flex: none;
+  font-size: var(--fs-cap);
+  color: var(--mut);
+  padding: 8rpx 4rpx 8rpx 20rpx;
+}
+.cdel {
+  flex: none;
+  margin-left: 8rpx;
+  font-size: var(--fs-mini);
+  color: var(--mut);
+  padding: 4rpx 0 4rpx 12rpx;
+}

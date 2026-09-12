@@ -227,6 +227,7 @@ public class MysqlKitchenStore {
                        COALESCE(fav.favorite_count, 0) AS favorite_count,
                        CASE WHEN my_fav.user_id IS NULL THEN 0 ELSE 1 END AS favorited,
                        CASE WHEN my_like.user_id IS NULL THEN 0 ELSE 1 END AS liked,
+                       CASE WHEN p.author_user_id = ? THEN 1 ELSE 0 END AS mine,
                        r.id AS recipe_id, r.title AS recipe_title, r.source_type, r.source_url, r.cuisine,
                        r.taste_tags_json, r.time_cost, r.servings, r.rating, r.summary, r.cover_image
                 FROM community_post p
@@ -241,6 +242,8 @@ public class MysqlKitchenStore {
                 LEFT JOIN community_post_like my_like ON my_like.post_id = p.id AND my_like.user_id = ?
                 WHERE p.audit_status = 'APPROVED' OR (p.audit_status = 'PENDING' AND p.author_user_id = ?)
                 ORDER BY p.like_count DESC, p.id DESC
+                -- LIMIT 护栏：信息流暂无分页，先限制单次查询规模（正常使用远够，分页留给后续需要时再加）
+                LIMIT 100
                 """;
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
             RecipeCard recipe = null;
@@ -273,9 +276,10 @@ public class MysqlKitchenStore {
                     rs.getBoolean("favorited"),
                     rs.getBoolean("liked"),
                     readStringList(rs.getString("tags_json")),
-                    recipe
+                    recipe,
+                    rs.getBoolean("mine")
             );
-        }, userId, userId, userId);
+        }, userId, userId, userId, userId);
     }
 
     public List<CommunityPost> myFavoritePosts(long userId) {
@@ -284,6 +288,7 @@ public class MysqlKitchenStore {
                        COALESCE(fav.favorite_count, 0) AS favorite_count,
                        1 AS favorited,
                        CASE WHEN my_like.user_id IS NULL THEN 0 ELSE 1 END AS liked,
+                       CASE WHEN p.author_user_id = ? THEN 1 ELSE 0 END AS mine,
                        r.id AS recipe_id, r.title AS recipe_title, r.source_type, r.source_url, r.cuisine,
                        r.taste_tags_json, r.time_cost, r.servings, r.rating, r.summary, r.cover_image
                 FROM community_post_favorite my_fav
@@ -330,9 +335,10 @@ public class MysqlKitchenStore {
                     true,
                     rs.getBoolean("liked"),
                     readStringList(rs.getString("tags_json")),
-                    recipe
+                    recipe,
+                    rs.getBoolean("mine")
             );
-        }, userId, userId);
+        }, userId, userId, userId);
     }
 
     @Transactional
@@ -366,7 +372,7 @@ public class MysqlKitchenStore {
 
     public List<CommunityCommentItem> communityComments(long postId, long viewerUserId) {
         return jdbcTemplate.query("""
-                        SELECT c.id, c.post_id, u.nickname AS author, c.content,
+                        SELECT c.id, c.post_id, c.user_id, u.nickname AS author, c.content,
                                DATE_FORMAT(c.created_at, '%Y-%m-%d %H:%i') AS created_at
                         FROM community_post_comment c
                         JOIN user_account u ON u.id = c.user_id
@@ -381,7 +387,8 @@ public class MysqlKitchenStore {
                         rs.getLong("post_id"),
                         rs.getString("author"),
                         rs.getString("content"),
-                        rs.getString("created_at")
+                        rs.getString("created_at"),
+                        viewerUserId != 0 && viewerUserId == rs.getLong("user_id")
                 ),
                 postId, viewerUserId
         );
@@ -410,7 +417,7 @@ public class MysqlKitchenStore {
             jdbcTemplate.update("UPDATE community_post SET comment_count = comment_count + 1 WHERE id = ?", postId);
         }
         return jdbcTemplate.queryForObject("""
-                        SELECT c.id, c.post_id, u.nickname AS author, c.content,
+                        SELECT c.id, c.post_id, c.user_id, u.nickname AS author, c.content,
                                DATE_FORMAT(c.created_at, '%Y-%m-%d %H:%i') AS created_at
                         FROM community_post_comment c
                         JOIN user_account u ON u.id = c.user_id
@@ -423,7 +430,8 @@ public class MysqlKitchenStore {
                         rs.getLong("post_id"),
                         rs.getString("author"),
                         rs.getString("content"),
-                        rs.getString("created_at")
+                        rs.getString("created_at"),
+                        userId == rs.getLong("user_id")
                 ),
                 postId
         );
@@ -1163,6 +1171,7 @@ public class MysqlKitchenStore {
                        COALESCE(fav.favorite_count, 0) AS favorite_count,
                        CASE WHEN my_fav.user_id IS NULL THEN 0 ELSE 1 END AS favorited,
                        CASE WHEN my_like.user_id IS NULL THEN 0 ELSE 1 END AS liked,
+                       CASE WHEN p.author_user_id = ? THEN 1 ELSE 0 END AS mine,
                        r.id AS recipe_id, r.title AS recipe_title, r.source_type, r.source_url, r.cuisine,
                        r.taste_tags_json, r.time_cost, r.servings, r.rating, r.summary, r.cover_image
                 FROM community_post p
@@ -1213,9 +1222,77 @@ public class MysqlKitchenStore {
                     rs.getBoolean("favorited"),
                     rs.getBoolean("liked"),
                     readStringList(rs.getString("tags_json")),
-                    recipe
+                    recipe,
+                    rs.getBoolean("mine")
             );
-        }, postId, userId, userId, postId);
+        }, userId, postId, userId, userId, postId);
+    }
+
+    public CommunityPostInfo communityPostInfo(long postId) {
+        return jdbcTemplate.query("""
+                        SELECT p.author_user_id, p.title, p.audit_status,
+                               (SELECT fm.family_id FROM family_member fm
+                                WHERE fm.user_id = p.author_user_id AND fm.member_status = 'ACTIVE'
+                                LIMIT 1) AS family_id
+                        FROM community_post p
+                        WHERE p.id = ?
+                        """,
+                rs -> rs.next()
+                        ? new CommunityPostInfo(rs.getLong("author_user_id"), rs.getLong("family_id"),
+                                rs.getString("title"), rs.getString("audit_status"))
+                        : null,
+                postId
+        );
+    }
+
+    /** 帖子归属信息：作者/作者家庭/标题/审核状态（详情可见性与互动通知共用）。 */
+    public record CommunityPostInfo(long authorUserId, long familyId, String title, String auditStatus) {
+    }
+
+    /**
+     * C 端帖子详情：APPROVED 公开可见；PENDING 仅作者本人（与信息流同规则）；
+     * REMOVED（运营下架 / 作者删除）一律不可见。不可见与不存在同语义，统一按 not found 抛出。
+     */
+    public CommunityPost communityPostDetail(long postId, long userId) {
+        CommunityPostInfo info = communityPostInfo(postId);
+        boolean visible = info != null && (
+                ContentSecurityService.STATUS_APPROVED.equals(info.auditStatus())
+                        || (ContentSecurityService.STATUS_PENDING.equals(info.auditStatus())
+                                && info.authorUserId() == userId));
+        if (!visible) {
+            throw new IllegalArgumentException("community post not found");
+        }
+        return loadCommunityPostById(postId, userId);
+    }
+
+    /** 作者删帖：与运营下架同走 REMOVED，信息流/详情立即不可见，行保留供审计。 */
+    public void deleteCommunityPost(long postId, long userId) {
+        int updated = jdbcTemplate.update(
+                "UPDATE community_post SET audit_status = 'REMOVED' WHERE id = ? AND author_user_id = ? AND audit_status <> 'REMOVED'",
+                postId, userId
+        );
+        if (updated == 0) {
+            throw new IllegalArgumentException("community post not found or not yours");
+        }
+    }
+
+    /** 评论者删自己的评论：软删（与后台删除同列，可恢复），曾计入计数的公开评论同步回收 comment_count。 */
+    @Transactional
+    public void deleteCommunityComment(long postId, long commentId, long userId) {
+        List<String> statuses = jdbcTemplate.queryForList(
+                "SELECT audit_status FROM community_post_comment WHERE id = ? AND post_id = ? AND user_id = ? AND deleted = 0",
+                String.class, commentId, postId, userId
+        );
+        if (statuses.isEmpty()) {
+            throw new IllegalArgumentException("comment not found or not yours");
+        }
+        jdbcTemplate.update("UPDATE community_post_comment SET deleted = 1 WHERE id = ?", commentId);
+        if (ContentSecurityService.STATUS_APPROVED.equals(statuses.get(0))) {
+            jdbcTemplate.update(
+                    "UPDATE community_post SET comment_count = GREATEST(comment_count - 1, 0) WHERE id = ?",
+                    postId
+            );
+        }
     }
 
     private void ensureCommunityPostExists(long postId) {
