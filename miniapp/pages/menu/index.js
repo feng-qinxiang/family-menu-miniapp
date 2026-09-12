@@ -11,6 +11,7 @@ const {
   announceMeal
 } = require('../../utils/api');
 const { mealTypeLabels, mealOrder } = require('../../utils/constants');
+const { animateNumber, stopNumberAnim } = require('../../utils/count-up');
 const { fallbackDishImg, recipeDishImg, LOCAL_DISHES } = require('../../utils/image');
 const { runGuarded } = require('../../utils/interaction');
 const subscribe = require('../../utils/subscribe');
@@ -82,7 +83,8 @@ Page({
     weeklyDays: [],
     loading: true,
     loadError: '',
-    heroMetaTop: '91px'
+    heroMetaTop: '91px',
+    statusBarHeight: 0
   },
 
   onLoad() {
@@ -212,6 +214,10 @@ Page({
         loading: false,
         loadError: ''
       });
+      // 统计数字 count-up（600ms cubic-out）；0 值直接落定走 '--' 占位
+      animateNumber(this, 'totalCount', totalCount);
+      animateNumber(this, 'totalTime', totalTime);
+      animateNumber(this, 'totalServings', maxServings);
       this.checkAllDone(items);
     } catch (err) {
       console.error('menu loadData failed', err);

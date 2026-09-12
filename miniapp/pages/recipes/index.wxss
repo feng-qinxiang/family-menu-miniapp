@@ -24,20 +24,20 @@
   position: absolute; top: calc(env(safe-area-inset-top) + 90rpx); left: 46rpx; right: 96px; z-index: 10;
   display: flex; align-items: center; justify-content: space-between;
 }
-.rx-hi { font-size: var(--fs-cap); letter-spacing: 4rpx; text-transform: uppercase; opacity: .85; font-weight: 700; color: var(--c-surface); }
-.rx-name { font-size: 32rpx; font-weight: 600; margin-top: 6rpx; color: var(--c-surface); }
+.rx-hi { font-size: var(--fs-cap); letter-spacing: 4rpx; text-transform: uppercase; opacity: .85; font-weight: 700; color: var(--anchor-contrast); }
+.rx-name { font-size: 32rpx; font-weight: 600; margin-top: 6rpx; color: var(--anchor-contrast); }
 .rx-create {
   flex: none; display: flex; align-items: center; gap: 8rpx;
-  background: var(--pop); color: var(--c-surface); font-size: var(--fs-sub); font-weight: 800;
+  background: var(--pop); color: var(--anchor-contrast); font-size: var(--fs-sub); font-weight: 800;
   padding: 18rpx 28rpx; border-radius: var(--r-pill);
   box-shadow: 0 2rpx 4rpx rgba(180,40,20,.3), var(--sh-pop);
 }
 .rx-create-plus { font-size: 32rpx; font-weight: 700; line-height: 1; }
-.rx-hero-body { position: absolute; left: 46rpx; right: 46rpx; bottom: var(--hero-body-above-sheet); z-index: 10; color: var(--c-surface); }
+.rx-hero-body { position: absolute; left: 46rpx; right: 46rpx; bottom: var(--hero-body-above-sheet); z-index: 10; color: var(--anchor-contrast); }
 .rx-tag {
   display: inline-block; font-family: var(--serif); font-style: italic;
   font-size: var(--fs-cap); letter-spacing: 2rpx; font-weight: 700;
-  color: var(--c-surface); background: var(--pop); padding: 10rpx 26rpx; border-radius: var(--r-xs);
+  color: var(--anchor-contrast); background: var(--pop); padding: 10rpx 26rpx; border-radius: var(--r-xs);
 }
 .rx-hero-title {
   font-size: var(--fs-hero-lg); line-height: 1; letter-spacing: -4rpx;
@@ -46,7 +46,7 @@
 .rx-hero-sub { font-size: var(--fs-cap); color: rgba(255,255,255,.85); font-weight: 400; }
 .rx-hero-meta { display: flex; gap: 14rpx; margin-top: 8rpx; flex-wrap: wrap; }
 .rx-m {
-  font-size: var(--fs-mini); font-weight: 600; color: var(--c-surface);
+  font-size: var(--fs-mini); font-weight: 600; color: var(--anchor-contrast);
   background: rgba(255,255,255,.16); padding: 10rpx 22rpx; border-radius: var(--r-pill);
 }
 /* ===== SHEET ===== */
@@ -189,7 +189,7 @@
 .rx-qf-chips { display: flex; flex-wrap: wrap; gap: 14rpx; }
 .rx-qf-scroll { white-space: nowrap; }
 .rx-qf-chip { font-size: var(--fs-cap); font-weight: 700; color: var(--mut); padding: 12rpx var(--r-md); border-radius: var(--r-pill); background: var(--paper-2); }
-.rx-qf-chip.on { background: var(--pop); color: var(--c-surface); }
+.rx-qf-chip.on { background: var(--pop); color: var(--anchor-contrast); }
 .rx-qf-reset {
   margin-top: 16rpx;
   padding: 10rpx;
@@ -233,13 +233,13 @@
 .rx-tray {
   position: fixed; left: 32rpx; right: 32rpx; bottom: calc(env(safe-area-inset-bottom) + 148rpx); z-index: 52;
   display: flex; align-items: center; gap: 22rpx;
-  background: var(--ink-deep); border-radius: 38rpx; padding: 22rpx 26rpx;
-  color: var(--paper); box-shadow: 0 24rpx 60rpx rgba(40,28,18,.4);
+  background: var(--anchor); border-radius: 38rpx; padding: 22rpx 26rpx;
+  color: var(--anchor-contrast); box-shadow: 0 24rpx 60rpx rgba(40,28,18,.4);
 }
 .rx-tray-badge {
   flex: none; width: 80rpx; height: 80rpx; border-radius: 26rpx; background: var(--pop);
   display: flex; align-items: center; justify-content: center;
-  font-size: 36rpx; font-weight: 900; color: var(--c-surface); box-shadow: var(--sh-pop);
+  font-size: 36rpx; font-weight: 900; color: var(--anchor-contrast); box-shadow: var(--sh-pop);
 }
 .rx-tray-copy { flex: 1; min-width: 0; }
 .rx-tray-t { font-size: var(--fs-cap); font-weight: 800; }
@@ -250,7 +250,7 @@
 }
 .rx-tray-go {
   flex: none; display: flex; align-items: center; gap: 10rpx;
-  background: var(--pop); color: var(--c-surface); font-size: var(--fs-sub); font-weight: 800;
+  background: var(--pop); color: var(--anchor-contrast); font-size: var(--fs-sub); font-weight: 800;
   padding: 20rpx 28rpx; border-radius: var(--r-pill);
 }
 .rx-tray-arrow {

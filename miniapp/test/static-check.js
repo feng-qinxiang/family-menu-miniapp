@@ -206,6 +206,30 @@ for (const file of files) {
   }
 }
 
+// ---- 7. 数组解构语法（整页白屏级事故，已发生 15+ 页）----
+// 数组解构编译后依赖 @babel/runtime 辅助模块（arrayWithHoles 等），项目未打包该运行时，
+// 页面 JS 一加载即崩、整页白屏且无错误 UI。三种形式全部禁止，一律改下标取值：
+//   const [a, b] = x  ｜  [a, b] = x（赋值式）  ｜  .then(([a, b]) => {})（回调参数）
+const DESTRUCTURE_RULES = [
+  { re: /(?:^|[^.\w$])(?:const|let|var)\s*\[[a-zA-Z_$][^[\];]*\]\s*=/, form: '声明式解构' },
+  { re: /(?:^|[^\w$.\])'])\s*\[[a-zA-Z_$][^[\];]*\]\s*=(?!=)/m, form: '赋值式解构' },
+  { re: /\(\s*\[[a-zA-Z_$][^[\]);]*\]\s*\)\s*=>/, form: '箭头函数参数解构' },
+  { re: /\bfunction\s*[a-zA-Z_$][\w$]*\s*\(\s*\[[a-zA-Z_$]/, form: '函数参数解构' },
+];
+for (const file of files) {
+  if (!file.endsWith('.js')) continue;
+  if (rel(file).startsWith('test/')) continue;   // test/ 是 Node 侧脚本，不进小程序运行时
+  const src = fs.readFileSync(file, 'utf8');
+  for (const rule of DESTRUCTURE_RULES) {
+    const m = rule.re.exec(src);
+    if (m) {
+      const line = src.slice(0, m.index).split('\n').length;
+      problems.push(`数组解构语法 ${rel(file)}:${line}（${rule.form}）—— 编译依赖 @babel/runtime（未打包），会整页白屏，请改下标取值`);
+      break;
+    }
+  }
+}
+
 console.log(`检查了 ${files.length} 个文件`);
 if (problems.length) {
   console.error(`\n✘ 发现 ${problems.length} 个问题：`);

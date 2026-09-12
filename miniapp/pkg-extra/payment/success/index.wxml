@@ -1,7 +1,7 @@
 <!-- pages/payment/success/index · 开通成功页 -->
 <nav-bar title="开通成功" show-back="{{true}}"></nav-bar>
 
-<view class="ps-wrap safe-bottom">
+<view class="ps-wrap safe-bottom {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <!-- 成功徽章 + 金光晕 -->
   <view class="ps-badge g-scale-in g-d1">
     <view class="ps-badge-ring"></view>

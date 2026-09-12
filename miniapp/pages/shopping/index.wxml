@@ -83,7 +83,7 @@
           <text class="mkt-gcount">{{group.items.length}} 样</text>
         </view>
 
-        <view class="tap-scale mkt-item g-fade-up g-d{{idx % 5 + 1}}" wx:for="{{group.items}}" wx:for-item="food" wx:for-index="idx" wx:key="itemId" data-id="{{food.itemId}}" data-purchased="{{food.purchased}}" bindtap="toggleItem">
+        <view class="tap-scale mkt-item {{revealOn ? (reveal[group.key + '-' + idx] ? 'g-fade-up' : 'rv-hold') : 'g-fade-up g-d' + (idx % 5 + 1)}}" data-rv="{{group.key + '-' + idx}}" wx:for="{{group.items}}" wx:for-item="food" wx:for-index="idx" wx:key="itemId" data-id="{{food.itemId}}" data-purchased="{{food.purchased}}" bindtap="toggleItem">
           <view class="mkt-check"></view>
           <image wx:if="{{food.cover}}" class="mkt-thumb" src="{{food.cover}}" mode="aspectFill" />
           <view wx:else class="mkt-thumb mkt-thumb--letter {{food.categoryKey}}">{{food.initial}}</view>

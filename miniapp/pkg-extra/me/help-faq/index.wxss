@@ -135,8 +135,8 @@
   background: var(--pop);
 }
 .item.open .caret-arrow {
-  border-right-color: var(--c-surface);
-  border-bottom-color: var(--c-surface);
+  border-right-color: var(--anchor-contrast);
+  border-bottom-color: var(--anchor-contrast);
 }
 
 /* 展开区 max-height 过渡 */
@@ -222,7 +222,7 @@
   font-size: 42rpx;
   font-weight: 900;
   letter-spacing: -1rpx;
-  color: var(--paper);
+  color: var(--anchor-contrast);
 }
 .contact-p {
   display: block;

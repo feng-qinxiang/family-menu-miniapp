@@ -1,5 +1,5 @@
 <!-- pages/community/post-detail · 帖子详情 -->
-<view class="page">
+<view class="page {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <nav-bar title="帖子详情" show-back="{{true}}"></nav-bar>
   <!-- 加载中骨架 -->
   <view wx:if="{{loading}}" class="loading">

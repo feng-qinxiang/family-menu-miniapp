@@ -30,7 +30,7 @@
   border: 4rpx solid rgba(232, 71, 42, 0.25);
 }
 .ps-badge-check {
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   font-size: 92rpx;
   font-weight: 900;
   line-height: 1;
@@ -63,7 +63,7 @@
   margin-top: 30rpx;
   padding: 14rpx 30rpx;
   border-radius: var(--r-pill);
-  background: var(--ink-deep);
+  background: var(--anchor);
   color: var(--gold);
   font-family: var(--serif);
   font-style: italic;

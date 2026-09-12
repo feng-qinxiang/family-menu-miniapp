@@ -43,14 +43,14 @@
   font-size: var(--fs-sub);
   letter-spacing: 1rpx;
   font-weight: 600;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   text-shadow: 0 2rpx 10rpx rgba(20, 14, 8, 0.65);
 }
 .mh-name {
   font-size: 32rpx;
   font-weight: 600;
   margin-top: 6rpx;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   text-shadow: 0 2rpx 10rpx rgba(20, 14, 8, 0.65);
 }
 .mh-iconbtns { display: flex; gap: 18rpx; }
@@ -82,7 +82,7 @@
 .mh-ico-glyph {
   font-size: 26rpx;
   font-weight: 800;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   line-height: 26rpx;
   height: 26rpx;
   display: block;
@@ -95,14 +95,14 @@
   right: 46rpx;
   bottom: 40rpx;
   z-index: 10;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
 }
 .mh-pill-tag {
   display: inline-block;
   font-size: var(--fs-cap);
   letter-spacing: 1rpx;
   font-weight: 700;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   background: var(--pop);
   padding: 8rpx 22rpx;
   border-radius: var(--r-pill);
@@ -115,7 +115,7 @@
   line-height: 0.98;
   letter-spacing: -3rpx;
   margin: 12rpx 0 8rpx;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   text-shadow: 0 4rpx 24rpx rgba(20, 14, 8, 0.55);
   white-space: nowrap;   /* 长菜名不换行，靠分档缩字号（t6/t7/t9/t11）兜住 */
 }
@@ -177,7 +177,7 @@
   height: 88rpx;
   border-radius: var(--r-pill);
   background: var(--pop);
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   font-size: 29rpx;
   font-weight: 800;
   box-shadow: var(--sh-pop);
@@ -199,7 +199,7 @@
 .mh-shuffle-tx {
   font-size: 26rpx;
   font-weight: 700;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   letter-spacing: 1rpx;
 }
 .mh-ico-shuffle {
@@ -347,7 +347,7 @@
   font-weight: 900;
   margin-top: 10rpx;
   letter-spacing: -1rpx;
-  color: var(--paper);
+  color: var(--anchor-contrast);
 }
 .mh-mc-names {
   position: relative;
@@ -391,7 +391,7 @@
 .mh-mc-num {
   font-size: 46rpx;
   font-weight: 900;
-  color: var(--paper);
+  color: var(--anchor-contrast);
   line-height: 1;
 }
 .mh-mc-u {
@@ -411,7 +411,7 @@
   align-items: center;
   gap: 8rpx;
   background: var(--pop);
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   font-size: 26rpx;
   font-weight: 800;
   padding: 22rpx 36rpx;
@@ -456,9 +456,9 @@
   border-radius: var(--r-pill);
 }
 .fp-slot.on {
-  color: var(--c-surface);
-  background: var(--ink-deep);
-  border-color: var(--ink-deep);
+  color: var(--anchor-contrast);
+  background: var(--anchor);
+  border-color: var(--anchor);
 }
 .fp-slot-week {
   flex: none;
@@ -521,7 +521,7 @@
   align-items: center;
   border-radius: var(--r-pill);
   background: var(--pop);
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   font-size: 24rpx;
   font-weight: 800;
   box-shadow: var(--sh-pop);
@@ -575,8 +575,8 @@
   min-height: 88rpx;
   padding: 12rpx 24rpx;
   border-radius: var(--r-pill);
-  background: var(--ink-deep);
-  color: var(--c-surface);
+  background: var(--anchor);
+  color: var(--anchor-contrast);
   font-size: 28rpx;
   font-weight: 800;
   line-height: 1.4;
@@ -586,7 +586,7 @@
 }
 .fp-wish-confirm.disabled {
   background: var(--line-deep);
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   box-shadow: none;
 }
 /* 空态引导：许愿池为空时，弱化为虚线引导框，避免误导点击 */
@@ -604,7 +604,7 @@
   overflow: visible;
   position: relative;
   padding: calc(env(safe-area-inset-top) + 48rpx) 36rpx 56rpx;
-  background: var(--ink-deep);
+  background: var(--anchor);
 }
 .mh-hero--empty .mh-hero-img,
 .mh-hero--empty .mh-hero-shade { display: none; }
@@ -622,7 +622,7 @@
   font-size: 24rpx;
 }
 .mh-hero--empty .mh-greet .mh-name {
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   font-size: 32rpx;
   font-weight: 700;
 }
@@ -638,7 +638,7 @@
 .mh-empty-headline {
   font-size: 56rpx;
   font-weight: 900;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   line-height: 1.15;
   letter-spacing: -2rpx;
   margin-bottom: 16rpx;
@@ -660,7 +660,7 @@
   padding: 20rpx 44rpx;
   border-radius: var(--r-pill);
   background: var(--pop);
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   font-size: 28rpx;
   font-weight: 800;
   box-shadow: var(--sh-pop);
@@ -690,6 +690,23 @@
   --sh-pop: 0 6rpx 16rpx rgba(232, 71, 42, 0.22);
   --fs-cap: 23rpx;
 }
+/* 深色模式副本：root-portal 不继承 page 变量，dark 值取 theme.json dark 段 */
+.wish-backdrop.is-dark,
+.wish-modal.is-dark {
+  --pop: #ff6a4d;
+  --pop-soft: #3a2218;
+  --pop-deep: #d94b30;
+  --ink: #efefef;
+  --mut: #9a9a96;
+  --mut-2: #757570;
+  --mut-strong: #c4c0b8;
+  --paper-2: #262626;
+  --c-surface: #242424;
+  --line: #333333;
+  --line-light: #333333;
+  --sh-pop: 0 6rpx 16rpx rgba(0, 0, 0, 0.45);
+}
+
 .wish-backdrop {
   position: fixed;
   top: 0;
@@ -777,7 +794,7 @@
   justify-content: center;
 }
 .wish-btn-cancel { background: var(--paper-2); color: var(--ink-deep); }
-.wish-btn-ok { background: var(--pop); color: var(--c-surface); box-shadow: 0 4rpx 8rpx rgba(180, 40, 20, 0.3), 0 20rpx 44rpx rgba(232, 71, 42, 0.4); }
+.wish-btn-ok { background: var(--pop); color: var(--anchor-contrast); box-shadow: 0 4rpx 8rpx rgba(180, 40, 20, 0.3), 0 20rpx 44rpx rgba(232, 71, 42, 0.4); }
 .wish-btn-ok.off { opacity: 0.4; }
 
 /* ============ SKELETON ============ */
@@ -899,7 +916,7 @@
   justify-content: center;
   border-radius: var(--r-pill);
   background: var(--pop);
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   font-size: var(--fs-btn);
   font-weight: 800;
   box-shadow: var(--sh-pop);

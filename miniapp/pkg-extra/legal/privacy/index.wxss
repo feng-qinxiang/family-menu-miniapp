@@ -56,7 +56,7 @@
   font-family: var(--serif);
   font-size: 26rpx;
   font-weight: 700;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   background: var(--pop);
   box-shadow: var(--sh-pop);
   width: 58rpx;
@@ -246,7 +246,7 @@
 .ft-mail {
   display: inline-block;
   margin-top: 14rpx;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   font-weight: 800;
   font-size: var(--fs-cap);
 }

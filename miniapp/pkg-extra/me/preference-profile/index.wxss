@@ -63,7 +63,7 @@
 .ov-n {
   font-size: 54rpx;
   font-weight: 900;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   letter-spacing: -2rpx;
   line-height: 1.05;
 }
@@ -132,7 +132,7 @@
   font-size: 48rpx;
   padding: 25rpx 38rpx;
   background: var(--pop);
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   box-shadow: var(--sh-pop);
 }
 .tcl-lg {
@@ -144,8 +144,8 @@
 .tcl-md {
   font-size: 32rpx;
   padding: 17rpx 29rpx;
-  background: var(--ink-deep);
-  color: var(--paper);
+  background: var(--anchor);
+  color: var(--anchor-contrast);
 }
 .tcl-sm {
   font-size: var(--fs-cap);
@@ -223,7 +223,7 @@
 .note-star {
   width: 28rpx;
   height: 28rpx;
-  background: var(--ink-deep);
+  background: var(--anchor);
   /* 五角星 clip-path 兜底为菱形也可读 */
   clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
 }

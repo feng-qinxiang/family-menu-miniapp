@@ -17,7 +17,7 @@
   z-index: 60;
 }
 .mkt-nav .navbar-title {
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.35);
 }
 .mkt-nav .navbar-back {
@@ -25,8 +25,8 @@
   border: 2rpx solid rgba(255, 255, 255, 0.24);
 }
 .mkt-nav .navbar-back-icon {
-  border-left-color: var(--c-surface);
-  border-bottom-color: var(--c-surface);
+  border-left-color: var(--anchor-contrast);
+  border-bottom-color: var(--anchor-contrast);
 }
 .mkt-nav--solid {
   background: var(--paper);
@@ -36,12 +36,12 @@
   text-shadow: none;
 }
 .mkt-nav--solid .navbar-back {
-  background: var(--ink-deep);
+  background: var(--anchor);
   border-color: transparent;
 }
 .mkt-nav--solid .navbar-back-icon {
-  border-left-color: var(--paper);
-  border-bottom-color: var(--paper);
+  border-left-color: var(--anchor-contrast);
+  border-bottom-color: var(--anchor-contrast);
 }
 
 /* ============ HERO ============ */
@@ -97,7 +97,7 @@
   font-size: var(--fs-cap);
   letter-spacing: 2rpx;
   font-weight: 700;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   background: var(--pop);
   padding: 10rpx 26rpx;
   border-radius: var(--r-xs);
@@ -156,7 +156,7 @@
   font-weight: 900;
   letter-spacing: -2rpx;
   line-height: 1;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
 }
 .mkt-ring-txt .cap {
   font-size: 20rpx;
@@ -341,7 +341,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   font-size: 40rpx;
   font-weight: 700;
   line-height: 1;
@@ -362,8 +362,8 @@
   flex: none;
   font-size: 26rpx;
   font-weight: 800;
-  color: var(--c-surface);
-  background: var(--ink-deep);
+  color: var(--anchor-contrast);
+  background: var(--anchor);
   padding: 20rpx 30rpx;
   border-radius: var(--r-md);
 }
@@ -420,8 +420,8 @@
   border-radius: var(--r-pill);
 }
 .sp-seg-item.on {
-  background: var(--ink-deep);
-  color: var(--c-surface);
+  background: var(--anchor);
+  color: var(--anchor-contrast);
 }
 
 /* 库存视图 */
@@ -467,8 +467,8 @@
   margin-top: 24rpx;
   height: 88rpx;
   border-radius: var(--r-pill);
-  background: var(--ink-deep);
-  color: var(--c-surface);
+  background: var(--anchor);
+  color: var(--anchor-contrast);
   font-size: var(--fs-cap);
   font-weight: 800;
   display: flex; align-items: center; justify-content: center;

@@ -27,6 +27,10 @@ Page({
   },
 
   async onLoad(query) {
+  // 大字模式档位：进页读取（设置页改完回来重进生效）
+  let fontScale = 'normal';
+  try { fontScale = wx.getStorageSync('font_scale') || 'normal'; } catch (e) { fontScale = 'normal'; }
+  if (fontScale !== this.data.fontScale) this.setData({ fontScale });
     const key = (query && query.plan === 'monthly') ? 'monthly' : 'yearly';
     // 先用本地兜底出首屏，再用后端权威套餐覆盖
     this._plans = fallbackPlans();

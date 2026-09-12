@@ -1,5 +1,5 @@
 <!-- pages/vip/orders · 我的订单（开通记录）二级页 -->
-<view class="ord-page">
+<view class="ord-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <nav-bar title="我的订单" status-bar-height="{{statusBarHeight}}"></nav-bar>
 
   <scroll-view scroll-y class="page">

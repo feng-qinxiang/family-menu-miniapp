@@ -1,5 +1,5 @@
 <!-- pages/vip/upgrade · 开通家庭同步会员 -->
-<view class="vu-page">
+<view class="vu-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <nav-bar title="开通家庭同步" status-bar-height="{{statusBarHeight}}"></nav-bar>
 
   <scroll-view class="vu-scroll" scroll-y="true">

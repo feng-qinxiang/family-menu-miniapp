@@ -16,7 +16,7 @@
   z-index: 60;
 }
 .cl-nav .navbar-title {
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.35);
 }
 .cl-nav .navbar-back {
@@ -24,8 +24,8 @@
   border: 2rpx solid rgba(255, 255, 255, 0.24);
 }
 .cl-nav .navbar-back-icon {
-  border-left-color: var(--c-surface);
-  border-bottom-color: var(--c-surface);
+  border-left-color: var(--anchor-contrast);
+  border-bottom-color: var(--anchor-contrast);
 }
 
 .cl-scroll {
@@ -72,7 +72,7 @@
   right: 46rpx;
   bottom: var(--hero-body-above-sheet);
   z-index: 10;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
 }
 .hero-tag {
   display: inline-block;
@@ -81,7 +81,7 @@
   font-size: var(--fs-cap);
   letter-spacing: 3rpx;
   font-weight: 700;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   background: var(--pop);
   padding: 11rpx 27rpx;
   border-radius: var(--r-xs);
@@ -109,7 +109,7 @@
 .ach .num {
   font-size: 58rpx;
   font-weight: 900;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   letter-spacing: -3rpx;
   line-height: 1;
 }
@@ -156,7 +156,7 @@
   position: relative;
   z-index: 1;
 }
-.cal-top .ct { font-size: var(--fs-sub); font-weight: 800; color: var(--c-surface); }
+.cal-top .ct { font-size: var(--fs-sub); font-weight: 800; color: var(--anchor-contrast); }
 .cal-top .cs {
   font-family: var(--serif);
   font-style: italic;
@@ -194,7 +194,7 @@
 }
 .cal-day.done .dd {
   background: var(--pop);
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   box-shadow: 0 8rpx 20rpx rgba(232, 71, 42, 0.4);
 }
 .cal-day.today .dd {
@@ -209,7 +209,7 @@
 .cal-day.miss:active .dd {
   background: rgba(232, 71, 42, 0.16);
   border-color: var(--pop);
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
 }
 .cal-day .fix {
   font-size: 17rpx;
@@ -229,7 +229,7 @@
   width: 36rpx;
   height: 36rpx;
   border-radius: 50%;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   font-size: 18rpx;
   font-weight: 800;
   display: flex;
@@ -298,7 +298,7 @@
   font-size: 18rpx;
   font-weight: 800;
   letter-spacing: 1rpx;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   background: rgba(40, 30, 20, 0.62);
   padding: 5rpx 13rpx;
   border-radius: 10rpx;
@@ -335,7 +335,7 @@
   width: 42rpx;
   height: 42rpx;
   border-radius: 50%;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   font-size: 20rpx;
   font-weight: 800;
   display: flex;

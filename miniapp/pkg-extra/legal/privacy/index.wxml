@@ -1,7 +1,7 @@
 <!-- pages/legal/privacy · 隐私政策（静态二级页）-->
 <nav-bar title="隐私政策" show-back="{{true}}" status-bar-height="{{statusBarHeight}}"></nav-bar>
 
-<view class="page">
+<view class="page {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <view class="body">
     <!-- Hero -->
     <view class="eyebrow eyebrow-serif g-fade-up">隐私政策</view>

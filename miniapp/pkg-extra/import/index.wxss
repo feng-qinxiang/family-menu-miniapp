@@ -16,9 +16,9 @@
   right: 0;
   z-index: 60;
 }
-.imp-nav .navbar-title { color: var(--c-surface); text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.35); }
+.imp-nav .navbar-title { color: var(--anchor-contrast); text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.35); }
 .imp-nav .navbar-back { background: rgba(255, 255, 255, 0.18); }
-.imp-nav .navbar-back-icon { border-color: var(--c-surface); }
+.imp-nav .navbar-back-icon { border-color: var(--anchor-contrast); }
 
 /* ============ HERO ============ */
 /* 与全站照片头统一高度，勿再单独写 560rpx */
@@ -55,7 +55,7 @@
   right: 46rpx;
   bottom: 100rpx;
   z-index: 5;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
 }
 .imp-tag {
   display: inline-block;
@@ -64,7 +64,7 @@
   font-size: var(--fs-cap);
   letter-spacing: 2rpx;
   font-weight: 700;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   background: var(--pop);
   padding: 8rpx 22rpx;
   border-radius: var(--r-xs);
@@ -111,9 +111,9 @@
   position: relative;
   overflow: hidden;
   flex: 1;
-  background: var(--ink-deep);
+  background: var(--anchor);
   border-color: var(--ink-deep);
-  color: var(--paper);
+  color: var(--anchor-contrast);
 }
 .imp-method.on {
   border-color: var(--pop);
@@ -149,7 +149,7 @@
   margin-top: 20rpx;
   letter-spacing: -0.5rpx;
 }
-.imp-method-main .m-name { color: var(--paper); }
+.imp-method-main .m-name { color: var(--anchor-contrast); }
 .m-desc {
   position: relative;
   z-index: 2;
@@ -167,7 +167,7 @@
   font-style: italic;
   font-size: 20rpx;
   font-weight: 700;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   background: var(--pop);
   padding: 5rpx 16rpx;
   border-radius: var(--r-xs);
@@ -294,7 +294,7 @@
   align-items: center;
   gap: 10rpx;
   background: var(--pop);
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   font-size: var(--fs-cap);
   font-weight: 800;
   padding: 0 40rpx;
@@ -345,7 +345,7 @@
   align-items: center;
   justify-content: center;
   background: rgba(44, 36, 27, 0.55);
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   font-size: 24rpx;
   font-weight: 700;
 }
@@ -357,7 +357,7 @@
   height: 40rpx;
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.5);
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   /* 触控热区 88rpx（视觉仍是 40rpx 的圆） */
   position: absolute;
   font-size: 28rpx;
@@ -371,7 +371,7 @@
   font-style: italic;
   font-size: 20rpx;
   font-weight: 700;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   background: var(--pop);
   padding: 5rpx 16rpx;
   border-radius: var(--r-xs);
@@ -417,7 +417,7 @@
 
 .diff-row { display: flex; gap: 16rpx; margin-top: 20rpx; }
 .diff-chip { flex: 1; justify-content: center; }
-.diff-chip.on { background: var(--pop); color: var(--c-surface); border-color: var(--pop); }
+.diff-chip.on { background: var(--pop); color: var(--anchor-contrast); border-color: var(--pop); }
 
 .ing-grid { display: flex; flex-wrap: wrap; gap: 16rpx; margin-top: 22rpx; }
 .ing {
@@ -435,7 +435,7 @@
   width: 50rpx;
   height: 50rpx;
   border-radius: var(--r-sm);
-  background: var(--ink-deep);
+  background: var(--anchor);
   color: var(--gold);
   font-size: var(--fs-sub);
   font-weight: 800;
@@ -478,7 +478,7 @@
   height: 36rpx;
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.5);
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   font-size: 26rpx;
   line-height: 36rpx;
   text-align: center;

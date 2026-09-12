@@ -10,6 +10,7 @@ const {
 
 const { recipeDishImg } = require('../../utils/image');
 const { withTabSelect } = require('../../behaviors/tab-select');
+const { withScrollReveal } = require('../../behaviors/scroll-reveal');
 const features = require('../../utils/features');
 
 const memberTones = ['mavt-a', 'mavt-b', 'mavt-c', 'mavt-d', 'mavt-e'];
@@ -147,7 +148,7 @@ Page({
         favoriteCuisine,
         loading: false,
         loadError: ''
-      });
+      }, () => withScrollReveal(this, { item: '.mag-hrow' }));
     } catch (err) {
       console.error('me loadProfile failed', err);
       this.setData({ loading: false, loadError: (err && err.message) || '网络不太好，稍后再试' });

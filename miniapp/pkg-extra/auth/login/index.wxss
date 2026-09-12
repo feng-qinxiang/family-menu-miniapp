@@ -64,11 +64,11 @@
   box-shadow: var(--sh-pop);
 }
 .brandbar .logo-glyph {
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   font-size: 38rpx;
   font-weight: 900;
 }
-.brandbar .bt { color: var(--c-surface); display: flex; flex-direction: column; }
+.brandbar .bt { color: var(--anchor-contrast); display: flex; flex-direction: column; }
 .brandbar .bt .en {
   font-family: var(--serif);
   font-style: italic;
@@ -90,7 +90,7 @@
   right: 46rpx;
   bottom: 130rpx;
   z-index: 10;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
 }
 .hero-body .tag {
   display: inline-block;
@@ -99,7 +99,7 @@
   font-size: var(--fs-cap);
   letter-spacing: 3rpx;
   font-weight: 700;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   background: var(--pop);
   padding: 11rpx 27rpx;
   border-radius: var(--r-xs);
@@ -245,7 +245,7 @@
   background: var(--pop);
   border-color: var(--pop);
 }
-.agree .box .check { color: var(--c-surface); font-size: 24rpx; font-weight: 900; }
+.agree .box .check { color: var(--anchor-contrast); font-size: 24rpx; font-weight: 900; }
 .agree .tx {
   font-size: 22rpx;
   color: var(--mut-strong);

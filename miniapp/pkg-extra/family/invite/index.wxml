@@ -1,7 +1,7 @@
 <!-- 邀请家人 · 二级页 -->
 <nav-bar title="邀请家人" status-bar-height="{{statusBarHeight}}"></nav-bar>
 
-<view class="container fi-page">
+<view class="container fi-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <!-- HERO 标题 -->
   <view class="fi-hero g-fade-up">
     <view class="fi-eyebrow">加入家庭</view>

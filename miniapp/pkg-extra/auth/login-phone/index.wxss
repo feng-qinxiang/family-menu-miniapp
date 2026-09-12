@@ -146,6 +146,7 @@
 
 /* —— 登录按钮 —— */
 .lp-loginbtn {
+  box-sizing: border-box;
   margin-top: 16rpx;
   width: 100%;
   display: flex;
@@ -232,6 +233,7 @@
 
 /* —— 微信 —— */
 .lp-wxbtn {
+  box-sizing: border-box;
   width: 100%;
   display: flex;
   align-items: center;

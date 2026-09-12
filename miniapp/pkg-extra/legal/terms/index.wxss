@@ -157,7 +157,7 @@
   height: 104rpx;
   border-radius: var(--r-pill);
   background: var(--pop);
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   font-size: 32rpx;
   font-weight: 800;
   letter-spacing: 1rpx;

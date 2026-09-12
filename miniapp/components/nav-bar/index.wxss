@@ -23,7 +23,7 @@
   width: 64rpx;
   height: 64rpx;
   border-radius: 50%;
-  background: var(--ink-deep);
+  background: var(--anchor);
   flex: none;
   position: relative;
 }

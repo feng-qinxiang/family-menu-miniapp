@@ -3,7 +3,7 @@
   <view class="nav-submit tap-scale" catchtap="onSubmit">提交</view>
 </nav-bar>
 
-<view class="container fb">
+<view class="container fb {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <!-- Hero -->
   <view class="fb-head g-fade-up">
     <view class="eyebrow-serif">洗耳恭听</view>

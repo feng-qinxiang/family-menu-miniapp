@@ -65,7 +65,7 @@
   font-size: var(--fs-cap);
   letter-spacing: 3rpx;
   font-weight: 700;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   background: var(--pop);
   padding: 12rpx 27rpx;
   border-radius: var(--r-xs);
@@ -106,7 +106,7 @@
 .phstat-n {
   font-size: 50rpx;
   font-weight: 900;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   letter-spacing: -2rpx;
 }
 .phstat-n.warn { color: var(--pop); }

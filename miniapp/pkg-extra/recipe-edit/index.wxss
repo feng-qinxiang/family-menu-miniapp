@@ -20,8 +20,8 @@ page { background: var(--paper); }
   border-radius: var(--r-pill);
 }
 .rc-seg-item.on {
-  background: var(--ink-deep);
-  color: var(--c-surface);
+  background: var(--anchor);
+  color: var(--anchor-contrast);
 }
 
 .rc-body { padding: 20rpx 46rpx calc(240rpx + env(safe-area-inset-bottom)); }
@@ -162,8 +162,8 @@ page { background: var(--paper); }
   border-radius: var(--r-pill);
 }
 .rc-dseg-i.on {
-  background: var(--ink-deep);
-  color: var(--c-surface);
+  background: var(--anchor);
+  color: var(--anchor-contrast);
 }
 
 .rc-pick-list { padding: 8rpx 0 16rpx; }
@@ -239,7 +239,7 @@ page { background: var(--paper); }
   height: 220rpx;
   margin-bottom: 28rpx;
   overflow: hidden;
-  background: var(--ink-deep);
+  background: var(--anchor);
 }
 .rc-video-player { width: 100%; height: 100%; }
 
@@ -292,7 +292,7 @@ page { background: var(--paper); }
 .rc-pick-btn {
   height: 88rpx;
   border-radius: var(--r-card);
-  background: var(--ink-deep);
+  background: var(--anchor);
   color: var(--gold);
   font-size: 28rpx;
   font-weight: 700;

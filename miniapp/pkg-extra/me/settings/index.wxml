@@ -1,7 +1,7 @@
 <!-- 设置页 · 视觉对标 settings.html，配色全部走全局 token -->
 <nav-bar title="设置" show-back="{{true}}" status-bar-height="{{statusBarHeight}}"></nav-bar>
 
-<view class="container settings">
+<view class="container settings {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <!-- Hero eyebrow + 镂空标题 -->
   <view class="set-hero g-fade-up">
     <view class="eyebrow-serif">偏好设置</view>

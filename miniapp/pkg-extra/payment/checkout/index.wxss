@@ -147,7 +147,7 @@
   flex: none;
 }
 .pm-icon-glyph {
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   font-size: 28rpx;
   font-weight: 700;
 }
@@ -194,7 +194,7 @@
 .btn-pay {
   width: 100%;
   background: var(--wx);
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   border: none;
   border-radius: var(--r-sm);
   padding: 28rpx;

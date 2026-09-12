@@ -148,7 +148,8 @@
     <!-- 菜卡网格 -->
     <view class="rx-grid" wx:if="{{!loading && displayedRecipes.length}}">
       <view
-        class="rx-card-slot g-fade-up g-d{{index % 5 + 1}}"
+        class="rx-card-slot {{revealOn ? (reveal[index] ? 'g-fade-up' : 'rv-hold') : 'g-fade-up g-d' + (index % 5 + 1)}}"
+        data-rv="{{index}}"
         wx:for="{{displayedRecipes}}"
         wx:key="id"
       >

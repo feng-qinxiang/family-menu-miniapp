@@ -19,8 +19,8 @@
   border: 2rpx solid rgba(255, 255, 255, 0.24);
 }
 .menu-page .navbar-back-icon {
-  border-left-color: var(--c-surface);
-  border-bottom-color: var(--c-surface);
+  border-left-color: var(--anchor-contrast);
+  border-bottom-color: var(--anchor-contrast);
 }
 
 /* ============ HERO ============ */
@@ -75,7 +75,7 @@
   padding: 12rpx 28rpx;
   border-radius: var(--r-pill);
   background: var(--pop);
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   font-size: 26rpx;
   font-weight: 800;
   box-sizing: border-box;
@@ -89,7 +89,7 @@
   right: 46rpx;
   bottom: var(--hero-body-above-sheet);
   z-index: 10;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
 }
 .m-hero-tag {
   display: inline-block;
@@ -98,7 +98,7 @@
   font-size: var(--fs-cap);
   letter-spacing: 3rpx;
   font-weight: 700;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   background: var(--pop);
   padding: 11rpx 27rpx;
   border-radius: var(--r-xs);
@@ -349,7 +349,7 @@
   font-weight: 900;
   margin-top: 10rpx;
   letter-spacing: -1rpx;
-  color: var(--paper);
+  color: var(--anchor-contrast);
 }
 .m-week-title .pop { color: var(--pop); }
 .m-week-link { font-size: 24rpx; color: var(--gold); font-weight: 700; flex: none; padding-top: 12rpx; }
@@ -363,7 +363,7 @@
 }
 .m-wk-item:last-child { border-bottom: none; }
 .m-wk-day { width: 92rpx; flex: none; }
-.m-wk-day .d1 { font-size: 29rpx; font-weight: 900; color: var(--c-surface); }
+.m-wk-day .d1 { font-size: 29rpx; font-weight: 900; color: var(--anchor-contrast); }
 .m-wk-day .d2 { font-size: 20rpx; color: rgba(255, 255, 255, 0.5); font-weight: 600; margin-top: 4rpx; }
 .m-wk-recipe {
   flex: 1;
@@ -407,8 +407,8 @@
   border-radius: var(--r-pill);
 }
 .mn-seg-item.on {
-  background: var(--ink-deep);
-  color: var(--c-surface);
+  background: var(--anchor);
+  color: var(--anchor-contrast);
 }
 
 /* 菜条操作区 */
@@ -431,7 +431,7 @@
 }
 .m-act-cook {
   background: var(--pop);
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   box-shadow: var(--sh-pop);
 }
 .m-act-done {
@@ -507,7 +507,7 @@
   flex: none;
   font-size: 20rpx;
   font-weight: 800;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   background: var(--pop);
   border-radius: var(--r-pill);
   padding: 4rpx 14rpx;
@@ -545,8 +545,8 @@
   display: flex;
   align-items: center;
   border-radius: var(--r-pill);
-  background: var(--ink-deep);
-  color: var(--c-surface);
+  background: var(--anchor);
+  color: var(--anchor-contrast);
   font-size: 28rpx;
   font-weight: 800;
   box-shadow: var(--sh-card);
@@ -580,8 +580,8 @@
   align-items: center;
   justify-content: center;
   border-radius: var(--r-pill);
-  background: var(--ink-deep);
-  color: var(--c-surface);
+  background: var(--anchor);
+  color: var(--anchor-contrast);
   font-size: 26rpx;
   font-weight: 700;
 }

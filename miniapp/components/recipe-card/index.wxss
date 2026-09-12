@@ -51,7 +51,7 @@
   padding: 8rpx 18rpx;
   border-radius: var(--r-xs);
   background: rgba(40, 30, 20, 0.55);
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   font-size: var(--fs-tiny);
   font-weight: 800;
   letter-spacing: 2rpx;
@@ -73,7 +73,7 @@
   padding: var(--r-xs) 15rpx;
   border-radius: var(--r-pill);
   background: rgba(40, 30, 20, 0.5);
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   font-size: 18rpx;
   font-weight: 800;
   line-height: 1.2;
@@ -150,7 +150,7 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  background: var(--ink-deep);
+  background: var(--anchor);
   content: '';
 }
 
@@ -212,7 +212,7 @@
 }
 
 .rc-add-mark {
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   font-size: 38rpx;
   font-weight: 700;
   line-height: 1;
@@ -290,7 +290,7 @@
 }
 
 .rc-row-add .rc-plus {
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   font-size: 40rpx;
   font-weight: 600;
   line-height: 1;

@@ -51,15 +51,15 @@
   align-items: center;
   justify-content: center;
 }
-.vip-back-ico { color: var(--c-surface); font-size: 44rpx; line-height: 1; }
-.vip-navtitle { color: var(--c-surface); font-size: 32rpx; font-weight: 700; }
+.vip-back-ico { color: var(--anchor-contrast); font-size: 44rpx; line-height: 1; }
+.vip-navtitle { color: var(--anchor-contrast); font-size: 32rpx; font-weight: 700; }
 .vip-hero-body {
   position: absolute;
   left: 46rpx;
   right: 46rpx;
   bottom: var(--hero-body-above-sheet);
   z-index: 10;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
 }
 .vip-tag {
   display: inline-block;
@@ -68,7 +68,7 @@
   font-size: var(--fs-cap);
   font-weight: 700;
   letter-spacing: 2rpx;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   background: var(--pop);
   padding: 8rpx 20rpx;
   border-radius: var(--r-xs);
@@ -93,7 +93,7 @@
 .vip-m {
   font-size: var(--fs-cap);
   font-weight: 600;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   background: rgba(255, 255, 255, 0.16);
   padding: 12rpx 22rpx;
   border-radius: var(--r-pill);
@@ -211,7 +211,7 @@
   top: 0;
   right: 0;
   background: var(--pop);
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   font-size: 20rpx;
   font-weight: 800;
   padding: 6rpx 18rpx;
@@ -249,7 +249,7 @@
   justify-content: center;
 }
 .vip-radio.on { background: var(--pop); border-color: var(--pop); }
-.vip-radio-tick { color: var(--c-surface); font-size: 24rpx; font-weight: 900; }
+.vip-radio-tick { color: var(--anchor-contrast); font-size: 24rpx; font-weight: 900; }
 
 /* ===== 成员 ===== */
 .vip-members {
@@ -269,7 +269,7 @@
   margin-left: -18rpx;
   border-radius: 22rpx;
   border: 3rpx solid var(--c-surface);
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   font-size: 28rpx;
   font-weight: 800;
   display: flex;

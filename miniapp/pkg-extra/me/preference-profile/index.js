@@ -42,6 +42,10 @@ Page({
   },
 
   onLoad() {
+    // 大字模式档位：onShow 读取，设置页改完回来立即生效
+    let fontScale = 'normal';
+    try { fontScale = wx.getStorageSync('font_scale') || 'normal'; } catch (e) { fontScale = 'normal'; }
+    if (fontScale !== this.data.fontScale) this.setData({ fontScale });
     let sbh = 0;
     try {
       if (typeof wx.getWindowInfo === 'function') {
@@ -62,7 +66,10 @@ Page({
       api.getPreferenceProfile().catch(() => null),
       api.getCookHistory().catch(() => [])
     ])
-      .then(([profile, history]) => {
+      // 禁用回调参数数组解构：编译依赖 @babel/runtime 辅助模块，未打包会整页白屏
+      .then((loaded) => {
+        const profile = loaded[0];
+        const history = loaded[1];
         if (!profile) {
           this.setData({ loading: false, failed: true });
           return;

@@ -1,0 +1,50 @@
+[
+  {
+    "name": "d01-home",
+    "logs": []
+  },
+  {
+    "name": "d02-recipes",
+    "logs": []
+  },
+  {
+    "name": "d03-community",
+    "logs": []
+  },
+  {
+    "name": "d04-pantry",
+    "logs": []
+  },
+  {
+    "name": "d05-me",
+    "logs": []
+  },
+  {
+    "name": "d06-menu",
+    "logs": []
+  },
+  {
+    "name": "d07-recipe-detail",
+    "logs": []
+  },
+  {
+    "name": "d08-cook-mode",
+    "logs": []
+  },
+  {
+    "name": "d09-shopping",
+    "logs": []
+  },
+  {
+    "name": "d10-wish-modal-dark",
+    "logs": []
+  },
+  {
+    "name": "d11-recipe-edit",
+    "logs": []
+  },
+  {
+    "name": "d12-notifications",
+    "logs": []
+  }
+]

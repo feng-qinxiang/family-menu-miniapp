@@ -65,7 +65,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.st-h5-light { color: var(--paper); font-weight: 700; }
+.st-h5-light { color: var(--anchor-contrast); font-weight: 700; }
 .st-p {
   font-size: 24rpx;
   color: var(--mut-strong);
@@ -128,7 +128,7 @@
 .st-center-tx {
   font-size: 28rpx;
   font-weight: 700;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   letter-spacing: 1rpx;
 }
 
@@ -153,7 +153,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   font-size: 32rpx;
   font-weight: 900;
   line-height: 1;
@@ -161,7 +161,7 @@
 .st-err-tx {
   font-size: var(--fs-cap);
   font-weight: 700;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   letter-spacing: 0.4rpx;
   white-space: nowrap;
 }
@@ -174,7 +174,7 @@
   flex: none;
   font-size: var(--fs-sub);
   font-weight: 800;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   padding: 10rpx 24rpx;
   border-radius: var(--r-pill);
   background: rgba(255, 255, 255, 0.22);
@@ -188,7 +188,7 @@
   right: 36rpx;
   gap: 20rpx;
   padding: 28rpx 32rpx;
-  background: var(--ink-deep);
+  background: var(--anchor);
   border-radius: 36rpx;
   box-shadow: 0 36rpx 80rpx rgba(40, 28, 16, 0.4);
   border: 2rpx solid rgba(255, 255, 255, 0.06);

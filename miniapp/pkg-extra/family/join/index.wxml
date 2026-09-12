@@ -1,7 +1,7 @@
 <!-- pages/family/join · 加入家庭：8格邀请码 + 扫码 + 家庭卡预览 + 申请加入 + 创建新家 -->
 <nav-bar title="加入家庭" status-bar-height="{{statusBarHeight}}"></nav-bar>
 
-<view class="container">
+<view class="container {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <!-- Hero -->
   <view class="head g-fade-up">
     <view class="eyebrow-serif">有邀请码？</view>

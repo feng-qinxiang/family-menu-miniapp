@@ -82,7 +82,7 @@
   font-size: 48rpx;
   font-weight: 900;
   letter-spacing: -1rpx;
-  color: var(--paper);
+  color: var(--anchor-contrast);
   font-family: var(--sans);
 }
 .fam-bot {
@@ -108,7 +108,7 @@
   font-size: 42rpx;
   font-weight: 900;
   letter-spacing: 8rpx;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   font-family: var(--serif);
 }
 .fam-count {
@@ -118,7 +118,7 @@
   padding: 17rpx 29rpx;
   border-radius: var(--r-pill);
   background: rgba(255, 255, 255, 0.14);
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   font-size: var(--fs-sub);
   font-weight: 700;
 }
@@ -151,14 +151,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   font-size: 37rpx;
   font-weight: 800;
   font-family: var(--sans);
 }
 .mavt-pine { background: var(--pine); }
 .mavt-gold { background: var(--gold-deep); }
-.mavt-inkdeep { background: var(--ink-deep); }
+.mavt-inkdeep { background: var(--anchor); }
 .mavt-pop { background: var(--pop); }
 
 .mmid {
@@ -186,7 +186,7 @@
   letter-spacing: 1rpx;
 }
 .badge-admin {
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   background: var(--pop);
 }
 .badge-member {

@@ -22,10 +22,10 @@
   border: 2rpx solid rgba(255, 255, 255, 0.24);
 }
 .community-page .navbar-back-icon {
-  border-left-color: var(--c-surface);
-  border-bottom-color: var(--c-surface);
+  border-left-color: var(--anchor-contrast);
+  border-bottom-color: var(--anchor-contrast);
 }
-.community-page .navbar-title { color: var(--c-surface); }
+.community-page .navbar-title { color: var(--anchor-contrast); }
 
 /* 顶部右侧发帖小钮 */
 .nav-post-btn {
@@ -35,7 +35,7 @@
   padding: 12rpx 26rpx;
   border-radius: var(--r-pill);
   background: var(--pop);
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   font-size: 26rpx;
   font-weight: 800;
   box-shadow: var(--sh-pop);
@@ -81,7 +81,7 @@
   left: 46rpx;
   right: 46rpx;
   bottom: var(--hero-body-above-sheet);
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
 }
 .hero-tag {
   display: inline-block;
@@ -90,7 +90,7 @@
   font-size: var(--fs-cap);
   letter-spacing: 3rpx;
   font-weight: 700;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   background: var(--pop);
   padding: 10rpx 26rpx;
   border-radius: var(--r-xs);
@@ -116,7 +116,7 @@
   border-radius: var(--r-chip);
   padding: 22rpx 26rpx;
 }
-.cstat-num { font-size: 46rpx; font-weight: 900; letter-spacing: -2rpx; color: var(--c-surface); }
+.cstat-num { font-size: 46rpx; font-weight: 900; letter-spacing: -2rpx; color: var(--anchor-contrast); }
 .cstat-lab { font-size: var(--fs-mini); color: rgba(255, 255, 255, 0.7); letter-spacing: 1rpx; margin-top: 4rpx; }
 
 /* ===================== Sheet ===================== */
@@ -151,7 +151,7 @@
   justify-content: center;
   font-size: 36rpx;
   font-weight: 900;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   font-family: var(--serif);
 }
 .pmeta { flex: 1; min-width: 0; }
@@ -190,7 +190,7 @@
   width: 58rpx;
   height: 58rpx;
   border-radius: 50%;
-  background: var(--ink-deep);
+  background: var(--anchor);
   flex: none;
   display: flex;
   align-items: center;

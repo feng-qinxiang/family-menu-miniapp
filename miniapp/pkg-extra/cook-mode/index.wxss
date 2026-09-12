@@ -45,7 +45,7 @@
 }
 .nbtn.keep .keep-ic { border-color: var(--pop); }
 .nbtn.keep .keep-ic::after { background: var(--pop); }
-.nbtn.keep.on .keep-ic { border-color: var(--c-surface); }
+.nbtn.keep.on .keep-ic { border-color: var(--anchor-contrast); }
 .nbtn.keep.on .keep-ic::after { background: var(--c-surface); }
 .keep-tx {
   font-size: 24rpx;
@@ -53,7 +53,7 @@
   color: var(--pop);
   letter-spacing: 1rpx;
 }
-.nbtn.keep.on .keep-tx { color: var(--c-surface); }
+.nbtn.keep.on .keep-tx { color: var(--anchor-contrast); }
 .dishbar {
   flex: 1;
   min-width: 0;
@@ -105,8 +105,8 @@
   border: 4rpx solid var(--pop);
 }
 .ic-clock { width: 34rpx; height: 34rpx; }
-.ic-clock-sm { width: 22rpx; height: 22rpx; border-width: 3rpx; border-color: var(--c-surface); }
-.nbtn.keep.on .ic-clock { border-color: var(--c-surface); }
+.ic-clock-sm { width: 22rpx; height: 22rpx; border-width: 3rpx; border-color: var(--anchor-contrast); }
+.nbtn.keep.on .ic-clock { border-color: var(--anchor-contrast); }
 .ic-clock::after, .ic-clock-sm::after {
   content: "";
   position: absolute;
@@ -219,7 +219,7 @@
 .stepimg .small .t {
   font-size: var(--fs-cap);
   font-weight: 800;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   margin-top: 6rpx;
 }
 .stepimg .timetag {
@@ -232,7 +232,7 @@
   gap: 10rpx;
   font-size: var(--fs-cap);
   font-weight: 700;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   background: rgba(232, 71, 42, 0.85);
   padding: 12rpx 22rpx;
   border-radius: var(--r-pill);
@@ -428,7 +428,7 @@
   flex: 1;
   min-width: 0;
   font-size: 32rpx;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   background: var(--pop);
   box-shadow: 0 2rpx 4rpx rgba(180, 40, 20, 0.3), 0 12rpx 26rpx rgba(232, 71, 42, 0.4);
 }
@@ -452,5 +452,5 @@
 }
 .ic-arrow-r {
   transform: rotate(45deg);
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
 }

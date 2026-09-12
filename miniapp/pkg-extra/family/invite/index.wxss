@@ -65,7 +65,7 @@
   font-family: var(--serif);
   font-size: 62rpx;
   font-weight: 700;
-  color: var(--paper);
+  color: var(--anchor-contrast);
 }
 
 /* 复制按钮 */
@@ -82,7 +82,7 @@
   border-radius: var(--r-pill);
   background: rgba(255, 255, 255, 0.1);
   border: 2rpx solid rgba(255, 255, 255, 0.2);
-  color: var(--paper);
+  color: var(--anchor-contrast);
   font-size: 26rpx;
   font-weight: 700;
 }

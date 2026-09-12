@@ -1,5 +1,5 @@
 <!-- pages/me/profile-edit · 编辑资料（二级页）文字头像 + 表单 -->
-<view class="pe-page">
+<view class="pe-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <nav-bar title="编辑资料" show-back="{{true}}">
     <text class="pe-navsave tap-scale" catchtap="onSave">保存</text>
   </nav-bar>

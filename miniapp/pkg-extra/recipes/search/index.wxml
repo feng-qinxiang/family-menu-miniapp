@@ -1,5 +1,5 @@
 <!-- pages/recipes/search · 搜索结果页 -->
-<view class="search-page">
+<view class="search-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <!-- sticky 搜索栏：状态栏占位 + 返回 + 输入 + 清除 + 取消 -->
   <view class="searchbar" style="padding-top: {{statusBarHeight}}px;">
     <view class="searchbar-inner" style="padding-right: {{capsuleRight}}px;">
@@ -15,7 +15,7 @@
         <input
           class="sbox-input"
           value="{{keyword}}"
-          placeholder="搜菜名 / 菜系 / 口味"
+          placeholder="搜菜名 / 菜系"
           placeholder-class="sbox-ph"
           confirm-type="search"
           bindinput="onInput"

@@ -83,6 +83,10 @@ Page({
   },
 
   onLoad(options) {
+  // 大字模式档位：进页读取（设置页改完回来重进生效）
+  let fontScale = 'normal';
+  try { fontScale = wx.getStorageSync('font_scale') || 'normal'; } catch (e) { fontScale = 'normal'; }
+  if (fontScale !== this.data.fontScale) this.setData({ fontScale });
     const postId = (options && options.postId) || '';
     this.setData({ postId });
     this.loadAll(postId);
@@ -95,7 +99,10 @@ Page({
       api.getCommunityPosts().catch(() => []),
       postId ? api.getCommunityComments(postId).catch(() => []) : Promise.resolve([])
     ])
-      .then(([posts, comments]) => {
+      // 禁用回调参数数组解构：编译依赖 @babel/runtime 辅助模块，未打包会整页白屏
+      .then((loaded) => {
+        const posts = loaded[0];
+        const comments = loaded[1];
         const list = Array.isArray(posts) ? posts : [];
         const raw = list.find((p) => String(p.id) === String(postId)) || null;
         // 找不到 = 帖子已删除/链接失效 → 走 loadError 空态，禁止静默换第一条

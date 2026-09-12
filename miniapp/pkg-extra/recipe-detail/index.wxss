@@ -51,7 +51,7 @@
   margin-top: auto;
   padding: 0 46rpx var(--hero-body-above-sheet);
   z-index: 2;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
 }
 .rd-tag {
   display: inline-block;
@@ -60,7 +60,7 @@
   font-size: var(--fs-cap);
   letter-spacing: 2rpx;
   font-weight: 700;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   background: var(--pop);
   padding: 10rpx 26rpx;
   border-radius: var(--r-xs);
@@ -96,7 +96,7 @@
   align-items: center;
   font-size: var(--fs-cap);
   font-weight: 600;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   background: rgba(255, 255, 255, 0.16);
   padding: 13rpx 24rpx;
   border-radius: var(--r-chip);
@@ -143,7 +143,7 @@
 .rd-sval {
   font-size: var(--fs-cap);
   font-weight: 700;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   min-width: 96rpx;
   text-align: center;
 }
@@ -215,7 +215,7 @@
   min-height: 92rpx;
   border-radius: 28rpx;
   background: var(--pop);
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   font-size: 28rpx;
   font-weight: 800;
   box-shadow: var(--sh-pop);
@@ -240,7 +240,7 @@
   margin: 0 0 8rpx;
   border-radius: 24rpx;
   overflow: hidden;
-  background: var(--ink-deep);
+  background: var(--anchor);
 }
 .rd-video-poster,
 .rd-video-player {
@@ -302,7 +302,7 @@
   width: 66rpx;
   height: 66rpx;
   border-radius: 21rpx;
-  background: var(--ink-deep);
+  background: var(--anchor);
   color: var(--gold);
   font-size: 32rpx;
   font-weight: 700;
@@ -313,7 +313,7 @@
 }
 .rd-sno.hot {
   background: var(--pop);
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   box-shadow: 0 12rpx 28rpx rgba(232, 71, 42, 0.35);
 }
 .rd-stx { flex: 1; padding-top: 6rpx; }
@@ -359,7 +359,7 @@
   justify-content: center;
   font-size: 28rpx;
   font-weight: 900;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   font-family: var(--serif);
 }
 .rd-rc { flex: 1; }
@@ -400,7 +400,7 @@
   justify-content: center;
   font-size: 28rpx;
   font-weight: 900;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   font-family: var(--serif);
   background: var(--pop);
 }
@@ -421,7 +421,7 @@
   min-width: 100rpx;
   height: 88rpx;
   border-radius: 26rpx;
-  background: var(--ink-deep);
+  background: var(--anchor);
   color: var(--gold);
   font-size: var(--fs-sub);
   font-weight: 800;
@@ -463,7 +463,7 @@
   height: 104rpx;
   border-radius: var(--r-chip);
   background: var(--pop);
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   font-size: 30rpx;
   font-weight: 900;
   letter-spacing: 2rpx;
@@ -479,7 +479,7 @@
   width: 170rpx;
   height: 104rpx;
   border-radius: var(--r-chip);
-  background: var(--ink-deep);
+  background: var(--anchor);
   color: var(--gold);
   font-size: 24rpx;
   font-weight: 800;

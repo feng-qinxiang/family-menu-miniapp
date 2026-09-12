@@ -75,7 +75,7 @@
     <view class="g-fade-up g-d2" wx:if="{{cookHistory.length}}">
       <section-head eyebrow="做菜记录" title="最近" popPart="上桌" hint="全部" more="{{true}}" bindtapmore="goCookLog" />
       <view class="card mag-history">
-        <view class="mag-hrow" wx:for="{{cookHistory}}" wx:key="id">
+        <view class="mag-hrow {{revealOn ? (reveal[index] ? 'g-fade-up' : 'rv-hold') : ''}}" data-rv="{{index}}" wx:for="{{cookHistory}}" wx:key="id">
           <image class="mag-thumb" src="{{item.cover}}" mode="aspectFill" />
           <view class="mag-hmid">
             <view class="mag-hname">{{item.recipeTitle}}</view>

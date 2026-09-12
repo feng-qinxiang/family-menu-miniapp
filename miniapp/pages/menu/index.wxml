@@ -54,11 +54,11 @@
           <view class="m-stat-label">上桌菜</view>
         </view>
         <view class="m-stat-cell">
-          <view class="m-stat-num">{{totalTime || '?'}}<text class="m-stat-u">分</text></view>
+          <view class="m-stat-num">{{totalTime || '--'}}<text class="m-stat-u" wx:if="{{totalTime}}">分</text></view>
           <view class="m-stat-label">厨房耗时</view>
         </view>
         <view class="m-stat-cell">
-          <view class="m-stat-num">{{totalServings || '?'}}<text class="m-stat-u">份</text></view>
+          <view class="m-stat-num">{{totalServings || '--'}}<text class="m-stat-u" wx:if="{{totalServings}}">份</text></view>
           <view class="m-stat-label">单菜最多份数</view>
         </view>
       </view>
@@ -135,7 +135,7 @@
             <view class="m-rsub">
               <text class="cz">{{dish.recipe.cuisine || '家常'}}</text>
               <text class="dot"></text>
-              <text>{{dish.recipe.timeCost || '?'}} 分钟</text>
+              <text>{{dish.recipe.timeCost || '--'}} 分钟</text>
               <text class="dot" wx:if="{{dish.addedByName}}"></text>
               <text class="m-rby" wx:if="{{dish.addedByName}}">{{dish.addedByName}} 点的</text>
             </view>

@@ -55,6 +55,10 @@ Page({
 
   // 从邀请页返回后新成员/邀请码可能已变，重新拉取
   onShow() {
+    // 大字模式档位：onShow 读取，设置页改完回来立即生效
+    let fontScale = 'normal';
+    try { fontScale = wx.getStorageSync('font_scale') || 'normal'; } catch (e) { fontScale = 'normal'; }
+    if (fontScale !== this.data.fontScale) this.setData({ fontScale });
     if (this._loaded) this.loadProfile();
     this._loaded = true;
   },

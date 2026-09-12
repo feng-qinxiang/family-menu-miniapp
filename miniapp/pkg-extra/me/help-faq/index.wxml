@@ -1,7 +1,7 @@
 <!-- 帮助中心 · 静态 FAQ 手风琴 + 搜索 + 客服暗卡 -->
 <nav-bar title="帮助中心" show-back="{{true}}" status-bar-height="{{statusBarHeight}}"></nav-bar>
 
-<view class="container help">
+<view class="container help {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <!-- Hero 标题 -->
   <view class="hero g-fade-up">
     <view class="eyebrow-serif">需要帮忙？</view>

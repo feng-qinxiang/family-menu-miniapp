@@ -227,7 +227,8 @@
     <scroll-view scroll-x class="mh-hcards" enhanced="{{true}}" show-scrollbar="{{false}}" wx:if="{{visibleRecipes.length}}">
       <view class="mh-hcards-inner">
         <view
-          class="mh-rcard-slot g-fade-up g-d{{index % 4 + 1}}"
+          class="mh-rcard-slot {{revealOn ? (reveal[index] ? 'g-fade-up' : 'rv-hold') : 'g-fade-up g-d' + (index % 4 + 1)}}"
+          data-rv="{{index}}"
           wx:for="{{visibleRecipes}}"
           wx:key="id"
         >
@@ -267,8 +268,8 @@
 
 <!-- ============ 自定义许愿弹窗（root-portal 保证脱离页面层级） ============ -->
 <root-portal wx:if="{{showWishModal}}">
-  <view class="wish-backdrop" catchtap="closeWishModal" catchtouchmove="noopScroll"></view>
-  <view class="wish-modal" catchtouchmove="noopScroll">
+  <view class="wish-backdrop {{theme === 'dark' ? 'is-dark' : ''}}" catchtap="closeWishModal" catchtouchmove="noopScroll"></view>
+  <view class="wish-modal {{theme === 'dark' ? 'is-dark' : ''}}" catchtouchmove="noopScroll">
     <view class="wish-modal-hd">
       <view class="wish-modal-ic">
         <text class="wish-modal-ic-glyph">味</text>

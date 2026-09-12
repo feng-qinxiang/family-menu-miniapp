@@ -143,7 +143,7 @@
   width: 12rpx;
   height: 12rpx;
   border-radius: 50%;
-  background: var(--ink-deep);
+  background: var(--anchor);
 }
 
 /* ===== 分隔 ===== */
@@ -286,7 +286,7 @@
   justify-content: center;
   font-size: var(--fs-sub);
   font-weight: 800;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.12);
 }
 .avatars .av:first-child {

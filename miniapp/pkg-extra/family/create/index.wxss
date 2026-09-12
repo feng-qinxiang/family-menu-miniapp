@@ -47,7 +47,7 @@
   right: 46rpx;
   bottom: 140rpx;
   z-index: 10;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
 }
 .fc-tag {
   display: inline-block;
@@ -56,7 +56,7 @@
   font-size: var(--fs-cap);
   letter-spacing: 3rpx;
   font-weight: 700;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   background: var(--pop);
   padding: 11rpx 27rpx;
   border-radius: var(--r-xs);
@@ -216,7 +216,7 @@
   justify-content: center;
   gap: 17rpx;
   background: var(--pop);
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   border-radius: var(--r-sm);
   padding: 33rpx;
   font-size: 32rpx;

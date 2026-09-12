@@ -9,6 +9,7 @@ const {
   rebuildShoppingList,
   toggleShoppingPurchased
 } = require('../../utils/api');
+const { withScrollReveal, disposeScrollReveal } = require('../../behaviors/scroll-reveal');
 
 const { recipeDishImg, localDishByIngredient } = require('../../utils/image');
 
@@ -371,7 +372,11 @@ Page({
     if (Object.prototype.hasOwnProperty.call(context, 'loading')) {
       patch.loading = context.loading;
     }
-    this.setData(patch);
+    this.setData(patch, () => withScrollReveal(this, { item: '.mkt-item' }));
+  },
+
+  onUnload() {
+    disposeScrollReveal(this);
   },
 
   buildShoppingState(shoppingList, context) {

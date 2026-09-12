@@ -65,7 +65,10 @@ Page({
     let weeklyMenu = null;
     let failed = false;
     try {
-      [pantryItems, weeklyMenu] = await Promise.all([getPantryItems(), getWeeklyMenu()]);
+      // 禁用数组解构：该语法编译后依赖 @babel/runtime 辅助模块，未打包进小程序会整页白屏
+      const loaded = await Promise.all([getPantryItems(), getWeeklyMenu()]);
+      pantryItems = loaded[0];
+      weeklyMenu = loaded[1];
     } catch (e) {
       pantryItems = [];
       failed = true;

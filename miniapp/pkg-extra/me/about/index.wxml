@@ -1,7 +1,7 @@
 <!-- 关于页 · 静态展示：品牌 + 数据 + 故事 + 团队 + 更多 + 版权 -->
 <nav-bar title="关于" show-back="{{true}}" status-bar-height="{{statusBarHeight}}"></nav-bar>
 
-<view class="container about">
+<view class="container about {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <!-- 品牌区 -->
   <view class="brand g-fade-up">
     <view class="logo">

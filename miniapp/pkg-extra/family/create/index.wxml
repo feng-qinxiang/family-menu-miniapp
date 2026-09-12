@@ -1,4 +1,4 @@
-<view class="fc-page">
+<view class="fc-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <scroll-view class="fc-scroll" scroll-y enhanced show-scrollbar="{{false}}">
 
     <!-- ===== Hero 大图 ===== -->

@@ -1,5 +1,5 @@
 <!-- pages/auth/login/index · 登录落地页（hero + 微信一键登录 + 手机号 + 游客） -->
-<view class="login-page">
+<view class="login-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <scroll-view class="login-scroll" scroll-y enhanced show-scrollbar="{{false}}">
 
     <!-- Hero -->

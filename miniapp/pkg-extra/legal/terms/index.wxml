@@ -1,5 +1,5 @@
 <!-- pages/legal/terms · 用户协议（静态长文 + 序号 serif + 金圆点 + 底部渐变 CTA）-->
-<view class="terms-page">
+<view class="terms-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <!-- 固定二级页导航 -->
   <nav-bar title="用户协议" status-bar-height="{{statusBarHeight}}"></nav-bar>
 

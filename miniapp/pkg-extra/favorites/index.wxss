@@ -156,7 +156,7 @@
   flex: none;
   font-size: var(--fs-mini);
   font-weight: 800;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
 }
 .fav-pnm {
   flex: 1;

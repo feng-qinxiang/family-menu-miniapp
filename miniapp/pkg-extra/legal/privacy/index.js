@@ -40,9 +40,15 @@ Page({
     ],
     // 运营者名称、联系方式、生效日期统一由 utils/legal-config.js 提供（提审前在那里填一次）
     ...getOperatorInfo(),
+    // 先给 Number 初始值，避免首帧绑定 undefined 触发 nav-bar 类型告警
+    statusBarHeight: 0,
   },
 
   onLoad() {
+    // 大字模式档位：onShow 读取，设置页改完回来立即生效
+    let fontScale = 'normal';
+    try { fontScale = wx.getStorageSync('font_scale') || 'normal'; } catch (e) { fontScale = 'normal'; }
+    if (fontScale !== this.data.fontScale) this.setData({ fontScale });
     let sbh = 0;
     try {
       if (typeof wx.getWindowInfo === 'function') {

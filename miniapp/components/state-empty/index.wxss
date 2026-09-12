@@ -64,7 +64,7 @@
 }
 .se-btn--pop {
   background: var(--pop);
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   box-shadow: var(--sh-pop);
 }
 .se-btn--ghost {

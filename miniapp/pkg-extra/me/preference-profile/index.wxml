@@ -1,7 +1,7 @@
 <!-- 偏好画像 · 我们家的口味（二级页：nav-bar + Hero 统计 + 菜系条形图 + 标签云 + TOP5 + 提示卡）-->
 <nav-bar title="我们家的口味" show-back="{{true}}" status-bar-height="{{statusBarHeight}}"></nav-bar>
 
-<view class="container pp">
+<view class="container pp {{fontScale === 'lg' ? 'font-lg' : ''}}">
 
   <!-- 加载骨架 -->
   <view wx:if="{{loading}}" class="pp-loading">

@@ -1,5 +1,5 @@
 <!-- 会员开通确认 · 白底系统 sans，二级页 nav-bar 返回 -->
-<view class="pay-page">
+<view class="pay-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <nav-bar title="开通确认" show-back="{{true}}"></nav-bar>
 
   <scroll-view class="pay-scroll" scroll-y enhanced show-scrollbar="{{false}}">

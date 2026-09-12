@@ -25,7 +25,7 @@
   width: 88rpx;
   height: 88rpx;
   border-radius: 50%;
-  background: var(--ink-deep);
+  background: var(--anchor);
   flex: none;
   display: flex;
   align-items: center;
@@ -217,7 +217,7 @@
   font-size: var(--fs-tiny);
   letter-spacing: 2rpx;
   font-weight: 800;
-  color: var(--c-surface);
+  color: var(--anchor-contrast);
   background: var(--tag-glass-bg, rgba(40, 30, 20, 0.55));
   padding: 8rpx 15rpx;
   border-radius: var(--r-xs);

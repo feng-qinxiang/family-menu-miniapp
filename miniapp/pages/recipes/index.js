@@ -3,6 +3,7 @@ const { recipeSourceLabels, cuisineList, mealOptions, sourceTabs, AVOID_KEYWORDS
 const { fallbackDishImg, recipeDishImg, onImgError } = require('../../utils/image');
 const { debounce } = require('../../utils/debounce');
 const { withTabSelect } = require('../../behaviors/tab-select');
+const { withScrollReveal, disposeScrollReveal } = require('../../behaviors/scroll-reveal');
 const { recipesFromPosts } = require('../../utils/dish-logic');
 const { runGuarded } = require('../../utils/interaction');
 
@@ -268,7 +269,7 @@ Page({
       hasMore: filteredRecipes.length > displayed.length,
       remainCount: filteredRecipes.length - displayed.length,
       avoidHiddenCount
-    });
+    }, () => withScrollReveal(this, { item: '.rx-card-slot' }));
   },
 
   // 临时关闭/恢复忌口过滤
@@ -283,7 +284,11 @@ Page({
       displayedRecipes: next,
       hasMore: this.data.filteredRecipes.length > next.length,
       remainCount: this.data.filteredRecipes.length - next.length
-    });
+    }, () => withScrollReveal(this, { item: '.rx-card-slot' }));
+  },
+
+  onUnload() {
+    disposeScrollReveal(this);
   },
 
   toggleAdvFilter() {

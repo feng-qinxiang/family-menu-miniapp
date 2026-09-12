@@ -32,6 +32,10 @@ Page({
   },
 
   onLoad(options) {
+  // 大字模式档位：进页读取（设置页改完回来重进生效）
+  let fontScale = 'normal';
+  try { fontScale = wx.getStorageSync('font_scale') || 'normal'; } catch (e) { fontScale = 'normal'; }
+  if (fontScale !== this.data.fontScale) this.setData({ fontScale });
     let sbh = 0;
     try {
       if (typeof wx.getWindowInfo === 'function') {

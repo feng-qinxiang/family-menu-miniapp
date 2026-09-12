@@ -7,6 +7,7 @@ const {
 } = require('../../utils/api');
 const { runGuarded, guard, release } = require('../../utils/interaction');
 const { withTabSelect } = require('../../behaviors/tab-select');
+const { withScrollReveal } = require('../../behaviors/scroll-reveal');
 
 const reportReasons = ['内容不实', '步骤不全', '疑似搬运', '其他'];
 
@@ -112,7 +113,7 @@ Page({
       loading: false,
       posts,
       communitySummary: this.buildCommunitySummary(posts)
-    });
+    }, () => withScrollReveal(this, { item: '.pcard' }));
   },
 
   buildCommunitySummary(posts) {

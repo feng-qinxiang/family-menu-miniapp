@@ -56,7 +56,8 @@
         <!-- 帖子流 -->
         <view class="post-list">
           <view
-            class="pcard tap-scale g-fade-up g-d{{index % 5 + 1}}"
+            class="pcard tap-scale {{revealOn ? (reveal[index] ? 'g-fade-up' : 'rv-hold') : 'g-fade-up g-d' + (index % 5 + 1)}}"
+            data-rv="{{index}}"
             wx:for="{{posts}}"
             wx:key="id"
             data-id="{{item.id}}"

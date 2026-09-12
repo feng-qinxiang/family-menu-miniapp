@@ -1,4 +1,4 @@
-<view class="mem-page">
+<view class="mem-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <!-- 二级页顶部导航 -->
   <nav-bar title="家庭管理" show-back="{{true}}" status-bar-height="{{statusBarHeight}}" />
 

@@ -11,10 +11,12 @@ const {
   removeWish: removeWishApi
 } = require('../../utils/api');
 const { runGuarded } = require('../../utils/interaction');
+const { animateNumber, stopNumberAnim } = require('../../utils/count-up');
 const { sourceLabels, mealTypeLabels, SLOTS, cuisinePinyin } = require('../../utils/constants');
 const { fallbackDishImg, recipeDishImg, onImgError } = require('../../utils/image');
 const { decorateHero, filterBySlot, todayDateKey } = require('../../utils/dish-logic');
 const { withTabSelect } = require('../../behaviors/tab-select');
+const { withScrollReveal } = require('../../behaviors/scroll-reveal');
 const subscribe = require('../../utils/subscribe');
 const WISH_STORAGE_KEY = 'family_wishes_v1';
 const WISH_PENDING_KEY = 'wish_pending_v1';
@@ -107,6 +109,7 @@ Page({
     showWishModal: false,  // 许愿弹窗（原先只在 setData 时才出现，未在 data 里声明）
     wishInput: '',
     fontScale: 'normal',   // 大字模式档位，onShow 从本地存储读取
+    theme: 'light',        // 深浅色档位：root-portal 弹窗不继承 page 变量，用它切 token 副本
     slotDoneCount: 0,      // 当前餐次已上桌的数量，updateSlotMenu 里算
     role: '',              // 本人在家庭中的角色（owner/admin/member），loadAll 时由后端数据填充
     canConfirm: true,      // owner/admin 可确认菜单；无家庭数据时不阻断（§6）
@@ -171,6 +174,14 @@ Page({
     this.loadAll();
     // 预热订阅消息配置：申请授权必须在点击手势里同步调用，不能等网络回来再申请
     subscribe.preload();
+    // 深色模式：许愿弹窗在 root-portal 下，靠 theme 值切换 wxss 里的 token 副本
+    try {
+      const info = typeof wx.getAppBaseInfo === 'function' ? wx.getAppBaseInfo() : {};
+      if (info.theme && info.theme !== this.data.theme) this.setData({ theme: info.theme });
+      if (typeof wx.onThemeChange === 'function') {
+        wx.onThemeChange((res) => this.setData({ theme: res.theme }));
+      }
+    } catch (e) {}
   },
 
   onShow() {
@@ -449,6 +460,8 @@ Page({
       };
       patch.hasHomeData = this._syncHasHomeData(patch);
       this.setData(patch);
+      // 待买数 count-up（600ms cubic-out）
+      animateNumber(this, 'shoppingPending', patch.shoppingPending);
       this.updateSlotMenu();
 
       this.applyFilters('all', allRecipes);
@@ -585,7 +598,7 @@ Page({
       activeCuisine: cuisine,
       heroRecipe: hero ? { ...hero, titleClass: decorateHero(hero.title) } : null,
       visibleRecipes: visible
-    });
+    }, () => withScrollReveal(this, { item: '.mh-rcard-slot' }));
   },
 
   selectCuisine(e) {

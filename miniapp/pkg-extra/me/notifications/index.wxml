@@ -1,5 +1,5 @@
 <!-- pages/me/notifications · 消息中心（二级页） -->
-<view class="notif-page">
+<view class="notif-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <nav-bar title="消息" show-back="{{true}}">
     <view class="nb-readall tap-scale" catchtap="onReadAll">
       <view class="nb-check"></view>
