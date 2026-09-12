@@ -1,6 +1,5 @@
 const { getRecipeDetail, saveRecipe, updateRecipe } = require('../../utils/api');
 const { chooseAndUpload, chooseVideo, uploadFile } = require('../../utils/upload');
-const { decodeStep, encodeStep, hoistVideo } = require('../../utils/recipe-steps');
 const { LOCAL_DISHES, recipeDishImg } = require('../../utils/image');
 const { cuisineList } = require('../../utils/constants');
 
@@ -87,8 +86,13 @@ Page({
       this.setData({ pageLoading: false });
       return;
     }
+    // 服务端已返回结构化步骤 {text,image,video}，表单直接用同构对象
     const steps = (recipe.steps && recipe.steps.length)
-      ? recipe.steps.map((s) => decodeStep(s))
+      ? recipe.steps.map((s) => ({
+          text: (s && s.text) || '',
+          image: (s && s.image) || '',
+          video: (s && s.video) || ''
+        }))
       : [{ text: '', image: '' }];
     const form = {
       title: recipe.title || '',
@@ -102,7 +106,7 @@ Page({
       ingredients: (recipe.ingredients && recipe.ingredients.length)
         ? recipe.ingredients
         : [{ name: '', amount: '', unit: '' }],
-      videoUrl: hoistVideo(steps) || recipe.videoUrl || '',
+      videoUrl: (steps.find((st) => st.video) || {}).video || recipe.videoUrl || '',
       steps
     };
     this.setData({
@@ -410,9 +414,10 @@ Page({
       tasteTags: form.tasteTags.filter(Boolean),
       summary: form.summary.trim(),
         ingredients: form.ingredients.filter((i) => i.name.trim()),
-        steps: form.steps.filter((s) => s.text.trim()).map((s, i) => encodeStep({
+        // 教学视频只挂第 0 步（页面约定，与详情页 hoist 取法一致）
+        steps: form.steps.filter((s) => s.text.trim()).map((s, i) => ({
           text: s.text,
-          image: s.image,
+          image: s.image || '',
           video: i === 0 ? (form.videoUrl || '') : ''
         })),
       sourceType: 'owned'

@@ -115,7 +115,8 @@ public final class AdminModels {
             Integer likeCount,
             Integer commentCount,
             Long recipeId,
-            String createdAt
+            String createdAt,
+            List<String> images
     ) {
     }
 
@@ -153,7 +154,7 @@ public final class AdminModels {
             List<String> tasteTags,
             String status,
             String createdAt,
-            List<String> steps,
+            List<ApiModels.RecipeStep> steps,
             List<AdminIngredient> ingredients
     ) {
     }

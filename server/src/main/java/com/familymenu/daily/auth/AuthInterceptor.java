@@ -56,9 +56,10 @@ public class AuthInterceptor implements HandlerInterceptor {
             "GET /api/payment/plans",
             // 微信支付异步回调：微信服务器不会带我们的 token，鉴权靠 RSA 验签 + AES 解密
             "POST /api/payment/notify",
-            // 社区只读浏览（帖子列表 + 评论列表）：UGC 已按审核状态过滤，可匿名查看
+            // 社区只读浏览（帖子列表 + 评论列表 + 话题榜）：UGC 已按审核状态过滤，可匿名查看
             "GET /api/community/posts",
-            "GET /api/community/posts/"
+            "GET /api/community/posts/",
+            "GET /api/community/topics"
     );
 
     private final AuthService authService;

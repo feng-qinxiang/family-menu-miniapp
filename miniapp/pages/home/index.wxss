@@ -406,6 +406,24 @@
   letter-spacing: 1rpx;
   margin-top: 8rpx;
 }
+.mh-mc-acts {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+}
+.mh-mc-go2 {
+  display: flex;
+  align-items: center;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.85);
+  border: 2rpx solid rgba(255, 255, 255, 0.35);
+  font-size: calc(26rpx * var(--fs-mul, 1));
+  font-weight: 700;
+  padding: 22rpx 32rpx;
+  min-height: 88rpx;
+  box-sizing: border-box;
+  border-radius: var(--r-pill);
+}
 .mh-mc-go {
   display: flex;
   align-items: center;

@@ -427,6 +427,108 @@ class EndpointCoverageTests {
         assertThat(notified).as("作者应收到点赞站内信").isTrue();
     }
 
+    // ==================== 二期：步骤媒体 / 评分反哺 / 帖子配图 / 话题 ====================
+
+    /** 结构化步骤 roundtrip：写入 {text,image} 对象，详情按 {text,image,video} 返回（无图的步骤不带 image 键）。 */
+    @Test
+    void recipeStepImageRoundtrip() throws Exception {
+        String token = guestLogin();
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("title", "带图菜谱 " + System.nanoTime());
+        body.put("cuisine", "家常");
+        body.put("tasteTags", List.of("清淡"));
+        body.put("steps", List.of(
+                Map.of("text", "切块", "image", "/uploads/step-1.jpg"),
+                Map.of("text", "下锅")
+        ));
+        body.put("ingredients", List.of(Map.of("name", "番茄", "amount", "2", "unit", "个")));
+        MvcResult created = postJson("/api/recipes", token, body);
+        assertThat(created.getResponse().getStatus()).isEqualTo(200);
+        long recipeId = json(created).get("id").asLong();
+
+        MvcResult detail = mockMvc.perform(get("/api/recipes/" + recipeId).header("X-Auth-Token", token))
+                .andExpect(status().isOk())
+                .andReturn();
+        JsonNode steps = json(detail).get("steps");
+        assertThat(steps.size()).isEqualTo(2);
+        assertThat(steps.get(0).get("image").asText()).isEqualTo("/uploads/step-1.jpg");
+        assertThat(steps.get(1).has("image")).as("无图步骤不应带 image 键").isFalse();
+    }
+
+    /** 评分反哺：带分的做菜记录把菜谱 rating 更新为真实均分；不带分不动。 */
+    @Test
+    void cookScoreUpdatesRecipeRating() throws Exception {
+        String token = guestLogin();
+        long recipeId = createRecipe(token);
+
+        MvcResult before = mockMvc.perform(get("/api/recipes/" + recipeId).header("X-Auth-Token", token))
+                .andExpect(status().isOk())
+                .andReturn();
+        double ratingBefore = json(before).get("rating").asDouble();
+
+        mockMvc.perform(post("/api/cook-history")
+                        .header("X-Auth-Token", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(Map.of("recipeId", recipeId, "score", 5))))
+                .andExpect(status().isOk());
+
+        MvcResult after = mockMvc.perform(get("/api/recipes/" + recipeId).header("X-Auth-Token", token))
+                .andExpect(status().isOk())
+                .andReturn();
+        double ratingAfter = json(after).get("rating").asDouble();
+        assertThat(ratingAfter).as("一次 5 分应把 rating 拉到 5.0（原 %.2f）", ratingBefore).isEqualTo(5.0);
+    }
+
+    /** 帖子配图：创建带 images 的帖子，创建返回与详情端点都带出 images。 */
+    @Test
+    void communityPostWithImagesRoundtrip() throws Exception {
+        String token = guestLogin();
+        MvcResult created = postJson("/api/community/posts", token, Map.of(
+                "title", "带图帖子 " + System.nanoTime(),
+                "content", "帖子配图覆盖",
+                "images", List.of("/uploads/post-1.jpg", "/uploads/post-2.jpg")));
+        long postId = json(created).get("id").asLong();
+        assertThat(json(created).get("images").size()).isEqualTo(2);
+
+        MvcResult detail = mockMvc.perform(get("/api/community/posts/" + postId).header("X-Auth-Token", token))
+                .andExpect(status().isOk())
+                .andReturn();
+        assertThat(json(detail).get("images").size()).isEqualTo(2);
+    }
+
+    /** 话题榜端点公开可读（鉴权白名单），返回数组（测试库无公开帖时为空数组）。 */
+    @Test
+    void communityTopicsEndpointIsPublic() throws Exception {
+        mockMvc.perform(get("/api/community/topics"))
+                .andExpect(status().isOk());
+    }
+
+    /** 信息流话题过滤：按 tags 精确过滤（作者可见自己的 PENDING 帖），不匹配的标签为空。 */
+    @Test
+    void communityFeedTagFilter() throws Exception {
+        String token = guestLogin();
+        postJson("/api/community/posts", token, Map.of(
+                "title", "话题过滤帖 " + System.nanoTime(),
+                "content", "带标签覆盖",
+                "tags", List.of("锅气测试")));
+
+        MvcResult feed = mockMvc.perform(get("/api/community/posts?tag=锅气测试").header("X-Auth-Token", token))
+                .andExpect(status().isOk())
+                .andReturn();
+        boolean found = false;
+        for (JsonNode post : json(feed)) {
+            if (post.get("title").asText().startsWith("话题过滤帖")) {
+                found = true;
+            }
+        }
+        assertThat(found).as("按标签应命中刚发的帖子").isTrue();
+
+        MvcResult none = mockMvc.perform(get("/api/community/posts?tag=不存在的标签").header("X-Auth-Token", token))
+                .andExpect(status().isOk())
+                .andReturn();
+        assertThat(json(none).size()).as("不匹配的标签应为空").isEqualTo(0);
+    }
+
     // ==================== 导入 ====================
 
     @Test

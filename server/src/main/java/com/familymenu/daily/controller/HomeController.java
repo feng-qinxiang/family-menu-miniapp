@@ -86,9 +86,16 @@ public class HomeController {
     }
 
     @GetMapping("/community/posts")
-    public List<CommunityPost> communityPosts(@CurrentUser AuthUser user) {
+    public List<CommunityPost> communityPosts(@RequestParam(required = false) String tag,
+                                              @CurrentUser AuthUser user) {
         // 只读公开接口：未带 token 也能浏览（user 为 null 时不返回"我收藏的"标记）
-        return store.communityPosts(user == null ? 0L : user.userId());
+        return store.communityPosts(user == null ? 0L : user.userId(), tag);
+    }
+
+    /** 热门话题：社区话题 chips 数据源，公开可读（近期公开帖标签频次 top 10）。 */
+    @GetMapping("/community/topics")
+    public List<String> communityTopics() {
+        return store.communityTopics(10);
     }
 
     /** C 端帖子详情：分享直达用。公开可读（APPROVED），PENDING 仅作者本人可见。 */
@@ -113,6 +120,19 @@ public class HomeController {
         String text = request.title() + "\n" + request.content()
                 + (request.tags() == null ? "" : "\n" + String.join(" ", request.tags()));
         String auditStatus = contentSecurity.auditStatus(user.userId(), text, ContentSecurityService.SCENE_FORUM);
+        // 配图逐张送 imgSecCheck：违规直接 400；任何一张无法机审 → 整帖取严为 PENDING
+        if (request.images() != null) {
+            for (String image : request.images()) {
+                if (image == null || image.isBlank()) {
+                    continue;
+                }
+                String imageStatus = contentSecurity.auditImage(user.userId(), image);
+                if (!ContentSecurityService.STATUS_APPROVED.equals(imageStatus)) {
+                    auditStatus = ContentSecurityService.STATUS_PENDING;
+                    break;
+                }
+            }
+        }
         return store.createCommunityPost(user.userId(), request, auditStatus);
     }
 

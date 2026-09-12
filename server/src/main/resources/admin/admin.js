@@ -1258,14 +1258,22 @@
             escapeHtml(((i.amount || '') + (i.unit || '')) || '适量') + '</em></li>';
         }).join('') || '<li class="muted">未填写食材</li>';
         var steps = (r.steps || []).map(function (s, i) {
-          return '<li><b>' + (i + 1) + '</b><span>' + escapeHtml(s) + '</span></li>';
+          var step = typeof s === 'string' ? { text: s } : (s || {});
+          var img = step.image
+            ? '<img class="rd-step-img" src="' + escapeHtml(step.image) + '" alt="">'
+            : '';
+          return '<li><b>' + (i + 1) + '</b><span>' + escapeHtml(step.text || '') + img + '</span></li>';
         }).join('') || '<li class="muted">未填写步骤</li>';
         var tags = (r.tasteTags || []).map(function (t) {
           return '<span class="pill">' + escapeHtml(t) + '</span>';
         }).join(' ');
+        var imgs = (r.images || []).map(function (u) {
+          return '<img class="pd-img" src="' + escapeHtml(u) + '" alt="">';
+        }).join('');
         var body =
           '<div class="rd-meta">' + meta + '</div>' +
           (tags ? '<div class="rd-tags">' + tags + '</div>' : '') +
+          (imgs ? '<div class="rd-sec"><h4>配图</h4><div class="pd-imgs">' + imgs + '</div></div>' : '') +
           '<div class="rd-sec"><h4>食材</h4><ul class="rd-ings">' + ings + '</ul></div>' +
           '<div class="rd-sec"><h4>步骤</h4><ol class="rd-steps">' + steps + '</ol></div>' +
           (r.summary ? '<div class="rd-sec"><h4>简介</h4><p class="rd-sum">' + escapeHtml(r.summary) + '</p></div>' : '');

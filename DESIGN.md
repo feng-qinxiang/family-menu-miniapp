@@ -34,6 +34,29 @@
 
 ## 变更历史
 
+### 2026-09-12 - 二期：厨房总控 + 步骤媒体列 + 评分反哺 + 社区图文与分享
+
+**变更内容**:
+
+1. **步骤媒体列（B1）**：`recipe_step` 新增 `image_url`/`video_url` 列（迁移脚本 `server/sql/migrate-step-media.sql` 含 JSON-in-text 存量回填）。
+   服务端 `ApiModels.RecipeStep{text,image,video}` 用 `@JsonCreator(DELEGATING)` 兼容三种入参——纯文本（种子/旧测试）、历史前端编码的 JSON 字符串、新结构化对象——saveSteps/loadSteps/AdminService 菜谱详情全部改结构化。
+   前端 `utils/recipe-steps.js` 编解码 hack 删除，recipe-edit / recipe-detail / cook-mode 直接读写对象。
+2. **评分反哺（B2）**：`addCookHistory` 带分写入后 `recipe.rating = AVG(cook_history.score)`——家里做的真实评分影响首页推荐排序、菜谱库与详情展示，点菜↔做菜形成数据闭环；不带分不动。
+3. **首页厨房入口（B3）**：今日菜单暗卡底部改为「买菜」+「开做 ›」双按钮，文案随餐次状态变化（开做 N 道/继续做/已齐·回看）——此前首页唯一动作是"去买菜"，进厨房必须二跳，这是"感知不到做菜功能"的直接原因。
+4. **厨房总控（B4）**：新分包页 `pkg-extra/kitchen`。餐次 chips + 上桌进度 + 耗时倒排顺序建议；每菜一张灶台卡（状态/做到第几步/独立倒计时/开做/上桌）；单一 1s tick 驱动多计时器，计时按真实时间差持久化到本地（页面重进自动续跑）；全上桌复用开饭广播；主灶高亮（跑着计时的菜优先）。纯逻辑抽 `utils/kitchen.js` 并配 node 断言（已入 CI）。
+   ponytail 边界：计时只存本地——单机单厨没有跨端需求，跨设备会话云端化是明确升级路径。
+5. **帖子配图（C1）**：`community_post.images_json`（≤6 张，迁移脚本 `migrate-post-images.sql`）；发帖表单多图选择（复用 `/api/upload`）；信息流首图 + 「N 图」角标；详情九宫格 + `wx.previewImage`；后台帖子详情渲染配图。
+6. **图片机审（C2）**：`ContentSecurityService.auditImage` 同步 `imgSecCheck`——只审本站 uploads 文件（白名单文件名防穿越，>1MB 按无法机审），违规 400、无法机审 PENDING；发帖时文本与图片取严，任一图无法机审整帖 PENDING。
+7. **分享卡片（C3）**：post-detail `onShareAppMessage`（`?postId=` 直达详情端点，卡片图用帖首图）+ 操作栏分享按钮。
+8. **话题后端化（C4）**：`GET /api/community/topics`（近 200 条公开帖标签 Java 侧聚合 top 10，鉴权白名单放行）；feed 支持 `?tag=`（`JSON_CONTAINS` 精确匹配，注意与可见性 OR 条件的括号优先级）；前端话题 chips 改服务端数据，点击站内过滤 + 「看全部」解除，不再跳菜谱搜索。
+
+**变更理由**: 用户反馈"点菜基本完善，做菜没感知、社区要继续完善"。做菜链路本身已建成，缺口在入口（首页无厨房动作）与数据闭环（评分不反哺）；社区余下最大缺口是图文能力与分享传播。
+
+**影响范围**: schema.sql + 两个迁移脚本、`ApiModels`（RecipeStep/CommunityPost.images/…）、`MysqlKitchenStore`（步骤 IO/评分反哺/feed tag/topics）、`ContentSecurityService`（auditImage）、`HomeController`（topics/tag/发帖机审）、`AuthService` 无改动；miniapp 新增 kitchen 页 + utils/kitchen.js，删除 utils/recipe-steps.js，home/menu/community/post-detail/recipe-detail/recipe-edit/cook-mode 适配；测试 +5（roundtrip/评分反哺/配图/topics/tag 过滤），miniapp CI 加 kitchen-logic。
+**上线注意**: 已有库必须执行 `server/sql/migrate-step-media.sql` 与 `migrate-post-images.sql`（全新库由 schema.sql 直接建出）。
+
+**决策依据**: 步骤媒体走"列化 + DTO 兼容解码"而不是一次性断掉旧格式，存量数据回填后新旧客户端都能跑；图片审核选同步 imgSecCheck（≤1M）而非 media_check_async——后者要回调端点与状态机，量级翻倍而收益在后期；话题聚合放 Java 侧不建索引，量级由 feed LIMIT 护栏兜住。
+
 ### 2026-09-12 - 社区收尾（详情端点、作者删除、互动通知）与烹饪体验补全
 
 **变更内容**:

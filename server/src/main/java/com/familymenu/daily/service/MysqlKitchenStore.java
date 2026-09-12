@@ -222,8 +222,13 @@ public class MysqlKitchenStore {
     }
 
     public List<CommunityPost> communityPosts(long userId) {
+        return communityPosts(userId, null);
+    }
+
+    /** tag 非空时按标签过滤（JSON_CONTAINS 精确匹配，写法参照 filterRecipes）。 */
+    public List<CommunityPost> communityPosts(long userId, String tag) {
         String sql = """
-                SELECT p.id, p.title, u.nickname AS author, p.content, p.like_count, p.comment_count, p.tags_json,
+                SELECT p.id, p.title, u.nickname AS author, p.content, p.like_count, p.comment_count, p.tags_json, p.images_json,
                        COALESCE(fav.favorite_count, 0) AS favorite_count,
                        CASE WHEN my_fav.user_id IS NULL THEN 0 ELSE 1 END AS favorited,
                        CASE WHEN my_like.user_id IS NULL THEN 0 ELSE 1 END AS liked,
@@ -240,7 +245,8 @@ public class MysqlKitchenStore {
                 ) fav ON fav.post_id = p.id
                 LEFT JOIN community_post_favorite my_fav ON my_fav.post_id = p.id AND my_fav.user_id = ?
                 LEFT JOIN community_post_like my_like ON my_like.post_id = p.id AND my_like.user_id = ?
-                WHERE p.audit_status = 'APPROVED' OR (p.audit_status = 'PENDING' AND p.author_user_id = ?)
+                WHERE (p.audit_status = 'APPROVED' OR (p.audit_status = 'PENDING' AND p.author_user_id = ?))
+                  AND (? IS NULL OR JSON_CONTAINS(p.tags_json, JSON_QUOTE(?)))
                 ORDER BY p.like_count DESC, p.id DESC
                 -- LIMIT 护栏：信息流暂无分页，先限制单次查询规模（正常使用远够，分页留给后续需要时再加）
                 LIMIT 100
@@ -277,14 +283,40 @@ public class MysqlKitchenStore {
                     rs.getBoolean("liked"),
                     readStringList(rs.getString("tags_json")),
                     recipe,
-                    rs.getBoolean("mine")
+                    rs.getBoolean("mine"),
+                    readStringList(rs.getString("images_json"))
             );
-        }, userId, userId, userId, userId);
+        }, userId, userId, userId, userId, tag, tag);
+    }
+
+    /**
+     * 热门话题：近期公开帖的标签频次 top N。
+     * 帖子量级小（feed 有 LIMIT 100 护栏），Java 侧聚合即可，不建索引不写 SQL 聚合。
+     */
+    public List<String> communityTopics(int limit) {
+        List<String> raws = jdbcTemplate.queryForList(
+                "SELECT tags_json FROM community_post WHERE audit_status = 'APPROVED' ORDER BY id DESC LIMIT 200",
+                String.class
+        );
+        Map<String, Integer> counts = new java.util.LinkedHashMap<>();
+        for (String raw : raws) {
+            for (String t : readStringList(raw)) {
+                String tag = t == null ? "" : t.trim();
+                if (!tag.isEmpty()) {
+                    counts.merge(tag, 1, Integer::sum);
+                }
+            }
+        }
+        return counts.entrySet().stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                .limit(limit)
+                .map(Map.Entry::getKey)
+                .toList();
     }
 
     public List<CommunityPost> myFavoritePosts(long userId) {
         String sql = """
-                SELECT p.id, p.title, u.nickname AS author, p.content, p.like_count, p.comment_count, p.tags_json,
+                SELECT p.id, p.title, u.nickname AS author, p.content, p.like_count, p.comment_count, p.tags_json, p.images_json,
                        COALESCE(fav.favorite_count, 0) AS favorite_count,
                        1 AS favorited,
                        CASE WHEN my_like.user_id IS NULL THEN 0 ELSE 1 END AS liked,
@@ -336,7 +368,8 @@ public class MysqlKitchenStore {
                     rs.getBoolean("liked"),
                     readStringList(rs.getString("tags_json")),
                     recipe,
-                    rs.getBoolean("mine")
+                    rs.getBoolean("mine"),
+                    readStringList(rs.getString("images_json"))
             );
         }, userId, userId, userId);
     }
@@ -348,8 +381,8 @@ public class MysqlKitchenStore {
         var keyHolder = new org.springframework.jdbc.support.GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement("""
-                    INSERT INTO community_post (recipe_id, author_user_id, title, content, tags_json, audit_status)
-                    VALUES (?, ?, ?, ?, ?, ?)
+                    INSERT INTO community_post (recipe_id, author_user_id, title, content, tags_json, images_json, audit_status)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
                     """, Statement.RETURN_GENERATED_KEYS);
             if (request.recipeId() == null) {
                 ps.setNull(1, java.sql.Types.BIGINT);
@@ -360,7 +393,8 @@ public class MysqlKitchenStore {
             ps.setString(3, request.title());
             ps.setString(4, request.content());
             ps.setString(5, tagsJson);
-            ps.setString(6, auditStatus == null ? ContentSecurityService.STATUS_PENDING : auditStatus);
+            ps.setString(6, writeStringList(request.images() == null ? List.of() : request.images()));
+            ps.setString(7, auditStatus == null ? ContentSecurityService.STATUS_PENDING : auditStatus);
             return ps;
         }, keyHolder);
         Number key = keyHolder.getKey();
@@ -838,6 +872,19 @@ public class MysqlKitchenStore {
         if (key == null) {
             throw new IllegalStateException("cook history insert failed");
         }
+        // 评分反哺菜谱：家里做过的真实评分聚合为菜谱 rating（首页推荐/菜谱库/详情共用）。
+        // 不带分的记录不动 rating；cook_history.score 为 1-5，AVG 落在原 rating 量纲内。
+        if (request.score() != null) {
+            jdbcTemplate.update("""
+                            UPDATE recipe SET rating = (
+                                SELECT AVG(score) FROM cook_history
+                                WHERE recipe_id = ? AND score IS NOT NULL
+                            )
+                            WHERE id = ?
+                            """,
+                    request.recipeId(), request.recipeId()
+            );
+        }
         return jdbcTemplate.queryForObject("""
                         SELECT ch.id, ch.recipe_id, r.title AS recipe_title,
                                DATE_FORMAT(ch.cooked_at, '%Y-%m-%d %H:%i') AS cooked_at,
@@ -886,10 +933,17 @@ public class MysqlKitchenStore {
         );
     }
 
-    private List<String> loadSteps(long recipeId) {
+    private List<ApiModels.RecipeStep> loadSteps(long recipeId) {
         return jdbcTemplate.query(
-                "SELECT step_text FROM recipe_step WHERE recipe_id = ? ORDER BY step_no ASC",
-                (rs, rowNum) -> rs.getString("step_text"),
+                """
+                        SELECT step_text, image_url, video_url
+                        FROM recipe_step WHERE recipe_id = ? ORDER BY step_no ASC
+                        """,
+                (rs, rowNum) -> new ApiModels.RecipeStep(
+                        rs.getString("step_text"),
+                        rs.getString("image_url"),
+                        rs.getString("video_url")
+                ),
                 recipeId
         );
     }
@@ -993,10 +1047,13 @@ public class MysqlKitchenStore {
         return ("easy".equals(v) || "hard".equals(v)) ? v : "medium";
     }
 
-    private void saveSteps(long recipeId, List<String> steps) {
+    private void saveSteps(long recipeId, List<ApiModels.RecipeStep> steps) {
         int index = 1;
-        for (String step : steps) {
-            jdbcTemplate.update("INSERT INTO recipe_step(recipe_id, step_no, step_text) VALUES (?, ?, ?)", recipeId, index++, step);
+        for (ApiModels.RecipeStep step : steps) {
+            jdbcTemplate.update(
+                    "INSERT INTO recipe_step(recipe_id, step_no, step_text, image_url, video_url) VALUES (?, ?, ?, ?, ?)",
+                    recipeId, index++, step.text(), step.image(), step.video()
+            );
         }
     }
 
@@ -1167,7 +1224,7 @@ public class MysqlKitchenStore {
 
     private CommunityPost loadCommunityPostById(long postId, long userId) {
         String sql = """
-                SELECT p.id, p.title, u.nickname AS author, p.content, p.like_count, p.comment_count, p.tags_json,
+                SELECT p.id, p.title, u.nickname AS author, p.content, p.like_count, p.comment_count, p.tags_json, p.images_json,
                        COALESCE(fav.favorite_count, 0) AS favorite_count,
                        CASE WHEN my_fav.user_id IS NULL THEN 0 ELSE 1 END AS favorited,
                        CASE WHEN my_like.user_id IS NULL THEN 0 ELSE 1 END AS liked,
@@ -1223,7 +1280,8 @@ public class MysqlKitchenStore {
                     rs.getBoolean("liked"),
                     readStringList(rs.getString("tags_json")),
                     recipe,
-                    rs.getBoolean("mine")
+                    rs.getBoolean("mine"),
+                    readStringList(rs.getString("images_json"))
             );
         }, userId, postId, userId, userId, postId);
     }

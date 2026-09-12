@@ -1221,3 +1221,7 @@ td.clamp { max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-sp
 .rd-steps li { display: flex; gap: 10px; font-size: 13px; line-height: 1.7; padding: 6px 0; }
 .rd-steps li b { flex: none; width: 20px; height: 20px; border-radius: 50%; background: rgba(194, 64, 42, 0.1); color: var(--pop); font-size: 12px; display: flex; align-items: center; justify-content: center; }
 .rd-sum { font-size: 13px; line-height: 1.75; color: var(--ink-2); margin: 0; }
+.rd-step-img { display: block; max-width: 260px; max-height: 160px; border-radius: 8px; margin-top: 6px; border: 1px solid rgba(0,0,0,0.08); }
+
+.pd-imgs { display: flex; flex-wrap: wrap; gap: 8px; }
+.pd-img { width: 120px; height: 90px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(0,0,0,0.08); }

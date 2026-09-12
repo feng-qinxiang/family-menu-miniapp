@@ -77,7 +77,10 @@
             <view class="ptitle clamp-2">{{item.title}}</view>
             <view class="pcontent clamp-2">{{item.content}}</view>
 
-            <image class="pphoto" src="{{item.photo}}" mode="aspectFill" />
+            <view class="pphoto-wrap">
+              <image class="pphoto" src="{{item.photo}}" mode="aspectFill" />
+              <view wx:if="{{item.imageCount > 1}}" class="pphoto-count">{{item.imageCount}} 图</view>
+            </view>
 
             <!-- 关联菜谱 -->
             <view
@@ -141,6 +144,10 @@
             <text class="tt">#{{item.tag}}</text>
           </view>
         </view>
+        <view wx:if="{{currentTag}}" class="tag-filter">
+          <text class="tag-filter-t">话题：#{{currentTag}}</text>
+          <view class="tag-filter-x tap-scale" bindtap="clearTopic">看全部 ×</view>
+        </view>
       </view>
 
       <!-- 流末 -->
@@ -186,6 +193,14 @@
       bindinput="onPostInput"
       data-field="tagsText"
     />
+    <!-- 配图：最多 6 张，点了就选（相册/相机），可删 -->
+    <view class="pf-imgs">
+      <view wx:for="{{postForm.images}}" wx:key="*this" class="pf-img">
+        <image src="{{item}}" mode="aspectFill" />
+        <view class="pf-img-del tap-scale" data-index="{{index}}" catchtap="removePostImage">×</view>
+      </view>
+      <view wx:if="{{postForm.images.length < 6}}" class="pf-img-add tap-scale" bindtap="addPostImages">＋</view>
+    </view>
     <view class="pf-actions">
       <view class="btn btn-ghost pf-cancel tap-scale" catchtap="togglePostForm">取消</view>
       <view class="btn btn-pop pf-submit tap-scale {{postSubmitting ? 'is-busy' : ''}}" catchtap="submitPost">{{postSubmitting ? '发布中…' : '发布'}}</view>

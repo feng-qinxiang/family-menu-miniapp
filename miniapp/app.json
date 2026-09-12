@@ -13,6 +13,7 @@
       "root": "pkg-extra",
       "pages": [
         "community/post-detail/index",
+        "kitchen/index",
         "vip/index",
         "vip/upgrade/index",
         "vip/orders/index",

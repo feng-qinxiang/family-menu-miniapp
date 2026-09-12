@@ -7,7 +7,6 @@ const {
   getTodayMenu,
   removeWish
 } = require('../../utils/api');
-const { decodeStep, hoistVideo } = require('../../utils/recipe-steps');
 const { recipeDishImg, stepDishImg } = require('../../utils/image');
 const { sourceLabels: baseSourceLabels } = require('../../utils/constants');
 
@@ -118,11 +117,12 @@ Page({
       const totalCount = ingredients.length;
       const missCount = totalCount - haveCount;
       const rawSteps = Array.isArray(recipe.steps) ? recipe.steps : [];
-      const decodedSteps = rawSteps.map((s) => decodeStep(s));
-      const videoUrl = hoistVideo(decodedSteps) || recipe.videoUrl || '';
-      const steps = decodedSteps.map((decoded, i) => ({
-        text: decoded.text,
-        image: stepDishImg(recipe, i, decoded.image),
+      // 服务端已返回结构化步骤 {text,image,video}；教学视频仍只认第一个带 video 的步骤
+      const videoStep = rawSteps.find((s) => s && s.video) || null;
+      const videoUrl = (videoStep && videoStep.video) || recipe.videoUrl || '';
+      const steps = rawSteps.map((s, i) => ({
+        text: (s && s.text) || '',
+        image: stepDishImg(recipe, i, s && s.image),
         tip: (rawSteps[i] && rawSteps[i].tip) || ''
       }));
       // 后端评价结构 {nickname, score, remark, cookedAt} → 视图结构 {author, when, score, content}

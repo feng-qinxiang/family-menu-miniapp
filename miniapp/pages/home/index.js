@@ -111,6 +111,7 @@ Page({
     fontScale: 'normal',   // 大字模式档位，onShow 从本地存储读取
     theme: 'light',        // 深浅色档位：root-portal 弹窗不继承 page 变量，用它切 token 副本
     slotDoneCount: 0,      // 当前餐次已上桌的数量，updateSlotMenu 里算
+    cookLabel: '',         // 厨房入口按钮文案（开做 N 道/继续做/已齐）
     role: '',              // 本人在家庭中的角色（owner/admin/member），loadAll 时由后端数据填充
     canConfirm: true,      // owner/admin 可确认菜单；无家庭数据时不阻断（§6）
 
@@ -255,7 +256,13 @@ Page({
     const slotMenu = filterBySlot(this.data.todayMenu, this.data.currentSlot);
     // 上桌进度：菜单页标记的 done 状态在首页卡片同步展示
     const slotDoneCount = slotMenu.filter(it => it.status === 'done').length;
-    this.setData({ slotMenu, slotDoneCount });
+    // 厨房入口文案：有待做→开做 N 道；有烧着的→继续做；全上桌→回看
+    const pendingCount = slotMenu.length - slotDoneCount;
+    const cookingCount = slotMenu.filter(it => it.status === 'cooking').length;
+    const cookLabel = pendingCount === 0
+      ? '已齐 · 回看 ›'
+      : cookingCount > 0 ? '继续做 ›' : `开做 ${pendingCount} 道 ›`;
+    this.setData({ slotMenu, slotDoneCount, cookLabel });
   },
 
   goWeek() {
@@ -645,6 +652,11 @@ Page({
 
   goShopping() {
     wx.navigateTo({ url: '/pages/shopping/index' });
+  },
+
+  // 厨房总控：本餐次所有菜一屏管理（开做/计时/上桌）
+  goCook() {
+    wx.navigateTo({ url: '/pkg-extra/kitchen/index' });
   },
 
   goRecipes() {

@@ -154,8 +154,14 @@ function getRecipes(source) {
   return request(`/api/recipes?source=${encodeURIComponent(source || 'all')}`, { silent: true });
 }
 
-function getCommunityPosts() {
-  return request('/api/community/posts', { silent: true });
+function getCommunityPosts(tag) {
+  const q = tag ? `?tag=${encodeURIComponent(tag)}` : '';
+  return request(`/api/community/posts${q}`, { silent: true });
+}
+
+// 热门话题（服务端聚合近帖标签频次）；失败/为空时页面回退到写死话题
+function getCommunityTopics() {
+  return request('/api/community/topics', { silent: true, fallback: () => [] });
 }
 
 // 帖子详情：分享/直达单帖用，不再拉全量信息流再 find
@@ -600,6 +606,7 @@ module.exports = {
   generateWeeklyMenu,
   getCommunityPosts,
   getCommunityPost,
+  getCommunityTopics,
   getCommunityComments,
   getMyFavorites,
   createFamily,

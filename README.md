@@ -99,7 +99,6 @@ cd server
 ```powershell
 node miniapp/test/static-check.js      # 静态自检：页面四件套 / JSON / WXSS 配平 / TabBar 与 tabs.js 一致
 node test/dish-logic.test.js
-node test/recipe-steps.test.js
 ```
 
 ## 小程序

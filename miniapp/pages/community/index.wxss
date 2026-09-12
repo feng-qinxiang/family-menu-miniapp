@@ -361,3 +361,79 @@
   height: 150rpx;
   box-sizing: border-box;
 }
+
+/* —— 帖子配图（信息流角标 + 发帖选择器） —— */
+.pphoto-wrap { position: relative; }
+.pphoto-count {
+  position: absolute;
+  right: 12rpx;
+  bottom: 12rpx;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: var(--fs-mini);
+  padding: 4rpx 14rpx;
+  border-radius: var(--r-pill);
+}
+.pf-imgs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  margin-top: 18rpx;
+}
+.pf-img {
+  position: relative;
+  width: 132rpx;
+  height: 132rpx;
+}
+.pf-img image {
+  width: 100%;
+  height: 100%;
+  border-radius: 12rpx;
+}
+.pf-img-del {
+  position: absolute;
+  top: -12rpx;
+  right: -12rpx;
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  background: var(--ink);
+  color: #fff;
+  font-size: 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pf-img-add {
+  width: 132rpx;
+  height: 132rpx;
+  border: 2rpx dashed rgba(0, 0, 0, 0.22);
+  border-radius: 12rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44rpx;
+  color: var(--mut);
+}
+
+/* —— 话题过滤提示条 —— */
+.tag-filter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14rpx;
+  margin-top: 16rpx;
+  padding: 14rpx 22rpx;
+  border-radius: var(--r-pill);
+  background: rgba(232, 71, 42, 0.08);
+}
+.tag-filter-t {
+  font-size: var(--fs-cap);
+  font-weight: 700;
+  color: var(--pop);
+}
+.tag-filter-x {
+  font-size: var(--fs-cap);
+  color: var(--mut-strong);
+  font-weight: 700;
+}

@@ -23,6 +23,7 @@ import com.familymenu.daily.dto.AdminModels.AdminShoppingRow;
 import com.familymenu.daily.dto.AdminModels.AdminIngredient;
 import com.familymenu.daily.dto.AdminModels.AdminUserItem;
 import com.familymenu.daily.dto.AdminModels.AdminUserPage;
+import com.familymenu.daily.dto.ApiModels.RecipeStep;
 import com.familymenu.daily.payment.PlanCatalog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -480,7 +481,7 @@ public class AdminService {
     /** 帖子详情（治理用）：运营在审核/下架前查看完整正文与标签。 */
     public AdminPostDetail getPostDetail(long postId) {
         return jdbcTemplate.query("""
-                        SELECT p.id, p.title, p.content, p.tags_json, u.nickname,
+                        SELECT p.id, p.title, p.content, p.tags_json, p.images_json, u.nickname,
                                p.audit_status, p.like_count, p.comment_count, p.recipe_id, p.created_at
                         FROM community_post p
                         LEFT JOIN user_account u ON u.id = p.author_user_id
@@ -500,6 +501,16 @@ public class AdminService {
                             // 脏数据（非法 JSON）时降级为空标签，不影响详情展示
                         }
                     }
+                    List<String> images = new ArrayList<>();
+                    String rawImages = rs.getString("images_json");
+                    if (rawImages != null && !rawImages.isBlank()) {
+                        try {
+                            images = JSON.readValue(rawImages,
+                                    new com.fasterxml.jackson.core.type.TypeReference<List<String>>() {});
+                        } catch (Exception ignored) {
+                            // 脏数据时降级为空图集
+                        }
+                    }
                     return new AdminPostDetail(
                             rs.getLong("id"),
                             rs.getString("title"),
@@ -510,7 +521,8 @@ public class AdminService {
                             rs.getInt("like_count"),
                             rs.getInt("comment_count"),
                             rs.getObject("recipe_id") != null ? rs.getLong("recipe_id") : null,
-                            rs.getString("created_at")
+                            rs.getString("created_at"),
+                            images
                     );
                 },
                 postId
@@ -634,10 +646,17 @@ public class AdminService {
         );
     }
 
-    private List<String> loadRecipeSteps(long recipeId) {
+    private List<RecipeStep> loadRecipeSteps(long recipeId) {
         return jdbcTemplate.query(
-                "SELECT step_text FROM recipe_step WHERE recipe_id = ? ORDER BY step_no ASC",
-                (rs, rowNum) -> rs.getString("step_text"),
+                """
+                        SELECT step_text, image_url, video_url
+                        FROM recipe_step WHERE recipe_id = ? ORDER BY step_no ASC
+                        """,
+                (rs, rowNum) -> new RecipeStep(
+                        rs.getString("step_text"),
+                        rs.getString("image_url"),
+                        rs.getString("video_url")
+                ),
                 recipeId
         );
     }

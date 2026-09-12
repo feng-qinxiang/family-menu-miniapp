@@ -1,6 +1,5 @@
 // pages/cook-mode/index.js · 烹饪模式（沉浸暗底分步引导）
 const api = require('../../utils/api');
-const { decodeStep } = require('../../utils/recipe-steps');
 const { recipeDishImg, stepDishImg } = require('../../utils/image');
 
 // 数字补零
@@ -145,9 +144,9 @@ Page({
     const dishImg = recipeDishImg(recipe);
 
     const steps = rawSteps.map((st, i) => {
-      const decoded = decodeStep(st);
-      const text = decoded.text;
-      const image = stepDishImg(recipe, i, decoded.image);
+      // 服务端已返回结构化步骤 {text,image,video}，直接取用
+      const text = (st && st.text) || '';
+      const image = stepDishImg(recipe, i, st && st.image);
       return {
         index: i,
         text,
@@ -187,6 +186,7 @@ Page({
   },
 
   // —— 步骤进度本地续做：同一道菜中途退出，再进来回到上次步骤 ——
+  // 存 {i,total}（厨房总控页用来显示"第几/共几步"）；读取兼容旧格式纯数字
   progressKey(recipeId) {
     return `cook_progress_${recipeId}`;
   },
@@ -194,11 +194,12 @@ Page({
   resumeOrStart(recipeId, steps) {
     let startAt = 0;
     try {
-      const saved = Number(wx.getStorageSync(this.progressKey(recipeId))) || 0;
+      const saved = wx.getStorageSync(this.progressKey(recipeId));
+      const savedIdx = (saved && typeof saved === 'object') ? Number(saved.i) : Number(saved);
       // 停在哪一步（含最后一步）都续做；完成时会清进度，能读到就说明没走完
-      if (saved > 0 && saved < steps.length) {
-        startAt = saved;
-        wx.showToast({ title: `已回到上次进度（${steps[saved].cn}）`, icon: 'none' });
+      if (savedIdx > 0 && savedIdx < steps.length) {
+        startAt = savedIdx;
+        wx.showToast({ title: `已回到上次进度（${steps[savedIdx].cn}）`, icon: 'none' });
       }
     } catch (e) {
       // 本地存储不可用则从头开始，不影响烹饪
@@ -236,10 +237,10 @@ Page({
       running: false,
       hasTimer: seconds > 0
     });
-    // 记录进度：中途退出（onClose/切走被杀）再进可续做；走完 onFinish 会清掉
+    // 记录进度：中途退出（onClose/切走被杀）再进可续做，厨房总控页据此显示步骤进度
     try {
       if (this.data.recipeId) {
-        wx.setStorageSync(this.progressKey(this.data.recipeId), i);
+        wx.setStorageSync(this.progressKey(this.data.recipeId), { i, total: steps.length });
       }
     } catch (e) {
       // 存不上就算了，续做是锦上添花

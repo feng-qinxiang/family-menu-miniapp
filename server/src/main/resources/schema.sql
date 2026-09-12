@@ -117,6 +117,10 @@ CREATE TABLE IF NOT EXISTS recipe_step (
     recipe_id BIGINT NOT NULL,
     step_no INT NOT NULL,
     step_text VARCHAR(500) NOT NULL,
+    -- 步骤配图/教学视频（/uploads/ 相对 URL）。历史上前端把 {text,image,video} 编码塞进 step_text，
+    -- 2026-09-12 起改为独立列；存量数据回填见 server/sql/migrate-step-media.sql
+    image_url VARCHAR(512) NULL,
+    video_url VARCHAR(512) NULL,
     INDEX idx_step_recipe (recipe_id, step_no)
 );
 
@@ -194,6 +198,8 @@ CREATE TABLE IF NOT EXISTS community_post (
     like_count INT NOT NULL DEFAULT 0,
     comment_count INT NOT NULL DEFAULT 0,
     tags_json TEXT NOT NULL,
+    -- 帖子配图（JSON 字符串数组，元素为 /uploads/ 图片 URL，最多 6 张）
+    images_json TEXT NULL,
     audit_status VARCHAR(16) NOT NULL DEFAULT 'PENDING',
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

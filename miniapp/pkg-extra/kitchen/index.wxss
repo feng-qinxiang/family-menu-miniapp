@@ -1,0 +1,255 @@
+/* pages/kitchen/index.wxss · 厨房总控 */
+.kitchen {
+  min-height: 100vh;
+  background: var(--paper);
+  padding: 0 26rpx 40rpx;
+  box-sizing: border-box;
+}
+
+/* —— 加载态 —— */
+.k-loading {
+  padding: 120rpx 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22rpx;
+}
+.k-loading-tx {
+  font-size: var(--fs-sub);
+  color: var(--mut);
+}
+.spinner {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  border: 6rpx solid var(--paper-2);
+  border-top-color: var(--pop);
+  animation: k-spin 0.9s linear infinite;
+}
+@keyframes k-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* —— 顶部：餐次 chips + 进度 —— */
+.k-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18rpx;
+  margin-top: 18rpx;
+}
+.k-slots {
+  display: flex;
+  gap: 14rpx;
+  flex: 1;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+.k-slot {
+  padding: 14rpx 28rpx;
+  border-radius: var(--r-pill);
+  background: var(--paper-2);
+  font-size: calc(27rpx * var(--fs-mul, 1));
+  font-weight: 700;
+  color: var(--ink-2);
+}
+.k-slot.on {
+  background: var(--ink);
+  color: var(--anchor-contrast);
+}
+.k-slot-n {
+  margin-left: 8rpx;
+  font-size: var(--fs-mini);
+  opacity: 0.7;
+}
+.k-progress {
+  flex: none;
+  font-size: var(--fs-cap);
+  color: var(--mut-strong);
+  font-weight: 700;
+}
+
+/* —— 顺序建议 —— */
+.k-order {
+  margin-top: 20rpx;
+  padding: 20rpx 26rpx;
+  background: rgba(232, 71, 42, 0.07);
+  border: 2rpx solid rgba(232, 71, 42, 0.14);
+  border-radius: var(--r-card, 16rpx);
+  display: flex;
+  align-items: flex-start;
+  gap: 12rpx;
+}
+.k-order-ic {
+  font-size: calc(26rpx * var(--fs-mul, 1));
+  line-height: 1.5;
+}
+.k-order-tx {
+  font-size: calc(25rpx * var(--fs-mul, 1));
+  line-height: 1.55;
+  color: var(--ink-2);
+  font-weight: 600;
+}
+
+/* —— 灶台卡片 —— */
+.k-list {
+  margin-top: 22rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+.k-card {
+  position: relative;
+  display: flex;
+  gap: 22rpx;
+  background: var(--paper-2);
+  border: 2rpx solid transparent;
+  border-radius: var(--r-card, 16rpx);
+  padding: 22rpx;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.k-card.main {
+  border-color: var(--pop);
+  box-shadow: 0 8rpx 30rpx rgba(232, 71, 42, 0.12);
+}
+.k-card.is-done {
+  opacity: 0.62;
+}
+.k-img {
+  flex: none;
+  width: 168rpx;
+  height: 168rpx;
+  border-radius: 14rpx;
+  background: var(--paper);
+}
+.k-main-flag {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: var(--pop);
+  color: var(--anchor-contrast);
+  font-size: var(--fs-mini);
+  font-weight: 800;
+  padding: 6rpx 18rpx;
+  border-radius: 0 0 14rpx 0;
+}
+.k-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.k-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+.k-title {
+  flex: 1;
+  min-width: 0;
+  font-size: calc(31rpx * var(--fs-mul, 1));
+  font-weight: 800;
+  color: var(--ink);
+}
+.k-tag {
+  flex: none;
+  font-size: var(--fs-mini);
+  font-weight: 800;
+  padding: 6rpx 16rpx;
+  border-radius: var(--r-pill);
+}
+.k-tag.todo {
+  background: rgba(176, 137, 73, 0.14);
+  color: var(--gold-deep);
+}
+.k-tag.cooking {
+  background: rgba(232, 71, 42, 0.12);
+  color: var(--pop);
+}
+.k-tag.done {
+  background: rgba(47, 74, 58, 0.12);
+  color: var(--pine, #2f4a3a);
+}
+.k-meta {
+  margin-top: 8rpx;
+  font-size: var(--fs-cap);
+  color: var(--mut);
+}
+
+/* —— 计时行 —— */
+.k-timer {
+  margin-top: 14rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14rpx;
+}
+.k-clock {
+  font-size: calc(40rpx * var(--fs-mul, 1));
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  letter-spacing: 2rpx;
+}
+.k-clock.running {
+  color: var(--pop);
+}
+.k-tbtns {
+  display: flex;
+  gap: 12rpx;
+}
+.k-tbtn {
+  padding: 12rpx 26rpx;
+  border-radius: var(--r-pill);
+  background: var(--pop);
+  color: var(--anchor-contrast);
+  font-size: var(--fs-cap);
+  font-weight: 800;
+}
+.k-tbtn.ghost {
+  background: transparent;
+  border: 2rpx solid rgba(0, 0, 0, 0.14);
+  color: var(--ink-2);
+}
+
+/* —— 动作行 —— */
+.k-acts {
+  margin-top: 14rpx;
+  display: flex;
+  gap: 14rpx;
+}
+.k-act {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 76rpx;
+  border-radius: var(--r-pill);
+  font-size: calc(27rpx * var(--fs-mul, 1));
+  font-weight: 800;
+  box-sizing: border-box;
+}
+.k-act.primary {
+  background: var(--ink);
+  color: var(--anchor-contrast);
+}
+.k-act.ghost {
+  border: 2rpx solid rgba(0, 0, 0, 0.14);
+  color: var(--ink-2);
+  background: transparent;
+}
+
+/* —— 全上桌横幅 —— */
+.k-done-banner {
+  margin-top: 26rpx;
+  padding: 30rpx;
+  border-radius: var(--r-card, 16rpx);
+  background: var(--ink);
+  color: var(--anchor-contrast);
+  text-align: center;
+  font-size: calc(29rpx * var(--fs-mul, 1));
+  font-weight: 800;
+}
+
+.k-pad-bottom { height: 30rpx; }

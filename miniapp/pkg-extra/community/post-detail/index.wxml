@@ -42,9 +42,22 @@
         <view wx:for="{{post.paragraphs}}" wx:key="index" class="ptext-p">{{item}}</view>
       </view>
 
-      <!-- 菜图 -->
-      <image class="dish-img g-fade-up g-d2" src="{{post.cover}}" mode="aspectFill"></image>
-      <view class="imgcap">— 出锅那一刻，香气直接拉满 —</view>
+      <!-- 帖子图集：有配图走九宫格（点击看大图），无图保留菜图位 -->
+      <view wx:if="{{post.images.length}}" class="pimgs g-fade-up g-d2">
+        <image
+          wx:for="{{post.images}}"
+          wx:key="*this"
+          class="pimg"
+          src="{{item}}"
+          mode="aspectFill"
+          data-url="{{item}}"
+          bindtap="onPreviewImage"
+        />
+      </view>
+      <block wx:else>
+        <image class="dish-img g-fade-up g-d2" src="{{post.cover}}" mode="aspectFill"></image>
+        <view class="imgcap">— 出锅那一刻，香气直接拉满 —</view>
+      </block>
 
       <!-- 标签 -->
       <view wx:if="{{post.tags.length}}" class="ptags g-fade-up g-d3">
@@ -85,6 +98,10 @@
           <text class="ricon">❝</text>
           <text class="n">{{post.commentCount}}</text>
         </view>
+        <button class="react react-share tap-scale" open-type="share">
+          <text class="ricon">⤴</text>
+          <text class="n">分享</text>
+        </button>
       </view>
 
       <!-- 评论区 -->

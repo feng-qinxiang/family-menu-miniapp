@@ -92,6 +92,15 @@
       </view>
     </view>
 
+    <!-- 厨房总控入口：多菜并行、计时、上桌一屏管理 -->
+    <view class="m-kitchen-entry tap-scale g-fade-up g-d2" bindtap="goKitchen">
+      <view class="m-ke-col">
+        <view class="m-ke-title">厨房总控</view>
+        <view class="m-ke-sub">多道菜一起盯 · 计时 / 上桌都在这</view>
+      </view>
+      <view class="m-ke-go">进入 ›</view>
+    </view>
+
     <!-- 餐次分组 -->
     <block wx:if="{{mealGroups.length}}">
       <section-head

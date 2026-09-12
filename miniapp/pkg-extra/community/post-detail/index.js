@@ -36,6 +36,7 @@ function normalizePost(post) {
     .split(/\n+/)
     .map((t) => t.trim())
     .filter(Boolean);
+  const images = Array.isArray(post.images) ? post.images.filter(Boolean) : [];
   return {
     id: post.id,
     title: post.title || '未命名分享',
@@ -45,6 +46,7 @@ function normalizePost(post) {
     avaText: avaText(post.author),
     paragraphs: paragraphs.length ? paragraphs : [post.content || '暂无正文'],
     cover,
+    images,
     likeCount: post.likeCount || 0,
     liked: !!post.liked,
     favoriteCount: post.favoriteCount || 0,
@@ -222,6 +224,24 @@ Page({
         this.setData({ favoriting: false });
         this.showToast('操作失败，请重试', 'error');
       });
+  },
+
+  // 九宫格图预览大图
+  onPreviewImage(e) {
+    const url = e.currentTarget.dataset.url;
+    const urls = (this.data.post && this.data.post.images) || [];
+    if (!urls.length) return;
+    wx.previewImage({ current: url || urls[0], urls });
+  },
+
+  // 微信分享卡片：路径直达详情端点（匿名可看），卡片图用帖首图
+  onShareAppMessage() {
+    const post = this.data.post || {};
+    return {
+      title: `${post.author || '厨友'}：${post.title || '家常分享'}`,
+      path: `/pkg-extra/community/post-detail/index?postId=${this.data.postId || post.id || ''}`,
+      imageUrl: post.cover || ''
+    };
   },
 
   // 跳转关联菜谱详情

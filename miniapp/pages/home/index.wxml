@@ -169,7 +169,10 @@
               <view class="mh-mc-cap">待买</view>
             </view>
           </view>
-          <view class="mh-mc-go tap-scale" catchtap="goShopping">去买菜 ›</view>
+          <view class="mh-mc-acts">
+            <view class="mh-mc-go2 tap-scale" catchtap="goShopping">买菜</view>
+            <view class="mh-mc-go tap-scale" catchtap="goCook">{{cookLabel}}</view>
+          </view>
         </view>
       </view>
 

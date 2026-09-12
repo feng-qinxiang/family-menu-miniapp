@@ -1,11 +1,13 @@
 const {
   createCommunityPost,
   getCommunityPosts,
+  getCommunityTopics,
   reportCommunityPost,
   toggleCommunityFavorite,
   toggleCommunityLike
 } = require('../../utils/api');
 const { runGuarded, guard, release } = require('../../utils/interaction');
+const { chooseAndUpload } = require('../../utils/upload');
 const { withTabSelect } = require('../../behaviors/tab-select');
 const { withScrollReveal } = require('../../behaviors/scroll-reveal');
 
@@ -48,8 +50,10 @@ Page({
     reportTargetId: '',
     reportDesc: '',
     showPostForm: false,
-    postForm: { title: '', content: '', tagsText: '' },
-    hotTopics: HOT_TOPICS
+    postForm: { title: '', content: '', tagsText: '', images: [] },
+    hotTopics: HOT_TOPICS,
+    // 当前话题过滤（后端 feed tag 参数）；'' = 不限
+    currentTag: ''
   },
 
   onLoad() {
@@ -60,6 +64,7 @@ Page({
       sbh = 0;
     }
     this.setData({ statusBarHeight: sbh });
+    this.loadTopics();
   },
 
   onShow() {
@@ -97,7 +102,7 @@ Page({
     this.setData({ loadError: false });
     let posts = [];
     try {
-      posts = this.normalizePosts(await getCommunityPosts() || []);
+      posts = this.normalizePosts(await getCommunityPosts(this.data.currentTag) || []);
     } catch (err) {
       console.error('community loadPosts failed', err);
       this.setData({
@@ -128,23 +133,44 @@ Page({
     return (posts || []).map((post, index) => {
       const recipe = post.recipe || null;
       const recipeImg = recipe && recipe.coverImage ? recipe.coverImage : '';
+      const images = Array.isArray(post.images) ? post.images.filter(Boolean) : [];
       const fallback = `/assets/dishes/${FALLBACK_PHOTOS[index % FALLBACK_PHOTOS.length]}.jpg`;
       return {
         ...post,
         authorInitial: post.author ? post.author.slice(0, 1) : '匿',
         avatarColor: AVATAR_COLORS[index % AVATAR_COLORS.length],
-        photo: recipeImg || fallback,
+        photo: images[0] || recipeImg || fallback,
+        imageCount: images.length,
         recipeThumb: recipeImg || fallback,
         tags: Array.isArray(post.tags) ? post.tags : []
       };
     });
   },
 
-  // 话题 chip → 菜谱搜索页（keyword 命中菜名/菜系/标签）
+  // 话题榜：服务端聚合近帖标签频次；拿不到/为空回退写死话题（老约定兜底）
+  async loadTopics() {
+    try {
+      const topics = await getCommunityTopics();
+      if (Array.isArray(topics) && topics.length) {
+        this.setData({ hotTopics: topics.slice(0, 8).map((t) => ({ tag: t })) });
+      }
+    } catch (err) {
+      // fallback：保留 HOT_TOPICS
+    }
+  },
+
+  // 话题 chip → 站内过滤信息流（后端 tag 参数），再点「全部」解除
   onTopicTap(event) {
     const { tag } = event.currentTarget.dataset;
-    if (!tag) return;
-    wx.navigateTo({ url: `/pkg-extra/recipes/search/index?keyword=${encodeURIComponent(tag)}` });
+    if (!tag || tag === this.data.currentTag) return;
+    this.setData({ currentTag: tag });
+    this.loadPosts();
+  },
+
+  clearTopic() {
+    if (!this.data.currentTag) return;
+    this.setData({ currentTag: '' });
+    this.loadPosts();
   },
 
   // 帖子卡 → 详情页
@@ -289,6 +315,29 @@ Page({
     this.setData({ [`postForm.${field}`]: e.detail.value });
   },
 
+  // 配图：最多 6 张，走全站上传通道（/api/upload，已压缩），传完存绝对 URL
+  async addPostImages() {
+    const current = this.data.postForm.images || [];
+    const left = 6 - current.length;
+    if (left <= 0) {
+      wx.showToast({ title: '最多 6 张图片', icon: 'none' });
+      return;
+    }
+    const uploaded = await chooseAndUpload(left);
+    const added = (uploaded || []).filter(Boolean);
+    if (!added.length) return;
+    this.setData({ 'postForm.images': current.concat(added).slice(0, 6) });
+  },
+
+  removePostImage(e) {
+    const idx = Number(e.currentTarget.dataset.index);
+    const images = (this.data.postForm.images || []).slice();
+    if (idx >= 0 && idx < images.length) {
+      images.splice(idx, 1);
+      this.setData({ 'postForm.images': images });
+    }
+  },
+
   async submitPost() {
     if (this.data.postSubmitting) return;
     const { title, content, tagsText } = this.data.postForm;
@@ -303,13 +352,18 @@ Page({
     const tags = tagsText.split(/[,，]/).map((s) => s.trim()).filter(Boolean);
     this.setData({ postSubmitting: true });
     try {
-      await createCommunityPost({ title: title.trim(), content: content.trim(), tags });
+      await createCommunityPost({
+        title: title.trim(),
+        content: content.trim(),
+        tags,
+        images: (this.data.postForm.images || []).filter(Boolean)
+      });
     } catch (err) {
       this.setData({ postSubmitting: false });
       wx.showToast({ title: '发布失败，请重试', icon: 'none' });
       return;
     }
-    this.setData({ showPostForm: false, postForm: { title: '', content: '', tagsText: '' }, postSubmitting: false });
+    this.setData({ showPostForm: false, postForm: { title: '', content: '', tagsText: '', images: [] }, postSubmitting: false });
     await this.loadPosts();
     wx.showToast({ title: '发布成功', icon: 'success' });
   }

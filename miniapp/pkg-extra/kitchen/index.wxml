@@ -1,0 +1,108 @@
+<!-- pages/kitchen/index · 厨房总控（多菜并行一屏管理） -->
+<view class="kitchen {{fontScale === 'lg' ? 'font-lg' : ''}}">
+  <nav-bar title="厨房总控" show-back="{{true}}"></nav-bar>
+
+  <!-- 加载中 -->
+  <view wx:if="{{loading}}" class="k-loading">
+    <view class="spinner"></view>
+    <text class="k-loading-tx">正在开火…</text>
+  </view>
+
+  <!-- 加载失败 -->
+  <state-empty
+    wx:elif="{{loadError}}"
+    type="offline"
+    title="厨房没连上"
+    desc="网络开小差了，检查后再试一次"
+    cta="重新加载"
+    bind:action="retryLoad"
+  ></state-empty>
+
+  <!-- 这一餐还没点菜 -->
+  <state-empty
+    wx:elif="{{!groups.length}}"
+    type="gray"
+    title="今天还没点菜"
+    desc="先去菜谱里挑几道，再回来开火"
+    cta="去点菜"
+    bind:action="goOrdering"
+  ></state-empty>
+
+  <!-- 正文 -->
+  <block wx:else>
+    <!-- 餐次 chips + 进度 -->
+    <view class="k-head">
+      <view class="k-slots">
+        <view
+          wx:for="{{groups}}"
+          wx:key="meal"
+          class="k-slot tap-scale {{item.meal === activeMeal ? 'on' : ''}}"
+          data-meal="{{item.meal}}"
+          bindtap="selectSlot"
+        >{{item.label}}<text class="k-slot-n">{{item.items.length}}</text></view>
+      </view>
+      <view class="k-progress">{{doneCount}}/{{items.length}} 已上桌</view>
+    </view>
+
+    <!-- 顺序建议 -->
+    <view class="k-order" wx:if="{{orderText}}">
+      <text class="k-order-ic">💡</text>
+      <text class="k-order-tx">{{orderText}}</text>
+    </view>
+
+    <!-- 灶台卡片 -->
+    <view class="k-list">
+      <view
+        wx:for="{{items}}"
+        wx:key="id"
+        class="k-card {{item.main ? 'main' : ''}} {{item.status === 'done' ? 'is-done' : ''}}"
+      >
+        <image class="k-img" src="{{item.img}}" mode="aspectFill" />
+        <view class="k-main-flag" wx:if="{{item.main}}">主灶</view>
+
+        <view class="k-col">
+          <view class="k-title-row">
+            <text class="k-title ellipsis">{{item.title}}</text>
+            <text class="k-tag {{item.status}}">{{item.status === 'done' ? '已上桌' : item.status === 'cooking' ? '烧着呢' : '待做'}}</text>
+          </view>
+
+          <view class="k-meta">
+            <text wx:if="{{item.timeCost}}">{{item.timeCost}} 分钟</text>
+            <text wx:if="{{item.servings}}"> · {{item.servings}} 人份</text>
+            <text wx:if="{{item.progressText}}"> · 做到 {{item.progressText}}</text>
+            <text wx:if="{{!item.timeCost && !item.servings && !item.progressText}}">· {{item.mealLabel}}</text>
+          </view>
+
+          <!-- 计时行 -->
+          <view class="k-timer" wx:if="{{item.status !== 'done'}}">
+            <text class="k-clock {{item.timer && item.timer.running ? 'running' : ''}}">{{item.timerText || '--:--'}}</text>
+            <view class="k-tbtns">
+              <view
+                class="k-tbtn tap-scale {{item.timer && item.timer.running ? 'on' : ''}}"
+                data-index="{{index}}"
+                catchtap="toggleTimer"
+              >{{item.timer && item.timer.running ? '暂停' : (item.timer ? '继续' : '计时')}}</view>
+              <view class="k-tbtn ghost tap-scale" data-index="{{index}}" catchtap="pickDuration">换时长</view>
+            </view>
+          </view>
+
+          <!-- 动作行 -->
+          <view class="k-acts" wx:if="{{item.status !== 'done'}}">
+            <view
+              class="k-act primary tap-scale"
+              data-id="{{item.recipeId}}"
+              data-item="{{item.id}}"
+              catchtap="startCook"
+            >{{item.status === 'cooking' ? '继续做 ›' : '开做 ›'}}</view>
+            <view class="k-act ghost tap-scale" data-id="{{item.recipeId}}" data-index="{{index}}" catchtap="markCooked">上桌</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 全上桌横幅 -->
+    <view class="k-done-banner" wx:if="{{allDone}}">这一餐全部上桌，开饭！🎉</view>
+
+    <view class="k-pad-bottom"></view>
+  </block>
+</view>

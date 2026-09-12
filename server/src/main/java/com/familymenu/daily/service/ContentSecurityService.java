@@ -2,16 +2,20 @@ package com.familymenu.daily.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 
 /**
- * UGC 内容安全校验（微信 msgSecCheck v2，见小程序内容安全规范）。
+ * UGC 内容安全校验（微信 msgSecCheck v2 / imgSecCheck，见小程序内容安全规范）。
  *
  * 社区发帖/评论前调用，机器审核 + 站内举报审核队列（人工）构成双重机制。
  * 返回的 audit_status 决定内容是否立即可见：
@@ -39,13 +43,22 @@ public class ContentSecurityService {
     /** msgSecCheck 单次内容上限 2500 字，超长取前段（标题+正文拼接一般不会超） */
     private static final int MAX_CONTENT_LENGTH = 2500;
 
+    /** imgSecCheck 单图上限 1MB（微信接口硬限制），超过按"无法机审"转人工队列 */
+    private static final long MAX_IMAGE_BYTES = 1024 * 1024;
+
+    /** imgSecCheck 判定违规的错误码 */
+    private static final int ERRCODE_IMAGE_RISK = 87014;
+
     /** 微信凭据与 access_token 统一从这里取（全站只有一份 token 缓存，见 WechatClient） */
     private final WechatClient wechatClient;
     private final RestClient restClient;
+    private final Path uploadRoot;
 
-    public ContentSecurityService(WechatClient wechatClient) {
+    public ContentSecurityService(WechatClient wechatClient,
+                                  @Value("${upload.dir:uploads}") String uploadDir) {
         this.wechatClient = wechatClient;
         this.restClient = RestClient.create();
+        this.uploadRoot = Paths.get(uploadDir).toAbsolutePath().normalize();
     }
 
     /**
@@ -117,6 +130,81 @@ public class ContentSecurityService {
             // 网络等异常：转人工审核，不阻断发布也不直接公开
             log.warn("ContentSecurity: check failed ({}), queued for manual review", ex.getMessage());
             return STATUS_PENDING;
+        }
+    }
+
+    /**
+     * 审核帖子配图（微信 imgSecCheck 同步版，单图 ≤1MB）。
+     * 与 {@link #auditStatus} 同语义：通过 → APPROVED；违规 → 抛 400；无法机审 → PENDING。
+     *
+     * 只审本站 uploads 目录里的文件：URL 里取不到 /uploads/ 文件名、名字含可疑字符、
+     * 文件不存在或超过 1MB，一律视为"无法机审"转人工，绝不直接放行。
+     */
+    public String auditImage(long userId, String imageUrl) {
+        if (imageUrl == null || imageUrl.isBlank()) {
+            return STATUS_APPROVED;
+        }
+        if (!wechatClient.configured()) {
+            log.info("ContentSecurity image not configured: queued for manual review");
+            return STATUS_PENDING;
+        }
+        byte[] bytes = readUploadedImage(imageUrl);
+        if (bytes == null) {
+            log.info("ContentSecurity image unreadable ({}), queued for manual review", imageUrl);
+            return STATUS_PENDING;
+        }
+        if (bytes.length > MAX_IMAGE_BYTES) {
+            log.info("ContentSecurity image too large ({} bytes), queued for manual review", bytes.length);
+            return STATUS_PENDING;
+        }
+        try {
+            String token = wechatClient.accessToken();
+            @SuppressWarnings("unchecked")
+            Map<String, Object> response = restClient.post()
+                    .uri("https://api.weixin.qq.com/wxa/img_sec_check?access_token=" + token)
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(bytes)
+                    .retrieve()
+                    .body(Map.class);
+            Object errcode = response == null ? null : response.get("errcode");
+            int code = errcode instanceof Number n ? n.intValue() : 0;
+            if (code == ERRCODE_IMAGE_RISK) {
+                log.info("ContentSecurity image reject: user={} image={}", userId, imageUrl);
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "图片涉嫌违规，请更换后再发布");
+            }
+            if (code != 0) {
+                log.warn("ContentSecurity image errcode={}, queued for manual review", code);
+                return STATUS_PENDING;
+            }
+            return STATUS_APPROVED;
+        } catch (ResponseStatusException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            log.warn("ContentSecurity image check failed ({}), queued for manual review", ex.getMessage());
+            return STATUS_PENDING;
+        }
+    }
+
+    /** 从图片 URL 解出 uploads 目录内的文件并读取；不合法/读不到返回 null（调用方按无法机审处理）。 */
+    private byte[] readUploadedImage(String imageUrl) {
+        try {
+            String marker = "/uploads/";
+            int idx = imageUrl.lastIndexOf(marker);
+            if (idx < 0) {
+                return null;
+            }
+            String name = imageUrl.substring(idx + marker.length());
+            // 白名单字符防路径穿越与外链；UUID 文件名天然满足
+            if (!name.matches("[A-Za-z0-9._-]+")) {
+                return null;
+            }
+            Path file = uploadRoot.resolve(name).normalize();
+            if (!file.startsWith(uploadRoot) || !Files.isRegularFile(file)) {
+                return null;
+            }
+            return Files.readAllBytes(file);
+        } catch (Exception ex) {
+            return null;
         }
     }
 }

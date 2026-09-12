@@ -611,3 +611,29 @@
   margin-bottom: 16rpx;
   opacity: 0.8;
 }
+
+/* 厨房总控入口横幅 */
+.m-kitchen-entry {
+  margin: 26rpx 0 6rpx;
+  padding: 26rpx 30rpx;
+  background: var(--ink);
+  color: var(--anchor-contrast);
+  border-radius: var(--r-card, 28rpx);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.m-ke-title {
+  font-size: calc(30rpx * var(--fs-mul, 1));
+  font-weight: 800;
+}
+.m-ke-sub {
+  margin-top: 6rpx;
+  font-size: var(--fs-cap);
+  color: rgba(255, 255, 255, 0.72);
+}
+.m-ke-go {
+  font-size: calc(26rpx * var(--fs-mul, 1));
+  font-weight: 800;
+  color: var(--gold-deep);
+}

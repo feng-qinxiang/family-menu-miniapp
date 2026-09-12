@@ -258,6 +258,10 @@ Page({
     wx.navigateTo({ url: `/pkg-extra/recipe-detail/index?id=${id}` });
   },
 
+  goKitchen() {
+    wx.navigateTo({ url: '/pkg-extra/kitchen/index' });
+  },
+
   goShopping() {
     wx.navigateTo({ url: '/pages/shopping/index' });
   },

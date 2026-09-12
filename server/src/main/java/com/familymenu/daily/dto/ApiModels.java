@@ -1,5 +1,9 @@
 package com.familymenu.daily.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -12,6 +16,44 @@ import java.util.Map;
 public final class ApiModels {
 
     private ApiModels() {
+    }
+
+    /**
+     * 结构化烹饪步骤（text 必填；image/video 可空）。
+     * 入参兼容三种形态：纯文本（种子/旧客户端/测试）、历史前端把 {text,image,video} 编码进字符串的旧格式
+     * （服务端负责解开，见 utils/recipe-steps.js 的历史 hack）、以及新前端的结构化对象。
+     */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record RecipeStep(String text, String image, String video) {
+
+        private static final ObjectMapper MAPPER = new ObjectMapper();
+
+        @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
+        public static RecipeStep from(JsonNode node) {
+            if (node == null || node.isNull()) {
+                return new RecipeStep("", null, null);
+            }
+            if (node.isTextual()) {
+                String raw = node.asText();
+                if (raw.startsWith("{")) {
+                    try {
+                        JsonNode parsed = MAPPER.readTree(raw);
+                        return new RecipeStep(
+                                parsed.path("text").asText(""),
+                                parsed.hasNonNull("image") ? parsed.get("image").asText() : null,
+                                parsed.hasNonNull("video") ? parsed.get("video").asText() : null);
+                    } catch (Exception ignored) {
+                        // 非法 JSON：按纯文本保留，不让一条脏数据毁掉整道菜谱
+                        return new RecipeStep(raw, null, null);
+                    }
+                }
+                return new RecipeStep(raw, null, null);
+            }
+            return new RecipeStep(
+                    node.path("text").asText(""),
+                    node.hasNonNull("image") ? node.get("image").asText() : null,
+                    node.hasNonNull("video") ? node.get("video").asText() : null);
+        }
     }
 
     public record IngredientItem(
@@ -75,7 +117,9 @@ public final class ApiModels {
             List<String> tags,
             RecipeCard recipe,
             /** 当前用户是否是作者（作者本人才显示删帖入口） */
-            boolean mine
+            boolean mine,
+            /** 帖子配图（/uploads/ URL，最多 6 张，可为空） */
+            List<String> images
     ) {
     }
 
@@ -130,7 +174,7 @@ public final class ApiModels {
             @NotEmpty @Size(max = 20) List<String> tasteTags,
             Integer timeCost,
             Integer servings,
-            @NotEmpty @Size(max = 50) List<String> steps,
+            @NotEmpty @Size(max = 50) List<RecipeStep> steps,
             @NotEmpty @Size(max = 50) List<IngredientItem> ingredients,
             @Size(max = 255) String summary,
             @Size(max = 512) String coverImage,
@@ -153,7 +197,8 @@ public final class ApiModels {
             @NotBlank @Size(max = 128) String title,
             @NotBlank @Size(max = 5000) String content,
             Long recipeId,
-            @Size(max = 10) List<@Size(max = 32) String> tags
+            @Size(max = 10) List<@Size(max = 32) String> tags,
+            @Size(max = 6) List<@Size(max = 512) String> images
     ) {
     }
 
@@ -318,7 +363,7 @@ public final class ApiModels {
             Integer servings,
             Double rating,
             String summary,
-            List<String> steps,
+            List<RecipeStep> steps,
             List<IngredientItem> ingredients,
             String createdAt,
             String coverImage,
@@ -335,7 +380,7 @@ public final class ApiModels {
             List<String> tasteTags,
             Integer timeCost,
             Integer servings,
-            List<String> steps,
+            List<RecipeStep> steps,
             List<IngredientItem> ingredients,
             String summary,
             String coverImage,

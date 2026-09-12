@@ -342,3 +342,29 @@
   color: var(--mut);
   padding: 4rpx 0 4rpx 12rpx;
 }
+
+/* ===== 帖子图集 + 分享按钮 ===== */
+.pimgs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12rpx;
+  margin: 26rpx 0 10rpx;
+}
+.pimg {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 14rpx;
+  background: var(--paper-2);
+}
+.react-share {
+  background: transparent;
+  border: none;
+  margin: 0;
+  padding: 0;
+  line-height: inherit;
+  color: inherit;
+  font-size: inherit;
+}
+.react-share::after {
+  border: none;
+}
