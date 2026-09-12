@@ -29,3 +29,5 @@ jobs:
 
       - name: 纯逻辑单测
         run: node miniapp/test/dish-logic.test.js
+    - name: Kitchen logic test
+      run: node miniapp/test/kitchen-logic.test.js
