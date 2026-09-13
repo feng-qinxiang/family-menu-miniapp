@@ -112,6 +112,7 @@ Page({
     theme: 'light',        // 深浅色档位：root-portal 弹窗不继承 page 变量，用它切 token 副本
     slotDoneCount: 0,      // 当前餐次已上桌的数量，updateSlotMenu 里算
     cookLabel: '',         // 厨房入口按钮文案（开做 N 道/继续做/已齐）
+    emptyCookLabel: '去厨房 ›',  // 空态卡厨房按钮文案
     role: '',              // 本人在家庭中的角色（owner/admin/member），loadAll 时由后端数据填充
     canConfirm: true,      // owner/admin 可确认菜单；无家庭数据时不阻断（§6）
 
@@ -262,7 +263,10 @@ Page({
     const cookLabel = pendingCount === 0
       ? '已齐 · 回看 ›'
       : cookingCount > 0 ? '继续做 ›' : `开做 ${pendingCount} 道 ›`;
-    this.setData({ slotMenu, slotDoneCount, cookLabel });
+    // 空态卡（本餐没菜但全天有菜）：按钮文案随全天状态变化
+    const emptyCookLabel = this.data.todayMenu.some(it => (it.status || 'todo') === 'cooking')
+      ? '继续做 ›' : '去厨房 ›';
+    this.setData({ slotMenu, slotDoneCount, cookLabel, emptyCookLabel });
   },
 
   goWeek() {

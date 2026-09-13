@@ -171,7 +171,7 @@
           </view>
           <view class="mh-mc-acts">
             <view class="mh-mc-go2 tap-scale" catchtap="goShopping">买菜</view>
-            <view class="mh-mc-go tap-scale" catchtap="goCook">{{cookLabel}}</view>
+            <view class="mh-mc-go mh-mc-go-cook tap-scale" catchtap="goCook">{{cookLabel}}</view>
           </view>
         </view>
       </view>
@@ -181,10 +181,10 @@
         <view class="deco-circle"></view>
         <view class="mh-mc-eyebrow">今天这一桌</view>
         <view class="mh-mc-title">{{currentSlot === 'breakfast' ? '早餐' : currentSlot === 'lunch' ? '午餐' : '晚餐'}}还没点菜</view>
-        <view class="mh-mc-names">从下面挑几道，凑齐今晚的桌</view>
+        <view class="mh-mc-names">其他餐次已经点好菜了，去厨房看看</view>
         <view class="mh-mc-bot">
-          <view class="mh-mc-empty-hint">看中哪道，点 ＋ 上桌</view>
-          <view class="mh-mc-go tap-scale" catchtap="goRecipes">逛菜谱 ›</view>
+          <view class="mh-mc-empty-hint">开做 / 计时 / 上桌都在厨房总控</view>
+          <view class="mh-mc-go mh-mc-go-cook tap-scale" catchtap="goCook">{{emptyCookLabel}}</view>
         </view>
       </view>
 
