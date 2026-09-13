@@ -142,7 +142,9 @@ Page({
         photo: images[0] || recipeImg || fallback,
         imageCount: images.length,
         recipeThumb: recipeImg || fallback,
-        tags: Array.isArray(post.tags) ? post.tags : []
+        tags: Array.isArray(post.tags) ? post.tags : [],
+        // 自己的待审帖子（只有作者本人看得到），加角标避免"为什么别人看不到"的困惑
+        isPending: post.auditStatus === 'PENDING'
       };
     });
   },
@@ -352,7 +354,7 @@ Page({
     const tags = tagsText.split(/[,，]/).map((s) => s.trim()).filter(Boolean);
     this.setData({ postSubmitting: true });
     try {
-      await createCommunityPost({
+      const created = await createCommunityPost({
         title: title.trim(),
         content: content.trim(),
         tags,
@@ -364,7 +366,9 @@ Page({
       return;
     }
     this.setData({ showPostForm: false, postForm: { title: '', content: '', tagsText: '', images: [] }, postSubmitting: false });
+    // 机审未过（PENDING）时先审后发：只有作者本人可见，文案要说清，别让用户以为发了没人理
+    const pending = created && created.auditStatus === 'PENDING';
     await this.loadPosts();
-    wx.showToast({ title: '发布成功', icon: 'success' });
+    wx.showToast({ title: pending ? '已提交，审核通过后大家可见' : '发布成功', icon: 'none', duration: 2200 });
   }
 });

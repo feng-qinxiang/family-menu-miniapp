@@ -386,7 +386,7 @@ Page({
   // 主 CTA 改为带第一条心愿直达搜索挑菜；挑到后详情页加菜会自动销愿。
   confirmMenu() {
     if (!this.data.canConfirm) {
-      wx.showToast({ title: '请等做饭人确认', icon: 'none' });
+      wx.showToast({ title: '请等管理员确认', icon: 'none' });
       return;
     }
     const list = this.data.wishes;
@@ -463,7 +463,7 @@ Page({
         familyProfile: family || { members: [] },
         role: myRole || '',
         // owner/admin 是「做饭人」可确认菜单；普通 member 需等待；查不到角色（无家庭）不阻断
-        canConfirm: myRole ? ['owner', 'admin', 'cook'].indexOf(myRole) !== -1 : true,
+        canConfirm: myRole ? ['owner', 'admin'].indexOf(myRole) !== -1 : true,
         todayMenu: normalizedItems,
         shoppingPending,
         allRecipes,
@@ -527,7 +527,7 @@ Page({
           family || this.data.familyProfile
         );
         patch.role = myRole || '';
-        patch.canConfirm = myRole ? ['owner', 'admin', 'cook'].indexOf(myRole) !== -1 : true;
+        patch.canConfirm = myRole ? ['owner', 'admin'].indexOf(myRole) !== -1 : true;
       }
       if (Object.keys(patch).length) this.setData(patch);
     } catch (err) {

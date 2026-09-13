@@ -335,7 +335,9 @@ public final class AdminModels {
             String phone,
             String role,
             String status,
-            String joinedAt
+            String joinedAt,
+            /** 忌口标签（影响小程序推荐过滤），运营排查"为什么推荐里没这道菜"用 */
+            java.util.List<String> avoidTags
     ) {
     }
 
@@ -349,7 +351,11 @@ public final class AdminModels {
             int itemCount,
             /** 菜名，用「、」连接，列表里直接展示 */
             String dishes,
-            String updatedAt
+            String updatedAt,
+            /** 餐次摘要（如「午餐 2 道 · 晚餐 1 道」），术语与小程序一致 */
+            String meals,
+            /** 做菜进度摘要（如「1 待做 · 2 已上桌」），术语对齐小程序「待做/烧着呢/已上桌」 */
+            String cookProgress
     ) {
     }
 

@@ -1152,7 +1152,8 @@ public class AdminService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "家庭不存在");
         }
         List<AdminFamilyMember> members = jdbcTemplate.query("""
-                        SELECT m.user_id, u.nickname, u.phone_number, m.member_role, m.member_status, m.created_at
+                        SELECT m.user_id, u.nickname, u.phone_number, m.member_role, m.member_status, m.created_at,
+                               m.avoid_tags_json
                         FROM family_member m
                         LEFT JOIN user_account u ON u.id = m.user_id
                         WHERE m.family_id = ?
@@ -1164,7 +1165,8 @@ public class AdminService {
                         maskPhone(rs.getString("phone_number")),
                         rs.getString("member_role"),
                         rs.getString("member_status"),
-                        rs.getString("created_at")
+                        rs.getString("created_at"),
+                        readTagList(rs.getString("avoid_tags_json"))
                 ),
                 familyId);
         return new AdminFamilyDetail(
@@ -1198,7 +1200,24 @@ public class AdminService {
                                (SELECT GROUP_CONCAT(r.title ORDER BY i.recipe_id SEPARATOR '、')
                                   FROM daily_menu_item i
                                   JOIN recipe r ON r.id = i.recipe_id
-                                 WHERE i.daily_menu_id = dm.id) AS dishes
+                                 WHERE i.daily_menu_id = dm.id) AS dishes,
+                               (SELECT GROUP_CONCAT(seg ORDER BY seg SEPARATOR ' · ')
+                                  FROM (
+                                    SELECT CONCAT(
+                                      CASE i.meal_type WHEN 'breakfast' THEN '早餐' WHEN 'lunch' THEN '午餐'
+                                                       WHEN 'afternoon' THEN '下午茶' ELSE '晚餐' END,
+                                      ' ', COUNT(*), ' 道') AS seg
+                                    FROM daily_menu_item i WHERE i.daily_menu_id = dm.id
+                                    GROUP BY i.meal_type
+                                  ) t) AS meals,
+                               (SELECT GROUP_CONCAT(seg ORDER BY FIELD(kind, 'todo', 'cooking', 'done') SEPARATOR ' · ')
+                                  FROM (
+                                    SELECT i.status AS kind,
+                                      CONCAT(CASE i.status WHEN 'todo' THEN '待做' WHEN 'cooking' THEN '烧着呢' ELSE '已上桌' END,
+                                             ' ', COUNT(*), ' 道') AS seg
+                                    FROM daily_menu_item i WHERE i.daily_menu_id = dm.id
+                                    GROUP BY i.status
+                                  ) t) AS cook_progress
                         FROM daily_menu dm
                         LEFT JOIN family f ON f.id = dm.family_id
                         WHERE (? IS NULL OR dm.menu_date = ?)
@@ -1214,7 +1233,9 @@ public class AdminService {
                         rs.getString("status"),
                         rs.getInt("item_count"),
                         rs.getString("dishes"),
-                        rs.getString("updated_at")
+                        rs.getString("updated_at"),
+                        rs.getString("meals"),
+                        rs.getString("cook_progress")
                 ),
                 day, day, kw, like, fid, fid, safeSize, (long) safePage * safeSize);
         return new AdminPage<>(items, total == null ? 0 : total, safePage, safeSize);
@@ -1313,6 +1334,19 @@ public class AdminService {
             FROM family f
             LEFT JOIN user_account u ON u.id = f.owner_user_id
             """;
+
+    /** avoid_tags_json → 字符串列表；脏数据降级空列表。 */
+    private java.util.List<String> readTagList(String json) {
+        if (json == null || json.isBlank()) {
+            return java.util.List.of();
+        }
+        try {
+            return JSON.readValue(json,
+                    new com.fasterxml.jackson.core.type.TypeReference<java.util.List<String>>() {});
+        } catch (Exception ignored) {
+            return java.util.List.of();
+        }
+    }
 
     private static AdminFamilyItem mapFamily(java.sql.ResultSet rs) throws java.sql.SQLException {
         return new AdminFamilyItem(

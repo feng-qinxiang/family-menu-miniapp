@@ -368,3 +368,20 @@
 .react-share::after {
   border: none;
 }
+
+/* ===== 审核状态角标 ===== */
+.post-title-row { display: flex; flex-direction: column; gap: 12rpx; }
+.pd-pending {
+  align-self: flex-start;
+  font-size: var(--fs-cap);
+  font-weight: 700;
+  color: var(--gold-deep);
+  background: rgba(176, 137, 73, 0.14);
+  padding: 8rpx 20rpx;
+  border-radius: var(--r-pill);
+}
+.cd-pending {
+  font-size: var(--fs-mini);
+  color: var(--gold-deep);
+  margin-left: 8rpx;
+}

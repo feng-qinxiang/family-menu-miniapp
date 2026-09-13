@@ -82,6 +82,26 @@
     </view>
     <view class="hint">通常 1–2 个工作日内回复</view>
   </view>
+
+  <!-- 我的历史反馈：含运营回复，反馈不再"提交即失联" -->
+  <view class="fh">
+    <view class="fh-head">我的反馈</view>
+    <view wx:if="{{historyLoading}}" class="fh-empty">加载中…</view>
+    <view wx:elif="{{!history.length}}" class="fh-empty">还没有反馈记录</view>
+    <view wx:else class="fh-list">
+      <view wx:for="{{history}}" wx:key="id" class="fh-item">
+        <view class="fh-row">
+          <text class="fh-badge {{item.replied ? 'ok' : ''}}">{{item.replied ? '已回复' : '处理中'}}</text>
+          <text class="fh-time">{{item.timeText}}</text>
+        </view>
+        <view class="fh-content">{{item.content}}</view>
+        <view wx:if="{{item.replied}}" class="fh-reply">
+          <text class="fh-reply-k">运营回复</text>
+          <text class="fh-reply-v">{{item.replyText}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
 </view>
 
 <state-toast

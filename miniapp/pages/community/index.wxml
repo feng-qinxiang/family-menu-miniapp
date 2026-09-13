@@ -74,7 +74,10 @@
               <view class="ptime">{{item.timeText || ''}}</view>
             </view>
 
-            <view class="ptitle clamp-2">{{item.title}}</view>
+            <view class="ptitle-row">
+              <text class="ptitle clamp-2">{{item.title}}</text>
+              <text wx:if="{{item.isPending}}" class="ppending">审核中</text>
+            </view>
             <view class="pcontent clamp-2">{{item.content}}</view>
 
             <view class="pphoto-wrap">

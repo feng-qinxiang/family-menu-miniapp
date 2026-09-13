@@ -1,0 +1,260 @@
+{
+  "results": [
+    {
+      "path": "pages/home/index",
+      "ok": true,
+      "views": 76,
+      "keyHit": true,
+      "why": ""
+    },
+    {
+      "path": "pages/recipes/index",
+      "ok": true,
+      "views": 50,
+      "keyHit": true,
+      "why": ""
+    },
+    {
+      "path": "pages/community/index",
+      "ok": true,
+      "views": 194,
+      "keyHit": true,
+      "why": ""
+    },
+    {
+      "path": "pages/menu/index",
+      "ok": true,
+      "views": 73,
+      "keyHit": true,
+      "why": ""
+    },
+    {
+      "path": "pages/me/index",
+      "ok": true,
+      "views": 124,
+      "keyHit": true,
+      "why": ""
+    },
+    {
+      "path": "pages/shopping/index",
+      "ok": true,
+      "views": 98,
+      "keyHit": true,
+      "why": ""
+    },
+    {
+      "path": "pages/pantry/index",
+      "ok": true,
+      "views": 144,
+      "keyHit": true,
+      "why": ""
+    },
+    {
+      "path": "pkg-extra/kitchen/index",
+      "ok": true,
+      "views": 21,
+      "keyHit": true,
+      "why": ""
+    },
+    {
+      "path": "pkg-extra/community/post-detail/index",
+      "ok": true,
+      "views": 42,
+      "keyHit": true,
+      "why": ""
+    },
+    {
+      "path": "pkg-extra/vip/index",
+      "ok": true,
+      "views": 85,
+      "keyHit": true,
+      "why": ""
+    },
+    {
+      "path": "pkg-extra/vip/upgrade/index",
+      "ok": true,
+      "views": 63,
+      "keyHit": true,
+      "why": ""
+    },
+    {
+      "path": "pkg-extra/vip/orders/index",
+      "ok": true,
+      "views": 7,
+      "keyHit": true,
+      "why": ""
+    },
+    {
+      "path": "pkg-extra/payment/checkout/index",
+      "ok": true,
+      "skip": "需订单号且 PAYMENT 开关关闭"
+    },
+    {
+      "path": "pkg-extra/payment/success/index",
+      "ok": true,
+      "skip": "需订单号且 PAYMENT 开关关闭"
+    },
+    {
+      "path": "pkg-extra/favorites/index",
+      "ok": true,
+      "views": 12,
+      "keyHit": true,
+      "why": ""
+    },
+    {
+      "path": "pkg-extra/import/index",
+      "ok": true,
+      "views": 29,
+      "keyHit": true,
+      "why": ""
+    },
+    {
+      "path": "pkg-extra/recipe-detail/index",
+      "ok": true,
+      "views": 74,
+      "keyHit": true,
+      "why": ""
+    },
+    {
+      "path": "pkg-extra/recipe-edit/index",
+      "ok": true,
+      "views": 36,
+      "keyHit": true,
+      "why": ""
+    },
+    {
+      "path": "pkg-extra/weekly-menu/index",
+      "ok": true,
+      "views": 127,
+      "keyHit": true,
+      "why": ""
+    },
+    {
+      "path": "pkg-extra/recipes/search/index",
+      "ok": true,
+      "views": 117,
+      "keyHit": true,
+      "why": ""
+    },
+    {
+      "path": "pkg-extra/cook-mode/index",
+      "ok": true,
+      "views": 39,
+      "keyHit": true,
+      "why": ""
+    },
+    {
+      "path": "pkg-extra/cook-log/index",
+      "ok": true,
+      "views": 121,
+      "keyHit": true,
+      "why": ""
+    },
+    {
+      "path": "pkg-extra/auth/login/index",
+      "ok": true,
+      "views": 27,
+      "keyHit": true,
+      "why": ""
+    },
+    {
+      "path": "pkg-extra/auth/login-phone/index",
+      "ok": true,
+      "views": 22,
+      "keyHit": true,
+      "why": ""
+    },
+    {
+      "path": "pkg-extra/family/create/index",
+      "ok": true,
+      "views": 31,
+      "keyHit": true,
+      "why": ""
+    },
+    {
+      "path": "pkg-extra/family/join/index",
+      "ok": true,
+      "views": 28,
+      "keyHit": true,
+      "why": ""
+    },
+    {
+      "path": "pkg-extra/family/members/index",
+      "ok": true,
+      "views": 39,
+      "keyHit": true,
+      "why": ""
+    },
+    {
+      "path": "pkg-extra/family/invite/index",
+      "ok": true,
+      "views": 26,
+      "keyHit": true,
+      "why": ""
+    },
+    {
+      "path": "pkg-extra/me/settings/index",
+      "ok": true,
+      "views": 52,
+      "keyHit": true,
+      "why": ""
+    },
+    {
+      "path": "pkg-extra/me/notifications/index",
+      "ok": true,
+      "views": 40,
+      "keyHit": true,
+      "why": ""
+    },
+    {
+      "path": "pkg-extra/me/preference-profile/index",
+      "ok": true,
+      "views": 74,
+      "keyHit": true,
+      "why": ""
+    },
+    {
+      "path": "pkg-extra/me/feedback/index",
+      "ok": true,
+      "views": 29,
+      "keyHit": true,
+      "why": ""
+    },
+    {
+      "path": "pkg-extra/me/help-faq/index",
+      "ok": true,
+      "views": 55,
+      "keyHit": true,
+      "why": ""
+    },
+    {
+      "path": "pkg-extra/me/about/index",
+      "ok": true,
+      "views": 64,
+      "keyHit": true,
+      "why": ""
+    },
+    {
+      "path": "pkg-extra/legal/terms/index",
+      "ok": true,
+      "views": 35,
+      "keyHit": true,
+      "why": ""
+    },
+    {
+      "path": "pkg-extra/legal/privacy/index",
+      "ok": true,
+      "views": 52,
+      "keyHit": true,
+      "why": ""
+    },
+    {
+      "path": "pkg-extra/me/profile-edit/index",
+      "ok": true,
+      "views": 53,
+      "keyHit": true,
+      "why": ""
+    }
+  ],
+  "consoleErrors": []
+}

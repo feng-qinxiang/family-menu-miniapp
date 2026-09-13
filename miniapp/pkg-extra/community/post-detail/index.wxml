@@ -13,10 +13,10 @@
   <state-empty
     wx:elif="{{loadError || !post}}"
     type="offline"
-    title="帖子不存在或已删除"
-    desc="可能已被作者删除或网络开小差，换个网络再试试"
-    cta="重新加载"
-    bind:action="onRetry"
+    title="{{loadErrorDesc ? '内容不可见' : '帖子不存在或已删除'}}"
+    desc="{{loadErrorDesc || '可能已被作者删除或网络开小差，换个网络再试试'}}"
+    cta="{{loadErrorDesc ? '返回' : '重新加载'}}"
+    bind:action="{{loadErrorDesc ? 'noop' : 'onRetry'}}"
   ></state-empty>
 
   <!-- 正文 -->
@@ -35,7 +35,10 @@
 
       <!-- 标题 -->
       <view class="eyebrow-serif eyebrow-mt g-fade-up g-d1">家常味道</view>
-      <view class="post-title g-fade-up g-d1">{{post.title}}</view>
+      <view class="post-title-row g-fade-up g-d1">
+        <view class="post-title">{{post.title}}</view>
+        <text wx:if="{{post.isPending}}" class="pd-pending">审核中 · 审核通过后大家可见</text>
+      </view>
 
       <!-- 正文段落 -->
       <view class="post-text g-fade-up g-d2">
@@ -125,7 +128,7 @@
                   data-comment-id="{{item.commentId}}"
                 >删除</text>
               </view>
-              <view class="ctext">{{item.content}}</view>
+              <view class="ctext">{{item.content}}<text wx:if="{{item.isPending}}" class="cd-pending">（审核中，通过后大家可见）</text></view>
             </view>
           </view>
         </view>

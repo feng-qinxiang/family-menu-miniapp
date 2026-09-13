@@ -437,3 +437,20 @@
   color: var(--mut-strong);
   font-weight: 700;
 }
+
+/* —— 待审核角标（仅作者本人可见的帖子） —— */
+.ptitle-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12rpx;
+}
+.ptitle-row .ptitle { flex: 1; min-width: 0; }
+.ppending {
+  flex: none;
+  font-size: var(--fs-mini);
+  font-weight: 700;
+  color: var(--gold-deep);
+  background: rgba(176, 137, 73, 0.14);
+  padding: 4rpx 14rpx;
+  border-radius: var(--r-pill);
+}

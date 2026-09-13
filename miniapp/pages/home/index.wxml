@@ -131,7 +131,7 @@
         class="fp-wish-confirm tap-scale {{!canConfirm ? 'disabled' : (wishes.length ? '' : 'hint')}}"
         bindtap="{{wishes.length ? 'confirmMenu' : 'addWish'}}"
       >
-        {{!canConfirm ? '等做饭人确认' : (wishes.length ? '去挑菜 → 加入菜单' : '＋ 先许个愿，家人一起点今晚的菜')}}
+        {{!canConfirm ? '等管理员确认' : (wishes.length ? '去挑菜' : '＋ 先许个愿，家人一起点今晚的菜')}}
       </view>
     </block>
   </view>

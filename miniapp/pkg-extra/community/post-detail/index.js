@@ -55,7 +55,9 @@ function normalizePost(post) {
     tags: Array.isArray(post.tags) ? post.tags : [],
     recipe: post.recipe || null,
     // 是否作者本人（作者才显示删帖入口）
-    mine: !!post.mine
+    mine: !!post.mine,
+    // 待审核中（仅作者本人可见阶段），标题旁加角标
+    isPending: post.auditStatus === 'PENDING'
   };
 }
 
@@ -68,7 +70,9 @@ function normalizeComment(c) {
     avaText: avaText(c.author),
     content: c.content || '',
     createdAt: c.createdAt || '刚刚',
-    mine: !!c.mine
+    mine: !!c.mine,
+    // 待审核评论：只有评论者本人可见
+    isPending: c.auditStatus === 'PENDING'
   };
 }
 
@@ -80,6 +84,7 @@ Page({
     scrollTopTo: -1,
     loading: true,
     loadError: false,
+    loadErrorDesc: '',
     post: null,
     comments: [],
     commentText: '',
@@ -100,22 +105,26 @@ Page({
 
   // 加载帖子 + 评论，带容错
   loadAll(postId) {
-    this.setData({ loading: true, loadError: false });
+    this.setData({ loading: true, loadError: false, loadErrorDesc: '' });
     Promise.all([
-      // 详情端点直取单帖；拉不到（已删/未过审/失效）与列表兜底失败同语义 → loadError
-      postId ? api.getCommunityPost(postId).catch(() => null) : Promise.resolve(null),
+      // 详情端点直取单帖；拉不到（已删/未过审/失效）与列表兜底失败同语义 → loadError。
+      // 服务端对"作者看自己被下架的帖"会给出明确原因（该分享因违规已被下架），透传展示
+      postId ? api.getCommunityPost(postId).catch((err) => ({ _err: err })) : Promise.resolve(null),
       postId ? api.getCommunityComments(postId).catch(() => []) : Promise.resolve([])
     ])
       // 禁用回调参数数组解构：编译依赖 @babel/runtime 辅助模块，未打包会整页白屏
       .then((loaded) => {
-        const raw = loaded[0];
+        const first = loaded[0];
         const comments = loaded[1];
+        const err = first && first._err;
+        const raw = err ? null : first;
         // 拿不到帖子 = 帖子已删除/链接失效 → 走 loadError 空态，禁止静默换第一条
         const post = normalizePost(raw);
         const cmts = (Array.isArray(comments) ? comments : []).map(normalizeComment);
         this.setData({
           loading: false,
           loadError: !post,
+          loadErrorDesc: (err && err.message) || '',
           post,
           comments: cmts,
           postId: post ? post.id : postId
@@ -313,6 +322,16 @@ Page({
           .catch(() => this.showToast('删除失败，请重试', 'error'));
       }
     });
+  },
+
+  // 下架内容空态的「返回」按钮（不可重试）
+  noop() {
+    const pages = getCurrentPages();
+    if (pages && pages.length > 1) {
+      wx.navigateBack({ delta: 1, fail: () => {} });
+    } else {
+      wx.switchTab({ url: '/pages/community/index', fail: () => {} });
+    }
   },
 
   showToast(text, type) {

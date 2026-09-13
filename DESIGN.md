@@ -34,6 +34,24 @@
 
 ## 变更历史
 
+### 2026-09-13 - /admin 运营后台与小程序术语、流程、习惯对齐
+
+**变更内容**:
+
+1. **admin 术语翻译**：菜单状态 READY、导入类型 link/text、审计动作（举报处置/批量×2）补中文映射（MENU_STATUS/IMPORT_TYPE 表）；表头英文 ID 全部业务化（帖子 ID/工单号/…）；用户列表 openid 脱敏（前 8 位…后 4 位，悬停看全量）；owner 角色标签对齐小程序「管理员（创建者）」；空态文案对齐小程序实际页面名（今日餐桌/今天买菜/冰箱）；批量 REMOVED 措辞按对象区分（帖子/举报=下架、评论=驳回）。
+2. **审核去盲审**：帖子详情弹窗渲染配图（AdminPostDetail.images 此前已返回但前端丢弃）；举报列表补被举报帖作者列（SQL JOIN user_account author）+「查看帖子」按钮复用详情弹窗——运营可判断恶意举报。
+3. **反馈闭环**（决策：小程序补列表）：新增 `GET /api/me/feedbacks`（MyFeedbackItem：types/content/status/reply/时间，封顶 20 条）；小程序「意见反馈」页加「我的反馈」历史区块（处理中/已回复徽标 + 回复正文），提交成功后留在本页刷新列表——此前运营写回复用户永远看不到（黑洞）。
+4. **审核状态用户侧传达**：CommunityPost/CommunityCommentItem 增加 auditStatus；自己的帖子在信息流/详情显示「审核中」角标，评论显示尾标；发帖 toast 按 auditStatus 区分文案；作者看自己 REMOVED 帖时详情端点返回明确文案「该分享因违规已被下架」（陌生人仍统一 400 不泄露存在性）。
+5. **角色术语统一**：全 app 统一「管理员」（删"做饭人"第二套词，成员页副文案说明权限）；删 canConfirm 死角色 'cook'（服务端只有 owner/admin/member）；首页确认按钮文案「去挑菜 → 加入菜单」→「去挑菜」（对齐实际行为）。菜单权限策略（用户决策）：**全员可操作**，只在 UI 说明，不加锁。
+6. **菜单页对齐用户语言**：AdminService.listMenus 聚合餐次摘要（午餐 2 道 · 晚餐 1 道）与做菜进度（待做/烧着呢/已上桌 各 N 道），admin 表格加两列；家庭详情成员行补忌口标签（avoid_tags_json）——解释推荐差异。
+7. **devCode 说明**：验证码回显本就由 auth.dev-otp-enabled 管住（默认关），登录页提示加「仅开发环境」。
+
+**变更理由**: 用户反馈 /admin 后台与小程序"不符合管理员和用户的使用习惯"。探查确认三类分歧：状态码/英文直出与小程序用户语言脱节；审核语境缺失（盲审、无反查）与反馈回复黑洞；"做饭人/管理员/创建者"三套词与幽灵角色。
+
+**影响范围**: admin.js（映射表/列头/渲染）、ApiModels（MyFeedbackItem/CommunityReportItem.postAuthor/AdminMenuRow.meals/cookProgress/AdminFamilyMember.avoidTags/CommunityPost+Comment.auditStatus）、MysqlKitchenStore（举报 JOIN/详情文案/auditStatus 列）、AdminService（菜单聚合/忌口/readTagList）、SupportService+Controller（feedbacks 端点）、miniapp（community/post-detail 审核角标与文案、feedback 历史列表、home/members 术语）、EndpointCoverageTests +1 用例 +2 断言。
+
+**决策依据**: 术语映射放 admin.js 前端而非后端改 API——运营展示层与用户 API 解耦，后端契约不动；auditStatus 全量返回而非仅 PENDING——前端逻辑简单，信息不敏感；反馈历史封顶 20 条不分页——低频操作，YAGNI。
+
 ### 2026-09-12 - 二期：厨房总控 + 步骤媒体列 + 评分反哺 + 社区图文与分享
 
 **变更内容**:

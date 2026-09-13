@@ -225,6 +225,11 @@ function getMyFavorites() {
   return request('/api/me/favorites', { silent: true });
 }
 
+// 我的反馈历史（含运营回复）——反馈闭环的另一半
+function getMyFeedbacks() {
+  return request('/api/me/feedbacks', { silent: true, fallback: () => [] });
+}
+
 // 登出：吊销服务端会话（失败不阻塞本地清理）
 function logout() {
   return requestStrict('/api/auth/logout', { method: 'POST' }).catch(() => null);
@@ -607,6 +612,7 @@ module.exports = {
   getCommunityPosts,
   getCommunityPost,
   getCommunityTopics,
+  getMyFeedbacks,
   getCommunityComments,
   getMyFavorites,
   createFamily,

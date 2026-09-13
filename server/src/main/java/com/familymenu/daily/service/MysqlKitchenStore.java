@@ -228,7 +228,7 @@ public class MysqlKitchenStore {
     /** tag 非空时按标签过滤（JSON_CONTAINS 精确匹配，写法参照 filterRecipes）。 */
     public List<CommunityPost> communityPosts(long userId, String tag) {
         String sql = """
-                SELECT p.id, p.title, u.nickname AS author, p.content, p.like_count, p.comment_count, p.tags_json, p.images_json,
+                SELECT p.id, p.title, u.nickname AS author, p.content, p.like_count, p.comment_count, p.tags_json, p.images_json, p.audit_status,
                        COALESCE(fav.favorite_count, 0) AS favorite_count,
                        CASE WHEN my_fav.user_id IS NULL THEN 0 ELSE 1 END AS favorited,
                        CASE WHEN my_like.user_id IS NULL THEN 0 ELSE 1 END AS liked,
@@ -284,7 +284,8 @@ public class MysqlKitchenStore {
                     readStringList(rs.getString("tags_json")),
                     recipe,
                     rs.getBoolean("mine"),
-                    readStringList(rs.getString("images_json"))
+                    readStringList(rs.getString("images_json")),
+                    rs.getString("audit_status")
             );
         }, userId, userId, userId, userId, tag, tag);
     }
@@ -316,7 +317,7 @@ public class MysqlKitchenStore {
 
     public List<CommunityPost> myFavoritePosts(long userId) {
         String sql = """
-                SELECT p.id, p.title, u.nickname AS author, p.content, p.like_count, p.comment_count, p.tags_json, p.images_json,
+                SELECT p.id, p.title, u.nickname AS author, p.content, p.like_count, p.comment_count, p.tags_json, p.images_json, p.audit_status,
                        COALESCE(fav.favorite_count, 0) AS favorite_count,
                        1 AS favorited,
                        CASE WHEN my_like.user_id IS NULL THEN 0 ELSE 1 END AS liked,
@@ -369,7 +370,8 @@ public class MysqlKitchenStore {
                     readStringList(rs.getString("tags_json")),
                     recipe,
                     rs.getBoolean("mine"),
-                    readStringList(rs.getString("images_json"))
+                    readStringList(rs.getString("images_json")),
+                    rs.getString("audit_status")
             );
         }, userId, userId, userId);
     }
@@ -407,7 +409,7 @@ public class MysqlKitchenStore {
     public List<CommunityCommentItem> communityComments(long postId, long viewerUserId) {
         return jdbcTemplate.query("""
                         SELECT c.id, c.post_id, c.user_id, u.nickname AS author, c.content,
-                               DATE_FORMAT(c.created_at, '%Y-%m-%d %H:%i') AS created_at
+                               DATE_FORMAT(c.created_at, '%Y-%m-%d %H:%i') AS created_at, c.audit_status
                         FROM community_post_comment c
                         JOIN user_account u ON u.id = c.user_id
                         WHERE c.post_id = ? AND c.deleted = 0
@@ -422,7 +424,8 @@ public class MysqlKitchenStore {
                         rs.getString("author"),
                         rs.getString("content"),
                         rs.getString("created_at"),
-                        viewerUserId != 0 && viewerUserId == rs.getLong("user_id")
+                        viewerUserId != 0 && viewerUserId == rs.getLong("user_id"),
+                        rs.getString("audit_status")
                 ),
                 postId, viewerUserId
         );
@@ -452,7 +455,7 @@ public class MysqlKitchenStore {
         }
         return jdbcTemplate.queryForObject("""
                         SELECT c.id, c.post_id, c.user_id, u.nickname AS author, c.content,
-                               DATE_FORMAT(c.created_at, '%Y-%m-%d %H:%i') AS created_at
+                               DATE_FORMAT(c.created_at, '%Y-%m-%d %H:%i') AS created_at, c.audit_status
                         FROM community_post_comment c
                         JOIN user_account u ON u.id = c.user_id
                         WHERE c.post_id = ? AND c.deleted = 0
@@ -465,7 +468,8 @@ public class MysqlKitchenStore {
                         rs.getString("author"),
                         rs.getString("content"),
                         rs.getString("created_at"),
-                        userId == rs.getLong("user_id")
+                        userId == rs.getLong("user_id"),
+                        rs.getString("audit_status")
                 ),
                 postId
         );
@@ -577,12 +581,13 @@ public class MysqlKitchenStore {
     public List<CommunityReportItem> communityReports(String status) {
         String normalized = normalizeReportStatus(status);
         return jdbcTemplate.query("""
-                        SELECT rpt.id, rpt.post_id, p.title AS post_title, reporter.nickname AS reporter,
+                        SELECT rpt.id, rpt.post_id, p.title AS post_title, author.nickname AS post_author, reporter.nickname AS reporter,
                                  rpt.reason, rpt.description, rpt.status, reviewer.nickname AS reviewer, rpt.review_note,
                                  DATE_FORMAT(rpt.created_at, '%Y-%m-%d %H:%i') AS created_at,
                                  DATE_FORMAT(rpt.resolved_at, '%Y-%m-%d %H:%i') AS resolved_at
                           FROM community_post_report rpt
                           JOIN community_post p ON p.id = rpt.post_id
+                          JOIN user_account author ON author.id = p.author_user_id
                           JOIN user_account reporter ON reporter.id = rpt.user_id
                           LEFT JOIN user_account reviewer ON reviewer.id = rpt.reviewer_user_id
                           WHERE (? = 'ALL' OR rpt.status = ?)
@@ -593,6 +598,7 @@ public class MysqlKitchenStore {
                           rs.getLong("id"),
                           rs.getLong("post_id"),
                           rs.getString("post_title"),
+                          rs.getString("post_author"),
                           rs.getString("reporter"),
                           rs.getString("reason"),
                           rs.getString("description"),
@@ -1150,12 +1156,13 @@ public class MysqlKitchenStore {
 
     private CommunityReportItem findCommunityReport(long reportId) {
         return jdbcTemplate.queryForObject("""
-                        SELECT rpt.id, rpt.post_id, p.title AS post_title, reporter.nickname AS reporter,
+                        SELECT rpt.id, rpt.post_id, p.title AS post_title, author.nickname AS post_author, reporter.nickname AS reporter,
                                  rpt.reason, rpt.description, rpt.status, reviewer.nickname AS reviewer, rpt.review_note,
                                  DATE_FORMAT(rpt.created_at, '%Y-%m-%d %H:%i') AS created_at,
                                  DATE_FORMAT(rpt.resolved_at, '%Y-%m-%d %H:%i') AS resolved_at
                           FROM community_post_report rpt
                           JOIN community_post p ON p.id = rpt.post_id
+                          JOIN user_account author ON author.id = p.author_user_id
                           JOIN user_account reporter ON reporter.id = rpt.user_id
                           LEFT JOIN user_account reviewer ON reviewer.id = rpt.reviewer_user_id
                           WHERE rpt.id = ?
@@ -1164,6 +1171,7 @@ public class MysqlKitchenStore {
                           rs.getLong("id"),
                           rs.getLong("post_id"),
                           rs.getString("post_title"),
+                          rs.getString("post_author"),
                           rs.getString("reporter"),
                           rs.getString("reason"),
                           rs.getString("description"),
@@ -1224,7 +1232,7 @@ public class MysqlKitchenStore {
 
     private CommunityPost loadCommunityPostById(long postId, long userId) {
         String sql = """
-                SELECT p.id, p.title, u.nickname AS author, p.content, p.like_count, p.comment_count, p.tags_json, p.images_json,
+                SELECT p.id, p.title, u.nickname AS author, p.content, p.like_count, p.comment_count, p.tags_json, p.images_json, p.audit_status,
                        COALESCE(fav.favorite_count, 0) AS favorite_count,
                        CASE WHEN my_fav.user_id IS NULL THEN 0 ELSE 1 END AS favorited,
                        CASE WHEN my_like.user_id IS NULL THEN 0 ELSE 1 END AS liked,
@@ -1281,7 +1289,8 @@ public class MysqlKitchenStore {
                     readStringList(rs.getString("tags_json")),
                     recipe,
                     rs.getBoolean("mine"),
-                    readStringList(rs.getString("images_json"))
+                    readStringList(rs.getString("images_json")),
+                    rs.getString("audit_status")
             );
         }, userId, postId, userId, userId, postId);
     }
@@ -1318,6 +1327,12 @@ public class MysqlKitchenStore {
                         || (ContentSecurityService.STATUS_PENDING.equals(info.auditStatus())
                                 && info.authorUserId() == userId));
         if (!visible) {
+            // 作者本人看自己被下架的帖子给出明确原因，其余情况统一按不存在
+            //（避免陌生人借 400 文案探测帖子是否曾存在）
+            if (info != null && userId != 0 && info.authorUserId() == userId
+                    && "REMOVED".equals(info.auditStatus())) {
+                throw new IllegalArgumentException("该分享因违规已被下架");
+            }
             throw new IllegalArgumentException("community post not found");
         }
         return loadCommunityPostById(postId, userId);

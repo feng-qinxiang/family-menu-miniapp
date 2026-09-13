@@ -356,6 +356,8 @@ class EndpointCoverageTests {
                 .andReturn();
         assertThat(json(mine).get("mine").asBoolean()).isTrue();
         assertThat(json(mine).get("id").asLong()).isEqualTo(postId);
+        // 游客发帖无法机审 → PENDING：作者本人拿得到状态，前端据此显示「审核中」
+        assertThat(json(mine).get("auditStatus").asText()).isEqualTo("PENDING");
 
         mockMvc.perform(get("/api/community/posts/" + postId))
                 .andExpect(status().isBadRequest());
@@ -393,8 +395,10 @@ class EndpointCoverageTests {
 
         mockMvc.perform(delete("/api/community/posts/" + postId).header("X-Auth-Token", token))
                 .andExpect(status().isOk());
+        // 作者本人看自己被删的帖：400 但带明确文案（区别于"链接失效"），前端透传展示
         mockMvc.perform(get("/api/community/posts/" + postId).header("X-Auth-Token", token))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("该分享因违规已被下架"));
         // 重复删除同语义拒绝
         mockMvc.perform(delete("/api/community/posts/" + postId).header("X-Auth-Token", token))
                 .andExpect(status().isBadRequest());
@@ -494,6 +498,32 @@ class EndpointCoverageTests {
                 .andExpect(status().isOk())
                 .andReturn();
         assertThat(json(detail).get("images").size()).isEqualTo(2);
+    }
+
+    /** 我的反馈历史：提交后能在列表里看到（含状态），运营回复由此闭环到提交人。 */
+    @Test
+    void myFeedbacksListsOwnTickets() throws Exception {
+        String token = guestLogin();
+        String marker = "走查反馈 " + System.nanoTime();
+        mockMvc.perform(post("/api/feedback")
+                        .header("X-Auth-Token", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(Map.of(
+                                "types", List.of("bug"),
+                                "content", marker))))
+                .andExpect(status().isOk());
+
+        MvcResult list = mockMvc.perform(get("/api/me/feedbacks").header("X-Auth-Token", token))
+                .andExpect(status().isOk())
+                .andReturn();
+        boolean found = false;
+        for (JsonNode item : json(list)) {
+            if (marker.equals(item.get("content").asText())) {
+                found = true;
+                assertThat(item.get("status").asText()).isEqualTo("OPEN");
+            }
+        }
+        assertThat(found).as("刚提交的反馈应出现在历史列表").isTrue();
     }
 
     /** 话题榜端点公开可读（鉴权白名单），返回数组（测试库无公开帖时为空数组）。 */

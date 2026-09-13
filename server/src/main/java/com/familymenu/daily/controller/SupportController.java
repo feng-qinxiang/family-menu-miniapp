@@ -1,6 +1,7 @@
 package com.familymenu.daily.controller;
 
 import com.familymenu.daily.auth.CurrentUser;
+import com.familymenu.daily.dto.ApiModels;
 import com.familymenu.daily.dto.ApiModels.FeedbackReceipt;
 import com.familymenu.daily.dto.ApiModels.FeedbackRequest;
 import com.familymenu.daily.dto.ApiModels.MarkNotificationsReadRequest;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api")
 public class SupportController {
@@ -34,6 +37,12 @@ public class SupportController {
     public FeedbackReceipt submitFeedback(@CurrentUser AuthUser user,
                                           @Valid @RequestBody FeedbackRequest request) {
         return supportService.submitFeedback(user, request);
+    }
+
+    /** 我的反馈历史：让运营在后台写的回复真正到达提交人（反馈闭环的另一半）。 */
+    @GetMapping("/me/feedbacks")
+    public List<ApiModels.MyFeedbackItem> myFeedbacks(@CurrentUser AuthUser user) {
+        return supportService.listMyFeedbacks(user);
     }
 
     @GetMapping("/notifications")

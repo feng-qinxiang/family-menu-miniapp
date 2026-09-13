@@ -119,7 +119,9 @@ public final class ApiModels {
             /** 当前用户是否是作者（作者本人才显示删帖入口） */
             boolean mine,
             /** 帖子配图（/uploads/ URL，最多 6 张，可为空） */
-            List<String> images
+            List<String> images,
+            /** 审核状态：PENDING 时仅作者本人可见，前端据此显示「审核中」角标 */
+            String auditStatus
     ) {
     }
 
@@ -130,7 +132,9 @@ public final class ApiModels {
             String content,
             String createdAt,
             /** 当前用户是否是评论者（作者本人才显示删评论入口） */
-            boolean mine
+            boolean mine,
+            /** 审核状态：PENDING 时仅作者本人可见，前端据此显示「审核中」尾标 */
+            String auditStatus
     ) {
     }
 
@@ -218,6 +222,8 @@ public final class ApiModels {
               Long reportId,
               Long postId,
               String postTitle,
+              /** 被举报帖的作者：运营判断恶意举报需要举报人/作者双方语境 */
+              String postAuthor,
               String reporter,
               String reason,
               String description,
@@ -575,6 +581,19 @@ public final class ApiModels {
             Long id,
             String status,
             String message
+    ) {
+    }
+
+    /** 我的反馈历史（GET /api/me/feedbacks）：状态与运营回复，让反馈真正闭环到提交人。 */
+    public record MyFeedbackItem(
+            Long id,
+            List<String> types,
+            String content,
+            /** OPEN=处理中 / RESOLVED / REJECTED（前端显示「处理中/已回复」） */
+            String status,
+            String reply,
+            String createdAt,
+            String handledAt
     ) {
     }
 

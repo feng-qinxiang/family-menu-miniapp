@@ -110,7 +110,7 @@ Page({
         roleLabel: roleInfo.label,
         roleBadge: roleInfo.badge,
         tone: AVT_TONES[idx % AVT_TONES.length],
-        sub: avoidTags.length ? '忌口：' + avoidTags.join('、') : (isOwner ? '家庭创建者' : '已加入这个家'),
+        sub: avoidTags.length ? '忌口：' + avoidTags.join('、') : (isOwner ? '管理员 · 家庭创建者' : '可以点菜、许愿，和大家一起维护菜单'),
         avoidTags,
         isSelf,
         isOwner,
@@ -198,7 +198,7 @@ Page({
         const tags = updated && Array.isArray(updated.avoidTags) ? updated.avoidTags : avoidTags;
         const members = this.data.members.map((m) =>
           m.userId === member.userId
-            ? { ...m, avoidTags: tags, sub: tags.length ? '忌口：' + tags.join('、') : (m.isSelf ? '家庭创建者' : '已加入这个家') }
+            ? { ...m, avoidTags: tags, sub: tags.length ? '忌口：' + tags.join('、') : (m.isSelf ? '管理员 · 家庭创建者' : '可以点菜、许愿，和大家一起维护菜单') }
             : m
         );
         this.setData({ members, editingMember: null });

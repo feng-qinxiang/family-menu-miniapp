@@ -2,6 +2,7 @@ package com.familymenu.daily.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.familymenu.daily.dto.ApiModels;
 import com.familymenu.daily.dto.ApiModels.FeedbackReceipt;
 import com.familymenu.daily.dto.ApiModels.FeedbackRequest;
 import com.familymenu.daily.dto.ApiModels.MarkNotificationsReadRequest;
@@ -26,6 +27,26 @@ public class SupportService {
     public SupportService(JdbcTemplate jdbcTemplate, ObjectMapper objectMapper) {
         this.jdbcTemplate = jdbcTemplate;
         this.objectMapper = objectMapper;
+    }
+
+    /** 我的反馈历史：按提交时间倒序（含运营回复），封顶 20 条——反馈是低频操作，无需分页。 */
+    public List<ApiModels.MyFeedbackItem> listMyFeedbacks(AuthUser user) {
+        String sql = "SELECT id, types_json, content, status, reply,"
+                + " DATE_FORMAT(created_at, '%Y-%m-%d %H:%i') AS created_at,"
+                + " DATE_FORMAT(handled_at, '%Y-%m-%d %H:%i') AS handled_at"
+                + " FROM feedback_ticket WHERE user_id = ? ORDER BY id DESC LIMIT 20";
+        return jdbcTemplate.query(sql,
+                (rs, rowNum) -> new ApiModels.MyFeedbackItem(
+                        rs.getLong("id"),
+                        fromJsonList(rs.getString("types_json")),
+                        rs.getString("content"),
+                        rs.getString("status"),
+                        rs.getString("reply"),
+                        rs.getString("created_at"),
+                        rs.getString("handled_at")
+                ),
+                user.userId()
+        );
     }
 
     @Transactional
@@ -117,6 +138,19 @@ public class SupportService {
                 body,
                 actionType
         );
+    }
+
+    /** types_json 是字符串数组；脏数据（非法 JSON）降级为空列表，不让一条坏行毁掉整个列表。 */
+    private List<String> fromJsonList(String json) {
+        if (json == null || json.isBlank()) {
+            return List.of();
+        }
+        try {
+            return objectMapper.readValue(json,
+                    objectMapper.getTypeFactory().constructCollectionType(List.class, String.class));
+        } catch (Exception ex) {
+            return List.of();
+        }
     }
 
     private String toJson(Object value) {

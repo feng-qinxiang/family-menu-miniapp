@@ -1,0 +1,42 @@
+[
+  {
+    "name": "借会话 token",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "HTTP: 发帖（游客→PENDING）",
+    "ok": true,
+    "detail": "auditStatus=PENDING"
+  },
+  {
+    "name": "社区: 自己的 PENDING 帖显示「审核中」角标",
+    "ok": true,
+    "detail": "审核中"
+  },
+  {
+    "name": "HTTP: 提交反馈",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "HTTP: 反馈历史含刚提交条目",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "反馈页: 「我的反馈」历史区块渲染",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "反馈页: 状态徽标（处理中）",
+    "ok": true,
+    "detail": "处理中"
+  },
+  {
+    "name": "首页: 截图留档（术语统一在代码层断言）",
+    "ok": true,
+    "detail": ""
+  }
+]

@@ -329,7 +329,8 @@
     btn.textContent = '发送中…';
     request('/api/admin/auth/otp', { method: 'POST', body: { phone: phone } })
       .then(function (res) {
-        setLoginMsg(res && res.devCode ? ('调试验证码：' + res.devCode) : '验证码已发送', 'ok');
+        // devCode 仅在服务端 auth.dev-otp-enabled=true 时回显（生产默认关闭），这里只是消费
+        setLoginMsg(res && res.devCode ? ('调试验证码（仅开发环境）：' + res.devCode) : '验证码已发送', 'ok');
         startCountdown(btn, 60);
       })
       .catch(function (err) {
@@ -990,13 +991,15 @@
       return '<tr><td class="pick"><input type="checkbox" data-pick="reports:' + escapeHtml(String(r.reportId)) +
           '"' + (state.picked.reports[r.reportId] ? ' checked' : '') + ' /></td>' +
         '<td class="num">' + escapeHtml(String(r.reportId)) + '</td>' +
-        '<td>#' + escapeHtml(String(r.postId)) + ' ' + escapeHtml(r.postTitle || '') + '</td>' +
+        '<td>#' + escapeHtml(String(r.postId)) + ' ' + escapeHtml(r.postTitle || '') +
+          (r.postAuthor ? '<div class="sub">作者 ' + escapeHtml(r.postAuthor) + '</div>' : '') + '</td>' +
         '<td>' + escapeHtml(r.reason || '') + '</td>' +
         '<td class="clamp" title="' + escapeHtml(r.description || '') + '">' + escapeHtml(r.description || '—') + '</td>' +
         '<td>' + escapeHtml(r.reporter || '—') + '</td>' +
         '<td>' + pill + '</td><td title="' + escapeHtml(r.createdAt || '') + '">' + fmtTime(r.createdAt) + '</td><td class="actions">' +
         (pending
-          ? '<button class="btn small danger" data-review="' + escapeHtml(String(r.reportId)) + '" data-status="REMOVED">下架帖子</button>' +
+          ? '<button class="btn small" data-postdetail="' + escapeHtml(String(r.postId)) + '">查看帖子</button>' +
+            '<button class="btn small danger" data-review="' + escapeHtml(String(r.reportId)) + '" data-status="REMOVED">下架帖子</button>' +
             '<button class="btn small" data-review="' + escapeHtml(String(r.reportId)) + '" data-status="IGNORED">忽略</button>'
           : escapeHtml(r.reviewNote || '—')) +
         '</td></tr>';
@@ -1007,7 +1010,7 @@
       '<div class="bulk-bar" data-bulkbar="reports"' + (pickedCount ? '' : ' hidden') + '>' +
       bulkBarHtml('reports', pickedCount) + '</div>' +
       '<table><thead><tr><th class="pick"><input type="checkbox" data-checkall="reports" aria-label="全选本页" /></th>' +
-      '<th class="num">ID</th><th>帖子</th><th>原因</th><th>说明</th><th>举报人</th>' +
+      '<th class="num">举报 ID</th><th>帖子（含作者）</th><th>原因</th><th>说明</th><th>举报人</th>' +
       '<th>状态</th><th>时间</th><th>操作</th></tr></thead><tbody>' + body + '</tbody></table></div>';
   }
 
@@ -1083,7 +1086,7 @@
       '<div class="bulk-bar" data-bulkbar="posts"' + (pickedCount ? '' : ' hidden') + '>' +
       bulkBarHtml('posts', pickedCount) + '</div>' +
       '<table><thead><tr><th class="pick"><input type="checkbox" data-checkall="posts" aria-label="全选本页" /></th>' +
-      '<th class="num">ID</th><th>标题</th><th>作者</th><th>状态</th><th class="num">赞</th>' +
+      '<th class="num">帖子 ID</th><th>标题</th><th>作者</th><th>状态</th><th class="num">赞</th>' +
       '<th class="num">评论</th><th>时间</th><th>操作</th></tr></thead><tbody>' + body + '</tbody></table></div>';
   }
 
@@ -1167,7 +1170,7 @@
       '<div class="bulk-bar" data-bulkbar="comments"' + (pickedCount ? '' : ' hidden') + '>' +
       bulkBarHtml('comments', pickedCount) + '</div>' +
       '<table><thead><tr><th class="pick"><input type="checkbox" data-checkall="comments" aria-label="全选本页" /></th>' +
-      '<th class="num">ID</th><th>帖子</th><th>作者</th><th>内容</th><th>状态</th>' +
+      '<th class="num">评论 ID</th><th>帖子</th><th>作者</th><th>内容</th><th>状态</th>' +
       '<th>时间</th><th>操作</th></tr></thead><tbody>' + body + '</tbody></table>' +
       pagerHtml('comments', state.commentPage, state.commentSize, state.commentTotal) + '</div>';
   }
@@ -1234,7 +1237,7 @@
     }).join('') : tableEmpty(8, { icon: 'book', title: '暂无菜谱', desc: '公共菜谱库为空，或当前搜索词没有匹配到菜谱。' });
     setPageHeader(rows.length + ' 条');
     $('panelRoot').innerHTML = '<div class="card">' + head +
-      '<table><thead><tr><th class="num">ID</th><th>标题</th><th>作者</th><th>菜系</th><th class="num">耗时</th>' +
+      '<table><thead><tr><th class="num">菜谱 ID</th><th>标题</th><th>作者</th><th>菜系</th><th class="num">耗时</th>' +
       '<th>状态</th><th>创建时间</th><th>操作</th></tr></thead><tbody>' + body + '</tbody></table></div>';
   }
 
@@ -1309,6 +1312,13 @@
         var body =
           (tags ? '<div class="rd-tags">' + tags + '</div>' : '') +
           '<div class="rd-sec"><h4>正文</h4>' + paras + '</div>' +
+          (function () {
+            // 配图：审核带图帖必须能看到图，否则等于盲审
+            var imgs = (p.images || []).map(function (u) {
+              return '<img class="pd-img" src="' + escapeHtml(u) + '" alt="">';
+            }).join('');
+            return imgs ? '<div class="rd-sec"><h4>配图</h4><div class="pd-imgs">' + imgs + '</div></div>' : '';
+          })() +
           '<div class="rd-meta">赞 ' + fmtNum(p.likeCount) + ' · 评 ' + fmtNum(p.commentCount) +
           (p.recipeId ? ' · 关联菜谱 #' + escapeHtml(String(p.recipeId)) : '') +
           ' · ' + escapeHtml(statusLabel) + '</div>';
@@ -1384,7 +1394,7 @@
     }).join('') : tableEmpty(8, { icon: 'inbox', title: '暂无反馈工单', desc: '用户在小程序「我的 → 意见反馈」提交后会出现在这里。' });
     setPageHeader('共 ' + fmtNum(state.feedbackTotal) + ' 条');
     $('panelRoot').innerHTML = '<div class="card">' + head +
-      '<table><thead><tr><th class="num">ID</th><th>用户</th><th>类型</th><th>内容</th><th>联系方式</th>' +
+      '<table><thead><tr><th class="num">工单号</th><th>用户</th><th>类型</th><th>内容</th><th>联系方式</th>' +
       '<th>状态</th><th>时间</th><th>操作</th></tr></thead><tbody>' + body + '</tbody></table>' +
       pagerHtml('feedback', state.feedbackPage, state.feedbackSize, state.feedbackTotal) + '</div>';
   }
@@ -1393,7 +1403,7 @@
     if (status === 'CLOSED') {
       promptDialog({
         title: '关闭工单 #' + id,
-        desc: '可选：填一段回复，用户会在小程序「我的反馈」里看到。',
+        desc: '可选：填一段回复，用户会在小程序「意见反馈」页的历史列表里看到。',
         label: '回复内容（可留空）',
         multiline: true,
         placeholder: '例如：问题已修复，请更新到最新版本后重试。',
@@ -1432,7 +1442,7 @@
     var body = rows.length ? rows.map(function (im) {
       var pill = im.auditStatus === 'APPROVED' ? 'ok' : (im.auditStatus === 'REJECTED' ? 'bad' : 'pending');
       return '<tr><td class="num">' + escapeHtml(String(im.id)) + '</td>' +
-        '<td>' + escapeHtml(im.sourceType || '—') + '</td>' +
+        '<td>' + escapeHtml(IMPORT_TYPE[im.sourceType] || im.sourceType || '—') + '</td>' +
         '<td class="clamp" title="' + escapeHtml(im.sourceUrl || '') + '">' + escapeHtml(im.sourceUrl || '—') + '</td>' +
         '<td class="clamp" title="' + escapeHtml(im.sourceText || '') + '">' + escapeHtml(im.sourceText || '—') + '</td>' +
         '<td><span class="pill ' + pill + '">' + escapeHtml(IMPORT_STATUS[im.auditStatus] || im.auditStatus) + '</span></td>' +
@@ -1445,7 +1455,7 @@
     }).join('') : tableEmpty(7, { icon: 'download', title: '暂无导入记录', desc: '用户在小程序「导入菜谱」粘贴链接或上传图片，解析结果会先到这里等待审核，通过后才入库。' });
     setPageHeader(rows.length + ' 条');
     $('panelRoot').innerHTML = '<div class="card">' + head +
-      '<table><thead><tr><th class="num">ID</th><th>类型</th><th>来源链接</th><th>内容摘要</th><th>状态</th>' +
+      '<table><thead><tr><th class="num">导入 ID</th><th>类型</th><th>来源链接</th><th>内容摘要</th><th>状态</th>' +
       '<th>时间</th><th>操作</th></tr></thead><tbody>' + body + '</tbody></table></div>';
   }
 
@@ -1541,12 +1551,23 @@
     });
     setPageHeader('共 ' + fmtNum(p.total) + ' 个家庭');
     $('panelRoot').innerHTML = '<div class="card">' + head +
-      '<table><thead><tr><th class="num">ID</th><th>家庭</th><th>创建者</th><th class="num">成员</th>' +
+      '<table><thead><tr><th class="num">家庭 ID</th><th>家庭</th><th>创建者</th><th class="num">成员</th>' +
       '<th class="num">菜谱</th><th class="num">菜单</th><th>创建时间</th><th>操作</th></tr></thead><tbody>' + body +
       '</tbody></table>' + pagerHtml('families', p.page, p.size, p.total) + '</div>';
   }
 
-  var MEMBER_ROLE = { owner: '创建者', admin: '管理员', member: '成员' };
+  // openid 脱敏展示：完整值仅在悬停 title（运营核对用），避免列表页整屏敏感串
+  function maskOpenid(v) {
+    if (!v) return '—';
+    var str = String(v);
+    return str.length <= 12 ? str : str.slice(0, 8) + '…' + str.slice(-4);
+  }
+
+  // 业务术语对齐小程序：菜单状态（小程序叫「今日餐桌」，状态词用用户语言）
+  var MENU_STATUS = { DRAFT: '点菜中', READY: '进行中', CLOSED: '已结束' };
+  // 导入来源类型：服务端存小写 link/text（小程序导入页对用户展示「外部链接 / 文本」）
+  var IMPORT_TYPE = { link: '外部链接', text: '文本', image: '图片 OCR' };
+  var MEMBER_ROLE = { owner: '管理员（创建者）', admin: '管理员', member: '成员' };
   var MEMBER_STATUS = { ACTIVE: '在家庭中', REMOVED: '已退出' };
   var LIST_STATUS = { OPEN: '进行中', CLOSED: '已结束' };
 
@@ -1562,9 +1583,11 @@
         var f = d.family || {};
         var groups = f.memberCount || 0;
         var members = (d.members || []).map(function (m) {
+          var tags = (m.avoidTags || []).join('、');
           return '<div class="row-item">' + avatarHtml(m.nickname) +
             '<div class="grow"><div class="title">' + escapeHtml(m.nickname || ('用户 #' + m.userId)) + '</div>' +
-            '<div class="sub">' + escapeHtml(m.phone || '未绑定手机号') + ' · #' + escapeHtml(String(m.userId)) + '</div></div>' +
+            '<div class="sub">' + escapeHtml(m.phone || '未绑定手机号') + ' · #' + escapeHtml(String(m.userId)) +
+            (tags ? ' · 忌口：' + escapeHtml(tags) : '') + '</div></div>' +
             '<div class="side">' + escapeHtml(MEMBER_ROLE[m.role] || m.role || '成员') + ' · ' +
             escapeHtml(MEMBER_STATUS[m.status] || m.status || '') + '<br>' + fmtTime(m.joinedAt) + '</div></div>';
         }).join('') || '<div class="empty">没有成员记录</div>';
@@ -1573,7 +1596,7 @@
           return '<div class="row-item">' +
             '<div class="grow"><div class="title">' + escapeHtml(m.dishes || '（空菜单）') + '</div>' +
             '<div class="sub">' + escapeHtml(String(m.menuDate || '')) + ' · ' + fmtNum(m.itemCount) + ' 道菜</div></div>' +
-            '<div class="side">' + escapeHtml(m.status || '') + '<br>' + fmtTime(m.updatedAt) + '</div></div>';
+            '<div class="side">' + escapeHtml(MENU_STATUS[m.status] || m.status || '—') + '<br>' + fmtTime(m.updatedAt) + '</div></div>';
         }).join('') || '<div class="empty">还没有菜单</div>';
 
         var shopping = (d.shoppingLists || []).map(function (s) {
@@ -1656,19 +1679,21 @@
         '<td><button class="btn small" data-famdetail="' + escapeHtml(String(m.familyId)) + '">' +
           escapeHtml(m.familyName || ('家庭 #' + m.familyId)) + '</button></td>' +
         '<td class="num">' + escapeHtml(String(m.menuDate || '')) + '</td>' +
-        '<td><span class="pill ' + (m.status === 'READY' ? 'ok' : '') + '">' + escapeHtml(m.status || '') + '</span></td>' +
+        '<td><span class="pill ' + (m.status === 'READY' ? 'ok' : '') + '">' + escapeHtml(MENU_STATUS[m.status] || m.status || '—') + '</span></td>' +
+        '<td class="clamp">' + escapeHtml(m.meals || '—') + '</td>' +
+        '<td class="clamp">' + escapeHtml(m.cookProgress || '—') + '</td>' +
         '<td class="num">' + fmtNum(m.itemCount) + '</td>' +
         '<td class="clamp" title="' + escapeHtml(m.dishes || '') + '">' + escapeHtml(m.dishes || '—') + '</td>' +
         '<td title="' + escapeHtml(m.updatedAt || '') + '">' + fmtTime(m.updatedAt) + '</td></tr>';
-    }).join('') : tableEmpty(7, {
+    }).join('') : tableEmpty(9, {
       icon: 'book',
       title: '这几天没有菜单',
-      desc: '家庭在小程序「今天吃什么」里加菜后会出现在这里。可以清除日期筛选看全部，或换个家庭名再搜。'
+      desc: '家庭在小程序「今日餐桌」里加菜后会出现在这里。可以清除日期筛选看全部，或换个家庭名再搜。'
     });
     setPageHeader('共 ' + fmtNum(p.total) + ' 张菜单');
     $('panelRoot').innerHTML = '<div class="card">' + head +
-      '<table><thead><tr><th class="num">ID</th><th>家庭</th><th class="num">日期</th><th>状态</th>' +
-      '<th class="num">菜品数</th><th>菜品</th><th>更新时间</th></tr></thead><tbody>' + body + '</tbody></table>' +
+      '<table><thead><tr><th class="num">菜单 ID</th><th>家庭</th><th class="num">日期</th><th>状态</th>' +
+      '<th>餐次</th><th>做菜进度</th><th class="num">菜品数</th><th>菜品</th><th>更新时间</th></tr></thead><tbody>' + body + '</tbody></table>' +
       pagerHtml('menus', p.page, p.size, p.total) + '</div>';
   }
 
@@ -1709,11 +1734,11 @@
     }).join('') : tableEmpty(7, {
       icon: 'cart',
       title: '没有购物清单',
-      desc: '家庭在小程序「买菜清单」页里生成清单后会出现在这里。清除日期筛选可以看全部。'
+      desc: '家庭在小程序「今天买菜」页里生成清单后会出现在这里。清除日期筛选可以看全部。'
     });
     setPageHeader('共 ' + fmtNum(p.total) + ' 张清单');
     $('panelRoot').innerHTML = '<div class="card">' + head +
-      '<table><thead><tr><th class="num">ID</th><th>家庭</th><th class="num">菜单日期</th><th>购买进度</th>' +
+      '<table><thead><tr><th class="num">清单 ID</th><th>家庭</th><th class="num">菜单日期</th><th>购买进度</th>' +
       '<th class="num">已购 / 总数</th><th>清单状态</th><th>创建时间</th></tr></thead><tbody>' + body +
       '</tbody></table>' + pagerHtml('shopping', p.page, p.size, p.total) + '</div>';
   }
@@ -1750,11 +1775,11 @@
     }).join('') : tableEmpty(7, {
       icon: 'box',
       title: '没有库存记录',
-      desc: '家庭在小程序「库存」页里登记食材后会出现在这里；也可以换个关键词再搜。'
+      desc: '家庭在小程序「冰箱」页里登记食材后会出现在这里；也可以换个关键词再搜。'
     });
     setPageHeader('共 ' + fmtNum(p.total) + ' 项食材');
     $('panelRoot').innerHTML = '<div class="card">' + head +
-      '<table><thead><tr><th class="num">ID</th><th>家庭</th><th>食材</th><th class="num">数量</th>' +
+      '<table><thead><tr><th class="num">库存 ID</th><th>家庭</th><th>食材</th><th class="num">数量</th>' +
       '<th class="num">保质期至</th><th>状态</th><th>登记时间</th></tr></thead><tbody>' + body + '</tbody></table>' +
       pagerHtml('pantry', p.page, p.size, p.total) + '</div>';
   }
@@ -1784,7 +1809,7 @@
       return '<tr><td class="num">' + escapeHtml(String(u.userId)) + '</td>' +
         '<td><div class="cell-user">' + avatarHtml(u.nickname, u.avatarUrl) +
           '<div><div class="name">' + escapeHtml(u.nickname || '') + '</div>' +
-          '<div class="sub">' + escapeHtml(u.openid || '—') + '</div></div></div></td>' +
+          '<div class="sub" title="' + escapeHtml(u.openid || '') + '">' + escapeHtml(maskOpenid(u.openid)) + '</div></div></div></td>' +
         '<td>' + escapeHtml(u.phone || '—') + '</td>' +
         '<td>' + (u.admin ? '<span class="pill info">' + escapeHtml(roleLabel(u.adminRole)) + '</span>' : '<span class="pill">普通用户</span>') + '</td>' +
         '<td>' + (banned ? '<span class="pill bad">已封禁</span>' : '<span class="pill ok">正常</span>') + '</td>' +
@@ -1801,7 +1826,7 @@
     }).join('') : tableEmpty(7, { icon: 'search', title: '没有匹配的账号', desc: '换个昵称、手机号或 openid 关键词再试。' });
     setPageHeader('共 ' + fmtNum(p.total) + ' 个账号');
     $('panelRoot').innerHTML = '<div class="card">' + head +
-      '<table><thead><tr>' + thSort('ID', 'id', 'user', 'num') + '<th>用户</th><th>手机号</th><th>角色</th><th>状态</th>' +
+      '<table><thead><tr>' + thSort('用户 ID', 'id', 'user', 'num') + '<th>用户</th><th>手机号</th><th>角色</th><th>状态</th>' +
       thSort('注册时间', 'createdAt', 'user') + '<th>操作</th></tr></thead><tbody>' + body + '</tbody></table>' +
       pagerHtml('users', p.page, p.size, p.total) + '</div>';
   }
@@ -1862,6 +1887,9 @@
   // 审计动作 / 结果 / 对象类型 → 中文（审计日志目前直接吐英文枚举，运营看不懂）
   var AUDIT_ACTION = {
     SET_POST_STATUS: '帖子状态变更',
+    BATCH_SET_POST_STATUS: '批量帖子状态变更',
+    REVIEW_REPORT: '举报处置',
+    BATCH_REVIEW_REPORT: '批量处置举报',
     SET_RECIPE_STATUS: '菜谱上下架',
     REVIEW_COMMENT: '审核评论',
     BATCH_REVIEW_COMMENT: '批量审核评论',
@@ -1933,7 +1961,7 @@
     }).join('') : tableEmpty(9, { icon: 'card', title: '暂无订单', desc: '用户下单支付后会出现在这里。可切换状态标签或调整日期区间。' });
     setPageHeader('共 ' + fmtNum(state.orderTotal) + ' 笔');
     $('panelRoot').innerHTML = '<div class="card">' + head +
-      '<table><thead><tr>' + thSort('ID', 'id', 'order', 'num') + '<th>商户单号</th><th>用户</th><th>套餐</th>' +
+      '<table><thead><tr>' + thSort('订单 ID', 'id', 'order', 'num') + '<th>商户单号</th><th>用户</th><th>套餐</th>' +
       thSort('金额', 'amount', 'order', 'num') + '<th>状态</th><th>方式</th>' +
       thSort('时间', 'createdAt', 'order') + '<th>操作</th></tr></thead><tbody>' + body + '</tbody></table>' +
       pagerHtml('orders', state.orderPage, state.orderSize, state.orderTotal) + '</div>';
@@ -2015,7 +2043,7 @@
     }).join('') : tableEmpty(7, { icon: 'shield', title: '没有匹配的操作记录', desc: '所有管理写操作都会自动留痕。换个关键词或调整日期区间再试。' });
     setPageHeader('共 ' + fmtNum(state.auditTotal) + ' 条');
     $('panelRoot').innerHTML = '<div class="card">' + head +
-      '<table><thead><tr>' + thSort('ID', 'id', 'audit', 'num') + '<th>操作人</th><th>动作</th><th>对象</th><th>详情</th>' +
+      '<table><thead><tr>' + thSort('日志 ID', 'id', 'audit', 'num') + '<th>操作人</th><th>动作</th><th>对象</th><th>详情</th>' +
       '<th>结果</th>' + thSort('时间', 'createdAt', 'audit') + '</tr></thead><tbody>' + body + '</tbody></table>' +
       pagerHtml('audit', state.auditPage, state.auditSize, state.auditTotal) + '</div>';
   }
@@ -2246,8 +2274,10 @@
     if (action === 'clear') { state.picked[kind] = {}; renderCurrentList(); return; }
     var ids = pickedIds(kind).map(Number).filter(function (n) { return !isNaN(n); });
     if (!ids.length) { toast('请先勾选要处理的记录'); return; }
+    // 措辞与单条操作一致：帖子/举报=下架，评论=驳回
+    var removedLabel = kind === 'comments' ? '驳回' : (kind === 'reports' ? '下架帖子' : '下架');
     var label = action === 'APPROVED' ? '通过'
-      : action === 'REMOVED' ? (kind === 'reports' ? '下架帖子' : '驳回/下架') : '忽略';
+      : action === 'REMOVED' ? removedLabel : '忽略';
     confirmDialog({
       title: '批量' + label + '？',
       desc: '将处理已勾选的 ' + ids.length + ' 条记录，操作会写入审计日志。',

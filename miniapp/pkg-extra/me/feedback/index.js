@@ -1,6 +1,6 @@
 // 意见反馈页 · 二级页
 // 真实接口：submitFeedback（POST /api/feedback，支持 images 字段）。游客直进，不拦登录。
-const { submitFeedback } = require('../../../utils/api');
+const { submitFeedback, getMyFeedbacks } = require('../../../utils/api');
 const { uploadFile } = require('../../../utils/upload');
 const { ensurePrivacy } = require('../../../utils/privacy');
 
@@ -20,6 +20,9 @@ Page({
     contact: '',
     submitting: false,
     toast: { visible: false, type: 'center', text: '' },
+    // 我的历史反馈（含运营回复）——让"提交出去的话"有下文
+    history: [],
+    historyLoading: true,
   },
 
   onLoad() {
@@ -38,6 +41,29 @@ Page({
       sbh = 0;
     }
     this.setData({ statusBarHeight: sbh });
+    this.loadHistory();
+  },
+
+  onShow() {
+    // 从别处回来（如设置页）也刷新一次
+    if (this._hasLoaded) this.loadHistory();
+  },
+
+  // 历史反馈：OPEN=处理中，其余（RESOLVED/REJECTED 等）=已回复
+  async loadHistory() {
+    try {
+      const list = await getMyFeedbacks();
+      const history = (list || []).map((it) => ({
+        ...it,
+        replied: it.status !== 'OPEN',
+        replyText: it.reply || '',
+        timeText: (it.handledAt || it.createdAt || '').slice(0, 10)
+      }));
+      this.setData({ history, historyLoading: false });
+    } catch (err) {
+      this.setData({ history: [], historyLoading: false });
+    }
+    this._hasLoaded = true;
   },
 
   // 类型多选切换
@@ -122,6 +148,8 @@ Page({
             submitting: false,
             toast: { visible: true, type: 'center', text: '已收到，感谢反馈' },
           });
+          // 提交成功后留在本页刷新历史，用户能看到自己刚提的那条
+          that.loadHistory();
         })
         .catch(function () {
           that.setData({ submitting: false });
@@ -152,15 +180,7 @@ Page({
 
   onToastClose() {
     this.setData({ 'toast.visible': false });
-    // 中心提示关闭后返回上一页
-    if (this.data.toast.text === '已收到，感谢反馈') {
-      wx.navigateBack({
-        delta: 1,
-        fail() {
-          wx.switchTab({ url: '/pages/me/index' });
-        },
-      });
-    }
+    // 提交成功留在本页（历史列表已刷新，能看到刚提交的）；其余错误提示不跳转
   },
 
   showToast(text) {
