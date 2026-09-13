@@ -9,7 +9,7 @@ const {
   rebuildShoppingList,
   toggleShoppingPurchased
 } = require('../../utils/api');
-const { withScrollReveal, disposeScrollReveal } = require('../../behaviors/scroll-reveal');
+const { withScrollReveal, dispose: disposeScrollReveal } = require('../../behaviors/scroll-reveal');
 
 const { recipeDishImg, localDishByIngredient } = require('../../utils/image');
 

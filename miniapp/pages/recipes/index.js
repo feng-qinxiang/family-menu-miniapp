@@ -3,7 +3,7 @@ const { recipeSourceLabels, cuisineList, mealOptions, sourceTabs, AVOID_KEYWORDS
 const { fallbackDishImg, recipeDishImg, onImgError } = require('../../utils/image');
 const { debounce } = require('../../utils/debounce');
 const { withTabSelect } = require('../../behaviors/tab-select');
-const { withScrollReveal, disposeScrollReveal } = require('../../behaviors/scroll-reveal');
+const { withScrollReveal, dispose: disposeScrollReveal } = require('../../behaviors/scroll-reveal');
 const { recipesFromPosts } = require('../../utils/dish-logic');
 const { runGuarded } = require('../../utils/interaction');
 
