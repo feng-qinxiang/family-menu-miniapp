@@ -27,6 +27,7 @@
  *  14. 主包/分包体积（按真实字节，非 du 的磁盘块）：逼近 2MB 上限就报，超了才判失败
  *  15. 大字模式是否每页都接上（只接一半、整页没接都判失败）
  *  16. catch 里清列表时是否同时置了「加载失败」状态位（否则失败会被显示成「还没有数据」）
+ *  17. 图标是否用了系统 emoji（非 BMP 码位，或符号区字符没追加 \FE0E 文字呈现）
  *
  * 退出码：有问题返回 1（可直接用于 CI）
  */
@@ -620,6 +621,41 @@ for (const x of swallowFailPages) {
   problems.push('加载失败被吞成空态 ' + x +
     ' -> catch 里清了列表却没置 *Failed/*Error 标记，' +
     'WXML 的空态分支会把它显示成「还没有 X」（另加一个状态位，文案分开）');
+}
+
+// ---- 17. 图标不许用系统 emoji：必须单色、可被 CSS color 着色 ----
+// 社区动作行原来用 ♡ ☆  💬 当图标。不追加 FE0E（文字呈现）时，iOS/Android 常把这些
+// 符号区字符渲染成彩色 emoji；而 💬（U+1F4AC）压根没有单色形态。彩色 emoji 吃不到 CSS color，
+// 于是既不跟品牌色、也不跟深色档翻转，还把系统风格混进品牌界面。
+// 成熟方案（iconfont / 单色 SVG，如 Vant Weapp、TDesign）一律单色描边，这里挡住两种回潮：
+//   A. 非 BMP 码位（> U+FFFF）——没有单色形态，直接失败；
+//   B. 默认就是 emoji 呈现的符号区（26xx / 27xx / 2Bxx）却没跟 \FE0E。
+// 纯文字（如 "·"、"+ "）不含转义码位也不在高区，放过。
+const CONTENT_DECL = /content\s*:\s*["']([^"']*)["']/;
+const EMOJI_DEFAULT_BLOCK = (cp) => (cp >= 0x2600 && cp <= 0x27BF) || (cp >= 0x2B00 && cp <= 0x2BFF);
+for (const file of files) {
+  if (!file.endsWith('.wxss')) continue;
+  const r = rel(file);
+  for (const [no, text] of wxssCodeLines(file)) {
+    const m = CONTENT_DECL.exec(text);
+    if (!m) continue;
+    const raw = m[1];
+    const escaped = (raw.match(/\\[0-9A-Fa-f]{1,6}/g) || []).map((s) => parseInt(s.slice(1), 16));
+    const literal = Array.from(raw.replace(/\\[0-9A-Fa-f]{1,6}\s?/g, '')).map((ch) => ch.codePointAt(0));
+    const codes = escaped.concat(literal).filter((cp) => !Number.isNaN(cp));
+    if (!codes.length) continue;
+    const hasTextPresentation = codes.indexOf(0xFE0E) >= 0;
+    for (const cp of codes) {
+      if (cp === 0xFE0E || cp === 0xFE0F) continue;
+      if (cp > 0xFFFF) {
+        problems.push(`图标用了 emoji 码位 ${r}:${no} -> U+${cp.toString(16).toUpperCase()} 没有单色形态，` +
+          '跨端渲染不一致且吃不到 CSS color（请换单色 SVG / iconfont，或像本页 .fab-plus 那样用 CSS 画）');
+      } else if (EMOJI_DEFAULT_BLOCK(cp) && !hasTextPresentation) {
+        problems.push(`符号图标没声明文字呈现 ${r}:${no} -> U+${cp.toString(16).toUpperCase()} 在 iOS/Android ` +
+          '常被渲染成彩色 emoji，请在 content 里追加 \\FE0E（或换单色 SVG / iconfont）');
+      }
+    }
+  }
 }
 
 // ---- 提审前必须由部署方填写的项（只报告、不阻断）----

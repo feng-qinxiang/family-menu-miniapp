@@ -167,7 +167,7 @@
   align-items: center;
   gap: 10rpx;
 }
-.pstats-heart::before { content: "\2665"; color: var(--pop); font-size: calc(24rpx * var(--fs-mul, 1)); line-height: 1; }
+.pstats-heart::before { content: "\2665\FE0E"; color: var(--pop); font-size: calc(24rpx * var(--fs-mul, 1)); line-height: 1; }
 .ptime { font-size: calc(22rpx * var(--fs-mul, 1)); color: var(--mut-2); flex: none; }
 .ptitle { font-size: calc(36rpx * var(--fs-mul, 1)); font-weight: 900; color: var(--ink); letter-spacing: -1rpx; margin: 26rpx 0 13rpx; line-height: 1.25; }
 .pcontent { font-size: calc(26rpx * var(--fs-mul, 1)); color: var(--mut-strong); line-height: 1.6; }
