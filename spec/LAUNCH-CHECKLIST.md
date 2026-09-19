@@ -1,11 +1,13 @@
 # 上线清单（个人主体版）
 
-> ## 接手须知（2026-09-19 第三轮更新：CI 仍全绿，后端 164 项）
+> ## 接手须知（2026-09-19 第五轮更新：全部已 push，CI 全绿，工作区干净）
 >
-> **已 push，CI 实测通过：**`server-ci / build-and-test` = success（**164 项**，全新 MySQL 库）、
-> `miniapp-ci / static-check` = success。⚠ `miniapp-ci` 只有**一个 job 名**却按顺序跑完四条前端门禁
-> （static-check / dish-logic / kitchen-logic / interaction-audit），别看到只有一个 check 名字
-> 就以为只跑了静态自检。本轮 7 个提交里没有改 `.github/workflows/**`，所以 `workflow` scope 这次不是必需。
+> **当前状态（刚核过，不是回忆）**：`git log origin/master..HEAD` 为空、工作区无改动；
+> `server-ci / build-and-test` = success（**30 个测试类 / 181 项**，全新 MySQL 库）、
+> `miniapp-ci / static-check` = success（四条前端门禁，静态检查编号到第 16 项）。
+> ⚠ `miniapp-ci` 只有**一个 job 名**却按顺序跑完四条门禁（static-check / dish-logic / kitchen-logic / interaction-audit），
+> 别看到只有一个 check 名字就以为只跑了静态自检。两个 workflow 都带 `paths` 过滤
+> （`miniapp/**` / `server/**`），所以**纯文档提交不触发任何 run 是正常的**，不是漏跑。
 >
 > push 的完整可复现命令（**必须先清空凭据助手列表**，否则 git 全局 `osxkeychain`
 > 会优先返回补 `workflow` scope 之前的旧 token，继续被 remote 拒绝）：
@@ -14,18 +16,46 @@
 >     -c https.proxy=http://127.0.0.1:7897 -c http.version=HTTP/1.1 \
 >     -c credential.helper='!gh auth git-credential' push origin master
 > ```
-> 另需 `gh` 的 token 带 `workflow` scope（改 `.github/workflows/**` 是硬性要求）：
-> `gh auth refresh --hostname github.com --scopes workflow`。
+> 改 `.github/workflows/**` 时 `gh` 的 token 必须带 `workflow` scope：
+> `gh auth refresh --hostname github.com --scopes workflow`。本轮没动 workflow 文件。
 >
-> 本轮做完的事（详细证据在 §3 走查表与 §3b 后端审计）：三条核心链路实测走查 + 修掉
-> 做菜沉浸页深色档塌陷、发帖弹层被 tabBar 吃掉「发布」、社区导航标题重叠、
-> 做菜换步不回首行、**换步杀掉正在倒计时的计时器（owner 选 B 方案，已实现）**、
-> 冰箱到期天数差一天；后端修掉**生产图片 7 天后集体 404**、`docker compose` 起不来、
-> `cook_history` 全表扫、通知角标少报、日志写进手机号、出站 HTTP 无超时，
-> 并新增 `/healthz` 存活探针 + `static-check` 第 12 项（恒定暗底页对比度门禁）。
-> **存量库迁移从两条变三条**（新增 `migrate-cook-history-family-index.sql`）。
+> ### 后面上线**只差 owner 的动作**，代码侧我能做的都做完并推上去了
 >
-> ### 以下两段是**当天更早轮次的记录，状态已作废**，保留只为留住那两条教训
+> 按依赖顺序，每条都给了可直接抄的命令/文件位置：
+>
+> 1. **ICP 备案域名** → 填 `miniapp/utils/env.js` 的 `trial` / `release`（现在还是 `https://test-api.example.com`
+>    与 `https://api.example.com`，CI 每次点名），并同步小程序后台的 request/uploadFile 合法域名。
+> 2. **运营者姓名 + 联系方式** → 填 `miniapp/utils/legal-config.js` 的 `operatorName` / `operatorContact`
+>    （现在是 `【请填写运营者名称】` / `【请填写联系方式】`，带占位符提交会被驳回）。
+> 3. **真实短信网关** → 后端环境变量 `SMS_PROVIDER`（现在 `noop`）。不接则**谁也绑不了手机号**，
+>    `/admin` 只能靠 `ADMIN_BOOTSTRAP_TOKEN` 引导登录（见 §6.1）。
+> 4. **生产库执行三条迁移**（存量库才需要；全新库由 `schema.sql` 直接建全）：
+>    ```
+>    mysql -u<user> -p <prod_db> < server/sql/migrate-import-source-index.sql
+>    mysql -u<user> -p <prod_db> < server/sql/migrate-post-feed-index.sql
+>    mysql -u<user> -p <prod_db> < server/sql/migrate-cook-history-family-index.sql
+>    ```
+>    三条都是幂等写法（`CREATE TABLE IF NOT EXISTS` / `information_schema` + `PREPARE`），重复执行安全。
+> 5. **真机三项**：相册授权弹窗、深色模式整体回归、小屏弹层内滚动。
+>    模拟器都给不了证据：相册是原生面板够不到；`simulator_refresh` 不重读 `theme.json` 所以深色只能算对比度；
+>    小屏只能靠真机手感。**这三条别用模拟器结论冒充已验**。
+> 6. **两条本轮新留的收尾**：① 登录状态下打开一次 `…/issues/new/choose`，确认「问题反馈 / 功能建议」
+>    两个模板显示出来（匿名访问会 302 到登录页、`community/health` 接口 404，本机无法机器确认）；
+>    ② `GET /api/recipes`、`/api/recipes/filter`、`/api/me/favorites` 三个列表**没有 LIMIT**，
+>    但前端「菜谱」页拿整份列表做本地搜索/筛选，加 LIMIT 会改坏功能——要连着前端分页一起改，属功能改动。
+>
+> ### 本轮（第四、五轮）做完的事，详细证据在 §3 走查表与 §3b 后端审计
+>
+> 大字模式 37 页全量接线（实测 64.98px vs 55.86px，缺口钉成 CI 失败）；社区发帖端到端实测；
+> 社区/成员/反馈/导入四页的加载-失败-空态统一（含**「加载失败」冒充「还没有数据」同类 3 处**，钉成 `static-check` 第 16 项）；
+> 忌口过滤在服务端**永远不可能命中**已修（词典两端一致性由测试直接读 `constants.js` 守住）；
+> 买菜清单重建的确认文案说反了已改正并钉测试；**做完菜按用量回写冰箱**（ADR-0009 方案 A，
+> 实测 `鸡蛋 8→6`、单位不符不扣、扣光即删行，且下游「现在能做」跟着掉出去）；
+> 首页看板不再捞 100 条帖子只为展示 4 条（通用查询日志实测 `LIMIT 4`）；
+> 用例顺序依赖修掉一处并把「反序全量」写进 README 验证步骤（现 **181 项**）；
+> 补 `SECURITY.md` / Issue 模板 / `CHANGELOG.md`；做了一次**全新库首跑彩排**（空库核心端点全 200）。
+>
+> ### 以下两段是**更早轮次的记录，状态已作废**，保留只为留住那两条教训
 >
 > ~~本地 `master` 领先 `origin/master` 21 个提交；这台机器三条凭据路径都实测不通
 > （keychain 无 `github.com` 条目、无 `gh` 登录、`ssh -T` publickey 拒绝）。~~
