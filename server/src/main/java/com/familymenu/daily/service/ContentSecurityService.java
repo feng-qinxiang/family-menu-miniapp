@@ -1,5 +1,6 @@
 package com.familymenu.daily.service;
 
+import com.familymenu.daily.config.WechatHttp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -57,7 +58,7 @@ public class ContentSecurityService {
     public ContentSecurityService(WechatClient wechatClient,
                                   @Value("${upload.dir:uploads}") String uploadDir) {
         this.wechatClient = wechatClient;
-        this.restClient = RestClient.create();
+        this.restClient = WechatHttp.create();
         this.uploadRoot = Paths.get(uploadDir).toAbsolutePath().normalize();
     }
 

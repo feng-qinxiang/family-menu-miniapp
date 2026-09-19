@@ -224,8 +224,12 @@ dev 库行数极少（cook_history 26 行、community_post 3 行），所以 `ro
   上限 20 MB（controller + multipart + nginx 三处一致），10 MB 手机原图照单全收。
   叠加「每次响应重新签名 → URL 每次都变 → 浏览器缓存必然失效」和 `/uploads/**` 没设 `Cache-Control`，
   移动网络下每屏都在重下原图。**这是上线后最值得做的一条性能项**，但要动存储与展示链路，不是几行的事。
-- `[LOW]` 发帖时同步调最多 7 次微信外部 HTTP（1 次文本机审 + 每张图一次），且 `RestClient.create()` 没设超时
-  （`ContentSecurityService:60`、`WechatClient:42`、`AuthService:97`）—— 微信接口一慢就占着 Tomcat 线程。
+- `[已修]` 发帖时同步调最多 7 次微信外部 HTTP（1 次文本机审 + 每张图一次），而三处
+  `RestClient.create()`（`ContentSecurityService`、`WechatClient`、`AuthService`）默认**没有任何超时**
+  —— 微信接口一慢就把 Tomcat 线程永久挂在 socket 上，且 `WechatClient.accessToken()` 整段在
+  `synchronized` 里，一个卡住的 token 请求会连带拖死所有并发发帖。
+  现统一走 `config/WechatHttp.create()`（建连 3s / 读取 8s），最坏情况降级成「这次机审失败 → 内容进人工队列」，
+  而不是全站不可用。两处调用点本来就 `catch (Exception)`，所以超时是被接住的、不会变成 500。
 - `[LOW]` `user_session` / `phone_otp` / `uploaded_file` / `admin_audit_log` 只增不清（有合适的索引却没有 `@Scheduled` 清理）。
 - `[LOW]` `upload.dir` 默认是相对路径 `uploads`，jar 直跑时落在「当前工作目录」，换 CWD 重启会让已有图片 404。
 - `[LOW]` `application-prod.yml` 的 JDBC URL 写死 `useSSL=false` + `allowPublicKeyRetrieval=true`：

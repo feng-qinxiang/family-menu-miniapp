@@ -1,5 +1,6 @@
 package com.familymenu.daily.service;
 
+import com.familymenu.daily.config.WechatHttp;
 import com.familymenu.daily.dto.AuthModels.AuthUser;
 import com.familymenu.daily.dto.AuthModels.LoginRequest;
 import com.familymenu.daily.dto.AuthModels.LoginResponse;
@@ -94,7 +95,7 @@ public class AuthService {
         this.membershipService = membershipService;
         this.smsGateway = smsGateway;
         this.objectMapper = objectMapper;
-        this.restClient = RestClient.create();
+        this.restClient = WechatHttp.create();
         this.appId = appId == null ? "" : appId.trim();
         this.appSecret = appSecret == null ? "" : appSecret.trim();
         this.devOtpEnabled = devOtpEnabled;

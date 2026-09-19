@@ -1,5 +1,6 @@
 package com.familymenu.daily.service;
 
+import com.familymenu.daily.config.WechatHttp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,7 +40,7 @@ public class WechatClient {
                         @Value("${wechat.app-id:}") String appId,
                         @Value("${wechat.app-secret:}") String appSecret) {
         this.jdbcTemplate = jdbcTemplate;
-        this.restClient = RestClient.create();
+        this.restClient = WechatHttp.create();
         this.appId = appId == null ? "" : appId.trim();
         this.appSecret = appSecret == null ? "" : appSecret.trim();
         this.configured = !this.appId.isEmpty() && !this.appSecret.isEmpty();
