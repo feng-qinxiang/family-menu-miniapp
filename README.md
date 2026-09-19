@@ -20,6 +20,13 @@
 - `docs/` 产品方案、MVP、数据模型、开发路线
 - `spec/` 上线清单（`LAUNCH-CHECKLIST.md`）与历史评审产物
 
+## 文档与协作
+
+- **上线前必办事项**：`spec/LAUNCH-CHECKLIST.md`（逐条带实测证据；缺了会被提审驳回的项在文件开头）
+- **变更记录**：`CHANGELOG.md`（提审那天开始打 tag，此前都记在「未发布」）
+- **报安全问题**：请看 `SECURITY.md`，走私密披露，**不要开公开 Issue**（本仓库是 public）
+- 提 bug / 功能建议请用 `.github/ISSUE_TEMPLATE/` 里的模板，便于复现与归类
+
 ## 启动后端
 
 ```powershell

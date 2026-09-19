@@ -1,0 +1,10 @@
+# 只留这两类模板，避免开出没有上下文的空 Issue
+blank_issues_enabled: false
+contact_links:
+  - name: 报告安全问题（不要开公开 Issue）
+    url: https://github.com/feng-qinxiang/family-menu-miniapp/security/advisories/new
+    about: 越权、上传签名绕过、登录与账号绑定等问题请走私密披露，详见 SECURITY.md
+  - name: 上线前必办事项（部署方）
+    about: >-
+      备案域名、运营者姓名与联系方式、真实短信网关、生产库迁移、真机验收——
+      清单在 spec/LAUNCH-CHECKLIST.md，缺了会被提审驳回

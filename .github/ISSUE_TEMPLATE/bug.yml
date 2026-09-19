@@ -1,0 +1,76 @@
+name: "问题反馈"
+description: "页面显示不对、操作没反应、数据算错——能复现的都可以报"
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        家庭点菜小程序的问题反馈。请先按下面几项写清楚，能复现的 bug 才修得动。
+        **安全问题请走 [SECURITY.md](../../SECURITY.md) 里的私密渠道，不要开在这里。**
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: 现象是什么
+      description: 看到了什么、期望看到什么。一句话能说清最好。
+      placeholder: 例：冰箱里鸡蛋只剩 1 个，做完番茄炒蛋后数字没变。
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 怎么复现
+      description: 从哪一页进入、点了什么、数据长什么样。
+      placeholder: |
+        1. 我的 → 冰箱：鸡蛋 3 个
+        2. 菜谱 → 番茄炒蛋 → 开始做菜 → 完成并打分
+        3. 回到冰箱：鸡蛋还是 3 个
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: 大概在哪一块
+      options:
+        - 今日餐桌（点菜）
+        - 菜谱 / 做菜模式
+        - 冰箱 / 买菜清单
+        - 社区（发帖 / 评论 / 点赞）
+        - 家庭（成员 / 邀请 / 忌口）
+        - 我的 / 设置
+        - 后台管理（/admin）
+        - 说不清
+    validations:
+      required: true
+  - type: dropdown
+    id: where
+    attributes:
+      label: 在哪看到的
+      options:
+        - 真机（iOS）
+        - 真机（Android）
+        - 微信开发者工具
+        - 后台管理网页
+        - 说不清
+    validations:
+      required: true
+  - type: textarea
+    id: device
+    attributes:
+      label: 设备与版本
+      description: 手机型号 + 系统版本 + 微信版本；开发者工具的话带上基础库版本。
+      placeholder: 例：iPhone 13 / iOS 17.5 / 微信 8.0.50；基础库 3.4.0
+  - type: textarea
+    id: logs
+    attributes:
+      label: 报错或截图
+      description: |
+        开发者工具控制台的报错原文；有截图就贴。
+        贴之前请确认里面没有 auth_token、手机号、邀请码这类真实凭据。
+      render: shell
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: 提交前确认
+      options:
+        - label: 我贴的内容里没有真实 token / 手机号 / 邀请码 / 别人家的数据
+          required: true

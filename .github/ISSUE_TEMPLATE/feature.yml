@@ -1,0 +1,29 @@
+name: "功能建议"
+description: "想让它在家庭里更好用的一点"
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        这个小程序的主线是"今天吃什么"：点菜 → 做菜 → 社区分享，冰箱和买菜清单是下游。
+        建议如果能落在这条主线上，更容易被采纳。
+  - type: textarea
+    id: problem
+    attributes:
+      label: 你家遇到的具体情况
+      description: 谁、在什么时候、想做哪件事、卡在哪。别只写"希望有个 XX 功能"。
+      placeholder: 例：家里两个人都会做同一道菜，谁做了另一份买菜清单还在催着买。
+    validations:
+      required: true
+  - type: textarea
+    id: want
+    attributes:
+      label: 你期望的样子
+      description: 一两句就够，写清"做完这一步后我应该看到什么"。
+    validations:
+      required: true
+  - type: textarea
+    id: now
+    attributes:
+      label: 现在只能怎么绕
+      description: 没有绕法也请写"没有"。
