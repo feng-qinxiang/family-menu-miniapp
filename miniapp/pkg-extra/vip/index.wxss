@@ -83,6 +83,7 @@
   font-size: calc(26rpx * var(--fs-mul, 1));
   line-height: 1.5;
   color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0 2rpx 8rpx rgba(20, 14, 8, 0.55);
 }
 .vip-hero-meta {
   display: flex;

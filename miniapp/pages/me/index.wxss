@@ -58,6 +58,7 @@
   font-size: var(--fs-cap);
   font-weight: 600;
   color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 2rpx 8rpx rgba(20, 14, 8, 0.55);
 }
 .mag-hero-body {
   position: absolute;
@@ -88,6 +89,7 @@
 .mag-hero-sub {
   font-size: calc(26rpx * var(--fs-mul, 1));
   color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0 2rpx 8rpx rgba(20, 14, 8, 0.55);
 }
 .mag-fam {
   display: flex;
@@ -118,6 +120,7 @@
   margin-left: 26rpx;
   font-size: calc(24rpx * var(--fs-mul, 1));
   color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0 2rpx 8rpx rgba(20, 14, 8, 0.55);
 }
 .mag-fam-lbl .b { color: var(--anchor-contrast); font-weight: 800; font-size: calc(29rpx * var(--fs-mul, 1)); }
 .mag-manage {

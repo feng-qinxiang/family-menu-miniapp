@@ -80,6 +80,7 @@
   font-size: calc(26rpx * var(--fs-mul, 1));
   color: rgba(255, 255, 255, 0.85);
   font-weight: 400;
+  text-shadow: 0 2rpx 8rpx rgba(20, 14, 8, 0.55);
 }
 .phero-stats {
   display: flex;

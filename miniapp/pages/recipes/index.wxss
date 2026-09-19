@@ -43,7 +43,7 @@
   font-size: var(--fs-hero-lg); line-height: 1; letter-spacing: -4rpx;
   margin: 16rpx 0 16rpx;
 }
-.rx-hero-sub { font-size: var(--fs-cap); color: rgba(255,255,255,.85); font-weight: 400; }
+.rx-hero-sub { font-size: var(--fs-cap); color: rgba(255,255,255,.85); font-weight: 400; text-shadow: 0 2rpx 8rpx rgba(20, 14, 8, 0.55); }
 .rx-hero-meta { display: flex; gap: 14rpx; margin-top: 8rpx; flex-wrap: wrap; }
 .rx-m {
   font-size: var(--fs-mini); font-weight: 600; color: var(--anchor-contrast);

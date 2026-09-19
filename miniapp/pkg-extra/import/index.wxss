@@ -81,6 +81,7 @@
   color: rgba(255, 255, 255, 0.85);
   line-height: 1.5;
   max-width: 560rpx;
+  text-shadow: 0 2rpx 8rpx rgba(20, 14, 8, 0.55);
 }
 
 /* ============ SHEET ============ */
