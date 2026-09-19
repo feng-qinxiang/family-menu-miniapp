@@ -7,12 +7,29 @@
 > 这台机器三条凭据路径都实测不通：keychain 无 `github.com` 条目、无 `gh` 登录、
 > `ssh -T git@github.com` → `Permission denied (publickey)`。
 >
-> **下一步（一条命令）**：
+> **下一步：push，但它现在被一条 GitHub 规则挡住。**
+>
+> 2026-09-19 实测过程：`gh auth login` 已成功（账号 feng-qinxiang），但
+> `git push` 被远端拒绝：
 > ```
-> cd /Users/xx/cx/家庭点菜小程序 && git push origin master
+> ! [remote rejected] master -> master (refusing to allow an OAuth App to create
+>   or update workflow `.github/workflows/miniapp-ci.yml` without `workflow` scope)
 > ```
-> （或 `gh auth login` 走设备码，需带 `HTTPS_PROXY=http://127.0.0.1:7897`，
-> 直连 GitHub OAuth 端点会超时。）
+> 原因：**凡提交里改动了 `.github/workflows/**`，token 必须带 `workflow` scope**。
+> `gh` 默认只申请 `repo / read:org / gist`，所以 22 个提交整体被退回（不是部分失败）。
+> 也解释了为什么 9/13 那次推送没事——那次没碰 workflow 文件。
+>
+> 另外两个环境事实（都实测过，别再重新试）：
+> - 直连 GitHub 会 `Recv failure: Operation timed out`，**必须走本机代理**：
+>   `git -c http.proxy=http://127.0.0.1:7897 -c https.proxy=http://127.0.0.1:7897 -c http.version=HTTP/1.1 ...`
+> - 本机没有 SSH 私钥（`ssh -T git@github.com` → `Permission denied (publickey)`），
+>   所以换 SSH remote 这条路不通。
+>
+> **两条可选路线**：
+> 1. 给现有 token 补 scope（已在 Safari 开过授权页，设备码 15 分钟有效）：
+>    `gh auth refresh --hostname github.com --scopes workflow`
+>    然后 `git -c http.proxy=... -c credential.helper='!gh auth git-credential' push origin master`
+> 2. 用带 `workflow` 权限的 PAT，或直接用 GitHub Desktop / 你平时推代码的工具推送。
 >
 > **push 之后必须回答的两个问题**（在此之前，本清单里所有"CI 已校验"的说法都不成立）：
 > 1. `server-ci` 是否转绿？根因已定位为时区（JDBC 钉 `serverTimezone=Asia/Shanghai`
