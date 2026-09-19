@@ -610,7 +610,7 @@ if (preflight.length) {
   preflight.forEach((p) => console.log('  · ' + p));
 }
 if (sizeWarns.length) {
-  console.log('\n⚠ 包体积（不阻断，但微信的 2MB 主包上限是硬约束）：');
+  console.log('\n⚠ 提醒（不阻断 CI，但都是上线前该知道的）：');
   sizeWarns.forEach((p) => console.log('  · ' + p));
 }
 if (problems.length) {
