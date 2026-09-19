@@ -78,14 +78,45 @@ class AdminRbacTests {
         jdbcTemplate.update("DELETE FROM user_session WHERE user_id = ?", userId);
     }
 
+    /**
+     * 自己建一条帖子 + 一条评论，返回评论 id。
+     *
+     * 原来这里是 `SELECT id FROM community_post_comment ORDER BY id LIMIT 1`——
+     * 全新库上没有评论，它只是碰巧因为同一轮里别的测试先建了数据才通过，
+     * 属于"执行顺序决定成败"的隐患。查询也改成限定在自己刚建的那个帖子下，
+     * 不再依赖全局状态。
+     */
+    private long newCommentId() throws Exception {
+        String author = guestLogin();
+        MvcResult post = mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                        .post("/api/community/posts")
+                        .header("X-Auth-Token", author)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"RBAC 用例帖 " + System.nanoTime()
+                                + "\",\"content\":\"由测试自己创建。\"}"))
+                .andExpect(status().isOk())
+                .andReturn();
+        long postId = objectMapper.readTree(post.getResponse().getContentAsString()).get("id").asLong();
+
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                        .post("/api/community/posts/" + postId + "/comments")
+                        .header("X-Auth-Token", guestLogin())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"content\":\"由测试自己创建的评论。\"}"))
+                .andExpect(status().isOk());
+
+        return jdbcTemplate.queryForObject(
+                "SELECT id FROM community_post_comment WHERE post_id = ? ORDER BY id DESC LIMIT 1",
+                Long.class, postId);
+    }
+
     // ---------- 内容审核员 ----------
 
     @Test
     void moderatorCanModerateContentButNotTouchUsersMoneyOrAudit() throws Exception {
         long[] id = new long[1];
         String moderator = adminWithRole("MODERATOR", id);
-        Long commentId = jdbcTemplate.queryForObject(
-                "SELECT id FROM community_post_comment ORDER BY id LIMIT 1", Long.class);
+        long commentId = newCommentId();
         try {
             // 能看能改内容
             mockMvc.perform(get("/api/admin/comments").header("X-Auth-Token", moderator))

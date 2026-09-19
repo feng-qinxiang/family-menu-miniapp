@@ -168,8 +168,7 @@ class AdminModulesTests {
         long[] id = new long[1];
         String admin = adminToken(id);
         // 用一条存在的帖子
-        Long postId = jdbcTemplate.queryForObject(
-                "SELECT id FROM community_post ORDER BY id LIMIT 1", Long.class);
+        long postId = newPost();
         try {
             mockMvc.perform(post("/api/admin/posts/" + postId + "/status").header("X-Auth-Token", admin)
                             .contentType(MediaType.APPLICATION_JSON).content("{\"status\":\"REMOVED\"}"))
@@ -194,8 +193,7 @@ class AdminModulesTests {
     void postDetailReturnsFullContent() throws Exception {
         long[] id = new long[1];
         String admin = adminToken(id);
-        Long postId = jdbcTemplate.queryForObject(
-                "SELECT id FROM community_post ORDER BY id LIMIT 1", Long.class);
+        long postId = newPost();
         try {
             mockMvc.perform(get("/api/admin/posts/" + postId).header("X-Auth-Token", admin))
                     .andExpect(status().isOk())
@@ -213,8 +211,7 @@ class AdminModulesTests {
     void removedPostIsHiddenFromPublicFeed() throws Exception {
         long[] id = new long[1];
         String admin = adminToken(id);
-        Long postId = jdbcTemplate.queryForObject(
-                "SELECT id FROM community_post ORDER BY id LIMIT 1", Long.class);
+        long postId = newPost();
         try {
             mockMvc.perform(post("/api/admin/posts/" + postId + "/status").header("X-Auth-Token", admin)
                             .contentType(MediaType.APPLICATION_JSON).content("{\"status\":\"REMOVED\"}"))
@@ -243,8 +240,7 @@ class AdminModulesTests {
         String admin = adminToken(id);
         try {
             // 造一条评论
-            Long postId = jdbcTemplate.queryForObject(
-                    "SELECT id FROM community_post ORDER BY id LIMIT 1", Long.class);
+            long postId = newPost();
             String userToken = guestLogin();
             MvcResult added = mockMvc.perform(post("/api/community/posts/" + postId + "/comments")
                             .header("X-Auth-Token", userToken)
@@ -276,8 +272,7 @@ class AdminModulesTests {
     void pendingCommentIsInvisibleUntilAdminApproves() throws Exception {
         long[] id = new long[1];
         String admin = adminToken(id);
-        Long postId = jdbcTemplate.queryForObject(
-                "SELECT id FROM community_post ORDER BY id LIMIT 1", Long.class);
+        long postId = newPost();
         String author = guestLogin();
         String other = guestLogin();
         String content = "待审评论-" + System.nanoTime();
@@ -407,8 +402,7 @@ class AdminModulesTests {
     void adminCanBatchApproveComments() throws Exception {
         long[] id = new long[1];
         String admin = adminToken(id);
-        Long postId = jdbcTemplate.queryForObject(
-                "SELECT id FROM community_post ORDER BY id LIMIT 1", Long.class);
+        long postId = newPost();
         String author = guestLogin();
         List<Long> created = new java.util.ArrayList<>();
         try {
@@ -644,8 +638,7 @@ class AdminModulesTests {
         long[] id = new long[1];
         String admin = adminToken(id);
         try {
-            Long postId = jdbcTemplate.queryForObject(
-                    "SELECT id FROM community_post ORDER BY id LIMIT 1", Long.class);
+            long postId = newPost();
             mockMvc.perform(post("/api/admin/posts/" + postId + "/status").header("X-Auth-Token", admin)
                             .contentType(MediaType.APPLICATION_JSON).content("{\"status\":\"APPROVED\"}"))
                     .andExpect(status().isOk());
@@ -808,7 +801,29 @@ class AdminModulesTests {
         }
     }
 
-    private Long postId() {
-        return jdbcTemplate.queryForObject("SELECT id FROM community_post ORDER BY id LIMIT 1", Long.class);
+    /**
+     * 自己建一条帖子并返回 id。
+     *
+     * 绝不能写成 `SELECT id FROM community_post ORDER BY id LIMIT 1`：CI 用的是全新库，
+     * 而 data.sql 里 community_post 的插入数是 0（帖子只存在于被
+     * app.seed-demo-data=false 挡掉的 data-demo.sql）。之前 8 个用例因此
+     * 抛 EmptyResultDataAccessException，本地却因为测试库攒了历史数据一直是绿的。
+     * 也不让所有用例共用一条：adminCanRemoveAndRestorePost 会把它下架，
+     * 那样执行顺序就决定成败。
+     */
+    private long newPost() throws Exception {
+        String author = guestLogin();
+        MvcResult created = mockMvc.perform(post("/api/community/posts")
+                        .header("X-Auth-Token", author)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"后台治理用例帖 " + System.nanoTime()
+                                + "\",\"content\":\"由测试自己创建，用于后台治理流程。\"}"))
+                .andExpect(status().isOk())
+                .andReturn();
+        return objectMapper.readTree(created.getResponse().getContentAsString()).get("id").asLong();
+    }
+
+    private Long postId() throws Exception {
+        return newPost();
     }
 }
