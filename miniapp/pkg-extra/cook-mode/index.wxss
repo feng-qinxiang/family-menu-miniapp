@@ -178,6 +178,41 @@
 .dot.done { background: var(--gold-deep); }
 .dot.now { background: var(--pop); }
 
+/* 离开的那一步还在倒数时的小条（本页是恒定暗底：只用 --cook-* 常量，勿用会翻转的 token） */
+.bgchip {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin: 0 46rpx 18rpx;
+  padding: 14rpx 24rpx;
+  border-radius: var(--r-pill);
+  background: var(--cook-surface);
+  border: 2rpx solid rgba(255, 255, 255, 0.12);
+}
+.bgchip-ic {
+  width: 22rpx;
+  height: 22rpx;
+  border-width: 3rpx;
+  border-color: var(--cook-pop);
+  flex: none;
+}
+.bgchip-tx {
+  font-size: calc(26rpx * var(--fs-mul, 1));
+  font-weight: 700;
+  color: var(--cook-ink);
+}
+.bgchip-more {
+  font-size: var(--fs-mini);
+  color: var(--cook-ink-mut);
+}
+.bgchip-go {
+  margin-left: auto;
+  font-size: calc(26rpx * var(--fs-mul, 1));
+  font-weight: 800;
+  color: var(--cook-pop);
+}
+
 /* 步骤大图 */
 .stepimg {
   position: relative;

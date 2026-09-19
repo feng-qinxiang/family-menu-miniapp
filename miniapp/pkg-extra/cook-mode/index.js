@@ -48,12 +48,19 @@ Page({
     total: 0,
     dots: [],          // 进度点状态：done|now|''
 
-    // 计时器
+    // 计时器（下面这几个只是「当前步那个槽」的视图，真实状态在 _slots 里）
     timerTotal: 0,     // 本步总秒数
     timerLeft: 0,      // 剩余秒数
     timerText: '00:00',
     running: false,
     hasTimer: false,
+    // 离开某一步时它还在跑 → 顶栏下方那枚小条接管显示，点一下回到那一步。
+    // 为什么非做不可：真实做菜是并行的（炖着 20 分钟去看下一步的配料），
+    // 旧实现 gotoStep 第一件事就是 clearTimer，那个倒计时既没提示也不保留，说没就没。
+    bgIdx: -1,
+    bgName: '',
+    bgText: '',
+    bgExtra: 0,        // 除了小条上这个，还有几个在跑
     // 换步时把步骤正文滚回顶部。0/0.01 交替：scroll-top 只在「值发生变化」时才下发，
     // 恒绑 0 时第二步之后的滚动位置会一直留着（长菜谱读到下面才换步，新步骤开头在屏外）。
     // 0.01px 会被渲染层夹回 0，所以两档观感都是顶部。
@@ -61,9 +68,10 @@ Page({
   },
 
   _timer: null,
-  _baseAt: 0,             // 本轮计时起点（Date.now），后台回来按差值追上
-  _baseLeft: 0,           // 起点时的剩余秒数
-  _hiddenRunning: false,  // 切后台前计时是否在跑
+  // 每步一个计时槽 { total, baseAt, baseLeft, running }。
+  // 用「起点时间戳 + 起点剩余」表示而不是逐秒递减，所以切后台、来回换步都不需要额外补偿：
+  // 剩余永远是 baseLeft - (Date.now() - baseAt)/1000，算一次就自动把流逝的时间追平。
+  _slots: null,
 
   onLoad(options) {
     let sbh = 0;
@@ -93,33 +101,80 @@ Page({
   },
 
   onUnload() {
-    this.clearTimer();
+    this.stopTicker();
     if (wx.setKeepScreenOn) {
       wx.setKeepScreenOn({ keepScreenOn: false });
     }
   },
 
   onHide() {
-    // 切后台停 tick 省电；_baseAt 保留，回来按 Date.now 差值续跑（计时连续，后台时间也算）
-    if (this.data.running) {
-      this.clearTimer();
-      this._hiddenRunning = true;
-    }
+    // 只停 tick 省电，不动任何槽的基准：回到前台第一拍就会把后台流逝的秒数一次追平
+    this.stopTicker();
   },
 
   onShow() {
-    // 后台回来：沿用旧基准重启 tick，第一拍即把后台流逝的时间算进来
-    if (this._hiddenRunning) {
-      this._hiddenRunning = false;
-      this.startTimer(true);
-    }
+    this.ensureTicker();
   },
 
-  clearTimer() {
+  slot(i) {
+    if (!this._slots) this._slots = {};
+    if (!this._slots[i]) this._slots[i] = { total: 0, baseAt: 0, baseLeft: 0, running: false };
+    return this._slots[i];
+  },
+
+  leftOf(s) {
+    if (!s.running) return Math.max(0, s.baseLeft);
+    // ceil：向下取整会在 1000ms 间隔下少显示一秒（0.4s 就跳成 0）
+    return Math.max(0, Math.ceil(s.baseLeft - (Date.now() - s.baseAt) / 1000));
+  },
+
+  anyRunning() {
+    const s = this._slots || {};
+    return Object.keys(s).some((k) => s[k].running);
+  },
+
+  ensureTicker() {
+    if (this._timer || !this.anyRunning()) return;
+    this._timer = setInterval(() => this._tick(), 1000);
+    this._tick();
+  },
+
+  stopTicker() {
     if (this._timer) {
       clearInterval(this._timer);
       this._timer = null;
     }
+  },
+
+  // 把「当前步的槽」+「其它仍在跑的槽」投影到 data 上
+  renderTimers() {
+    const cur = this.slot(this.data.current);
+    const left = this.leftOf(cur);
+    let bestIdx = -1;
+    let bestLeft = 0;
+    let running = 0;
+    const s = this._slots || {};
+    Object.keys(s).forEach((k) => {
+      const idx = Number(k);
+      if (!s[idx].running || idx === this.data.current) return;
+      const l = this.leftOf(s[idx]);
+      running += 1;
+      if (bestIdx < 0 || l < bestLeft) {
+        bestIdx = idx;
+        bestLeft = l;
+      }
+    });
+    this.setData({
+      timerTotal: cur.total,
+      timerLeft: left,
+      timerText: this.fmt(left),
+      running: cur.running,
+      hasTimer: cur.total > 0,
+      bgIdx: bestIdx,
+      bgName: bestIdx >= 0 ? ((this.data.steps[bestIdx] || {}).cn || '') : '',
+      bgText: bestIdx >= 0 ? this.fmt(bestLeft) : '',
+      bgExtra: running > 1 ? running - 1 : 0
+    });
   },
 
   async loadDetail(recipeId) {
@@ -231,17 +286,20 @@ Page({
     const dots = steps.map((s, k) => (k < i ? 'done' : k === i ? 'now' : ''));
 
     const seconds = step.seconds || 0;
-    this.clearTimer();
+    const sl = this.slot(i);
+    // 第一次进这一步才按菜谱识别到的时长铺默认值；跑过/手动改过的以槽里的为准（不清零、不杀掉在跑的）
+    if (!sl.total) {
+      sl.total = seconds;
+      sl.baseLeft = seconds;
+    }
     this.setData({
       current: i,
       dots,
-      timerTotal: seconds,
-      timerLeft: seconds,
-      timerText: this.fmt(seconds),
-      running: false,
-      hasTimer: seconds > 0,
       stepTop: this.data.stepTop === 0 ? 0.01 : 0
     });
+    this.renderTimers();
+    // 换到一个还在跑的步 → 需要 tick；换走时留下面一个还在跑的步 → 也要 tick
+    this.ensureTicker();
     // 记录进度：中途退出（onClose/切走被杀）再进可续做，厨房总控页据此显示步骤进度
     try {
       if (this.data.recipeId) {
@@ -291,79 +349,81 @@ Page({
     wx.showActionSheet({
       itemList: labels,
       success: (res) => {
-        const total = seconds[res.tapIndex];
-        this.clearTimer();
-        this.setData({
-          timerTotal: total,
-          timerLeft: total,
-          timerText: this.fmt(total),
-          hasTimer: true,
-          running: false
-        });
-        this.startTimer();
+        const cur = this.slot(this.data.current);
+        cur.total = seconds[res.tapIndex];
+        cur.baseLeft = cur.total;
+        cur.baseAt = Date.now();
+        cur.running = true;
+        this.renderTimers();
+        this.ensureTicker();
       },
       fail: () => {}
     });
   },
 
-  startTimer(resumeBase) {
-    if (!resumeBase && this.data.timerLeft <= 0) {
-      // 已结束则重置再开
-      this.setData({ timerLeft: this.data.timerTotal });
-    }
-    this.clearTimer();
-    if (!resumeBase) {
-      // 新开始：以当前剩余为基准
-      this._baseAt = Date.now();
-      this._baseLeft = this.data.timerLeft;
-    }
-    // resumeBase=true（后台续跑）：沿用 _baseAt/_baseLeft，差值自动补上后台流逝
-    this.setData({ running: true });
-    this._timer = setInterval(() => this._tick(), 1000);
-    this._tick();
+  startTimer() {
+    const cur = this.slot(this.data.current);
+    if (!cur.total) return;
+    // 跑完了再按就是重新开始
+    if (this.leftOf(cur) <= 0) cur.baseLeft = cur.total;
+    cur.baseAt = Date.now();
+    cur.running = true;
+    this.renderTimers();
+    this.ensureTicker();
   },
 
   _tick() {
-    const elapsed = (Date.now() - this._baseAt) / 1000;
-    // ceil：向下取整会在 1000ms 间隔下少显示一秒（0.4s 就跳成 0）
-    const left = Math.ceil(this._baseLeft - elapsed);
-    if (left <= 0) {
-      this.clearTimer();
-      this.setData({ timerLeft: 0, timerText: this.fmt(0), running: false });
+    const s = this._slots || {};
+    const done = [];
+    Object.keys(s).forEach((k) => {
+      const slot = s[k];
+      if (!slot.running) return;
+      // 只读、不重新取基准：baseAt 在整个计时期间固定，节流/切后台后的那一拍会一次把
+      // 流逝的秒数全追回来。反过来若每拍都把 baseAt 推到「现在」，elapsed 就永远略小于 1，
+      // ceil(1 - 0.995) = 1 → 数字卡在 00:01 再也不到 0（实测踩过）。
+      if (this.leftOf(slot) > 0) return;
+      slot.running = false;
+      slot.baseLeft = 0;
+      slot.baseAt = 0;
+      done.push(Number(k));
+    });
+    this.renderTimers();
+    if (!this.anyRunning()) this.stopTicker();
+    if (done.length) {
       wx.vibrateShort && wx.vibrateShort({ type: 'heavy' });
-      wx.showToast({ title: '这一步时间到啦', icon: 'none' });
-      return;
+      const first = (this.data.steps[done[0]] || {}).cn || '这一步';
+      const more = done.length > 1 ? `（另有 ${done.length - 1} 步也到点）` : '';
+      wx.showToast({ title: `${first}时间到啦${more}`, icon: 'none' });
     }
-    this.setData({ timerLeft: left, timerText: this.fmt(left) });
   },
 
   pauseTimer() {
-    if (!this.data.running) return;
-    // 固化此刻的真实剩余（时间戳差值），下次从暂停点续跑
-    const elapsed = (Date.now() - this._baseAt) / 1000;
-    this._baseLeft = Math.max(0, Math.ceil(this._baseLeft - elapsed));
-    this.clearTimer();
-    this.setData({
-      running: false,
-      timerLeft: this._baseLeft,
-      timerText: this.fmt(this._baseLeft)
-    });
+    const cur = this.slot(this.data.current);
+    if (!cur.running) return;
+    cur.baseLeft = this.leftOf(cur);
+    cur.running = false;
+    cur.baseAt = 0;
+    this.renderTimers();
+    if (!this.anyRunning()) this.stopTicker();
   },
 
   resetTimer() {
-    this.clearTimer();
-    this.setData({
-      timerLeft: this.data.timerTotal,
-      timerText: this.fmt(this.data.timerTotal),
-      running: false
-    });
+    const cur = this.slot(this.data.current);
+    cur.baseLeft = cur.total;
+    cur.running = false;
+    cur.baseAt = 0;
+    this.renderTimers();
+    if (!this.anyRunning()) this.stopTicker();
+  },
+
+  // 顶栏小条：跳回那个还在倒计时的步骤
+  jumpToBgStep() {
+    if (this.data.bgIdx >= 0) this.gotoStep(this.data.bgIdx);
   },
 
   // 退出烹饪模式
   onClose() {
-    this.clearTimer();
-    this._hiddenRunning = false;
-    this.setData({ running: false });
+    this.stopTicker();
     const pages = getCurrentPages();
     if (pages && pages.length > 1) {
       wx.navigateBack({ delta: 1 });
@@ -379,9 +439,10 @@ Page({
 
   // 完成 → 先请用户打个真实评分，再写做菜记录 + 回做菜记录页
   onFinish() {
-    this.clearTimer();
-    this._hiddenRunning = false;
-    this.setData({ running: false });
+    // 这道菜走完了，所有步的计时一起作废：gotoLog 是 navigateTo，本页还留在栈里，
+    // 不清空的话用户从做菜记录页退回来会看到"这步还剩 12:04"继续倒数。
+    this.stopTicker();
+    this._slots = {};
     // 烹饪走完，清掉本地续做进度
     try {
       if (this.data.recipeId) {

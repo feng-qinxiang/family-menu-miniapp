@@ -35,6 +35,14 @@
   <!-- 正文 -->
   <view wx:else class="body">
 
+    <!-- 离开的那一步还在倒数：这枚小条接管提醒，点它回到那一步 -->
+    <view wx:if="{{bgIdx >= 0}}" class="bgchip tap-scale" catchtap="jumpToBgStep">
+      <view class="ic-clock-sm bgchip-ic"></view>
+      <text class="bgchip-tx">{{bgName}}还剩 {{bgText}}</text>
+      <text wx:if="{{bgExtra}}" class="bgchip-more">另有 {{bgExtra}} 步</text>
+      <text class="bgchip-go">回去 ›</text>
+    </view>
+
     <!-- 进度点条 -->
     <view class="dots">
       <view
