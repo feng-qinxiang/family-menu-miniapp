@@ -74,6 +74,15 @@ page {
   --success: #3a9d5d;
   --success-light: #7fd29a;
   --cook-bg: var(--themeCookBg, #1a1410);   /* 烹饪模式沉浸底色 */
+  /* 沉浸暗底专用恒定色板：--cook-bg 两档都是深色，所以其上的前景/卡底也必须恒定。
+     若在这里改用会翻转的 token（--c-border-light 深色档=#333、--ink 深色档=#efefef），
+     深色模式下就是「深字压深底」+ 暗底上蹦出白卡片。取值等于浅色档现状，观感不变。 */
+  --cook-ink: #f1ece2;        /* 暗底主前景（正文、菜名、按钮文字）*/
+  --cook-ink-mut: #b3a795;    /* 暗底次级前景（小标签、说明）*/
+  --cook-surface: #2c241b;    /* 暗底上的卡底/药丸底 */
+  --cook-line: #d5c9b8;       /* 暗底上的描边图标 */
+  --cook-mark: #ffffff;       /* 亮底图标上的指针（时钟针）*/
+  --cook-pop: #e8472a;      /* 暗底上的品牌红填充（承载浅色文字，深色档不再提亮）*/
   --line: var(--themeLine, #e8e0d0);          /* 浅分隔线 */
   --line-deep: var(--themeLineDeep, #d5c9b8); /* 深分隔线/描边 */
   --skeleton: var(--themeSkeleton, #efe4d7);  /* 骨架屏统一底色（全站一致） */

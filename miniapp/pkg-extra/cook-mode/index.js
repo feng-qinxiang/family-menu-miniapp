@@ -53,7 +53,11 @@ Page({
     timerLeft: 0,      // 剩余秒数
     timerText: '00:00',
     running: false,
-    hasTimer: false
+    hasTimer: false,
+    // 换步时把步骤正文滚回顶部。0/0.01 交替：scroll-top 只在「值发生变化」时才下发，
+    // 恒绑 0 时第二步之后的滚动位置会一直留着（长菜谱读到下面才换步，新步骤开头在屏外）。
+    // 0.01px 会被渲染层夹回 0，所以两档观感都是顶部。
+    stepTop: 0
   },
 
   _timer: null,
@@ -235,7 +239,8 @@ Page({
       timerLeft: seconds,
       timerText: this.fmt(seconds),
       running: false,
-      hasTimer: seconds > 0
+      hasTimer: seconds > 0,
+      stepTop: this.data.stepTop === 0 ? 0.01 : 0
     });
     // 记录进度：中途退出（onClose/切走被杀）再进可续做，厨房总控页据此显示步骤进度
     try {

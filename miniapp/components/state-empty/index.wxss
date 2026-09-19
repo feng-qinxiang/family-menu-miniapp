@@ -78,7 +78,7 @@
    变成「深字压深底」而完全看不见。以下仅覆盖文字/描边按钮，**不动 .se-illu 圆形底色**
    —— 圆形保持浅色，图标（深色描边 SVG）才看得清，同时在暗底上像一枚徽章。 */
 .se--dark .se-title {
-  color: var(--c-border-light);
+  color: var(--cook-ink);
 }
 .se--dark .se-desc {
   color: rgba(241, 236, 226, 0.62);

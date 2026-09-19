@@ -22,6 +22,7 @@
  *   9. .wxss 里 border / color 是否写死裸黑（深色模式下会看不见）
  *  10. .js 里 require() 的相对路径目标是否存在（漏提交新文件 = CI 检出树里缺文件）
  *  11. .wxss 里 var(--token) 引用的名字是否真有定义（拼错的 token 会静默丢样式）
+ *  12. 恒定暗底（沉浸）页的前景/填充色是否在浅色档和深色档都成立（深色档翻出 #333 正文即失败）
  *
  * 退出码：有问题返回 1（可直接用于 CI）
  */
@@ -356,6 +357,120 @@ for (const [token, where] of tokenUses) {
   if (seenBadToken.has(key)) continue;
   seenBadToken.add(key);
   problems.push(`var() 引用了没定义的 token ${where} -> ${token}（会静默丢掉该处样式，深色档尤其明显）`);
+}
+
+// ---- 12. 恒定暗底页（沉浸模式）上的配色必须在两档都成立 ----
+// 烹饪模式这类页面的底色 --cook-bg 两档都是深色（#1a1410 / #111111），它不像普通页面
+// 那样「底和字一起翻转」。所以这类页面上任何会翻转的 token 都会在深色档翻到暗底的
+// 另一头：实测 --c-border-light 深色档 = #333333，压在 #111111 上对比度 1.6:1，
+// 做菜正文直接看不见；--ink 深色档 = #efefef，暗底上会蹦出白卡片、白药丸、白按钮。
+// 规则（只挡「看不见」这一级，不挡「略逊」）：
+//   color:      与所在规则/页面底色在两档下的对比度都 ≥ 3.0
+//   background: 两档取值必须稳定（|相对亮度差| ≤ 0.25），否则暗底上会翻出亮块
+//   border(-color): 同上稳定（描边图标翻成暗色就等于没有）
+const themePath = path.join(ROOT, 'theme.json');
+if (fs.existsSync(themePath)) {
+  const theme = JSON.parse(fs.readFileSync(themePath, 'utf8'));
+  const lumOf = (hex) => {
+    const h = hex.trim().replace('#', '');
+    const full = h.length === 3 ? h.split('').map((c) => c + c).join('') : h;
+    if (!/^[0-9a-fA-F]{6}$/.test(full)) return null;
+    const ch = [0, 2, 4].map((i) => parseInt(full.slice(i, i + 2), 16) / 255)
+      .map((v) => (v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4)));
+    return 0.2126 * ch[0] + 0.7152 * ch[1] + 0.0722 * ch[2];
+  };
+  const contrast = (a, b) => {
+    const la = lumOf(a), lb = lumOf(b);
+    if (la == null || lb == null) return null;
+    return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+  };
+
+  // token -> { light, dark }：app.wxss 里 --x: var(--themeX, #fallback) 的取 theme.json，
+  // 写成常量 hex 的两档相同。
+  const appWxss = stripComments(fs.readFileSync(path.join(ROOT, 'app.wxss'), 'utf8'));
+  const tokens = {};
+  for (const m of appWxss.matchAll(/(--[\w-]+)\s*:\s*var\(\s*(--[\w-]+)\s*,\s*(#[0-9a-fA-F]{3,6})\s*\)/g)) {
+    const tk = m[2].slice(2);   // --themePaper -> themePaper（theme.json 里的键名）
+    tokens[m[1]] = { light: theme.light[tk] || m[3], dark: theme.dark[tk] || m[3] };
+  }
+  for (const m of appWxss.matchAll(/(--[\w-]+)\s*:\s*(#[0-9a-fA-F]{3,6})\s*(?:;|[;}])/g)) {
+    if (!tokens[m[1]]) tokens[m[1]] = { light: m[2], dark: m[2] };
+  }
+  /** 解析一条声明值 -> {light,dark}；rgba/gradient/未知一律返回 null（不参与判定） */
+  const resolve = (value) => {
+    const v = value.trim();
+    const tv = /var\(\s*(--[\w-]+)\s*(?:,\s*([^)]*))?\)/.exec(v);
+    if (tv) {
+      if (tokens[tv[1]]) return tokens[tv[1]];
+      return /#[0-9a-fA-F]{3,6}/.test(tv[2] || '')
+        ? { light: tv[2].trim(), dark: tv[2].trim() }
+        : null;
+    }
+    if (/^#[0-9a-fA-F]{3,6}$/.test(v)) return { light: v, dark: v };
+    return null;
+  };
+  // 两档都偏暗的 token = 恒定暗底；引用它的页面即「沉浸页」
+  const fixedDark = Object.keys(tokens).filter(
+    (t) => lumOf(tokens[t].light) < 0.25 && lumOf(tokens[t].dark) < 0.25
+  );
+  for (const file of files) {
+    if (!file.endsWith('.wxss')) continue;
+    const src = stripComments(fs.readFileSync(file, 'utf8'));
+    // 只有「页面根节点」铺恒定暗底的才算沉浸页。根节点类名取自同目录 WXML 的第一个元素，
+    // 否则页内一枚深色小 badge 也会把整份文件误判成暗底页（vip/orders 的 --pine 徽章即如此）。
+    const wxmlPath = file.replace(/\.wxss$/, '.wxml');
+    const rootClasses = new Set();
+    if (fs.existsSync(wxmlPath)) {
+      const rootEl = /<(?:view|scroll-view|block)[^>]*class="([^"]+)"/.exec(fs.readFileSync(wxmlPath, 'utf8'));
+      if (rootEl) rootEl[1].split(/\s+/).forEach((c) => c && rootClasses.add(c));
+    }
+    const surfaces = fixedDark.filter((t) => {
+      if (!rootClasses.size) return false;
+      for (const b of src.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+        const sel = b[1].trim().replace(/\s+/g, ' ');
+        if (!/^\.[\w-]+$/.test(sel)) continue;
+        if (!rootClasses.has(sel.slice(1))) continue;
+        if (new RegExp('background[^;]*var\\(\\s*' + t + '\\s*\\)').test(b[2])) return true;
+      }
+      return false;
+    });
+    if (!surfaces.length) continue;
+    const r = rel(file);
+    // 逐条规则块判定：块内自带 background 时用它当底色，否则用页面恒定暗底
+    for (const block of src.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+      const selector = block[1].trim().replace(/\s+/g, ' ');
+      const body = block[2];
+      const own = /(?:^|[;])\s*(?:background|background-color)\s*:\s*([^;]+)/.exec(body);
+      const bg = own ? resolve(own[1].replace(/^(linear|radial)-gradient\([\s\S]*$/, 'x')) : null;
+      const pageBg = resolve(`var(${surfaces[0]})`);
+      const surf = bg || pageBg;
+      for (const m of body.matchAll(/(^|[;])\s*(color|border-color|border)\s*:\s*([^;]+)/g)) {
+        const prop = m[2];
+        const raw = m[3].trim();
+        if (prop !== 'color') {
+          const pair = resolve(/var\([^)]*\)|#[0-9a-fA-F]{3,6}/.exec(raw)?.[0] || raw);
+          if (pair && Math.abs(lumOf(pair.light) - lumOf(pair.dark)) > 0.25) {
+            problems.push(
+              `恒定暗底页的 ${prop} 两档翻转，深色档会看不见 ${r} -> ${selector} { ${prop}: ${raw} }` +
+              `（${pair.light} → ${pair.dark}；请改用不随深色档翻转的 --cook-* 常量）`
+            );
+          }
+          continue;
+        }
+        const fg = resolve(raw);
+        if (!fg || !surf) continue;
+        ['light', 'dark'].forEach((mode) => {
+          const c = contrast(fg[mode], surf[mode]);
+          if (c != null && c < 3) {
+            problems.push(
+              `恒定暗底页前景在${mode === 'dark' ? '深色' : '浅色'}档不可读 ${r} -> ${selector} ` +
+              `{ color: ${raw} } 对比度 ${c.toFixed(2)}:1（底色 ${surf[mode]}，需 ≥3:1；请改用 --cook-* 常量）`
+            );
+          }
+        });
+      }
+    }
+  }
 }
 
 // ---- 提审前必须由部署方填写的项（只报告、不阻断）----

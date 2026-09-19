@@ -7,7 +7,7 @@
   flex-direction: column;
   min-height: 100vh;
   background: var(--cook-bg);
-  color: var(--c-border-light);
+  color: var(--cook-ink);
 }
 
 /* ============ 顶部栏 ============ */
@@ -40,13 +40,13 @@
   border-color: rgba(232, 71, 42, 0.4);
 }
 .nbtn.keep.on {
-  background: var(--pop);
-  border-color: var(--pop);
+  background: var(--cook-pop);
+  border-color: var(--cook-pop);
 }
 .nbtn.keep .keep-ic { border-color: var(--pop); }
 .nbtn.keep .keep-ic::after { background: var(--pop); }
 .nbtn.keep.on .keep-ic { border-color: var(--anchor-contrast); }
-.nbtn.keep.on .keep-ic::after { background: var(--c-surface); }
+.nbtn.keep.on .keep-ic::after { background: var(--cook-mark); }
 .keep-tx {
   font-size: calc(24rpx * var(--fs-mul, 1));
   font-weight: 800;
@@ -62,7 +62,7 @@
 .dishbar .dn {
   font-size: calc(36rpx * var(--fs-mul, 1));
   font-weight: 900;
-  color: var(--c-border-light);
+  color: var(--cook-ink);
   letter-spacing: -1rpx;
   font-family: var(--sans);
 }
@@ -95,7 +95,7 @@
   width: 100%;
   height: 4rpx;
   border-radius: 4rpx;
-  background: var(--c-border-light);
+  background: var(--cook-ink);
 }
 .ic-x::before { transform: translateY(-50%) rotate(45deg); }
 .ic-x::after { transform: translateY(-50%) rotate(-45deg); }
@@ -117,8 +117,8 @@
   background: var(--pop);
   transform-origin: bottom center;
 }
-.nbtn.keep.on .ic-clock::after { background: var(--c-surface); }
-.ic-clock-sm::after { background: var(--c-surface); height: 30%; }
+.nbtn.keep.on .ic-clock::after { background: var(--cook-mark); }
+.ic-clock-sm::after { background: var(--cook-mark); height: 30%; }
 
 /* ============ 加载/空态 ============ */
 .loading {
@@ -140,7 +140,7 @@
 @keyframes cookspin { to { transform: rotate(360deg); } }
 .loading-tx {
   font-size: calc(26rpx * var(--fs-mul, 1));
-  color: var(--mut-2);
+  color: var(--cook-ink-mut);
   font-family: var(--serif);
   font-style: italic;
 }
@@ -259,7 +259,7 @@
   font-size: calc(50rpx * var(--fs-mul, 1));
   line-height: 1.6;
   font-weight: 800;
-  color: var(--c-border-light);
+  color: var(--cook-ink);
   letter-spacing: -0.5rpx;
   margin-top: 16rpx;
   font-family: var(--sans);
@@ -279,8 +279,8 @@
   /* 配料标签同步放大一档，与步骤正文匹配 */
   font-size: calc(30rpx * var(--fs-mul, 1));
   font-weight: 600;
-  color: var(--c-border-light);
-  background: var(--ink);
+  color: var(--cook-ink);
+  background: var(--cook-surface);
   border: 2rpx solid rgba(255, 255, 255, 0.1);
   padding: 18rpx 30rpx;
   border-radius: var(--r-pill);
@@ -316,7 +316,7 @@
 /* 计时卡 */
 .timer {
   margin-top: 38rpx;
-  background: var(--ink);
+  background: var(--cook-surface);
   border: 2rpx solid rgba(255, 255, 255, 0.1);
   border-radius: 38rpx;
   padding: 34rpx 38rpx;
@@ -327,7 +327,7 @@
 .timer .tl .cap {
   font-size: var(--fs-mini);
   letter-spacing: 3rpx;
-  color: var(--mut-2);
+  color: var(--cook-ink-mut);
   font-weight: 700;
 }
 /* 换时长入口：点时间区域随时重选 */
@@ -340,7 +340,7 @@
   font-family: var(--serif);
   font-size: calc(88rpx * var(--fs-mul, 1));
   font-weight: 700;
-  color: var(--c-border-light);
+  color: var(--cook-ink);
   line-height: 1;
   margin-top: 8rpx;
   letter-spacing: 2rpx;
@@ -409,7 +409,7 @@
   width: 32rpx;
   height: 32rpx;
   border-radius: 50%;
-  border: 4rpx solid var(--line-deep);
+  border: 4rpx solid var(--cook-line);
   border-top-color: transparent;
   position: relative;
 }
@@ -420,7 +420,7 @@
   right: -2rpx;
   border-style: solid;
   border-width: 6rpx 0 0 8rpx;
-  border-color: transparent transparent transparent var(--line-deep);
+  border-color: transparent transparent transparent var(--cook-line);
 }
 
 .scroll-pad { height: 24rpx; }
@@ -448,8 +448,8 @@
   flex: none;
   width: 220rpx;
   font-size: calc(29rpx * var(--fs-mul, 1));
-  color: var(--c-border-light);
-  background: var(--ink);
+  color: var(--cook-ink);
+  background: var(--cook-surface);
   border: 2rpx solid rgba(255, 255, 255, 0.1);
 }
 .btn.prev.disabled {
@@ -460,7 +460,7 @@
   min-width: 0;
   font-size: calc(32rpx * var(--fs-mul, 1));
   color: var(--anchor-contrast);
-  background: var(--pop);
+  background: var(--cook-pop);
   box-shadow: 0 2rpx 4rpx rgba(180, 40, 20, 0.3), 0 12rpx 26rpx rgba(232, 71, 42, 0.4);
 }
 .btn.next text {
@@ -479,7 +479,7 @@
 }
 .ic-arrow-l {
   transform: rotate(-135deg);
-  color: var(--c-border-light);
+  color: var(--cook-ink);
 }
 .ic-arrow-r {
   transform: rotate(45deg);
