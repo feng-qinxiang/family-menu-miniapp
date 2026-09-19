@@ -894,6 +894,9 @@ public class MysqlKitchenStore {
                     request.recipeId(), request.recipeId()
             );
         }
+        // 做完菜 → 按菜谱标准用量回写冰箱（ADR-0009 方案 A）。与上面同一事务：
+        // 扣错了不能只留下一条做菜历史，而库存悄悄少了。
+        int pantryDeducted = deductPantryForRecipe(familyId, request.recipeId());
         return jdbcTemplate.queryForObject("""
                         SELECT ch.id, ch.recipe_id, r.title AS recipe_title,
                                DATE_FORMAT(ch.cooked_at, '%Y-%m-%d %H:%i') AS cooked_at,
@@ -910,10 +913,56 @@ public class MysqlKitchenStore {
                         rs.getString("cooked_at"),
                         rs.getObject("score", Integer.class),
                         rs.getString("remark"),
-                        rs.getString("cooked_by_name")
+                        rs.getString("cooked_by_name"),
+                        pantryDeducted
                 ),
                 key.longValue()
         );
+    }
+
+    /**
+     * 按菜谱用量扣减本家庭冰箱库存，返回被改动的行数（0 = 什么都没扣，前端据此决定要不要提这句）。
+     * 规则见 {@link PantryDeduction}：名称与单位都要对得上、两边都是可解析的数字才扣。
+     */
+    private int deductPantryForRecipe(long familyId, long recipeId) {
+        if (familyId <= 0) {
+            return 0;
+        }
+        List<String[]> needRows = jdbcTemplate.query(
+                "SELECT ingredient_name, unit, amount FROM recipe_ingredient WHERE recipe_id = ?",
+                (rs, n) -> new String[]{rs.getString("ingredient_name"), rs.getString("unit"), rs.getString("amount")},
+                recipeId);
+        List<PantryDeduction.Needed> needed = PantryDeduction.mergeNeeded(needRows);
+        if (needed.isEmpty()) {
+            return 0;
+        }
+        // 临期优先消耗；没写保质期的排在最后（宁可先吃有日期的）
+        List<PantryDeduction.Stock> stock = jdbcTemplate.query(
+                "SELECT id, ingredient_name, unit, amount FROM pantry_item WHERE family_id = ?"
+                        + " ORDER BY (expires_at IS NULL), expires_at ASC, id ASC",
+                (rs, n) -> new PantryDeduction.Stock(rs.getLong("id"), rs.getString("ingredient_name"),
+                        rs.getString("unit"), rs.getString("amount")),
+                familyId);
+        int changed = 0;
+        for (PantryDeduction.Change c : PantryDeduction.plan(needed, stock)) {
+            if (c.after() <= 0) {
+                changed += jdbcTemplate.update("DELETE FROM pantry_item WHERE id = ? AND family_id = ?",
+                        c.stockId(), familyId);
+            } else {
+                changed += jdbcTemplate.update("UPDATE pantry_item SET amount = ? WHERE id = ? AND family_id = ?",
+                        formatPantryAmount(c.after()), c.stockId(), familyId);
+            }
+        }
+        return changed;
+    }
+
+    /** 库存列是字符串：6.0 写成 "6"，0.5 保留一位小数，别把 "6.0" 摆给用户看。 */
+    private static String formatPantryAmount(double v) {
+        double rounded = Math.round(v * 100) / 100.0;
+        if (Math.abs(rounded - Math.rint(rounded)) < 1e-9) {
+            return String.valueOf((long) Math.rint(rounded));
+        }
+        return String.valueOf(rounded);
     }
 
     /** 烹饪记录按家庭维度返回（家人做过什么都可见），前端按掌勺人筛选。 */

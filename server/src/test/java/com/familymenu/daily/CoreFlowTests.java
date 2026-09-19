@@ -313,4 +313,90 @@ class CoreFlowTests {
         mockMvc.perform(post("/api/shopping-list/today/rebuild"))
                 .andExpect(status().isUnauthorized());
     }
+
+    /**
+     * 做完一道菜要把用掉的食材从冰箱里扣掉（ADR-0009 方案 A：默认按标准量自动扣）。
+     * 这条链跨 菜单 → 清单 → 冰箱 → 做菜记录 四个接口，所以走端到端：
+     * 纯算法有 PantryDeductionTests 守着，这里证明的是"记一笔做完"真的会回写库存。
+     */
+    @Test
+    void cookingDeductsPantryByRecipeAmount() throws Exception {
+        String token = guestLogin();
+        mockMvc.perform(post("/api/family")
+                        .header("X-Auth-Token", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(java.util.Map.of(
+                                "name", "扣料测试家庭" + System.nanoTime()))))
+                .andExpect(status().isOk());
+
+        long recipeId = firstRecipeId(token);
+        mockMvc.perform(post("/api/daily-menu/today/items")
+                        .header("X-Auth-Token", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(java.util.Map.of(
+                                "recipeId", recipeId, "mealType", "dinner"))))
+                .andExpect(status().isOk());
+        mockMvc.perform(post("/api/shopping-list/today/rebuild").header("X-Auth-Token", token))
+                .andExpect(status().isOk());
+
+        // 从清单里挑一种用量写得成数字的食材，往冰箱放一份**一定够**的量。
+        // （第一版这里放的是 99，结果排骨一道菜要 500 克，库存被扣到 0 直接删行，
+        // 断言"还剩一点"就红了——那是设计行为，不是 bug：扣光即用完。）
+        JsonNode chosen = null;
+        for (JsonNode candidate : shoppingItems(token)) {
+            if (candidate.get("amount").asText().trim().matches("\\d.*")) {
+                chosen = candidate;
+                break;
+            }
+        }
+        assertThat(chosen).as("这道菜至少得有一种数字用量的食材，否则这个用例测不到扣减").isNotNull();
+        String name = chosen.get("ingredientName").asText();
+        String unit = chosen.hasNonNull("unit") ? chosen.get("unit").asText("") : "";
+
+        mockMvc.perform(post("/api/pantry")
+                        .header("X-Auth-Token", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(java.util.Map.of(
+                                "ingredientName", name, "amount", "999999", "unit", unit))))
+                .andExpect(status().isOk());
+
+        MvcResult cooked = mockMvc.perform(post("/api/cook-history")
+                        .header("X-Auth-Token", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"recipeId\":" + recipeId + "}"))
+                .andExpect(status().isOk())
+                .andReturn();
+        JsonNode cookedJson = read(cooked);
+        assertThat(cookedJson.path("pantryDeducted").asInt())
+                .as("记一笔做完之后，响应要告诉前端冰箱被扣了几行（0 表示没东西可扣）")
+                .isGreaterThanOrEqualTo(1);
+
+        MvcResult pantryRes = mockMvc.perform(get("/api/pantry").header("X-Auth-Token", token))
+                .andExpect(status().isOk())
+                .andReturn();
+        JsonNode rows = objectMapper.readTree(pantryRes.getResponse().getContentAsString(
+                java.nio.charset.StandardCharsets.UTF_8));
+        boolean reduced = false;
+        for (JsonNode row : rows) {
+            if (name.equals(row.get("ingredientName").asText())) {
+                double left = Double.parseDouble(row.get("amount").asText());
+                assertThat(left).as("扣完不能是负数，也不该在这一笔里被扣光（放的是够用的大数）").isGreaterThan(0);
+                reduced = left < 999999;
+            }
+        }
+        assertThat(reduced).as("冰箱里「%s」的量应从 999999 减下来", name).isTrue();
+    }
+
+    private long firstRecipeId(String token) throws Exception {
+        MvcResult res = mockMvc.perform(get("/api/recipes?source=all").header("X-Auth-Token", token))
+                .andExpect(status().isOk())
+                .andReturn();
+        return objectMapper.readTree(res.getResponse().getContentAsString(
+                java.nio.charset.StandardCharsets.UTF_8)).get(0).get("id").asLong();
+    }
+
+    private JsonNode read(MvcResult result) throws Exception {
+        return objectMapper.readTree(result.getResponse().getContentAsString(
+                java.nio.charset.StandardCharsets.UTF_8));
+    }
 }

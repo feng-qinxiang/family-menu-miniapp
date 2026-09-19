@@ -323,16 +323,22 @@ Page({
     if (!res.confirm) return;
     let done = false;
     let cookLogFailed = false;
+    let pantryDeducted = 0;
     await runGuarded(this, `cooked-${id}`, async () => {
       await Promise.all([
         item ? updateMenuItemStatus(item, 'done') : Promise.resolve(),
-        addCookHistory({ recipeId: id }).catch(() => { cookLogFailed = true; })
+        addCookHistory({ recipeId: id })
+          .then((r) => { pantryDeducted = (r && r.pantryDeducted) || 0; })
+          .catch(() => { cookLogFailed = true; })
       ]);
       done = true;
     }, {
       loading: '处理中',
-      // 之前 .catch(() => {}) 把失败吞成"已上桌"，用户的做菜历史会静默缺一笔
-      success: () => (cookLogFailed ? '已上桌，但做菜记录没保存' : '已上桌'),
+      // 之前 .catch(() => {}) 把失败吞成"已上桌"，用户的做菜历史会静默缺一笔。
+      // 冰箱被扣了也要说一句：库存数字自己变小却不解释，像被人删了东西
+      success: () => (cookLogFailed
+        ? '已上桌，但做菜记录没保存'
+        : (pantryDeducted ? `已上桌 · 冰箱扣了 ${pantryDeducted} 项` : '已上桌')),
       fail: '操作失败'
     });
     if (!done) return;

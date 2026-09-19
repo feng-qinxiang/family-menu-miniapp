@@ -401,8 +401,15 @@ public final class ApiModels {
             String cookedAt,
             Integer score,
             String remark,
-            String cookedByName
+            String cookedByName,
+            /** 这一笔做完后从冰箱扣掉了几行库存（仅"新建记录"的响应里有意义，列表里为 null）。 */
+            Integer pantryDeducted
     ) {
+        /** 兼容构造器：列表等语境不关心扣减数。 */
+        public CookHistoryItem(Long id, Long recipeId, String recipeTitle, String cookedAt,
+                               Integer score, String remark, String cookedByName) {
+            this(id, recipeId, recipeTitle, cookedAt, score, remark, cookedByName, null);
+        }
     }
 
     public record AddCookHistoryRequest(
