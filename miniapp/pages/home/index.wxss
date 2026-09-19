@@ -206,7 +206,7 @@
   position: relative;
   width: 28rpx;
   height: 28rpx;
-  border: 4rpx solid var(--c-surface);
+  border: 4rpx solid var(--anchor-contrast);
   border-left-color: transparent;
   border-radius: 50%;
   transform: rotate(-45deg);
@@ -222,7 +222,7 @@
   height: 0;
   border-left: 7rpx solid transparent;
   border-right: 7rpx solid transparent;
-  border-bottom: 11rpx solid var(--c-surface);
+  border-bottom: 11rpx solid var(--anchor-contrast);
 }
 /* ============ SHEET ============ */
 .mh-sheet {

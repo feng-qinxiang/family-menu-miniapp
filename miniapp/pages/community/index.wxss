@@ -292,7 +292,7 @@
   box-shadow: 0 20rpx 46rpx rgba(232, 71, 42, 0.45), 0 4rpx 12rpx rgba(60, 40, 20, 0.18);
 }
 .fab-plus { position: relative; width: 44rpx; height: 44rpx; }
-.fab-plus::before, .fab-plus::after { content: ""; position: absolute; background: var(--c-surface); border-radius: 4rpx; }
+.fab-plus::before, .fab-plus::after { content: ""; position: absolute; background: var(--anchor-contrast); border-radius: 4rpx; }
 .fab-plus::before { left: 50%; top: 4rpx; bottom: 4rpx; width: 6rpx; transform: translateX(-50%); }
 .fab-plus::after { top: 50%; left: 4rpx; right: 4rpx; height: 6rpx; transform: translateY(-50%); }
 

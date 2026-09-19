@@ -347,7 +347,7 @@
   top: 2rpx;
   width: 24rpx;
   height: 24rpx;
-  border: 4rpx solid var(--c-surface);
+  border: 4rpx solid var(--anchor-contrast);
   border-radius: 50%;
 }
 .mem-invbtn-icon::after {
@@ -357,7 +357,7 @@
   bottom: 0;
   width: 18rpx;
   height: 4rpx;
-  background: var(--c-surface);
+  background: var(--anchor-contrast);
   border-radius: 2rpx;
-  box-shadow: -7rpx -7rpx 0 -2rpx var(--c-surface);
+  box-shadow: -7rpx -7rpx 0 -2rpx var(--anchor-contrast);
 }
