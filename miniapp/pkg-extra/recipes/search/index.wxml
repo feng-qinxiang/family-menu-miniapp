@@ -41,7 +41,7 @@
         <text class="rtitle-t">找到「</text><text class="rtitle-kw pop">{{keyword || '全部'}}</text><text class="rtitle-t">」</text>
       </view>
       <view class="rcount g-fade-up g-d2">
-        共 <text class="rcount-n">{{total}}</text> 道相关菜谱 · 按相关度排序
+        共 <text class="rcount-n">{{total}}</text> 道菜 · 按「{{sortLabel}}」排列
       </view>
 
       <!-- 排序 / 筛选 chip 横滑 -->

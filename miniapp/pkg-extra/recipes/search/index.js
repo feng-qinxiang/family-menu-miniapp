@@ -23,6 +23,8 @@ Page({
     keyword: '',
     sorts: SORTS,
     activeSort: 'all',
+    // 副文案要能如实说出「现在这屏是按什么排的」，见 _apply 里的说明
+    sortLabel: '综合',
     allRecipes: [],
     list: [],
     total: 0,
@@ -77,6 +79,11 @@ Page({
   // 关键词过滤 + 排序/筛选 + 高亮分段
   _apply(keyword, sortKey) {
     const kw = String(keyword || '').trim();
+    // 副文案原先无论什么情况都写「按相关度排序」——但只有点了标签才会真的排序，
+    // 默认「综合」这条路根本没做任何相关性计算（空关键词时更是无的放矢）。
+    // 这是「页面对用户撒的小谎」那一类（同邀请码的「24 小时内有效」），改成如实报当前标签。
+    const hit = SORTS.filter((x) => x.key === sortKey)[0];
+    this.setData({ sortLabel: hit ? hit.label : '综合' });
     let list = this.data.allRecipes.slice();
 
     if (kw) {
