@@ -142,7 +142,14 @@ CREATE TABLE IF NOT EXISTS cook_history (
     score INT NULL,
     remark VARCHAR(255) NULL,
     INDEX idx_cook_history_user (user_id, cooked_at DESC),
-    INDEX idx_cook_history_recipe (recipe_id)
+    INDEX idx_cook_history_recipe (recipe_id),
+    -- 做菜记录页按家庭取最近 50 条（WHERE family_id ORDER BY cooked_at DESC LIMIT 50）；
+    -- 没有这条索引时 EXPLAIN 是 type=ALL + Using filesort（全表扫 + 排序），而这是全站长得最快的一张表。
+    INDEX idx_cook_history_family (family_id, cooked_at DESC),
+    -- 菜谱列表/首页要为每道菜谱带出「我家做过几次/最近一次」，那个派生表按 family_id 过滤后
+    -- GROUP BY recipe_id：派生表无法用 recipe_id 索引去 seek family_id，所以必须有一条
+    -- 以 family_id 打头、带 recipe_id 的索引，否则每个菜谱列表请求都全扫 cook_history。
+    INDEX idx_cook_history_family_recipe (family_id, recipe_id)
 );
 
 CREATE TABLE IF NOT EXISTS daily_menu (

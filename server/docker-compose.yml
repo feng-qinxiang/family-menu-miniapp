@@ -68,6 +68,10 @@ services:
       ADMIN_BOOTSTRAP_TOKEN: ${ADMIN_BOOTSTRAP_TOKEN:-}
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-}
       UPLOAD_DIR: /app/uploads
+      # 上传链接签名密钥：prod profile 下缺失会让 UploadSigner 构造期直接抛异常，
+      # 容器起不来并被 restart: unless-stopped 反复拉起 —— 所以在这里用 :? 让 compose 当场报错
+      # 并给出这句话，而不是让人去翻 docker logs 找启动栈。
+      UPLOAD_ACCESS_SECRET: ${UPLOAD_ACCESS_SECRET:?必须设置 UPLOAD_ACCESS_SECRET（生成：openssl rand -hex 32）}
       LOG_LEVEL: ${LOG_LEVEL:-info}
       TZ: Asia/Shanghai
       # 以下三项生产严禁开启（保持默认空/关）

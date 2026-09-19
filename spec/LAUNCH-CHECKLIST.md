@@ -187,8 +187,65 @@
 所以本轮结论是「按 token 取色算出来的」，不是截图看出来的——这也是第 12 项用计算而不用快照的原因。**整站深色观感仍需真机复核** |
 | 社区导航标题 | ✅（修复后） | 截图放大实测：nav-bar 的标题是**绝对居中**（`.navbar-title-slot{position:absolute;left:0;right:0}` + `max-width:56%`），不会给右侧 slot 让位，所以 tab 页「邻里厨房」4 字标题的最后一个字被「发帖」胶囊**压掉一半**（不是省略号截断，是叠在下面）。社区页导航标题改为留空，页面名由 hero 大字承担——与餐桌页（`title=""` + 点菜胶囊）同一写法。其余 4 个「标题+右侧按钮」的二级页实测不冲突（有返回键占位、按钮只有 2 字） |
 | 社区发帖弹层可达性 | ✅（修复后） | **弹层里的「发布」按钮此前在 tab 页上永远点不到**。自定义 tabBar 是独立图层，页面内 z-index 再高（state-sheet 是 9990）也压不住它；而 `wx.hideTabBar()` 在 custom tabBar 下直接失败（实测 `errMsg: hideTabBar:fail custom Tabbar`），所以只能把弹层抬到 tabBar 上沿。改法：`state-sheet` 新增 `lift` 属性 + `--tabbar-h` token（= 8rpx 上内边距 + 96rpx 高 + 24rpx 下内边距 + 安全区，数值来源 custom-tab-bar/index.wxss，改那边必须同步这边），社区两个弹层启用 `lift`，并把 `max-height` 压成 `calc(80vh - var(--tabbar-h))` 保证小屏（SE 667px）下表单仍能滚到底。**实测 390×844 修复前发布键被吃掉、修复后取消/发布完整可见**。⚠ 遗留：tabBar 本身压不暗（遮罩在它下面），只是观感问题 |
+| 做菜模式：换步会杀掉正在倒计时的计时器 | ⬠ 待产品决定（未改） | 实测代码路径：`gotoStep()` 第一件事是 `clearTimer()` 并把 `running` 置 false，所以**炖着 20 分钟去点「下一步」看配料，那个倒计时就没了**（既没提示也不保留剩余）。真实做菜就是并行多任务，这条值得定。两个方案：<br>(A) 保守——离开时把该步剩余秒数存进 `this._stepTimers[i]`，回到这一步时还原（不继续走表），约 15 行、不碰现有 tick/后台续跑逻辑；<br>(B) 完整——计时器按步骤分槽、后台继续走，顶栏挂一枚「⏱ 12:04」小条，点它回到那一步；约 70 行，要重写 `_baseAt/_baseLeft` 这套含切后台续跑的逻辑，风险中等。<br>本轮**没顺手改**：这是行为变更不是明确缺陷（计时卡文案就是「这一步计时」），且厨房总控页已有按菜的独立计时器可作替代路径。按邀请码有效期那条的先例，留给 owner 选。 |
 | 开关页直连弹回首页（复核） | ✅ | 2026-09-19 二次实测：直连 `pkg-extra/vip/index` 后 t=3s 仍停在该页、**t=8s 已回到 `pages/home/index`**，守卫有效。<br>⚠ 别在 3 秒处采样就下结论——本轮曾据此误判「switchTab 被吞、守卫失效」，改了三版 `leaveToHome` 又全部回退，实际原实现一直是对的。<br>同理，`navPad`/`plans` 这类**在 Page data 里有默认值**的字段不能用来判断守卫之后的代码有没有跑。 |
 
+
+## 3b. 后端 / 数据库上线前审计（2026-09-19 三轮，逐条实测过才写）
+
+方法：全量读 13 个 controller + 18 个 service/config + `schema.sql` + 两份 profile + compose/Dockerfile/nginx 样例，
+再用本地 MySQL 的 `EXPLAIN` / `information_schema` 复核。**结论里凡是「实测」二字都对应一条可重跑的查询**。
+dev 库行数极少（cook_history 26 行、community_post 3 行），所以 `rows=` 数字没有意义，
+判断一律建立在**索引定义 + plan 形状**（`type=ALL` / `Using filesort` / `DEPENDENT SUBQUERY`）上，这两者不随基数变。
+
+### 本轮已修（都有测试或 EXPLAIN 证据）
+
+| 项 | 证据 |
+| --- | --- |
+| **生产上所有用户图片会在上传满 7 天后集体 404** | 链路：`UploadSigner.sign()` 把 `/uploads/x.png` 签成带 `e=<过期>&k=<签名>` → 小程序展示网络图必须用完整 URL，于是 `utils/upload.js:53` 自己拼上 API 域名 → 编辑菜谱/发帖时把这个**绝对**值原样回传 → `UploadPathNormalizer` 旧实现只认 `startsWith("/uploads/")`，绝对形态整个漏网 → 库里存进带过期的链接。本地签名默认关着，所以这条只在生产成立、走查看不出来。已改为把相对/绝对、签名/未签名四种形态统一剥成相对裸路径，外链一律不碰；补 `UploadPathNormalizerTests` 5 条形状断言（含 `/assets/uploads/` 这种伪装外链） |
+| **`docker compose up -d`（清单推荐的部署方式）根本起不来** | prod profile 下 `UploadSigner` 构造期强制要求 `UPLOAD_ACCESS_SECRET`（实测 `application.yml` + 代码 `:64-71`），而 `docker-compose.yml` 只给了 `UPLOAD_DIR`、`.env.example` 里也没这个键 → 容器抛异常退出 → `restart: unless-stopped` 无限重启。已在 compose 用 `${UPLOAD_ACCESS_SECRET:?…}` 让 compose **当场报错并给出这句话**，`.env.example` 补键与生成方法 |
+| **做菜记录页 + 每个菜谱列表请求都在全扫 `cook_history`** | 见 §7 新增的 `migrate-cook-history-family-index.sql`：改前 `type=ALL, possible_keys=NULL, Using where; Using filesort`，改后 `type=ref, Extra=Using index`（本地库实测，脚本重复执行安全） |
+| **通知角标长期少报** | `SupportService.listNotifications` 的 `unread` 是数出来的：`(int) items.stream().filter(unread).count()`，而 `items` 只有最近 50 条。社区点赞/评论每条写一行通知，攒过 50 条后第 51 条之前的未读永远进不了这个 stream。改成单独 `COUNT(*) WHERE user_id=? AND unread=1`（正好走 `idx_notification_user` 的 `(user_id, unread)` 前缀） |
+| **日志会写进手机号 / openid / 邀请码** | `GlobalExceptionHandler` 对 `DuplicateKeyException` / `DataIntegrityViolationException` 记的是 `ex.getMessage()`，而 Spring 的 DataAccessException 消息带着失败 SQL 和 MySQL 原文，`Duplicate entry 'xxx' for key 'user_account.uk_user_phone'` 里的 xxx 就是用户填的值。改为只记 `方法 + URI`（每个唯一键只属于一个接口，定位够用） |
+| **没有存活探针** | 全站没有 actuator 也没有 `/healthz`（实测 `curl :9088/api/health` → 404），部署侧无法判断服务是否活着。新增 `GET /healthz`（挂在 `/api/**` 之外所以天然免鉴权、不用动白名单），返回 `{"status":"UP","db":"UP"}`、库连不上时 503；因为匿名可访问且每次打一次库，同步给它加了 60 次/分钟/IP 的限流规则。契约钉在 `HealthEndpointTests`（免鉴权可达 / 必须真打库 / 只允许这两个字段） |
+
+后端测试从 153 → **161 条，全绿**（`./mvnw -o test`，跑前 `DROP DATABASE family_menu_daily_test_db` 以对齐 CI）。
+
+### 已查清、本轮**故意没改**（等 owner 定，别当成漏网）
+
+- `[MED]` **四个列表端点没有 LIMIT**：`GET /api/recipes`、`/api/recipes/filter`、`/api/me/favorites`
+  都是把可见集合整张返回（`MysqlKitchenStore:155-187 / 796-848 / 322-381`），`/api/home/dashboard`
+  更是「取全量菜谱 + 取 100 条帖子只展示 4 条」（`:85-119`，那个 100 是写死的，controller 的 clamp 管不到它）。
+  **为什么没顺手改**：菜谱库现在是人工整理的 16 条 + 家庭自建，前端「菜谱」页是把整份列表拿去做本地搜索/筛选的，
+  直接加 LIMIT 会把筛选功能改坏。要做得连着前端分页一起改，属于功能改动不是加固。
+- `[MED]` **三条硬截断没有翻页入口**：做菜记录 `LIMIT 50`、帖子评论 `LIMIT 20`、通知 `LIMIT 50`
+  —— 页面上都没有「看更多」，评论数角标会和列表不一致。同上，要连着 UI 改。
+- `[MED]` **上传图完全不压缩不缩放**：`UploadController:66` 是裸 `transferTo`，全站没有 ImageIO/缩略图；
+  上限 20 MB（controller + multipart + nginx 三处一致），10 MB 手机原图照单全收。
+  叠加「每次响应重新签名 → URL 每次都变 → 浏览器缓存必然失效」和 `/uploads/**` 没设 `Cache-Control`，
+  移动网络下每屏都在重下原图。**这是上线后最值得做的一条性能项**，但要动存储与展示链路，不是几行的事。
+- `[LOW]` 发帖时同步调最多 7 次微信外部 HTTP（1 次文本机审 + 每张图一次），且 `RestClient.create()` 没设超时
+  （`ContentSecurityService:60`、`WechatClient:42`、`AuthService:97`）—— 微信接口一慢就占着 Tomcat 线程。
+- `[LOW]` `user_session` / `phone_otp` / `uploaded_file` / `admin_audit_log` 只增不清（有合适的索引却没有 `@Scheduled` 清理）。
+- `[LOW]` `upload.dir` 默认是相对路径 `uploads`，jar 直跑时落在「当前工作目录」，换 CWD 重启会让已有图片 404。
+- `[LOW]` `application-prod.yml` 的 JDBC URL 写死 `useSSL=false` + `allowPublicKeyRetrieval=true`：
+  compose 内网拓扑下没问题，但把 `DB_HOST` 指向远程托管 MySQL 时等于凭据走明文。
+- `ADMIN_BOOTSTRAP_TOKEN` 一旦设置就是**永久有效的单因子后台入口**（跳过验证码，只认服务端配的手机号），
+  而 `deploy/nginx.conf.example` 里 `/admin` 的 IP 白名单是**注释掉的**。清单 §6 已写「用完立刻删」，
+  部署时请真的删。
+
+### ⚠ 提审当天会被审核员撞上的一个坑（值得先决定）
+
+游客的 openid 是 `guest-xxx` 自造标识，而微信 `msgSecCheck` 只认真实 openid
+（`WechatClient.realOpenid` 显式把 `guest-` / `phone-` / `invite-` 前缀判为 null），
+所以**游客发的帖子/评论一律落 `PENDING` 人工队列**（`ContentSecurityService:87-91`）。
+而 §4 的提审备注打算写「点击游客浏览即可体验全部功能」—— 审核员以游客身份发帖后会一直停在「审核中」，
+且 §6 说明 `/admin` 在接真实短信网关前登不进去，等于**没人能当场放行**。
+三个选项：(a) 提审备注里明确写「社区发帖需微信登录后才走机审，游客内容进人工审核队列」；
+(b) 给游客发帖加一句可见说明（现在是静默 pending）；(c) 先接短信网关或临时开 `AUTH_DEV_OTP_ENABLED` 完成首绑再关。
+本轮没动代码，等 owner 选。
+
+---
 
 ## 4. 提审注意事项
 
@@ -293,6 +350,12 @@
 
 ## 7. 部署方式
 
+> **部署完第一件事：`curl https://<你的域名>/healthz`** → `{"status":"UP","db":"UP"}` 才算真的活着。
+> 它匿名可访问（挂在 `/healthz` 而非 `/api/**`，因此不吃鉴权拦截器，也不用往白名单里加东西），
+> 每次请求会打一次 `SELECT 1`——所以 `RateLimitFilter` 给它配了 60 次/分钟/IP，库连不上时返回
+> **503** + `{"status":"DOWN","db":"DOWN"}`。uptime 监控、容器 healthcheck、nginx 探活都指它。
+> 契约已由 `HealthEndpointTests` 钉住：免鉴权可访问、必须真打库、响应只允许这两个字段（匿名端点勿外泄驱动/异常信息）。
+
 ### 方式一：Docker Compose（推荐）
 
 ```bash
@@ -346,12 +409,29 @@ java -Duser.timezone=Asia/Shanghai -jar target/family-menu-daily-server-0.1.0-SN
   - 旧库补索引：`sql/migrate-import-source-index.sql`（一次性；`import_source` 建表时漏了审核队列索引，
     后台「导入审核」列表会随数据增长退化成全表扫。重复执行报 Duplicate key name，可加 `--force`）
   - 旧库升级信息流索引：`sql/migrate-post-feed-index.sql`（2026-09-19 新增；
-    社区 feed 按 `like_count DESC, id DESC` 排序，旧索引只到 `like_count`，
-    第二排序键不在索引里 → 每次请求都把全部已过审帖子 filesort 一遍。
-    5 万帖实测：首页 23.8ms / 扫 24700 行 → 加 `id DESC` 后 0.084ms / filesort 消失。
+    社区 feed 按 `like_count DESC, id DESC` 排序，旧索引只到 `like_count`，第二排序键不在索引里。
     脚本是「先 DROP 再 ADD」，**重复执行安全**（第二次只是重建），大表请低峰期跑。
     ⚠ `schema.sql` 用的是 `CREATE TABLE IF NOT EXISTS`，**改了它不会动已存在的表**，
     所以存量库（含本地测试库）必须单独跑这个迁移，否则新加的索引根本不会出现。）
+  - ⚠ **本条下面原来那句「加 id DESC 后 filesort 消失」是错的，2026-09-19 复核已更正**：
+    那个 0.084ms 是用**简化过的**单条件查询量的（`WHERE audit_status='APPROVED' ORDER BY like_count DESC, id DESC`
+    → `type=ref, Extra=Using index`，确实无 filesort）。但 C 端真实查询为了「作者能看见自己审核中的帖子」
+    把 WHERE 写成了 `(audit_status='APPROVED' OR (audit_status='PENDING' AND author_user_id=?))`，
+    实测 EXPLAIN 是 `type=range, key=idx_post_audit, Extra=Using index condition; Using where; **Using filesort**`
+    —— OR 让优化器扫两段索引再排序，第二排序键进不进索引都救不了。
+    索引本身仍该保留（它让排序前的访问变成索引范围扫、并给出确定的 tiebreak），但别把它当成「排序问题已解决」。
+    真要消掉：把该查询拆成 `UNION ALL`（已过审一页 + 自己待审一页，各自按索引序取），或让待审帖子改走
+    单独的「审核中」区块、feed 只查 APPROVED。**当前流量（几个家庭）不构成瓶颈，故本轮只记录不改**。
+- 旧库补做菜记录索引：`sql/migrate-cook-history-family-index.sql`（2026-09-19 新增；
+    `cook_history` 原本只有 `(user_id, cooked_at)` 和 `(recipe_id)`，而两条热查询都以 `family_id` 打头：
+    ① 做菜记录页 `WHERE family_id ORDER BY cooked_at DESC LIMIT 50` → 实测 `type=ALL, possible_keys=NULL,
+    Using where; Using filesort`（全表扫 + 排序，且这是全站行数增长最快的表）；
+    ② 菜谱列表/首页那个「我家做过几次」派生表 `WHERE family_id GROUP BY recipe_id` → 派生表用不上
+    以 `recipe_id` 打头的索引，等于每个菜谱列表请求全扫一次。
+    补 `(family_id, cooked_at DESC)` 与 `(family_id, recipe_id)` 后两条都变 `type=ref, Extra=Using index`
+    （本地开发库跑完实测，脚本用 `information_schema` + `PREPARE` 判断，**重复执行安全**——
+    MySQL 8.4 不支持 `DROP INDEX IF EXISTS`，实测 ERROR 1064，所以没沿用上面那份「先删后建」写法）。
+    已钉成 `LaunchHardeningTests.cookHistoryHasFamilyLeadingIndexes`（同时校验 schema.sql 文本与库里的真实列序）。
 - 老库如需清理历史演示数据（多个重名"周末厨房"、种子账号）：
   `mysql -u<user> -p <库名> < server/sql/cleanup-demo-data.sql`（先备份，脚本只删明确的演示账号）
 - 老库如需清理废弃会员列，手动执行一次：
@@ -448,11 +528,16 @@ WXSS 配平与注释风格、图片/组件引用、事件处理函数存在性�
       > 本地开发库 2026-09-19 查证 `idx_import_source_audit` 已存在；**生产库仍需你在部署时执行一次**。
 - [ ] `server/sql/migrate-post-feed-index.sql` 已在存量库执行一次（社区 feed 排序索引补 `id DESC`；
       > 本地开发库 2026-09-19 已执行并查证为 `(audit_status, like_count, id)`；**生产库仍需执行**。
-      不跑的话首页信息流每次请求都 filesort 全部已过审帖子。可重复执行，本地开发库已跑过）
+      ⚠ 它并不能消掉 C 端 feed 的 filesort（WHERE 里的 OR 才是原因，见 §7 更正版说明），别当成已优化完。
+      可重复执行，本地开发库已跑过）
+- [ ] `server/sql/migrate-cook-history-family-index.sql` 已在存量库执行一次（2026-09-19 新增；
+      > 本地开发库**已执行并实测**：`type=ALL + Using filesort` → `type=ref + Using index`，且重复执行不报错。
+      **生产库仍需你在部署时执行一次**。不跑的话做菜记录页与每个菜谱列表请求都会全扫 `cook_history`。
+      测试库 `family_menu_daily_test_db` 已重建，新库由 schema.sql 直接带出这两条索引）
 - [x] 工作区已提交：2026-09-19 实测 `git status` 干净、本地领先 origin 18 个提交，
       `miniapp/utils/features.js`、`application-prod.yml` 等运行时必需文件均已入库。
-      ⚠ **仍未 push**：这台机器没有 GitHub 凭据（keychain 无条目、无 `gh` 登录、无 SSH 私钥），
-      所以「CI 跑过这批改动」至今不成立——见 §7「CI 的真实状态」。
+      ⚠ 本条下面「仍未 push / 这台机器没有 GitHub 凭据」是旧状态，**2026-09-19 已作废**：
+      `gh` 已登录（keyring），当轮已 push 且三条 workflow 全绿——以文件开头「接手须知」为准。
 - [x] **提交时已 `git add -A` 全量纳入未跟踪新文件**（`3d1a4bf`，85 文件、9 个新文件全进）。
       原警告如下，保留以免以后有人只 `-am`：
       2026-09-19 实测：工作区有 9 个未跟踪文件，其中 7 个被**已跟踪代码**依赖，

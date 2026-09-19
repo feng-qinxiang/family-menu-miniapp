@@ -1,5 +1,6 @@
 package com.familymenu.daily.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -67,16 +68,26 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", "接口不存在"));
     }
 
+    /**
+     * 唯一键冲突。只记「哪个接口撞了」，不记 {@code ex.getMessage()}：
+     * Spring 的 DataAccessException 消息里带着失败 SQL 和 MySQL 原文，而 MySQL 的
+     * {@code Duplicate entry 'xxx' for key 'user_account.uk_user_phone'} 里 xxx 就是
+     * 冲突的那个值——手机号、openid、邀请码都会从这里进日志。
+     * 定位用 URI 足够（每个唯一键只属于一个接口），排查需要细节时看代码不看日志。
+     */
     @ExceptionHandler(DuplicateKeyException.class)
-    public ResponseEntity<Map<String, String>> handleDuplicateKey(DuplicateKeyException ex) {
-        log.warn("duplicate key: {}", ex.getMessage());
+    public ResponseEntity<Map<String, String>> handleDuplicateKey(DuplicateKeyException ex,
+                                                                  HttpServletRequest request) {
+        log.warn("duplicate key on {} {}", request.getMethod(), request.getRequestURI());
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(Map.of("error", "记录已存在，请勿重复操作"));
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<Map<String, String>> handleDataIntegrity(DataIntegrityViolationException ex) {
-        log.warn("data integrity violation: {}", ex.getMessage());
+    public ResponseEntity<Map<String, String>> handleDataIntegrity(DataIntegrityViolationException ex,
+                                                                   HttpServletRequest request) {
+        // 同上：这条消息同样会带出用户填的冲突值
+        log.warn("data integrity violation on {} {}", request.getMethod(), request.getRequestURI());
         return ResponseEntity.badRequest()
                 .body(Map.of("error", "数据不符合要求"));
     }

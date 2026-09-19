@@ -49,7 +49,9 @@ public class RateLimitFilter extends OncePerRequestFilter {
             new Rule("POST", "/api/admin/auth/bootstrap", 5, 60_000L),
             new Rule("GET", "/api/family/join-preview", 20, 60_000L),
             new Rule("POST", "/api/feedback", 5, 60_000L),
-            new Rule("POST", "/api/import/preview", 20, 60_000L)
+            new Rule("POST", "/api/import/preview", 20, 60_000L),
+            // 探活端点匿名可访问且每次打一次库，不限流就成了免费的 DB 压力源
+            new Rule("GET", "/healthz", 60, 60_000L)
     );
 
     /** 计数器上限，防止被大量伪造 IP/路径撑爆内存 */

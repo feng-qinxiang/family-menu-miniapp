@@ -182,6 +182,49 @@ class LaunchHardeningTests {
     }
 
     /**
+     * cook_history 必须有以 family_id 打头的两条索引。
+     *
+     * 为什么钉：这张表全站长得最快（每做一道菜一行），而原先只有 (user_id, cooked_at) 和
+     * (recipe_id)，导致两条热查询都走不到索引——
+     *  1) 做菜记录页 WHERE family_id ORDER BY cooked_at DESC LIMIT 50：实测 EXPLAIN 为
+     *     type=ALL + Using filesort（全表扫再排序）；补索引后 type=ref + Using index。
+     *  2) 菜谱列表/首页的派生表 SELECT recipe_id,COUNT(*),MAX(cooked_at)
+     *     WHERE family_id=? GROUP BY recipe_id：派生表用不了以 recipe_id 打头的索引，
+     *     所以每个菜谱列表请求都要全扫整张表。
+     * 已有库要跑 sql/migrate-cook-history-family-index.sql（schema.sql 用 CREATE TABLE IF NOT
+     * EXISTS，改了它不会动已存在的表——测试库若已建过，也要重跑迁移或重建）。
+     */
+    @Test
+    void cookHistoryHasFamilyLeadingIndexes() {
+        String schema;
+        try (BufferedReader r = new BufferedReader(new InputStreamReader(
+                new ClassPathResource("schema.sql").getInputStream(), StandardCharsets.UTF_8))) {
+            schema = r.lines().collect(Collectors.joining("\n"));
+        } catch (Exception ex) {
+            throw new IllegalStateException(ex);
+        }
+        int from = schema.indexOf("CREATE TABLE IF NOT EXISTS cook_history (");
+        assertThat(from).as("schema.sql 里应能找到 cook_history 建表语句").isGreaterThan(-1);
+        String ddl = schema.substring(from, schema.indexOf(");", from));
+        assertThat(ddl).as("记录页排序需要 (family_id, cooked_at DESC)")
+                .contains("idx_cook_history_family (family_id, cooked_at DESC)");
+        assertThat(ddl).as("菜谱列表派生表需要 (family_id, recipe_id)")
+                .contains("idx_cook_history_family_recipe (family_id, recipe_id)");
+
+        assertThat(indexColumns("idx_cook_history_family"))
+                .containsExactly("family_id", "cooked_at");
+        assertThat(indexColumns("idx_cook_history_family_recipe"))
+                .containsExactly("family_id", "recipe_id");
+    }
+
+    private List<String> indexColumns(String indexName) {
+        return jdbcTemplate.queryForList(
+                "SELECT column_name FROM information_schema.statistics WHERE table_schema = DATABASE() "
+                        + "AND table_name = 'cook_history' AND index_name = ? ORDER BY seq_in_index",
+                String.class, indexName);
+    }
+
+    /**
      * 「按今日菜单重新整理清单」的确认文案承诺两件事：手动条目保留、自动条目重算。
      * 原文案说反了（称手动条目会被覆盖）。这里直接查库断言 is_manual 标志的真实语义。
      */

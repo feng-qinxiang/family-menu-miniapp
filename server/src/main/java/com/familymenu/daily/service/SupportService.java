@@ -105,7 +105,13 @@ public class SupportService {
                 },
                 user.userId()
         );
-        int unread = (int) items.stream().filter(NotificationItem::unread).count();
+        // 未读数必须单独 COUNT，不能数上面那一页：那条查询只取最近 50 条，
+        // 而社区点赞/评论是每条写一行通知，攒过 50 条很快——届时第 51 条之前的未读
+        // 永远进不了这个 stream，角标就长期少报（用户以为没人理）。
+        // idx_notification_user 以 (user_id, unread) 打头，这条 COUNT 走索引前缀。
+        int unread = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM notification_message WHERE user_id = ? AND unread = 1",
+                Integer.class, user.userId());
         return new NotificationSummary(items, unread);
     }
 

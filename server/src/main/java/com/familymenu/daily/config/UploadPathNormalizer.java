@@ -40,15 +40,43 @@ public class UploadPathNormalizer {
             return stripSignature(value);
         }
 
-        private static String stripSignature(String value) {
-            if (value == null || !value.startsWith(PREFIX)) {
-                return value;
+        /**
+         * 把「站内上传图」的任何形态（相对裸路径 / 相对带签名 / 绝对带签名）统一剥成
+         * 库里该有的相对裸路径 {@code /uploads/xxx.png}。
+         *
+         * 绝对形态必须处理：小程序展示网络图片只能用完整 URL，所以它会把服务端给的相对路径
+         * 自己拼上 API 域名（{@code miniapp/utils/upload.js} 的
+         * {@code resolve(url.indexOf('http') === 0 ? url : `${base}${url}`)}），
+         * 编辑菜谱/发帖时再把这个绝对值原样回传。只认相对前缀的话这条路径整个漏掉，
+         * 带 {@code e=<过期>} 的链接就写进了库——本地签名默认关闭所以测不出来，
+         * 生产上等于「所有用户图片在上传满 link-ttl（默认 7 天）后集体 404」。
+         *
+         * 外链一律不碰：只有 {@code /uploads/} 紧跟在 host 之后才算站内上传图。
+         */
+        static String stripSignature(String value) {
+            if (value == null) {
+                return null;
             }
-            int q = value.indexOf('?');
-            if (q < 0 || !value.contains("k=")) {
-                return value;
+            int start;
+            if (value.startsWith(PREFIX)) {
+                start = 0;
+            } else {
+                int scheme = value.indexOf("://");
+                if (scheme < 0 || !(value.startsWith("http://") || value.startsWith("https://"))) {
+                    return value;
+                }
+                int hostEnd = value.indexOf('/', scheme + 3);
+                start = value.indexOf(PREFIX, scheme + 3);
+                if (start < 0 || hostEnd != start) {
+                    return value;
+                }
             }
-            return value.substring(0, q);
+            String tail = value.substring(start);
+            int q = tail.indexOf('?');
+            if (q < 0 || !tail.substring(q).contains("k=")) {
+                return tail;
+            }
+            return tail.substring(0, q);
         }
     }
 }
