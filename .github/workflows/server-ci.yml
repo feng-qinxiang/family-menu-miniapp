@@ -34,6 +34,13 @@ jobs:
       DB_NAME: family_menu_daily_db
       DB_USERNAME: root
       DB_PASSWORD: test-password
+      # 故意让 JVM 时区 ≠ MySQL 时区（上面的 mysql:8.0 服务是 SYSTEM=UTC）。
+      # 曾经 user_session/phone_otp 的 expires_at 用 JVM 时钟写入、却用 SQL 的 NOW() 校验，
+      # 两边差 8 小时时会话与验证码"一建立就过期"——本地两边都是 +08:00 所以看不出来，
+      # 只有把两侧拧开才会红。2026-09-19 实测：拧开时 4 项 OTP/登录用例失败，
+      # 改成单一时钟（DATE_ADD(NOW(), INTERVAL ?)）后 153 项全绿。
+      # 别把它改成 UTC"图省事"，那等于撤掉这道防回归。
+      TZ: Asia/Shanghai
       # 测试依赖 dev OTP 固定码 246810
       AUTH_DEV_OTP_ENABLED: 'true'
       # 测试库允许自动建表 + 注入种子数据

@@ -160,11 +160,12 @@ public class AuthService {
 
         String code = devOtpEnabled ? "246810" : String.format("%06d", ThreadLocalRandom.current().nextInt(0, 1_000_000));
         jdbcTemplate.update("UPDATE phone_otp SET consumed_at = NOW() WHERE phone = ? AND consumed_at IS NULL", phone);
+        // 过期时间由 MySQL 自己算：写入用 JVM 时钟、校验用 NOW() 的话，
+        // 两边时区不一致时验证码会"一生成就过期"（见 verifyOtp 的 expires_at > NOW()）。
         jdbcTemplate.update(
-                "INSERT INTO phone_otp(phone, code_hash, expires_at) VALUES (?, ?, ?)",
+                "INSERT INTO phone_otp(phone, code_hash, expires_at) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 5 MINUTE))",
                 phone,
-                buildOtpHash(phone, code),
-                LocalDateTime.now().plusMinutes(5)
+                buildOtpHash(phone, code)
         );
         // 调用短信网关 SPI，未配置时 NoopSmsGateway 记录 WARN 日志
         smsGateway.send(phone, code);
@@ -453,12 +454,14 @@ public class AuthService {
     private String createSession(long userId, String loginType) {
         String token = UUID.randomUUID().toString().replace("-", "");
         // 只落库哈希；明文 token 仅在本次响应里返回给客户端
+        // 同上：会话有效期也交给 MySQL 算，才和 isSessionValid 里的 s.expires_at > NOW() 同一个时钟。
+        // 否则「JVM 一个时区、MySQL 另一个时区」时，会话要么一建立就失效、要么白多活 8 小时。
         jdbcTemplate.update(
-                "INSERT INTO user_session(token, user_id, login_type, expires_at) VALUES (?, ?, ?, ?)",
+                "INSERT INTO user_session(token, user_id, login_type, expires_at) VALUES (?, ?, ?, DATE_ADD(NOW(), INTERVAL ? DAY))",
                 sha256Hex(token),
                 userId,
                 loginType,
-                LocalDateTime.now().plusDays(SESSION_DAYS)
+                SESSION_DAYS
         );
         return token;
     }

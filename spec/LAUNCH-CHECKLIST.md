@@ -4,10 +4,11 @@
 >
 > 已验证：37 个注册页面全部在模拟器实际打开过；点菜→清单、做菜（详情→步骤→记一笔→记录）、
 > 社区（发帖/待审隔离/举报入口/分页）、家庭（创建/邀请码/加入/成员）、导入、周菜单、反馈、通知
-> 均端到端跑通；后端 152 项测试 0 失败；三份 workflow YAML 经自检脚本校验。详见 §3 走查结论表。
+> 均端到端跑通；后端 153 项测试 0 失败；三份 workflow YAML 经自检脚本校验。详见 §3 走查结论表。
 >
-> 同日二次复核（对着**当前工作区**重跑，非引用上次结论）：后端 `mvn test` 25 类 / 152 项 / 0 失败 0 错误
-> （连真实 MySQL，surefire 报告为准）；四条前端门禁全绿（static-check 285 文件、交互体检 A/B/C 均 0）；
+> 同日二次复核（对着**当前工作区**重跑，非引用上次结论）：后端 `mvn verify` 25 类 / 153 项 / 0 失败 0 错误
+> （连真实 MySQL，surefire 报告为准；**在 `TZ=UTC` 与默认 `+08:00` 两种时区下各跑一遍都全绿**——
+> 前者曾暴露 4 项 OTP/登录失败，根因是过期时间用 JVM 时钟写、却用 SQL `NOW()` 校验，已修）；四条前端门禁全绿（static-check 285 文件、交互体检 A/B/C 均 0）；
 > 做菜链路再走一遍并落库验证（`cook_history` 新增行含 recipe/user/family/score，验完已删）；
 > `utils/capsule.js` 的运行时覆盖已实测生效（菜单 hero 顶距由 CSS 兜底 136px 被改为胶囊下缘 91px）。
 > 本轮新增：`static-check` 第 10 项「require 目标必须存在」，并用移走 capsule.js 的方式实测其能阻断 CI。
@@ -242,8 +243,17 @@ java -Duser.timezone=Asia/Shanghai -jar target/family-menu-daily-server-0.1.0-SN
 ```
 
 > jar 方式记得显式加 `-Duser.timezone=Asia/Shanghai`（或设 `TZ`）。JVM 跑 UTC 时，
-> 验证码/会话过期时间会比 MySQL 的 `NOW()` 差 8 小时，可能"一生成就过期"。
+> 日期文案、"今天/本周"这类按天分档会和 MySQL 的 `NOW()` 差 8 小时。
 > Docker 方式已在 `Dockerfile` 里设好。
+>
+> ✅ **登录态与验证码已不再依赖这个开关**（2026-09-19 修复）。原先
+> `user_session.expires_at` 和 `phone_otp.expires_at` 是**用 JVM 时钟写入、
+> 却用 SQL 的 `NOW()` 校验**：两个时钟差 8 小时时会话与验证码"一建立就过期"，
+> 忘加这个 JVM 参数就等于全站登录 401。两处现已改为 `DATE_ADD(NOW(), INTERVAL ?)`，
+> 单一时钟。`server-ci.yml` 更把 job 的 `TZ` 故意设成 `Asia/Shanghai`
+> 而 MySQL 服务是 UTC —— 专门把两侧拧开当防回归。
+> 实测：拧开时 4 项 OTP/登录用例失败（`Status expected:<200> but was:<401>`），
+> 修复后 153 项全绿；本机默认 +08:00 下同样 153 项全绿。
 
 ### 生产配置要点（`application-prod.yml` 已固定）
 
@@ -305,7 +315,9 @@ java -Duser.timezone=Asia/Shanghai -jar target/family-menu-daily-server-0.1.0-SN
 ### CI
 
 `.github/workflows/server-ci.yml`：推送/PR 触发，起 MySQL service 容器，跑 `mvn verify`。
-实测规模 **25 个测试类 / 152 项用例**（2026-09-19 本机连真实 MySQL 跑通，0 失败 0 错误）；
+实测规模 **25 个测试类 / 153 项用例**（2026-09-19 本机连真实 MySQL 跑通，0 失败 0 错误；
+且 job 里 `TZ` 故意设为 `Asia/Shanghai` 而 MySQL 服务是 UTC，把两侧时钟拧开当防回归——
+正是这样才复现并修掉了「过期时间用 JVM 时钟写、用 SQL `NOW()` 校验」这个会导致全站登录 401 的 bug）；
 `CoreFlowInvariantsTests` 锁住三条核心链路的不变量：待审帖仅作者可见、
 邀请码加入后归属正确、同一菜谱连点三次菜单只留一条。
 其中 `LaunchHardeningTests` 专门锁住本轮上线加固项：社区分页与 `size` 夹紧、
