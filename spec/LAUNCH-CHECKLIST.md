@@ -459,6 +459,18 @@ WXSS 配平与注释风格、图片/组件引用、事件处理函数存在性�
   要改的话应当连同前端一起改，别单独动后端。
 - 另测：`PUT /api/recipes/{别人的}` 返回 `not your recipe`（归属校验正常，不是 bug）。
 
+### 新账号演示数据：已查证是「有门控的」，别再误报（2026-09-19）
+
+排查过程中发现 `cook_history` 一夜之间多了 24 行（同一个 `user_id=52 / family_id=10`、
+`cooked_at` 被回溯到过去若干天），一度怀疑是"新建家庭就伪造做菜历史"。
+**结论：不是缺陷。** `AuthService:545` 有 `if (!seedDemoData) return;` 门控，
+`seedDemoDataForFamily()`（ pantry + daily_menu + cook_history 那套）只在
+`app.seed-demo-data=true` 时才跑；`application.yml` 默认 false，
+`application-prod.yml` 硬钉 false。会看到这些行，是因为**本机这个开发实例
+是开着演示种子跑的**，与生产无关。
+判断这类问题的正确顺序：先看新行的 user_id/family_id 是否同属一个家庭、
+时间是否被批量回溯（种子特征），再去找门控开关，别直接下结论。
+
 ### 深色模式的两条实测约束（2026-09-19 验证）
 
 - `app.json` 的 `window.navigationBarBackgroundColor` / `backgroundColor` **不能**写成 `$xxx` 主题引用：
