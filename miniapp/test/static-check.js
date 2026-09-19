@@ -358,7 +358,39 @@ for (const [token, where] of tokenUses) {
   problems.push(`var() 引用了没定义的 token ${where} -> ${token}（会静默丢掉该处样式，深色档尤其明显）`);
 }
 
+// ---- 提审前必须由部署方填写的项（只报告、不阻断）----
+// 为什么不阻断：这两个值只有部署方能给（要等 ICP 备案下来的域名、以及运营者本人姓名/联系方式），
+// 在拿到之前把 CI 判红只会淹没其它真正需要看的失败。所以每次运行都显式列出来，
+// 免得"忘了填"这种低级原因把提审退回来一次、再等 1~7 天。
+const preflight = [];
+const legalPath = path.join(ROOT, 'utils/legal-config.js');
+if (fs.existsSync(legalPath)) {
+  const legal = fs.readFileSync(legalPath, 'utf8');
+  ['operatorName', 'operatorContact'].forEach((key) => {
+    const m = new RegExp(key + "\\s*:\\s*'([^']*)'").exec(legal);
+    if (m && m[1].indexOf('【') !== -1) {
+      preflight.push(`utils/legal-config.js -> ${key}: ${m[1]}（带占位符提交会被审核驳回）`);
+    }
+  });
+}
+const envPath = path.join(ROOT, 'utils/env.js');
+if (fs.existsSync(envPath)) {
+  const envSrc = fs.readFileSync(envPath, 'utf8');
+  ['trial', 'release'].forEach((mode) => {
+    const at = envSrc.indexOf(mode + ':');
+    if (at < 0) return;
+    const m = /apiBaseUrl:\s*'([^']*)'/.exec(envSrc.slice(at, at + 280));
+    if (m && /example\.com/i.test(m[1])) {
+      preflight.push(`utils/env.js -> ${mode}: ${m[1]}（换成已备案 HTTPS 域名，并同步小程序后台的服务器域名白名单）`);
+    }
+  });
+}
+
 console.log(`检查了 ${files.length} 个文件`);
+if (preflight.length) {
+  console.log('\n⚠ 提审前需部署方填写（不阻断 CI，但缺了就等着被驳回）：');
+  preflight.forEach((p) => console.log('  · ' + p));
+}
 if (problems.length) {
   console.error(`\n✘ 发现 ${problems.length} 个问题：`);
   problems.forEach((p) => console.error('  · ' + p));
