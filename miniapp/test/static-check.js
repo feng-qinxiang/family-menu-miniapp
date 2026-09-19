@@ -21,6 +21,7 @@
  *   8. .wxss 里 font-size 是否可随「大字模式」缩放
  *   9. .wxss 里 border / color 是否写死裸黑（深色模式下会看不见）
  *  10. .js 里 require() 的相对路径目标是否存在（漏提交新文件 = CI 检出树里缺文件）
+ *  11. .wxss 里 var(--token) 引用的名字是否真有定义（拼错的 token 会静默丢样式）
  *
  * 退出码：有问题返回 1（可直接用于 CI）
  */
@@ -315,6 +316,46 @@ for (const file of files) {
       }
     }
   });
+}
+
+// ---- 11. var(--token) 用的名字必须真的有人定义 ----
+// 设计 token 全站靠 --xxx 传，深色档整套观感也靠覆盖这些变量实现。
+// 拼错一个 token 名不会报错，只会静默丢掉颜色/间距：浅色档可能看着还行，
+// 深色档直接变成"没有值"。带 fallback 的 var(--x, y) 不算错（它会退到 y），
+// 只钉无 fallback 的裸引用——那才是真的渲染成无效值。
+// token 定义来自两处：.wxss 里的 `--x: ...` 与 theme.json 的 light/dark 键。
+const TOKEN_DEF = /(--[a-zA-Z0-9-]+)\s*:/g;
+const TOKEN_USE = /var\(\s*(--[a-zA-Z0-9-]+)\s*([,)])/g;
+const definedTokens = new Set();
+const tokenUses = [];
+for (const file of files) {
+  if (file.endsWith('.json')) {
+    // theme.json：light/dark 两档的键都会变成 --键名 供 $xxx / var() 使用
+    let parsed = null;
+    try { parsed = JSON.parse(fs.readFileSync(file, 'utf8')); } catch (e) { continue; }
+    ['light', 'dark'].forEach((mode) => {
+      Object.keys((parsed && parsed[mode]) || {}).forEach((k) => definedTokens.add('--' + k));
+    });
+    continue;
+  }
+  if (!file.endsWith('.wxss')) continue;
+  const src = fs.readFileSync(file, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+  let m;
+  TOKEN_DEF.lastIndex = 0;
+  while ((m = TOKEN_DEF.exec(src))) definedTokens.add(m[1]);
+  TOKEN_USE.lastIndex = 0;
+  while ((m = TOKEN_USE.exec(src))) {
+    if (m[2] === ',') continue; // 有 fallback，不算未定义
+    tokenUses.push([m[1], rel(file)]);
+  }
+}
+const seenBadToken = new Set();
+for (const [token, where] of tokenUses) {
+  if (definedTokens.has(token)) continue;
+  const key = token + '@' + where;
+  if (seenBadToken.has(key)) continue;
+  seenBadToken.add(key);
+  problems.push(`var() 引用了没定义的 token ${where} -> ${token}（会静默丢掉该处样式，深色档尤其明显）`);
 }
 
 console.log(`检查了 ${files.length} 个文件`);

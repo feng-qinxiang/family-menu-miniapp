@@ -316,7 +316,14 @@ java -Duser.timezone=Asia/Shanghai -jar target/family-menu-daily-server-0.1.0-SN
 `static-check.js`（阻断：页面四件套、tabBar 与 utils/tabs.js 一致、JSON 可解析、
 WXSS 配平与注释风格、图片/组件引用、事件处理函数存在性、跳转路径、数组解构、**第 8 项字号可缩放性**、
 **第 9 项 border/color 禁写裸黑（深色档会看不见）**、
-**第 10 项 require 相对路径的目标文件必须存在（挡住「新文件忘了 git add」→ CI 检出树缺文件）**）、
+**第 10 项 require 相对路径的目标文件必须存在（挡住「新文件忘了 git add」→ CI 检出树缺文件）**、
+**第 11 项 var(--token) 引用的名字必须有定义（拼错的 token 静默丢样式，深色档最明显；
+带 fallback 的 `var(--x, y)` 放过**）。
+第 10、11 项都做过反向验证：
+第 10 项用「移走 capsule.js」触发 exit 1 并点名 5 个页面；
+第 11 项用「塞一个 `var(--totally-undefined-token)`」触发 exit 1，删掉即恢复 0。
+2026-09-19 全站实测：172 个 token 定义 / 122 个被引用 / **0 个未定义**，
+所以第 11 项当前是纯防回归门禁，不是在报既有问题。
 `dish-logic.test.js`、`kitchen-logic.test.js`，以及 `interaction-audit.js`
 （A 类「绑了事件却没按下反馈」**阻断**——纯机械判定、无误报；B/C 类靠类名与尺寸启发式，只报告不判失败）。
 **2026-09-18 之前该文件的最后一步缩进错误，整份 YAML 非法、GitHub 直接忽略，小程序实际处于零自动化把关状态**；
