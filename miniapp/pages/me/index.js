@@ -22,7 +22,12 @@ function formatCookedLabel(item) {
   if (dateStr) {
     const d = new Date(String(dateStr).replace(' ', 'T'));
     if (!isNaN(d.getTime())) {
-      const diff = Math.floor((Date.now() - d.getTime()) / 86400000);
+      // 按「日历日」差算，不是「过了多少个 24 小时」：
+      // 昨晚 22:00 做的菜，今天早上看会算出 diff=0 → 标成「今天」，其实是昨天。
+      const day0 = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+      const today0 = new Date();
+      today0.setHours(0, 0, 0, 0);
+      const diff = Math.round((today0.getTime() - day0.getTime()) / 86400000);
       if (diff <= 0) when = '今天';
       else if (diff === 1) when = '昨天';
       else if (diff === 2) when = '前天';

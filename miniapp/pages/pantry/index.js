@@ -257,7 +257,15 @@ Page({
     // 用本地解析：new Date('2026-09-10') 按 UTC 算，东八区会少一天
     const target = parseLocalDate(expiresAt);
     if (!target) return null;
-    return Math.floor((target.getTime() - Date.now()) / 86400000);
+    // 必须按「日历日」算：拿到期日的 0 点去减当前时刻，会把一天切成两种结果——
+    // 同一天上午算出 0、下午算出 -1。实测（2026-09-19 16:35）：
+    //   到期=今天 → -1 → 显示「已过期，尽快处理」（今天其实还能吃）
+    //   到期=明天 → 0 → 显示「还剩 0 天」；此后每个数都少一天
+    // 而且「临期待用」的判据是 days>=0，所以到期当天的食材根本不计入临期。
+    // 两边都归到当天 0 点再相减，才是用户理解的那个数。
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return Math.round((target.getTime() - today.getTime()) / 86400000);
   },
 
   buildAmountText(item) {
@@ -268,6 +276,8 @@ Page({
   buildExpiresText(days) {
     if (days === null) return '未填到期日';
     if (days < 0) return '已过期，尽快处理';
+    // 到期当天说「还剩 0 天」读起来像已经没了；这一天恰恰是最该提醒的一天
+    if (days === 0) return '今天就到期，先用';
     if (days <= 3) return `还剩 ${days} 天，先用`;
     return `保质期 还剩 ${days} 天`;
   }
