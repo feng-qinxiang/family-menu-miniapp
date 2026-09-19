@@ -253,8 +253,8 @@
   justify-content: center;
 }
 .mkt-thumb {
-  width: 88rpx;
-  height: 88rpx;
+  width: var(--tile-chip);
+  height: var(--tile-chip);
   border-radius: 22rpx;
   flex: none;
   background: var(--paper-2);

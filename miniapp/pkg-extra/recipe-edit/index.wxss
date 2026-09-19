@@ -301,7 +301,7 @@ page { background: var(--paper); }
   justify-content: center;
 }
 .rc-pick-grid { display: flex; flex-wrap: wrap; gap: 12rpx; margin-top: 20rpx; }
-.rc-pick-cell { width: 148rpx; height: 148rpx; background: var(--paper-2); }
+.rc-pick-cell { width: var(--tile-pick); height: var(--tile-pick); background: var(--paper-2); }
 
 .rc-footbar {
   position: fixed;

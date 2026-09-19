@@ -222,8 +222,11 @@
 }
 /* 列表骨架（最近上桌 / 口味偏好加载态） */
 .mag-skel-thumb {
-  width: 96rpx;
-  height: 96rpx;
+  /* 骨架必须和它替身的那张卡同尺寸，否则数据回来时整行会跳一下。
+     原来是 96rpx 而真卡是 120rpx——差 24rpx，实测加载完会看到明显的位移。
+     两处一起收敛到紧凑行图块规格 --tile-row-sm(104rpx)。 */
+  width: var(--tile-row-sm);
+  height: var(--tile-row-sm);
   border-radius: var(--r-md);
   background: var(--skeleton);
   flex: none;
@@ -270,8 +273,8 @@
   border-bottom: 2rpx solid var(--paper-2);
 }
 .mag-thumb {
-  width: 120rpx;
-  height: 120rpx;
+  width: var(--tile-row-sm);
+  height: var(--tile-row-sm);
   border-radius: var(--r-chip);
   flex: none;
   background: var(--paper-2);

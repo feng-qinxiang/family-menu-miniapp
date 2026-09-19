@@ -295,6 +295,20 @@
 | 首页 hero 的「买」「谱」两个字符按钮 | ⬠ 判定为**保留**（与计划相反，理由在此） | 计划把它列成"文字当图标"的违规。放大截图（`/tmp/r2-home-crop2x.png`）：白色粗体汉字在半透明深圆 + 浅色描边里，还带一个红点角标（买菜清单有待买项）。它是**单色、可被 CSS color 着色、跟大字模式缩放**的，且对中文用户比一个抽象购物车更好认（"买"=买菜、"谱"=菜谱库）。<br>换成 CSS 画的购物车/书本属于**视觉重做**，风险大于收益，所以本轮不动。<br>⚠ 这是 agent 的判断，不是既成事实——owner 若要换图标，改 `pages/home/index.wxml:50,53` 与 `.mh-ico-glyph` 即可，门禁第 20 项不会拦（汉字不在 Emoji_Presentation 清单里）。 |
 | 四条前端门禁 | ✅ 全绿 | `static-check`（现 20 项）/ `dish-logic.test` / `kitchen-logic.test` / `interaction-audit`（A/B/C 均 0）全部 `exit 0`。 |
 
+### 第六轮 R3（2026-09-19）：UI 台账 v1 + 图块/头像规格表 + 新门禁 21
+
+| 项 | 结果 | 证据：怎么量的 / 修复前测到什么 / 修复后测到什么 |
+| --- | --- | --- |
+| `miniapp/test/ui-ledger.js`（生成物，已挂 CI） | ✅ | 零依赖，扫 48 个页面/组件模板 + WXSS，产出 `artifacts/ui-ledger/ledger.{md,json}`，按四条主线逐页给：图块边长、圆角取值、加载态、空态、裸 rpx/px、emoji 数、CSS 图标数、未声明组件、置了没人读的状态位。<br>`.github/workflows/miniapp-ci.yml` 加第 5 个 run 步骤（恒 exit 0，跑挂了才算红），改完用 `ruby -ryaml` 解析过、steps=7。<br>⚠ **主指标中途换过一次**：第一版把"同一角色的实现数"按**去重后的取值/写法**计，于是我把 9 个裸值换成 5 个 token 之后，指标反而从 12 涨到 13——它在给规格表改名，不是在收敛。现在只数**还没进 token 表的裸值种数**（归零才算管住），另报 token 种数（防止表长私人偏方）。<br>当前读数：四条主线 图块裸值 **4**、圆角裸值 32、加载态 3 种、空态 2 种；全站 17 / 54 / 4 / 3。 |
+| 图块与头像收进一张规格表 | ✅ 11 处裸值 → 6 个命名角色 | 台账量出"行里那道菜的缩略图"同一角色有 **96 / 104 / 112 / 120 / 146** 五种值、行内小标记 **82 / 88** 两种。逐个看过后**不是一件事**（周菜单一天两道、买菜清单一行一料，密度本就不同），所以不强行并成一个数，改成**每个角色有名字**：`--dish-thumb`(146) / `--tile-row-sm`(104) / `--tile-chip`(88) / `--tile-cover`(168) / `--tile-grid`(177) / `--tile-pick`(148)。<br>换进去的 11 处：weekly-menu `.wm-thumb`、shopping `.mkt-thumb`、kitchen `.k-img`、favorites `.fav-pthumb`、recipe-edit `.rc-pick-cell`（这 5 处**数值没变**，只是有了名字）；me `.mag-thumb` 120→104、me `.mag-skel-thumb` 96→104、import `.r-thumb` 112→104、notifications `.thumb-dish` 82→88、community `.precipe .rthumb` 104→token（这 5 处有 ≤16rpx 的实际变化，已逐页截图核过没有破版：`/tmp/r3-pages-me-index.png`、`/tmp/r3-pkg-extra-import-index.png`）。<br>**顺带修掉一个真缺陷**：「我的」页做菜记录的骨架块是 96rpx、替身的真卡是 120rpx——**骨架和它替身的内容不同尺寸**，数据回来那一瞬整行会跳。两处统一到 104。<br>**同一个作者在两处不同大小**：社区列表头像 84rpx、帖子详情头像 92rpx、评论行 72rpx → 补 `--ava-row` / `--ava-head` / `--ava-cmt` 三个角色名（数值不变，先止住"下一页写第四个数"）。 |
+| 新门禁 21：类名带 `thumb` 的图块边长必须走规格表 | ✅ 已钉，落地 0 命中 | **反向验证**：把 `.wm-thumb` 改回 `104rpx` → `exit 1` 点名 `pkg-extra/weekly-menu/index.wxss:257 .wm-thumb -> width/height 是 104rpx / 104rpx，没走 --dish-thumb / --tile-* 规格表`；还原 → `exit 0`。<br>⚠ 判据第一版按 `thumb|cover|pic|img` 扫，报 **48 条**，其中 34 条是误报（`*-hero-img`、`*-cover`、骨架块本来就是 `100%` 或另一个角色）；收窄到"类名含 thumb 且宽高是裸 rpx 的正方形"，并放过 `border-radius:50%` 的圆头像，才是现在这 6 条真命中。 |
+| 计划里的门禁 22（裸圆角一律禁止） | ⬠ **判定不做**，理由记下 | 实测：全站 `border-radius:<n>rpx` 裸值 **168 条**，其中数值恰好等于某个现有 `--r-*` token 的只有 **8 条**；而这些 token 是按**用途**命名的（`--r-sheet` = 上推 sheet、`--r-card` = 卡片），把一处图片圆角写成 `var(--r-sheet)` 比 `20rpx` 更难读。众数还落在 2/3/4/6/12rpx 这些描边与小标签上，压根不该有 token。<br>这和当初放弃 `--fs-*` 改名是同一个形状：收益是命名一致，代价是 168 处视觉回归风险。**只做了有道理的那一条**：`pages/menu/index.wxss` 的 `.m-week-card` 从 46rpx 归到 `--r-xl`(42rpx)——一个没有出处的数，差 4rpx 看不出来，但回到刻度上才不会又漂出 45/47。 |
+| 台账报的 4 处裸 px | ✅ 逐个核过，全部保留 | `pages/recipes/index.wxss:24 right: 96px` 与 `pkg-extra/vip/index.wxss:42 padding: 51px`——看着像"该写 rpx 写成了 px"，实际前者是**胶囊避让的兜底值**：`utils/capsule.js:24` 算的就是 `windowWidth - menuButton.left + 8` 再拼 `'px'`，而页面 WXML 本来就绑了 `style="right: {{capsuleRight}}"`（`pages/recipes/index.wxml:9`），胶囊是各机型定宽的控件，**用 px 才对**；后者是 VIP 页（不在四条主线、也不在上线范围）。<br>另两处 `backdrop-filter: blur(6px|18px)` 本来就是 px（模糊半径不该随屏宽缩放）。<br>台账已改成**只数几何属性上的 px**，不再把 blur 算进来（否则每次都是噪音）。 |
+| 周菜单一个加载态都没有 | ✅（台账抓出来的，不是猜的） | 逐页读数里 `pkg-extra/weekly-menu` 的加载态是「**无**」：首屏直接渲染统计卡的「0 天 / 0 道 / 0 个」，等数据回来才跳成真实数字——和 R1 那批"把没加载完说成没有"同一类。<br>改法：加 `<state-loading visible="{{loading}}" text="正在排本周的桌…" />`，并把内容块条件从 `!loadError` 收紧成 `!loadError && !loading`；`index.json` 同步补 `state-loading` 声明（漏了就会被门禁 18 抓住，等于自测）。<br>四条主线加载态因此从 4 种降到 3 种（骨架屏 / state-loading / 手写 spinner）。 |
+| 四条前端门禁 + YAML | ✅ 全绿 | `static-check`（现 21 项）/ `dish-logic.test` / `kitchen-logic.test` / `interaction-audit` 全部 `exit 0`；`ruby -ryaml` 解析改过的 workflow。 |
+| 台账留下的下一步靶子（不是待办清单，是**读数**） | ⬠ 未做 | 四条主线还剩 4 个裸图块值（社区发帖选图格 132、详情图 138、recipe-edit 小图标 48/88）；圆角裸值 32 种；头像在非主线页还有 200 / 208 两个值；全站裸 rpx 3717 处（**已接受**，理由见台账末尾「已接受的债务」）。 |
+
+
 
 
 

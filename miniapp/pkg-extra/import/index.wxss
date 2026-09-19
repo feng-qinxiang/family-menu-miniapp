@@ -525,7 +525,7 @@
   border-bottom: 2rpx solid var(--paper-2);
 }
 .recent:last-child { border-bottom: none; }
-.r-thumb { width: 112rpx; height: 112rpx; border-radius: 26rpx; flex: none; }
+.r-thumb { width: var(--tile-row-sm); height: var(--tile-row-sm); border-radius: 26rpx; flex: none; }
 .r-mid { flex: 1; min-width: 0; }
 .r-title { font-size: calc(32rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--ink); letter-spacing: -0.5rpx; }
 .r-sub { font-size: calc(22rpx * var(--fs-mul, 1)); color: var(--mut); margin-top: 8rpx; }

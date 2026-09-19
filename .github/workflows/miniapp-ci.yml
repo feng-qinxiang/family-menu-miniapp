@@ -37,3 +37,9 @@ jobs:
       # B / C 靠类名与尺寸启发式，文本链接本就不该有 88rpx 热区，脚本只报告不影响退出码。
       - name: 交互体检（A 类阻断，B/C 报告）
         run: node miniapp/test/interaction-audit.js
+
+      # 台账只报事实、不因数据判失败（脚本恒 exit 0，跑挂了才算红）。
+      # 主指标是「还没进 token 表的裸值种数」，要单调下降；
+      # 真正会挡合并的是 static-check 第 21 项（图块边长必须走规格表）。
+      - name: UI 台账（同一视觉角色还剩几种没名字的写法）
+        run: node miniapp/test/ui-ledger.js

@@ -145,8 +145,8 @@
 }
 .ptop { display: flex; align-items: center; gap: 22rpx; }
 .pavatar {
-  width: 84rpx;
-  height: 84rpx;
+  width: var(--ava-row);
+  height: var(--ava-row);
   border-radius: 26rpx;
   flex: none;
   display: flex;
@@ -184,7 +184,7 @@
   border-radius: 28rpx;
   border: 2rpx solid var(--paper-2);
 }
-.precipe .rthumb { width: 104rpx; height: 104rpx; border-radius: 22rpx; flex: none; }
+.precipe .rthumb { width: var(--tile-row-sm); height: var(--tile-row-sm); border-radius: 22rpx; flex: none; }
 .precipe .rmid { flex: 1; min-width: 0; }
 .precipe .rk { font-family: var(--serif); font-style: italic; font-size: calc(20rpx * var(--fs-mul, 1)); color: var(--gold-deep); font-weight: 700; }
 .precipe .rn { font-size: calc(28rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--ink); margin-top: 2rpx; }

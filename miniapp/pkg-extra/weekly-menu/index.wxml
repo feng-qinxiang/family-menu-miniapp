@@ -1,4 +1,7 @@
 <view class="wm-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
+  <!-- 本页原来一个加载态都没有：首屏直接显示统计卡的「0 天 / 0 道 / 0 个」，
+       等数据回来才跳成真实数字——和 R1 修掉的那批"把没加载完说成没有"同一类。 -->
+  <state-loading visible="{{loading}}" text="正在排本周的桌…" />
   <!-- 二级页顶部导航：浮于照片 hero 之上，右侧放重排按钮 -->
   <view class="wm-nav-fixed">
     <nav-bar title="" statusBarHeight="{{statusBarHeight}}">
@@ -49,7 +52,7 @@
       bind:action="retryLoad"
     />
 
-    <block wx:if="{{!loadError}}">
+    <block wx:if="{{!loadError && !loading}}">
     <!-- 统计卡 -->
     <view class="wm-summary g-fade-up">
       <view class="wm-scell">

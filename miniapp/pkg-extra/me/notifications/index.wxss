@@ -143,7 +143,7 @@
 .ic-sys { background: var(--gold); }
 .ic-wish { background: var(--pop-soft); }
 .ic-meal { background: var(--gold); }
-.ic-img { width: 88rpx; height: 88rpx; border-radius: var(--r-md); }
+.ic-img { width: var(--tile-chip); height: var(--tile-chip); border-radius: var(--r-md); }
 
 /* 用 CSS 画简易类型图标（避免 background-image 本地图） */
 .ic-svg { width: 40rpx; height: 40rpx; }
@@ -270,8 +270,9 @@
 }
 .nfoot-spacer { flex: 1; }
 .thumb-dish {
-  width: 82rpx;
-  height: 82rpx;
+  /* 82rpx 是这条角色上的第四个值（88/96/104/120 都有人写），归到行内小标记规格 */
+  width: var(--tile-chip);
+  height: var(--tile-chip);
   border-radius: var(--r-sm);
   flex: none;
 }

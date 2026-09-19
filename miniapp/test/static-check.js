@@ -31,6 +31,7 @@
  *  18. WXML 用到的自定义组件是否在同页 index.json 声明（漏声明不报错、整屏不渲染）
  *  19. JS 里置的 *Failed / *Error 状态位是否真的被 WXML 读到（置了没人读 = 失败显示成空态）
  *  20. WXML 里的图标是否用了 emoji（第 17 项只管 WXSS 的 content:，管不到渲染层）
+ *  21. 行内图块（类名带 thumb）的边长是否走 app.wxss 的 --dish-thumb / --tile-* 规格表
  *
  * 退出码：有问题返回 1（可直接用于 CI）
  */
@@ -782,6 +783,40 @@ const scanIconText = (r, text, kind) => {
 for (const file of files) {
   if (!file.endsWith('.wxml')) continue;
   scanIconText(rel(file), fs.readFileSync(file, 'utf8').replace(/<!--[\s\S]*?-->/g, ''), 'WXML');
+}
+
+// ---- 21. 图块（菜品缩略图/封面格）的边长必须走 token，不许写裸 rpx ----
+// 台账实测全站 12 种正方形图块取值。逐个看过后**不是一件事**：行内菜图 / 紧凑行 /
+// 行内小标记 / 灶台大卡 / 两列封面格 / 选择网格各有密度，强行并成一个数会改坏版面。
+// 所以这条门禁不要求"同一个值"，只要求"同一个出处"——边长必须来自 app.wxss 的
+// --dish-thumb / --tile-* 规格表。新页面要放图块，先在表里挑角色，别再随手写一个 150rpx。
+// 圆形头像（border-radius:50%）不算图块角色，放过。
+// 判据只认**类名里带 thumb 的图块**：这一族是"行里那道菜的缩略图"，最容易漂
+// （实测同一角色曾出现 96/104/112/120/146 五种）。而 `*-img` / `*-hero-*` /
+// `*-cover` / `*-skel-*` 这些命中 photo 格与整屏 hero 图，宽高本来就是 100% 或
+// 各自的角色，不归这条管——第一版按 thumb|cover|pic|img 扫，48 条里 34 条是这类误报。
+const TILE_DECL = /\.([a-z0-9_-]*thumb[a-z0-9_-]*)\b/i;
+const TILE_TOKEN = /var\(\s*--(?:dish-thumb|tile-[a-z-]+)\s*\)/;
+for (const file of files) {
+  if (!file.endsWith('.wxss')) continue;
+  const r = rel(file);
+  if (r === 'app.wxss') continue;
+  const src = stripComments(fs.readFileSync(file, 'utf8'));
+  for (const block of src.match(/[^{}]+\{[^{}]*\}/g) || []) {
+    const sel = block.slice(0, block.indexOf('{')).trim();
+    if (!TILE_DECL.test(sel)) continue;
+    const body = block.slice(block.indexOf('{') + 1);
+    const w = /(?:^|;)\s*width\s*:([^;]+)/.exec(body);
+    const h = /(?:^|;)\s*height\s*:([^;]+)/.exec(body);
+    if (!w || !h) continue;
+    // 百分比 / calc / em 的是覆盖层或自适应块，不是一种"规格尺寸"
+    if (/%|calc\(|\bem\b|vh|vw/.test(w[1] + h[1])) continue;
+    if (/border-radius\s*:\s*50%/.test(body)) continue;   // 圆头像不是图块角色
+    if (TILE_TOKEN.test(w[1]) && TILE_TOKEN.test(h[1])) continue;
+    const line = src.slice(0, src.indexOf(block)).split('\n').length;
+    problems.push(`图块边长写死 ${r}:${line} ${sel} -> width/height 是 ${w[1].trim()} / ${h[1].trim()}，`
+      + '没走 app.wxss 的 --dish-thumb / --tile-* 规格表（要放新尺寸就先在表里加一个有名字的角色，别在页面里写裸数值）');
+  }
 }
 
 // ---- 提审前必须由部署方填写的项（只报告、不阻断）----

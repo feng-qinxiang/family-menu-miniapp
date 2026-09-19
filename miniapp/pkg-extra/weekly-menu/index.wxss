@@ -259,8 +259,8 @@
   letter-spacing: 1rpx;
 }
 .wm-thumb {
-  width: 104rpx;
-  height: 104rpx;
+  width: var(--tile-row-sm);
+  height: var(--tile-row-sm);
   border-radius: 28rpx;
   flex: none;
   background: var(--paper-2);

@@ -331,7 +331,9 @@
 .m-week-card {
   margin-top: 50rpx;
   padding: 42rpx 38rpx 28rpx;
-  border-radius: 46rpx;
+  /* 原来是 46rpx——比全站最大的圆角 token --r-xl(42rpx) 还多 4rpx，
+     一个没有出处的数。差 4rpx 肉眼看不出，但回到刻度上才不会又漂出一个 45/47。 */
+  border-radius: var(--r-xl);
 }
 .m-week-head {
   display: flex;

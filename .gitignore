@@ -57,3 +57,6 @@ Thumbs.db
 /artifacts/**/*.sql
 /demo-cleanup-backup-*.sql
 artifacts/ui-audit/phase2/
+# UI 台账：入库的是人读的 ledger.md（收敛曲线的证据），机器读的两份随时可重生成
+/artifacts/ui-ledger/ledger.json
+/artifacts/ui-ledger/last.json

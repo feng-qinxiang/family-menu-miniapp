@@ -22,8 +22,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 92rpx;
-  height: 92rpx;
+  width: var(--ava-head);
+  height: var(--ava-head);
   border-radius: 50%;
   font-family: var(--serif);
   font-weight: 700;
@@ -31,7 +31,7 @@
   color: var(--anchor-contrast);
   box-shadow: 0 4rpx 12rpx rgba(60, 40, 20, 0.12);
 }
-.ava-sm { width: 72rpx; height: 72rpx; font-size: calc(32rpx * var(--fs-mul, 1)); }
+.ava-sm { width: var(--ava-cmt); height: var(--ava-cmt); font-size: calc(32rpx * var(--fs-mul, 1)); }
 .ava-lin { background: linear-gradient(135deg, var(--pop), var(--orange)); }
 .ava-lan { background: linear-gradient(135deg, var(--pine), var(--cat-green)); }
 .ava-zhao { background: linear-gradient(135deg, var(--cat-purple-deep), var(--cat-purple-light)); }

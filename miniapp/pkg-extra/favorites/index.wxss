@@ -110,8 +110,8 @@
   box-shadow: var(--sh-card);
 }
 .fav-pthumb {
-  width: 177rpx;
-  height: 177rpx;
+  width: var(--tile-grid);
+  height: var(--tile-grid);
   border-radius: var(--r-md);
   flex: none;
   background: var(--paper-2);
