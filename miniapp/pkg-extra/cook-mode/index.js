@@ -35,7 +35,11 @@ function scaleAmount(amount, ratio) {
 
 Page({
   data: {
+    // 大字模式：app.wxss 的 .font-lg 会把 --fs-mul 提到 1.15。
+    // 这页以前没接档位，等于「设置里开了大字，做菜模式照样小字」——而做菜时手机放在
+    // 一臂外、手上有油，恰恰是最需要大字的一屏。app.wxss 的注释本来就写着全站都要挂。
     statusBarHeight: 0,
+    fontScale: 'normal',
     loading: true,
     loadError: false,
     recipeId: '',
@@ -96,6 +100,7 @@ Page({
     this._menuItemId = (options && options.menuItemId) || '';
     // 详情页带入的人数（份量已按其换算），>0 时按比例缩放食材用量
     this._servings = Number(options && options.servings) || 0;
+    try { this.data.fontScale = wx.getStorageSync('font_scale') || 'normal'; } catch (e) {}
     this.setData({ statusBarHeight: sbh, capsulePad, recipeId });
     this.loadDetail(recipeId);
   },

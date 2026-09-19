@@ -1,5 +1,5 @@
 <!-- pages/cook-mode/index.wxml · 烹饪模式（沉浸暗底分步引导） -->
-<view class="cook" style="--sbh: {{statusBarHeight}}px;">
+<view class="cook {{fontScale === 'lg' ? 'font-lg' : ''}}" style="--sbh: {{statusBarHeight}}px;">
 
   <!-- 顶部：返回 X + 菜名步数 + 计时入口 -->
   <view class="topbar" style="padding-top: {{statusBarHeight}}px; padding-right: {{capsulePad || 19}}px;">
