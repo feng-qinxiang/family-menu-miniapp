@@ -331,6 +331,21 @@
 | 深色模式对比度成表（能逼近的那半） | ✅ 算完，撞出浅色档一处不达标 | 直接按 `theme.json` 的 light/dark 两套值算 WCAG 对比度（像素级观感仍属真机）：<br>`paper/ink` 14.41 → 14.82；`paper/mut` 4.70 → 6.04；`paper-2/ink` 12.86 → 13.16；`surface/ink` 15.27 → 13.50；`surface/mut` 4.98 → 5.50；`paper/pop` 3.69 → 6.02；**`paper/gold-deep` 3.04 → 7.20**。<br>→ **深色档全线比浅色档更好**（金色从 3.04 跳到 7.20），没有新缺陷。<br>→ 浅色档暴露一个问题：`--gold-deep` 作小字（眉标题、`粤菜 · 28 分钟` 这类元信息）在**三块底上分别是 3.04 / 2.71 / 3.22**，其中 `--paper-2` 上 **2.71 连"大字号/UI 组件 3.0"这条底线都没到**；全站 `color: var(--gold-deep)` 共 **73 处**。<br>保持色相压暗到：≥3.0 需 `#a58145`（明度 48.8→45.8，几乎看不出）；≥4.5（AA 正文）需 `#836636`（明度→36.3，明显变深铜色）。<br>⚠ **这是品牌观感决定，不替 owner 做**：改一个 token 就影响 73 处，列进 §8 待决。`--pop` 那条 3.69 查过**没有实际文字用它**（`color: var(--pop)` 0 处声明，只出现在 hero 大标题的 `.pop` 上，属大字号），所以不动。 |
 | 组件内部量不到（本轮的取证边界） | ⚠ 已知限制，用替代法 | `automation_element_action --selector ".ss-sheet"` 取不到值——自定义组件的内部树对自动化**不开放**（与 `wx.createSelectorQuery` 在 eval 上下文里失效同源）。所以弹层那一项改成"截图量高 + CSS 算术"，而不是 `scrollHeight/clientHeight` 直读。 |
 
+### 第六轮 R6（2026-09-19）：后端读路径与执行计划
+
+取证方法：`SET GLOBAL general_log='ON' / log_output='TABLE'` → 打接口 → 从 `mysql.general_log` 取**代码里那条原句**再 EXPLAIN（不用简化过的谓词，避免量出假绿）。
+第二实例起在 **9089**（不动 owner 在用的 9088），测完 `kill`、`general_log='OFF'`、`TRUNCATE mysql.general_log` 复原。
+
+| 项 | 结果 | 修复前 EXPLAIN（真实 SQL）→ 修复后 |
+| --- | --- | --- |
+| 社区 feed 每请求做一次**全表收藏聚合** | ✅ 已修 | 修复前（原句含 `LEFT JOIN (SELECT post_id, COUNT(*) FROM community_post_favorite GROUP BY post_id) fav`，**没有按本页 post 收敛**）：<br>`1 PRIMARY p range idx_post_audit rows=4 Extra: Using index condition; Using where; Using filesort`<br>`2 DERIVED community_post_favorite index uk_post_user → 整张收藏表扫一遍再物化`<br>修复后：改成按行相关子查询 `(SELECT COUNT(*) ... WHERE f.post_id = p.id)` → `5 DEPENDENT SUBQUERY f ref uk_post_user Using index`，**每页只数 20 次**，派生表物化消失。 |
+| feed 的 OR 让 `idx_post_audit` 退化成 filesort | ✅ 拆成 UNION ALL 两段 | 语义不能丢（作者要看得见自己待审的帖），所以拆两段：`APPROVED` 一段、`PENDING AND author=?` 一段，各取 `offset+size` 条再合并排序。<br>修复后 EXPLAIN：`2 DERIVED p ref idx_post_audit Using where`——**帖子扫描本身不再 filesort**，只剩外层对 ≤2×(offset+size) 行做一次合并排序（`<derived2> Using filesort`，行数是个位数）。<br>⚠ **改完第一版 6 个用例全 500**：UNION 分支里的 `ORDER BY ... LIMIT` 不加括号会被当成作用于整个 union，MySQL 直接 1064（`error near 'UNION ALL'`）。已在代码注释里钉住这条。 |
+| 菜谱列表的派生表 + 哈希连接 | ✅ `Using temporary` 消失 | 修复前：`1 PRIMARY recipe ALL ... Extra: Using where; `**`Using temporary; Using filesort`**` + `1 PRIMARY <derived2> ALL Using join buffer (hash join)`。<br>修复后：两个相关子查询取 `cook_count` / `last_cooked_at`，走 `idx_cook_history_family` 的 `ref`，`Extra` 只剩 `Using where; Using filesort`——**临时表没了**。<br>⚠ 如实记下没赢的部分：`recipe` 上仍是 `type=ALL`。可见范围那一长串 OR（`community OR family_id=? OR is_public=1 OR family_id IS NULL OR owner_user_id=?`）本来就非 sargable，**加任何复合索引都用不上**，所以计划里说的 `idx_recipe_visibility(status, source_type, family_id, rating, id)` 我**没有建**——建了优化器也不会选，白付写放大。当前 dev 库 18 行、`/api/recipes` 8ms。 |
+| 新测试：合并分页不重不漏 | ✅ 2 条，且验过有牙 | `CommunityFeedUnionTests`：① 造 6 条已过审（含两组并列赞数，逼出 `id DESC` tiebreak）+ 1 条作者待审且 999 赞，逐页走完断言**无重复、无遗漏、相对顺序 = like_count DESC → id DESC**，且待审帖**只对作者可见**；② 收藏数改成按行子查询后，值仍等于实际行数（2）。<br>不断言总条数——测试库里有别的用例留下的帖子，判据改成"我这批帖子的相对次序"才与全库数据无关（第一版断 `hasSize(7)` 就是这么误红的）。<br>**反向验证**：把第二段的 `audit_status='PENDING' AND author=?` 去掉 `audit_status` 条件让两段重叠 → 测试点名「第 3 页出现重复条目 102（UNION 两段没互斥）」→ 还原。 |
+| 顺带看到的一条（未改，记账） | ⚠ 待评估 | general_log 按形状聚合时看到**每个 API 请求都带 3~5 次鉴权链查询**（`user_membership` 有效期、`family_member` 归属、`user_account` 全字段），量级是业务查询的好几倍。这是拦截器逐请求查库，不是某个接口的缺陷；当前 QPS 下无感，**上线后要真出问题再动**（缓存会话→用户→家庭三元组即可），本轮不碰。 |
+| 门禁 | ✅ 全绿 | `mvn test` **183 项 0 失败**（181 + 新增 2），并且 `-Dsurefire.runOrder=reversealphabetical` 反序全量同样 0 失败。 |
+
+
 
 
 

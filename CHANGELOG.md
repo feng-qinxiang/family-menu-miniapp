@@ -30,9 +30,16 @@
 - **图块与头像收进一张规格表**：`--tile-row-sm/--tile-chip/--tile-cover/--tile-grid/--tile-pick`
   与 `--ava-row/--ava-head/--ava-cmt`，11 处裸值归位（同一角色的菜图曾出现 96/104/112/120/146 五种）。
 - **静态检查扩到 21 项**：21) 类名带 `thumb` 的图块边长必须走规格表，不许写裸 rpx（反向验证过能判失败）。
+- **社区信息流 SQL 重写 + 分页不变量测试**（`CommunityFeedUnionTests`，2 条，反向验证过有牙）：
+  待审帖只对作者可见这个 OR 原本让 `idx_post_audit` 退化成 filesort，现拆成 UNION ALL 两段各自命中索引。
 
 ### Fixed
 
+- **社区信息流每次翻页都全表扫一遍收藏数**：`LEFT JOIN (SELECT post_id, COUNT(*) FROM
+  community_post_favorite GROUP BY post_id)` 那个派生表没有按本页帖子收敛（EXPLAIN 里是
+  `DERIVED ... Using index`），改成按行相关子查询后每页只数 20 次。
+- **菜谱列表的临时表**：`cook_history` 的派生表要先物化再哈希连接（`Using temporary`），
+  改成两个走 (family_id, recipe_id) 前缀的相关子查询，临时表消失。
 - **做菜模式的计时器活不过"关掉再进"**：每步一个计时槽只挂在页面对象上，而厨房总控页早就把它
   存进 storage——同一个"炖着 20 分钟"，一个入口跨路由活着、另一个重进就归零。
   现在复用厨房页的四元组形状落盘（`cook_timers_<recipeId>`），恢复算法收进

@@ -157,17 +157,19 @@ public class MysqlKitchenStore {
         String normalized = Optional.ofNullable(source).orElse("owned").trim().toLowerCase(Locale.ROOT);
         String sql = """
                 SELECT id, title, source_type, source_url, cuisine, taste_tags_json, time_cost, servings, rating, summary, cover_image,
-                       owner_user_id, ch.cook_count, ch.last_cooked_at
+                       owner_user_id,
+                       (SELECT COUNT(*) FROM cook_history ch
+                         WHERE ch.family_id = ? AND ch.recipe_id = recipe.id) AS cook_count,
+                       (SELECT DATE_FORMAT(MAX(ch2.cooked_at), '%Y-%m-%d %H:%i') FROM cook_history ch2
+                         WHERE ch2.family_id = ? AND ch2.recipe_id = recipe.id) AS last_cooked_at
                 FROM recipe
-                LEFT JOIN (
-                    SELECT recipe_id, COUNT(*) AS cook_count,
-                           DATE_FORMAT(MAX(cooked_at), '%Y-%m-%d %H:%i') AS last_cooked_at
-                    FROM cook_history WHERE family_id = ? GROUP BY recipe_id
-                ) ch ON ch.recipe_id = recipe.id
                 WHERE status = 'ACTIVE' AND (? = 'all' OR source_type = ?)
                           AND (source_type = 'community' OR family_id = ? OR is_public = 1 OR family_id IS NULL OR owner_user_id = ?)
                 ORDER BY rating DESC, id DESC
                 """;
+        // 原来这里是 `LEFT JOIN (SELECT ... FROM cook_history WHERE family_id=? GROUP BY recipe_id) ch`：
+        // 派生表要先物化再哈希连接，EXPLAIN 里是 `Using temporary` + `<derived2> Using join buffer (hash join)`。
+        // 两个相关子查询都走 idx_cook_history_family_recipe 的 (family_id, recipe_id) 前缀，按行点查。
         return jdbcTemplate.query(sql, (rs, rowNum) -> new RecipeCard(
                 rs.getLong("id"),
                 rs.getString("title"),
@@ -184,7 +186,7 @@ public class MysqlKitchenStore {
                 rs.getString("last_cooked_at"),
                 // 公共菜谱库的 owner 是种子账号，这里必须和当前用户比对，前端才知道"这条是不是我建的"
                 rs.getLong("owner_user_id") == userId
-        ), familyId, normalized, normalized, familyId, userId);
+        ), familyId, familyId, normalized, normalized, familyId, userId);
     }
 
     @Transactional
@@ -233,9 +235,21 @@ public class MysqlKitchenStore {
 
     /** 分页版：page 从 1 起。信息流此前一次拉全量（仅 LIMIT 100 护栏），帖子多了会越拖越慢。 */
     public List<CommunityPost> communityPosts(long userId, String tag, int page, int size) {
-        String sql = """
+        // 两处都是实测出来的问题，改法各对应一条：
+        // ① 收藏数原来用 `LEFT JOIN (SELECT post_id, COUNT(*) ... GROUP BY post_id)`，
+        //    那个派生表**没有按本页 post 收敛**，每翻一页都要把整张 community_post_favorite
+        //    扫一遍再物化（EXPLAIN 里是 `DERIVED ... Using index`）。改成按行做相关子查询，
+        //    每页只数 20 次，走 uk_post_user 的 post_id 前缀。
+        // ② `audit_status='APPROVED' OR (PENDING AND author=?)` 这个 OR 让 idx_post_audit
+        //    退化成 range + filesort（作者要能看见自己待审的帖，这个语义不能丢）。
+        //    拆成 UNION ALL 两段：每段单条件命中 (audit_status, like_count DESC, id DESC)，
+        //    顺序由索引给出；两段各取 offset+size 条再合并，保证分页不重不漏
+        //    （状态互斥，同一条帖不会同时出现在两段里）。
+        int offset = (Math.max(page, 1) - 1) * size;
+        int fetch = offset + size;
+        String select = """
                 SELECT p.id, p.title, u.nickname AS author, p.content, p.like_count, p.comment_count, p.tags_json, p.images_json, p.audit_status,
-                       COALESCE(fav.favorite_count, 0) AS favorite_count,
+                       (SELECT COUNT(*) FROM community_post_favorite f WHERE f.post_id = p.id) AS favorite_count,
                        CASE WHEN my_fav.user_id IS NULL THEN 0 ELSE 1 END AS favorited,
                        CASE WHEN my_like.user_id IS NULL THEN 0 ELSE 1 END AS liked,
                        CASE WHEN p.author_user_id = ? THEN 1 ELSE 0 END AS mine,
@@ -244,18 +258,19 @@ public class MysqlKitchenStore {
                 FROM community_post p
                 JOIN user_account u ON u.id = p.author_user_id
                 LEFT JOIN recipe r ON r.id = p.recipe_id
-                LEFT JOIN (
-                    SELECT post_id, COUNT(*) AS favorite_count
-                    FROM community_post_favorite
-                    GROUP BY post_id
-                ) fav ON fav.post_id = p.id
                 LEFT JOIN community_post_favorite my_fav ON my_fav.post_id = p.id AND my_fav.user_id = ?
                 LEFT JOIN community_post_like my_like ON my_like.post_id = p.id AND my_like.user_id = ?
-                WHERE (p.audit_status = 'APPROVED' OR (p.audit_status = 'PENDING' AND p.author_user_id = ?))
-                  AND (? IS NULL OR JSON_CONTAINS(p.tags_json, JSON_QUOTE(?)))
-                ORDER BY p.like_count DESC, p.id DESC
-                LIMIT ? OFFSET ?
                 """;
+        String tagFilter = " AND (? IS NULL OR JSON_CONTAINS(p.tags_json, JSON_QUOTE(?)))\n";
+        // ⚠ 每个 UNION 分支必须**整段加括号**，否则分支里的 ORDER BY ... LIMIT 会被当成作用于
+        // 整个 union，MySQL 直接 1064 语法错误（改完第一版就是 6 个测试全 500，报在 'UNION ALL' 那一行）。
+        String sql = "SELECT * FROM (\n"
+                + "(" + select + "WHERE p.audit_status = 'APPROVED'" + tagFilter
+                + "ORDER BY p.like_count DESC, p.id DESC LIMIT ?)\n"
+                + "UNION ALL\n"
+                + "(" + select + "WHERE p.audit_status = 'PENDING' AND p.author_user_id = ?" + tagFilter
+                + "ORDER BY p.like_count DESC, p.id DESC LIMIT ?)\n"
+                + ") merged ORDER BY merged.like_count DESC, merged.id DESC LIMIT ? OFFSET ?";
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
             RecipeCard recipe = null;
             long recipeId = rs.getLong("recipe_id");
@@ -292,7 +307,12 @@ public class MysqlKitchenStore {
                     readStringList(rs.getString("images_json")),
                     rs.getString("audit_status")
             );
-        }, userId, userId, userId, userId, tag, tag, size, (Math.max(page, 1) - 1) * size);
+        }, // 第一段：mine / my_fav / my_like / tag×2 / LIMIT
+            userId, userId, userId, tag, tag, fetch,
+            // 第二段：同上，多一个 author_user_id
+            userId, userId, userId, userId, tag, tag, fetch,
+            // 外层分页
+            size, offset);
     }
 
     /**
@@ -323,7 +343,7 @@ public class MysqlKitchenStore {
     public List<CommunityPost> myFavoritePosts(long userId) {
         String sql = """
                 SELECT p.id, p.title, u.nickname AS author, p.content, p.like_count, p.comment_count, p.tags_json, p.images_json, p.audit_status,
-                       COALESCE(fav.favorite_count, 0) AS favorite_count,
+                       (SELECT COUNT(*) FROM community_post_favorite f WHERE f.post_id = p.id) AS favorite_count,
                        1 AS favorited,
                        CASE WHEN my_like.user_id IS NULL THEN 0 ELSE 1 END AS liked,
                        CASE WHEN p.author_user_id = ? THEN 1 ELSE 0 END AS mine,
@@ -333,11 +353,6 @@ public class MysqlKitchenStore {
                 JOIN community_post p ON p.id = my_fav.post_id
                 JOIN user_account u ON u.id = p.author_user_id
                 LEFT JOIN recipe r ON r.id = p.recipe_id
-                LEFT JOIN (
-                    SELECT post_id, COUNT(*) AS favorite_count
-                    FROM community_post_favorite
-                    GROUP BY post_id
-                ) fav ON fav.post_id = p.id
                 LEFT JOIN community_post_like my_like ON my_like.post_id = p.id AND my_like.user_id = ?
                 WHERE my_fav.user_id = ?
                 ORDER BY my_fav.id DESC
