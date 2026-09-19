@@ -25,6 +25,8 @@ Page({
     memberCount: 0,
     selfUserId: null,
     loaded: false,
+    // 拉取失败 ≠ 家里没人：两者文案不同，混起来会让用户以为家人被移走了
+    loadFailed: false,
     // 移除确认弹窗
     removeDialogVisible: false,
     pendingRemove: null,
@@ -84,9 +86,15 @@ Page({
         }
       })
       .catch(() => {
-        this.setData({ members: [], memberCount: 0, loaded: true, codeFailed: true });
+        this.setData({ members: [], memberCount: 0, loaded: true, loadFailed: true, codeFailed: true });
         this.showToast('家庭信息加载失败');
       });
+  },
+
+  // 失败态的「重新加载」：state-empty 只发 action 事件，先清错误标记再重拉
+  retryLoad() {
+    this.setData({ loadFailed: false });
+    this.loadProfile();
   },
 
   applyProfile(profile) {
@@ -125,7 +133,8 @@ Page({
       members,
       memberCount: members.length,
       selfUserId: selfId,
-      loaded: true
+      loaded: true,
+      loadFailed: false
     });
   },
 

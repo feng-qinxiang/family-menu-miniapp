@@ -248,15 +248,7 @@
   background: var(--gold-deep);
 }
 
-/* 空态 */
-.mem-empty {
-  padding: 72rpx 32rpx;
-  text-align: center;
-}
-.mem-empty-txt {
-  font-size: calc(26rpx * var(--fs-mul, 1));
-  color: var(--mut);
-}
+/* 空态/失败态改用共享组件 state-empty，本页不再自带样式 */
 
 /* 列表结束分隔语 */
 .mend {
