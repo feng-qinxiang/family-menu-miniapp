@@ -9,14 +9,14 @@
 ## 技术栈与架构
 
 - 后端：Spring Boot 3.2 / Java 17 / Spring JDBC / MySQL 8（Maven Wrapper 自举，无本机 Maven 依赖）
-- 前端：微信小程序原生（39 页面、自定义 TabBar、设计 token 主题化、深色模式）
+- 前端：微信小程序原生（**37 个页面**：主包 7 + 分包 `pkg-extra` 30；自定义 TabBar、设计 token 主题化、深色模式）
 - 测试：`@SpringBootTest` 集成测试连真实 MySQL，覆盖登录→菜单→清单→家庭协作主链路
 - 架构：小程序 ⇄ REST API（`AuthInterceptor` 统一鉴权）⇄ Spring Boot ⇄ MySQL 8；无密码登录（微信 code2session / OTP / 游客会话）
 
 ## 项目结构
 
 - `server/` Spring Boot 3.2 / Java 17 后端 API（包名 `com.familymenu.daily`）
-- `miniapp/` 微信小程序原生前端（39 个页面，含 8 个分包页）
+- `miniapp/` 微信小程序原生前端（37 个页面，其中 30 个在 `pkg-extra` 分包）
 - `docs/` 产品方案、MVP、数据模型、开发路线
 - `spec/` 上线清单（`LAUNCH-CHECKLIST.md`）与历史评审产物
 
@@ -40,11 +40,23 @@ cd server
 | `WECHAT_APP_ID` / `WECHAT_APP_SECRET` | 空 | 微信登录凭据，留空则微信登录不可用并引导手机验证码 |
 | `AUTH_DEV_OTP_ENABLED` | `false` | 开发态固定验证码 `246810` 并回显 devCode，仅供本地联调；**默认关闭**，生产严禁开启 |
 | `APP_SEED_DEMO_DATA` | `true` | 演示数据总开关：启动播种（种子用户/社区帖子）+ 新账号首登补演示菜单/清单/记录/通知。生产由 `application-prod.yml` 固定 `false`，否则真实用户第一屏会出现别人的假数据 |
-| `UPLOAD_DIR` | `uploads` | 上传文件落盘目录 |
+| `UPLOAD_DIR` | `uploads` | 上传文件落盘目录。**生产请给绝对路径**：相对路径落在「进程当前目录」，换 CWD 重启会让已有图片全部 404 |
+| `UPLOAD_ACCESS_SECRET` | 空 | 上传链接的 HMAC 签名密钥。**本地留空即整体关闭签名（零配置可跑）；但 `prod` profile 下留空会在启动时直接抛异常** —— 生成：`openssl rand -hex 32`。`docker-compose.yml` 与 `.env.example` 已把它设为必填，缺了 compose 会当场报错而不是无限重启 |
 
 > ⚠️ **生产安全须知**
 > - `DB_USERNAME` / `DB_PASSWORD` 默认 `root` / `123456` 仅为本地零配置启动方便。**上线前必须用环境变量覆盖为最小权限的专用数据库账号，禁用 root 直连**，切勿沿用默认弱口令。
 > - `AUTH_DEV_OTP_ENABLED` 默认已为 `false`。开启后任意手机号请求验证码会拿到固定码 `246810` 且明文回显，等同任意账号接管，**仅限本地联调临时开启**。生产/测试环境务必保持关闭并接入真实短信网关。
+> - `ADMIN_BOOTSTRAP_TOKEN` 一旦设置就是**长期有效的单因子后台入口**（跳过验证码，只认服务端配的 `ADMIN_BOOTSTRAP_PHONE`）。只在"登不进后台"时临时用，用完删掉并重启。
+
+### 部署完怎么确认它真的活着
+
+```bash
+curl https://<你的域名>/healthz     # → {"status":"UP","db":"UP"}；库连不上时返回 503
+```
+
+这个端点匿名可访问（挂在 `/healthz` 而不是 `/api/**`，所以不吃鉴权拦截器），每次会打一次 `SELECT 1`，
+因此限流过滤器给它配了 60 次/分钟/IP。uptime 监控、容器 healthcheck、nginx 探活都指它；
+契约由 `HealthEndpointTests` 钉住（免鉴权可达 / 必须真打库 / 响应只允许这两个字段，不外泄驱动与异常信息）。
 
 ### 本地开发怎么开验证码
 
@@ -67,7 +79,17 @@ Spring Boot 会自动加载「工作目录下 `config/application.yml`」，优�
 
 数据库结构与种子数据见 `server/sql/create-database.sql`、`server/src/main/resources/schema.sql`、`data.sql`。schema 使用 MySQL 专有语法，需 MySQL 8（H2 跑不通）。
 
-`data.sql` 内置了公共种子数据：16 道左右菜谱、社区帖子与评论。这些是**所有人共享的菜谱库**，与账号无关。
+> ⚠ **`schema.sql` 用的是 `CREATE TABLE IF NOT EXISTS`，改了它不会动已存在的表。**
+> 所以存量库（包括本地开发库）要单独跑 `server/sql/` 下的迁移脚本，新加的索引/列不会出现。
+> 当前待跑的存量库迁移清单以 `spec/LAUNCH-CHECKLIST.md` §7 为准（2026-09-19 为三条）。
+
+> 本地用 Git Bash 时 `./mvnw` 会因路径未转换报 `ClassNotFoundException: plexus.classworlds.launcher.Launcher`，
+> 用 `../.tools/mvn.sh test`（基于自带 wrapper 的绕过脚本）代替；另外新克隆的 `server/mvnw` 可能没有可执行位，先 `chmod +x`。
+
+`data.sql` 只内置**公共菜谱库**那一份种子数据（16 道左右菜谱，与账号无关）。
+**社区帖子和评论不在 `data.sql` 里**——它们在 `data-demo.sql`，受 `APP_SEED_DEMO_DATA` 门控，
+所以生产（该开关固定 `false`）不会带进任何假帖子/假互动。演示帖上看到的 128 赞、16 评论就是这么来的，
+别误以为线上也会有。
 
 ### 演示数据（`APP_SEED_DEMO_DATA`）
 
@@ -89,20 +111,28 @@ cd server
 
 主链路集成测试在 `server/src/test/java/com/familymenu/daily/CoreFlowTests.java`，覆盖：游客登录 → 首页看板 → 菜谱 → 今日菜单 → 购物清单重建 → OTP 下发与登录 → 家庭创建/邀请码/加入/移除 → 反馈提交 → 通知已读。测试用 `@SpringBootTest` 连真实 MySQL，需本机 3306 可用。
 
-全量 **25 个测试类 / 152 项用例**（2026-09-19 本机 `./mvnw test` 实测 0 失败 0 错误），含管理台权限、支付回调验签、手机号绑定安全、会话 token、演示数据开关等专项。
+全量 **28 个测试类 / 164 项用例**（2026-09-19 本机 `./mvnw test` 实测 0 失败 0 错误），含管理台权限、支付回调验签、手机号绑定安全、会话 token、演示数据开关、上传签名与包体积等专项。
 
-> 本地用 Git Bash 时 `./mvnw` 会因路径未转换报 `ClassNotFoundException: plexus.classworlds.launcher.Launcher`，
-> 用 `../.tools/mvn.sh test`（基于自带 wrapper 的绕过脚本）代替。
+> ⚠ **想让本地结果代表 CI，必须先删测试库**：`src/test/resources/application.properties` 指向
+> `family_menu_daily_test_db` 且带 `createDatabaseIfNotExist=true`，所以这个库会跨次运行累积数据。
+> 本机它曾经悄悄替 9 个用例提供了 CI 上根本不存在的帖子，导致本地全绿、CI 全红，还把根因误判成时区。
+> 跑代表性验证前：`DROP DATABASE family_menu_daily_test_db;`（surefire 的 `-Dtest` 用逗号分隔类名，`A+B` 会报 "No tests matching pattern"）。
 
-前端纯逻辑单测（零依赖，node 直接跑）：
+本地没有装 `node` 时，前端那四条门禁可以借任何现成的 Node 运行时跑（本项目 CI 用的是真 `node`）：
 
-```powershell
-node miniapp/test/static-check.js         # 静态自检：页面四件套 / JSON / WXSS 配平 / TabBar 与 tabs.js 一致
-node miniapp/test/dish-logic.test.js      # 点菜、菜谱纯逻辑
-node miniapp/test/kitchen-logic.test.js   # 厨房总控、库存、周菜单纯逻辑
+```bash
+ELECTRON_RUN_AS_NODE=1 <某个 node 可执行文件> miniapp/test/static-check.js
 ```
 
-这三条已接进 CI（`.github/workflows/miniapp-ci.yml`），改 `miniapp/**` 就会跑。
+前端零依赖门禁（四条，都已接进 CI；`.github/workflows/miniapp-ci.yml` 里是**一个 job 跑四步**，
+所以 GitHub 上只看到一个叫 `static-check` 的 check，别以为只跑了静态自检）：
+
+```powershell
+node miniapp/test/static-check.js         # 静态自检：页面四件套 / JSON / WXSS 配平 / TabBar 一致 / token 定义 / 暗底对比度 / 包体积
+node miniapp/test/dish-logic.test.js      # 点菜、菜谱纯逻辑
+node miniapp/test/kitchen-logic.test.js   # 厨房总控、库存、周菜单纯逻辑
+node miniapp/test/interaction-audit.js    # 交互体检：按下反馈、热区尺寸（A 类阻断，B/C 只报告）
+```
 
 ## 小程序
 
