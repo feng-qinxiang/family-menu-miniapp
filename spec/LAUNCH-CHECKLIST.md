@@ -300,14 +300,20 @@ java -Duser.timezone=Asia/Shanghai -jar target/family-menu-daily-server-0.1.0-SN
   而工作区里那份解析通过（`name="miniapp-ci"`、`jobs=["static-check"]`）。
   即：**修复只在未提交的工作区里，GitHub 上那份 YAML 至今仍是坏的**——
   所以「小程序四条门禁」在线上从未真正执行过，job 列表为空就是证据。
-- **server-ci 的失败原因本地复现不出来**：把 HEAD 单独 `git worktree add` 出来
-  （确认过 HEAD 树里没有 `UploadSigner.java` 等未跟踪文件），
-  用 CI 同款参数（空测试库 + `SPRING_SQL_INIT_MODE=always` + `AUTH_DEV_OTP_ENABLED=true`）
-  跑 `mvn -B verify`：**139 项 0 失败、BUILD SUCCESS**；工作区那份跑同一条是 **152 项 0 失败**。
-  本机是 MySQL 8.4 + JDK 21，CI 是 mysql:8.0 + temurin JDK 17，
-  差异只可能出在这两处（或 CI 日志里那条本机看不到的信息）。
-  原始日志需要鉴权（未装 `gh`、无 token），**要定位就得先拿到日志**：
-  装 `gh` 并 `gh auth login`，或在 Actions 页面把「Build and run tests」那一步的日志贴出来。
+- **server-ci 的失败原因已定位并修复**（先前记的"本地复现不出来"是错的，已更正）：
+  差的是**时区**，不是 MySQL/JDK 版本。数据源 URL 里钉了 `serverTimezone=Asia/Shanghai`，
+  于是 MySQL 的**会话时区是 +08:00、`NOW()` 返回北京时间**；而 CI runner 的 JVM 跑在 UTC，
+  `LocalDateTime.now()` 是 UTC 时间。过期时间用 JVM 时钟写入、却用 SQL `NOW()` 校验，
+  两边差 8 小时 → 会话与验证码"一建立就过期" → 鉴权接口全 401。
+  本机两边都是 +08:00，所以之前怎么跑都是绿的。
+  **决定性复现**：把 `origin/master` 单独 `git worktree add` 出来（未修复版），
+  用 CI 同款参数 + `TZ=UTC` 跑 `mvn -B verify` → **139 项 4 失败、BUILD FAILURE**，
+  失败的正是 `PhoneBindSecurityTests` 3 项 + `CoreFlowTests.phoneOtpLoginFlowWorks`，
+  与 CI 报的「Build and run tests exit 1」同一签名。
+  修复见 `AuthService` 改用 `DATE_ADD(NOW(), INTERVAL ?)` 单一时钟：
+  同样条件下 **153 项 0 失败**，默认 +08:00 下也 0 失败。
+  所以**推上去之后 server-ci 大概率直接转绿**；若仍红，才需要去 Actions 拿日志
+  （原始日志需鉴权：`gh auth login`，或把「Build and run tests」那一步的输出贴出来）。
 - 顺带一条：HEAD 里的 `server/mvnw` **没有可执行位**（`sh ./mvnw` 才跑得动，直接执行 exit 126）；
   工作区已修好（`git status` 里的 `M server/mvnw` 就是那个 mode 变更）。CI 用的是 `mvn` 不受影响，
   但任何「克隆下来就 `./mvnw`」的人都会撞上。
