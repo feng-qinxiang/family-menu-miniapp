@@ -360,10 +360,11 @@ class EndpointCoverageTests {
         assertThat(json(mine).get("auditStatus").asText()).isEqualTo("PENDING");
 
         mockMvc.perform(get("/api/community/posts/" + postId))
-                .andExpect(status().isBadRequest());
+                // 待审帖对非作者就是"不存在"：404 而不是 400（R7 把社区资源不存在的语义对齐菜谱详情）
+                .andExpect(status().isNotFound());
     }
 
-    /** 作者能删自己的帖子和评论；别人删不动（403 语义下统一 400）。删除后详情/列表立即不可见。 */
+    /** 作者能删自己的帖子和评论；别人删不动。删除后详情/列表立即不可见（不存在 = 404）。 */
     @Test
     void authorCanDeleteOwnPostAndComment() throws Exception {
         String token = guestLogin();
@@ -395,11 +396,13 @@ class EndpointCoverageTests {
 
         mockMvc.perform(delete("/api/community/posts/" + postId).header("X-Auth-Token", token))
                 .andExpect(status().isOk());
-        // 作者本人看自己被删的帖：400 但带明确文案（区别于"链接失效"），前端透传展示
+        // 作者本人看自己被删的帖：404 但带明确文案（区别于"链接失效"），前端透传展示
         mockMvc.perform(get("/api/community/posts/" + postId).header("X-Auth-Token", token))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("该分享因违规已被下架"));
-        // 重复删除同语义拒绝
+        // 重复删除：仍是 400。删除走的是 `WHERE id=? AND author_user_id=? AND status<>'REMOVED'`，
+        // "已经删了"和"不是你的帖"故意合并成一条文案，避免外人用状态码探测某条帖是否存在。
+        // （详情读取的"不存在"才是 404，见上面那条断言。）
         mockMvc.perform(delete("/api/community/posts/" + postId).header("X-Auth-Token", token))
                 .andExpect(status().isBadRequest());
     }

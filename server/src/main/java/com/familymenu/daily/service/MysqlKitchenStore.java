@@ -20,6 +20,8 @@ import com.familymenu.daily.dto.ApiModels.CommunityReportRequest;
 import com.familymenu.daily.dto.ApiModels.UpdateRecipeRequest;
 import com.familymenu.daily.dto.ApiModels.VipStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +39,8 @@ import java.util.regex.Pattern;
 @Service
 public class MysqlKitchenStore {
 
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(MysqlKitchenStore.class);
+
     private static final Pattern URL_PATTERN = Pattern.compile("(https?://\\S+)");
     private static final TypeReference<List<String>> STRING_LIST = new TypeReference<>() {
     };
@@ -44,12 +48,42 @@ public class MysqlKitchenStore {
     private final JdbcTemplate jdbcTemplate;
     private final ObjectMapper objectMapper;
     private final com.familymenu.daily.payment.MembershipService membershipService;
+    private final org.springframework.transaction.support.TransactionTemplate txTemplate;
 
     public MysqlKitchenStore(JdbcTemplate jdbcTemplate, ObjectMapper objectMapper,
-                             com.familymenu.daily.payment.MembershipService membershipService) {
+                             com.familymenu.daily.payment.MembershipService membershipService,
+                             org.springframework.transaction.PlatformTransactionManager txManager) {
         this.jdbcTemplate = jdbcTemplate;
         this.objectMapper = objectMapper;
         this.membershipService = membershipService;
+        this.txTemplate = new org.springframework.transaction.support.TransactionTemplate(txManager);
+    }
+
+    /**
+     * 在事务里跑一段活，遇到并发冲突就地重启。
+     *
+     * 为什么必须有：两个人同一瞬间点同一个帖时，两个事务会互等对方持有的行锁，
+     * InnoDB 直接回滚其中一方，报错原文的建议就是 "try restarting transaction"。
+     * 回滚是 InnoDB 的正常调度，但把它的 500 抛给小程序就是缺陷——用户看到的是
+     * 「操作失败」，而重试一次必然成功。
+     * 重试只能放在事务边界**外面**（@Transactional 自己没法重试自己，回滚后方法内的
+     * 状态已经不可信），所以这几个写入口都走这里而不是直接标 @Transactional。
+     */
+    private <T> T inTxWithDeadlockRetry(java.util.function.Supplier<T> work) {
+        for (int attempt = 0; ; attempt++) {
+            try {
+                return txTemplate.execute(status -> work.get());
+            } catch (org.springframework.dao.ConcurrencyFailureException
+                     | org.springframework.dao.DuplicateKeyException ex) {
+                // DuplicateKeyException 也要重试：两个人同一瞬间点同一个帖，
+                // 两边都探到"没点过"，后提交的那条会撞 uk_post_user。
+                // 重试一次后必然探到"已存在"→ 走取消分支，用户看到的是 200 而不是 409。
+                if (attempt >= 2) {
+                    throw ex;
+                }
+                log.warn("并发冲突，重启事务（第 {} 次重试）：{}", attempt + 1, ex.getMessage());
+            }
+        }
     }
 
     @Transactional
@@ -451,8 +485,12 @@ public class MysqlKitchenStore {
         );
     }
 
-    @Transactional
     public CommunityCommentItem addCommunityComment(long postId, long userId, CommunityCommentRequest request,
+                                                   String auditStatus) {
+        return inTxWithDeadlockRetry(() -> addCommunityCommentTx(postId, userId, request, auditStatus));
+    }
+
+    private CommunityCommentItem addCommunityCommentTx(long postId, long userId, CommunityCommentRequest request,
                                                    String auditStatus) {
         String content = request == null || request.content() == null ? "" : request.content().trim();
         if (content.isBlank()) {
@@ -460,120 +498,117 @@ public class MysqlKitchenStore {
         }
         String status = auditStatus == null ? ContentSecurityService.STATUS_PENDING : auditStatus;
         ensureCommunityPostExists(postId);
-        jdbcTemplate.update("""
-                        INSERT INTO community_post_comment(post_id, user_id, content, audit_status)
-                        VALUES (?, ?, ?, ?)
-                        """,
-                postId,
-                userId,
-                content,
-                status
-        );
+        // 取回自己刚插的那一行的 id。原来回显用的是"该帖最新一条评论"（下面 ORDER BY c.id DESC LIMIT 1），
+        // 两个人同时评论时，后到的那条会把先到的顶掉——A 发完看到的就是 B 的文字。
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement("""
+                    INSERT INTO community_post_comment(post_id, user_id, content, audit_status)
+                    VALUES (?, ?, ?, ?)
+                    """, Statement.RETURN_GENERATED_KEYS);
+            ps.setLong(1, postId);
+            ps.setLong(2, userId);
+            ps.setString(3, content);
+            ps.setString(4, status);
+            return ps;
+        }, keyHolder);
+        Number newId = keyHolder.getKey();
         // 只有公开可见的评论才计入 comment_count，否则列表显示的评论数与实际不符
         if (ContentSecurityService.STATUS_APPROVED.equals(status)) {
             jdbcTemplate.update("UPDATE community_post SET comment_count = comment_count + 1 WHERE id = ?", postId);
         }
-        return jdbcTemplate.queryForObject("""
-                        SELECT c.id, c.post_id, c.user_id, u.nickname AS author, c.content,
-                               DATE_FORMAT(c.created_at, '%Y-%m-%d %H:%i') AS created_at, c.audit_status
-                        FROM community_post_comment c
-                        JOIN user_account u ON u.id = c.user_id
-                        WHERE c.post_id = ? AND c.deleted = 0
-                        ORDER BY c.id DESC
-                        LIMIT 1
-                        """,
-                (rs, rowNum) -> new CommunityCommentItem(
-                        rs.getLong("id"),
-                        rs.getLong("post_id"),
-                        rs.getString("author"),
-                        rs.getString("content"),
-                        rs.getString("created_at"),
-                        userId == rs.getLong("user_id"),
-                        rs.getString("audit_status")
-                ),
-                postId
+        return newId == null
+                // 驱动/代理没回自增 id 的兜底：退回"该帖最新一条"。并发下可能回显成别人的那条，
+                // 但总比抛 EmptyResultDataAccessException 把接口打成 500 好。
+                ? latestCommentOf(postId, userId)
+                : commentOf(newId.longValue(), userId);
+    }
+
+    private static final String COMMENT_SELECT = """
+            SELECT c.id, c.post_id, c.user_id, u.nickname AS author, c.content,
+                   DATE_FORMAT(c.created_at, '%Y-%m-%d %H:%i') AS created_at, c.audit_status
+            FROM community_post_comment c
+            JOIN user_account u ON u.id = c.user_id
+            """;
+
+    private CommunityCommentItem commentOf(long commentId, long viewerUserId) {
+        return jdbcTemplate.queryForObject(COMMENT_SELECT + " WHERE c.id = ?",
+                (rs, rowNum) -> toCommentItem(rs, viewerUserId), commentId);
+    }
+
+    private CommunityCommentItem latestCommentOf(long postId, long viewerUserId) {
+        return jdbcTemplate.queryForObject(COMMENT_SELECT + " WHERE c.post_id = ? AND c.deleted = 0 ORDER BY c.id DESC LIMIT 1",
+                (rs, rowNum) -> toCommentItem(rs, viewerUserId), postId);
+    }
+
+    private CommunityCommentItem toCommentItem(java.sql.ResultSet rs, long viewerUserId) throws java.sql.SQLException {
+        return new CommunityCommentItem(
+                rs.getLong("id"),
+                rs.getLong("post_id"),
+                rs.getString("author"),
+                rs.getString("content"),
+                rs.getString("created_at"),
+                viewerUserId != 0 && viewerUserId == rs.getLong("user_id"),
+                rs.getString("audit_status")
         );
     }
 
-    @Transactional
-    public CommunityPost toggleCommunityFavorite(long postId, long userId) {
-        ensureCommunityPostExists(postId);
-        Integer existing = jdbcTemplate.query("""
-                        SELECT 1
-                        FROM community_post_favorite
-                        WHERE post_id = ? AND user_id = ?
-                        LIMIT 1
-                        """,
-                rs -> rs.next() ? 1 : null,
-                postId,
-                userId
-        );
-        if (existing == null) {
-            jdbcTemplate.update("""
-                            INSERT INTO community_post_favorite(post_id, user_id)
-                            VALUES (?, ?)
-                            """,
-                    postId,
-                    userId
-            );
+    /**
+     * 判"点没点过"并翻转账号状态。
+     *
+     * ⚠ 这里刻意不用「INSERT ... ON DUPLICATE KEY UPDATE 的受影响行数」判方向：
+     * Connector/J 默认 `useAffectedRows=false`（按**匹配行数**报），于是"行已存在、值没变"
+     * 也返回 1，`== 1` 会把"取消点赞"错判成"新点赞"——CoreFlowTests 的
+     * `communityPostLikeTogglesAndKeepsCountInSync` 正是这么抓到的（第二次点完 liked 仍为 true）。
+     * 也试过 INSERT IGNORE：它撞唯一键时取共享锁，两个线程各持一把再去 DELETE 就互等成 InnoDB 死锁。
+     * 所以回到"先探后写"，唯一键冲突交给外层重试（并发下必有一方拿到 Duplicate key）。
+     */
+    private boolean toggleRow(String table, long postId, long userId) {
+        boolean existed = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM " + table + " WHERE post_id = ? AND user_id = ?",
+                Integer.class, postId, userId) > 0;
+        if (existed) {
+            jdbcTemplate.update("DELETE FROM " + table + " WHERE post_id = ? AND user_id = ?", postId, userId);
         } else {
-            jdbcTemplate.update("""
-                            DELETE FROM community_post_favorite
-                            WHERE post_id = ? AND user_id = ?
-                            """,
-                    postId,
-                    userId
-            );
+            jdbcTemplate.update("INSERT INTO " + table + "(post_id, user_id) VALUES (?, ?)", postId, userId);
         }
-        return findCommunityPost(postId, userId);
+        return !existed;
+    }
+
+    public CommunityPost toggleCommunityFavorite(long postId, long userId) {
+        return inTxWithDeadlockRetry(() -> {
+            ensureCommunityPostExists(postId);
+            toggleRow("community_post_favorite", postId, userId);
+            return findCommunityPost(postId, userId);
+        });
     }
 
     /**
      * 点赞 / 取消点赞（每人每帖一次）。同步维护 community_post.like_count，
      * 保证排序（ORDER BY like_count DESC）与列表计数一致。
      */
-    @Transactional
     public CommunityPost toggleCommunityLike(long postId, long userId) {
-        ensureCommunityPostExists(postId);
-        Integer existing = jdbcTemplate.query("""
-                        SELECT 1
-                        FROM community_post_like
-                        WHERE post_id = ? AND user_id = ?
-                        LIMIT 1
-                        """,
-                rs -> rs.next() ? 1 : null,
-                postId,
-                userId
-        );
-        if (existing == null) {
-            jdbcTemplate.update("""
-                            INSERT INTO community_post_like(post_id, user_id)
-                            VALUES (?, ?)
-                            """,
-                    postId,
-                    userId
-            );
-            jdbcTemplate.update("""
-                            UPDATE community_post SET like_count = like_count + 1 WHERE id = ?
-                            """,
-                    postId
-            );
-        } else {
-            jdbcTemplate.update("""
-                            DELETE FROM community_post_like
-                            WHERE post_id = ? AND user_id = ?
-                            """,
-                    postId,
-                    userId
-            );
-            // GREATEST 兜底：历史数据 like_count 可能大于真实点赞行数，避免减成负数
-            jdbcTemplate.update("""
-                            UPDATE community_post SET like_count = GREATEST(like_count - 1, 0) WHERE id = ?
-                            """,
-                    postId
-            );
-        }
-        return findCommunityPost(postId, userId);
+        return inTxWithDeadlockRetry(() -> {
+            ensureCommunityPostExists(postId);
+            toggleRow("community_post_like", postId, userId);
+            syncCommunityLikeCount(postId);
+            return findCommunityPost(postId, userId);
+        });
+    }
+
+    /**
+     * 点赞计数从行重算，不做 ±1。
+     * 增量维护在并发下会和真实行数漂移（原代码那句 GREATEST(like_count - 1, 0) 的注释
+     * 已经承认"历史数据 like_count 可能大于真实点赞行数"——遮羞不解决），
+     * 而这条 feed 按 like_count 排序，漂了就会让列表顺序和卡片上的数字互相对不上。
+     * 计数走 uk_post_user 的 post_id 前缀，单帖一次索引内计数。
+     */
+    private void syncCommunityLikeCount(long postId) {
+        jdbcTemplate.update("""
+                UPDATE community_post p
+                SET p.like_count = (SELECT COUNT(*) FROM community_post_like l WHERE l.post_id = p.id)
+                WHERE p.id = ?
+                """, postId);
     }
 
     @Transactional
@@ -863,8 +898,12 @@ public class MysqlKitchenStore {
         ), params.toArray());
     }
 
-    @Transactional
     public CookHistoryItem addCookHistory(long userId, long familyId, AddCookHistoryRequest request) {
+        // 走重试事务：扣冰箱库存是"读-改-写"，两个人同时做完同一道菜时后一个必须在新快照上重来一次
+        return inTxWithDeadlockRetry(() -> addCookHistoryTx(userId, familyId, request));
+    }
+
+    private CookHistoryItem addCookHistoryTx(long userId, long familyId, AddCookHistoryRequest request) {
         if (request == null || request.recipeId() == null) {
             throw new IllegalArgumentException("recipeId required");
         }
@@ -960,15 +999,47 @@ public class MysqlKitchenStore {
                 (rs, n) -> new PantryDeduction.Stock(rs.getLong("id"), rs.getString("ingredient_name"),
                         rs.getString("unit"), rs.getString("amount")),
                 familyId);
+        // 读-改-写之间必须防"两个人同时做完同一道菜"：
+        // 原来把库存读进 Java、算完再写**绝对值**，两个家人同时上桌就都按"8 个"扣 2，
+        // 结果都是写 6，第二次的扣减凭空消失。改成把读到的原始字符串放进 WHERE
+        // （乐观条件），0 行说明有人先改了 → 重新读一遍库存再规划一次。
         int changed = 0;
-        for (PantryDeduction.Change c : PantryDeduction.plan(needed, stock)) {
-            if (c.after() <= 0) {
-                changed += jdbcTemplate.update("DELETE FROM pantry_item WHERE id = ? AND family_id = ?",
-                        c.stockId(), familyId);
-            } else {
-                changed += jdbcTemplate.update("UPDATE pantry_item SET amount = ? WHERE id = ? AND family_id = ?",
-                        formatPantryAmount(c.after()), c.stockId(), familyId);
+        boolean conflicted = false;
+        for (int attempt = 0; attempt < 2; attempt++) {
+            Map<Long, String> readAmount = new java.util.HashMap<>();
+            for (PantryDeduction.Stock s : stock) {
+                readAmount.put(s.id(), s.amount());
             }
+            conflicted = false;
+            for (PantryDeduction.Change c : PantryDeduction.plan(needed, stock)) {
+                String was = readAmount.get(c.stockId());
+                int n = c.after() <= 0
+                        ? jdbcTemplate.update("DELETE FROM pantry_item WHERE id = ? AND family_id = ? AND amount <=> ?",
+                                c.stockId(), familyId, was)
+                        : jdbcTemplate.update("UPDATE pantry_item SET amount = ? WHERE id = ? AND family_id = ? AND amount <=> ?",
+                                formatPantryAmount(c.after()), c.stockId(), familyId, was);
+                if (n == 0) {
+                    conflicted = true;
+                    continue;
+                }
+                changed += n;
+            }
+            if (!conflicted) {
+                return changed;
+            }
+            // 有人同时改过这一行。**在同一事务里重读是没用的**：REPEATABLE READ 的快照
+            // 停在第一次读的那一刻，重读还是旧值（实测这样只会连着两次都算出 6）。
+            // 所以直接抛乐观锁冲突，让外层 inTxWithDeadlockRetry 开一个**新事务**（新快照）重来。
+            stock = jdbcTemplate.query(
+                    "SELECT id, ingredient_name, unit, amount FROM pantry_item WHERE family_id = ?"
+                            + " ORDER BY (expires_at IS NULL), expires_at ASC, id ASC",
+                    (rs, n) -> new PantryDeduction.Stock(rs.getLong("id"), rs.getString("ingredient_name"),
+                            rs.getString("unit"), rs.getString("amount")),
+                    familyId);
+        }
+        if (conflicted) {
+            throw new org.springframework.dao.OptimisticLockingFailureException(
+                    "冰箱库存被同时改动，本次扣减需要重试");
         }
         return changed;
     }
@@ -1294,7 +1365,11 @@ public class MysqlKitchenStore {
     private CommunityPost findCommunityPost(long postId, long userId) {
         CommunityPost found = loadCommunityPostById(postId, userId);
         if (found == null) {
-            throw new IllegalArgumentException("community post not found");
+            // 资源不存在就是 404。原来抛 IllegalArgumentException 会被全局处理器映射成 400，
+            // 客户端无法区分"我参数写错了"和"这条帖已经没了"；菜谱详情走的就是 404（见 :767），
+            // 社区这三处对齐同一个语义。
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.NOT_FOUND, "community post not found");
         }
         return found;
     }
@@ -1400,9 +1475,14 @@ public class MysqlKitchenStore {
             //（避免陌生人借 400 文案探测帖子是否曾存在）
             if (info != null && userId != 0 && info.authorUserId() == userId
                     && "REMOVED".equals(info.auditStatus())) {
-                throw new IllegalArgumentException("该分享因违规已被下架");
+                throw new org.springframework.web.server.ResponseStatusException(
+                        org.springframework.http.HttpStatus.NOT_FOUND, "该分享因违规已被下架");
             }
-            throw new IllegalArgumentException("community post not found");
+            // 资源不存在就是 404。原来抛 IllegalArgumentException 会被全局处理器映射成 400，
+            // 客户端无法区分"我参数写错了"和"这条帖已经没了"；菜谱详情走的就是 404（见 :767），
+            // 社区这三处对齐同一个语义。
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.NOT_FOUND, "community post not found");
         }
         return loadCommunityPostById(postId, userId);
     }
@@ -1448,7 +1528,11 @@ public class MysqlKitchenStore {
                 postId
         );
         if (exists == null) {
-            throw new IllegalArgumentException("community post not found");
+            // 资源不存在就是 404。原来抛 IllegalArgumentException 会被全局处理器映射成 400，
+            // 客户端无法区分"我参数写错了"和"这条帖已经没了"；菜谱详情走的就是 404（见 :767），
+            // 社区这三处对齐同一个语义。
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.NOT_FOUND, "community post not found");
         }
     }
 

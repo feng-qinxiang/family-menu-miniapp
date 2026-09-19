@@ -35,6 +35,20 @@
 
 ### Fixed
 
+- **并发点赞不再报错**：原来"先查再插"，两个人同一瞬间点同一个帖时第二条撞唯一键变成
+  409「记录已存在，请勿重复操作」。现在把唯一键冲突与 InnoDB 死锁一起纳入**事务外重试**
+  （`inTxWithDeadlockRetry`，MySQL 对死锁的建议原文就是 "try restarting transaction"）。
+  中途两个失败的第一版都记进了清单：`INSERT IGNORE` 会因共享锁互等成死锁；
+  `ON DUPLICATE KEY UPDATE` 的受影响行数在 Connector/J 默认 `useAffectedRows=false` 下
+  会把"取消点赞"错判成"新点赞"。
+- **两个人同时做完同一道菜，两次扣减都在**：冰箱库存原来是读进内存算完写绝对值，
+  两边都写回 6、后一次扣减凭空消失。改成带原始值的乐观条件 + 冲突时抛
+  `OptimisticLockingFailureException` 让外层开**新事务**（同一事务里重读无效：
+  REPEATABLE READ 的快照停在第一次读那一刻）。
+- **并发评论不再回显成别人的文字**：回显原来取"该帖最新一条"，改为按生成键取自己那行。
+- **点赞计数改为从行重算**，不再 ±1：增量维护会和真实行数漂移，而 feed 按 `like_count` 排序。
+- **社区"资源不存在"从 400 改成 404**，与菜谱详情同一语义（重复删除仍故意留 400，
+  那是"已删/非本人"合并文案的反探测设计）。
 - **社区信息流每次翻页都全表扫一遍收藏数**：`LEFT JOIN (SELECT post_id, COUNT(*) FROM
   community_post_favorite GROUP BY post_id)` 那个派生表没有按本页帖子收敛（EXPLAIN 里是
   `DERIVED ... Using index`），改成按行相关子查询后每页只数 20 次。

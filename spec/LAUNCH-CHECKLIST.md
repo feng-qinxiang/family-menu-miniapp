@@ -345,6 +345,19 @@
 | 顺带看到的一条（未改，记账） | ⚠ 待评估 | general_log 按形状聚合时看到**每个 API 请求都带 3~5 次鉴权链查询**（`user_membership` 有效期、`family_member` 归属、`user_account` 全字段），量级是业务查询的好几倍。这是拦截器逐请求查库，不是某个接口的缺陷；当前 QPS 下无感，**上线后要真出问题再动**（缓存会话→用户→家庭三元组即可），本轮不碰。 |
 | 门禁 | ✅ 全绿 | `mvn test` **183 项 0 失败**（181 + 新增 2），并且 `-Dsurefire.runOrder=reversealphabetical` 反序全量同样 0 失败。 |
 
+### 第六轮 R7（2026-09-19）：三处写路径竞态 + 社区"不存在"改 404
+
+| 项 | 结果 | 证据：怎么量的 / 修复前测到什么 / 修复后测到什么 |
+| --- | --- | --- |
+| 并发点赞不再 409 | ✅ | 修复前：先 `SELECT 1 FROM community_post_like` 再决定 INSERT/DELETE，两条同时到达都读到"没点过"，第二条撞 `uk_post_user` → 409「记录已存在，请勿重复操作」。<br>**量法**：`CommunityWriteRaceTests` 用 `CyclicBarrier(2)` 把两个请求对齐到同一瞬间。**修复前实测 `[200, 500]`**（第二条不是 409 就是死锁 500），**修复后 `[200, 200]`** 且 `like_count == COUNT(community_post_like)`。 |
+| ⚠ 两个失败的第一版（都记下来，别再踩） | 已推翻重做 | ① **`INSERT IGNORE` 更糟**：它撞唯一键时取的是**共享锁**，两个线程各持一把 S 锁再去 DELETE → InnoDB 死锁，实测 `CannotAcquireLockException: Deadlock found when trying to get lock; try restarting transaction`，接口 500。② **`ON DUPLICATE KEY UPDATE` 的受影响行数判方向也不可信**：Connector/J 默认 `useAffectedRows=false`（按**匹配行数**报），"行存在且值没变"照样返回 1，于是"取消点赞"被错判成"新点赞"——`CoreFlowTests.communityPostLikeTogglesAndKeepsCountInSync` 当场抓到（`Expecting value to be false but was true`）。<br>最终写法：回到"先探后写"，把 `DuplicateKeyException` 与 `ConcurrencyFailureException` 一起纳入**事务外重试**。 |
+| 事务外重试（`inTxWithDeadlockRetry`） | ✅ 实测被触发 | MySQL 对死锁给的建议原文就是 "try restarting transaction"，而 `@Transactional` 自己没法重试自己（回滚后方法内状态不可信）。做法：注入 `PlatformTransactionManager` 建 `TransactionTemplate`，写入口改成 `inTxWithDeadlockRetry(() -> ...)`，冲突时最多重启 2 次。<br>**证据**：测试日志里能看到 `WARN ... 并发冲突，重启事务（第 1 次重试）`，分别出现在 `UPDATE community_post p SET like_count=...`（点赞）与 `冰箱库存被同时改动，本次扣减需要重试`（扣库存）上——**重试路径是真被走到的，不是摆设**。 |
+| 两人同时做完同一道菜，两次扣减都在 | ✅ | 修复前：把库存读进 Java、算完写**绝对值**，两边都算出 6 → 后一次的扣减凭空消失（实测断言 `6.0 isBetween [2.0, 4.0001]` 失败，正是旧行为）。<br>改法：`UPDATE ... WHERE id=? AND family_id=? AND amount <=> <读到的原值>`（乐观条件），0 行即冲突。<br>⚠ **第一版在同一事务里"重读一次"是无效的**：REPEATABLE READ 的快照停在第一次读那一刻，重读还是 8 → 又算出 6。改成**抛 `OptimisticLockingFailureException`** 让外层开新事务（新快照）重来，才真的扣到 4。<br>`amount` 仍是 VARCHAR（改 DECIMAL 属另一件事，本轮不动），所以比较用 `<=>` 带原始字符串。 |
+| 并发评论不再回显成别人的文字 | ✅ | 修复前 `addCommunityComment` 回显用 `WHERE post_id=? ORDER BY id DESC LIMIT 1`（该帖最新一条）→ A 发完看到的可能是一毫秒前插进来的 B 的评论。<br>改法：`PreparedStatement(…, RETURN_GENERATED_KEYS)` 拿自增 id，按 id 回显；拿不到 id 时才退回"最新一条"（并写明这条兜底可能回显错、但好过把接口打成 500——第一版我写的 `WHERE c.id = ?` 传 null 就是这个坑，`EmptyResultDataAccessException` 直接 500，已改成两条明确路径）。<br>**量法**：两线程各发两条不同文案，断言每次响应 `content` 等于自己发的那条 → 4 条全对。 |
+| 社区"资源不存在"从 400 改成 404 | ✅（一处刻意保留 400） | `ensureCommunityPostExists` 等三处 `IllegalArgumentException("community post not found")` → `ResponseStatusException(NOT_FOUND, ...)`，与菜谱详情（`:767`）同一语义；作者看自己被下架的帖仍带中文原因（`该分享因违规已被下架`），客户端 `api.js` 读的是 `data.error`，状态码变了文案没变。<br>⚠ **删除接口重复删除故意留 400**：那条 SQL 把"已经删了"和"不是你的帖"合并成一句文案，就是为了不让外人用状态码探测某条帖是否存在——改它等于把这个反探测设计拆掉。测试注释里写明了。 |
+| 门禁 | ✅ 全绿 | `mvn test` **186 项 0 失败**（183 + 新增 3）；反序全量同样 0 失败；**竞态类连跑 3 次都过**（这类测试必须测稳定性，不然 CI 上会随机红）。 |
+
+
 
 
 
