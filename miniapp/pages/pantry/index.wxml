@@ -12,7 +12,7 @@
     <view class="phero-copy">
       <text class="phero-tag">我的冰箱</text>
       <view class="title-stroke title-shadow phero-title">冰箱<text class="pop">库存</text></view>
-      <view class="phero-sub">家里现在有什么，点菜前先看一眼</view>
+      <view class="phero-sub">家里现在有什么，点菜前先看一眼 · 做完菜按用量自动扣</view>
       <view class="phero-stats">
         <view class="phstat">
           <view class="phstat-n">{{pantrySummary.count}}</view>
