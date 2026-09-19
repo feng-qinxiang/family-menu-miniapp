@@ -490,6 +490,32 @@ WXSS 配平与注释风格、图片/组件引用、事件处理函数存在性�
 > 顺带确认：三份 workflow 里**没有任何 `${{ }}` 插值**进 `run`，
 > 不存在把 event 载荷拼进 shell 的注入面。
 
+### server-ci 剩余失败的真实原因（2026-09-19 push 后首次拿到日志）
+
+push 成功后 CI 结果：`miniapp-ci` **success**（四条门禁历史上第一次真正执行）、
+`workflows-ci-lint` **success**、`server-ci` **failure**：`Tests run: 153, Failures: 1, Errors: 8`。
+
+**不是时区**（那个修复解决的是另一个真实存在的跨时区登录 401 bug，已在 CI 里生效：
+日志时间戳已是 +08:00）。剩下的 9 个失败全是**测试自己依赖库里已有社区帖子**：
+
+- `AdminModulesTests.postId()` 的实现是
+  `SELECT id FROM community_post ORDER BY id LIMIT 1` —— 它**不创建数据，只假设已有**；
+  空库上 `queryForObject` 抛 `EmptyResultDataAccessException: expected 1, actual 0`，
+  连带 8 个用例失败。
+- `CoreFlowTests.communityPostLikeTogglesAndKeepsCountInSync` 断言公开 feed
+  `posts.size() > 0`，同样假设已有帖子。
+- 而 `data.sql`（生产/CI 都会执行的公共菜谱库）里 `community_post` 插入数是 **0**，
+  帖子只存在于 `data-demo.sql`，后者被 `app.seed-demo-data=false` 挡掉。
+  本机测试库因为历次跑动已经攒了帖子，所以本地一直是绿的——**这是本地漂移，不是代码正确**。
+
+**正确修法**（下次做，别用"给 CI 打开演示种子"糊过去，那会把假数据带进测试语义）：
+让这 9 个用例自带 fixture —— 参照已经通过的 `CoreFlowInvariantsTests`（它自己发帖再断言），
+在 `@BeforeEach` 里建帖/建评论，而不是依赖库里恰好有。
+
+`gh` 已登录且 token 带 `workflow` scope；push 需走代理且必须清空凭据助手列表：
+`git -c credential.helper= -c http.proxy=http://127.0.0.1:7897 -c https.proxy=http://127.0.0.1:7897 -c http.version=HTTP/1.1 -c credential.helper='!gh auth git-credential' push origin master`
+（git 全局 `credential.helper=osxkeychain` 会优先返回 keychain 里的旧 token，导致补过 scope 仍被拒。）
+
 ### 跨家庭数据隔离（IDOR）实测结论（2026-09-19）
 
 拿两个独立游客（**必须带不同的 `X-Device-Id`**，否则后端按同一台设备折叠成同一个账号，
