@@ -1,21 +1,6 @@
 // pages/community/post-detail · 帖子详情（全新页）
 const api = require('../../../utils/api');
 
-const FALLBACK_DISHES = [
-  'beef-broccoli', 'chicken-congee', 'egg-drop-soup', 'fried-rice',
-  'hongshao-pork', 'hot-sour-soup', 'kungpao-chicken', 'lo-mein',
-  'long-beans', 'mapo-tofu', 'orange-chicken', 'shrimp-peas',
-  'sichuan-eggplant', 'sweet-sour-chicken', 'tomato-egg', 'wontons'
-];
-
-// 根据 id/title 稳定挑一张本地菜图兜底
-function pickDish(seed) {
-  const s = String(seed || '');
-  let sum = 0;
-  for (let i = 0; i < s.length; i++) sum += s.charCodeAt(i);
-  return '/assets/dishes/' + FALLBACK_DISHES[sum % FALLBACK_DISHES.length] + '.jpg';
-}
-
 // 头像底色循环（与设计稿一致的撞色梯度）
 const AVA_THEMES = ['lin', 'lan', 'zhao', 'gold', 'pine'];
 function avaTheme(seed) {
@@ -31,7 +16,11 @@ function avaText(name) {
 // 把帖子原始字段标准化为视图模型
 function normalizePost(post) {
   if (!post) return null;
-  const cover = (post.recipe && post.recipe.coverImage) || pickDish(post.id || post.title);
+  // 只认「本帖关联菜谱的封面」。之前没菜谱的帖子会按 id 稳定挑一张本地库存菜图当大图，
+  // 邻居的分享就被显示成了不相干的一道菜——列表页已因同样的理由去掉过这个兜底
+  // （见 pages/community/index.js 的 photo 注释），详情页漏改了。
+  // 帖子自己上传的实拍图走 images 画廊渲染，不在这里冒充。
+  const cover = (post.recipe && post.recipe.coverImage) || '';
   const paragraphs = String(post.content || '')
     .split(/\n+/)
     .map((t) => t.trim())
