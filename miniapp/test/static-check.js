@@ -24,6 +24,7 @@
  *  11. .wxss 里 var(--token) 引用的名字是否真有定义（拼错的 token 会静默丢样式）
  *  12. 恒定暗底（沉浸）页的前景/填充色是否在浅色档和深色档都成立（深色档翻出 #333 正文即失败）
  *  13. 绑了动态文本的标题是否用了「单行展示字」的紧凑行高（长菜名一换行两行字会互压）
+ *  14. 主包/分包体积（按真实字节，非 du 的磁盘块）：逼近 2MB 上限就报，超了才判失败
  *
  * 退出码：有问题返回 1（可直接用于 CI）
  */
@@ -508,6 +509,45 @@ for (const file of files) {
   }
 }
 
+// ---- 14. 包体积：主包逼近微信上限时先说，超了才判失败 ----
+// 微信主包上限 2MB（单个分包也是 2MB，整包 30MB）。实测按文件真实字节累加：
+// 主包 1.36MB（68%）、分包 pkg-extra 0.53MB —— 还有余量，但没人盯着就没人知道什么时候顶穿，
+// 而上传报错（"main package source size exceed max limit"）只说超限、不说谁占的。
+// ⚠ 别用 `du -sk` 估包体积：它按磁盘块（4KB/文件）计，本项目两百多个小文件会让主包
+// 从 1.36MB 虚报成 1.84MB（我本轮就这么错过一次，差点写出"再加两张图就顶穿"的错结论）。
+// 只有真超过上限才判红；没超时判红会淹没真正的失败。
+const MAIN_LIMIT_KB = 2 * 1024;
+const WARN_KB = Math.round(MAIN_LIMIT_KB * 0.85);
+const sizeKb = (dir) => {
+  let total = 0;
+  for (const f of walk(path.join(ROOT, dir))) {
+    // packOptions.ignore 里列的目录不会被打包，别把它算进主包
+    const r = rel(f);
+    if (r.startsWith('test/')) continue;
+    total += fs.statSync(f).size;
+  }
+  return Math.round(total / 1024);
+};
+const subRoots = (app.subpackages || []).map((sp) => sp.root);
+const mainKb = walk(ROOT).reduce((acc, f) => {
+  const r = rel(f);
+  if (r.startsWith('test/') || f.includes('/test/')) return acc;
+  if (subRoots.some((sr) => r.startsWith(sr + '/'))) return acc;
+  return acc + fs.statSync(f).size;
+}, 0) / 1024;
+const sizeLines = [`主包 ${Math.round(mainKb / 10.24) / 100}MB / 2MB`];
+for (const sr of subRoots) sizeLines.push(`分包 ${sr} ${Math.round(sizeKb(sr) / 10.24) / 100}MB / 2MB`);
+console.log('包体积：' + sizeLines.join(' · '));
+const sizeWarns = [];
+if (mainKb > MAIN_LIMIT_KB) {
+  problems.push(`主包已超微信 2MB 上限（实测 ${Math.round(mainKb / 10.24) / 100}MB），上传会直接失败` +
+    '——把只被分包页面用到的资源挪进分包，或压掉 assets 里的占位图');
+} else if (mainKb > WARN_KB) {
+  sizeWarns.push(`主包已用掉微信 2MB 上限的 ${Math.round(mainKb * 100 / MAIN_LIMIT_KB)}%` +
+    `（${Math.round(mainKb / 10.24) / 100}MB）——再加一两张 assets 图就可能顶穿，` +
+    '新资源优先放分包或走远程图');
+}
+
 // ---- 提审前必须由部署方填写的项（只报告、不阻断）----
 // 为什么不阻断：这两个值只有部署方能给（要等 ICP 备案下来的域名、以及运营者本人姓名/联系方式），
 // 在拿到之前把 CI 判红只会淹没其它真正需要看的失败。所以每次运行都显式列出来，
@@ -540,6 +580,10 @@ console.log(`检查了 ${files.length} 个文件`);
 if (preflight.length) {
   console.log('\n⚠ 提审前需部署方填写（不阻断 CI，但缺了就等着被驳回）：');
   preflight.forEach((p) => console.log('  · ' + p));
+}
+if (sizeWarns.length) {
+  console.log('\n⚠ 包体积（不阻断，但微信的 2MB 主包上限是硬约束）：');
+  sizeWarns.forEach((p) => console.log('  · ' + p));
 }
 if (problems.length) {
   console.error(`\n✘ 发现 ${problems.length} 个问题：`);
