@@ -388,7 +388,7 @@ Page({
         pendingCount,
         purchasedCount,
         progressPercent,
-        statusText: totalCount ? (pendingCount ? `还差 ${pendingCount} 项` : '今天买齐了') : '今天不用买'
+        statusText: totalCount ? (pendingCount ? `还差 ${pendingCount} 样` : '今天买齐了') : '今天不用买'
       }
     };
   },
