@@ -89,8 +89,15 @@ Page({
   decorate(it, mealLabel) {
     const recipe = it.recipe || {};
     const recipeId = recipe.id || it.recipeId || '';
+    // 后端 DTO 里菜单项主键叫 itemId（pages/menu 取的就是 dish.itemId）。
+    // 之前这里读 it.id 恒为 undefined → id=''，于是总控里三处静默失效：
+    //   1) startCook 的 `if (item)` 不成立，从不回写「烧着呢」；
+    //   2) 跳 cook-mode 时 menuItemId 为空，做完菜不会自动「上桌」；
+    //   3) markCooked 的 `item.id ? update : resolve()` 跳过回写却提示「已上桌」，
+    //      并且所有菜共用 timerKey('')，多菜并行计时会互相串档。
+    const itemId = it.itemId || it.id || '';
     return {
-      id: it.id || '',
+      id: itemId,
       recipeId,
       title: recipe.title || '一道菜',
       img: recipeDishImg(recipe),
@@ -100,7 +107,7 @@ Page({
       timeCost: Number(recipe.timeCost) || 0,
       servings: recipe.servings || 0,
       progressText: stepProgressText(this.readProgress(recipeId)),
-      timer: this.restoreTimer(it.id),
+      timer: this.restoreTimer(itemId),
       timerText: '',
       main: false
     };
