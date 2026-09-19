@@ -368,11 +368,16 @@ WXSS 配平与注释风格、图片/组件引用、事件处理函数存在性�
       ⚠️ 这里才是运营者信息的**唯一来源**——隐私政策页只 `require` 它、自身不存文案；
       （旧版本清单误写成 `miniapp/pages/legal/privacy/index.js`，该路径根本不存在，按它找会漏改）
 - [ ] `server/sql/migrate-import-source-index.sql` 已在存量库执行一次（新库由 schema.sql 直接建出）
+      > 本地开发库 2026-09-19 查证 `idx_import_source_audit` 已存在；**生产库仍需你在部署时执行一次**。
 - [ ] `server/sql/migrate-post-feed-index.sql` 已在存量库执行一次（社区 feed 排序索引补 `id DESC`；
+      > 本地开发库 2026-09-19 已执行并查证为 `(audit_status, like_count, id)`；**生产库仍需执行**。
       不跑的话首页信息流每次请求都 filesort 全部已过审帖子。可重复执行，本地开发库已跑过）
-- [ ] 工作区已提交：`git status` 干净，尤其 `miniapp/utils/features.js`、`miniapp/components/back-top/`、
-      `server/src/main/resources/application-prod.yml` 等运行时必需文件必须入库（否则干净克隆跑不起来）
-- [ ] **提交时必须 `git add` 全部未跟踪新文件，不能只 `git commit -am`**。
+- [x] 工作区已提交：2026-09-19 实测 `git status` 干净、本地领先 origin 18 个提交，
+      `miniapp/utils/features.js`、`application-prod.yml` 等运行时必需文件均已入库。
+      ⚠ **仍未 push**：这台机器没有 GitHub 凭据（keychain 无条目、无 `gh` 登录、无 SSH 私钥），
+      所以「CI 跑过这批改动」至今不成立——见 §7「CI 的真实状态」。
+- [x] **提交时已 `git add -A` 全量纳入未跟踪新文件**（`3d1a4bf`，85 文件、9 个新文件全进）。
+      原警告如下，保留以免以后有人只 `-am`：
       2026-09-19 实测：工作区有 9 个未跟踪文件，其中 7 个被**已跟踪代码**依赖，
       只提交改动文件会得到一个「编译即失败」的 commit：
       - `miniapp/utils/capsule.js` ← `pages/home`、`pages/menu`、`pages/recipes`、`pages/me`、
