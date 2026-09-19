@@ -356,6 +356,9 @@ Page({
     const id = (e.detail && e.detail.id) || (e.currentTarget && e.currentTarget.dataset && e.currentTarget.dataset.id);
     if (!id) return;
     if (this.data.todayDishIds.includes(String(id))) {
+      // 原来直接跳菜单：点了"加入"却换页、什么也没加，读起来像点错了。
+      // 说一句再去，跳页才解释得通。
+      wx.showToast({ title: '这道菜已在今日菜单，带你去看', icon: 'none' });
       wx.navigateTo({ url: '/pages/menu/index' });
       return;
     }

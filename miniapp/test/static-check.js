@@ -28,6 +28,8 @@
  *  15. 大字模式是否每页都接上（只接一半、整页没接都判失败）
  *  16. catch 里清列表时是否同时置了「加载失败」状态位（否则失败会被显示成「还没有数据」）
  *  17. 图标是否用了系统 emoji（非 BMP 码位，或符号区字符没追加 \FE0E 文字呈现）
+ *  18. WXML 用到的自定义组件是否在同页 index.json 声明（漏声明不报错、整屏不渲染）
+ *  19. JS 里置的 *Failed / *Error 状态位是否真的被 WXML 读到（置了没人读 = 失败显示成空态）
  *
  * 退出码：有问题返回 1（可直接用于 CI）
  */
@@ -654,6 +656,62 @@ for (const file of files) {
         problems.push(`符号图标没声明文字呈现 ${r}:${no} -> U+${cp.toString(16).toUpperCase()} 在 iOS/Android ` +
           '常被渲染成彩色 emoji，请在 content 里追加 \\FE0E（或换单色 SVG / iconfont）');
       }
+    }
+  }
+}
+
+// ---- 18. WXML 里用到的自定义组件必须在同页 index.json 声明 ----
+// 周菜单的 <state-empty wx:if="{{loadError}}"> 就是这么漏在 index.json 之外的：
+// 未声明的标签不会报错、也不会渲染，于是"加载失败"那一屏**什么都不显示**——
+// 页面既不显示错误态也不显示空态，用户看到的是内容区凭空缺一块。
+// 判据只认「带连字符的标签」（小程序内置标签里非连字符的占多数，自定义组件命名必须含连字符），
+// BUILTIN 列出微信自带的连字符标签，避免把 scroll-view 当成漏声明。
+const WXML_BUILTIN_HYPHENATED = new Set([
+  'scroll-view', 'cover-view', 'cover-image', 'movable-area', 'movable-view',
+  'match-media', 'page-container', 'root-portal', 'navigation-bar', 'keyboard-accessory',
+  'page-meta', 'share-element', 'voip-room', 'snapshot', 'editor',
+  'official-account', 'open-data', 'xr-frame-attention-blob', 'xr-frame-scene'
+]);
+const componentTplFiles = files.filter((f) => f.endsWith('.wxml'));
+for (const file of componentTplFiles) {
+  const jsonPath = file.replace(/\.wxml$/, '.json');
+  const declared = fs.existsSync(jsonPath) ? fs.readFileSync(jsonPath, 'utf8') : '';
+  // 注释里的示例标签不算（文档型 wxml 常举例子）
+  const src = fs.readFileSync(file, 'utf8').replace(/<!--[\s\S]*?-->/g, '');
+  const tags = new Set((src.match(/<([a-z][a-z0-9]*(?:-[a-z0-9]+)+)[\s/>]/g) || [])
+    .map((s) => s.slice(1).split(/[\s/>]/)[0]));
+  for (const tag of tags) {
+    if (WXML_BUILTIN_HYPHENATED.has(tag)) continue;
+    if (declared.indexOf(`"${tag}"`) < 0) {
+      const line = (src.split('\n').findIndex((l) => l.indexOf('<' + tag) >= 0) + 1) || 1;
+      problems.push(`自定义组件未声明 ${rel(file)}:${line} 用了 <${tag}>，但 ${rel(jsonPath)} 的 usingComponents 里没有它 ` +
+        `-> 不报错也不渲染，这一屏直接空掉（补 "${tag}": "/components/${tag}/index"）`);
+    }
+  }
+}
+
+// ---- 19. JS 里置的「失败」状态位必须在 WXML 被读到 ----
+// 第 16 项管的是"catch 里忘了置位"，这条管"置了却没人读"：冰箱页的 matchFailed
+// 就是这么一个死位——catch 里认真 setData({ matchFailed: true })，WXML 只判
+// matchResults.length，于是"匹配失败"照样被显示成"还没匹配到菜谱"。
+// 判据：setData 里以 Failed / Error 结尾的键，必须在本页 WXML 出现过。
+for (const file of componentTplFiles) {
+  const jsPath = file.replace(/\.wxml$/, '.js');
+  if (!fs.existsSync(jsPath)) continue;
+  const jsSrc = fs.readFileSync(jsPath, 'utf8');
+  const wxmlSrc = fs.readFileSync(file, 'utf8');
+  const setKeys = new Set();
+  for (const m of jsSrc.matchAll(/setData\(\s*\{([\s\S]{0,600}?)\}\s*\)/g)) {
+    for (const k of m[1].matchAll(/([A-Za-z_$][\w$]*)\s*:/g)) setKeys.add(k[1]);
+  }
+  for (const key of setKeys) {
+    if (!/(?:Failed|Error)$/.test(key)) continue;
+    // 必须按词边界匹配：子串匹配下 WXML 里写错的 matchFailedZZZ 也会被判成"读到了"，
+    // 而"改了名只改一头"恰恰是这条门禁要防的那类失误（反向验证时实测出来的）。
+    const usedInWxml = new RegExp('\\b' + key.replace(/[$]/g, '\\$') + '\\b').test(wxmlSrc);
+    if (!usedInWxml) {
+      problems.push(`失败状态位没人读 ${rel(jsPath)} -> setData({ ${key} }) 置了位，但 ${rel(file)} 里没有一处引用它 ` +
+        `-> 失败被显示成空态或成功态（要么绑到 wx:if 上，要么删掉这个位）`);
     }
   }
 }

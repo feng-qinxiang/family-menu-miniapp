@@ -146,6 +146,14 @@ Page({
       return;
     }
     await this.loadPantry();
+    // 删除走的是二次确认弹窗，确认后没有任何回执——列表少一行是唯一线索，
+    // 而它和"这一行本来就折叠了"很难区分。添加有「已添加」，删除给同一条。
+    wx.showToast({ title: '已删除', icon: 'success' });
+  },
+
+  retryMatch() {
+    // 静默重算：不滚到页尾（用户就站在失败态那一屏），也失败时不再叠一条 toast
+    this.matchRecipes(true);
   },
 
   async matchRecipes(silent) {

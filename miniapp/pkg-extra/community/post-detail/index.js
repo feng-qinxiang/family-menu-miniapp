@@ -92,6 +92,40 @@ Page({
     this.loadAll(postId);
   },
 
+  onShow() {
+    // 只在"不是第一次进"时静默补一次：本页原来只在 onLoad 拉数据，
+    // 去别处点了赞、别人补了评论再回来看，赞数/评论数/评论列表全是旧的，
+    // 而且没有任何提示——看着像自己的操作丢了。
+    if (!this._enteredOnce) {
+      this._enteredOnce = true;
+      return;
+    }
+    let fontScale = 'normal';
+    try { fontScale = wx.getStorageSync('font_scale') || 'normal'; } catch (e) { fontScale = 'normal'; }
+    if (fontScale !== this.data.fontScale) this.setData({ fontScale });
+    if (this.data.postId && !this.data.loading) this.refreshQuietly();
+  },
+
+  // 与 loadAll 的区别：不置 loading（否则每次回来看见一次骨架屏），失败也保持原状
+  refreshQuietly() {
+    const postId = this.data.postId;
+    Promise.all([
+      api.getCommunityPost(postId).catch(() => null),
+      api.getCommunityComments(postId).catch(() => null)
+    ])
+      .then((loaded) => {
+        const raw = loaded[0];
+        const comments = loaded[1];
+        const patch = {};
+        // 帖子恰好被下架/删除时不清空整屏——用户可能正看着它，
+        // 交给下一次显式操作（回复/点赞）的失败回执处理。
+        if (raw) patch.post = normalizePost(raw);
+        if (Array.isArray(comments)) patch.comments = comments.map(normalizeComment);
+        if (Object.keys(patch).length) this.setData(patch);
+      })
+      .catch(() => {});
+  },
+
   // 加载帖子 + 评论，带容错
   loadAll(postId) {
     this.setData({ loading: true, loadError: false, loadErrorDesc: '' });

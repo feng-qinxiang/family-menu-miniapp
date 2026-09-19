@@ -1,10 +1,21 @@
 # 上线清单（个人主体版）
 
-> ## 接手须知（2026-09-19 第五轮更新：全部已 push，CI 全绿，工作区干净）
+> ## 接手须知（2026-09-19 第六轮更新：转入「全链路实操 + UI 细节管理」，共 8 轮 R1~R8）
+>
+> **本轮的取向（owner 定的四条，别再重新问）**：
+> ① UI 手腕＝**按视觉角色收敛**——不做 `--sp-*` 全量替换（实测 37 页里 0 页用它、硬编码 rpx 共 3482 处、
+> 裸圆角 158 处，而 6 档 token 覆盖不了 20/28/36rpx 这些众数值，等于在零视觉断言下重做 1.3 万行样式）；
+> ② 后端＝**用户可感知项 + 索引/执行计划全做**；③ 做菜主线＝**照成熟菜谱 App 惯例补齐交互**；
+> ④ 深色/小屏＝**模拟器能逼近多少算多少，逐项标注证据边界**。
+> owner 同时明确：备案域名 / 运营者信息 / 短信网关 / 生产库迁移 / 真机三项**继续推迟**，本轮不碰。
+>
+> **R1 已完成（止血四处 + 两条新门禁）**，证据在下方「第六轮 R1」表。
+> 待做：R2 图标收口、R3 视觉角色收敛 + `miniapp/test/ui-ledger.js` 台账、R4 做菜补齐、
+> R5 四链路走查、R6 后端读路径与索引、R7 写路径竞态与 404 语义、R8 购物清单 N+1 与时钟口径。
 >
 > **当前状态（刚核过，不是回忆）**：`git log origin/master..HEAD` 为空、工作区无改动；
 > `server-ci / build-and-test` = success（**30 个测试类 / 181 项**，全新 MySQL 库）、
-> `miniapp-ci / static-check` = success（四条前端门禁，静态检查编号到第 16 项）。
+> `miniapp-ci / static-check` = success（四条前端门禁，静态检查编号到第 **19** 项）。
 > ⚠ `miniapp-ci` 只有**一个 job 名**却按顺序跑完四条门禁（static-check / dish-logic / kitchen-logic / interaction-audit），
 > 别看到只有一个 check 名字就以为只跑了静态自检。两个 workflow 都带 `paths` 过滤
 > （`miniapp/**` / `server/**`），所以**纯文档提交不触发任何 run 是正常的**，不是漏跑。
@@ -252,6 +263,22 @@
 | 社区发帖弹层可达性 | ✅（修复后） | **弹层里的「发布」按钮此前在 tab 页上永远点不到**。自定义 tabBar 是独立图层，页面内 z-index 再高（state-sheet 是 9990）也压不住它；而 `wx.hideTabBar()` 在 custom tabBar 下直接失败（实测 `errMsg: hideTabBar:fail custom Tabbar`），所以只能把弹层抬到 tabBar 上沿。改法：`state-sheet` 新增 `lift` 属性 + `--tabbar-h` token（= 8rpx 上内边距 + 96rpx 高 + 24rpx 下内边距 + 安全区，数值来源 custom-tab-bar/index.wxss，改那边必须同步这边），社区两个弹层启用 `lift`，并把 `max-height` 压成 `calc(80vh - var(--tabbar-h))` 保证小屏（SE 667px）下表单仍能滚到底。**实测 390×844 修复前发布键被吃掉、修复后取消/发布完整可见**。⚠ 遗留：tabBar 本身压不暗（遮罩在它下面），只是观感问题 |
 | 做菜模式：换步不再杀掉正在倒计时的计时器 | ✅（2026-09-19 按 owner 选的 B 方案实现） | 原实现 `gotoStep()` 第一件事是 `clearTimer()`，**炖着 20 分钟点「下一步」看配料，那个倒计时就没了**（无提示、不保留）。现在改成**每步一个计时槽** `_slots[i] = {total, baseAt, baseLeft, running}`：换步只切视图、不动别的槽；离开且仍在跑的步骤由顶栏下方一枚小条接管（`第三步还剩 20:33 · 回去 ›`，多个在跑时追加「另有 N 步」），点它跳回那一步、数字和运行态原样接上；到点照样震动 + toast（文案带上是哪一步）。<br>顺带**简化了切后台续跑**：剩余一律 `baseLeft - (Date.now()-baseAt)`，`onHide` 只停 tick、`onShow` 重启，原来的 `_hiddenRunning` 补偿逻辑整个删掉。<br>实测（模拟器真点）：第三步起 10:00 → 跳第二步 → `bgIdx=2 / bgText=10:00` → 3 秒后 `09:58`（后台确实在走）→ 点回去 → `current=2 / running=true / 09:58`；另用 3 秒短计时验证到点后 `bgIdx=-1`、槽停止、`_timer` 归 null（不泄漏 interval）。<br>⚠ **实现过程中被实测抓到一个我自己引入的 bug**：`_tick` 里若每拍都把 `baseAt` 推到「现在」，elapsed 永远略小于 1，`ceil(1-0.995)=1` → **数字卡死在 00:01 再也不到 0**（3 秒计时跑 6 秒后仍显示 00:01）。已改为计时期间 `baseAt` 固定、每拍只读不写，注释里写明了原因。 |
 | 开关页直连弹回首页（复核） | ✅ | 2026-09-19 二次实测：直连 `pkg-extra/vip/index` 后 t=3s 仍停在该页、**t=8s 已回到 `pages/home/index`**，守卫有效。<br>⚠ 别在 3 秒处采样就下结论——本轮曾据此误判「switchTab 被吞、守卫失效」，改了三版 `leaveToHome` 又全部回退，实际原实现一直是对的。<br>同理，`navPad`/`plans` 这类**在 Page data 里有默认值**的字段不能用来判断守卫之后的代码有没有跑。 |
+
+### 第六轮 R1（2026-09-19）：止血四处 + 新门禁 18/19
+
+四处都在模拟器上真操作过，截图在 `/tmp/r1-*.png`（`--optimize false`，780×1688）。
+
+| 项 | 结果 | 证据：怎么量的 / 修复前测到什么 / 修复后测到什么 |
+| --- | --- | --- |
+| **周菜单加载失败 → 整块内容凭空消失** | ✅（修复后） | 两层缺陷叠在一起。① `pkg-extra/weekly-menu/index.wxml` 用了 `<state-empty wx:if="{{loadError}}">`，但该页 `index.json` 的 `usingComponents` 只声明了 `nav-bar` 与 `section-head`——**未声明的自定义标签不报错也不渲染**，所以错误态从来没显示过。② 就算补上声明，那块错误态原来排在**七天卡片之后**：本页 `onShow` 会静默重取，失败时 `weeklyMenu.days` 仍是上次的 7 天，于是用户先看见「本周安排 0 天 / 已排 0 道 / 空位 0 个」的统计卡（像数据被清空），说明"是网络问题"的那条提示要滚到底才够得着。<br>**量法**：`simulator_open_page` → `automation_evaluate` 里 `p.setData({loadError:true, loading:false})` → 截图。**修复前**：内容区整块空白（hero 之下什么都没有，`/tmp/r1-weekly-err-before.png`）。**修复后**：sheet 开头出现离线图标 + 「本周菜单没加载出来」+「重新加载」按钮，七天卡片与统计卡整块隐藏（`/tmp/r1-weekly-err-after.png`）；恢复声明后正常路径截图无回归（`/tmp/r1-weekly-ok.png`，`days=7`）。<br>⚠ 第一次截图我误判成"修复没生效"——因为 `setData` 之后没滚到错误块所在位置，看的是内容区。判据：**截图前先把要验的那一屏滚进视野**。 |
+| **冰箱「匹配失败」被显示成「家里没食材」+ 删除无回执** | ✅（修复后） | `pages/pantry/index.js:164` 在 `matchRecipes` 的 catch 里认真置了 `matchFailed: true`，但 WXML 从来没读它——空态分支只看 `matchResults.length`，于是网络一抖就显示「冰箱里的食材还没匹配到菜谱」。**这是第 16 项门禁的补集**：16 管"忘了置位"，这条管"置了没人读"。<br>改法：`state-empty` 失败分支放在空态之前（`type=offline` +「现在能做没算出来」+「匹配失败了，不是家里没食材」+ ghost 样式「再算一次」→ `retryMatch()` 走静默重算，不滚页、不叠 toast）。<br>**量法**：`setData({matchFailed:true, matchResults:[]})` → 截图（`/tmp/r1-pantry-matchfail.png` 显示新文案与按钮）；再调页面对象自己的 `p.retryMatch()` → **before `matchFailed=true` / after `false`、结果 6 条**（真实打了 `/api/pantry/match`）。<br>删除回执：原来「添加」有 `已添加` toast、「删除」什么都没有（只有列表少一行）。**量法**：先 `api.addPantryItem` 建一条 `R1临时测试葱`（`id=1073`），把 `wx.showModal` 换成自动确认（**只有弹窗是替身，删除请求与 toast 都走真实路径**），调 `p.removeItem()` 并拦下 `wx.showToast` 的文案 → **实测 `toast="已删除"`、`stillThere=false`、条目 6→5**，临时行已随删除消失（不污染开发库）。 |
+| **菜谱页重复加菜：点「加入」却直接换页** | ✅（修复后） | `pages/recipes/index.js:358` 命中"这道菜已在今日菜单"时只 `wx.navigateTo('/pages/menu/index')`，用户看到的是"我点了一下、页面跳走了、什么也没加"。改为先给一句说明再跳。<br>**量法**（不写库）：读 `p.data.todayDishIds` 取真实存在的那条 `id=101`，把 `wx.showToast`/`wx.navigateTo` 换成记录用的替身后调 `p.addRecipeToToday({currentTarget:{dataset:{id}}})` → **实测 `{toast:"这道菜已在今日菜单，带你去看", nav:"/pages/menu/index"}`**，早退分支在第一个 `await` 之前，所以没有任何写请求发出。 |
+| **帖子详情只在 `onLoad` 拉一次 → 回来还是旧的** | ✅（修复后） | `pkg-extra/community/post-detail` 无 `onShow`：去别处点了赞、别人补了评论再回来看，赞数/评论数/评论列表全是旧值，且没有任何提示。<br>改法：加 `onShow`，**首次进页直接返回**（`_enteredOnce` 位，避免和 `onLoad` 重复请求），之后走 `refreshQuietly()`——不置 `loading`（否则每次回来看见一次骨架屏）、帖子恰好被下架时不清空整屏（交给下一次显式操作的失败回执）；顺带在 `onShow` 重读大字档位。<br>**量法（端到端、带还原）**：`postId=1` 打开 → 页面基线 `likeCount=128` → 用 `require("utils/api.js").toggleCommunityLike(1)` 在页面外改一次 → 服务端读到 `129` → 调 `p.onShow()` → **页面 `pageAfterOnShow=129`** → 再 toggle 一次把赞取消，服务端回到 `128`（数据已复原）。<br>顺手排掉一条我的怀疑：`normalizeComment` 里 `c.commentId || 'c-'+Math.random()` 看着像"后端不返 commentId、每次刷新都换 key、作者删不掉自己评论"——实际 `ApiModels.CommunityCommentItem` 第一个分量就叫 `commentId`（`ApiModels.java:128`），**没有这个缺陷**，随机兜底只服务假数据。 |
+| **新门禁 18：WXML 用到的自定义组件必须在同页 `index.json` 声明** | ✅ 已钉，落地即 0 命中 | 泛化扫描（带连字符的标签，内置标签走 `WXML_BUILTIN_HYPHENATED` 白名单）：全站 37 页 + 组件，**唯一命中就是周菜单那条**；`scroll-view` / `root-portal` 这类内置标签有 19 处，不白名单会全变误报。<br>**反向验证**：删掉 `state-empty` 声明 → `exit 1`，点名 `pkg-extra/weekly-menu/index.wxml:124 用了 <state-empty>…不报错也不渲染，这一屏直接空掉`；还原 → `exit 0`。 |
+| **新门禁 19：JS 里置的 `*Failed` / `*Error` 位必须被本页 WXML 读到** | ✅ 已钉，落地即 0 命中 | 基线扫描命中 **1 处 = `matchFailed`**（就是上面那个真缺陷），修完归零。<br>⚠ **这条门禁是被反向验证救回来的**：第一版用 `wxmlSrc.indexOf(key)` 子串匹配，我把 WXML 改成 `matchFailedZZZ` 之后门禁**照样 exit 0**——因为 `matchFailedZZZ` 里含 `matchFailed`。改成 `\b` 词边界后第一次测仍不报，原因是我自己新加的兜底分支里还留着另一处合法引用（**改坏要一次改干净**）。两处都改名 → `exit 1` 点名 `setData({ matchFailed }) 置了位，但 …wxml 里没有一处引用它`。 |
+| 四条前端门禁 + 编译 | ✅ 全绿 | `static-check`（现 19 项，285 文件）/ `dish-logic.test` / `kitchen-logic.test` / `interaction-audit`（A/B/C 均 0）四条 `exit 0`；改过的模板另用 `compile_wxml` 单独编过（`codeLength=33489`）；console 宽 grep 无 error/warn。 |
+| ⚠ 本轮我自己造的两个测量事故（记下来免得再犯） | 已复原 | ① **zsh 不对未加引号的变量做分词**：把 `wechatide -c Qoder automation_evaluate --project …` 存进 `$W` 再 `$W --fn-source …`，整串被当成一个命令名 → 命令根本没跑，而我把随之而来的空输出当成了"断言没通过"。② **替身恢复写错**：`wx.showToast = Object.getPrototypeOf(wx).showToast` 把 `wx.showToast` 变成了 `undefined`（`typeof` 实测），后续任何 toast 都不会出现；靠 `simulator_refresh` 重启运行时才复原（复原后 `typeof wx.showToast === "function"`）。<br>判据：**替身要存原引用、恢复后要 `typeof` 复核**；测完顺手 `get_simulator_console` 宽读一次。 |
+
 
 
 ## 3b. 后端 / 数据库上线前审计（2026-09-19 三轮，逐条实测过才写）

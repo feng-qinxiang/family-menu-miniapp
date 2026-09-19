@@ -115,8 +115,21 @@
       hint="按库存匹配"
     />
 
+    <!-- 匹配接口失败 ≠ 一道都做不了：这里原来只判 !matchResults.length，
+         网络一抖就显示「还没匹配到菜谱」，把用户往"我家食材不行"上带。
+         失败位 JS 里一直在置（matchRecipes 的 catch），只是没人读它。 -->
+    <state-empty
+      wx:if="{{showMatch && matchFailed}}"
+      type="offline"
+      title="现在能做没算出来"
+      desc="匹配失败了，不是家里没食材"
+      cta="再算一次"
+      cta-style="ghost"
+      bind:action="retryMatch"
+    />
+
     <!-- 有食材但一道都匹配不上：给空态，别整块消失让人以为没反应 -->
-    <view wx:if="{{showMatch && !matchResults.length && pantrySummary.count}}" class="pantry-empty g-fade-up">
+    <view wx:if="{{showMatch && !matchFailed && !matchResults.length && pantrySummary.count}}" class="pantry-empty g-fade-up">
       <text class="pantry-empty-txt">冰箱里的食材还没匹配到菜谱，再添几样或去菜谱库看看</text>
     </view>
 
