@@ -386,8 +386,9 @@ Page({
     }
     const tags = tagsText.split(/[,，]/).map((s) => s.trim()).filter(Boolean);
     this.setData({ postSubmitting: true });
+    let created = null;
     try {
-      const created = await createCommunityPost({
+      created = await createCommunityPost({
         title: title.trim(),
         content: content.trim(),
         tags,
