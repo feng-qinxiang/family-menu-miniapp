@@ -1,8 +1,22 @@
 # 上线清单（个人主体版）
 
-> ## 接手须知（2026-09-19 会话收尾时留）
+> ## 接手须知（2026-09-19 更新：CI 已全绿）
 >
-> **代码侧已全部提交，只差 push 这一步，而 push 只能由部署方做。**
+> **已 push，三条 workflow 最新一次全部 success：**
+> `server-ci`（153 项，全新 MySQL 库）、`miniapp-ci`（四条前端门禁，历史上第一次真正执行）、
+> `workflows-ci-lint`。三份 YAML 在 GitHub 侧均为 `state=active`。
+>
+> push 的完整可复现命令（**必须先清空凭据助手列表**，否则 git 全局 `osxkeychain`
+> 会优先返回补 `workflow` scope 之前的旧 token，继续被 remote 拒绝）：
+> ```
+> git -c credential.helper= -c http.proxy=http://127.0.0.1:7897 \
+>     -c https.proxy=http://127.0.0.1:7897 -c http.version=HTTP/1.1 \
+>     -c credential.helper='!gh auth git-credential' push origin master
+> ```
+> 另需 `gh` 的 token 带 `workflow` scope（改 `.github/workflows/**` 是硬性要求）：
+> `gh auth refresh --hostname github.com --scopes workflow`。
+>
+> ~~代码侧已全部提交，只差 push 这一步~~
 > 本地 `master` 领先 `origin/master` **21 个提交**，工作区干净（`git status` 无输出）。
 > 这台机器三条凭据路径都实测不通：keychain 无 `github.com` 条目、无 `gh` 登录、
 > `ssh -T git@github.com` → `Permission denied (publickey)`。
