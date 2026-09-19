@@ -43,12 +43,15 @@
       <text class="bgchip-go">回去 ›</text>
     </view>
 
-    <!-- 进度点条 -->
+    <!-- 进度条每段可点，直接跳到那一步（段本身只有 8rpx 高，热区靠 .dot::after 撑到 88rpx） -->
     <view class="dots">
       <view
         wx:for="{{dots}}"
         wx:key="index"
         class="dot {{item}}"
+        data-idx="{{index}}"
+        catchtap="onDotTap"
+        aria-label="跳到第 {{index + 1}} 步"
       ></view>
     </view>
 

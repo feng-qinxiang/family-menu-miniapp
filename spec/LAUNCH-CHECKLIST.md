@@ -308,6 +308,19 @@
 | 四条前端门禁 + YAML | ✅ 全绿 | `static-check`（现 21 项）/ `dish-logic.test` / `kitchen-logic.test` / `interaction-audit` 全部 `exit 0`；`ruby -ryaml` 解析改过的 workflow。 |
 | 台账留下的下一步靶子（不是待办清单，是**读数**） | ⬠ 未做 | 四条主线还剩 4 个裸图块值（社区发帖选图格 132、详情图 138、recipe-edit 小图标 48/88）；圆角裸值 32 种；头像在非主线页还有 200 / 208 两个值；全站裸 rpx 3717 处（**已接受**，理由见台账末尾「已接受的债务」）。 |
 
+### 第六轮 R4（2026-09-19）：做菜主线按成熟做法补齐
+
+| 项 | 结果 | 证据：怎么量的 / 修复前测到什么 / 修复后测到什么 |
+| --- | --- | --- |
+| 每步计时槽落盘，跨"关掉再进"存活 | ✅（实测倒数继续走） | 原来 `_slots` 只挂在页面对象上（`cook-mode/index.js:78`），厨房总控页却按 `menuItemId` 把计时存进 storage——**同一个"炖着 20 分钟"，一个入口跨路由活着、另一个重进就没了**。<br>改法：不发明新机制，复用厨房页那套四元组 `{total, baseAt, baseLeft, running}`，键 `cook_timers_<recipeId>`；落盘点 = 起/停/重置/换时长/换步/到点/`onUnload`；完成时连同键一起删。<br>**量法**（模拟器真跑）：第 2 步铺 20:00 起跑 → 重进前读到 **19:32**（`left=1172`）→ `simulator_refresh` 整页重启 → 重新进入本页 → **19:04**（`left=1143`），且 `left === 由 baseAt 反算的值`（说明不是重新铺满 20:00，也不是归零，是按墙钟续跑）；`current=1` 说明步骤进度也一起续上了。<br>落盘内容实测：`cook_timers_101 = {"1":{"total":1200,"baseAt":1789831183719,"baseLeft":1200,"running":true}}`。<br>⚠ 中途一次**假警报**：我拿 `Object.keys(wx.getStorageInfoSync().keys)` 去筛键名，`keys` 本来就是数组，取 `Object.keys` 得到的是下标字符串，于是筛出空集、差点记成"没落盘"。判据：**读 storage 键名直接用 `.keys`，别再套一层**。测完已清掉这两条键。 |
+| 恢复算法与厨房页共用一份 + 钉测试 | ✅ | 算法挪到 `utils/kitchen.js` 的 `restoreTimerSlots(saved, stepCount, now)`（`now` 由调用方传，测试才能钉住时钟），`cook-mode` 只负责读写存储。<br>`kitchen-logic.test.js` 加 7 条断言：15 分钟前的 20 分钟计时**剩 5 分钟且仍在跑**；暂停的槽原样回来不许自己续跑；离开期间到点的槽**落在 00:00 而不是整槽消失**（用户回来要知道那 20 分钟过了）；越界 / `total=0` / `null` 脏数据全丢；`null` 与字符串脏值都不炸。 |
+| 进度段可点，直接跳到那一步 | ✅（实测点段跳步） | 原来只能线性 `上一步 / 下一步`，回头看第 3 步要连点 5 次往回退。<br>改法：`.dots` 每段 `catchtap="onDotTap"`，**视觉一点没动**——热区靠 `.dot::after` 撑到 88rpx（段本身只有 8rpx 高，手指点不准），左右各留 6rpx 防误触相邻段。<br>**量法**：`automation_element_action --action tap --selector .dot` → `current` 由 1 变 **0**、`dots` 变 `now|`、正文换成第一步、`cook_progress_101` 同步写成 `{i:0,total:2}`。<br>截图 `/tmp/r4-cookmode.png` 同时确认并行场景没退化：顶栏下方那枚「第二步还剩 18:03 · 回去 ›」小条在跑、点它跳得回去。<br>⚠ 遗留（留给 owner 定，不是 bug）：**可点没有任何可见可供性**——截图上就是两根条。要加数字或"点段跳步"提示都是观感改动，不该在上线前替 owner 决定。 |
+| 屏幕常亮 | ✅ **早就实现了**（计划写错了） | 计划把"做菜期间屏幕常亮"列成要补的三项之一。读代码发现 `cook-mode/index.js:94-97` 已 `onLoad` 开、`:108-113` 已 `onUnload` 关，**这条是空枪**。<br>⚠ 但"设了 `keepScreenOn` 真机就不熄屏"这件事模拟器证不了（模拟器不睡眠），**仍需真机确认一次**。 |
+| 常驻底栏显示已用/剩余 | ⬠ **判定不加** | 成熟应用确实常见一条常驻计时条。但本页实测已有三处覆盖同一信息且各有分工：顶栏「计时」按钮（`running` 时高亮）、离开那步的 `bgchip` 小条（带剩余 + 一键回去）、当前步的计时面板。<br>再加一条会把同一数字显示四遍，在小屏（667px）上挤掉步骤正文。记为"看过、比较过、不做"，不是漏做。 |
+| 交互体检 A 类撞到新元素，顺带修掉检核器一个盲区 | ✅ 已反向验证 | 新加的 `.dot` 被 A 类点名（好门禁该有的样子）。但我的反馈写法是 `.dot:active { background: 提亮 }`——**进度条做 `scale` 会让相邻段看着在抖**，不该用 `.tap-scale`。<br>根因是 `interaction-audit.js:37` 的 `FEEDBACK` 只认 `tap-scale / tap-dim / hover-class` 三种写在标签上的写法，看不见同页 WXSS 里的 `:active`。补成第四种合法写法（只认紧贴 `:active` 的那个类名，`.a .b:active` 算 `b` 不算 `a`），并**反向验证**：删掉 `.dot:active` 那条规则 → A 类重新报 1 处；还原 → 四条门禁全 `exit 0`。 |
+| 四条前端门禁 | ✅ 全绿 | `static-check`（21 项）/ `dish-logic.test` / `kitchen-logic.test`（含新增 7 条断言）/ `interaction-audit`（A/B/C 均 0）全部 `exit 0`；console 宽 grep 无 error/warn。 |
+
+
 
 
 

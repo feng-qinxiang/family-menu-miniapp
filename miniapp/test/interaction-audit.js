@@ -10,7 +10,8 @@
  * 唯独 A 类是机械可判定的（绑了事件却没按下反馈），一律判失败。
  *
  * 检查三类：
- *   A. 有事件绑定但没有按下反馈（本行或紧邻的父级都没有 tap-scale / hover-class）→ 非 0 即 exit 1
+ *   A. 有事件绑定但没有按下反馈（本行或紧邻的父级都没有 tap-scale / hover-class，
+ *      同页 WXSS 里也没有该类的 :active 规则）→ 非 0 即 exit 1
  *   B. 长得可点却没有事件绑定（类名像按钮，检查到即列出；已确认的误报进 B_CONFIRMED 白名单）
  *   C. 可点元素在 wxss 里的声明尺寸小于 88rpx（只统计 wxml 里直接绑了事件的类；
  *      已有 ::after ≥88rpx 热区扩展的、刻意小于 88 的进 C_CONFIRMED 白名单）
@@ -57,12 +58,33 @@ const reportB = [];
 // 直接绑了事件（bind/catch）的类集合：C 类只统计真正的点击目标
 const boundClasses = new Set();
 
+// 按下反馈的第四种合法写法：类自己在同页 WXSS 里写了 :active 规则。
+// 原来只认 tap-scale / tap-dim / hover-class，于是"进度条段按下提亮"这种
+// **刻意不用缩放**的反馈会被误判成没反馈（实测撞到 cook-mode 的 .dot：
+// 一段 8rpx 高的进度条做 scale 会让相邻段看着在抖）。
+const activeCache = new Map();
+function activeClasses(wxmlFile) {
+  if (activeCache.has(wxmlFile)) return activeCache.get(wxmlFile);
+  const wxss = wxmlFile.replace(/\.wxml$/, '.wxss');
+  let set = new Set();
+  if (fs.existsSync(wxss)) {
+    const src = fs.readFileSync(wxss, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+    // 只认紧贴 :active 的那个类名（.a .b:active 的反馈在 b 上，不算 a 的）
+    set = new Set([...src.matchAll(/\.([A-Za-z0-9_-]+)\s*:active/g)].map((m) => m[1]));
+  }
+  activeCache.set(wxmlFile, set);
+  return set;
+}
+
 for (const file of wxmlFiles) {
   const src = fs.readFileSync(file, 'utf8');
+  const actives = activeClasses(file);
   for (const t of extractTags(src)) {
     const className = (t.attrs.match(/class="([^"]*)"/) || [])[1] || '';
     const hasEvent = /\b(?:bind|catch|mut-bind)(?::)?[a-zA-Z-]+\s*=/.test(t.attrs);
     if (hasEvent) className.split(/\s+/).forEach((c) => c && boundClasses.add(c));
+    // 动态类（{{item}}）不参与判断，只看写死的类名
+    const staticClasses = className.split(/\s+/).filter((c) => c && !/[{}]/.test(c));
 
     // 输入类控件与滚动容器不需要按下反馈（前者靠键盘反馈，后者靠滚动反馈）
     const INPUT_LIKE = ['input', 'textarea', 'scroll-view', 'swiper', 'picker'].includes(t.tag);
@@ -83,6 +105,7 @@ for (const file of wxmlFiles) {
     const INPUT_AREA = /(input|agree|codebox|stx|editor)/i;
     if (hasEvent && !FEEDBACK.test(t.attrs) && !INPUT_LIKE
         && !MASK.test(className) && !INNER.test(lastClass)
+        && !staticClasses.some((c) => actives.has(c))
         && !EXEMPT.test(className) && !INPUT_AREA.test(className)
         // tab-item 的按下反馈写在子元素 .tab-icon-wrap:active 上（整体缩放会和指示条动画打架）
         && !/custom-tab-bar/.test(rel(file)) && !/^tab-item/.test(lastClass)) {

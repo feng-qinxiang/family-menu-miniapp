@@ -170,10 +170,25 @@
 }
 .dot {
   flex: 1;
+  position: relative;
   height: 8rpx;
   border-radius: 6rpx;
   background: rgba(255, 255, 255, 0.12);
   transition: background 0.25s ease;
+}
+/* 按下时整段提亮（不用 .tap-scale：进度条缩放会让相邻段看起来在抖）。
+   交互体检 A 类要求"绑了事件就得有按下反馈"，这条就是。 */
+.dot:active { background: rgba(255, 255, 255, 0.34); }
+/* 段本身 8rpx 高，手指点不准：热区撑到 88rpx（上下各 40rpx、左右各留 6rpx 防误触相邻段）。
+   视觉一点没动，只是能点了。 */
+.dot::after {
+  content: "";
+  position: absolute;
+  left: -6rpx;
+  right: -6rpx;
+  top: 50%;
+  height: 88rpx;
+  margin-top: -44rpx;
 }
 .dot.done { background: var(--gold-deep); }
 .dot.now { background: var(--pop); }

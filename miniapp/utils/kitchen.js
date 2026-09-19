@@ -44,6 +44,31 @@ function secondsLeft(baseAt, baseLeft) {
   return Math.ceil((Number(baseLeft) || 0) - elapsed);
 }
 
+// 做菜模式「每步一个计时槽」的恢复算法。厨房页按菜单项存一份、做菜页按菜谱存一份，
+// 四元组形状一致（{total, baseAt, baseLeft, running}），所以"离开期间时间照样走"这件事只写一遍。
+// now 由调用方传入（不传用 Date.now()），这样测试能钉住时钟、把跨重进的读数算准。
+function restoreTimerSlots(saved, stepCount, now) {
+  const out = {};
+  if (!saved || typeof saved !== 'object') return out;
+  const t = now || Date.now();
+  Object.keys(saved).forEach((k) => {
+    const i = Number(k);
+    const v = saved[k] || {};
+    if (!(Number(v.total) > 0) || !Number.isFinite(i) || i < 0 || i >= stepCount) return;
+    if (!v.running) {
+      out[i] = { total: Number(v.total), baseAt: 0, baseLeft: Number(v.baseLeft) || 0, running: false };
+      return;
+    }
+    const left = Math.max(0, Math.ceil((Number(v.baseLeft) || 0) - (t - (Number(v.baseAt) || t)) / 1000));
+    // 离开期间跑到点了：留在 00:00 的「到点」状态而不是删掉——
+    // 用户回来要知道那 20 分钟已经过了，而不是「我刚才设的计时呢？」
+    out[i] = left > 0
+      ? { total: Number(v.total), baseAt: Number(v.baseAt), baseLeft: Number(v.baseLeft), running: true }
+      : { total: Number(v.total), baseAt: 0, baseLeft: 0, running: false };
+  });
+  return out;
+}
+
 // 存储键：进度按菜谱（跟 cook-mode 共用），计时按菜单项（每道菜各自一个灶）
 function progressKey(recipeId) {
   return `cook_progress_${recipeId}`;
@@ -52,4 +77,4 @@ function timerKey(menuItemId) {
   return `kitchen_timer_${menuItemId}`;
 }
 
-module.exports = { fmtClock, buildKitchenOrder, pickMainStove, stepProgressText, secondsLeft, progressKey, timerKey };
+module.exports = { fmtClock, buildKitchenOrder, pickMainStove, stepProgressText, secondsLeft, restoreTimerSlots, progressKey, timerKey };

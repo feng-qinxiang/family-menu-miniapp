@@ -1,6 +1,7 @@
 // pages/cook-mode/index.js · 烹饪模式（沉浸暗底分步引导）
 const api = require('../../utils/api');
 const { recipeDishImg, stepDishImg } = require('../../utils/image');
+const { restoreTimerSlots } = require('../../utils/kitchen');
 
 // 数字补零
 function pad2(n) {
@@ -107,6 +108,8 @@ Page({
 
   onUnload() {
     this.stopTicker();
+    // 页面要销毁了，把还在跑的槽落一次盘：靠 tick 落不够（可能已经停在 00:00 无 tick 的状态）
+    this.persistSlots();
     if (wx.setKeepScreenOn) {
       wx.setKeepScreenOn({ keepScreenOn: false });
     }
@@ -245,8 +248,43 @@ Page({
     });
 
     if (steps.length) {
+      // 计时槽要在 gotoStep 之前恢复：否则第一步的 gotoStep 会把"这步本来还剩 12:04"当成没跑过
+      this.restoreSlots(recipeId, steps);
       this.resumeOrStart(recipeId, steps);
     }
+  },
+
+  // —— 计时槽本地续跑：离开页面（关掉、被回收、切去冰箱）再回来，倒数不归零 ——
+  // 厨房总控页早就按 menuItemId 把计时存进 storage 了（kitchen/index.js 的 restoreTimer/persistTimer），
+  // 本页原来只把 _slots 挂在页面对象上——同一个"炖着 20 分钟"的概念，
+  // 从菜单页开做能跨路由活着、把做菜页关掉就归零。两处存的四元组形状完全一致，这里只是换个存放位置。
+  timersKey(recipeId) {
+    return `cook_timers_${recipeId}`;
+  },
+
+  persistSlots() {
+    const recipeId = this.data.recipeId;
+    if (!recipeId) return;
+    try {
+      const s = this._slots || {};
+      const out = {};
+      Object.keys(s).forEach((k) => {
+        const v = s[k];
+        if (!v || !(v.total > 0)) return;
+        out[k] = { total: v.total, baseAt: v.baseAt, baseLeft: v.baseLeft, running: !!v.running };
+      });
+      if (Object.keys(out).length) wx.setStorageSync(this.timersKey(recipeId), out);
+      else wx.removeStorageSync(this.timersKey(recipeId));
+    } catch (e) {
+      // 存不上不影响本轮页面内使用（与厨房页同一取舍）
+    }
+  },
+
+  restoreSlots(recipeId, steps) {
+    let saved = null;
+    try { saved = wx.getStorageSync(this.timersKey(recipeId)); } catch (e) { saved = null; }
+    // 算法在 utils/kitchen.js（与厨房页共用一份），这里只负责读写存储
+    this._slots = restoreTimerSlots(saved, steps.length);
   },
 
   // —— 步骤进度本地续做：同一道菜中途退出，再进来回到上次步骤 ——
@@ -313,6 +351,15 @@ Page({
     } catch (e) {
       // 存不上就算了，续做是锦上添花
     }
+    this.persistSlots();
+  },
+
+  // 进度条每段都可点：直接跳到那一步（原来只能线性 上一步/下一步，
+  // 想回头看第 3 步得连点 5 次往回退）
+  onDotTap(e) {
+    const idx = Number(e.currentTarget.dataset.idx);
+    if (!Number.isFinite(idx)) return;
+    this.gotoStep(idx);
   },
 
   fmt(sec) {
@@ -361,6 +408,7 @@ Page({
         cur.running = true;
         this.renderTimers();
         this.ensureTicker();
+        this.persistSlots();
       },
       fail: () => {}
     });
@@ -375,6 +423,7 @@ Page({
     cur.running = true;
     this.renderTimers();
     this.ensureTicker();
+    this.persistSlots();
   },
 
   _tick() {
@@ -395,6 +444,7 @@ Page({
     this.renderTimers();
     if (!this.anyRunning()) this.stopTicker();
     if (done.length) {
+      this.persistSlots();
       wx.vibrateShort && wx.vibrateShort({ type: 'heavy' });
       const first = (this.data.steps[done[0]] || {}).cn || '这一步';
       const more = done.length > 1 ? `（另有 ${done.length - 1} 步也到点）` : '';
@@ -410,6 +460,7 @@ Page({
     cur.baseAt = 0;
     this.renderTimers();
     if (!this.anyRunning()) this.stopTicker();
+    this.persistSlots();
   },
 
   resetTimer() {
@@ -419,6 +470,7 @@ Page({
     cur.baseAt = 0;
     this.renderTimers();
     if (!this.anyRunning()) this.stopTicker();
+    this.persistSlots();
   },
 
   // 顶栏小条：跳回那个还在倒计时的步骤
@@ -452,6 +504,7 @@ Page({
     try {
       if (this.data.recipeId) {
         wx.removeStorageSync(this.progressKey(this.data.recipeId));
+        wx.removeStorageSync(this.timersKey(this.data.recipeId));
       }
     } catch (e) {
       // 清不掉无碍，下次进来至多回到末步再点一次完成
