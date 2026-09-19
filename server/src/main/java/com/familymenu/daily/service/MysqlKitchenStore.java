@@ -95,15 +95,14 @@ public class MysqlKitchenStore {
                 default -> { }
             }
         }
-        // 忌口过滤：收集当前家庭所有 ACTIVE 成员的 avoid_tags，推荐时排除含对应标签的菜谱
+        // 忌口过滤：收集当前家庭所有 ACTIVE 成员的 avoid_tags，推荐时排除命中的菜谱。
+        // 规则与菜谱列表共用 AvoidTagFilter（菜名+菜系+口味标签的包含判断）——
+        // 早先这里是「口味标签 == 忌口标签」，而库里存的是「酸辣/麻辣」，成员选的是「辣」，
+        // 于是服务端这条过滤对八个预设标签全部形同不存在，今日推荐照推麻婆豆腐。
         java.util.Set<String> familyAvoidTags = loadFamilyAvoidTags(familyId);
         List<RecipeCard> recommended = new ArrayList<>(all);
         if (!familyAvoidTags.isEmpty()) {
-            recommended.removeIf(card -> {
-                if (card.tasteTags() == null) return false;
-                return card.tasteTags().stream().anyMatch(tag ->
-                        familyAvoidTags.contains(tag == null ? "" : tag.trim().toLowerCase(java.util.Locale.ROOT)));
-            });
+            recommended.removeIf(card -> AvoidTagFilter.matchesAny(card, familyAvoidTags));
         }
         recommended.sort(Comparator.comparing(RecipeCard::rating, Comparator.nullsLast(Comparator.reverseOrder())));
         return new HomeDashboard(
