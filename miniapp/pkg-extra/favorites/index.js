@@ -15,6 +15,8 @@ const FALLBACK_PHOTOS = [
 
 Page({
   data: {
+    // 大字模式：档位由设置页写进 storage，根节点挂 .font-lg 才会吃到 --fs-mul
+    fontScale: 'normal',
     statusBarHeight: 0,
     activeTab: 'recipe',
     recipes: [],
@@ -27,6 +29,9 @@ Page({
   },
 
   onLoad() {
+    let fontScale = 'normal';
+    try { fontScale = wx.getStorageSync('font_scale') || 'normal'; } catch (e) { fontScale = 'normal'; }
+    if (fontScale !== this.data.fontScale) this.setData({ fontScale });
     let sbh = 0;
     try {
       sbh = (wx.getWindowInfo ? wx.getWindowInfo().statusBarHeight : wx.getSystemInfoSync().statusBarHeight) || 0;

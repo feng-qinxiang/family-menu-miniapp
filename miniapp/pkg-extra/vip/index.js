@@ -8,6 +8,8 @@ function loadPlansFallback() {
 
 Page({
   data: {
+    // 大字模式：档位由设置页写进 storage，根节点挂 .font-lg 才会吃到 --fs-mul
+    fontScale: 'normal',
     isVip: false,
     planName: '',
     selectedPlan: 'yearly',
@@ -39,6 +41,9 @@ Page({
   },
 
   onLoad() {
+    let fontScale = 'normal';
+    try { fontScale = wx.getStorageSync('font_scale') || 'normal'; } catch (e) { fontScale = 'normal'; }
+    if (fontScale !== this.data.fontScale) this.setData({ fontScale });
     const features = require('../../utils/features');
     if (!features.PAYMENT) { features.leaveToHome(); return; }
     try {

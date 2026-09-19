@@ -1,4 +1,4 @@
-<view class="imp-page">
+<view class="imp-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <!-- 固定顶部返回（透明叠加在 hero 上；hero 已有大标题，这里不重复标题避免叠字）-->
   <view class="imp-nav">
     <nav-bar title="" status-bar-height="{{statusBarHeight}}"></nav-bar>

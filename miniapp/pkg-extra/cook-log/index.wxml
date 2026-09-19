@@ -1,5 +1,5 @@
 <!-- 做菜记录 · 二级页（非 tab）。hero + 成就 + 周打卡 + chip筛选 + 月份分组 Timeline -->
-<view class="cl-page">
+<view class="cl-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <!-- 自定义导航：透明叠在 hero 上 -->
   <view class="cl-nav">
     <nav-bar title="做菜记录" show-back="{{true}}" status-bar-height="{{statusBarHeight}}"></nav-bar>

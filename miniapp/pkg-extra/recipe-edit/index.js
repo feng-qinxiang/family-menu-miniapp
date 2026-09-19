@@ -16,6 +16,8 @@ const CUISINE_OPTIONS = ['家常'].concat(cuisineList.filter((c) => c !== '家�
 
 Page({
   data: {
+    // 大字模式：档位由设置页写进 storage，根节点挂 .font-lg 才会吃到 --fs-mul
+    fontScale: 'normal',
     isEdit: false,
     recipeId: null,
     difficultyOptions: DIFFICULTY_OPTIONS,
@@ -64,6 +66,9 @@ Page({
   },
 
   onLoad(options) {
+    let fontScale = 'normal';
+    try { fontScale = wx.getStorageSync('font_scale') || 'normal'; } catch (e) { fontScale = 'normal'; }
+    if (fontScale !== this.data.fontScale) this.setData({ fontScale });
     if (options.id) {
       // 编辑模式：先遮罩加载，避免空表单闪变后被数据覆盖
       this.setData({ isEdit: true, recipeId: options.id, pageLoading: true });

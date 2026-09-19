@@ -30,6 +30,8 @@ function pad2(n) { return n < 10 ? '0' + n : '' + n; }
 
 Page({
   data: {
+    // 大字模式：档位由设置页写进 storage，根节点挂 .font-lg 才会吃到 --fs-mul
+    fontScale: 'normal',
     statusBarHeight: 0,
     // 时间线回顶键（滚深出现）
     showBackTop: false,
@@ -51,6 +53,9 @@ Page({
   },
 
   onLoad(options) {
+    let fontScale = 'normal';
+    try { fontScale = wx.getStorageSync('font_scale') || 'normal'; } catch (e) { fontScale = 'normal'; }
+    if (fontScale !== this.data.fontScale) this.setData({ fontScale });
     let sbh = 0;
     try {
       if (typeof wx.getWindowInfo === 'function') {

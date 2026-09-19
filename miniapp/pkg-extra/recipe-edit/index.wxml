@@ -3,13 +3,13 @@
 <state-loading wx:if="{{pageLoading}}" text="加载菜谱中…"></state-loading>
 
 <block wx:else>
-<view class="rc-seg">
+<view class="rc-seg {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <view class="tap-scale rc-seg-item {{editTab === 'info' ? 'on' : ''}}" data-tab="info" bindtap="switchTab">介绍</view>
   <view class="tap-scale rc-seg-item {{editTab === 'ings' ? 'on' : ''}}" data-tab="ings" bindtap="switchTab">用料</view>
   <view class="tap-scale rc-seg-item {{editTab === 'steps' ? 'on' : ''}}" data-tab="steps" bindtap="switchTab">步骤</view>
 </view>
 
-<view class="rc-body">
+<view class="rc-body {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <text class="rc-tip" wx:if="{{tipText}}">{{tipText}}</text>
 
   <block wx:if="{{editTab === 'info'}}">
@@ -131,7 +131,7 @@
   </block>
 </view>
 
-<view class="rc-footbar">
+<view class="rc-footbar {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <view class="btn btn-pop btn-block tap-scale {{saving ? 'is-busy' : ''}}" bindtap="submit">{{saving ? '保存中…' : '保存'}}</view>
 </view>
 

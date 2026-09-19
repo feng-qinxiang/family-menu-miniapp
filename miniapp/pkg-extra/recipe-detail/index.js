@@ -38,6 +38,8 @@ function scaleAmount(amount, ratio) {
 
 Page({
   data: {
+    // 大字模式：档位由设置页写进 storage，根节点挂 .font-lg 才会吃到 --fs-mul
+    fontScale: 'normal',
     recipe: null,
     servings: 2,
     baseServings: 2,
@@ -54,6 +56,9 @@ Page({
   },
 
   onLoad(options) {
+    let fontScale = 'normal';
+    try { fontScale = wx.getStorageSync('font_scale') || 'normal'; } catch (e) { fontScale = 'normal'; }
+    if (fontScale !== this.data.fontScale) this.setData({ fontScale });
     let sbh = 0;
     try {
       sbh = (wx.getWindowInfo ? wx.getWindowInfo() : wx.getSystemInfoSync()).statusBarHeight || 0;

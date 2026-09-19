@@ -25,7 +25,7 @@
  *  12. 恒定暗底（沉浸）页的前景/填充色是否在浅色档和深色档都成立（深色档翻出 #333 正文即失败）
  *  13. 绑了动态文本的标题是否用了「单行展示字」的紧凑行高（长菜名一换行两行字会互压）
  *  14. 主包/分包体积（按真实字节，非 du 的磁盘块）：逼近 2MB 上限就报，超了才判失败
- *  15. 大字模式是否每页都接上（只接一半判失败；整页没接列入提醒）
+ *  15. 大字模式是否每页都接上（只接一半、整页没接都判失败）
  *
  * 退出码：有问题返回 1（可直接用于 CI）
  */
@@ -551,10 +551,14 @@ if (mainKb > MAIN_LIMIT_KB) {
 
 
 // ---- 15. 大字模式必须每页都接上（WXML 挂 .font-lg + JS 读档位，两者都要有）----
-// app.wxss 里 .font-lg 的注释就写着「全站 36 页根节点挂 .font-lg」，但实测只有 29 页真挂了。
-// 漏接的页面不会报错、不会白屏，只是「用户在设置里开了大字，这一页照样小字」——
+// app.wxss 里 .font-lg 的注释就写着「全站 36 页根节点挂 .font-lg」，但 2026-09-19 实测只有 29 页真挂了。
+// 漏接的页面不会报错、不会白屏，只是「用户在设置页开了大字，这一页照样小字」——
 // 而漏掉的恰好包括做菜模式（手机在一臂外、手上有油，最需要大字的一屏）和菜谱详情。
 // 只绑类不读档 = 永远拿到 normal；只读档不绑类 = 白读。两种都判失败。
+// 2026-09-19 把其余 7 页补齐（第 8 页 cook-mode 见上一个提交）后缺口清零，所以「整页没接」
+// 也从只提醒升级为失败：
+// 多顶层节点的页面（recipe-detail 的三个状态、recipe-edit 的 seg/body/footbar）每个可见根节点都要挂，
+// 因为 .font-lg 只是重定义自定义属性，而自定义属性只向下继承。
 const fontLgMissing = [];
 const fontLgHalfWired = [];
 for (const page of declaredPages) {
@@ -571,9 +575,9 @@ for (const page of declaredPages) {
 for (const x of fontLgHalfWired) {
   problems.push('大字模式只接了一半 ' + x + ' -> 要么永远不放大、要么白读一次存储');
 }
-if (fontLgMissing.length) {
-  sizeWarns.push('这些页面没接大字模式（开了大字照样小字），共 ' + fontLgMissing.length + ' 个：' +
-    fontLgMissing.join('、'));
+for (const x of fontLgMissing) {
+  problems.push('大字模式整页没接 ' + x + ' -> 设置页开了大字、这一页照样小字' +
+    "（WXML 每个可见根节点挂 {{fontScale === 'lg' ? 'font-lg' : ''}}，JS 读 storage 的 font_scale）");
 }
 
 // ---- 提审前必须由部署方填写的项（只报告、不阻断）----

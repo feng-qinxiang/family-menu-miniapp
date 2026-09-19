@@ -1,7 +1,7 @@
 <wxs src="/utils/cuisine.wxs" module="cuisine" />
 
 <!-- ============ 正常态 ============ -->
-<view class="rd-page g-fade-in" wx:if="{{recipe}}">
+<view class="rd-page g-fade-in {{fontScale === 'lg' ? 'font-lg' : ''}}" wx:if="{{recipe}}">
   <scroll-view class="rd-scroll" scroll-y enhanced show-scrollbar="{{false}}"
     scroll-top="{{scrollTopTo}}" scroll-with-animation bindscroll="onScrollBody">
 
@@ -165,7 +165,7 @@
 </view>
 
 <!-- ============ 加载骨架 ============ -->
-<view class="rd-page" wx:if="{{loading}}">
+<view class="rd-page {{fontScale === 'lg' ? 'font-lg' : ''}}" wx:if="{{loading}}">
   <view class="rd-hero rd-hero-skel">
     <nav-bar title="" status-bar-height="{{statusBarHeight}}"></nav-bar>
   </view>
@@ -180,7 +180,7 @@
 </view>
 
 <!-- ============ 空态 ============ -->
-<view class="rd-page rd-empty-page" wx:if="{{!loading && !recipe}}">
+<view class="rd-page rd-empty-page {{fontScale === 'lg' ? 'font-lg' : ''}}" wx:if="{{!loading && !recipe}}">
   <nav-bar title="菜谱详情" status-bar-height="{{statusBarHeight}}"></nav-bar>
   <state-empty
     type="search"
