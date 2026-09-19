@@ -30,6 +30,7 @@
  *  17. 图标是否用了系统 emoji（非 BMP 码位，或符号区字符没追加 \FE0E 文字呈现）
  *  18. WXML 用到的自定义组件是否在同页 index.json 声明（漏声明不报错、整屏不渲染）
  *  19. JS 里置的 *Failed / *Error 状态位是否真的被 WXML 读到（置了没人读 = 失败显示成空态）
+ *  20. WXML 里的图标是否用了 emoji（第 17 项只管 WXSS 的 content:，管不到渲染层）
  *
  * 退出码：有问题返回 1（可直接用于 CI）
  */
@@ -714,6 +715,73 @@ for (const file of componentTplFiles) {
         `-> 失败被显示成空态或成功态（要么绑到 wx:if 上，要么删掉这个位）`);
     }
   }
+}
+
+// ---- 20. 图标规则从 WXSS 的 content: 扩到 WXML（我们自己的渲染层）----
+// 第 17 项只扫 WXSS，所以 WXML 里的 💡🎉 照样活了一整轮（实测：kitchen 两处）。
+// 与第 17 项同一套判据，但两条收紧/放宽是有意为之：
+//   A) 非 BMP 码位（>U+FFFF）：没有单色形态，一律失败——彩色 emoji 吃不到 CSS color，
+//      既不跟品牌色也不跟深色档翻，iOS/Android 还各画各的。
+//   B) BMP 里「默认就是 emoji 呈现」的码位（按 Unicode Emoji_Presentation=Yes 列，
+//      不是整段 26xx/27xx）：必须紧跟 \uFE0E 才放过。
+// 为什么 B 不用整段码位区间：✓(U+2713) ✕(U+2715) ★(U+2605) ✦(U+2726) ❝(U+275D) ⚑(U+2691)
+// 这些**默认就是文字呈现**，本来就能被 CSS color 着色、跨端一致，全站 8 个文件在用；
+// 按区间一刀切会把它们全判成缺陷，还会逼人往 WXML 里塞一个看不见的变体选择符。
+const EMOJI_PRESENTATION_BMP = [
+  [0x203c, 0x203c], [0x2049, 0x2049], [0x2122, 0x2122], [0x2139, 0x2139],
+  [0x2194, 0x2199], [0x21a9, 0x21aa], [0x231a, 0x231b], [0x2328, 0x2328],
+  [0x23cf, 0x23cf], [0x23e9, 0x23f3], [0x23f8, 0x23fa], [0x24c2, 0x24c2],
+  [0x25aa, 0x25ab], [0x25b6, 0x25b6], [0x25b8, 0x25bc], [0x25c0, 0x25c0],
+  [0x25c2, 0x25c4], [0x25e3, 0x25e3], [0x25ed, 0x25ee], [0x25f8, 0x25fb],
+  [0x2600, 0x2604], [0x260e, 0x260e], [0x2611, 0x2611], [0x2614, 0x2615],
+  [0x2618, 0x2618], [0x261d, 0x261d], [0x2620, 0x2620], [0x2622, 0x2623],
+  [0x2626, 0x2626], [0x262a, 0x262a], [0x262e, 0x262f], [0x2638, 0x263a],
+  [0x2640, 0x2640], [0x2642, 0x2642], [0x2648, 0x2653], [0x265f, 0x2660],
+  [0x2663, 0x2663], [0x2665, 0x2666], [0x2668, 0x2668], [0x267b, 0x267b],
+  [0x267e, 0x267e], [0x267f, 0x267f], [0x2692, 0x2692], [0x2694, 0x2697],
+  [0x2699, 0x2699], [0x269b, 0x269f], [0x26a0, 0x26a1], [0x26a7, 0x26a7],
+  [0x26aa, 0x26ab], [0x26b0, 0x26b1], [0x26b4, 0x26b7], [0x26bd, 0x26be],
+  [0x26c2, 0x26c4], [0x26c8, 0x26c8], [0x26ce, 0x26d1], [0x26d3, 0x26d4],
+  [0x26e9, 0x26ea], [0x26f0, 0x26f5], [0x26f7, 0x26fa], [0x26fd, 0x26fd],
+  [0x2702, 0x2702], [0x2708, 0x270d], [0x270f, 0x270f], [0x2712, 0x2712],
+  [0x2714, 0x2714], [0x2716, 0x2716], [0x271d, 0x271d], [0x2721, 0x2721],
+  [0x2728, 0x2728], [0x2733, 0x2734], [0x2744, 0x2744], [0x2747, 0x2747],
+  [0x274c, 0x274c], [0x274e, 0x274e], [0x2753, 0x2755], [0x2757, 0x2757],
+  [0x2763, 0x2764], [0x2795, 0x2797], [0x27a1, 0x27a1], [0x27b0, 0x27b0],
+  [0x27bf, 0x27bf], [0x2934, 0x2935], [0x2b05, 0x2b07], [0x2b1b, 0x2b1c],
+  [0x2b50, 0x2b50], [0x2b55, 0x2b55]
+];
+const isEmojiPresentationBmp = (cp) =>
+  EMOJI_PRESENTATION_BMP.some(([lo, hi]) => cp >= lo && cp <= hi);
+
+const scanIconText = (r, text, kind) => {
+  let offset = 0;
+  let prevCp = 0;
+  for (const ch of text) {
+    const cp = ch.codePointAt(0);
+    const line = text.slice(0, offset).split('\n').length;
+    offset += ch.length;
+    const skip = cp === 0xfe0e || cp === 0xfe0f;
+    const hadTextSelector = prevCp === 0xfe0e;
+    prevCp = cp;
+    if (skip) continue;
+    if (cp > 0xffff) {
+      problems.push(`${kind}用了 emoji 码位 ${r}:${line} -> U+${cp.toString(16).toUpperCase()} 没有单色形态，` +
+        '跨端渲染不一致且吃不到 CSS color（请换 app.wxss 的 .ico-* CSS 图标，或像社区动作行那样用 clip-path/border 画）');
+    } else if (isEmojiPresentationBmp(cp) && !hadTextSelector) {
+      problems.push(`${kind}的符号默认走 emoji 呈现 ${r}:${line} -> U+${cp.toString(16).toUpperCase()} ` +
+        '在 iOS/Android 常被画成彩色，吃不到 CSS color（换 CSS 图标；WXML 里没法写 \\FE0E，所以这条只能靠换实现）');
+    }
+  }
+};
+// 只扫 WXML（我们自己的渲染层），不扫 JS 字面量。第一版连 JS 一起扫，实测报出 27 处
+// U+2B50，全在 recipe-detail:292 / cook-mode:485 的 wx.showActionSheet itemList 里——
+// 那是**原生面板**：CSS 到不了那里，"吃不到 currentColor、不跟深色档翻"这条危害根本不成立，
+// 而评分选项除了星没有别的表达方式可放。我们自己的评分 UI 早就是 clip-path 画的 .rd-star，
+// 不受影响。判"图标"要落在渲染层，不是所有字符串。
+for (const file of files) {
+  if (!file.endsWith('.wxml')) continue;
+  scanIconText(rel(file), fs.readFileSync(file, 'utf8').replace(/<!--[\s\S]*?-->/g, ''), 'WXML');
 }
 
 // ---- 提审前必须由部署方填写的项（只报告、不阻断）----

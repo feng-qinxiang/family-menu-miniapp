@@ -80,9 +80,16 @@
   align-items: flex-start;
   gap: 12rpx;
 }
-.k-order-ic {
-  font-size: calc(26rpx * var(--fs-mul, 1));
-  line-height: 1.5;
+/* 原来这里是一枚 💡。换成一个纯排版的「建议」标签：
+   26rpx 的灯泡用 CSS 画出来在截图里读作"气球"，而彩色 emoji 吃不到 color、
+   不跟深色档翻——标签既是单色可着色，又比小图标更好认。 */
+.k-order-tag {
+  font-size: calc(22rpx * var(--fs-mul, 1));
+  line-height: 1.55;
+  font-weight: 800;
+  letter-spacing: 1rpx;
+  color: var(--pop);
+  flex: none;
 }
 .k-order-tx {
   font-size: calc(25rpx * var(--fs-mul, 1));

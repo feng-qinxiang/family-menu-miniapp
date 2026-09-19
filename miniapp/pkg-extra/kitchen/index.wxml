@@ -46,7 +46,7 @@
 
     <!-- 顺序建议 -->
     <view class="k-order" wx:if="{{orderText}}">
-      <text class="k-order-ic">💡</text>
+      <text class="k-order-tag">建议</text>
       <text class="k-order-tx">{{orderText}}</text>
     </view>
 
@@ -101,7 +101,7 @@
     </view>
 
     <!-- 全上桌横幅 -->
-    <view class="k-done-banner" wx:if="{{allDone}}">这一餐全部上桌，开饭！🎉</view>
+    <view class="k-done-banner" wx:if="{{allDone}}">这一餐全部上桌，开饭！</view>
 
     <view class="k-pad-bottom"></view>
   </block>

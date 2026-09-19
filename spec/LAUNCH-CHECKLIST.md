@@ -9,13 +9,17 @@
 > ④ 深色/小屏＝**模拟器能逼近多少算多少，逐项标注证据边界**。
 > owner 同时明确：备案域名 / 运营者信息 / 短信网关 / 生产库迁移 / 真机三项**继续推迟**，本轮不碰。
 >
-> **R1 已完成（止血四处 + 两条新门禁）**，证据在下方「第六轮 R1」表。
-> 待做：R2 图标收口、R3 视觉角色收敛 + `miniapp/test/ui-ledger.js` 台账、R4 做菜补齐、
+> **R1、R2 已完成**（止血四处状态缺陷 + 图标标准收口），证据在下方「第六轮 R1 / R2」两张表。
+> 待做：R3 视觉角色收敛 + `miniapp/test/ui-ledger.js` 台账、R4 做菜补齐、
 > R5 四链路走查、R6 后端读路径与索引、R7 写路径竞态与 404 语义、R8 购物清单 N+1 与时钟口径。
+>
+> ⚠ R2 把一条计划里的判断**推翻了一半**：被列成"文字当图标"违规的 8 处里只有 2 处（kitchen 的 💡🎉）
+> 是真违规，`❝ ⤴  ★ ✦` 都是默认文字呈现的 BMP 字符、本来就能着色；首页 hero 的「买」「谱」判定为**保留**。
+> 理由与判据写在 R2 那张表里，owner 要翻案看同一行。
 >
 > **当前状态（刚核过，不是回忆）**：`git log origin/master..HEAD` 为空、工作区无改动；
 > `server-ci / build-and-test` = success（**30 个测试类 / 181 项**，全新 MySQL 库）、
-> `miniapp-ci / static-check` = success（四条前端门禁，静态检查编号到第 **19** 项）。
+> `miniapp-ci / static-check` = success（四条前端门禁，静态检查编号到第 **20** 项）。
 > ⚠ `miniapp-ci` 只有**一个 job 名**却按顺序跑完四条门禁（static-check / dish-logic / kitchen-logic / interaction-audit），
 > 别看到只有一个 check 名字就以为只跑了静态自检。两个 workflow 都带 `paths` 过滤
 > （`miniapp/**` / `server/**`），所以**纯文档提交不触发任何 run 是正常的**，不是漏跑。
@@ -278,6 +282,19 @@
 | **新门禁 19：JS 里置的 `*Failed` / `*Error` 位必须被本页 WXML 读到** | ✅ 已钉，落地即 0 命中 | 基线扫描命中 **1 处 = `matchFailed`**（就是上面那个真缺陷），修完归零。<br>⚠ **这条门禁是被反向验证救回来的**：第一版用 `wxmlSrc.indexOf(key)` 子串匹配，我把 WXML 改成 `matchFailedZZZ` 之后门禁**照样 exit 0**——因为 `matchFailedZZZ` 里含 `matchFailed`。改成 `\b` 词边界后第一次测仍不报，原因是我自己新加的兜底分支里还留着另一处合法引用（**改坏要一次改干净**）。两处都改名 → `exit 1` 点名 `setData({ matchFailed }) 置了位，但 …wxml 里没有一处引用它`。 |
 | 四条前端门禁 + 编译 | ✅ 全绿 | `static-check`（现 19 项，285 文件）/ `dish-logic.test` / `kitchen-logic.test` / `interaction-audit`（A/B/C 均 0）四条 `exit 0`；改过的模板另用 `compile_wxml` 单独编过（`codeLength=33489`）；console 宽 grep 无 error/warn。 |
 | ⚠ 本轮我自己造的两个测量事故（记下来免得再犯） | 已复原 | ① **zsh 不对未加引号的变量做分词**：把 `wechatide -c Qoder automation_evaluate --project …` 存进 `$W` 再 `$W --fn-source …`，整串被当成一个命令名 → 命令根本没跑，而我把随之而来的空输出当成了"断言没通过"。② **替身恢复写错**：`wx.showToast = Object.getPrototypeOf(wx).showToast` 把 `wx.showToast` 变成了 `undefined`（`typeof` 实测），后续任何 toast 都不会出现；靠 `simulator_refresh` 重启运行时才复原（复原后 `typeof wx.showToast === "function"`）。<br>判据：**替身要存原引用、恢复后要 `typeof` 复核**；测完顺手 `get_simulator_console` 宽读一次。 |
+
+### 第六轮 R2（2026-09-19）：图标标准收口 + 新门禁 20
+
+| 项 | 结果 | 证据：怎么量的 / 修复前测到什么 / 修复后测到什么 |
+| --- | --- | --- |
+| 全站图标违规的真实范围 | ✅ 已量 | 计划里写的是"3 个文件 8 处"，实测**只有 2 处是真违规**：`pkg-extra/kitchen/index.wxml:49,104` 的 💡🎉（非 BMP，没有单色形态）。<br>其余被点名的 `❝ ⤴  ❞  ★ ✦` 全在 BMP，按 Unicode 是**默认文字呈现**，本来就能被 `color` 着色、跨端一致——把它们和彩色 emoji 混为一谈会把 8 个在用文件全判成缺陷，还会逼人往 WXML 里塞一个看不见的 `\uFE0E`。<br>所以门禁第 20 项的 B 分支用 **Emoji_Presentation=Yes 的码位清单**（约 90 个区间），不用第 17 项那种"整段 26xx/27xx"的粗判据。 |
+| 新门禁 20：WXML 里的图标不许用 emoji | ✅ 已钉，落地 0 命中 | 基线：修复前 WXML 命中 **2 处**（就是 kitchen 那两枚）；修完归零。<br>**反向验证**：往 `k-done-banner` 注入 `💡⭐` → `exit 1`，两条分支各点名一次、行号都是 104（`U+1F4A1 没有单色形态` / `U+2B50 默认走 emoji 呈现`）；撤掉注入后四条门禁全 `exit 0`。<br>⚠ **第一版把 JS 字符串字面量也扫了，报出 31 条——27 条是误报**：`recipe-detail:292` / `cook-mode:485` 的 `wx.showActionSheet` itemList 用 ⭐ 表示评分档位。那是**原生面板**，CSS 到不了那里，"吃不到 currentColor、不跟深色档翻"的危害根本不成立，而两行评分选项除了星没有别的表达方式；我们自己的评分 UI 早就是 clip-path 画的 `.rd-star`（`recipe-detail/index.wxss:384`），不受影响。剩下 4 条是 `test/` 脚本自己的输出符号。<br>判据：**"图标"这个概念只在渲染层成立**，扫 JS 会把原生面板与测试脚本一起卷进来。 |
+| 补一份全站共享的 CSS 图标词汇 | ✅ | `app.wxss` 末尾新增 `.ico-bubble`（评论）/ `.ico-share`（分享：开口托盘 + clip-path 箭头）/ `.ico-flag`（举报：旗杆 + 带缺口旗）。全部 `currentColor` + `em` 单位——颜色跟主题与激活态翻，尺寸跟 `font-size` 所以大字模式自动生效。<br>为什么放全局而不是各页再画一份：全站已有 20+ 个页面级 CSS 图标（社区 `.ico-chat`、通知页 `.ic-bell`、导入页 `.ic-cam`…）各画各的，这正是"同一角色多种实现"的漂移源。 |
+| kitchen：💡 换成排版标签、🎉 直接删 | ✅（截图定稿） | 💡 先按标准换成 CSS 画的灯泡（圈 + 灯座），**截图一看读作"气球"**——26rpx 下细节全糊。改成一个纯排版的「建议」标签（`--pop` 色、`--fs-mul` 缩放），比小图标更好认也不引入"看不清的图形"。`/tmp/r2-k-crop2x.png` 已核。<br>🎉（开饭横幅）直接删掉：文案"这一餐全部上桌，开饭！"自己就带情绪，横幅本身是实心色块，加任何小图标都是噪音。 |
+| post-detail：三个字符图标换 CSS，顺带查出操作行必然溢出 | ✅（A/B 证明不是我改坏的） | 换图标后截图发现「收藏 0」「举报」被竖排换行、三个胶囊高度不一。**先做 A/B**：把 `index.wxml` + `index.wxss` 临时换回 HEAD 版本重编译截图（`/tmp/r2-pd-BEFORE.png`）→ **换行在改图标之前就存在**，不是本次回归。<br>再量数值定因：`.react-bar` 可用宽 **344px（664rpx）**，五个胶囊按内容（图标 22rpx + gap 12 + 文案 + 左右内边距 60rpx）实际需要约 **800rpx**；`.react` 没有 `flex:none`，于是被等比压扁、文字折行——实测三个胶囊高度分别 **38.1 / 21.7 / 58.3px**。<br>改法：`.react` 加 `flex:none` + `white-space:nowrap`，`.react-bar` 改 `flex-wrap:wrap`（装不下就整胶囊换行，不压字）；分享/举报按社区列表页 `.pa-report` 的层级降为**次级文字动作**，并放进 `.react-sub{flex:1 1 100%;justify-content:space-between}` 独占一行。<br>**修复后实测**：第一排三个胶囊等高 38.1px，第二排 `.react-sub` 344×39.7px，分享在左、举报在右；放大截图 `/tmp/r2-pd-crop2x.png` 里五个图标同色同粗同基线。<br>⚠ 两点如实记下：① `button` 的 UA 默认宽度（实测仍是 184px，`min-width:0` 压不动）现在**不再影响布局**，因为分布改由 `.react-sub` 决定；② 顺带发现「赞」的图标 `.ricon-heart` 是 `border-radius:50%` 的**空心圆**，看着不像心——属设计选择不是缺陷，留给 R3 台账记一笔。 |
+| 首页 hero 的「买」「谱」两个字符按钮 | ⬠ 判定为**保留**（与计划相反，理由在此） | 计划把它列成"文字当图标"的违规。放大截图（`/tmp/r2-home-crop2x.png`）：白色粗体汉字在半透明深圆 + 浅色描边里，还带一个红点角标（买菜清单有待买项）。它是**单色、可被 CSS color 着色、跟大字模式缩放**的，且对中文用户比一个抽象购物车更好认（"买"=买菜、"谱"=菜谱库）。<br>换成 CSS 画的购物车/书本属于**视觉重做**，风险大于收益，所以本轮不动。<br>⚠ 这是 agent 的判断，不是既成事实——owner 若要换图标，改 `pages/home/index.wxml:50,53` 与 `.mh-ico-glyph` 即可，门禁第 20 项不会拦（汉字不在 Emoji_Presentation 清单里）。 |
+| 四条前端门禁 | ✅ 全绿 | `static-check`（现 20 项）/ `dish-logic.test` / `kitchen-logic.test` / `interaction-audit`（A/B/C 均 0）全部 `exit 0`。 |
+
 
 
 

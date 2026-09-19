@@ -97,17 +97,20 @@
           <view class="ricon ricon-star {{post.favorited ? 'on' : ''}}"></view>
           <text class="n">收藏 {{post.favoriteCount}}</text>
         </view>
-        <view class="react react-end">
-          <text class="ricon">❝</text>
+        <view class="react">
+          <view class="ricon ico-bubble"></view>
           <text class="n">{{post.commentCount}}</text>
         </view>
-        <button class="react react-share tap-scale" open-type="share">
-          <text class="ricon">⤴</text>
-          <text class="n">分享</text>
-        </button>
-        <view class="react react-report tap-scale" bindtap="onReport">
-          <text class="ricon">⚑</text>
-          <text class="n">举报</text>
+        <!-- 次级动作单独一行（分享 / 举报）：不靠 button 的 UA 默认宽度去撑分布 -->
+        <view class="react-sub">
+          <button class="react react-share tap-scale" open-type="share">
+            <view class="ricon ico-share"></view>
+            <text class="n">分享</text>
+          </button>
+          <view class="react react-report tap-scale" bindtap="onReport">
+            <view class="ricon ico-flag"></view>
+            <text class="n">举报</text>
+          </view>
         </view>
       </view>
 

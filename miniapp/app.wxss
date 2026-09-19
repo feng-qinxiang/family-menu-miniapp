@@ -604,3 +604,44 @@ page {
 }
 @keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
 @keyframes blink { 50% { opacity: 0; } }
+
+/* ===================== 全站图标词汇（单色、可被 CSS color 着色）=====================
+   为什么放全局：这些形状原来各页自己画一份（社区 .ico-chat、通知页 .ic-bell、
+   导入页 .ic-cam…），而 WXML 里当图标用的字符只剩两种下场——系统 emoji（吃不到
+   currentColor，既不跟品牌色也不跟深色档翻，iOS/Android 还各画各的），或者一个
+   看不见摸不着的变体选择符。所以统一走 CSS 画：尺寸全用 em（跟着 font-size 走，
+   大字模式自动生效），颜色一律 currentColor（跟着主题与激活态翻）。
+   用法：给一个空 view 挂类，外层用 font-size 控制大小，用 color 控制颜色。 */
+.ico-bubble { position: relative; display: inline-block; width: 1.05em; height: 1.05em; vertical-align: -0.14em; }
+.ico-bubble::before {
+  content: ""; position: absolute; left: 0.06em; top: 0.1em;
+  width: 0.88em; height: 0.64em; box-sizing: border-box;
+  border: 0.09em solid currentColor; border-radius: 0.2em 0.2em 0.2em 0.06em;
+}
+.ico-bubble::after {
+  content: ""; position: absolute; left: 0.22em; bottom: 0.1em; width: 0; height: 0;
+  border-left: 0.14em solid transparent; border-right: 0.05em solid transparent;
+  border-top: 0.16em solid currentColor;
+}
+/* 分享 / 导出：顶部开口的托盘 + 一支向上的箭头（箭头用 clip-path 一次成型） */
+.ico-share { position: relative; display: inline-block; width: 1em; height: 1em; vertical-align: -0.14em; }
+.ico-share::before {
+  content: ""; position: absolute; left: 0.08em; right: 0.08em; bottom: 0.04em;
+  height: 0.46em; box-sizing: border-box;
+  border: 0.09em solid currentColor; border-top: none; border-radius: 0.08em;
+}
+.ico-share::after {
+  content: ""; position: absolute; left: 50%; top: 0.02em; width: 0.5em; height: 0.56em;
+  transform: translateX(-50%); background: currentColor;
+  clip-path: polygon(50% 0%, 100% 42%, 66% 42%, 66% 100%, 34% 100%, 34% 42%, 0% 42%);
+}
+/* 举报：旗杆 + 一面带缺口的旗 */
+.ico-flag { position: relative; display: inline-block; width: 0.95em; height: 1.05em; vertical-align: -0.14em; }
+.ico-flag::before {
+  content: ""; position: absolute; left: 0.06em; top: 0; width: 0.12em; height: 100%;
+  background: currentColor; border-radius: 0.05em;
+}
+.ico-flag::after {
+  content: ""; position: absolute; left: 0.18em; top: 0.06em; width: 0.72em; height: 0.5em;
+  background: currentColor; clip-path: polygon(0 0, 100% 0, 80% 50%, 100% 100%, 0 100%);
+}

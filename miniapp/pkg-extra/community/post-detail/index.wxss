@@ -169,10 +169,15 @@
 }
 
 /* ===== 操作栏 ===== */
+/* 实测（390×844 档）：可用宽 664rpx，五个胶囊按内容实际需要约 800rpx，
+   所以原来既不换行也不缩字号，只能被挤扁——「收藏 0」竖排成两行、
+   三个胶囊高度 38/22/58px 各不相同。改成：字号锁死不折行，
+   装不下就**整胶囊换到第二行**，两行都左对齐，观感与列表页动作行一致。 */
 .react-bar {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 18rpx;
+  gap: 14rpx 10rpx;
   margin-top: 42rpx;
   padding-bottom: 42rpx;
   border-bottom: 2rpx solid var(--paper-2);
@@ -181,14 +186,18 @@
   display: flex;
   align-items: center;
   gap: 12rpx;
-  padding: 18rpx 30rpx;
+  flex: none;
+  white-space: nowrap;
+  padding: 18rpx 26rpx;
   border-radius: var(--r-pill);
   background: var(--paper-2);
   color: var(--mut-strong);
   font-size: var(--fs-sub);
   font-weight: 700;
 }
-.react .ricon { font-size: calc(28rpx * var(--fs-mul, 1)); line-height: 1; }
+/* 图标一律 22rpx 见方：.ricon-heart / .ricon-star 是定宽高的 CSS 形状，
+   而 app.wxss 的 .ico-* 用 em（1em≈图标框），所以这里把字号压到 22rpx 让一排对齐。 */
+.react .ricon { font-size: calc(22rpx * var(--fs-mul, 1)); line-height: 1; }
 /* 几何心/星，不用 emoji */
 .ricon-heart,
 .ricon-star {
@@ -213,7 +222,8 @@
 .react .n { font-weight: 800; }
 .react.liked { background: var(--pop-soft); color: var(--pop); }
 .react.fav-on { background: var(--pop-soft); color: var(--pop); }
-.react-end { margin-left: auto; }
+/* 原来这里靠 .react-end{margin-left:auto} 把评论顶到行尾；改成一排左对齐后
+   换行才不会跑出"半行右对齐"的孤儿胶囊，所以这个类连同它在 WXML 里的用法一起删。 */
 
 /* ===== 评论区 ===== */
 .csec { margin-top: 44rpx; }
@@ -367,13 +377,26 @@
   border-radius: 14rpx;
   background: var(--paper-2);
 }
-.react-share {
+/* 次级动作行：占满一整行、两端对齐（分享在左、举报在右）。
+   flex: 1 1 100% 是"强制另起一行"的写法，不依赖上面那排装不装得下。 */
+.react-sub {
+  display: flex;
+  flex: 1 1 100%;
+  align-items: center;
+  justify-content: space-between;
+}
+/* 分享 / 举报 = 次级文字动作（与社区列表页 .pa-report 同一层级：主操作是胶囊，
+   次级是弱色文字），所以不给胶囊底色。button 的 UA 默认样式要显式压掉。 */
+.react-share,
+.react-report {
   background: transparent;
   border: none;
+  min-width: 0;
+  flex: 0 0 auto;
   margin: 0;
-  padding: 0;
+  padding: 18rpx 8rpx;
   line-height: inherit;
-  color: inherit;
+  color: var(--mut-strong);
   font-size: inherit;
 }
 .react-share::after {
