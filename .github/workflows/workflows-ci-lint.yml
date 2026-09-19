@@ -17,7 +17,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # 脚本报错信息里有中文：ruby 的 -e 源码编码跟随 locale，
+      # 在 LANG 未设（默认 US-ASCII）的 shell 里连脚本本身都解析不了。
+      # GitHub runner 默认是 C.UTF-8 所以不会中招，但本地想跑同一份检查就必须显式钉住。
       - name: 解析 .github/workflows 下全部 YAML（语法错就退出非零）
+        env:
+          LANG: C.UTF-8
+          LC_ALL: C.UTF-8
         run: |
           ruby -ryaml -e '
             Dir.glob(".github/workflows/*.{yml,yaml}").sort.each do |f|

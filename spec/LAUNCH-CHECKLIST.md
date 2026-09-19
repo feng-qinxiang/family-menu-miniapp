@@ -388,6 +388,16 @@ WXSS 配平与注释风格、图片/组件引用、事件处理函数存在性�
 并校验每个 job 有 steps、每个 step 有 `run` 或 `uses`。它存在的唯一理由就是上面那条
 「缩进坏掉 → 工作流被静默忽略」的事故不再重演。
 
+> **这道守卫本身已用事故原件验证过（2026-09-19）**：把 `origin/master` 上那份坏掉的
+> `miniapp-ci.yml` 放进同目录跑同一段 ruby → **exit 1**，报的正是
+> `did not find expected key while parsing a block mapping at line 18 column 5`；
+> 换成修好的那份 → 三份全 OK、exit 0。所以它不是装饰，是真能挡住那次事故的。
+> 另：脚本里的报错信息含中文，ruby `-e` 的源码编码跟随 locale，`LANG` 未设时默认
+> US-ASCII 会连脚本都解析不了（GitHub runner 是 `C.UTF-8` 不受影响，但本地跑会踩）。
+> 已在该 step 显式钉 `LANG/LC_ALL=C.UTF-8`，本地与 CI 行为一致。
+> 顺带确认：三份 workflow 里**没有任何 `${{ }}` 插值**进 `run`，
+> 不存在把 event 载荷拼进 shell 的注入面。
+
 ### 深色模式的两条实测约束（2026-09-19 验证）
 
 - `app.json` 的 `window.navigationBarBackgroundColor` / `backgroundColor` **不能**写成 `$xxx` 主题引用：
