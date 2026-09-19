@@ -1,6 +1,9 @@
 <!-- pages/me/notifications · 消息中心（二级页） -->
 <view class="notif-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
-  <nav-bar title="消息" show-back="{{true}}">
+  <!-- 标题留空：导航标题是绝对居中的、不会给右侧按钮让位，而「全部已读」带图标共约 190rpx，
+       实测 2 字的「消息」也会被它的对勾压住。页面名由下方 hero「消息通知 / 家里的动静」承担，
+       与社区页（发帖胶囊）、餐桌页（点菜胶囊）同一写法。 -->
+  <nav-bar title="" show-back="{{true}}">
     <view class="nb-readall tap-scale" catchtap="onReadAll">
       <view class="nb-check"></view>
       <text>全部已读</text>
