@@ -1,5 +1,38 @@
 # 上线清单（个人主体版）
 
+> ## 接手须知（2026-09-19 会话收尾时留）
+>
+> **代码侧已全部提交，只差 push 这一步，而 push 只能由部署方做。**
+> 本地 `master` 领先 `origin/master` **21 个提交**，工作区干净（`git status` 无输出）。
+> 这台机器三条凭据路径都实测不通：keychain 无 `github.com` 条目、无 `gh` 登录、
+> `ssh -T git@github.com` → `Permission denied (publickey)`。
+>
+> **下一步（一条命令）**：
+> ```
+> cd /Users/xx/cx/家庭点菜小程序 && git push origin master
+> ```
+> （或 `gh auth login` 走设备码，需带 `HTTPS_PROXY=http://127.0.0.1:7897`，
+> 直连 GitHub OAuth 端点会超时。）
+>
+> **push 之后必须回答的两个问题**（在此之前，本清单里所有"CI 已校验"的说法都不成立）：
+> 1. `server-ci` 是否转绿？根因已定位为时区（JDBC 钉 `serverTimezone=Asia/Shanghai`
+>    使 MySQL 会话在 +08:00，而 CI runner JVM 在 UTC；过期时间曾由 JVM 时钟写、
+>    由 SQL `NOW()` 校验 → 会话与验证码"一建立就过期"）。已在未修复的 `origin/master` 上
+>    用 `TZ=UTC` 复现出与 CI 同签名的失败（139 项 4 失败），修复后 153 项全绿。
+>    **若仍红**，就去 Actions 取「Build and run tests」的日志——本机无法复现的原因已排除，
+>    剩下的差异只可能在 mysql:8.0 / JDK 17。
+> 2. `miniapp-ci` 是否**第一次真正执行**四条门禁？GitHub 上那份 YAML 至今是坏的
+>    （`did not find expected key ... line 18 column 5`），所以历史上它的 job 列表为空、
+>    等于小程序零自动化把关。修好的那份在这 21 个提交里，没 push 就不生效。
+>
+> **仍然卡在部署方手上、代码无法代劳的**：ICP 备案域名（`miniapp/utils/env.js`）、
+> 运营者姓名与联系方式（`miniapp/utils/legal-config.js`）、真实短信网关
+> （不接则谁也绑不了手机号、`/admin` 进不去）、生产库执行 §7 列的两个迁移脚本、
+> 真机三项（相册授权弹窗、深色整体回归、小屏弹层内滚动）。
+>
+> 其余细节见 §7「CI 的真实状态」、§8 逐条清单，以及「跨家庭数据隔离（IDOR）实测结论」。
+
+
 > **当前就绪度（2026-09-19 自动走查 + 加固后）**
 >
 > 已验证：37 个注册页面全部在模拟器实际打开过；点菜→清单、做菜（详情→步骤→记一笔→记录）、
