@@ -95,7 +95,9 @@ function performRequest(path, config) {
         'X-Auth-Token': getAuthToken(),
         'X-Device-Id': getDeviceId()
       },
-      timeout: 10000,
+      // 读请求给 15s、写请求保持 10s：读慢了用户宁可多等一会（页面本来就有加载态），
+      // 而写请求等太久会让人以为没戳上再来一次——那才是重复提交的来源。
+      timeout: (config.method || 'GET').toUpperCase() === 'GET' ? 15000 : 10000,
       success(res) { resolve({ res }); },
       fail(err) { resolve({ err }); }
     });

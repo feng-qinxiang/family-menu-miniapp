@@ -32,9 +32,19 @@
 - **静态检查扩到 21 项**：21) 类名带 `thumb` 的图块边长必须走规格表，不许写裸 rpx（反向验证过能判失败）。
 - **社区信息流 SQL 重写 + 分页不变量测试**（`CommunityFeedUnionTests`，2 条，反向验证过有牙）：
   待审帖只对作者可见这个 OR 原本让 `idx_post_audit` 退化成 filesort，现拆成 UNION ALL 两段各自命中索引。
+- **`ShoppingListSourceTests`**（2 条）：钉住清单条目的"来自哪道菜"确实回指用到它的菜谱，
+  以及每条都带 `sourceRecipes` 数组（前端按 `.length` 判断，给 null 会让那一行整个消失）。
 
 ### Fixed
 
+- **购物清单的"来自哪道菜"每行重跑一次四表连接**：那条 `GROUP_CONCAT(...)` 相关子查询在
+  EXPLAIN 里是 4 个 `DEPENDENT`，清单有几行就跑几遍；改成两条查询 + Java 侧按食材分组，
+  顺带解掉 `group_concat_max_len`（实测默认 1024 字节）把来源静默截断的问题。
+  `loadPreviousPurchasedMap` 也不再顺带跑一次来源回溯。
+- **"今天"有两套定义**：许愿侧用 JVM 的 `LocalDate.now()`、菜单侧用 SQL `CURRENT_DATE`，
+  而 JDBC 连接钉了 `serverTimezone=Asia/Shanghai` —— 夜里许的愿会落到菜单看不到的那天。
+  统一到数据库时钟（与 `AdminService.metrics` 同一个先例）。
+- **前端读写共用一个 10s 超时**：现在 GET 给 15s、写请求保持 10s——写等太久会让人以为没戳上再点一次。
 - **并发点赞不再报错**：原来"先查再插"，两个人同一瞬间点同一个帖时第二条撞唯一键变成
   409「记录已存在，请勿重复操作」。现在把唯一键冲突与 InnoDB 死锁一起纳入**事务外重试**
   （`inTxWithDeadlockRetry`，MySQL 对死锁的建议原文就是 "try restarting transaction"）。

@@ -127,13 +127,24 @@ public class WishService {
 
     private LocalDate parseDate(String date) {
         if (date == null || date.isBlank()) {
-            return LocalDate.now();
+            return dbToday();
         }
         try {
             return LocalDate.parse(date.trim());
         } catch (Exception ex) {
-            return LocalDate.now();
+            return dbToday();
         }
+    }
+
+    /**
+     * "今天"一律问数据库，不用 JVM 时钟。
+     * 理由和 AdminService.metrics 一样（那里已经踩过一次）：JDBC 连接钉了
+     * `serverTimezone=Asia/Shanghai`，而 JVM 可能是 UTC——夜里许愿时两个"今天"会差一天，
+     * 于是愿望落在菜单看不到的那天。菜单侧用的是 SQL CURRENT_DATE，这里必须同源。
+     */
+    private LocalDate dbToday() {
+        LocalDate fromDb = jdbcTemplate.queryForObject("SELECT DATE(NOW())", LocalDate.class);
+        return fromDb == null ? LocalDate.now() : fromDb;
     }
 
     private String slotLabel(String slot) {

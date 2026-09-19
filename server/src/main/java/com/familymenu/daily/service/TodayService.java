@@ -386,16 +386,10 @@ public class TodayService {
     }
 
     private List<ShoppingListItemView> loadShoppingItems(long shoppingListId) {
-        // 子查询把每条食材回溯到今日菜单中使用它的菜谱（手动补充的条目为 NULL）
-        return jdbcTemplate.query("""
-                        SELECT sli.id, sli.ingredient_name, sli.amount, sli.unit, sli.purchased,
-                               (SELECT GROUP_CONCAT(DISTINCT r.title ORDER BY r.title SEPARATOR '、')
-                                FROM daily_menu_item dmi
-                                JOIN recipe r ON r.id = dmi.recipe_id
-                                JOIN recipe_ingredient ri ON ri.recipe_id = r.id
-                                JOIN shopping_list sl ON sl.daily_menu_id = dmi.daily_menu_id
-                                WHERE sl.id = sli.shopping_list_id
-                                      AND ri.ingredient_name = sli.ingredient_name) AS source_recipes
+        // 原来是一条 SQL 里带相关子查询：清单有 N 行就把"daily_menu_item × recipe × recipe_ingredient × shopping_list"
+        // 这个四表连接跑 N 遍（EXPLAIN 里是 N 个 DEPENDENT SUBQUERY）。改成两条查询 + Java 侧分组。
+        List<ShoppingListItemView> items = jdbcTemplate.query("""
+                        SELECT sli.id, sli.ingredient_name, sli.amount, sli.unit, sli.purchased
                         FROM shopping_list_item sli
                         WHERE sli.shopping_list_id = ?
                         ORDER BY sli.purchased ASC, sli.ingredient_name ASC
@@ -406,12 +400,46 @@ public class TodayService {
                         rs.getString("amount"),
                         rs.getString("unit"),
                         rs.getBoolean("purchased"),
-                        rs.getString("source_recipes") == null
-                                ? List.of()
-                                : List.of(rs.getString("source_recipes").split("、"))
+                        new ArrayList<>()   // 来源在下面第二步填进去
                 ),
                 shoppingListId
         );
+        if (items.isEmpty()) {
+            return List.of();
+        }
+        // 把每条食材回溯到今日菜单中使用它的菜谱（手动补充的食材匹配不到，留空）
+        Map<String, List<String>> titlesByIngredient = new HashMap<>();
+        jdbcTemplate.query("""
+                        SELECT DISTINCT ri.ingredient_name, r.title
+                        FROM shopping_list sl
+                        JOIN daily_menu_item dmi ON dmi.daily_menu_id = sl.daily_menu_id
+                        JOIN recipe r ON r.id = dmi.recipe_id
+                        JOIN recipe_ingredient ri ON ri.recipe_id = r.id
+                        WHERE sl.id = ?
+                        """,
+                rs -> {
+                    String name = rs.getString("ingredient_name");
+                    // 原来 GROUP_CONCAT(... ORDER BY r.title) 按菜名排；Java 侧保持同一顺序，
+                    // 免得清单上"来自哪道菜"的顺序在两个版本之间跳
+                    titlesByIngredient.computeIfAbsent(name, k -> new ArrayList<>()).add(rs.getString("title"));
+                },
+                shoppingListId
+        );
+        List<ShoppingListItemView> out = new ArrayList<>(items.size());
+        for (ShoppingListItemView item : items) {
+            List<String> titles = new ArrayList<>(titlesByIngredient.getOrDefault(item.ingredientName(), List.of()));
+            // 原来 GROUP_CONCAT(... ORDER BY r.title) 按菜名排；Java 侧保持同一顺序，
+            // 免得清单上"来自哪道菜"的顺序在两个版本之间跳
+            titles.sort(java.util.Comparator.naturalOrder());
+            out.add(withSources(item, titles));
+        }
+        return out;
+    }
+
+    /** 视图记录是不可变的，分组结果只能这样回填——比原来塞子查询便宜得多（一次查询 + 内存拼装）。 */
+    private static ShoppingListItemView withSources(ShoppingListItemView item, List<String> titles) {
+        return new ShoppingListItemView(item.itemId(), item.ingredientName(), item.amount(), item.unit(),
+                item.purchased(), titles);
     }
 
     private List<IngredientRow> loadRecipeIngredients(long recipeId) {
@@ -459,10 +487,16 @@ public class TodayService {
 
     private Map<String, Boolean> loadPreviousPurchasedMap(long shoppingListId) {
         Map<String, Boolean> result = new HashMap<>();
-        List<ShoppingListItemView> items = loadShoppingItems(shoppingListId);
-        for (ShoppingListItemView item : items) {
-            result.put(normalizeIngredientKey(item.ingredientName(), item.unit()), item.purchased());
-        }
+        // 这里只要"名字/单位/买没买"三样，原来却走 loadShoppingItems（连带把"来自哪道菜"
+        // 的菜谱回溯也跑一遍）。重建清单每次都要读它一次，白付一次四表连接。
+        jdbcTemplate.query(
+                "SELECT ingredient_name, unit, purchased FROM shopping_list_item WHERE shopping_list_id = ?",
+                (org.springframework.jdbc.core.RowCallbackHandler) rs -> {
+                    result.put(normalizeIngredientKey(rs.getString("ingredient_name"), rs.getString("unit")),
+                            rs.getBoolean("purchased"));
+                },
+                shoppingListId
+        );
         return result;
     }
 
