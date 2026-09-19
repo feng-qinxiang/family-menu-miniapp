@@ -82,7 +82,13 @@
 .mag-hero-title {
   margin: 26rpx 0 16rpx;
   font-size: var(--fs-hero-xl);
-  line-height: 0.92;
+  /* 家庭名是用户自己起的（家庭管理里可改），长到会换行；0.92 是单行展示字的行高，
+     换行后两行字互压。按「最多两行 + 能换行的行高」定，名字不截断、高度也不失控。 */
+  line-height: 1.1;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
   letter-spacing: -5rpx;
   -webkit-text-stroke: 3rpx var(--c-surface);
 }

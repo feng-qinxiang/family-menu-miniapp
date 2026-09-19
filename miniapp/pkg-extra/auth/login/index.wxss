@@ -106,7 +106,11 @@
 }
 .hero-title {
   font-size: var(--fs-hero-lg);
-  line-height: 0.9;
+  /* 0.9 是给单行展示字用的，但本页标题里有硬换行（.br），永远是两行：
+     72rpx 字号 × 0.9 = 64.8rpx 行盒，再叠 -webkit-text-stroke 的 3rpx 外描边，
+     两行字会直接互相压上（实测首页登录页「今天吃什么 / 一家人说了算」贴在一起）。
+     这是审核员进小程序看到的第一屏，不能是挤成一坨的。 */
+  line-height: 1.06;
   letter-spacing: -6rpx;
   margin: 30rpx 0 26rpx;
   -webkit-text-stroke: 3rpx var(--c-surface);

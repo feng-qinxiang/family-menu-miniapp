@@ -80,7 +80,15 @@
   border-radius: var(--r-pill);
 }
 .rd-hero-title {
-  font-size: var(--fs-hero-xl);  line-height: 0.92;
+  font-size: var(--fs-hero-xl);
+  /* 菜名是家里人自己起的，长到一定换行（实测「外婆传下来的红烧肉炖土豆胡萝卜玉米一锅出」
+     19 字换了三行）。0.92 这个行高是按单行展示字定的，一旦换行，上下两行的字直接互压到认不出来。
+     这里按「会换行」定行高，并最多三行——再多就把整张 hero 图吞掉。 */
+  line-height: 1.14;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
   letter-spacing: -6rpx;
   margin: 28rpx 0 26rpx;
   -webkit-text-stroke: 3rpx var(--c-surface);

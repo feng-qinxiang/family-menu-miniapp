@@ -23,6 +23,7 @@
  *  10. .js 里 require() 的相对路径目标是否存在（漏提交新文件 = CI 检出树里缺文件）
  *  11. .wxss 里 var(--token) 引用的名字是否真有定义（拼错的 token 会静默丢样式）
  *  12. 恒定暗底（沉浸）页的前景/填充色是否在浅色档和深色档都成立（深色档翻出 #333 正文即失败）
+ *  13. 绑了动态文本的标题是否用了「单行展示字」的紧凑行高（长菜名一换行两行字会互压）
  *
  * 退出码：有问题返回 1（可直接用于 CI）
  */
@@ -470,6 +471,40 @@ if (fs.existsSync(themePath)) {
         });
       }
     }
+  }
+}
+
+// ---- 13. 绑了动态文本的标题不许用「单行展示字」的紧凑行高 ----
+// line-height < 1 是给一行大标题定的紧凑值。可一旦这个标题绑的是用户输入（菜名、家庭名），
+// 长到换行时上下两行的字面会直接互相压上去。本轮实测抓到三处：登录页 hero 的硬换行
+// （「今天吃什么 / 一家人说了算」贴在一起）、菜谱详情页 19 字菜名换三行、我的页长家庭名。
+// 整屏截图里很难看出来，得放大才看得见，所以钉成检查项。
+// 判定：规则里 line-height < 1，且该类在配套 WXML 里绑着 {{动态文本}}，
+// 而规则自身既没有 white-space: nowrap 也没有 -webkit-line-clamp —— 有任一个都算安全。
+const TIGHT_LINE_HEIGHT = /line-height\s*:\s*(0?\.\d+|\d+(?:\.\d+)?)\s*;/;
+for (const file of files) {
+  if (!file.endsWith('.wxss')) continue;
+  const wxmlPath = file.replace(/\.wxss$/, '.wxml');
+  if (!fs.existsSync(wxmlPath)) continue;
+  const tmpl = fs.readFileSync(wxmlPath, 'utf8');
+  const r = rel(file);
+  for (const block of stripComments(fs.readFileSync(file, 'utf8')).matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+    const body = block[2];
+    const lh = TIGHT_LINE_HEIGHT.exec(body);
+    if (!lh) continue;
+    const v = parseFloat(lh[1]);
+    if (!(v > 0 && v < 1)) continue;
+    if (/white-space\s*:\s*nowrap|-webkit-line-clamp/.test(body)) continue;
+    const classes = [];
+    for (const c of block[1].matchAll(/\.([\w-]+)/g)) classes.push(c[1]);
+    if (!classes.length) continue;
+    const dyn = classes.filter((c) =>
+      new RegExp('<[a-z-]+[^>]*class="[^"]*\\b' + c + '\\b[^"]*"[^>]*>[^<]*\\{\\{').test(tmpl))[0];
+    if (!dyn) continue;
+    problems.push(
+      `紧凑行高的标题绑着动态文本，长名字一换行两行字会互压 ${r} -> .${dyn} { line-height: ${v} }` +
+      '（请给到 line-height ≥ 1，或加 white-space: nowrap，或用 -webkit-line-clamp 限制行数）'
+    );
   }
 }
 
