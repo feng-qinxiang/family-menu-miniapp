@@ -209,7 +209,7 @@ dev 库行数极少（cook_history 26 行、community_post 3 行），所以 `ro
 | **日志会写进手机号 / openid / 邀请码** | `GlobalExceptionHandler` 对 `DuplicateKeyException` / `DataIntegrityViolationException` 记的是 `ex.getMessage()`，而 Spring 的 DataAccessException 消息带着失败 SQL 和 MySQL 原文，`Duplicate entry 'xxx' for key 'user_account.uk_user_phone'` 里的 xxx 就是用户填的值。改为只记 `方法 + URI`（每个唯一键只属于一个接口，定位够用） |
 | **没有存活探针** | 全站没有 actuator 也没有 `/healthz`（实测 `curl :9088/api/health` → 404），部署侧无法判断服务是否活着。新增 `GET /healthz`（挂在 `/api/**` 之外所以天然免鉴权、不用动白名单），返回 `{"status":"UP","db":"UP"}`、库连不上时 503；因为匿名可访问且每次打一次库，同步给它加了 60 次/分钟/IP 的限流规则。契约钉在 `HealthEndpointTests`（免鉴权可达 / 必须真打库 / 只允许这两个字段） |
 
-后端测试从 153 → **161 条，全绿**（`./mvnw -o test`，跑前 `DROP DATABASE family_menu_daily_test_db` 以对齐 CI）。
+后端测试从 153 → **164 条，全绿**（`./mvnw -o test`，跑前 `DROP DATABASE family_menu_daily_test_db` 以对齐 CI）。
 
 ### 已查清、本轮**故意没改**（等 owner 定，别当成漏网）
 
@@ -220,10 +220,19 @@ dev 库行数极少（cook_history 26 行、community_post 3 行），所以 `ro
   直接加 LIMIT 会把筛选功能改坏。要做得连着前端分页一起改，属于功能改动不是加固。
 - `[MED]` **三条硬截断没有翻页入口**：做菜记录 `LIMIT 50`、帖子评论 `LIMIT 20`、通知 `LIMIT 50`
   —— 页面上都没有「看更多」，评论数角标会和列表不一致。同上，要连着 UI 改。
-- `[MED]` **上传图完全不压缩不缩放**：`UploadController:66` 是裸 `transferTo`，全站没有 ImageIO/缩略图；
-  上限 20 MB（controller + multipart + nginx 三处一致），10 MB 手机原图照单全收。
-  叠加「每次响应重新签名 → URL 每次都变 → 浏览器缓存必然失效」和 `/uploads/**` 没设 `Cache-Control`，
-  移动网络下每屏都在重下原图。**这是上线后最值得做的一条性能项**，但要动存储与展示链路，不是几行的事。
+- `[部分已修]` **图片缓存此前完全失效**：`/uploads/**` 的自定义资源处理器只发 `Last-Modified`
+  （自定义处理器不继承 `spring.web.resources.cache.*`），而签名 `exp = now + TTL` 每次响应都不同
+  → 每次接口返回都是一个新 URL → 小程序按完整 URL 建缓存键 → **同一张菜图每进一屏重下一遍**。
+  已修：`UploadSigner.bucketedExpiry()` 把 `exp` 按 TTL 分桶（取「下下个桶边界」，保证剩余有效期仍 ≥ TTL），
+  同一周期内链接字节级稳定；`/uploads/**` 补 `Cache-Control: private, max-age=<同一个 TTL>`
+  （文件名是 UUID、内容永不覆盖，可放心缓存）。钉成 `UploadSignerTests`，**已反向验证**：
+  把 `exp` 改回 `now + TTL` → 测试点名「exp 落在 TTL 边界上（分桶）」并 BUILD FAILURE。
+  **没做的那半**：服务端不压缩/不缩放（`UploadController:66` 是裸 `transferTo`，全站没有 ImageIO，
+  上限 20 MB 三处一致）。故意不顺手加：手机 JPEG 带 EXIF 方向，`ImageIO.read` 会**丢掉 EXIF**，
+  重编码后竖拍照片会横过来——这是会把好功能改坏的那种"优化"，要做必须连带读 EXIF 方向并旋转，
+  得引 `metadata-extractor`/`commons-imaging`。而且小程序侧 `chooseImage` 已经传 `sizeType: ['compressed']`，
+  常见路径进来的本来就是压缩图，所以这条的实际收益远没有上面那半大。留作上线后的独立改动。
+  ⚠ 视频没有走压缩（`utils/upload.js` 只对图片请求 compressed），60s 教学片段是原样上传的。
 - `[已修]` 发帖时同步调最多 7 次微信外部 HTTP（1 次文本机审 + 每张图一次），而三处
   `RestClient.create()`（`ContentSecurityService`、`WechatClient`、`AuthService`）默认**没有任何超时**
   —— 微信接口一慢就把 Tomcat 线程永久挂在 socket 上，且 `WechatClient.accessToken()` 整段在

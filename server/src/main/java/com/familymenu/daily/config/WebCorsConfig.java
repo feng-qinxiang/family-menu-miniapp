@@ -1,5 +1,5 @@
 package com.familymenu.daily.config;
-
+import java.time.Duration;
 import com.familymenu.daily.auth.AuthInterceptor;
 import com.familymenu.daily.auth.CurrentUserArgumentResolver;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,12 +22,14 @@ public class WebCorsConfig implements WebMvcConfigurer {
 
     private final String[] allowedOrigins;
     private final String uploadDir;
+    private final long uploadLinkTtlSeconds;
     private final AuthInterceptor authInterceptor;
     private final CurrentUserArgumentResolver currentUserArgumentResolver;
     private final UploadSigner.AccessInterceptor uploadAccessInterceptor;
 
     public WebCorsConfig(@Value("${cors.allowed-origins:}") String allowedOriginsCsv,
                          @Value("${upload.dir:uploads}") String uploadDir,
+                         @Value("${upload.link-ttl-seconds:604800}") long uploadLinkTtlSeconds,
                          AuthInterceptor authInterceptor,
                          CurrentUserArgumentResolver currentUserArgumentResolver,
                          UploadSigner.AccessInterceptor uploadAccessInterceptor) {
@@ -41,6 +43,7 @@ public class WebCorsConfig implements WebMvcConfigurer {
             this.allowedOrigins = parts;
         }
         this.uploadDir = uploadDir;
+        this.uploadLinkTtlSeconds = uploadLinkTtlSeconds <= 0 ? 604800L : uploadLinkTtlSeconds;
         this.authInterceptor = authInterceptor;
         this.currentUserArgumentResolver = currentUserArgumentResolver;
         this.uploadAccessInterceptor = uploadAccessInterceptor;
@@ -89,7 +92,14 @@ public class WebCorsConfig implements WebMvcConfigurer {
         if (!location.endsWith("/")) {
             location = location + "/";
         }
-        registry.addResourceHandler("/uploads/**").addResourceLocations(location);
+        // 菜图/头像/步骤图是全站最重的资源，而文件名是 UUID、内容永不覆盖，天然可缓存。
+        // 之前这里只发 Last-Modified（自定义处理器不继承 spring.web.resources.cache.*，
+        // 见下面 /admin 那段注释），小程序按完整 URL 建缓存键，签名串一变就全 miss。
+        // 现在 exp 已按 TTL 分桶（UploadSigner.bucketedExpiry），一个周期内 URL 稳定，
+        // max-age 取同一个 TTL：签名最短剩余有效期就是它，不会出现「缓存里还有但链接已失效」。
+        registry.addResourceHandler("/uploads/**")
+                .addResourceLocations(location)
+                .setCacheControl(CacheControl.maxAge(Duration.ofSeconds(uploadLinkTtlSeconds)).cachePrivate());
         // 运营后台静态资源（classpath:/admin/），与 C 端 static/ 隔离。
         //
         // 必须显式设 no-cache：这里注册的自定义处理器**不会**继承

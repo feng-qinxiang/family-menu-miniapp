@@ -89,8 +89,22 @@ public class UploadSigner {
         if (!enabled() || url == null || !url.startsWith(PREFIX) || url.contains("k=")) {
             return url;
         }
-        long exp = Instant.now().getEpochSecond() + ttlSeconds;
+        long exp = bucketedExpiry();
         return url + (url.indexOf('?') >= 0 ? "&" : "?") + "e=" + exp + "&k=" + signature(url, exp);
+    }
+
+    /**
+     * 过期时间按 TTL 分桶取整，而不是 {@code now + TTL}。
+     *
+     * 为什么：签名串是 URL 的一部分，每次响应都算一个新的 {@code exp} 就等于每次响应换一个
+     * 新 URL，而图片缓存（小程序和浏览器都一样）是按完整 URL 建键的 → 必然全部 miss，
+     * 同一张菜图每进一屏就重下一遍。分桶后同一个 TTL 周期内所有响应给出**完全相同**的链接，
+     * 缓存才第一次真正生效。
+     * 取「下下个桶的边界」保证发出时剩余有效期仍 ≥ TTL（不会刚拿到就快到期）。
+     */
+    private long bucketedExpiry() {
+        long now = Instant.now().getEpochSecond();
+        return (now / ttlSeconds + 2) * ttlSeconds;
     }
 
     /** 校验：路径 + 过期秒 + 签名三者对得上才放行。 */
