@@ -249,6 +249,17 @@ dev 库行数极少（cook_history 26 行、community_post 3 行），所以 `ro
   更是「取全量菜谱 + 取 100 条帖子只展示 4 条」（`:85-119`，那个 100 是写死的，controller 的 clamp 管不到它）。
   **为什么没顺手改**：菜谱库现在是人工整理的 16 条 + 家庭自建，前端「菜谱」页是把整份列表拿去做本地搜索/筛选的，
   直接加 LIMIT 会把筛选功能改坏。要做得连着前端分页一起改，属于功能改动不是加固。
+  **【2026-09-19 更新】四条里最没道理的那条已改掉**：`/api/home/dashboard` 的社区精选原来是
+  `communityPosts(userId).stream().limit(4)`（捞 100 条 + 每条 JOIN 菜谱/收藏/点赞，只为展示 4 条），
+  改成 `communityPosts(userId, null, 1, 4)`。
+  **不是推断，是量出来的**：临时打开 MySQL 通用查询日志（`general_log`，原值 0、`log_output` 原值 FILE，
+  测完都还原并清空日志表），打一次 dashboard 后从 `mysql.general_log` 里读回那条 SQL，
+  结尾已是 `LIMIT 4 OFFSET 0`（改之前是 `LIMIT 100`）。
+  等价性由 `CoreFlowTests#dashboardFeaturedPostsMatchTheFeedHead` 锁住：造 6 条帖子后断言
+  首页 `featuredPosts` 与 `GET /api/community/posts` 的**前 4 条逐条同 id**
+  （feed 排序是 `like_count DESC, id DESC`，所以"第 1 页 4 条"恒等于"整张列表前 4 条"）。
+  ⚠ 这条用例锁的是**结果等价**，不是行数——行数是由 SQL 里的 `LIMIT 4` 直接保证的（已按上面办法核过）。
+  另外三条（recipes / filter / favorites）仍按上面的理由不动，要连着前端分页一起做。
 - `[MED]` **三条硬截断没有翻页入口**：做菜记录 `LIMIT 50`、帖子评论 `LIMIT 20`、通知 `LIMIT 50`
   —— 页面上都没有「看更多」，评论数角标会和列表不一致。同上，要连着 UI 改。
 - `[部分已修]` **图片缓存此前完全失效**：`/uploads/**` 的自定义资源处理器只发 `Last-Modified`

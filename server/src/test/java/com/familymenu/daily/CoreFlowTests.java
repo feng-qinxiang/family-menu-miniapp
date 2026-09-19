@@ -387,6 +387,44 @@ class CoreFlowTests {
         assertThat(reduced).as("冰箱里「%s」的量应从 999999 减下来", name).isTrue();
     }
 
+    /**
+     * 首页「社区精选」只展示 4 条，以前却是把 100 条连 JOIN 全捞出来再 limit(4)。
+     * 改成"取第 1 页 4 条"后必须是同一批：feed 排序是 like_count DESC, id DESC，
+     * 所以第 1 页的前 4 条恒等于整张列表的前 4 条。这条用例锁住这个等价关系，
+     * 以后谁改了 feed 的排序又忘了这里，会先在这里红。
+     */
+    @Test
+    void dashboardFeaturedPostsMatchTheFeedHead() throws Exception {
+        String token = guestLogin();
+        for (int i = 0; i < 6; i++) {
+            mockMvc.perform(post("/api/community/posts")
+                            .header("X-Auth-Token", token)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(java.util.Map.of(
+                                    "title", "首页精选自检 " + i + " " + System.nanoTime(),
+                                    "content", "用于比对首页精选与 feed 头部是否一致"))))
+                    .andExpect(status().isOk());
+        }
+
+        JsonNode feed = read(mockMvc.perform(get("/api/community/posts")
+                        .header("X-Auth-Token", token))
+                .andExpect(status().isOk())
+                .andReturn());
+        JsonNode dashboard = read(mockMvc.perform(get("/api/home/dashboard")
+                        .header("X-Auth-Token", token))
+                .andExpect(status().isOk())
+                .andReturn());
+        JsonNode featured = dashboard.get("featuredPosts");
+
+        assertThat(feed.size()).as("造了 6 条，feed 至少该有这些").isGreaterThanOrEqualTo(6);
+        assertThat(featured.size()).isEqualTo(Math.min(4, feed.size()));
+        for (int i = 0; i < featured.size(); i++) {
+            assertThat(featured.get(i).get("id").asLong())
+                    .as("首页第 %d 条精选应与 feed 第 %d 条同一条", i, i)
+                    .isEqualTo(feed.get(i).get("id").asLong());
+        }
+    }
+
     private long firstRecipeId(String token) throws Exception {
         MvcResult res = mockMvc.perform(get("/api/recipes?source=all").header("X-Auth-Token", token))
                 .andExpect(status().isOk())

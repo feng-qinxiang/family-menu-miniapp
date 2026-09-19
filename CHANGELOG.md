@@ -38,6 +38,9 @@
 - 品牌色底上的图标误用会随主题翻转的 `--c-surface` 描边，深色档翻成深灰几乎看不见（共 13 条声明）。
 - 大字模式（无障碍）此前只有 29/37 页接上线，做菜模式与菜谱详情都在漏网之列——已全量补齐。
 - `cook_history` 按家庭维度查询缺索引导致全表扫；补两条索引并给出可重复执行的迁移脚本。
+- **首页看板把 100 条帖子连 JOIN 全捞出来，只为展示 4 条**：`/api/home/dashboard` 的「社区精选」
+  改为直接取第 1 页 4 条（SQL 结尾从 `LIMIT 100` 变成 `LIMIT 4`，按 MySQL 通用查询日志实测确认），
+  展示结果逐条不变（`CoreFlowTests#dashboardFeaturedPostsMatchTheFeedHead` 锁住与 feed 头部等价）。
 
 ### Changed
 

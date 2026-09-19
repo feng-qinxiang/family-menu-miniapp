@@ -112,7 +112,9 @@ public class MysqlKitchenStore {
                 owned,
                 community,
                 imported,
-                communityPosts(userId).stream().limit(4).toList(),
+                // 首页只展示 4 条，就别把 100 条连 JOIN 全捞出来：feed 的排序是
+                // like_count DESC, id DESC，所以「取第 1 页 4 条」与原来「取 100 条再 limit(4)」是同一批。
+                communityPosts(userId, null, 1, 4),
                 vipStatus(userId)
         );
     }

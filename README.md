@@ -118,7 +118,7 @@ cd server
 
 主链路集成测试在 `server/src/test/java/com/familymenu/daily/CoreFlowTests.java`，覆盖：游客登录 → 首页看板 → 菜谱 → 今日菜单 → 购物清单重建 → OTP 下发与登录 → 家庭创建/邀请码/加入/移除 → 反馈提交 → 通知已读。测试用 `@SpringBootTest` 连真实 MySQL，需本机 3306 可用。
 
-全量 **30 个测试类 / 180 项用例**（2026-09-19 本机实测 0 失败 0 错误；跑前先 `DROP DATABASE family_menu_daily_test_db` 以对齐 CI，并且**用 `-Dsurefire.runOrder=reversealphabetical` 反序再跑一遍**——用例之间不许有顺序依赖，`CoreFlowTests` 单独跑也必须全绿），含管理台权限、支付回调验签、手机号绑定安全、会话 token、演示数据开关、上传签名与包体积、忌口词典两端一致性、买菜清单重建语义、做完菜扣冰箱库存等专项。
+全量 **30 个测试类 / 181 项用例**（2026-09-19 本机实测 0 失败 0 错误；跑前先 `DROP DATABASE family_menu_daily_test_db` 以对齐 CI，并且**用 `-Dsurefire.runOrder=reversealphabetical` 反序再跑一遍**——用例之间不许有顺序依赖，`CoreFlowTests` 单独跑也必须全绿），含管理台权限、支付回调验签、手机号绑定安全、会话 token、演示数据开关、上传签名与包体积、忌口词典两端一致性、买菜清单重建语义、做完菜扣冰箱库存等专项。
 
 > ⚠ **想让本地结果代表 CI，必须先删测试库**：`src/test/resources/application.properties` 指向
 > `family_menu_daily_test_db` 且带 `createDatabaseIfNotExist=true`，所以这个库会跨次运行累积数据。
