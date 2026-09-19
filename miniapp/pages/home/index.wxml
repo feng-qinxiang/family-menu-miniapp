@@ -193,7 +193,7 @@
         <view class="deco-circle"></view>
         <view class="mh-mc-eyebrow">今天这一桌</view>
         <view class="mh-mc-title">还没点菜</view>
-        <view class="mh-mc-names">从下面挑几道，凑齐今晚的桌</view>
+        <view class="mh-mc-names">从下面挑几道，凑齐这一桌</view>
         <view class="mh-mc-bot">
           <view class="mh-mc-empty-hint">看中哪道，点 ＋ 上桌</view>
           <view class="mh-mc-go tap-scale" catchtap="goRecipes">逛菜谱 ›</view>
@@ -277,7 +277,7 @@
       <view class="wish-modal-ic">
         <text class="wish-modal-ic-glyph">味</text>
       </view>
-      <view class="wish-modal-title">今晚想吃什么？</view>
+      <view class="wish-modal-title">{{heroMealWord}}想吃什么？</view>
       <view class="wish-modal-sub">写下来，家人都能看到</view>
     </view>
     <view class="wish-modal-bd">
