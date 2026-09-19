@@ -413,7 +413,7 @@
 .mag-phone-glyph {
   width: 22rpx;
   height: 30rpx;
-  border: 3rpx solid var(--c-surface);
+  border: 3rpx solid var(--anchor-contrast);
   border-radius: 6rpx 6rpx 10rpx 10rpx;
   box-sizing: border-box;
   position: relative;

@@ -174,7 +174,7 @@
 .pm-check-tick {
   width: 18rpx;
   height: 10rpx;
-  border-left: 4rpx solid var(--c-surface);
+  border-left: 4rpx solid var(--anchor-contrast);
   border-bottom: 4rpx solid var(--c-surface);
   transform: rotate(-45deg);
   margin-top: -4rpx;

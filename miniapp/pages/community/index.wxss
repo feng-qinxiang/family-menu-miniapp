@@ -202,8 +202,8 @@
 .rgo-arrow {
   width: 16rpx;
   height: 16rpx;
-  border-top: 4rpx solid var(--c-surface);
-  border-right: 4rpx solid var(--c-surface);
+  border-top: 4rpx solid var(--anchor-contrast);
+  border-right: 4rpx solid var(--anchor-contrast);
   transform: rotate(45deg) translate(-2rpx, 2rpx);
 }
 

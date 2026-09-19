@@ -162,8 +162,8 @@
 .ic-arrow {
   width: 18rpx;
   height: 18rpx;
-  border-top: 5rpx solid var(--c-surface);
-  border-right: 5rpx solid var(--c-surface);
+  border-top: 5rpx solid var(--anchor-contrast);
+  border-right: 5rpx solid var(--anchor-contrast);
   transform: rotate(45deg);
 }
 
@@ -203,8 +203,8 @@
 .lp-check {
   width: 16rpx;
   height: 9rpx;
-  border-left: 4rpx solid var(--c-surface);
-  border-bottom: 4rpx solid var(--c-surface);
+  border-left: 4rpx solid var(--anchor-contrast);
+  border-bottom: 4rpx solid var(--anchor-contrast);
   transform: rotate(-45deg) translateY(-2rpx);
 }
 .lp-agree-tx {
