@@ -23,6 +23,7 @@ Page({
     // 我的历史反馈（含运营回复）——让"提交出去的话"有下文
     history: [],
     historyLoading: true,
+    historyFailed: false,
   },
 
   onLoad() {
@@ -59,9 +60,10 @@ Page({
         replyText: it.reply || '',
         timeText: (it.handledAt || it.createdAt || '').slice(0, 10)
       }));
-      this.setData({ history, historyLoading: false });
+      this.setData({ history, historyLoading: false, historyFailed: false });
     } catch (err) {
-      this.setData({ history: [], historyLoading: false });
+      // 失败不能说成「还没有反馈记录」——那是另一回事，用户会以为自己的反馈被删了
+      this.setData({ history: [], historyLoading: false, historyFailed: true });
     }
     this._hasLoaded = true;
   },

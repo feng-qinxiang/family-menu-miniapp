@@ -238,6 +238,8 @@
   color: var(--mut);
   padding: 30rpx 0;
 }
+/* 失败态可点重试：颜色必须区别于普通灰提示，否则看不出是个热区 */
+.fh-empty--retry { color: var(--pop); font-weight: 600; text-align: center; }
 .fh-list { display: flex; flex-direction: column; gap: 18rpx; }
 .fh-item {
   background: var(--paper-2);

@@ -59,7 +59,8 @@ Page({
       });
       this.setData({ recentImports: recent, recentLoadFailed: false });
     } catch (e) {
-      this.setData({ recentImports: [] });
+      // 不置 recentLoadFailed，WXML 里那条「加载失败，点按重试」分支就是死代码
+      this.setData({ recentImports: [], recentLoadFailed: true });
     }
   },
 

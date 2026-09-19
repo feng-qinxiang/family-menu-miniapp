@@ -87,6 +87,7 @@
   <view class="fh">
     <view class="fh-head">我的反馈</view>
     <view wx:if="{{historyLoading}}" class="fh-empty">加载中…</view>
+    <view wx:elif="{{historyFailed}}" class="fh-empty fh-empty--retry tap-scale" bindtap="loadHistory">反馈记录没加载出来，点这里重试</view>
     <view wx:elif="{{!history.length}}" class="fh-empty">还没有反馈记录</view>
     <view wx:else class="fh-list">
       <view wx:for="{{history}}" wx:key="id" class="fh-item">
