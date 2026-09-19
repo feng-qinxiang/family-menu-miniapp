@@ -77,8 +77,11 @@
     </view>
   </view>
 
-  <!-- Hero 空态：紧凑杂志风，文字驱动 -->
-  <view class="mh-hero mh-hero--empty g-fade-in" wx:if="{{!loading && !(loadError && !hasHomeData) && !heroRecipe}}">
+  <!-- Hero 空态：紧凑杂志风，文字驱动。
+       必须 !loadError：菜谱接口挂了但别的接口成功时（hasHomeData 仍为 true），
+       这里若照常渲染，就会对"其实有菜谱、只是没网"的用户说"录入拿手菜/从第一道菜开始"，
+       把网络故障谎报成空数据。 -->
+  <view class="mh-hero mh-hero--empty g-fade-in" wx:if="{{!loading && !loadError && !heroRecipe}}">
     <view class="mh-empty-body g-fade-up">
       <view class="mh-greet">
         <view class="mh-hi">{{greeting}}</view>
