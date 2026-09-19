@@ -1,10 +1,11 @@
 # 上线清单（个人主体版）
 
-> ## 接手须知（2026-09-19 更新：CI 已全绿）
+> ## 接手须知（2026-09-19 第三轮更新：CI 仍全绿，后端 164 项）
 >
-> **已 push，三条 workflow 最新一次全部 success：**
-> `server-ci`（153 项，全新 MySQL 库）、`miniapp-ci`（四条前端门禁，历史上第一次真正执行）、
-> `workflows-ci-lint`。三份 YAML 在 GitHub 侧均为 `state=active`。
+> **已 push，CI 实测通过：**`server-ci / build-and-test` = success（**164 项**，全新 MySQL 库）、
+> `miniapp-ci / static-check` = success。⚠ `miniapp-ci` 只有**一个 job 名**却按顺序跑完四条前端门禁
+> （static-check / dish-logic / kitchen-logic / interaction-audit），别看到只有一个 check 名字
+> 就以为只跑了静态自检。本轮 7 个提交里没有改 `.github/workflows/**`，所以 `workflow` scope 这次不是必需。
 >
 > push 的完整可复现命令（**必须先清空凭据助手列表**，否则 git 全局 `osxkeychain`
 > 会优先返回补 `workflow` scope 之前的旧 token，继续被 remote 拒绝）：
@@ -16,10 +17,21 @@
 > 另需 `gh` 的 token 带 `workflow` scope（改 `.github/workflows/**` 是硬性要求）：
 > `gh auth refresh --hostname github.com --scopes workflow`。
 >
-> ~~代码侧已全部提交，只差 push 这一步~~
-> 本地 `master` 领先 `origin/master` **21 个提交**，工作区干净（`git status` 无输出）。
-> 这台机器三条凭据路径都实测不通：keychain 无 `github.com` 条目、无 `gh` 登录、
-> `ssh -T git@github.com` → `Permission denied (publickey)`。
+> 本轮做完的事（详细证据在 §3 走查表与 §3b 后端审计）：三条核心链路实测走查 + 修掉
+> 做菜沉浸页深色档塌陷、发帖弹层被 tabBar 吃掉「发布」、社区导航标题重叠、
+> 做菜换步不回首行、**换步杀掉正在倒计时的计时器（owner 选 B 方案，已实现）**、
+> 冰箱到期天数差一天；后端修掉**生产图片 7 天后集体 404**、`docker compose` 起不来、
+> `cook_history` 全表扫、通知角标少报、日志写进手机号、出站 HTTP 无超时，
+> 并新增 `/healthz` 存活探针 + `static-check` 第 12 项（恒定暗底页对比度门禁）。
+> **存量库迁移从两条变三条**（新增 `migrate-cook-history-family-index.sql`）。
+>
+> ### 以下两段是**当天更早轮次的记录，状态已作废**，保留只为留住那两条教训
+>
+> ~~本地 `master` 领先 `origin/master` 21 个提交；这台机器三条凭据路径都实测不通
+> （keychain 无 `github.com` 条目、无 `gh` 登录、`ssh -T` publickey 拒绝）。~~
+> → 现已 `gh` 登录 + 代理推送成功，工作区干净、`git log origin/master..HEAD` 为空。
+> **仍然成立的两条事实**：直连 GitHub 会 `Recv failure: Operation timed out`，**必须走本机代理**；
+> 本机没有 SSH 私钥，换 SSH remote 这条路不通。
 >
 > **下一步：push，但它现在被一条 GitHub 规则挡住。**
 >
