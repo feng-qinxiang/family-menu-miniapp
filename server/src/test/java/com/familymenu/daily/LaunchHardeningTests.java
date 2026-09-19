@@ -152,6 +152,36 @@ class LaunchHardeningTests {
     }
 
     /**
+     * 社区信息流的排序是 like_count DESC, id DESC，两个键都必须在索引里，
+     * 否则 MySQL 每次请求都把全部已过审帖子 filesort 一遍（5 万帖实测首页 23.8ms、
+     * 扫 24700 行；索引补到 id DESC 后 0.084ms、filesort 消失）。
+     * 分页只解决了传输量，没解决排序，所以这条单独钉住。
+     */
+    @Test
+    void communityFeedSortIsFullyCoveredByIndex() {
+        String schema;
+        try (BufferedReader r = new BufferedReader(new InputStreamReader(
+                new ClassPathResource("schema.sql").getInputStream(), StandardCharsets.UTF_8))) {
+            schema = r.lines().collect(Collectors.joining("\n"));
+        } catch (Exception ex) {
+            throw new IllegalStateException(ex);
+        }
+        int from = schema.indexOf("CREATE TABLE IF NOT EXISTS community_post (");
+        assertThat(from).as("schema.sql 里应能找到 community_post 建表语句").isGreaterThan(-1);
+        String ddl = schema.substring(from, schema.indexOf(");", from));
+        assertThat(ddl)
+                .as("信息流按 like_count DESC, id DESC 翻页，索引必须覆盖到 id")
+                .contains("idx_post_audit (audit_status, like_count DESC, id DESC)");
+
+        List<String> columns = jdbcTemplate.queryForList(
+                "SELECT column_name FROM information_schema.statistics WHERE table_schema = DATABASE() "
+                        + "AND table_name = 'community_post' AND index_name = 'idx_post_audit' "
+                        + "ORDER BY seq_in_index",
+                String.class);
+        assertThat(columns).containsExactly("audit_status", "like_count", "id");
+    }
+
+    /**
      * 「按今日菜单重新整理清单」的确认文案承诺两件事：手动条目保留、自动条目重算。
      * 原文案说反了（称手动条目会被覆盖）。这里直接查库断言 is_manual 标志的真实语义。
      */

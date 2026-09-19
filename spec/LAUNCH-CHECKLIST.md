@@ -258,6 +258,13 @@ java -Duser.timezone=Asia/Shanghai -jar target/family-menu-daily-server-0.1.0-SN
   - 旧库补列：`sql/migrate-legacy.sql`（一次性，列已存在会报错，可加 `--force`）
   - 旧库补索引：`sql/migrate-import-source-index.sql`（一次性；`import_source` 建表时漏了审核队列索引，
     后台「导入审核」列表会随数据增长退化成全表扫。重复执行报 Duplicate key name，可加 `--force`）
+  - 旧库升级信息流索引：`sql/migrate-post-feed-index.sql`（2026-09-19 新增；
+    社区 feed 按 `like_count DESC, id DESC` 排序，旧索引只到 `like_count`，
+    第二排序键不在索引里 → 每次请求都把全部已过审帖子 filesort 一遍。
+    5 万帖实测：首页 23.8ms / 扫 24700 行 → 加 `id DESC` 后 0.084ms / filesort 消失。
+    脚本是「先 DROP 再 ADD」，**重复执行安全**（第二次只是重建），大表请低峰期跑。
+    ⚠ `schema.sql` 用的是 `CREATE TABLE IF NOT EXISTS`，**改了它不会动已存在的表**，
+    所以存量库（含本地测试库）必须单独跑这个迁移，否则新加的索引根本不会出现。）
 - 老库如需清理历史演示数据（多个重名"周末厨房"、种子账号）：
   `mysql -u<user> -p <库名> < server/sql/cleanup-demo-data.sql`（先备份，脚本只删明确的演示账号）
 - 老库如需清理废弃会员列，手动执行一次：
@@ -329,6 +336,8 @@ WXSS 配平与注释风格、图片/组件引用、事件处理函数存在性�
       ⚠️ 这里才是运营者信息的**唯一来源**——隐私政策页只 `require` 它、自身不存文案；
       （旧版本清单误写成 `miniapp/pages/legal/privacy/index.js`，该路径根本不存在，按它找会漏改）
 - [ ] `server/sql/migrate-import-source-index.sql` 已在存量库执行一次（新库由 schema.sql 直接建出）
+- [ ] `server/sql/migrate-post-feed-index.sql` 已在存量库执行一次（社区 feed 排序索引补 `id DESC`；
+      不跑的话首页信息流每次请求都 filesort 全部已过审帖子。可重复执行，本地开发库已跑过）
 - [ ] 工作区已提交：`git status` 干净，尤其 `miniapp/utils/features.js`、`miniapp/components/back-top/`、
       `server/src/main/resources/application-prod.yml` 等运行时必需文件必须入库（否则干净克隆跑不起来）
 - [ ] **提交时必须 `git add` 全部未跟踪新文件，不能只 `git commit -am`**。
