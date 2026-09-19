@@ -349,6 +349,15 @@ WXSS 配平与注释风格、图片/组件引用、事件处理函数存在性�
 - [ ] `ADMIN_OPENIDS` 已配置，且能用管理员手机号登录 `/admin`
 - [ ] nginx 已加 `/admin` IP 白名单，HTTPS 证书就绪
 - [ ] 已设置 `UPLOAD_ACCESS_SECRET`（生产留空会启动失败，这是有意的），并确认小程序里图片仍能正常显示
+      > 2026-09-19 已用**第二个实例 + `UPLOAD_ACCESS_SECRET` 打开**（9099，不动开发实例）实测完这套契约：
+      > 上传返回的是带签名的 `/uploads/x.jpg?e=&k=`；**不带签名直接 GET → 403**，带签名 → 200；
+      > 把带签名的值原样 PUT 回 `coverImage` 后，**库里存的是裸路径** `/uploads/x.jpg`
+      > （`UploadPathNormalizer` 在 Jackson 入口剥签名），再读出来时服务端**重新签了一个新过期时间**。
+      > 也就是说「签名到期图片集体 404」和「签名串逐次编辑叠加」这两个坑都不会发生。
+      > 仍需真机确认的只剩：相册选图那一步的原生授权弹窗。
+      > （顺带证伪了一次误判：`/api/recipes/2` 改封面返回 `not your recipe` 是**归属校验正常**，
+      > 不是 bug；请求头是 `X-Auth-Token`，不是 `Authorization: Bearer`。）
+
 - [ ] 微信支付若开启：已配置 `WECHAT_PAY_PLATFORM_CERT_PATH`，并用真实支付回归一次回调
 - [ ] 真机回归：微信登录、游客模式、社区发帖/评论、图片上传、举报下架闭环
 - [ ] 短信网关仍为 noop（`PHONE_LOGIN=false`），若开启手机号登录须先接真实网关
