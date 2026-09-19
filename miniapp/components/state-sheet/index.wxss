@@ -22,6 +22,12 @@
   max-height: 80vh;
   overflow-y: auto;
 }
+.ss-sheet--lift {
+  /* tab 页：整层抬到自定义 tabBar 上沿，并把总高压回 80vh 以内 */
+  bottom: var(--tabbar-h);
+  max-height: calc(80vh - var(--tabbar-h));
+}
+
 .ss-bar {
   width: 72rpx;
   height: 8rpx;

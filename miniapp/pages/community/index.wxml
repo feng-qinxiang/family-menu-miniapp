@@ -1,6 +1,9 @@
 <view class="community-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
-  <!-- tab 页顶部导航（透明覆盖在 hero 上，无返回键）-->
-  <nav-bar title="邻里厨房" show-back="{{false}}" status-bar-height="{{statusBarHeight}}">
+  <!-- tab 页顶部导航（透明覆盖在 hero 上，无返回键）。
+       标题留空：本页导航右侧是「发帖」胶囊，加上微信胶囊后中间已无位置——
+       实测 4 字标题会被发帖按钮压掉最后一个字（导航标题是绝对居中的，不会自动让位）。
+       页面名由下方 hero 的「邻里厨房」大字承担，与餐桌页「点菜」按钮 + hero 的写法一致。 -->
+  <nav-bar title="" show-back="{{false}}" status-bar-height="{{statusBarHeight}}">
     <view class="nav-post-btn tap-scale" catchtap="togglePostForm">
       <text class="nav-post-plus">+</text>{{showPostForm ? '收起' : '发帖'}}
     </view>
@@ -175,7 +178,7 @@
   <back-top show="{{showBackTop}}" right="38rpx" bottom="352rpx" bind:totop="backToTop" />
 
   <!-- ===== 发帖弹层 ===== -->
-  <state-sheet visible="{{showPostForm}}" title="分享今天的菜" bind:close="togglePostForm">
+  <state-sheet lift visible="{{showPostForm}}" title="分享今天的菜" bind:close="togglePostForm">
     <input
       class="pf-input"
       placeholder="给帖子起个标题"
@@ -215,7 +218,7 @@
   </state-sheet>
 
   <!-- ============ 举报弹层 ============ -->
-  <state-sheet visible="{{showReportSheet}}" title="举报这条帖子" bind:close="closeReportSheet">
+  <state-sheet lift visible="{{showReportSheet}}" title="举报这条帖子" bind:close="closeReportSheet">
     <view class="rp-reasons">
       <view
         wx:for="{{reportReasons}}"

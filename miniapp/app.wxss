@@ -83,6 +83,9 @@ page {
   --cook-line: #d5c9b8;       /* 暗底上的描边图标 */
   --cook-mark: #ffffff;       /* 亮底图标上的指针（时钟针）*/
   --cook-pop: #e8472a;      /* 暗底上的品牌红填充（承载浅色文字，深色档不再提亮）*/
+  /* 自定义 tabBar 占位高度：数值来源是 custom-tab-bar/index.wxss 的 8rpx 上内边距 + 96rpx 高 + 24rpx 下内边距，
+     改那里必须同步这里（tab 页上的弹层/悬浮按钮要靠它抬到栏上方）*/
+  --tabbar-h: calc(env(safe-area-inset-bottom) + 128rpx);
   --line: var(--themeLine, #e8e0d0);          /* 浅分隔线 */
   --line-deep: var(--themeLineDeep, #d5c9b8); /* 深分隔线/描边 */
   --skeleton: var(--themeSkeleton, #efe4d7);  /* 骨架屏统一底色（全站一致） */

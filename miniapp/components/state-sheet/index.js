@@ -9,6 +9,14 @@ Component({
       type: Boolean,
       value: false
     },
+    // tab 页专用：自定义 tabBar 是独立图层，页面里 z-index 再高也盖不住它，
+    // 而 wx.hideTabBar() 在 custom tabBar 下直接 fail（实测 errMsg: hideTabBar:fail custom Tabbar），
+    // 所以弹层只能自己抬到 tabBar 上沿——否则 80vh 的发帖表单最下面约 100px
+    // 被 tabBar 吃掉，「发布」看不见也点不到。
+    lift: {
+      type: Boolean,
+      value: false
+    },
     title: {
       type: String,
       value: ''

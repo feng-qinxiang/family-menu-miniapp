@@ -3,10 +3,10 @@
   <view class="ss-mask" catchtap="onClose" catchtouchmove="noop"></view>
   <!-- 面板自身是 max-height:80vh + overflow-y:auto，不能再 catchtouchmove：
        那会让发帖这类长表单在弹层里完全滚不动。遮罩仍保留防穿透。 -->
-  <view class="ss-sheet g-fade-up">
+  <view class="ss-sheet g-fade-up {{lift ? 'ss-sheet--lift' : ''}}">
     <view wx:if="{{showBar}}" class="ss-bar"></view>
     <view wx:if="{{title}}" class="ss-title">{{title}}</view>
     <view class="ss-body"><slot></slot></view>
-    <view class="ss-safe"></view>
+    <view wx:if="{{!lift}}" class="ss-safe"></view>
   </view>
 </view>

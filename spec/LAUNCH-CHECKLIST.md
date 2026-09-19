@@ -185,6 +185,8 @@
 **已反向验证**：把 `--c-border-light` 种回 `.steptext` → 门禁点名 `对比度 1.49:1` 并 exit 1。<br>
 ⚠ 深色档**像素级**复核仍待真机：模拟器 `simulator_refresh` 不重读 `theme.json`（实测把 light 钉成 dark 的值，页面纹丝不动），
 所以本轮结论是「按 token 取色算出来的」，不是截图看出来的——这也是第 12 项用计算而不用快照的原因。**整站深色观感仍需真机复核** |
+| 社区导航标题 | ✅（修复后） | 截图放大实测：nav-bar 的标题是**绝对居中**（`.navbar-title-slot{position:absolute;left:0;right:0}` + `max-width:56%`），不会给右侧 slot 让位，所以 tab 页「邻里厨房」4 字标题的最后一个字被「发帖」胶囊**压掉一半**（不是省略号截断，是叠在下面）。社区页导航标题改为留空，页面名由 hero 大字承担——与餐桌页（`title=""` + 点菜胶囊）同一写法。其余 4 个「标题+右侧按钮」的二级页实测不冲突（有返回键占位、按钮只有 2 字） |
+| 社区发帖弹层可达性 | ✅（修复后） | **弹层里的「发布」按钮此前在 tab 页上永远点不到**。自定义 tabBar 是独立图层，页面内 z-index 再高（state-sheet 是 9990）也压不住它；而 `wx.hideTabBar()` 在 custom tabBar 下直接失败（实测 `errMsg: hideTabBar:fail custom Tabbar`），所以只能把弹层抬到 tabBar 上沿。改法：`state-sheet` 新增 `lift` 属性 + `--tabbar-h` token（= 8rpx 上内边距 + 96rpx 高 + 24rpx 下内边距 + 安全区，数值来源 custom-tab-bar/index.wxss，改那边必须同步这边），社区两个弹层启用 `lift`，并把 `max-height` 压成 `calc(80vh - var(--tabbar-h))` 保证小屏（SE 667px）下表单仍能滚到底。**实测 390×844 修复前发布键被吃掉、修复后取消/发布完整可见**。⚠ 遗留：tabBar 本身压不暗（遮罩在它下面），只是观感问题 |
 | 开关页直连弹回首页（复核） | ✅ | 2026-09-19 二次实测：直连 `pkg-extra/vip/index` 后 t=3s 仍停在该页、**t=8s 已回到 `pages/home/index`**，守卫有效。<br>⚠ 别在 3 秒处采样就下结论——本轮曾据此误判「switchTab 被吞、守卫失效」，改了三版 `leaveToHome` 又全部回退，实际原实现一直是对的。<br>同理，`navPad`/`plans` 这类**在 Page data 里有默认值**的字段不能用来判断守卫之后的代码有没有跑。 |
 
 
