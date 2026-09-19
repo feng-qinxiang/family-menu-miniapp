@@ -107,6 +107,9 @@
   color: rgba(255, 255, 255, 0.85);
   line-height: 1.5;
   max-width: 560rpx;
+  /* 副文案正好落在渐变遮罩的透明带（28%~52%）上，亮图直接把它冲淡；
+     与首页 hero 同款描影，三页 hero 观感一致 */
+  text-shadow: 0 2rpx 8rpx rgba(20, 14, 8, 0.55);
 }
 .cstats { display: flex; margin-top: 34rpx; gap: 18rpx; }
 .cstat {
@@ -124,7 +127,7 @@
   position: relative;
   margin-top: -50rpx;
   background: var(--paper);
-  border-radius: 20rpx 20rpx 0 0;
+  border-radius: var(--r-sheet) var(--r-sheet) 0 0;
   padding: 50rpx 0 40rpx;
   z-index: 20;
 }
@@ -324,12 +327,13 @@
 .pf-cancel { flex: 1; }
 .pf-submit { flex: 2; }
 
-.safe-bottom { height: 40rpx; }
+/* 自定义 TabBar 实高 96rpx + 24rpx 内边距 + 安全区，占位必须跟着走 */
+.safe-bottom { height: calc(env(safe-area-inset-bottom) + 132rpx); }
 .empty-retry {
   display: inline-flex;
   margin-top: 28rpx;
   padding: 14rpx 44rpx;
-  border-radius: 999rpx;
+  border-radius: var(--r-pill);
   background: var(--pop);
   color: #fff;
   font-size: calc(28rpx * var(--fs-mul, 1));
@@ -344,7 +348,7 @@
 }
 .rp-reason {
   padding: 12rpx 30rpx;
-  border-radius: 999rpx;
+  border-radius: var(--r-pill);
   background: var(--paper-2);
   color: var(--mut-strong);
   font-size: calc(26rpx * var(--fs-mul, 1));
@@ -364,6 +368,14 @@
 
 /* —— 帖子配图（信息流角标 + 发帖选择器） —— */
 .pphoto-wrap { position: relative; }
+/* 无配图帖子的占位：只说明"还没配图"，不再拿本地菜品图冒充邻居实拍 */
+.pphoto-none {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper);
+}
+.pphoto-none-t { color: var(--mut-2); font-size: var(--fs-mini); }
 .pphoto-count {
   position: absolute;
   right: 12rpx;
@@ -394,25 +406,40 @@
   position: absolute;
   top: -12rpx;
   right: -12rpx;
-  width: 40rpx;
-  height: 40rpx;
+  /* 圆形删除钮是"几何件"，整颗（含字形与命中区）按大字档等比放大，
+     否则字形长大会撑破 44rpx 的圆 */
+  width: calc(44rpx * var(--fs-mul, 1));
+  height: calc(44rpx * var(--fs-mul, 1));
   border-radius: 50%;
-  background: var(--ink);
-  color: #fff;
-  font-size: 28rpx;
+  /* --anchor / --anchor-contrast 是"两主题都不翻转"的恒定色对；
+     原先用 --ink，深色档它翻成 #efefef，白底白字等于看不见删除按钮 */
+  background: var(--anchor);
+  color: var(--anchor-contrast);
+  font-size: calc(28rpx * var(--fs-mul, 1));
   display: flex;
   align-items: center;
   justify-content: center;
 }
+/* 视觉 44rpx（大字档等比放大），命中区恒为 2×：删除是破坏性操作，手指不该点不中 */
+.pf-img-del::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: calc(88rpx * var(--fs-mul, 1));
+  height: calc(88rpx * var(--fs-mul, 1));
+  content: "";
+  transform: translate(-50%, -50%);
+}
 .pf-img-add {
+  /* 方格必须与 .pf-img 同宽才能对上下面的图片网格，所以只放大 ＋ 字形 */
   width: 132rpx;
   height: 132rpx;
-  border: 2rpx dashed rgba(0, 0, 0, 0.22);
+  border: 2rpx dashed var(--line-deep);
   border-radius: 12rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 44rpx;
+  font-size: calc(44rpx * var(--fs-mul, 1));
   color: var(--mut);
 }
 

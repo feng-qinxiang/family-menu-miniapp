@@ -119,6 +119,14 @@ Page({
     this.refreshQuality();
   },
 
+  // 校验失败时把用户带到出问题的那一页：菜名/菜系在「介绍」，食材在「用料」，
+  // 步骤在「步骤」。只弹 toast 的话，人在「用料」页却被「介绍」页的字段拦住，找不到要改哪。
+  jumpToTab(tab) {
+    if (this.data.editTab === tab) return;
+    this.setData({ editTab: tab, editingStep: -1 });
+    wx.pageScrollTo({ scrollTop: 0, duration: 0 });
+  },
+
   switchTab(e) {
     const tab = e.currentTarget.dataset.tab;
     if (!tab || tab === this.data.editTab) return;
@@ -386,22 +394,34 @@ Page({
     const { form, isEdit, recipeId } = this.data;
     if (!form.title.trim()) {
       this.setData({ saving: false });
+      this.jumpToTab('info');
       wx.showToast({ title: '请输入菜名', icon: 'none' });
       return;
     }
     if (!form.cuisine.trim()) {
       this.setData({ saving: false });
+      this.jumpToTab('info');
       wx.showToast({ title: '请输入菜系', icon: 'none' });
       return;
     }
     if (!form.ingredients.filter((i) => i.name.trim()).length) {
       this.setData({ saving: false });
+      this.jumpToTab('ings');
       wx.showToast({ title: '至少添加一种食材', icon: 'none' });
       return;
     }
     if (!form.steps.filter((s) => s.text.trim()).length) {
       this.setData({ saving: false });
+      this.jumpToTab('steps');
       wx.showToast({ title: '至少添加一个步骤', icon: 'none' });
+      return;
+    }
+    // 后端 RecipeRequest.tasteTags 是 @NotEmpty：客户端不拦的话，用户只会看到
+    // 一句"创建失败，请重试"，而重试永远不可能成功
+    if (!form.tasteTags.filter(Boolean).length) {
+      this.setData({ saving: false });
+      this.jumpToTab('info');
+      wx.showToast({ title: '至少选一个口味标签', icon: 'none' });
       return;
     }
     const payload = {
@@ -429,7 +449,7 @@ Page({
         updated = await updateRecipe(recipeId, payload);
       } catch (err) {
         this.setData({ saving: false });
-        wx.showToast({ title: '保存失败，请重试', icon: 'none' });
+        wx.showToast({ title: (err && err.message) || '保存失败，请重试', icon: 'none' });
         return;
       }
       if (!updated) {
@@ -444,7 +464,7 @@ Page({
         created = await saveRecipe(payload);
       } catch (err) {
         this.setData({ saving: false });
-        wx.showToast({ title: '创建失败，请重试', icon: 'none' });
+        wx.showToast({ title: (err && err.message) || '创建失败，请重试', icon: 'none' });
         return;
       }
       if (!created) {

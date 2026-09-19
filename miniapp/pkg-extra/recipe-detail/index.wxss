@@ -77,7 +77,7 @@
   color: #fff;
   background: rgba(0, 0, 0, 0.28);
   border: 2rpx solid rgba(255, 255, 255, 0.45);
-  border-radius: 999rpx;
+  border-radius: var(--r-pill);
 }
 .rd-hero-title {
   font-size: var(--fs-hero-xl);  line-height: 0.92;
@@ -152,7 +152,7 @@
   position: relative;
   margin-top: -50rpx;
   background: var(--paper);
-  border-radius: 20rpx 20rpx 0 0;
+  border-radius: var(--r-sheet) var(--r-sheet) 0 0;
   padding: 44rpx 46rpx calc(400rpx + env(safe-area-inset-bottom));
   z-index: 5;
 }
@@ -267,7 +267,9 @@
   transform: translate(-50%, -50%);
 }
 .rd-ic-play-lg {
-  border-left-color: var(--ink-deep);
+  /* 播放圆底是恒定的白（压在视频封面上，不随主题翻转），三角必须用恒定深色：
+     原先的 --ink-deep 深色档翻成 #e2e2e2，白圆里放一个白三角 = 播放键看起来是空的 */
+  border-left-color: var(--anchor);
   margin-left: 8rpx;
 }
 .rd-video-meta {

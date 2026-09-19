@@ -150,6 +150,35 @@ Page({
     this.setData({ scrollTopTo: this.data.scrollTopTo === 0 ? 0.1 : 0 });
   },
 
+  // 详情页可被分享出去，必须自带举报入口（微信对 UGC 页面的硬性要求）；
+  // 原因枚举与列表页 pages/community 保持一致，处置仍在 /admin 举报审核
+  onReport() {
+    const post = this.data.post;
+    const postId = (post && post.id) || this.data.postId;
+    if (!postId) return;
+    const reasons = ['内容不实', '步骤不全', '疑似搬运', '其他'];
+    wx.showActionSheet({
+      itemList: reasons,
+      success: async (res) => {
+        const key = `report-${postId}`;
+        if (this._reporting) return;
+        this._reporting = true;
+        wx.showLoading({ title: '提交中', mask: true });
+        try {
+          await api.reportCommunityPost(postId, { reason: reasons[res.tapIndex], description: '' });
+          wx.hideLoading();
+          wx.showToast({ title: '已举报，我们会尽快处理', icon: 'none' });
+        } catch (e) {
+          wx.hideLoading();
+          wx.showToast({ title: '举报失败，请重试', icon: 'none' });
+        } finally {
+          this._reporting = false;
+        }
+      },
+      fail: () => {}
+    });
+  },
+
   onCommentInput(e) {
     this.setData({ commentText: e.detail.value });
   },

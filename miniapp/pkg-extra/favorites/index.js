@@ -38,6 +38,10 @@ Page({
   },
 
   // 拉取我的收藏（帖子）。菜谱 = 帖子里关联的菜谱去重。
+  retryLoad() {
+    this.loadData();
+  },
+
   loadData() {
     this.setData({ loading: true });
     getMyFavorites().then((list) => {
@@ -50,6 +54,7 @@ Page({
         recipeCount: recipes.length,
         postCount: posts.length,
         countText: '已收藏 ' + recipes.length + ' 道菜谱 · ' + posts.length + ' 篇帖子',
+        loadError: false,
         loading: false
       });
     }).catch(() => {
@@ -59,7 +64,9 @@ Page({
         recipeCount: 0,
         postCount: 0,
         loading: false,
-        countText: '已收藏 0 道菜谱 · 0 篇帖子'
+        countText: '已收藏 0 道菜谱 · 0 篇帖子',
+        // 失败不能显示成"还没有收藏"——那会让人以为自己把收藏清光了
+        loadError: true
       });
       this._toast('收藏加载失败，请稍后重试');
     });

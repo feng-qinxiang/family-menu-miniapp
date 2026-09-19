@@ -218,7 +218,7 @@
   letter-spacing: 2rpx;
   font-weight: 800;
   color: var(--anchor-contrast);
-  background: var(--tag-glass-bg, rgba(40, 30, 20, 0.55));
+  background: rgba(40, 30, 20, 0.55);
   padding: 8rpx 15rpx;
   border-radius: var(--r-xs);
 }

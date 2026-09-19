@@ -47,7 +47,7 @@
   ],
   "preloadRule": {
     "pages/home/index": {
-      "network": "all",
+      "network": "wifi",
       "packages": [
         "pkg-extra"
       ]
@@ -57,7 +57,7 @@
     "navigationBarTitleText": "家庭点菜",
     "navigationBarBackgroundColor": "#fbf8f3",
     "navigationBarTextStyle": "black",
-    "backgroundTextStyle": "light",
+    "backgroundTextStyle": "dark",
     "backgroundColor": "#fbf8f3"
   },
   "tabBar": {

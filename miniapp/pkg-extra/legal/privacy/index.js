@@ -4,6 +4,7 @@ const { copyText } = require('../../../utils/privacy');
 
 Page({
   data: {
+    statusBarHeight: 0,
     intro:
       '「家庭点菜」尊重并保护每一位用户的个人隐私。本政策说明我们如何收集、使用、存储你的信息，以及你对这些信息所拥有的权利。请你在使用前仔细阅读。',
     sections: [

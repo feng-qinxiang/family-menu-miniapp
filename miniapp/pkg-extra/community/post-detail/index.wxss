@@ -300,6 +300,17 @@
   justify-content: center;
   box-shadow: var(--sh-pop);
 }
+.send { position: relative; }
+/* 单手打字时拇指要够到发送键：视觉 84rpx 不变，命中区补到 88rpx */
+.send::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 88rpx;
+  height: 88rpx;
+  content: "";
+  transform: translate(-50%, -50%);
+}
 .send-busy { opacity: 0.55; }
 /* 发送箭头：CSS 三角 */
 .send-icon {

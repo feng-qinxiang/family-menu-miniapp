@@ -8,7 +8,8 @@
 
   <scroll-view class="community-scroll" scroll-y enhanced show-scrollbar="{{false}}"
     refresher-enabled="{{true}}" refresher-triggered="{{refreshing}}" bindrefresherrefresh="onRefresh"
-    scroll-top="{{scrollTopTo}}" scroll-with-animation bindscroll="onScrollBody">
+    scroll-top="{{scrollTopTo}}" scroll-with-animation bindscroll="onScrollBody"
+    lower-threshold="120" bindscrolltolower="loadMorePosts">
     <!-- ===== Hero ===== -->
     <view class="hero">
       <image class="hero-bg" src="/assets/dishes/sweet-sour-chicken.jpg" mode="aspectFill" />
@@ -81,7 +82,10 @@
             <view class="pcontent clamp-2">{{item.content}}</view>
 
             <view class="pphoto-wrap">
-              <image class="pphoto" src="{{item.photo}}" mode="aspectFill" />
+              <image wx:if="{{item.photo}}" class="pphoto" src="{{item.photo}}" mode="aspectFill" />
+              <view wx:else class="pphoto pphoto-none">
+                <text class="pphoto-none-t">这篇还没配图</text>
+              </view>
               <view wx:if="{{item.imageCount > 1}}" class="pphoto-count">{{item.imageCount}} 图</view>
             </view>
 
@@ -92,7 +96,7 @@
               catchtap="openRecipe"
               data-recipe-id="{{item.recipe.id}}"
             >
-              <image class="rthumb" src="{{item.recipeThumb}}" mode="aspectFill" />
+              <image wx:if="{{item.recipeThumb}}" class="rthumb" src="{{item.recipeThumb}}" mode="aspectFill" />
               <view class="rmid">
                 <view class="rk">关联菜谱</view>
                 <view class="rn ellipsis">{{item.recipe.title}}</view>
@@ -155,7 +159,7 @@
 
       <!-- 流末 -->
       <view class="pad" wx:if="{{posts.length}}">
-        <view class="feed-end"><text>没有更多了</text></view>
+        <view class="feed-end"><text>{{hasMore ? '上拉加载更多…' : '没有更多了'}}</text></view>
       </view>
 
       <view class="safe-bottom"></view>

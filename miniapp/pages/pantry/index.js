@@ -8,13 +8,10 @@ const {
 const { withTabSelect } = require('../../behaviors/tab-select');
 const { recipeDishImg } = require('../../utils/image');
 const { parseLocalDate } = require('../../utils/dish-logic');
+const { INGREDIENT_CATEGORIES, categoryOf: sharedCategoryOf } = require('../../utils/ingredients');
 
-// 分类规则：按食材名关键字归类（蔬菜 / 肉蛋 / 调料 / 其他）
-const CATEGORY_RULES = [
-  { key: 'veg', label: '蔬菜', icon: 'veg', words: ['菜', '番茄', '西红柿', '椒', '土豆', '葱', '蒜', '姜', '瓜', '茄', '萝卜', '豆角', '芹', '菇', '笋', '藕', '兰花', '生菜'] },
-  { key: 'meat', label: '肉蛋', icon: 'meat', words: ['肉', '蛋', '鸡', '鸭', '鱼', '虾', '牛', '猪', '羊', '豆腐', '排骨', '虾仁'] },
-  { key: 'season', label: '调料', icon: 'season', words: ['生抽', '老抽', '酱', '醋', '油', '盐', '糖', '淀粉', '料酒', '蚝油', '辣', '椒粉', '味精', '鸡精', '豆瓣'] }
-];
+// 分类规则统一在 utils/ingredients（冰箱与买菜清单必须同一套，否则两页对不上账）
+const CATEGORY_RULES = INGREDIENT_CATEGORIES;
 
 Page({
   data: {
@@ -207,13 +204,9 @@ Page({
   },
 
   categoryOf(name) {
-    const n = String(name || '');
-    for (const rule of CATEGORY_RULES) {
-      if (rule.words.some((w) => n.includes(w))) {
-        return rule;
-      }
-    }
-    return { key: 'other', label: '其他', icon: 'other' };
+    // 交给 utils/ingredients 统一判定：这里曾自己遍历 CATEGORY_RULES，
+    // 少了「花椒/胡椒」这类强特征词前置，同一个食材在冰箱和买菜清单会分到不同组
+    return sharedCategoryOf(name);
   },
 
   // 「现在就能做」匹配卡 → 菜谱详情

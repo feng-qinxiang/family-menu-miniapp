@@ -387,7 +387,10 @@ Page({
     }
     // 菜单联动：走完烹饪流程即视为这道菜上桌，静默回写菜单状态
     if (this._menuItemId) {
-      api.updateMenuItemStatus(this._menuItemId, 'done').catch(() => {});
+      // 尽力而为：失败时这道菜在厨房总控里仍是"待做"。不弹窗打断跳转，但必须留痕可查
+      api.updateMenuItemStatus(this._menuItemId, 'done').catch((err) => {
+        console.warn('[cook-mode] 菜单状态回写失败', this._menuItemId, err);
+      });
       this._menuItemId = '';
     }
     const { recipeId, recipe } = this.data;
@@ -420,9 +423,14 @@ Page({
         }
         gotoLog();
       },
-      fail: () => {
-        // 用户取消评分也记录一笔（不带分）
-        api.addCookHistory({ recipeId, remark: '' }).catch(() => {});
+      fail: async () => {
+        // 用户取消评分也记录一笔（不带分）。静默吞掉失败会让人以为记上了：
+        // 下面紧接着就跳去做菜记录页，页面上看不出少了一条
+        try {
+          await api.addCookHistory({ recipeId, remark: '' });
+        } catch (err) {
+          wx.showToast({ title: '记录保存失败', icon: 'none' });
+        }
         gotoLog();
       }
     });

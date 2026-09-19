@@ -6,12 +6,31 @@ function getAuthToken() {
   return wx.getStorageSync('auth_token') || '';
 }
 
-function setAuthToken(token) {
+function setAuthToken(token, kind) {
   if (token) {
+    loginExpiredHandled = false;   // 拿到新会话（重新登录/游客）即解除屏障
     wx.setStorageSync('auth_token', token);
+    // 记下这份会话是游客还是登录用户换的：401 续期时二者处理方式完全不同
+    if (kind) wx.setStorageSync('session_kind', kind);
   } else {
     wx.removeStorageSync('auth_token');
+    wx.removeStorageSync('session_kind');
   }
+}
+
+function getSessionKind() {
+  return wx.getStorageSync('session_kind') || '';
+}
+
+let sessionExpiredNotified = false;
+// 一次 401 清掉登录态后，同一屏其余在途请求也会陆续收到 401；
+// 没有这个屏障它们会落到下面的游客兜底，等于又静默降级了一次。
+let loginExpiredHandled = false;
+function notifySessionExpired() {
+  if (sessionExpiredNotified) return;
+  sessionExpiredNotified = true;
+  wx.showToast({ title: '登录已过期，请重新登录', icon: 'none', duration: 2500 });
+  setTimeout(() => { sessionExpiredNotified = false; }, 8000);
 }
 
 function getDeviceId() {
@@ -52,7 +71,7 @@ function ensureGuestSession(expectedToken) {
             resolve(null);
             return;
           }
-          setAuthToken(res.data.token);
+          setAuthToken(res.data.token, 'guest');
           resolve(res.data.token);
         } else {
           resolve(null);
@@ -92,6 +111,14 @@ async function rawRequest(path, options) {
       return { ok: true, data: res.data };
     }
     if (res.statusCode === 401 && config.skipReauth !== true) {
+      if (getSessionKind() === 'login' || loginExpiredHandled) {
+        // 微信/验证码登录用户的会话过期时，静默换成游客身份会让家庭、菜单、收藏
+        // "凭空消失"而且没有任何提示。这里改为清掉登录态并明确告知需要重新登录。
+        loginExpiredHandled = true;
+        setAuthToken('');
+        if (config.silent !== true) notifySessionExpired();
+        return { ok: false, status: 401, data: res.data, sessionExpired: true };
+      }
       // 传当前 token 作基线，游客会话只在 token 未被改写时写入
       const refreshed = await ensureGuestSession(getAuthToken());
       if (refreshed) {
@@ -154,8 +181,12 @@ function getRecipes(source) {
   return request(`/api/recipes?source=${encodeURIComponent(source || 'all')}`, { silent: true });
 }
 
-function getCommunityPosts(tag) {
-  const q = tag ? `?tag=${encodeURIComponent(tag)}` : '';
+function getCommunityPosts(tag, page, size) {
+  const params = [];
+  if (tag) params.push(`tag=${encodeURIComponent(tag)}`);
+  if (page) params.push(`page=${encodeURIComponent(page)}`);
+  if (size) params.push(`size=${encodeURIComponent(size)}`);
+  const q = params.length ? `?${params.join('&')}` : '';
   return request(`/api/community/posts${q}`, { silent: true });
 }
 
@@ -412,7 +443,7 @@ function guestLogin() {
     skipReauth: true
   }).then((response) => {
     if (response && response.token) {
-      setAuthToken(response.token);
+      setAuthToken(response.token, 'guest');
     }
     return response;
   });
@@ -425,7 +456,7 @@ function wechatLogin(payload) {
     skipReauth: true
   }).then((response) => {
     if (response && response.token) {
-      setAuthToken(response.token);
+      setAuthToken(response.token, 'login');
     }
     return response;
   });
@@ -446,7 +477,7 @@ function loginWithOtp(payload) {
     skipReauth: true
   }).then((response) => {
     if (response && response.token) {
-      setAuthToken(response.token);
+      setAuthToken(response.token, 'login');
     }
     return response;
   });

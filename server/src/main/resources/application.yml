@@ -34,7 +34,9 @@ spring:
       # 由 SeedRunner 按 app.seed-demo-data 决定是否执行（见下方 app.seed-demo-data）。
       data-locations: classpath:data.sql
       encoding: UTF-8
-      continue-on-error: true
+      # 不再吞错：schema.sql/data.sql 失败会带着半成品结构启动，接口全 500 且无提示。
+      # 种子脚本均为 INSERT IGNORE / CREATE TABLE IF NOT EXISTS，重复执行安全。
+      continue-on-error: false
 
 wechat:
   app-id: ${WECHAT_APP_ID:}
@@ -85,6 +87,10 @@ app:
 
 upload:
   dir: ${UPLOAD_DIR:uploads}
+  # 上传文件访问签名（见 UploadSigner）：留空 = 本地不启用；prod profile 留空会启动失败。
+  # 启用后 /uploads/** 必须带 ?e=<过期秒>&k=<HMAC> 才读得到，响应里的图片地址由服务端自动签好。
+  access-secret: ${UPLOAD_ACCESS_SECRET:}
+  link-ttl-seconds: ${UPLOAD_LINK_TTL_SECONDS:604800}
 
 admin:
   # 首次管理员的 openid 白名单（逗号分隔），仅用于启动时升权，只升不降。

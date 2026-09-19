@@ -1,5 +1,29 @@
 # 上线清单（个人主体版）
 
+> **当前就绪度（2026-09-19 自动走查 + 加固后）**
+>
+> 已验证：37 个注册页面全部在模拟器实际打开过；点菜→清单、做菜（详情→步骤→记一笔→记录）、
+> 社区（发帖/待审隔离/举报入口/分页）、家庭（创建/邀请码/加入/成员）、导入、周菜单、反馈、通知
+> 均端到端跑通；后端 152 项测试 0 失败；三份 workflow YAML 经自检脚本校验。详见 §3 走查结论表。
+>
+> 同日二次复核（对着**当前工作区**重跑，非引用上次结论）：后端 `mvn test` 25 类 / 152 项 / 0 失败 0 错误
+> （连真实 MySQL，surefire 报告为准）；四条前端门禁全绿（static-check 285 文件、交互体检 A/B/C 均 0）；
+> 做菜链路再走一遍并落库验证（`cook_history` 新增行含 recipe/user/family/score，验完已删）；
+> `utils/capsule.js` 的运行时覆盖已实测生效（菜单 hero 顶距由 CSS 兜底 136px 被改为胶囊下缘 91px）。
+> 本轮新增：`static-check` 第 10 项「require 目标必须存在」，并用移走 capsule.js 的方式实测其能阻断 CI。
+>
+> **仍未过的那道门：这些改动全部只存在于工作区。** 未提交 → GitHub Actions 从未在本轮代码上跑过，
+> 且 §8 的「工作区已提交」是硬项；另有 9 个未跟踪文件被已跟踪代码依赖（详见 §8 第一条），
+> 只 `git commit -am` 会得到一个编译即失败的 commit。
+>
+> 仍卡在部署方（也就是你）手上的三件事，代码侧无法代劳：
+> ① `miniapp/utils/env.js` 的 `trial`/`release` 换成已备案 HTTPS 域名；
+> ② `miniapp/utils/legal-config.js` 的 `operatorName` / `operatorContact` 两处 `【】` 填真值；
+> ③ 接入真实短信网关（`SMS_PROVIDER`），否则谁也绑不了手机号、`/admin` 进不去。
+>
+> 仍需真机才能确认的三项：相册选图与隐私弹窗、深色模式整体回归、小屏弹层内滚动。
+>
+
 代码已按个人主体裁剪完毕（支付/手机号登录用开关隐藏，主包 < 2MB）。
 **社区（邻里厨房）保留上线**：发帖/评论已接微信 msgSecCheck 机审 + 站内举报人工审核队列双重机制。
 以下是**提审前必须人工完成**的运营侧事项，按顺序执行。
@@ -26,6 +50,8 @@
 | `DB_HOST` / `DB_PORT` / `DB_NAME` | MySQL 连接 | 是 |
 | `DB_USERNAME` / `DB_PASSWORD` | MySQL 账号（**改掉默认 123456**） | 是 |
 | `UPLOAD_DIR` | 上传文件目录（建议绝对路径） | 建议 |
+| `UPLOAD_ACCESS_SECRET` | 上传文件访问签名密钥。**prod 留空会启动失败**（否则 `/uploads/**` 等于公开可长期访问的家庭实拍）；本地留空则整套签名自动关闭 | prod 必填 |
+| `UPLOAD_LINK_TTL_SECONDS` | 图片链接有效期，默认 604800（7 天）。设太短会让用户停留在旧页面时图片成片裂开 | 否 |
 | `WECHAT_PAY_MOCK_ENABLED` | 模拟支付开关，**生产严禁设置** | 否（默认关） |
 | `AUTH_DEV_OTP_ENABLED` | 调试验证码开关，**生产严禁设置** | 否（默认关） |
 
@@ -56,6 +82,29 @@
   - [ ] 首页/菜谱/冰箱/菜篮子核心流程可用（增删菜谱、点菜、生成购物清单）
   - [ ] 图片上传（菜谱封面）正常，隐私弹窗出现后同意可继续
 - [ ] 检查体验版请求走的是 `trial` 域名且 HTTPS 正常
+
+### 模拟器走查结论（2026-09-19，Qoder 自动走查 + 手工操作）
+
+以下在**微信开发者工具模拟器**上真机操作验证通过，**不等于**体验版真机回归（真机仍须单独做）：
+
+| 项 | 结果 | 证据 |
+| --- | --- | --- |
+| 游客会话进入首页 | ✅ | 自动取游客 token，首页有真实数据 |
+| 登录页无手机号入口 | ✅ | `features.PHONE_LOGIN=false` + `wx:if`，且 `auth/login-phone` 页已加开关守卫，直连被弹回首页 |
+| 我的页无 VIP banner | ✅ | 页面仅家庭统计与做菜记录；VIP/支付 5 个页面直连全部被弹回首页 |
+| 社区发帖 → 先审后发 | ✅ | 发帖落库 `audit_status=PENDING`；作者可见并带「审核中」角标，他人接口只返回已过审帖 |
+| 点菜 → 购物清单 | ✅ | 连点 3 次「加到菜单」菜单仍 1 条（幂等），清单自动派生 3 项并回指来源菜谱 |
+| 做菜全流程 | ✅ | 菜谱详情 → 做菜模式 1~5 步 → 完成·记一笔 → 做菜记录页 |
+| 新建菜谱 | ✅（修复后） | 曾前后端校验不一致：后端 `tasteTags @NotEmpty`、前端不校验且把 400 吞成「创建失败，请重试」→ 已修，实测创建成功 |
+| 家庭邀请 → 加入 | ✅ | 输码预览「周末厨房」→ 申请加入 → `familyId` 变更、成员表新增 ACTIVE 行、跳转成员页 |
+| 导入配方 → 解析 → 存入菜谱 | ✅ | 点「填入示例」→「开始解析」得 5 食材/4 步骤 → 「存入我的菜谱」：菜谱 17→18（`id=110, sourceType=imported`），并在 `import_source` 落一条 `PENDING` 进后台待审队列 |
+| 周菜单重新生成 | ✅ | `POST /api/weekly-menu/generate` 返回 7 天、每天 2 道不重复；页面确认框文案如实说明"覆盖当前这一版" |
+| 意见反馈提交 | ✅ | `feedback_ticket` 落库：`user_id/family_id/types_json=["feature"]`、内容原样、`status=OPEN`，后台工单队列可见 |
+| 通知全部已读 | ✅ | 点「全部已读」后 `/api/notifications` 3 条未读归零 |
+| 上传→展示闭环 | ✅（服务端侧） | 用接口真实上传一张 PNG（`/uploads/xxx.png` 直接 200）→ PUT 设为菜谱封面 → 详情页显示的正是这张上传图。**注意**：修 `recipeDishImg` 之前，菜名含「番茄/紫菜/土豆」等关键词的菜谱会永远显示库存图而非用户实传封面 |
+| 相册选图与隐私弹窗 | ⬠ 未验 | `wx.chooseImage`/相册授权是原生面板，模拟器自动化够不到，仍需真机点一遍 |
+| 深色模式 | ⬠ 部分 | 已修自定义 TabBar 变量作用域、两处硬编码色，及 4 处「前景/底色只在一档成立」：<br>厨房总控两个幽灵按钮 + 社区加图虚线（裸黑描边，深色档看不见）、<br>菜谱详情视频播放三角（恒定白圆上用了会翻转的 `--ink-deep`，深色档变白上白）。<br>`static-check` 第 9 项已禁止 border/color 再写裸黑。**整站深色观感仍需真机复核** |
+
 
 ## 4. 提审注意事项
 
@@ -201,31 +250,139 @@ java -Duser.timezone=Asia/Shanghai -jar target/family-menu-daily-server-0.1.0-SN
 - 建库/迁移：
   - 新库：`sql/create-database.sql` + `src/main/resources/schema.sql`（后者可重复执行）
   - 旧库补列：`sql/migrate-legacy.sql`（一次性，列已存在会报错，可加 `--force`）
+  - 旧库补索引：`sql/migrate-import-source-index.sql`（一次性；`import_source` 建表时漏了审核队列索引，
+    后台「导入审核」列表会随数据增长退化成全表扫。重复执行报 Duplicate key name，可加 `--force`）
 - 老库如需清理历史演示数据（多个重名"周末厨房"、种子账号）：
   `mysql -u<user> -p <库名> < server/sql/cleanup-demo-data.sql`（先备份，脚本只删明确的演示账号）
 - 老库如需清理废弃会员列，手动执行一次：
   `ALTER TABLE user_account DROP COLUMN vip_status;`
   `ALTER TABLE user_account DROP COLUMN plan_name;`
 
+### CI 的真实状态（2026-09-19 查 GitHub API 实测，别再凭印象）
+
+`https://api.github.com/repos/feng-qinxiang/family-menu-miniapp/actions/runs`（公开可读，无需 token）显示
+最近 6 次运行里 **5 次 failure**，且都发生在已推送的 HEAD `b29c7df` 及之前：
+
+| run | workflow | commit | 结果 |
+| --- | --- | --- | --- |
+| 34759427722 | server-ci | b29c7df | failure（step「Build and run tests」exit 1） |
+| 34759427028 | miniapp-ci | b29c7df | failure（**jobs 列表为空**） |
+| 34756731061 / 34756107655 / 34705526659 | miniapp-ci | b289d64 / d93859f / 5f2a7b5 | 同上，failure 且无 job |
+| 34704940739 | miniapp-ci | b6d5e6d | **success**（最后一次真正跑过的前端门禁） |
+
+已查清的与未查清的：
+
+- **miniapp-ci 的失败原因已证实**：`git show HEAD:.github/workflows/miniapp-ci.yml` 用 ruby YAML
+  解析报 `did not find expected key ... line 18 column 5`（`- name: Kitchen logic test` 少了一格缩进），
+  而工作区里那份解析通过（`name="miniapp-ci"`、`jobs=["static-check"]`）。
+  即：**修复只在未提交的工作区里，GitHub 上那份 YAML 至今仍是坏的**——
+  所以「小程序四条门禁」在线上从未真正执行过，job 列表为空就是证据。
+- **server-ci 的失败原因本地复现不出来**：把 HEAD 单独 `git worktree add` 出来
+  （确认过 HEAD 树里没有 `UploadSigner.java` 等未跟踪文件），
+  用 CI 同款参数（空测试库 + `SPRING_SQL_INIT_MODE=always` + `AUTH_DEV_OTP_ENABLED=true`）
+  跑 `mvn -B verify`：**139 项 0 失败、BUILD SUCCESS**；工作区那份跑同一条是 **152 项 0 失败**。
+  本机是 MySQL 8.4 + JDK 21，CI 是 mysql:8.0 + temurin JDK 17，
+  差异只可能出在这两处（或 CI 日志里那条本机看不到的信息）。
+  原始日志需要鉴权（未装 `gh`、无 token），**要定位就得先拿到日志**：
+  装 `gh` 并 `gh auth login`，或在 Actions 页面把「Build and run tests」那一步的日志贴出来。
+- 顺带一条：HEAD 里的 `server/mvnw` **没有可执行位**（`sh ./mvnw` 才跑得动，直接执行 exit 126）；
+  工作区已修好（`git status` 里的 `M server/mvnw` 就是那个 mode 变更）。CI 用的是 `mvn` 不受影响，
+  但任何「克隆下来就 `./mvnw`」的人都会撞上。
+
 ### CI
 
-`.github/workflows/server-ci.yml`：推送/PR 触发，起 MySQL service 容器，跑 `mvn verify`（**59 项测试**）。
-注意：它只监听 `server/**` 的改动，纯小程序改动不会触发任何检查。
+`.github/workflows/server-ci.yml`：推送/PR 触发，起 MySQL service 容器，跑 `mvn verify`。
+实测规模 **25 个测试类 / 152 项用例**（2026-09-19 本机连真实 MySQL 跑通，0 失败 0 错误）；
+`CoreFlowInvariantsTests` 锁住三条核心链路的不变量：待审帖仅作者可见、
+邀请码加入后归属正确、同一菜谱连点三次菜单只留一条。
+其中 `LaunchHardeningTests` 专门锁住本轮上线加固项：社区分页与 `size` 夹紧、
+无家庭账号打家庭维度端点不得出现 5xx、`import_source` 审核索引存在、生产配置不留凭据默认值。
+它只监听 `server/**` 的改动。
+
+`.github/workflows/miniapp-ci.yml`：监听 `miniapp/**`，跑四条前端检查——
+`static-check.js`（阻断：页面四件套、tabBar 与 utils/tabs.js 一致、JSON 可解析、
+WXSS 配平与注释风格、图片/组件引用、事件处理函数存在性、跳转路径、数组解构、**第 8 项字号可缩放性**、
+**第 9 项 border/color 禁写裸黑（深色档会看不见）**、
+**第 10 项 require 相对路径的目标文件必须存在（挡住「新文件忘了 git add」→ CI 检出树缺文件）**）、
+`dish-logic.test.js`、`kitchen-logic.test.js`，以及 `interaction-audit.js`
+（A 类「绑了事件却没按下反馈」**阻断**——纯机械判定、无误报；B/C 类靠类名与尺寸启发式，只报告不判失败）。
+**2026-09-18 之前该文件的最后一步缩进错误，整份 YAML 非法、GitHub 直接忽略，小程序实际处于零自动化把关状态**；
+现已修正，推上去后请到 Actions 页面确认它真的跑绿一次。
+本机无 `node`（PATH 里没有），但可直接用 Qoder 自带的 Node 运行时跑这四条：
+`ELECTRON_RUN_AS_NODE=1 /Applications/Qoder.app/Contents/MacOS/Qoder miniapp/test/static-check.js`
+（实测 v24.18.0，退出码可信）。注意重跑要先清 require 缓存，
+否则脚本不会重新执行、输出为空，看起来像"通过"。
 
 ---
 
 ## 8. 上线前仍需人工确认
 
 - [ ] `miniapp/utils/env.js` 的 `trial` / `release` 占位域名替换为真实备案域名（**唯一来源，别处不用改**）
-- [ ] 隐私政策页 [miniapp/pages/legal/privacy/index.js](../miniapp/pages/legal/privacy/index.js) 里的
-      `【请填写运营者名称】` / `【请填写联系方式】` 替换为真实主体信息（**带括号提交会被审核挑出来**）
+- [ ] [miniapp/utils/legal-config.js](../miniapp/utils/legal-config.js) 第 13、15 行的
+      `【请填写运营者名称】` / `【请填写联系方式】` 替换为真实主体信息（**带括号提交会被审核挑出来**）。
+      ⚠️ 这里才是运营者信息的**唯一来源**——隐私政策页只 `require` 它、自身不存文案；
+      （旧版本清单误写成 `miniapp/pages/legal/privacy/index.js`，该路径根本不存在，按它找会漏改）
+- [ ] `server/sql/migrate-import-source-index.sql` 已在存量库执行一次（新库由 schema.sql 直接建出）
 - [ ] 工作区已提交：`git status` 干净，尤其 `miniapp/utils/features.js`、`miniapp/components/back-top/`、
       `server/src/main/resources/application-prod.yml` 等运行时必需文件必须入库（否则干净克隆跑不起来）
+- [ ] **提交时必须 `git add` 全部未跟踪新文件，不能只 `git commit -am`**。
+      2026-09-19 实测：工作区有 9 个未跟踪文件，其中 7 个被**已跟踪代码**依赖，
+      只提交改动文件会得到一个「编译即失败」的 commit：
+      - `miniapp/utils/capsule.js` ← `pages/home`、`pages/menu`、`pages/recipes`、`pages/me`、
+        `pkg-extra/recipes/search` 五个页面首行 require（缺了这五页整块白屏、console 干净）
+      - `miniapp/utils/ingredients.js` ← `pages/pantry`、`pages/shopping`
+      - `server/.../config/UploadSigner.java`、`UploadPathNormalizer.java` ← 被已跟踪的
+        `WebCorsConfig.java` 引用（缺了 `mvn compile` 直接失败）
+      - `server/sql/migrate-import-source-index.sql`（本清单 §7 要求的存量库迁移）
+      - `CoreFlowInvariantsTests` / `LaunchHardeningTests` / `UploadSignedAccessTests`
+        （§7 所称「152 项测试」的证据来源本身还没入库）
+      - `.github/workflows/workflows-ci-lint.yml`
+      现已由 `static-check.js` 第 10 项兜住：CI 只检出已提交内容，漏 add 的 require 目标
+      在检出树里不存在 → 检查失败并点名受影响页面（已用「临时移走 capsule.js」实测，
+      exit 1 且准确列出上述 5 个页面）。后端这一类由 `mvn verify` 的编译器兜住。
+- [ ] **用开发者工具打开本项目要开仓库根目录，不要开 `miniapp/`**。
+      仓库根 `project.config.json` 的 `miniprogramRoot=miniapp/` 且 `urlCheck:false`；
+      而 `miniapp/project.config.json` + `miniapp/project.private.config.json`（两者都被 gitignore）
+      里 `urlCheck:true`。从 `miniapp/` 打开时 `http://localhost:9088` 会被判
+      `request:fail url not in domain list` → 游客 token 取不到 → **全站空白**，
+      看起来像代码坏了（2026-09-19 实际踩过一次，误判为回归）。
 - [ ] `ADMIN_OPENIDS` 已配置，且能用管理员手机号登录 `/admin`
 - [ ] nginx 已加 `/admin` IP 白名单，HTTPS 证书就绪
+- [ ] 已设置 `UPLOAD_ACCESS_SECRET`（生产留空会启动失败，这是有意的），并确认小程序里图片仍能正常显示
 - [ ] 微信支付若开启：已配置 `WECHAT_PAY_PLATFORM_CERT_PATH`，并用真实支付回归一次回调
 - [ ] 真机回归：微信登录、游客模式、社区发帖/评论、图片上传、举报下架闭环
 - [ ] 短信网关仍为 noop（`PHONE_LOGIN=false`），若开启手机号登录须先接真实网关
+
+`.github/workflows/workflows-ci-lint.yml`：改动 `.github/workflows/**` 时用 ruby 逐份解析工作流 YAML，
+并校验每个 job 有 steps、每个 step 有 `run` 或 `uses`。它存在的唯一理由就是上面那条
+「缩进坏掉 → 工作流被静默忽略」的事故不再重演。
+
+### 深色模式的两条实测约束（2026-09-19 验证）
+
+- `app.json` 的 `window.navigationBarBackgroundColor` / `backgroundColor` **不能**写成 `$xxx` 主题引用：
+  当前基础库会直接判 `app.json` 非法，模拟器报
+  `"$navigationBarBackgroundColor" is not hexColor` 并**整app启动失败**。
+  深色下的原生窗口底色只能保持字面量，页面内深色靠 `app.wxss` 的 `@media (prefers-color-scheme: dark)`。
+- `backgroundTextStyle` 同样不支持主题化，只能在 `light`/`dark` 里选一个。
+  已按「默认浅色主题」取 `dark`（原来是 `light`，浅色底上浅色三点根本看不见）。
+  深色模式下的下拉刷新指示点仍需真机复核，必要时改自定义下拉刷新。
+- 自定义 TabBar 不在 `page` 子树内，拿不到挂在 `page{}` 上的 token，
+  已在 `custom-tab-bar/index.wxss` 内自带深浅两套值（改色需同步 theme.json 与该文件）。
+
+### 会话过期：已验证的行为（2026-09-19 运行时实测）
+
+登录态会话过期（401）时不再静默换成游客：清掉 `auth_token` 与 `session_kind`，并提示需要重新登录。
+并发场景实测过——同时发 3 个会 401 的请求（`/api/auth/me`、`/api/daily-menu/today`、`/api/pantry`），
+最终存储状态仍是"两者都已清除"，说明屏障生效、没有哪个在途请求偷偷写回游客身份。
+要区分的是：清态之后**冷启动**应用时，`app.js` 会按设计为无会话状态取一个游客会话（游客可浏览是产品设定），
+那不是降级 bug。
+
+### 社区信息流分页（2026-09-19 补）
+
+`GET /api/community/posts` 现支持 `page`（从 1 起）/ `size`（默认 20，服务端夹紧到 1~50），
+排序为 `like_count DESC, id DESC`。此前该接口只有 `LIMIT 100` 护栏、一次返回全量，
+帖子过百后每个用户进首页就要拖全表。小程序端滚到列表底部自动取下一页并按 id 去重。
+不传参数时行为与旧版一致（第 1 页 20 条），老客户端不受影响。
 
 ### 社区审核现在是"先审后发"
 

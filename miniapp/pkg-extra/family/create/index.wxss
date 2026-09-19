@@ -73,7 +73,7 @@
   position: relative;
   margin-top: -50rpx;
   background: var(--paper);
-  border-radius: 20rpx 20rpx 0 0;
+  border-radius: var(--r-sheet) var(--r-sheet) 0 0;
   padding: 48rpx 46rpx calc(60rpx + env(safe-area-inset-bottom));
   z-index: 20;
 }

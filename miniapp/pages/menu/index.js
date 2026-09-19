@@ -1,3 +1,4 @@
+const { getCapsule } = require('../../utils/capsule');
 const {
   getPantryItems,
   getShoppingList,
@@ -83,14 +84,14 @@ Page({
     weeklyDays: [],
     loading: true,
     loadError: '',
-    heroMetaTop: '91px',
+    // 兜底含安全区；量到胶囊时由 utils/capsule 的 bottom 覆盖
+    heroMetaTop: 'calc(env(safe-area-inset-top) + 178rpx)',
     statusBarHeight: 0
   },
 
   onLoad() {
     try {
-      const mb = wx.getMenuButtonBoundingClientRect();
-      if (mb && mb.bottom) this.setData({ heroMetaTop: (mb.bottom + 8) + 'px' });
+      this.setData({ heroMetaTop: getCapsule().bottom });
     } catch (e) {}
     // 预热订阅消息配置：喊开饭时要在点击手势里同步申请授权，不能临时去等网络
     subscribe.preload();
@@ -321,15 +322,17 @@ Page({
     });
     if (!res.confirm) return;
     let done = false;
+    let cookLogFailed = false;
     await runGuarded(this, `cooked-${id}`, async () => {
       await Promise.all([
         item ? updateMenuItemStatus(item, 'done') : Promise.resolve(),
-        addCookHistory({ recipeId: id }).catch(() => {})
+        addCookHistory({ recipeId: id }).catch(() => { cookLogFailed = true; })
       ]);
       done = true;
     }, {
       loading: '处理中',
-      success: '已上桌',
+      // 之前 .catch(() => {}) 把失败吞成"已上桌"，用户的做菜历史会静默缺一笔
+      success: () => (cookLogFailed ? '已上桌，但做菜记录没保存' : '已上桌'),
       fail: '操作失败'
     });
     if (!done) return;
@@ -364,10 +367,11 @@ Page({
       wx.showToast({ title: '菜单还是空的', icon: 'none' });
       return;
     }
-    // 重建会覆盖当前清单（手动补充的条目会重算），属于破坏性操作，先确认
+    // TodayService.rebuildShoppingList 只删 is_manual=0 的行：手动补充的会保留，
+    // 真正会丢的是自动条目上已勾选的"已买"状态。文案必须说准这两件事。
     const res = await wx.showModal({
       title: '按今日菜单重新生成清单？',
-      content: '会按当前菜单重算食材，之前在清单里手动添加的条目将被覆盖。',
+      content: '菜单自动算出的食材会重新生成，已勾的"买好了"会清掉；你手动加的条目会保留。',
       confirmText: '重新生成',
       cancelText: '取消'
     });

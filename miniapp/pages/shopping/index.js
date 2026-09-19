@@ -12,17 +12,10 @@ const {
 const { withScrollReveal, dispose: disposeScrollReveal } = require('../../behaviors/scroll-reveal');
 
 const { recipeDishImg, localDishByIngredient } = require('../../utils/image');
-
-const PANTRY_CATS = [
-  { key: 'veg',    label: '蔬菜', words: ['菜', '番茄', '椒', '土豆', '葱', '蒜', '姜', '瓜', '茄', '萝卜', '豆角', '芹', '菇', '笋', '兰花', '生菜'] },
-  { key: 'meat',   label: '肉蛋', words: ['肉', '蛋', '鸡', '鸭', '鱼', '虾', '牛', '猪', '羊', '豆腐', '排骨'] },
-  { key: 'season', label: '调料', words: ['生抽', '老抽', '酱', '醋', '油', '盐', '糖', '淀粉', '料酒', '蚝油', '辣'] }
-];
+const { INGREDIENT_CATEGORIES, categoryOf } = require('../../utils/ingredients');
 
 function pantryCategory(name) {
-  const n = String(name || '');
-  const cat = PANTRY_CATS.find(c => c.words.some(w => n.includes(w)));
-  return cat ? { key: cat.key, label: cat.label } : { key: 'other', label: '其他' };
+  return categoryOf(name);
 }
 
 function decoratePantryItem(it) {
@@ -46,11 +39,7 @@ function groupPantry(items) {
   return ['veg', 'meat', 'season', 'other'].map(k => map[k]).filter(Boolean);
 }
 
-const ingredientCategories = [
-  { key: 'veg', label: '蔬菜水果', words: ['菜', '葱', '姜', '蒜', '番茄', '西兰花', '黄瓜', '椒', '香菜'] },
-  { key: 'meat', label: '肉蛋水产', words: ['肉', '鸡', '蛋', '鱼', '虾', '牛', '猪', '五花'] },
-  { key: 'seasoning', label: '调味干货', words: ['盐', '糖', '生抽', '老抽', '料酒', '醋', '酱', '油', '八角', '花椒'] }
-];
+const ingredientCategories = INGREDIENT_CATEGORIES;
 
 Page({
   data: {
@@ -212,11 +201,11 @@ Page({
     }
   },
 
-  // 「按今日菜单重新整理」会覆盖当前清单（手动补充的条目会被重算），属破坏性操作
+  // 重建只清 is_manual=0 的自动条目（含其已买勾选），手动加的条目保留 —— 原文案说反了
   async refreshList() {
     const res = await wx.showModal({
       title: '按今日菜单重新整理？',
-      content: '会按今天的菜单重算食材，清单里手动添加的条目将被覆盖。',
+      content: '菜单自动算出的食材会重新生成，已勾的"买好了"会清掉；你手动加的条目会保留。',
       confirmText: '重新整理',
       cancelText: '取消'
     });

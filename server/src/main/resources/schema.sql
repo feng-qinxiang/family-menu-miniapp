@@ -267,7 +267,9 @@ CREATE TABLE IF NOT EXISTS import_source (
     review_note VARCHAR(255) NULL,
     resolved_at DATETIME NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    -- 后台「导入审核」队列按 audit_status 过滤、按 id 翻页；无此索引即全表扫
+    KEY idx_import_source_audit (audit_status, id)
 );
 
 -- token 列存的是 bearer token 的 SHA-256 十六进制摘要，不是明文：

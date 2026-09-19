@@ -254,7 +254,7 @@
   border-radius: var(--r-pill);
 }
 .fh-badge.ok {
-  color: #2f4a3a;
+  color: var(--pine);
   background: rgba(47, 74, 58, 0.12);
 }
 .fh-time { font-size: var(--fs-mini); color: var(--mut); }
@@ -262,7 +262,7 @@
   margin-top: 12rpx;
   font-size: calc(27rpx * var(--fs-mul, 1));
   line-height: 1.6;
-  color: var(--ink-2);
+  color: var(--mut-strong);
 }
 .fh-reply {
   margin-top: 14rpx;
@@ -277,10 +277,10 @@
   flex: none;
   font-size: var(--fs-mini);
   font-weight: 800;
-  color: #2f4a3a;
+  color: var(--pine);
 }
 .fh-reply-v {
   font-size: var(--fs-sub);
   line-height: 1.6;
-  color: var(--ink-2);
+  color: var(--mut-strong);
 }

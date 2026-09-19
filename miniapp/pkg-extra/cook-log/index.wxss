@@ -137,7 +137,7 @@
   position: relative;
   margin-top: -50rpx;
   background: var(--paper);
-  border-radius: 20rpx 20rpx 0 0;
+  border-radius: var(--r-sheet) var(--r-sheet) 0 0;
   padding: 46rpx 0 calc(36rpx + env(safe-area-inset-bottom));
   z-index: 20;
 }
@@ -283,12 +283,14 @@
   border: var(--bd-card);
 }
 .tcard .thumb {
-  width: 162rpx;
-  height: 162rpx;
-  border-radius: var(--r-chip);
+  
+  
+  border-radius: var(--r-md);
   flex: none;
   position: relative;
   overflow: hidden;
+  width: var(--dish-thumb);
+  height: var(--dish-thumb);
 }
 .tcard .thumb-img { width: 100%; height: 100%; }
 .tcard .date {
@@ -426,5 +428,5 @@
 
 /* 刚做完的菜高亮（从烹饪模式完成跳转定位） */
 .tcard.is-new {
-  box-shadow: 0 0 0 4rpx var(--tomato, #e8472a);
+  box-shadow: 0 0 0 4rpx var(--pop);
 }

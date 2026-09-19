@@ -1,4 +1,14 @@
+/* 自定义 TabBar 不在 page 子树内：app.wxss 里挂在 page{} 上的 token（含深色覆盖、
+   大字模式）都传不进来自定义 TabBar 的样式作用域，var(--themeLine, 浅色兜底) 只会命中兜底，
+   于是深色模式下整条栏仍是米白底 + 浅色调文字。这里自带深浅两套值。
+   取值与 theme.json 的 light/dark 段一致，改色请同步 theme.json 与 app.wxss 的深色块。 */
 .tab-bar {
+  --tb-line: #e8e0d0;
+  --tb-paper: rgba(251, 248, 243, 0.96);
+  --tb-text: #6b5f50;
+  --tb-active: #e8472a;
+  --tb-radius: 999rpx;
+  --tb-fs: 21rpx;
   position: fixed;
   right: 0;
   bottom: 0;
@@ -9,8 +19,8 @@
   height: 96rpx;
   padding: 8rpx 10rpx calc(env(safe-area-inset-bottom) + 24rpx);
   box-sizing: content-box;
-  border-top: 1rpx solid var(--themeLine, rgba(236, 229, 217, 0.96));
-  background: var(--themePaper, rgba(251, 248, 243, 0.96));
+  border-top: 1rpx solid var(--tb-line);
+  background: var(--tb-paper);
   backdrop-filter: blur(18px);
   box-shadow: 0 -6rpx 24rpx rgba(60, 40, 20, 0.08);
 }
@@ -25,12 +35,12 @@
   align-items: center;
   justify-content: center;
   gap: 6rpx;
-  color: var(--mut-strong);
+  color: var(--tb-text);
   transition: transform 0.18s ease;
 }
 
 .tab-item.active {
-  color: var(--pop);
+  color: var(--tb-active);
 }
 
 /* 按下反馈：图标整体轻微下沉，补上"点到了"的即时确认 */
@@ -48,10 +58,24 @@
   top: 0;
   width: 36rpx;
   height: 5rpx;
-  border-radius: 0 0 var(--r-pill) var(--r-pill);
-  background: var(--pop);
+  border-radius: 0 0 var(--tb-radius) var(--tb-radius);
+  background: var(--tb-active);
   content: "";
   animation: tab-indicator-in 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* 大字模式：与 app.wxss 里 --fs-mul 1.15 同档（21rpx → 24rpx），
+   否则全站文字放大而底部五个 tab 仍是最小字号 */
+.tab-bar.font-lg {
+  --tb-fs: 24rpx;
+}
+
+@media (prefers-color-scheme: dark) {
+  .tab-bar {
+    --tb-line: #333333;
+    --tb-paper: rgba(28, 28, 28, 0.96);
+    --tb-text: #c4c0b8;
+  }
 }
 
 @keyframes tab-indicator-in {
@@ -81,7 +105,7 @@
 .tab-text {
   max-width: 100%;
   overflow: hidden;
-  font-size: var(--fs-mini);
+  font-size: var(--tb-fs);
   font-weight: 600;
   line-height: 1.2;
   text-overflow: ellipsis;
@@ -89,6 +113,6 @@
 }
 
 .tab-item.active .tab-text {
-  color: var(--pop);
+  color: var(--tb-active);
   font-weight: 800;
 }

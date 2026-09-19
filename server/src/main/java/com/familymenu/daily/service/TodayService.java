@@ -277,20 +277,42 @@ public class TodayService {
             return shoppingListId;
         }
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(
-                    "INSERT INTO shopping_list(family_id, daily_menu_id, status) VALUES (?, ?, 'OPEN')",
-                    Statement.RETURN_GENERATED_KEYS
-            );
-            ps.setLong(1, familyId);
-            ps.setLong(2, menuId);
-            return ps;
-        }, keyHolder);
+        try {
+            jdbcTemplate.update(connection -> {
+                PreparedStatement ps = connection.prepareStatement(
+                        "INSERT INTO shopping_list(family_id, daily_menu_id, status) VALUES (?, ?, 'OPEN')",
+                        Statement.RETURN_GENERATED_KEYS
+                );
+                ps.setLong(1, familyId);
+                ps.setLong(2, menuId);
+                return ps;
+            }, keyHolder);
+        } catch (DuplicateKeyException ignored) {
+            // 同一家庭的两个成员同一天首次打开清单会撞 uk_shopping_menu。
+            // 与 ensureTodayMenu 一样回读已存在的那条，而不是把 500 抛给用户。
+            Long existing = findShoppingListId(menuId);
+            if (existing != null) {
+                return existing;
+            }
+            throw ignored;
+        }
         Number key = keyHolder.getKey();
         if (key == null) {
             throw new IllegalStateException("shopping list create failed");
         }
         return key.longValue();
+    }
+
+    private Long findShoppingListId(long menuId) {
+        return jdbcTemplate.query("""
+                        SELECT id
+                        FROM shopping_list
+                        WHERE daily_menu_id = ?
+                        LIMIT 1
+                        """,
+                rs -> rs.next() ? rs.getLong("id") : null,
+                menuId
+        );
     }
 
     private DailyMenuView loadMenuView(long menuId, long familyId) {

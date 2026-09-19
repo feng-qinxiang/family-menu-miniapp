@@ -1,3 +1,4 @@
+const { getCapsule } = require('../../utils/capsule');
 const {
   getCookHistory,
   getCurrentUser,
@@ -50,14 +51,12 @@ Page({
     appVersion: 'v1.0.0',
     loading: true,
     loadError: '',
-    capsuleTop: '51px'
+    // 兜底必须含安全区：写死 51px 在刘海机上会让标题顶进状态栏
+    capsuleTop: 'calc(env(safe-area-inset-top) + 90rpx)'
   },
 
   onLoad() {
-    try {
-      const mb = wx.getMenuButtonBoundingClientRect();
-      if (mb && mb.top) this.setData({ capsuleTop: mb.top + 'px' });
-    } catch (e) {}
+    this.setData({ capsuleTop: getCapsule().top });
   },
 
   onShow() {

@@ -38,6 +38,8 @@ Page({
   },
 
   onLoad() {
+    const features = require('../../../utils/features');
+    if (!features.PAYMENT) { features.leaveToHome(); return; }
     let sbh = 0;
     try {
       if (typeof wx.getWindowInfo === 'function') {

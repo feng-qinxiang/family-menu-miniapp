@@ -184,10 +184,10 @@
   <nav-bar title="菜谱详情" status-bar-height="{{statusBarHeight}}"></nav-bar>
   <state-empty
     type="search"
-    title="菜谱纸没找到"
-    desc="可能已经删除，或者链接里的菜谱编号不对。"
-    cta="返回菜谱库"
+    title="{{loadError ? '这道菜没加载出来' : '菜谱纸没找到'}}"
+    desc="{{loadError ? '网络或服务没响应，点重新加载再试一次。' : '可能已经删除，或者链接里的菜谱编号不对。'}}"
+    cta="{{loadError ? '重新加载' : '返回菜谱库'}}"
     cta-style="pop"
-    bind:action="goBack"
+    bind:action="onEmptyAction"
   ></state-empty>
 </view>

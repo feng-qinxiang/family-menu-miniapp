@@ -313,12 +313,17 @@
 | P0 设计纪律 | 完成 | 色值 token 化（含 root-portal 变量副本方案）、字号标尺 12 级、hero/返回键/按钮规格统一、空态收敛 state-empty | `.shead` 13 页组件化与 `.badge` 三处合并**跳过**：样式已在 app.wxss 全局收敛，页面样式隔离下无实际冲突，组件化纯属结构搬家，收益低于风险 |
 | P1 组件与导航 | 完成 | TabBar 四 tab 重构（今日/菜谱/冰箱/我的）、menu 转二级页、pantry 转 tab 页、SVG 零闲置、recipe-card 字段兼容 | home/recipes 卡片保持手写：横滑紧凑卡与「selected/创建卡」是独立视觉变体，强行组件化回归风险高，列为低优先级 |
 | P2 设计稿缺口 | 完成 | 文案中文化、home hero 镂空+暖光、忌口筛选闭环（schema+接口+成员编辑+recipes 过滤）、state-sheet/state-loading、tap-scale 弹性、me 数字滚动 | 滚动浮现（IntersectionObserver）**降级**：页面入场动画 + g-d 阶梯已覆盖主要感知，收益边际；share-card 默认走 onShareAppMessage，pay-wechat/state-imgview 原生兜底（已定决策） |
-| P3 体验健壮性 | 完成 | 失败/空态解耦 5 页 + community 加载态、menu 定时器清理、home 死 Map 删除、许愿离线提示、弹窗滚动锁、--mut AA 收敛、feedback 触达区、大字模式开关 | 大字模式**已知局限**：仅 var() 引用字号放大（6 主页面），静态 rpx 字号不缩放；全站缩放需字号 token 化二期 |
+| P3 体验健壮性 | 完成 | 失败/空态解耦 5 页 + community 加载态、menu 定时器清理、home 死 Map 删除、许愿离线提示、弹窗滚动锁、--mut AA 收敛、feedback 触达区、大字模式开关 | 大字模式当时**已知局限**：仅 var() 引用字号放大（6 主页面），静态 rpx 字号不缩放 → 该局限已于 2026-09-19 闭合（见残余风险 2） |
 | P4 深色模式与文档 | 完成 | theme.json darkmode + token 主题化（含 TabBar）、docs/UI设计规范.md、DESIGN.md 变更历史 | 真机深色截图与 43 页截图回归**未执行**（需微信开发者工具环境）；`probe-mcp.mjs` 回归流程已写入规范文档 |
 
 ### 残余风险（下阶段建议）
 
 1. **真机验收**：4 tab 跳转、忌口编辑、深色模式、大字模式需开发者工具/真机过一遍（本会话为静态验证 + 编译验证）。
-2. **大字模式二期**：字号 token 化后全站 calc 缩放。
-3. **滚动浮现**：如产品需要，按规范文档第九节用 IntersectionObserver 落地。
-4. **cook-mode 失败静默**：详情加载失败仍为静默空态（未列入本次 5 页清单，P3 收尾时遗漏，建议补）。
+2. ~~**大字模式二期**：字号 token 化后全站 calc 缩放。~~ **已闭合（2026-09-19）**：全站 776 处 `font-size` 已 100% 可缩放——
+   773 处走 `var(--fs-*)` 或 `calc(Xrpx * var(--fs-mul, 1))`，另 3 处为 `var(--tb-fs)` / `0.62em` / `font-size: inherit` 这类天然跟随父级的写法。
+   并由 `miniapp/test/static-check.js` 第 8 项把「裸写 rpx/px 字号」钉成 CI 阻断项（探针实测：只报真漏，注释与跨行声明不误报）。
+3. ~~**滚动浮现**：如产品需要，按规范文档第九节用 IntersectionObserver 落地。~~ **已落地**：`behaviors/scroll-reveal.js`，6 个页面接入。
+4. ~~**cook-mode 失败静默**：详情加载失败仍为静默空态。~~ **已闭合**：`cook-mode` 现有 `loadError` 可重试失败态。
+   同轮顺带清掉一类更隐蔽的静默——写操作被 `.catch(() => {})` 吞掉：
+   `cook-mode` 取消评分时的做菜记录、`recipe-detail` 的自动销愿，均已改为"要么提示、要么留痕"。
+   其余静默 catch（下拉刷新、`getCurrentUser` 兜底、logout 收尾）都是读路径或刻意不阻断，维持现状。

@@ -91,10 +91,12 @@ function isRemoteStock(url) {
 function recipeDishImg(recipe) {
   if (!recipe) return fallbackDishImg('');
   const title = recipe.title || recipe.recipeTitle || recipe.name || '';
+  const cover = recipe.coverImage || recipe.cover || recipe.dishImg || '';
+  // 真实封面优先。以前"按菜名匹配本地图"排在它前面，结果是：用户传了自家实拍，
+  // 只要菜名里带"番茄/紫菜/土豆"这类词，页面永远显示一张库存图而不是他传的那张。
+  if (cover && !isRemoteStock(cover)) return cover;
   const byTitle = localDishByTitle(title);
   if (byTitle) return byTitle;
-  const cover = recipe.coverImage || recipe.cover || recipe.dishImg || '';
-  if (cover && !isRemoteStock(cover)) return cover;
   return fallbackDishImg(recipe.id || title);
 }
 

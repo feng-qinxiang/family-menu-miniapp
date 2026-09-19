@@ -1,5 +1,6 @@
 // pages/recipes/search/index · 菜谱搜索结果页（二级页）
 // sticky 搜索栏 + 排序 chip 横滑 + 2 列网格（关键词 .pop 高亮）
+const { getCapsule } = require('../../../utils/capsule');
 // 数据：getRecipes('all') 本地过滤，禁用臆造 api
 const api = require('../../../utils/api');
 const { recipeDishImg } = require('../../../utils/image');
@@ -46,12 +47,7 @@ Page({
     } catch (e) {
       sbh = 0;
     }
-    let capsuleRight = 96;
-    try {
-      const mb = wx.getMenuButtonBoundingClientRect();
-      const sys = (wx.getWindowInfo && wx.getWindowInfo()) || wx.getSystemInfoSync();
-      if (mb && sys && mb.left) capsuleRight = sys.windowWidth - mb.left + 8;
-    } catch (e) {}
+    const capsuleRight = getCapsule().rightNum;
     const kw = (options && options.keyword) ? decodeURIComponent(options.keyword) : '';
     // 从首页心愿「待挑菜」跳来时带 wishId/slot，点卡片透传给详情页做销愿闭环
     this._wishId = (options && options.wishId) ? decodeURIComponent(options.wishId) : '';

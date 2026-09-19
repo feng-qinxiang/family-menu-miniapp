@@ -11,6 +11,9 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -21,11 +24,13 @@ public class WebCorsConfig implements WebMvcConfigurer {
     private final String uploadDir;
     private final AuthInterceptor authInterceptor;
     private final CurrentUserArgumentResolver currentUserArgumentResolver;
+    private final UploadSigner.AccessInterceptor uploadAccessInterceptor;
 
     public WebCorsConfig(@Value("${cors.allowed-origins:}") String allowedOriginsCsv,
                          @Value("${upload.dir:uploads}") String uploadDir,
                          AuthInterceptor authInterceptor,
-                         CurrentUserArgumentResolver currentUserArgumentResolver) {
+                         CurrentUserArgumentResolver currentUserArgumentResolver,
+                         UploadSigner.AccessInterceptor uploadAccessInterceptor) {
         if (allowedOriginsCsv == null || allowedOriginsCsv.isBlank()) {
             this.allowedOrigins = new String[0];
         } else {
@@ -38,6 +43,7 @@ public class WebCorsConfig implements WebMvcConfigurer {
         this.uploadDir = uploadDir;
         this.authInterceptor = authInterceptor;
         this.currentUserArgumentResolver = currentUserArgumentResolver;
+        this.uploadAccessInterceptor = uploadAccessInterceptor;
     }
 
     @Override
@@ -58,6 +64,9 @@ public class WebCorsConfig implements WebMvcConfigurer {
         registry.addInterceptor(authInterceptor)
                 .addPathPatterns("/api/**")
                 .excludePathPatterns("/api/auth/guest", "/api/auth/login");
+        // 上传文件读取闸门（未启用签名时直接放行，本地零配置不受影响）
+        registry.addInterceptor(uploadAccessInterceptor)
+                .addPathPatterns("/uploads/**");
     }
 
     @Override
@@ -67,7 +76,19 @@ public class WebCorsConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        String location = Paths.get(uploadDir).toAbsolutePath().normalize().toUri().toString();
+        Path uploadRoot = Paths.get(uploadDir).toAbsolutePath().normalize();
+        // 目录必须先存在：Path#toUri() 只在"确实是已存在的目录"时才补结尾斜杠，
+        // 而首次部署时 uploads/ 还没建，location 会少了结尾 "/"，Spring 把它当文件而非目录，
+        // 结果用户上传的封面能存进去却永久 404。这里既建目录也显式补斜杠。
+        try {
+            Files.createDirectories(uploadRoot);
+        } catch (IOException ex) {
+            throw new IllegalStateException("上传目录不可用: " + uploadRoot, ex);
+        }
+        String location = uploadRoot.toUri().toString();
+        if (!location.endsWith("/")) {
+            location = location + "/";
+        }
         registry.addResourceHandler("/uploads/**").addResourceLocations(location);
         // 运营后台静态资源（classpath:/admin/），与 C 端 static/ 隔离。
         //

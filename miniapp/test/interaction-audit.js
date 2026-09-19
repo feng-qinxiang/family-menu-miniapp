@@ -1,18 +1,19 @@
 #!/usr/bin/env node
 /**
- * 交互体检（只报告，不阻断）
+ * 交互体检（A 类阻断，B / C 类只报告）
  *
  *   node miniapp/test/interaction-audit.js
  *
  * 为什么单独一个脚本：点击体验的问题（没反馈、热区太小、假可点）
  * 没法用「通过/失败」一刀切——文本链接本来就不该有 88rpx 热区。
- * 所以这里只做统计与定位，交给人判断，用于改动前后的对比与回归复查。
+ * 所以 B / C 只做统计与定位，交给人判断，用于改动前后的对比与回归复查；
+ * 唯独 A 类是机械可判定的（绑了事件却没按下反馈），一律判失败。
  *
  * 检查三类：
- *   A. 有事件绑定但没有按下反馈（本行或紧邻的父级都没有 tap-scale / hover-class）
- *   B. 长得可点却没有事件绑定（类名像按钮，检查到即列出；已确认的误报进 B_OK 白名单）
+ *   A. 有事件绑定但没有按下反馈（本行或紧邻的父级都没有 tap-scale / hover-class）→ 非 0 即 exit 1
+ *   B. 长得可点却没有事件绑定（类名像按钮，检查到即列出；已确认的误报进 B_CONFIRMED 白名单）
  *   C. 可点元素在 wxss 里的声明尺寸小于 88rpx（只统计 wxml 里直接绑了事件的类；
- *      已有 ::after ≥88rpx 热区扩展的、刻意小于 88 的进 C_OK 白名单）
+ *      已有 ::after ≥88rpx 热区扩展的、刻意小于 88 的进 C_CONFIRMED 白名单）
  */
 const fs = require('fs');
 const path = require('path');
@@ -170,4 +171,11 @@ reportBReal.slice(0, 20).forEach((r) => console.log('   · ' + r));
 console.log(`\nC. 声明尺寸小于 88rpx 的可点类（已剔除 ${reportC.length - reportCReal.length} 处刻意尺寸）：${reportCReal.length} 处`);
 reportCReal.slice(0, 20).forEach((r) => console.log('   · ' + r));
 if (reportCReal.length > 20) console.log(`   … 其余 ${reportCReal.length - 20} 处`);
-console.log('\n（本脚本只报告，不判定通过/失败；文本链接类小热区属正常，请按元素性质判断）');
+console.log('\n（B / C 只报告不判定：靠类名与尺寸启发式识别，文本链接类小热区属正常，需按元素性质人工判断）');
+
+// A 类是纯机械判定（这行或父级有没有 tap-scale / hover-class），不存在误报，
+// 所以直接判失败——否则"新增页面忘了加按下反馈"会一路溜到线上。
+if (reportA.length) {
+  console.error(`\n✘ A 类 ${reportA.length} 处：绑了事件却没有按下反馈，请加 tap-scale 或 hover-class`);
+  process.exit(1);
+}

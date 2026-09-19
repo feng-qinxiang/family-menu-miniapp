@@ -160,10 +160,12 @@ Page({
         missCount,
         inTodayMenu,
         playingVideo: false,
+        loadError: false,
         loading: false
       });
     } catch (err) {
-      this.setData({ recipe: null, loading: false });
+      // 失败与"菜谱不存在"是两回事：都显示"可能已经删除"会让人以为菜没了
+      this.setData({ recipe: null, loadError: true, loading: false });
       wx.showToast({ title: '加载详情失败', icon: 'none' });
     }
   },
@@ -232,7 +234,12 @@ Page({
       this.setData({ inTodayMenu: true });
       // 心愿闭环：这道菜是为某条心愿挑的 → 加入菜单即愿望达成，自动销愿
       if (this._wishId) {
-        removeWish(this._wishId).catch(() => {});
+        const wishId = this._wishId;
+        // 尽力而为：主操作（加入菜单）已经成功，不该为一个收尾写挡住反馈；
+        // 但失败必须留痕——否则这条心愿仍留在心愿单里，和「愿望达成」的提示对不上
+        removeWish(wishId).catch((err) => {
+          console.warn('[recipe-detail] 销愿失败，这条心愿仍会留在心愿单', wishId, err);
+        });
         this._wishId = '';
         wx.showToast({ title: '愿望达成，已入菜单', icon: 'success' });
       } else {
@@ -306,6 +313,15 @@ Page({
         });
       }
     });
+  },
+
+  // 空态按钮：加载失败时是"重新加载"，真·找不到时才是返回菜谱库
+  onEmptyAction() {
+    if (this.data.loadError) {
+      this.loadRecipe(this.data.recipeId);
+      return;
+    }
+    this.goBack();
   },
 
   goBack() {

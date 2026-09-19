@@ -1,3 +1,5 @@
+const { getCapsule } = require('../../utils/capsule');
+
 const { addTodayMenuRecipe, getMyFavorites, getRecipes, getShoppingList, getTodayMenu, getFamilyProfile } = require('../../utils/api');
 const { recipeSourceLabels, cuisineList, mealOptions, sourceTabs, AVOID_KEYWORDS } = require('../../utils/constants');
 const { fallbackDishImg, recipeDishImg, onImgError } = require('../../utils/image');
@@ -60,16 +62,9 @@ Page({
   onLoad() {
     let fontScale = 'normal';
     try { fontScale = wx.getStorageSync('font_scale') || 'normal'; } catch (e) { fontScale = 'normal'; }
-    let capsuleTop = '';
-    let capsuleRight = '96px';
-    try {
-      const mb = wx.getMenuButtonBoundingClientRect();
-      const sys = (wx.getWindowInfo && wx.getWindowInfo()) || wx.getSystemInfoSync();
-      if (mb && sys && mb.left) {
-        capsuleTop = mb.top + 'px';
-        capsuleRight = (sys.windowWidth - mb.left + 8) + 'px';
-      }
-    } catch (e) {}
+    const capsule = getCapsule();
+    const capsuleTop = capsule.top;
+    const capsuleRight = capsule.right;
     this.setData({ fontScale, capsuleTop, capsuleRight });
   },
 

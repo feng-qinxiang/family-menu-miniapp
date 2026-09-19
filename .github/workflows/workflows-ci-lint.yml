@@ -1,0 +1,37 @@
+name: workflows-ci-lint
+
+# 教训：miniapp-ci.yml 里有一个步骤缩进少了两格，整份 YAML 非法，
+# GitHub 直接忽略这个工作流——小程序因此长期处于「以为有检查、实际零检查」的状态。
+# 这类错误不会有任何地方报错，只能由另一个工作流来兜。
+on:
+  push:
+    paths:
+      - '.github/workflows/**'
+  pull_request:
+    paths:
+      - '.github/workflows/**'
+
+jobs:
+  yaml-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 解析 .github/workflows 下全部 YAML（语法错就退出非零）
+        run: |
+          ruby -ryaml -e '
+            Dir.glob(".github/workflows/*.{yml,yaml}").sort.each do |f|
+              doc = YAML.load_file(f)
+              raise "#{f}: 顶层不是映射" unless doc.is_a?(Hash)
+              raise "#{f}: 缺 jobs"       unless doc["jobs"].is_a?(Hash) && !doc["jobs"].empty?
+              doc["jobs"].each do |name, job|
+                steps = job["steps"]
+                raise "#{f} job #{name}: 缺 steps" unless steps.is_a?(Array) && !steps.empty?
+                steps.each_with_index do |st, i|
+                  raise "#{f} job #{name} step #{i}: 步骤既无 run 也无 uses" \
+                    unless st.is_a?(Hash) && (st["run"] || st["uses"])
+                end
+              end
+              puts "OK #{f}"
+            end
+          '

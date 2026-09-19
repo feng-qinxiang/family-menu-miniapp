@@ -82,7 +82,8 @@ Page({
   },
 
   onScan() {
-    wx.scanCode({
+    // 扫码会调起摄像头，与剪贴板同属隐私接口：未同意授权时微信直接 fail
+    ensurePrivacy(() => wx.scanCode({
       onlyFromCamera: false,
       success: (res) => {
         const result = res.result || '';
@@ -102,7 +103,7 @@ Page({
       fail: () => {
         wx.showToast({ title: '已取消扫码', icon: 'none' });
       },
-    });
+    }));
   },
 
   async loadFamily(code) {

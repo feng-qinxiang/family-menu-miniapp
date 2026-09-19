@@ -233,10 +233,12 @@
 
 .rc-row-thumb {
   flex: none;
-  width: 146rpx;
-  height: 146rpx;
+  
+  
   border-radius: var(--r-md);
   background: var(--paper-2);
+  width: var(--dish-thumb);
+  height: var(--dish-thumb);
 }
 
 .rc-row-mid {

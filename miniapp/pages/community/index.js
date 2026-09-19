@@ -12,14 +12,11 @@ const { withTabSelect } = require('../../behaviors/tab-select');
 const { withScrollReveal } = require('../../behaviors/scroll-reveal');
 
 const reportReasons = ['内容不实', '步骤不全', '疑似搬运', '其他'];
+// 信息流分页：后端 /api/community/posts 已支持 page/size（上限 50）
+const FEED_PAGE_SIZE = 20;
 
 // 头像撞色轮转（番茄红 / 深墨 / 松绿）
 const AVATAR_COLORS = ['#e8472a', '#3a2e23', '#2f4a3a', '#b08949'];
-// 帖子配图本地兜底池（无 recipe.coverImage 时使用）
-const FALLBACK_PHOTOS = [
-  'sweet-sour-chicken', 'hongshao-pork', 'tomato-egg', 'kungpao-chicken',
-  'mapo-tofu', 'fried-rice', 'orange-chicken', 'beef-broccoli'
-];
 // 热门话题：后端暂无话题接口，点击直接带关键词跳菜谱搜索（复用搜索页 keyword 参数）
 const HOT_TOPICS = [
   { tag: '今天吃什么' },
@@ -52,6 +49,7 @@ Page({
     showPostForm: false,
     postForm: { title: '', content: '', tagsText: '', images: [] },
     hotTopics: HOT_TOPICS,
+    hasMore: false,
     // 当前话题过滤（后端 feed tag 参数）；'' = 不限
     currentTag: ''
   },
@@ -100,9 +98,10 @@ Page({
   async loadPosts(silent) {
     if (!silent) this.setData({ loading: true });
     this.setData({ loadError: false });
+    this._page = 1;
     let posts = [];
     try {
-      posts = this.normalizePosts(await getCommunityPosts(this.data.currentTag) || []);
+      posts = this.normalizePosts(await getCommunityPosts(this.data.currentTag, 1, FEED_PAGE_SIZE) || []);
     } catch (err) {
       console.error('community loadPosts failed', err);
       this.setData({
@@ -117,8 +116,36 @@ Page({
       loadError: false,
       loading: false,
       posts,
+      hasMore: posts.length >= FEED_PAGE_SIZE,
       communitySummary: this.buildCommunitySummary(posts)
     }, () => withScrollReveal(this, { item: '.pcard' }));
+  },
+
+  // 滚到底再取下一页。后端按点赞数排序，翻页期间热度变化可能造成少量重复，用 id 去重兜住。
+  async loadMorePosts() {
+    if (!this.data.hasMore || this._loadingMore || this.data.loading) return;
+    this._loadingMore = true;
+    const next = (this._page || 1) + 1;
+    try {
+      const batch = this.normalizePosts(await getCommunityPosts(this.data.currentTag, next, FEED_PAGE_SIZE) || []);
+      if (!batch.length) {
+        this.setData({ hasMore: false });
+        return;
+      }
+      const seen = new Set((this.data.posts || []).map((p) => p.id));
+      const merged = (this.data.posts || []).concat(batch.filter((p) => !seen.has(p.id)));
+      this._page = next;
+      this.setData({
+        posts: merged,
+        hasMore: batch.length >= FEED_PAGE_SIZE,
+        communitySummary: this.buildCommunitySummary(merged)
+      });
+    } catch (err) {
+      // 保留 hasMore，用户再滚一次即可重试
+      console.warn('community loadMore failed', err);
+    } finally {
+      this._loadingMore = false;
+    }
   },
 
   buildCommunitySummary(posts) {
@@ -134,14 +161,15 @@ Page({
       const recipe = post.recipe || null;
       const recipeImg = recipe && recipe.coverImage ? recipe.coverImage : '';
       const images = Array.isArray(post.images) ? post.images.filter(Boolean) : [];
-      const fallback = `/assets/dishes/${FALLBACK_PHOTOS[index % FALLBACK_PHOTOS.length]}.jpg`;
+      // 以前这里按 index 轮播本地菜品图：用户会把它当成邻居家的实拍，属于伪造内容。
+      // 无图就交给 wxml 的占位块，只保留「本帖关联菜谱」自己的封面。
       return {
         ...post,
         authorInitial: post.author ? post.author.slice(0, 1) : '匿',
         avatarColor: AVATAR_COLORS[index % AVATAR_COLORS.length],
-        photo: images[0] || recipeImg || fallback,
+        photo: images[0] || recipeImg || '',
         imageCount: images.length,
-        recipeThumb: recipeImg || fallback,
+        recipeThumb: recipeImg,
         tags: Array.isArray(post.tags) ? post.tags : [],
         // 自己的待审帖子（只有作者本人看得到），加角标避免"为什么别人看不到"的困惑
         isPending: post.auditStatus === 'PENDING'
@@ -326,8 +354,13 @@ Page({
       return;
     }
     const uploaded = await chooseAndUpload(left);
-    const added = (uploaded || []).filter(Boolean);
-    if (!added.length) return;
+    const picked = uploaded || [];
+    const added = picked.filter(Boolean);
+    if (!added.length) {
+      // picked 非空说明用户确实选了图却一张都没传上去；空数组才是取消选图
+      if (picked.length) wx.showToast({ title: '图片上传失败，请重试', icon: 'none' });
+      return;
+    }
     this.setData({ 'postForm.images': current.concat(added).slice(0, 6) });
   },
 

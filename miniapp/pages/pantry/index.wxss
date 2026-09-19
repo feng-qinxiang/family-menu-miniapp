@@ -123,7 +123,7 @@
   margin-top: -50rpx;
   z-index: 20;
   background: var(--paper);
-  border-radius: 20rpx 20rpx 0 0;
+  border-radius: var(--r-sheet) var(--r-sheet) 0 0;
   padding: 50rpx 46rpx calc(env(safe-area-inset-bottom) + 160rpx);
 }
 .psheet .shead { margin-top: 8rpx; }
@@ -336,11 +336,13 @@
 }
 .mc-top { display: flex; gap: 27rpx; padding: 27rpx; }
 .mc-ph {
-  width: 162rpx;
-  height: 162rpx;
+  
+  
   border-radius: var(--r-md);
   flex: none;
   background: var(--paper-2);
+  width: var(--dish-thumb);
+  height: var(--dish-thumb);
 }
 .mc-mi { flex: 1; min-width: 0; }
 .mc-h4 {

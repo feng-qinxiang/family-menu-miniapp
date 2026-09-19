@@ -285,11 +285,15 @@
   padding: 18rpx 30rpx;
   border-radius: var(--r-pill);
 }
+/* 未勾选态用中性空心圈：--pop 在本项目里是「待采购」的语义色
+   （见 recipe-detail 的 .rd-dot.miss），借用它会让人以为家里没这些食材 */
 .ing .dotmark {
   width: 14rpx;
   height: 14rpx;
   border-radius: 50%;
-  background: var(--pop);
+  background: transparent;
+  box-shadow: inset 0 0 0 2rpx currentColor;
+  opacity: 0.45;
   flex: none;
 }
 /* 勾选态：圆点变对勾、文字划线变淡（暗底沉浸式下的"备齐"反馈） */
@@ -359,10 +363,21 @@
   border: 2rpx solid rgba(232, 71, 42, 0.4);
 }
 .tbtn.ghost {
+  position: relative;
   width: 80rpx;
   height: 80rpx;
   background: rgba(255, 255, 255, 0.06);
   border-color: rgba(255, 255, 255, 0.12);
+}
+/* 「上一步」是做菜中途最常按的键，视觉 80rpx 不变、命中区补到 88rpx */
+.tbtn.ghost::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 88rpx;
+  height: 88rpx;
+  content: "";
+  transform: translate(-50%, -50%);
 }
 
 /* play / pause / reset icons */

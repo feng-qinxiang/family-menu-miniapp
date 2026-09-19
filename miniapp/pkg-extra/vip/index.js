@@ -39,6 +39,8 @@ Page({
   },
 
   onLoad() {
+    const features = require('../../utils/features');
+    if (!features.PAYMENT) { features.leaveToHome(); return; }
     try {
       const mb = wx.getMenuButtonBoundingClientRect();
       if (mb && mb.top) this.setData({ navPad: mb.top + 'px' });

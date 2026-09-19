@@ -105,6 +105,10 @@
           <text class="ricon">⤴</text>
           <text class="n">分享</text>
         </button>
+        <view class="react react-report tap-scale" bindtap="onReport">
+          <text class="ricon">⚑</text>
+          <text class="n">举报</text>
+        </view>
       </view>
 
       <!-- 评论区 -->

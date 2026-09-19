@@ -55,6 +55,7 @@ page {
   --r-sheet: 20rpx;     /* 上推 sheet 圆角（收敛自 32rpx） */
   --r-chip: 30rpx;
   --r-pill: 999rpx;
+  --dish-thumb: 146rpx;   /* 菜品在列表行里的缩略图边长：点菜/菜单/冰箱/做菜记录共用一个规格 */
 
   /* —— 新 token：hero 规格（照片 hero 统一高度）—— */
   --hero-h: 862rpx;      /* 照片 hero 统一高度 */
@@ -233,7 +234,9 @@ page {
 }
 
 /* ============ 大字模式（设置页开关，全站 36 页根节点挂 .font-lg）============ */
-/* 覆盖字号 token：用 var() 引用的文字按档位放大；页面静态 rpx 不受影响（已知局限）。 */
+/* 覆盖字号 token：用 var(--fs-*) 引用的文字走下面的 lg 值；
+   页面里的静态 rpx 一律写成 calc(Xrpx * var(--fs-mul, 1)) 由本系数放大。
+   全站 776 处 font-size 已全部可缩放，新增页面照此惯例，勿再裸写 rpx 字号。 */
 page.font-lg, .font-lg {
   --fs-mul: 1.15;   /* 静态 rpx 字号的统一放大系数（token 字号有自己的 lg 值） */
   --fs-hero-xl: 110rpx;

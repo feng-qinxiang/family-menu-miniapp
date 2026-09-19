@@ -17,6 +17,10 @@
  *   4. .wxml 里引用的本地图片是否存在
  *   5. .json 里 usingComponents 指向的组件是否存在
  *   6. .wxml 里 bind / catch 绑定的处理函数是否真实存在（点了没反应的头号原因）
+ *   7. .js 里字面量跳转路径是否指向已声明页面；是否用了会整页白屏的数组解构
+ *   8. .wxss 里 font-size 是否可随「大字模式」缩放
+ *   9. .wxss 里 border / color 是否写死裸黑（深色模式下会看不见）
+ *  10. .js 里 require() 的相对路径目标是否存在（漏提交新文件 = CI 检出树里缺文件）
  *
  * 退出码：有问题返回 1（可直接用于 CI）
  */
@@ -228,6 +232,89 @@ for (const file of files) {
       break;
     }
   }
+}
+
+// ---- 8 & 9. WXSS 逐行代码（已剔除注释，保留原行号）----
+// 深色模式靠 @media 覆盖 --theme* 变量，所以"写死颜色"只在其中一档成立；
+// 注释里的示例值又常被误当成声明，故两者共用一个去注释的行扫描器。
+function wxssCodeLines(file) {
+  const out = [];
+  let inComment = false;
+  fs.readFileSync(file, 'utf8').split('\n').forEach((line, i) => {
+    let text = line;
+    if (inComment) {
+      const end = text.indexOf('*/');
+      if (end === -1) return;
+      text = text.slice(end + 2);
+      inComment = false;
+    }
+    const open = text.indexOf('/*');
+    if (open !== -1) {
+      const close = text.indexOf('*/', open + 2);
+      text = close === -1 ? text.slice(0, open) : text.slice(0, open) + text.slice(close + 2);
+      inComment = close === -1;
+    }
+    out.push([i + 1, text]);
+  });
+  return out;
+}
+
+// ---- 8. 字号必须能随「大字模式」放大 ----
+// 全站 776 处 font-size 已统一成 var(--fs-*) 或 calc(Xrpx * var(--fs-mul, 1))。
+// 再裸写一个 rpx/px 字号，就是在这一行悄悄放弃无障碍缩放——编译不报错、走查也难发现，所以钉成检查项。
+const FONT_SIZE_DECL = /font-size\s*:\s*([^;{}]+)/;
+// 描边/文字用了裸黑：深色档 = 深底上加一点更黑，直接看不见（厨房总控幽灵按钮、社区加图虚线都中过）
+const BLACK_ON_SURFACE = /(?:^|[;{ ])(border|color)\s*:[^;]*rgba\(\s*0\s*,\s*0\s*,\s*0/;
+for (const file of files) {
+  if (!file.endsWith('.wxss')) continue;
+  const r = rel(file);
+  for (const [no, text] of wxssCodeLines(file)) {
+    const fsMatch = FONT_SIZE_DECL.exec(text);
+    if (fsMatch) {
+      const value = fsMatch[1].trim();
+      if (!value.includes('var(') && /\d+(\.\d+)?(rpx|px)/.test(value)) {
+        problems.push(
+          `字号不随大字模式放大 ${r}:${no} -> font-size: ${value}` +
+          `（请改为 var(--fs-*) 或 calc(${value} * var(--fs-mul, 1))）`
+        );
+      }
+    }
+    const bMatch = BLACK_ON_SURFACE.exec(text);
+    if (bMatch) {
+      problems.push(
+        `深色模式下 ${bMatch[1]} 用的裸黑会看不见 ${r}:${no} -> ${text.trim()}` +
+        '（请改用 var(--line-deep) / var(--c-border) / var(--mut) 等会翻转的 token）'
+      );
+    }
+  }
+}
+
+// ---- 10. require() 的目标文件必须存在 ----
+// 相对路径写错一级（`../utils/x` 应为 `../../utils/x`）时，模块在 require 阶段就抛错：
+// 页面整块空白、console 干净，若外面还包了 try/catch 则连错误都看不见。
+// 另一个作用是把「被依赖的新文件忘了提交」挡在 CI：CI 只检出已提交内容，
+// 漏 add 的文件在检出树里不存在，这一项会直接失败。
+const REQUIRE_CALL = /require\(\s*['"]([^'"\s]+)['"]\s*\)/g;
+const JS_COMMENT_LINE = /^\s*(\/\/|\*|\/\*)/;
+for (const file of files) {
+  if (!file.endsWith('.js')) continue;
+  const src = stripComments(fs.readFileSync(file, 'utf8'));
+  const lines = src.split('\n');
+  lines.forEach((line, i) => {
+    if (JS_COMMENT_LINE.test(line)) return;
+    let m;
+    REQUIRE_CALL.lastIndex = 0;
+    while ((m = REQUIRE_CALL.exec(line))) {
+      const spec = m[1];
+      if (spec.indexOf('.') !== 0) continue; // 只校验相对路径，包名/根路径交给运行时
+      if (spec.indexOf('${') !== -1) continue;
+      const base = path.resolve(path.dirname(file), spec);
+      const candidates = [base, base + '.js', base + '.json', path.join(base, 'index.js')];
+      if (!candidates.some((c) => fs.existsSync(c))) {
+        problems.push(`require 的目标不存在 ${rel(file)}:${i + 1} -> ${spec}（页面会在加载时整块白屏）`);
+      }
+    }
+  });
 }
 
 console.log(`检查了 ${files.length} 个文件`);

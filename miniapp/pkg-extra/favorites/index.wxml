@@ -49,6 +49,14 @@
             ></recipe-card>
           </view>
         </view>
+        <state-empty wx:elif="{{loadError}}"
+          type="pop"
+          title="收藏没加载出来"
+          desc="网络或服务没响应，重新加载再试一次。"
+          cta="重新加载"
+          ctaStyle="pop"
+          bind:action="retryLoad"
+        ></state-empty>
         <state-empty wx:elif="{{!loading}}"
           type="pop"
           title="还没有收藏"

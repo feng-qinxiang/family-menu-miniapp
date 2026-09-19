@@ -3,6 +3,8 @@ const { visibleTabs } = require('../utils/tabs');
 Component({
   data: {
     selected: 0,
+    // 大字模式：TabBar 是独立组件，拿不到页面根节点上的 .font-lg，只能自己读档位
+    fontLg: false,
     // tab 定义统一在 utils/tabs.js（app.json 的 tabBar.list 由静态自检保证与之一致）。
     // 社区 tab 随 COMMUNITY 开关显隐：关闭时只是不渲染，app.json 仍声明。
     list: visibleTabs()
@@ -11,14 +13,28 @@ Component({
   pageLifetimes: {
     show() {
       this._syncSelected();
+      this._syncFontScale();
     }
   },
   lifetimes: {
     attached() {
       this._syncSelected();
+      this._syncFontScale();
     }
   },
   methods: {
+    _syncFontScale() {
+      let scale = '';
+      try {
+        const app = getApp();
+        scale = (app && app.globalData && app.globalData.fontScale) || wx.getStorageSync('font_scale') || 'normal';
+      } catch (e) {
+        scale = 'normal';
+      }
+      const fontLg = scale === 'lg';
+      if (fontLg !== this.data.fontLg) this.setData({ fontLg });
+    },
+
     _syncSelected() {
       const pages = getCurrentPages();
       if (!pages.length) return;

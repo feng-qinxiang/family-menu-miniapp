@@ -325,15 +325,17 @@ Page({
     });
     if (!res.confirm) return;
     let ok = false;
+    let cookLogFailed = false;
     await runGuarded(this, `cooked-${item.id}`, async () => {
       await Promise.all([
         item.id ? api.updateMenuItemStatus(item.id, 'done') : Promise.resolve(),
-        api.addCookHistory({ recipeId: id }).catch(() => {})
+        api.addCookHistory({ recipeId: id }).catch(() => { cookLogFailed = true; })
       ]);
       ok = true;
     }, {
       loading: '处理中',
-      success: '已上桌',
+      // 与 pages/menu 的「上桌」一致：记录写失败必须让人看见，不能静默缺一笔
+      success: () => (cookLogFailed ? '已上桌，但做菜记录没保存' : '已上桌'),
       fail: '操作失败'
     });
     if (!ok) return;

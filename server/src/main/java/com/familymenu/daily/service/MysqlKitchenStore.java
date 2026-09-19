@@ -227,6 +227,11 @@ public class MysqlKitchenStore {
 
     /** tag 非空时按标签过滤（JSON_CONTAINS 精确匹配，写法参照 filterRecipes）。 */
     public List<CommunityPost> communityPosts(long userId, String tag) {
+        return communityPosts(userId, tag, 1, 100);
+    }
+
+    /** 分页版：page 从 1 起。信息流此前一次拉全量（仅 LIMIT 100 护栏），帖子多了会越拖越慢。 */
+    public List<CommunityPost> communityPosts(long userId, String tag, int page, int size) {
         String sql = """
                 SELECT p.id, p.title, u.nickname AS author, p.content, p.like_count, p.comment_count, p.tags_json, p.images_json, p.audit_status,
                        COALESCE(fav.favorite_count, 0) AS favorite_count,
@@ -248,8 +253,7 @@ public class MysqlKitchenStore {
                 WHERE (p.audit_status = 'APPROVED' OR (p.audit_status = 'PENDING' AND p.author_user_id = ?))
                   AND (? IS NULL OR JSON_CONTAINS(p.tags_json, JSON_QUOTE(?)))
                 ORDER BY p.like_count DESC, p.id DESC
-                -- LIMIT 护栏：信息流暂无分页，先限制单次查询规模（正常使用远够，分页留给后续需要时再加）
-                LIMIT 100
+                LIMIT ? OFFSET ?
                 """;
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
             RecipeCard recipe = null;
@@ -287,7 +291,7 @@ public class MysqlKitchenStore {
                     readStringList(rs.getString("images_json")),
                     rs.getString("audit_status")
             );
-        }, userId, userId, userId, userId, tag, tag);
+        }, userId, userId, userId, userId, tag, tag, size, (Math.max(page, 1) - 1) * size);
     }
 
     /**

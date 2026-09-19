@@ -87,9 +87,13 @@ public class HomeController {
 
     @GetMapping("/community/posts")
     public List<CommunityPost> communityPosts(@RequestParam(required = false) String tag,
-                                              @CurrentUser AuthUser user) {
+                                             @RequestParam(defaultValue = "1") int page,
+                                             @RequestParam(defaultValue = "20") int size,
+                                             @CurrentUser AuthUser user) {
         // 只读公开接口：未带 token 也能浏览（user 为 null 时不返回"我收藏的"标记）
-        return store.communityPosts(user == null ? 0L : user.userId(), tag);
+        // size 夹紧：不给 ?size=999999 一次拖走全表的机会
+        int safeSize = Math.min(Math.max(size, 1), 50);
+        return store.communityPosts(user == null ? 0L : user.userId(), tag, Math.max(page, 1), safeSize);
     }
 
     /** 热门话题：社区话题 chips 数据源，公开可读（近期公开帖标签频次 top 10）。 */

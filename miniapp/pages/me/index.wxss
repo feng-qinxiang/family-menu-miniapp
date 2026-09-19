@@ -41,7 +41,7 @@
 }
 .mag-hero-top {
   position: absolute;
-  top: 51px;
+  top: calc(env(safe-area-inset-top) + 90rpx);
   left: 46rpx;
   right: 46rpx;
   z-index: 3;
@@ -137,7 +137,7 @@
   z-index: 5;
   padding: 46rpx 46rpx 0;
   background: var(--paper);
-  border-radius: 20rpx 20rpx 0 0;
+  border-radius: var(--r-sheet) var(--r-sheet) 0 0;
 }
 
 /* ---------- VIP banner ---------- */

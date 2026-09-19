@@ -1,3 +1,5 @@
+const { getCapsule } = require('../../utils/capsule');
+
 const {
   addTodayMenuRecipe,
   getCurrentUser,
@@ -22,13 +24,23 @@ const WISH_STORAGE_KEY = 'family_wishes_v1';
 const WISH_PENDING_KEY = 'wish_pending_v1';
 const CACHE_KEY_MENU = 'home_cache_todayMenu';
 const CACHE_KEY_SHOPPING = 'home_cache_shoppingPending';
+// 缓存只用于「同一餐次内秒开首屏」，不是离线数据源：超过 6 小时或换了家庭就不认，
+// 否则隔夜会把昨天的今日菜单和「待买 N」当首屏渲染出来。
+const CACHE_TTL_MS = 6 * 60 * 60 * 1000;
 
 // ponytail: simple stale-while-revalidate — show cached data instantly, overwrite on network success
 function readCache(key) {
   try { return wx.getStorageSync(key); } catch (e) { return null; }
 }
-function writeCache(key, val) {
-  try { wx.setStorageSync(key, val); } catch (e) { /* best-effort */ }
+function readFreshCache(key, familyId) {
+  const raw = readCache(key);
+  if (!raw || typeof raw !== 'object' || !('v' in raw)) return null;   // 旧格式直接放弃
+  if (!raw.at || Date.now() - raw.at > CACHE_TTL_MS) return null;
+  if (familyId != null && raw.familyId != null && raw.familyId !== familyId) return null;
+  return raw.v;
+}
+function writeCache(key, val, familyId) {
+  try { wx.setStorageSync(key, { at: Date.now(), familyId: familyId == null ? null : familyId, v: val }); } catch (e) { /* best-effort */ }
 }
 
 function loadWishes() {
@@ -151,19 +163,12 @@ Page({
     this._inited = false;
     const todayKey = todayDateKey();
     // 离线缓存：先用上次菜单渲染；hasHomeData 等 loadAll/applyFilters 后再定
-    const cachedMenu = readCache(CACHE_KEY_MENU);
-    const cachedPending = readCache(CACHE_KEY_SHOPPING);
+    const cachedMenu = readFreshCache(CACHE_KEY_MENU, this._cacheFamilyId);
+    const cachedPending = readFreshCache(CACHE_KEY_SHOPPING, this._cacheFamilyId);
     const menu = Array.isArray(cachedMenu) ? cachedMenu : [];
-    let capsuleTop = 'calc(env(safe-area-inset-top) + 90rpx)';
-    let capsuleRight = '96px';
-    try {
-      const mb = wx.getMenuButtonBoundingClientRect();
-      const sys = (wx.getWindowInfo && wx.getWindowInfo()) || wx.getSystemInfoSync();
-      if (mb && sys && mb.left) {
-        capsuleTop = mb.top + 'px';
-        capsuleRight = (sys.windowWidth - mb.left + 8) + 'px';
-      }
-    } catch (e) {}
+    const capsule = getCapsule();
+    const capsuleTop = capsule.top;
+    const capsuleRight = capsule.right;
     this.setData({
       todayKey,
       todayMenu: menu,
@@ -451,9 +456,10 @@ Page({
       const cuisineTiles = this.buildCuisineTiles(allRecipes);
       const myRole = this._resolveMyRole(user, family);
 
-      // 写缓存供离线兜底
-      writeCache(CACHE_KEY_MENU, normalizedItems);
-      writeCache(CACHE_KEY_SHOPPING, shoppingPending);
+      // 写缓存供离线兜底；记下家庭 id，换账号/换家庭后旧缓存一律不认
+      this._cacheFamilyId = (family && family.familyId) || null;
+      writeCache(CACHE_KEY_MENU, normalizedItems, this._cacheFamilyId);
+      writeCache(CACHE_KEY_SHOPPING, shoppingPending, this._cacheFamilyId);
 
       const patch = {
         loading: false,
@@ -509,8 +515,8 @@ Page({
       const shoppingPending = shoppingItems.filter(i => !i.purchased).length;
       this.setData({ todayMenu: normalizedItems, shoppingPending });
       this.updateSlotMenu();
-      writeCache(CACHE_KEY_MENU, normalizedItems);
-      writeCache(CACHE_KEY_SHOPPING, shoppingPending);
+      writeCache(CACHE_KEY_MENU, normalizedItems, this._cacheFamilyId);
+      writeCache(CACHE_KEY_SHOPPING, shoppingPending, this._cacheFamilyId);
     } catch (err) {
       console.warn('home refreshLight menu', err);
       return;

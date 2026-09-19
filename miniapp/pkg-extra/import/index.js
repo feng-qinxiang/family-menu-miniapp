@@ -216,7 +216,7 @@ Page({
       });
     } catch (err) {
       this.setData({ saving: false });
-      wx.showToast({ title: '保存失败，请重试', icon: 'none' });
+      wx.showToast({ title: (err && err.message) || '保存失败，请重试', icon: 'none' });
       return;
     }
     wx.setStorageSync('last_imported_recipe', recipe);

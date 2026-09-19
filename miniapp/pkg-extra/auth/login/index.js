@@ -56,9 +56,6 @@ Page({
         api.wechatLogin({ code })
           .then((res) => {
             wx.hideLoading();
-            if (res && res.token) {
-              try { wx.setStorageSync('auth_token', res.token); } catch (e) {}
-            }
             this.toast('微信登录成功');
             this.goHome();
           })
@@ -90,9 +87,6 @@ Page({
   _fallbackGuest(successText) {
     api.guestLogin()
       .then((res) => {
-        if (res && res.token) {
-          try { wx.setStorageSync('auth_token', res.token); } catch (e) {}
-        }
         if (successText) this.toast(successText);
         this.goHome();
       })
@@ -109,13 +103,6 @@ Page({
 
     api.guestLogin()
       .then((res) => {
-        if (res && res.token) {
-          try {
-            wx.setStorageSync('auth_token', res.token);
-          } catch (e) {
-            // 存储失败不阻断进入
-          }
-        }
         if (successText) this.toast(successText);
         this.goHome();
       })

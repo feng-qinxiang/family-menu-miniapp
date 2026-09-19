@@ -51,7 +51,7 @@
   background: var(--paper-2);
   font-size: calc(27rpx * var(--fs-mul, 1));
   font-weight: 700;
-  color: var(--ink-2);
+  color: var(--mut-strong);
 }
 .k-slot.on {
   background: var(--ink);
@@ -87,7 +87,7 @@
 .k-order-tx {
   font-size: calc(25rpx * var(--fs-mul, 1));
   line-height: 1.55;
-  color: var(--ink-2);
+  color: var(--mut-strong);
   font-weight: 600;
 }
 
@@ -209,8 +209,10 @@
 }
 .k-tbtn.ghost {
   background: transparent;
-  border: 2rpx solid rgba(0, 0, 0, 0.14);
-  color: var(--ink-2);
+  /* 原先写死 rgba(0,0,0,.14)：深色档它就是"深底上加一点更黑"，幽灵按钮直接看不见边框。
+     --line-deep 浅色 #d5c9b8（与原像素几乎一致）、深色 #3a3a3a，两档都成立 */
+  border: 2rpx solid var(--line-deep);
+  color: var(--mut-strong);
 }
 
 /* —— 动作行 —— */
@@ -224,7 +226,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 76rpx;
+  /* 开做/上桌是厨房总控最主要的一步，高度抬到 88rpx 命中标准；
+     两键横向 flex:1 且留有 14rpx 间距，加高不会互相误触 */
+  min-height: 88rpx;
   border-radius: var(--r-pill);
   font-size: calc(27rpx * var(--fs-mul, 1));
   font-weight: 800;
@@ -235,8 +239,8 @@
   color: var(--anchor-contrast);
 }
 .k-act.ghost {
-  border: 2rpx solid rgba(0, 0, 0, 0.14);
-  color: var(--ink-2);
+  border: 2rpx solid var(--line-deep);
+  color: var(--mut-strong);
   background: transparent;
 }
 

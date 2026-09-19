@@ -89,7 +89,7 @@ cd server
 
 主链路集成测试在 `server/src/test/java/com/familymenu/daily/CoreFlowTests.java`，覆盖：游客登录 → 首页看板 → 菜谱 → 今日菜单 → 购物清单重建 → OTP 下发与登录 → 家庭创建/邀请码/加入/移除 → 反馈提交 → 通知已读。测试用 `@SpringBootTest` 连真实 MySQL，需本机 3306 可用。
 
-全量 **74 项测试**（13 个测试类），含管理台权限、支付回调验签、手机号绑定安全、会话 token、演示数据开关等专项。
+全量 **25 个测试类 / 152 项用例**（2026-09-19 本机 `./mvnw test` 实测 0 失败 0 错误），含管理台权限、支付回调验签、手机号绑定安全、会话 token、演示数据开关等专项。
 
 > 本地用 Git Bash 时 `./mvnw` 会因路径未转换报 `ClassNotFoundException: plexus.classworlds.launcher.Launcher`，
 > 用 `../.tools/mvn.sh test`（基于自带 wrapper 的绕过脚本）代替。
@@ -97,13 +97,19 @@ cd server
 前端纯逻辑单测（零依赖，node 直接跑）：
 
 ```powershell
-node miniapp/test/static-check.js      # 静态自检：页面四件套 / JSON / WXSS 配平 / TabBar 与 tabs.js 一致
-node test/dish-logic.test.js
+node miniapp/test/static-check.js         # 静态自检：页面四件套 / JSON / WXSS 配平 / TabBar 与 tabs.js 一致
+node miniapp/test/dish-logic.test.js      # 点菜、菜谱纯逻辑
+node miniapp/test/kitchen-logic.test.js   # 厨房总控、库存、周菜单纯逻辑
 ```
+
+这三条已接进 CI（`.github/workflows/miniapp-ci.yml`），改 `miniapp/**` 就会跑。
 
 ## 小程序
 
-用微信开发者工具打开 `miniapp/` 目录。API 基址由 `miniapp/utils/env.js` 按运行环境解析（开发者工具走 `http://localhost:9088`，体验版/正式版走该文件里的域名，**上线前必须替换占位域名**，见 `spec/LAUNCH-CHECKLIST.md`）。
+用微信开发者工具打开**仓库根目录**（`project.config.json` 所在处，appid 与 `miniprogramRoot: miniapp/` 都在这个文件里）。
+不要直接打开 `miniapp/`：那样开发者工具会在 `miniapp/` 下另生成一份没有 appid 的 `project.config.json`，
+与仓库里这份分叉，上传时容易带错配置。API 基址由 `miniapp/utils/env.js` 按运行环境解析
+（开发者工具走 `http://localhost:9088`，体验版/正式版走该文件里的域名，**上线前必须替换占位域名**，见 `spec/LAUNCH-CHECKLIST.md`）。
 
 ## 登录体系说明
 

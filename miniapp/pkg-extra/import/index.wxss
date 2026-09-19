@@ -550,7 +550,7 @@
   padding: 28rpx;
   text-align: center;
   font-size: calc(26rpx * var(--fs-mul, 1));
-  color: var(--ink-3, #857a68);
-  background: var(--card, #fff);
+  color: var(--mut);
+  background: var(--paper-2);
   border-radius: 20rpx;
 }

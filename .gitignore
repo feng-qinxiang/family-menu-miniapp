@@ -22,6 +22,9 @@ Thumbs.db
 /uploads/
 /server/uploads/
 /project.private.config.json
+# 直接打开 miniapp/ 时开发者工具会在子目录另生成一份，属本机状态，不入库
+/miniapp/project.private.config.json
+/miniapp/project.config.json
 /ui-preview.html
 /.zcode/
 /artifacts/ui-baseline/
