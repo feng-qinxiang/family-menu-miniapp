@@ -240,13 +240,30 @@
 }
 .pa-btn.on { color: var(--pop); }
 .pa-ico { font-size: calc(28rpx * var(--fs-mul, 1)); line-height: 1; }
-.ico-star::before { content: "\2606"; }
-.ico-star.on::before { content: "\2605"; }
-.ico-heart::before { content: "\2661"; }
-.ico-heart.on::before { content: "\2665"; }
+/* 图标一律要求「单色、可被 CSS color 着色」。CSS 里追加的 FE0E 是
+   variation selector-15（文字呈现）：不追加时 ☆★♡⚠ 在 iOS/Android 上常被渲染成彩色 emoji，
+   既吃不到 currentColor（也就跟着不翻深色档），又把系统风格混进品牌界面。
+   成熟方案（iconfont / 单色 SVG）都是单色描边，这里用最小改动对齐同一观感。 */
+.ico-star::before { content: "\2606\FE0E"; }
+.ico-star.on::before { content: "\2605\FE0E"; }
+.ico-heart::before { content: "\2661\FE0E"; }
+.ico-heart.on::before { content: "\2665\FE0E"; }
 .pa-btn.like-on { color: var(--pop); }
-.ico-chat::before { content: "\1F4AC"; }
-.ico-warn::before { content: "\26A0"; }
+/* 评论：BMP 里没有可用的单色气泡字符（💬 是纯 emoji，没有文字呈现形式），
+   所以照本页 .fab-plus 的既有做法用 CSS 画——尺寸全用 em，跟着 font-size 走，
+   大字模式与深色档都自动生效。 */
+.ico-chat { position: relative; display: inline-block; width: 1.05em; height: 1.05em; vertical-align: -0.14em; }
+.ico-chat::before {
+  content: ""; position: absolute; left: 0.06em; top: 0.1em;
+  width: 0.88em; height: 0.64em; box-sizing: border-box;
+  border: 0.09em solid currentColor; border-radius: 0.2em 0.2em 0.2em 0.06em;
+}
+.ico-chat::after {
+  content: ""; position: absolute; left: 0.22em; bottom: 0.1em; width: 0; height: 0;
+  border-left: 0.14em solid transparent; border-right: 0.05em solid transparent;
+  border-top: 0.16em solid currentColor;
+}
+.ico-warn::before { content: "\26A0\FE0E"; }
 .pa-spacer { flex: 1; }
 .pa-report { font-size: calc(22rpx * var(--fs-mul, 1)); color: var(--mut-2); font-weight: 600; display: flex; align-items: center; gap: 8rpx; }
 
