@@ -26,6 +26,7 @@
  *  13. 绑了动态文本的标题是否用了「单行展示字」的紧凑行高（长菜名一换行两行字会互压）
  *  14. 主包/分包体积（按真实字节，非 du 的磁盘块）：逼近 2MB 上限就报，超了才判失败
  *  15. 大字模式是否每页都接上（只接一半、整页没接都判失败）
+ *  16. catch 里清列表时是否同时置了「加载失败」状态位（否则失败会被显示成「还没有数据」）
  *
  * 退出码：有问题返回 1（可直接用于 CI）
  */
@@ -578,6 +579,47 @@ for (const x of fontLgHalfWired) {
 for (const x of fontLgMissing) {
   problems.push('大字模式整页没接 ' + x + ' -> 设置页开了大字、这一页照样小字' +
     "（WXML 每个可见根节点挂 {{fontScale === 'lg' ? 'font-lg' : ''}}，JS 读 storage 的 font_scale）");
+}
+
+// ---- 16. catch 里清列表必须同时置一个「加载失败」状态位 ----
+// 同类缺陷一次查出 3 处（family/members、me/feedback、import 的死分支），根因是同一句写法：
+// 失败时只 setData({ xxx: [] })，而 WXML 的空态分支只看 xxx.length / loaded，
+// 于是「加载失败」被显示成「还没有 X」——用户以为自己的数据被删了。
+// 判据：0/空 = 知道没有；失败 = 不知道。两者必须各占一个状态位。
+// 只看 catch 之后 500 字符内的 setData，且只认「清成空数组」这一种写法，避免误伤。
+const swallowFailPages = [];
+for (const page of declaredPages) {
+  const jsPath = path.join(ROOT, page + '.js');
+  if (!fs.existsSync(jsPath)) continue;
+  const src = fs.readFileSync(jsPath, 'utf8');
+  let from = 0;
+  for (;;) {
+    const at = src.indexOf('catch', from);
+    if (at < 0) break;
+    from = at + 5;
+    // 取「这一整个 catch 块」而不是固定 500 字符：
+    // 固定窗口会溢到 catch 后面的成功分支，把 images: [] 之类的正常写法误判成吞错。
+    let open = src.indexOf('{', at + 5);
+    if (open < 0) break;
+    let depth = 0;
+    let end = open;
+    for (let i = open; i < src.length && i < open + 4000; i++) {
+      if (src[i] === '{') depth++;
+      else if (src[i] === '}') {
+        depth--;
+        if (depth === 0) { end = i; break; }
+      }
+    }
+    const body = src.slice(open, end + 1);
+    if (!/setData\(\s*\{[^}]*[\w$]+\s*:\s*\[\]/.test(body)) continue;
+    if (/(?:Failed|Error)\w*\s*:\s*true/.test(body)) continue;
+    swallowFailPages.push(page + ' @catch 第 ' + (src.slice(0, at).split('\n').length) + ' 行');
+  }
+}
+for (const x of swallowFailPages) {
+  problems.push('加载失败被吞成空态 ' + x +
+    ' -> catch 里清了列表却没置 *Failed/*Error 标记，' +
+    'WXML 的空态分支会把它显示成「还没有 X」（另加一个状态位，文案分开）');
 }
 
 // ---- 提审前必须由部署方填写的项（只报告、不阻断）----

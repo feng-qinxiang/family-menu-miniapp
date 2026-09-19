@@ -128,7 +128,7 @@ ELECTRON_RUN_AS_NODE=1 <某个 node 可执行文件> miniapp/test/static-check.j
 所以 GitHub 上只看到一个叫 `static-check` 的 check，别以为只跑了静态自检）：
 
 ```powershell
-node miniapp/test/static-check.js         # 静态自检：页面四件套 / JSON / WXSS 配平 / TabBar 一致 / token 定义 / 暗底对比度 / 包体积
+node miniapp/test/static-check.js         # 静态自检：页面四件套 / JSON / WXSS 配平 / TabBar 一致 / token 定义 / 暗底对比度 / 行高 / 包体积 / 大字模式接线 / 失败态不被吞成空态
 node miniapp/test/dish-logic.test.js      # 点菜、菜谱纯逻辑
 node miniapp/test/kitchen-logic.test.js   # 厨房总控、库存、周菜单纯逻辑
 node miniapp/test/interaction-audit.js    # 交互体检：按下反馈、热区尺寸（A 类阻断，B/C 只报告）
