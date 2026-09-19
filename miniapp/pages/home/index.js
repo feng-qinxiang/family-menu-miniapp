@@ -90,6 +90,29 @@ function greetingText() {
 }
 
 /**
+ * 与 greetingText() 用同一套小时分档，保证「中午好」下面不会跟着「今晚想吃点啥」。
+ * 之前 hero 的这句和角标「今晚主打」是写死的，11 点进首页就会上句中午好、下句问今晚。
+ */
+function mealWordText() {
+  const h = new Date().getHours();
+  if (h < 6) return '夜里';
+  if (h < 11) return '早上';
+  if (h < 14) return '中午';
+  if (h < 18) return '下午';
+  return '晚上';
+}
+
+/**
+ * hero 角标的「哪一餐」跟的是当前选中的餐次，不是墙上时钟：
+ * hero 那道菜就是这一餐要上的菜，写死或按时钟都会在切到午餐/晚餐 tab 时说错话。
+ */
+const SLOT_MEAL_WORD = { breakfast: '早上', lunch: '中午', dinner: '晚上', snack: '加餐' };
+
+function slotWord(slot) {
+  return SLOT_MEAL_WORD[slot] || '晚上';
+}
+
+/**
  * 推荐排序：库存匹配率 > 评分 > id。
  *
  * 之前这里用的是 Math.random 打乱，结果每次进首页、每切一次菜系看到的推荐都不一样，
@@ -109,12 +132,14 @@ Page({
   data: {
     loading: true,
     greeting: '你好',
+    mealWord: mealWordText(),
     currentUser: {},
     familyProfile: { members: [] },
 
     // 餐次 & 许愿池（§3 / §5）
     slots: SLOTS,
     currentSlot: 'dinner',
+    heroMealWord: slotWord('dinner'),
     todayKey: '',
     wishes: [],            // 当前 (date,slot) 下的许愿数组
     wishExpanded: false,   // 许愿池默认折叠一行，点击展开（DEC-UI1）
@@ -252,7 +277,7 @@ Page({
   selectSlot(e) {
     const { slot } = e.currentTarget.dataset;
     if (!slot || slot === this.data.currentSlot) return;
-    this.setData({ currentSlot: slot });
+    this.setData({ currentSlot: slot, heroMealWord: slotWord(slot) });
     this.updateSlotMenu();
     this.refreshWishes();
   },
@@ -465,6 +490,7 @@ Page({
         loading: false,
         loadError: '',
         greeting: greetingText(),
+        mealWord: mealWordText(),
         currentUser: user || {},
         familyProfile: family || { members: [] },
         role: myRole || '',

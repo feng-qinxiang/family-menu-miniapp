@@ -43,7 +43,7 @@
     <view class="mh-hero-top" style="top: {{capsuleTop}}; right: {{capsuleRight}};">
       <view class="mh-greet">
         <view class="mh-hi">{{greeting}}</view>
-        <view class="mh-name">{{currentUser.nickname || '朋友'}}，今晚想吃点啥</view>
+        <view class="mh-name">{{currentUser.nickname || '朋友'}}，{{mealWord}}想吃点啥</view>
       </view>
       <view class="tap-scale mh-iconbtns">
         <view class="tap-scale mh-iconbtn" catchtap="goShopping" aria-label="买菜">
@@ -57,11 +57,11 @@
     </view>
 
     <view class="tap-scale mh-hero-body g-fade-up g-d2" data-id="{{heroRecipe.id}}" bindtap="goDetail">
-      <text class="mh-pill-tag">今晚主打</text>
+      <text class="mh-pill-tag">{{heroMealWord}}主打</text>
       <view class="mh-hero-title title-stroke {{heroRecipe.titleClass}}">
         {{heroRecipe.title}}
       </view>
-      <view class="mh-hero-sub">{{heroRecipe.summary || '今晚就安排它上桌'}}</view>
+      <view class="mh-hero-sub">{{heroRecipe.summary || heroMealWord + '就安排它上桌'}}</view>
       <view class="mh-hero-meta">
         <view class="mh-m" wx:if="{{heroRecipe.timeCost}}">{{heroRecipe.timeCost}} 分钟</view>
         <view class="mh-m" wx:if="{{heroRecipe.servings}}">{{heroRecipe.servings}} 人份</view>
@@ -82,7 +82,7 @@
     <view class="mh-empty-body g-fade-up">
       <view class="mh-greet">
         <view class="mh-hi">{{greeting}}</view>
-        <view class="mh-name">{{currentUser.nickname || '朋友'}}，今晚想吃点啥</view>
+        <view class="mh-name">{{currentUser.nickname || '朋友'}}，{{mealWord}}想吃点啥</view>
       </view>
       <text class="mh-empty-eyebrow">第一道菜</text>
       <view class="mh-empty-headline">从第一道菜<text class="pop">开始</text></view>
