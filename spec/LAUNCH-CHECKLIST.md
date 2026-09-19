@@ -440,6 +440,25 @@ WXSS 配平与注释风格、图片/组件引用、事件处理函数存在性�
 > 顺带确认：三份 workflow 里**没有任何 `${{ }}` 插值**进 `run`，
 > 不存在把 event 载荷拼进 shell 的注入面。
 
+### 跨家庭数据隔离（IDOR）实测结论（2026-09-19）
+
+拿两个独立游客（**必须带不同的 `X-Device-Id`**，否则后端按同一台设备折叠成同一个账号，
+测出来会是"两个人家庭 id 相同"的假象）做交叉写探针：
+
+- B（family 12）新增菜单项 → `itemId=1054`；A（family 11）用**自己的 token** 去
+  `PATCH /api/daily-menu/today/items/1054/status`。
+- 结果：**B 的行纹丝不动**（仍是 `todo`），A 收到的是 A 自己家庭的菜单视图（`familyId:11`）。
+  即没有越权写入、也没有读到别人的数据。
+- 机制：`TodayController` 只把 `user.familyId()`（取自 token）传给
+  `todayService.updateItemStatus(familyId, itemId, status)`，`itemId` 是被 family 条件约束的，
+  外家庭 id 命中 0 行。用户侧控制器里 `familyId` **一律来自 token**（29 处 `user.familyId()`），
+  所有从请求里取 `familyId`/`postId` 的端点都在 `AdminController` 内，由 RBAC 覆盖。
+- ⚠ 唯一的小毛病：越权写返回的是 **200 + 自己的视图**，而不是 403/404。
+  安全上无害，但客户端真写错 id 时会"看起来成功了"，不利于排查。
+  **本轮刻意不改**：小程序的乐观回滚依赖拿回一个视图对象，临上线改响应语义风险大于收益。
+  要改的话应当连同前端一起改，别单独动后端。
+- 另测：`PUT /api/recipes/{别人的}` 返回 `not your recipe`（归属校验正常，不是 bug）。
+
 ### 深色模式的两条实测约束（2026-09-19 验证）
 
 - `app.json` 的 `window.navigationBarBackgroundColor` / `backgroundColor` **不能**写成 `$xxx` 主题引用：
