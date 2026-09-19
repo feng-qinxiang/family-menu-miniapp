@@ -64,10 +64,12 @@
     <text>复制邀请信息</text>
   </view>
 
-  <!-- Tip 24h -->
+  <!-- Tip：邀请码长期有效（family 表没有过期列，toInviteCode 也是取到就复用），
+       所以这里不能说"24 小时内有效"——用户若信了这个说法，可能把它丢进
+       后来混进陌生人的群聊或截图外传，而它其实永远不会失效。 -->
   <view class="fi-note g-fade-up g-d4">
     <view class="fi-note-ic"></view>
-    <view class="fi-note-text">家人在小程序里<text class="b">输入邀请码</text>即可加入这桌，一起点菜、凑齐今晚的菜单。邀请码 <text class="b">24 小时</text>内有效。</view>
+    <view class="fi-note-text">家人在小程序里<text class="b">输入邀请码</text>即可加入这桌，一起点菜、凑齐今晚的菜单。邀请码<text class="b">长期有效</text>，请只发给自己信任的家人。</view>
   </view>
 
   <view class="safe-bottom"></view>
