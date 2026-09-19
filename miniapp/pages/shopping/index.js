@@ -201,11 +201,13 @@ Page({
     }
   },
 
-  // 重建只清 is_manual=0 的自动条目（含其已买勾选），手动加的条目保留 —— 原文案说反了
+  // 实测（2026-09-19）：重建删掉 is_manual=0 的自动条目后，会按「食材名+单位」把上一版的
+  // 已买勾选恢复回去（TodayService.loadPreviousPurchasedMap），手动条目不动。
+  // 早先这里的注释和文案都写成"已买会被清掉"，与代码和实测都相反。
   async refreshList() {
     const res = await wx.showModal({
       title: '按今日菜单重新整理？',
-      content: '菜单自动算出的食材会重新生成，已勾的"买好了"会清掉；你手动加的条目会保留。',
+      content: '自动条目按当前菜单重算用量；已勾的「买好了」和你手动加的条目都会保留。',
       confirmText: '重新整理',
       cancelText: '取消'
     });

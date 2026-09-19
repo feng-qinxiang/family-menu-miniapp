@@ -367,11 +367,11 @@ Page({
       wx.showToast({ title: '菜单还是空的', icon: 'none' });
       return;
     }
-    // TodayService.rebuildShoppingList 只删 is_manual=0 的行：手动补充的会保留，
-    // 真正会丢的是自动条目上已勾选的"已买"状态。文案必须说准这两件事。
+    // 实测（2026-09-19）：重建会按「食材名+单位」把上一版的已买勾选恢复回去，手动条目也保留，
+    // 所以这里原先写"已勾的买好了会清掉"是把真相说反了（服务端 loadPreviousPurchasedMap 就是为留住它）。
     const res = await wx.showModal({
       title: '按今日菜单重新生成清单？',
-      content: '菜单自动算出的食材会重新生成，已勾的"买好了"会清掉；你手动加的条目会保留。',
+      content: '自动条目按当前菜单重算用量；已勾的「买好了」和你手动加的条目都会保留。',
       confirmText: '重新生成',
       cancelText: '取消'
     });
