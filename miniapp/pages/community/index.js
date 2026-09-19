@@ -203,6 +203,18 @@ Page({
     this.loadPosts();
   },
 
+  // state-empty 只发一个 action 事件，具体动作按当前状态分派：筛过的空态先清筛选，否则去发帖
+  onEmptyAction() {
+    if (this.data.currentTag) this.clearTopic();
+    else this.setData({ showPostForm: true });
+  },
+
+  // 失败态的「重新加载」必须走这个包装：loadPosts 的第一参数是 silent 布尔，
+  // 直接把 loadPosts 绑成 CTA 会把事件对象当成 silent 传进去。
+  retryLoad() {
+    this.loadPosts();
+  },
+
   // 帖子卡 → 详情页
   openPost(event) {
     const { id } = event.currentTarget.dataset;

@@ -43,19 +43,23 @@
       <view class="pad">
         <section-head eyebrow="今日餐桌" title="邻居们" popPart="在做" titleTail="啥" />
 
-          <!-- 加载态 -->
-          <view wx:if="{{loading && !posts.length}}" class="empty-state">
-            <view class="empty-text">正在加载社区动态…</view>
+          <!-- 加载态：与菜谱/买菜清单同一套骨架语言，不用一行文字占位 -->
+          <view wx:if="{{loading && !posts.length}}" class="cf-skel">
+            <view class="cf-skel-card" wx:for="{{[1,2,3]}}" wx:key="*this">
+              <view class="cf-skel-head shimmer"></view>
+              <view class="cf-skel-line shimmer"></view>
+              <view class="cf-skel-line cf-skel-line--short shimmer"></view>
+            </view>
           </view>
           <!-- 失败态 -->
-          <view wx:elif="{{loadError}}" class="empty-state">
-            <view class="empty-text">社区加载失败，检查网络后再试试</view>
-            <view class="empty-retry tap-scale" bindtap="loadPosts">重新加载</view>
-          </view>
-          <!-- 空态 -->
-          <view wx:elif="{{!posts.length}}" class="empty-state">
-            <view class="empty-text">还没有人发帖，来做第一个分享的人吧</view>
-          </view>
+          <state-empty wx:elif="{{loadError}}" type="offline"
+            title="社区没加载出来" desc="检查网络后再试试" cta="重新加载" bindaction="retryLoad" />
+          <!-- 空态：生产库第一天就是空的，这一屏审核员一定会看到。
+               按话题筛过的空 ≠ 全站没人发帖，文案要分开，别对用户撒小谎。 -->
+          <state-empty wx:elif="{{!posts.length}}" type="{{currentTag ? 'search' : 'pop'}}"
+            title="{{currentTag ? '「' + currentTag + '」下还没有帖子' : '还没有人发帖'}}"
+            desc="{{currentTag ? '换个话题，或者自己开一条' : '做第一个分享这顿吃什么的人'}}"
+            cta="{{currentTag ? '清空筛选' : '写一条'}}" bindaction="onEmptyAction" />
 
         <!-- 帖子流 -->
         <view class="post-list">

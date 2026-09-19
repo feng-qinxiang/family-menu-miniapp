@@ -250,8 +250,17 @@
 .pa-spacer { flex: 1; }
 .pa-report { font-size: calc(22rpx * var(--fs-mul, 1)); color: var(--mut-2); font-weight: 600; display: flex; align-items: center; gap: 8rpx; }
 
-/* ===================== 空态 ===================== */
-.community-page .empty-state { padding: 80rpx 28rpx; }
+/* ===================== 加载骨架（与 .pcard 同形状，加载完不跳版） ===================== */
+.cf-skel-card {
+  background: var(--c-surface);
+  border: var(--bd-card);
+  border-radius: var(--r-card);
+  padding: 34rpx;
+  margin-bottom: 34rpx;
+}
+.cf-skel-head { width: 84rpx; height: 84rpx; border-radius: 26rpx; background: var(--paper-2); }
+.cf-skel-line { height: 26rpx; margin-top: 26rpx; border-radius: var(--r-xs); background: var(--paper-2); }
+.cf-skel-line--short { width: 55%; }
 
 /* ===================== 热门话题 ===================== */
 .topics { margin: 46rpx 46rpx 0; }
@@ -329,16 +338,6 @@
 
 /* 自定义 TabBar 实高 96rpx + 24rpx 内边距 + 安全区，占位必须跟着走 */
 .safe-bottom { height: calc(env(safe-area-inset-bottom) + 132rpx); }
-.empty-retry {
-  display: inline-flex;
-  margin-top: 28rpx;
-  padding: 14rpx 44rpx;
-  border-radius: var(--r-pill);
-  background: var(--pop);
-  color: #fff;
-  font-size: calc(28rpx * var(--fs-mul, 1));
-  font-weight: 600;
-}
 /* 举报弹层 */
 .rp-reasons {
   display: flex;
