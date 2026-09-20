@@ -10,6 +10,7 @@ const { runGuarded, guard, release } = require('../../utils/interaction');
 const { chooseAndUpload } = require('../../utils/upload');
 const { withTabSelect } = require('../../behaviors/tab-select');
 const { withScrollReveal } = require('../../behaviors/scroll-reveal');
+const { onPhotoError: markPhotoBroken } = require('../../utils/image');
 
 const reportReasons = ['内容不实', '步骤不全', '疑似搬运', '其他'];
 // 信息流分页：后端 /api/community/posts 已支持 page/size（上限 50）
@@ -27,6 +28,7 @@ const HOT_TOPICS = [
 ];
 
 Page({
+  onPhotoError(e) { markPhotoBroken(e, this); },
   data: {
       statusBarHeight: 0,
     fontScale: 'normal',

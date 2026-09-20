@@ -58,7 +58,8 @@
         />
       </view>
       <block wx:elif="{{post.cover}}">
-        <image class="dish-img img-ph g-fade-up g-d2" src="{{post.cover}}" mode="aspectFill"></image>
+        <image class="dish-img {{post.coverBroken ? 'img-broken' : ''}} g-fade-up g-d2" src="{{post.cover}}" mode="aspectFill"
+          data-err-key="post.coverBroken" binderror="onPhotoError"></image>
         <view class="imgcap">— 出锅那一刻，香气直接拉满 —</view>
       </block>
 

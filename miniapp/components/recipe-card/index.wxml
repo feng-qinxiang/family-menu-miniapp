@@ -21,7 +21,8 @@
   bindtap="onTap"
 >
   <view class="rc-ph">
-    <image class="rc-ph-img img-ph" src="{{cover}}" mode="aspectFill" />
+    <image class="rc-ph-img {{coverBroken ? 'img-broken' : ''}}" src="{{cover}}" mode="aspectFill"
+      data-err-key="coverBroken" binderror="onPhotoError" />
     <view wx:if="{{label}}" class="rc-lbl">{{label}}</view>
     <view wx:if="{{badgeText}}" class="rc-badge {{selected ? 'is-hot' : ''}}">{{badgeText}}</view>
     <view wx:if="{{showFav}}" class="rc-fav tap-scale {{favorited ? 'on' : ''}}" catchtap="onFav">

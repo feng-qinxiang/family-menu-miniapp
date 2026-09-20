@@ -110,6 +110,16 @@ function onImgError(e, pageCtx, dataPath, seed) {
   pageCtx.setData({ [dataPath]: fallback });
 }
 
+/* 用户上传的照片挂了**不能**换成库存菜图——那等于拿别人家的菜冒充邻居的实拍
+   （社区页早就为这件事写过一条注释）。这里只把"这张图坏了"记进 data，
+   由 WXML 挂 .img-broken 画出中性占位。
+   data-err-key 传的就是要置真的那条 data 路径，例如 "posts[3].photoBroken"。
+   和上面的 onImgError 一样收 ctx：调用方是页面方法，写法 onPhotoError(e) { markPhotoBroken(e, this); }。 */
+function onPhotoError(e, ctx) {
+  const key = e.currentTarget.dataset.errKey;
+  if (key && ctx) ctx.setData({ [key]: true });
+}
+
 module.exports = {
   LOCAL_DISHES,
   fallbackDishImg,
@@ -117,5 +127,6 @@ module.exports = {
   localDishByTitle,
   localDishByIngredient,
   stepDishImg,
-  onImgError
+  onImgError,
+  onPhotoError
 };

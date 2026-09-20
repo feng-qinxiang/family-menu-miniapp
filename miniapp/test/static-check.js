@@ -37,9 +37,10 @@
  *  24. 字号是否在 12 档刻度上（标尺外的展示级尺寸走冻结白名单，禁止新增）
  *  25. 每条声明是否写成 property: value（花括号配平查不出非法声明，模拟器会整包编译失败）
  *  26. 大图框（aspectFill 的照片位）比例是否还在横长条上、高度是否出自 --photo-*-h 规格表
- *  27. 大图位置是否挂了 img-ph 失败兜底（图挂了就剩一个尺寸完好的空洞）
+ *  27. 大图位置是否有"确认失败才画出来"的兜底（binderror + data-err-key + img-broken 三样齐）
  *  28. 卡表面（圆角走 --r-card）的左右内边距是否出自 --pad-card* 规格表
  *  29. 头像位的圆角/字号是否由框宽推出（--r-ava / --ava-glyph），而不是各写一个数
+ *  30. 每个 .js 是否能通过语法解析（前面所有检查都是正则读源码，没人真的解析过）
  *
  * 退出码：有问题返回 1（可直接用于 CI）
  */
@@ -1008,24 +1009,27 @@ for (const [file, cls] of PHOTO_SITES) {
   }
 }
 
-// ---- 27. 大图位置必须挂 img-ph 失败兜底 ----
+// ---- 27. 大图位置必须有"确认失败才画出来"的兜底 ----
 // 图挂不出来时那块地方不是"变灰"，是**留一个尺寸完好的空洞**——
 // 实测把社区信息流第一条的 photo 指向不存在的文件，那张卡留下 440rpx 高的纯白，
-// 和"这条帖子本来没图"长得一模一样。app.wxss 的 .img-ph 用 ::before 兜底
-// （图正常时被内层图片盖住、失败时露出来），只需要类名，不需要 30 个页面各写一遍回调。
-// 这条门禁保证登记表里的大图不会哪天悄悄把类名摘掉——摘掉是静默的，截图也看不出差别。
-const IMG_PH_SITES = [
+// 和"这条帖子本来没图"长得一模一样。
+// 上一版这里用 CSS-only（在 <image> 上直接出 ::before），**已回退并换成 binderror**：
+// 同一个写法在 .pphoto 上画在图片之下、在 .rc-ph-img 上却画在图片之上，
+// 菜谱网格 8 张真实照片被灰块整排盖掉——"遮住正常图片"比"留空洞"严重，而且 CSS 分不清
+// "还没画"和"真挂了"。所以现在三样都要有：binderror 回调、data-err-key、img-broken 条件类。
+// 这条门禁保证登记表里的大图不会哪天悄悄把其中一样摘掉——摘掉是静默的，好图坏图长得一样。
+const IMG_FALLBACK_SITES = [
   ['pages/community/index.wxml', 'pphoto'],
   ['pkg-extra/recipe-detail/index.wxml', 'rd-step-img'],
   ['pkg-extra/cook-mode/index.wxml', 'stepimg-pic'],
   ['pkg-extra/community/post-detail/index.wxml', 'dish-img'],
   ['components/recipe-card/index.wxml', 'rc-ph-img'],
 ];
-const appWxml = fs.readFileSync(path.join(ROOT, 'app.wxss'), 'utf8');
-if (!/\.img-ph::before\s*\{[^}]*content\s*:/.test(appWxml)) {
-  problems.push('兜底失效 app.wxss -> .img-ph::before 没有 content（这个类只剩 position:relative，图挂了照样是空洞）');
+const appCssForBroken = fs.readFileSync(path.join(ROOT, 'app.wxss'), 'utf8');
+if (!/\.img-broken::before\s*\{[^}]*content\s*:/.test(appCssForBroken)) {
+  problems.push('兜底失效 app.wxss -> .img-broken::before 没有 content（这个类只剩一层灰底，图挂了没有说明）');
 }
-for (const [file, cls] of IMG_PH_SITES) {
+for (const [file, cls] of IMG_FALLBACK_SITES) {
   const src = fs.readFileSync(path.join(ROOT, file), 'utf8');
   const tags = src.match(/<image[^>]*>/g) || [];
   const hit = tags.filter((t) => new RegExp('class="[^"]*\\b' + cls + '\\b').test(t));
@@ -1033,10 +1037,16 @@ for (const [file, cls] of IMG_PH_SITES) {
     problems.push(`大图位置找不到 ${file} -> <image class="…${cls}…">（类名改了要同步改第 27 项的登记表）`);
     continue;
   }
-  const bare = hit.filter((t) => !/\bimg-ph\b/.test(t));
-  if (bare.length) {
-    problems.push(`大图没挂兜底 ${file} -> ${cls}：${bare.length}/${hit.length} 处缺 img-ph `
-      + '（图 404 时那里会留下一个尺寸完好的空洞，看起来像"本来就没图"）');
+  for (const t of hit) {
+    const one = t.replace(/\s+/g, ' ');
+    const miss = [];
+    if (!/binderror="onPhotoError"/.test(one)) miss.push('binderror="onPhotoError"');
+    if (!/data-err-key=/.test(one)) miss.push('data-err-key');
+    if (!/\bimg-broken\b/.test(one)) miss.push("条件类 img-broken");
+    if (miss.length) {
+      problems.push(`大图兜底不完整 ${file} -> ${cls} 缺 ${miss.join(' + ')}`
+        + '（三样缺一都静默：少了回调没人知道图挂了，少了条件类画不出占位，少了 key 回调不知道该置谁）');
+    }
   }
 }
 
@@ -1110,6 +1120,25 @@ for (const file of files) {
   }
 }
 
+// ---- 30. 每个 .js 必须能通过语法解析 ----
+// 这条是被自己连续两次事故逼出来的：一次是批量脚本把 WXSS 声明改成非法形状（全站白屏、门禁全绿），
+// 一次是把解构改名写成 `const { a as b } = require(...)`（那是 ESM import 的写法，CommonJS 里是语法错误），
+// 结果 recipe-card 组件模块"not defined"、菜谱网格整片消失，而 29 项检查照样全绿——
+// 因为前面所有检查都是拿正则读源码，**从没有真正解析过这些文件**。
+// 判据：拿跑这个脚本的同一个 node 对每个 .js 做 --check（只解析不执行，Page/wx 这类全局名不参与）。
+const { spawnSync } = require('child_process');
+let jsChecked = 0;
+for (const file of files) {
+  if (!file.endsWith('.js')) continue;
+  jsChecked += 1;
+  const r = spawnSync(process.execPath, ['--check', file], { encoding: 'utf8' });
+  if (r.status !== 0) {
+    const first = (r.stderr || '').split('\n').find((l) => l.trim()) || '（无 stderr）';
+    problems.push(`JS 语法错误 ${rel(file)} -> ${first.trim().slice(0, 120)} `
+      + '（这个文件在模拟器里会整个模块 not defined：页面空白或组件整片消失，而正则类门禁查不出来）');
+  }
+}
+
 // ---- 提审前必须由部署方填写的项（只报告、不阻断）----
 // 为什么不阻断：这两个值只有部署方能给（要等 ICP 备案下来的域名、以及运营者本人姓名/联系方式），
 // 在拿到之前把 CI 判红只会淹没其它真正需要看的失败。所以每次运行都显式列出来，
@@ -1138,7 +1167,7 @@ if (fs.existsSync(envPath)) {
   });
 }
 
-console.log(`检查了 ${files.length} 个文件`);
+console.log(`检查了 ${files.length} 个文件（其中 ${jsChecked} 个 .js 过了语法解析）`);
 if (preflight.length) {
   console.log('\n⚠ 提审前需部署方填写（不阻断 CI，但缺了就等着被驳回）：');
   preflight.forEach((p) => console.log('  · ' + p));

@@ -1,6 +1,6 @@
 // pages/cook-mode/index.js · 烹饪模式（沉浸暗底分步引导）
 const api = require('../../utils/api');
-const { recipeDishImg, stepDishImg } = require('../../utils/image');
+const { recipeDishImg, stepDishImg, onPhotoError: markPhotoBroken } = require('../../utils/image');
 const { restoreTimerSlots } = require('../../utils/kitchen');
 
 // 数字补零
@@ -35,6 +35,7 @@ function scaleAmount(amount, ratio) {
 }
 
 Page({
+  onPhotoError(e) { markPhotoBroken(e, this); },
   data: {
     // 大字模式：app.wxss 的 .font-lg 会把 --fs-mul 提到 1.15。
     // 这页以前没接档位，等于「设置里开了大字，做菜模式照样小字」——而做菜时手机放在

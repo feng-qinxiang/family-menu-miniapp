@@ -1,6 +1,6 @@
 // components/recipe-card/index.js
 // 菜谱卡：variant=card|row；card 可叠 badge/selected/角标加菜
-const { recipeDishImg } = require('../../utils/image');
+const { recipeDishImg, onPhotoError: markPhotoBroken } = require('../../utils/image');
 
 Component({
   options: {
@@ -78,6 +78,7 @@ Component({
   },
 
   methods: {
+    onPhotoError(e) { markPhotoBroken(e, this); },
     _buildView() {
       const r = this.data.recipe || {};
       const density = this.data.density || 'default';

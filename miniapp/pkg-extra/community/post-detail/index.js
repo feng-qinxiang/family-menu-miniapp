@@ -1,5 +1,6 @@
 // pages/community/post-detail · 帖子详情（全新页）
 const api = require('../../../utils/api');
+const { onPhotoError: markPhotoBroken } = require('../../../utils/image');
 
 // 头像底色循环（与设计稿一致的撞色梯度）
 const AVA_THEMES = ['lin', 'lan', 'zhao', 'gold', 'pine'];
@@ -66,6 +67,7 @@ function normalizeComment(c) {
 }
 
 Page({
+  onPhotoError(e) { markPhotoBroken(e, this); },
   data: {
     postId: '',
     // 评论区回顶键（滚深出现）

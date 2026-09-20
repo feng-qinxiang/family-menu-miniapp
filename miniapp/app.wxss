@@ -660,19 +660,18 @@ page {
 @keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
 @keyframes blink { 50% { opacity: 0; } }
 
-/* —— 图片加载失败兜底 —— */
+/* —— 图片加载失败兜底（.img-broken，由 binderror 确认后才会挂上）—— */
 /* 事故现场：把社区信息流第一条的 photo 指到一个不存在的文件，那张卡的配图位
    留下一整块 440rpx 高的空白——框还在、尺寸还在、什么说明都没有，
-   看起来像"这条帖子本来就没图"，而不像"图坏了"。全站 55 个 <image> 里只有 2 个写了 binderror。
-   为什么不用 binderror 铺开：回调要拿到"改哪个 data 路径"，等于给每个列表项串一条 key，
-   30 个页面各写一遍、漏一个就静默失效，而且漏了也看不出来。
-   这里用渲染层的一个事实：<image> 允许出 ::before，且它画在内层图片之下——
-   图正常时一个字都看不见（已用真机截图正反两面验过），图 404/断网时元素透明，兜底才露出来。
-   所以兜底只需要一个类名，不依赖 JS、不依赖 data 路径，也就没有"漏接"这种失败模式。
-   注意：只挂在**静态定位**的大图上。已经 position:absolute 的 hero 图不挂——
-   页面规则排在 app.wxss 之后，会把这里的 relative 覆盖掉，行为反而不可控。 */
-.img-ph { position: relative; }
-.img-ph::before {
+   看起来像"这条帖子本来就没图"，而不像"图坏了"。
+   上一版这里用的是 CSS-only（在 <image> 上直接出 ::before 当占位，靠"图正常时盖住它"），
+   **已回退**：同一个写法在 .pphoto 上画在图片之下（正常图能盖住），
+   在 .rc-ph-img 上却画在图片之上——菜谱网格 8 张真实照片被灰块整排盖掉（截图对比复现）。
+   同一份 CSS 在两种宿主元素上结论相反，而"遮住正常图片"比"留一个空洞"严重得多。
+   所以现在改成：JS 的 binderror 确认失败 → 挂 .img-broken → 这一层才画出来。
+   代价是每处要串一条 data-err-key，换来的是"不会误伤能正常显示的图片"。 */
+.img-broken { position: relative; background: var(--skeleton); }
+.img-broken::before {
   content: "图片没加载出来";
   position: absolute;
   inset: 0;
@@ -683,8 +682,7 @@ page {
   justify-content: center;
   text-align: center;
   border-radius: inherit;
-  background: var(--paper-2);
-  color: var(--mut-2);
+  color: var(--mut);
   font-size: var(--fs-mini);
   line-height: 1.4;
 }

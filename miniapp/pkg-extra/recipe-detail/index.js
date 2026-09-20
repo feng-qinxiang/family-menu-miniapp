@@ -7,7 +7,7 @@ const {
   getTodayMenu,
   removeWish
 } = require('../../utils/api');
-const { recipeDishImg, stepDishImg } = require('../../utils/image');
+const { recipeDishImg, stepDishImg, onPhotoError: markPhotoBroken } = require('../../utils/image');
 const { sourceLabels: baseSourceLabels } = require('../../utils/constants');
 
 // 复用全局来源标签（社区开关关闭时 community 显示"精选"），本页额外支持 link/text
@@ -37,6 +37,7 @@ function scaleAmount(amount, ratio) {
 }
 
 Page({
+  onPhotoError(e) { markPhotoBroken(e, this); },
   data: {
     // 大字模式：档位由设置页写进 storage，根节点挂 .font-lg 才会吃到 --fs-mul
     fontScale: 'normal',
