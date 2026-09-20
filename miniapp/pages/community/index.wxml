@@ -89,7 +89,7 @@
             <view class="pcontent clamp-2">{{item.content}}</view>
 
             <view class="pphoto-wrap">
-              <image wx:if="{{item.photo}}" class="pphoto" src="{{item.photo}}" mode="aspectFill" />
+              <image wx:if="{{item.photo}}" class="pphoto img-ph" src="{{item.photo}}" mode="aspectFill" />
               <view wx:else class="pphoto pphoto-none">
                 <text class="pphoto-none-t">这篇还没配图</text>
               </view>

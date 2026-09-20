@@ -120,7 +120,7 @@
   background: var(--c-surface);
   border: 4rpx solid var(--paper-2);
   border-radius: var(--r-card);
-  padding: 38rpx 31rpx 35rpx;
+  padding: 38rpx var(--pad-card) 35rpx;
   box-shadow: var(--sh-soft);
 }
 .vu-plan.on {

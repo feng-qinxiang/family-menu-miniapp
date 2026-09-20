@@ -237,7 +237,7 @@
   gap: 26rpx;
   background: var(--c-surface);
   border-radius: var(--r-card);
-  padding: 28rpx 30rpx;
+  padding: 28rpx var(--pad-card);
   margin-bottom: 22rpx;
   border: var(--bd-card);
   box-shadow: var(--sh-raised);
@@ -331,7 +331,7 @@
   background: var(--c-surface);
   border: 3rpx dashed var(--line-deep);
   border-radius: var(--r-card);
-  padding: 22rpx 24rpx;
+  padding: 22rpx var(--pad-card-sm);
 }
 .mkt-add-ic {
   width: 68rpx;

@@ -94,7 +94,7 @@
           <view class="rd-sno {{index === 2 ? 'hot' : ''}} serif">{{index + 1}}</view>
           <view class="rd-stx">
             <view class="rd-stx-p">{{item.text}}</view>
-            <image class="rd-step-img" src="{{item.image}}" mode="aspectFill"
+            <image class="rd-step-img img-ph" src="{{item.image}}" mode="aspectFill"
               bindtap="previewStepImage" data-url="{{item.image}}" />
             <view wx:if="{{item.tip}}" class="rd-tip">
               <view class="rd-ic rd-ic-star"></view>

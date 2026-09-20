@@ -74,13 +74,41 @@ page {
   --tile-pick: 148rpx;    /* 图片选择网格的一格（菜谱编辑/导入） */
   /* 头像两档：同一个作者在社区列表是 84rpx、点进详情是 92rpx——同一个人换了个头。
      两档各有密度理由，但必须**有名字**，否则下一个页面会写第三个数。 */
-  --ava-row: 84rpx;       /* 行内头像（社区列表、评论行） */
+  --ava-row: 84rpx;       /* 行内头像（社区列表、我的页成员堆叠） */
   --ava-head: 92rpx;      /* 页头头像（帖子详情、成员详情） */
-  --ava-cmt: 72rpx;       /* 评论行小头像 */
+  --ava-cmt: 72rpx;       /* 评论行小头像 / 成员头像堆叠 */
+  --ava-hero: 208rpx;     /* 个人资料里那张大头像（上传位） */
+  /* 同一个人的头像在**不同页换了形状**：社区列表是 26rpx 圆角方，点进他那条帖子变成正圆；
+     字也一样，同一个"阿"字在社区列表占框宽 43%、在我的页只占 36%、收藏页的小圆点占到 53%。
+     头像只有"框宽"一个自由度，所以形状和字都按框宽推：
+     圆角 = 框宽 × 0.31（微信自己的头像就是这个比例，也等于现有 26/84、62/200 两处的实测值），
+     字号 = 框宽 × 0.4（≥72rpx 的头像都够用；再小的头像堆叠另有 --fs-mini 保底，不套这条）。 */
+  --r-ava: 0.31;
+  --ava-glyph: 0.4;
 
   /* —— 新 token：hero 规格（照片 hero 统一高度）—— */
   --hero-h: 862rpx;      /* 照片 hero 统一高度 */
   --hero-h-sm: 620rpx;   /* 小 hero（vip/family 类） */
+
+  /* —— 新 token：大图角色（aspectFill 裁多少由这组数决定）—— */
+  /* 实拍菜图以方图为主（assets/dishes 19 张里 16 张是 600×600），
+     而旧版面把大图框做成了横长条：社区配图 588×322 只留下方图 55% 的高度，
+     菜谱步骤图 515×240 只留 47%——一条鱼、一盘面被拦腰裁掉是最常看到的违和。
+     这里按"同一角色一个框比例"收到 ≈4:3（方图纵向裁 25%），
+     宽度是各容器自己的（rpx 已按 750 视口归一，所以高度用裸值钉死比例）。 */
+  --photo-feed-h: 440rpx;    /* 信息流配图：容器 588rpx 宽 → 1.34 */
+  --photo-step-h: 386rpx;    /* 菜谱详情步骤图：容器 515rpx 宽 → 1.33 */
+  --photo-focus-h: 494rpx;   /* 做菜模式步骤大图：容器 658rpx 宽 → 1.33 */
+  --photo-head-h: 462rpx;    /* 帖子详情头图：容器 616rpx 宽 → 1.33 */
+
+  /* —— 新 token：卡表面的内边距（只有两档，按密度分角色）—— */
+  /* 台账实测：同一个卡表面（border-radius 走 --r-card）全站写了 20 多种 padding，
+     光"左右"就有 16/18/24/25/26/28/30/31/32/34/35/40/64。多数各有理由（窄列统计卡、
+     输入框、弹窗），但**同一屏上相邻的两张卡**用不同值就是纯漂移：
+     首页的「许愿池」白卡左右 28、它下面那张深色主卡左右 40——两张卡左边缘对齐、
+     里面的文字却错开 6px，并排看就是"没排版"。所以这里只钉"左右"这一个轴。 */
+  --pad-card: 28rpx;      /* 标准卡表面的左右内边距（全站默认） */
+  --pad-card-sm: 24rpx;   /* 紧凑卡：行内小卡、输入卡、嵌套卡 */
 
   /* —— 新 token：阴影 / 边框 —— */
   --sh-card: 0 2rpx 10rpx rgba(60, 40, 20, 0.05);   /* 轻量单层阴影（收敛自双层重投影） */
@@ -389,7 +417,7 @@ page.font-lg, .font-lg {
 /* ============ 卡片 ============ */
 .card {
   box-sizing: border-box;
-  padding: 28rpx;
+  padding: var(--pad-card);
   border-radius: var(--r-card);
   background: var(--c-surface);
   border: var(--bd-card);
@@ -397,7 +425,7 @@ page.font-lg, .font-lg {
 }
 .card-flat {
   box-sizing: border-box;
-  padding: 24rpx;
+  padding: var(--pad-card-sm);
   border-radius: var(--r-card);
   background: var(--paper-2);
 }
@@ -405,7 +433,7 @@ page.font-lg, .font-lg {
   box-sizing: border-box;
   position: relative;
   overflow: hidden;
-  padding: 40rpx;
+  padding: var(--pad-card);
   border-radius: var(--r-card);
   background: var(--anchor);
   color: var(--anchor-contrast);
@@ -578,7 +606,7 @@ button[disabled] {
 .accent-btn { box-sizing: border-box; display: flex; align-items: center; justify-content: center; min-height: 88rpx; border-radius: var(--r-card); background: var(--pine); color: #fff; font-size: var(--fs-btn); font-weight: 700; }
 .primary-btn::after, .ghost-btn::after, .accent-btn::after { border: none; }
 .primary-btn:active, .ghost-btn:active, .accent-btn:active { transform: scale(0.98); }
-.textarea { box-sizing: border-box; width: 100%; min-height: 220rpx; padding: 24rpx; border: var(--bd-card); border-radius: var(--r-card); background: var(--c-surface); color: var(--ink); font-size: calc(28rpx * var(--fs-mul, 1)); line-height: 1.5; }
+.textarea { box-sizing: border-box; width: 100%; min-height: 220rpx; padding: var(--pad-card-sm); border: var(--bd-card); border-radius: var(--r-card); background: var(--c-surface); color: var(--ink); font-size: calc(28rpx * var(--fs-mul, 1)); line-height: 1.5; }
 .empty-state { display: flex; flex-direction: column; align-items: center; padding: 96rpx 28rpx; color: var(--mut); text-align: center; }
 .empty-text { margin-top: 16rpx; color: var(--mut); font-size: calc(25rpx * var(--fs-mul, 1)); }
 .skeleton { overflow: hidden; border-radius: var(--r-card); background: var(--skeleton); }
@@ -631,6 +659,35 @@ page {
 }
 @keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
 @keyframes blink { 50% { opacity: 0; } }
+
+/* —— 图片加载失败兜底 —— */
+/* 事故现场：把社区信息流第一条的 photo 指到一个不存在的文件，那张卡的配图位
+   留下一整块 440rpx 高的空白——框还在、尺寸还在、什么说明都没有，
+   看起来像"这条帖子本来就没图"，而不像"图坏了"。全站 55 个 <image> 里只有 2 个写了 binderror。
+   为什么不用 binderror 铺开：回调要拿到"改哪个 data 路径"，等于给每个列表项串一条 key，
+   30 个页面各写一遍、漏一个就静默失效，而且漏了也看不出来。
+   这里用渲染层的一个事实：<image> 允许出 ::before，且它画在内层图片之下——
+   图正常时一个字都看不见（已用真机截图正反两面验过），图 404/断网时元素透明，兜底才露出来。
+   所以兜底只需要一个类名，不依赖 JS、不依赖 data 路径，也就没有"漏接"这种失败模式。
+   注意：只挂在**静态定位**的大图上。已经 position:absolute 的 hero 图不挂——
+   页面规则排在 app.wxss 之后，会把这里的 relative 覆盖掉，行为反而不可控。 */
+.img-ph { position: relative; }
+.img-ph::before {
+  content: "图片没加载出来";
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  padding: 0 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-radius: inherit;
+  background: var(--paper-2);
+  color: var(--mut-2);
+  font-size: var(--fs-mini);
+  line-height: 1.4;
+}
 
 /* ===================== 全站图标词汇（单色、可被 CSS color 着色）=====================
    为什么放全局：这些形状原来各页自己画一份（社区 .ico-chat、通知页 .ic-bell、

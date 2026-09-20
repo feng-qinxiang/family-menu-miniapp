@@ -57,7 +57,7 @@
 
     <!-- 步骤大图 -->
     <view class="stepimg g-fade-in">
-      <image class="stepimg-pic" src="{{steps[current].image}}" mode="aspectFill" />
+      <image class="stepimg-pic img-ph" src="{{steps[current].image}}" mode="aspectFill" />
       <view class="stepimg-mask"></view>
       <view wx:if="{{hasTimer}}" class="timetag">
         <view class="ic-clock-sm"></view>

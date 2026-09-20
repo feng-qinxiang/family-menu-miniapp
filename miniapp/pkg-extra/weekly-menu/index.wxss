@@ -165,7 +165,7 @@
   flex: 1;
   background: var(--c-surface);
   border-radius: var(--r-card);
-  padding: 28rpx 26rpx;
+  padding: 28rpx var(--pad-card-sm);
   box-shadow: var(--sh-raised);
   border: var(--bd-card);
 }
@@ -193,7 +193,7 @@
 .wm-daycard {
   background: var(--c-surface);
   border-radius: var(--r-card);
-  padding: 30rpx 32rpx 16rpx;
+  padding: 30rpx var(--pad-card) 16rpx;
   margin-bottom: 26rpx;
   box-shadow: var(--sh-raised);
   border: var(--bd-card);

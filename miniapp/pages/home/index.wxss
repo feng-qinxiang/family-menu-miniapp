@@ -500,7 +500,7 @@
   background: var(--c-surface);
   border: var(--bd-card);
   border-radius: var(--r-card);
-  padding: 28rpx 28rpx 24rpx;
+  padding: var(--pad-card) var(--pad-card) var(--pad-card-sm);
   box-shadow: var(--sh-card);
 }
 .fp-wish-head {

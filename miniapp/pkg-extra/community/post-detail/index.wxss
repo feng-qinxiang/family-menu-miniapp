@@ -24,14 +24,14 @@
   justify-content: center;
   width: var(--ava-head);
   height: var(--ava-head);
-  border-radius: 50%;
+  border-radius: calc(var(--ava-head) * var(--r-ava));
   font-family: var(--serif);
   font-weight: 700;
-  font-size: calc(36rpx * var(--fs-mul, 1));
+  font-size: calc(var(--ava-head) * var(--ava-glyph) * var(--fs-mul, 1));
   color: var(--anchor-contrast);
   box-shadow: 0 4rpx 12rpx rgba(60, 40, 20, 0.12);
 }
-.ava-sm { width: var(--ava-cmt); height: var(--ava-cmt); font-size: calc(32rpx * var(--fs-mul, 1)); }
+.ava-sm { width: var(--ava-cmt); height: var(--ava-cmt); font-size: calc(var(--ava-cmt) * var(--ava-glyph) * var(--fs-mul, 1)); }
 .ava-lin { background: linear-gradient(135deg, var(--pop), var(--orange)); }
 .ava-lan { background: linear-gradient(135deg, var(--pine), var(--cat-green)); }
 .ava-zhao { background: linear-gradient(135deg, var(--cat-purple-deep), var(--cat-purple-light)); }
@@ -80,7 +80,7 @@
 /* ===== 菜图 ===== */
 .dish-img {
   width: 100%;
-  height: 460rpx;
+  height: var(--photo-head-h);
   border-radius: var(--r-card);
   margin-top: 34rpx;
   display: block;
@@ -118,7 +118,7 @@
   gap: 26rpx;
   background: var(--c-surface);
   border-radius: var(--r-card);
-  padding: 24rpx;
+  padding: var(--pad-card-sm);
   margin-top: 38rpx;
   border: var(--bd-card);
   box-shadow: var(--sh-card);
@@ -345,7 +345,7 @@
 .sk-w90 { width: 90%; }
 .sk-img {
   width: 100%;
-  height: 360rpx;
+  height: var(--photo-head-h);   /* = .dish-img，骨架和真卡同高，加载完不跳版 */
   margin: 12rpx 0 28rpx;
 }
 

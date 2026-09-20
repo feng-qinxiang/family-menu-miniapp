@@ -119,7 +119,7 @@
 .vip-bcard {
   box-sizing: border-box;
   width: calc((100% - 20rpx) / 2);
-  padding: 28rpx 24rpx;
+  padding: 28rpx var(--pad-card-sm);
   background: var(--c-surface);
   border: var(--bd-card);
   border-radius: var(--r-card);
@@ -197,7 +197,7 @@
 .vip-plan {
   position: relative;
   flex: 1;
-  padding: 32rpx 24rpx 28rpx;
+  padding: 32rpx var(--pad-card-sm) 28rpx;
   background: var(--c-surface);
   border: 3rpx solid var(--c-border-light);
   border-radius: var(--r-card);
@@ -257,7 +257,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 28rpx;
+  padding: var(--pad-card);
   background: var(--c-surface);
   border: var(--bd-card);
   border-radius: var(--r-card);

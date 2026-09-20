@@ -103,14 +103,14 @@
   margin-top: 34rpx;
 }
 .mag-ava {
-  width: 88rpx;
-  height: 88rpx;
+  width: var(--ava-row);
+  height: var(--ava-row);
   margin-left: -22rpx;
-  border-radius: 26rpx;
+  border-radius: calc(var(--ava-row) * var(--r-ava));
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: calc(32rpx * var(--fs-mul, 1));
+  font-size: calc(var(--ava-row) * var(--ava-glyph) * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--anchor-contrast);
   border: 4rpx solid rgba(255, 255, 255, 0.85);
@@ -154,7 +154,7 @@
   display: flex;
   align-items: center;
   gap: 24rpx;
-  padding: 28rpx 30rpx;
+  padding: 28rpx var(--pad-card);
   border-radius: var(--r-card);
   background: linear-gradient(120deg, var(--pop-deep) 0%, var(--pop) 100%);
   box-shadow: var(--sh-soft);
@@ -201,7 +201,7 @@
   flex: 1;
   background: var(--c-surface);
   border-radius: var(--r-card);   /* 统计卡回到全站卡片标准 16rpx */
-  padding: 30rpx 26rpx;
+  padding: 30rpx var(--pad-card-sm);
   border: var(--bd-card);
   box-shadow: var(--sh-raised);
 }
@@ -396,7 +396,7 @@
   align-items: center;
   gap: 18rpx;
   margin: 24rpx 28rpx 0;
-  padding: 22rpx 28rpx;
+  padding: 22rpx var(--pad-card);
   border-radius: var(--r-card);
   background: linear-gradient(135deg, var(--banner-grad-a), var(--banner-grad-b));
   border: 1rpx solid var(--banner-bd);

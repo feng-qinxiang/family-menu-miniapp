@@ -66,7 +66,7 @@
   border: var(--bd-card);
   border-radius: var(--r-card);
   box-shadow: var(--sh-soft);
-  padding: 30rpx 30rpx 64rpx;
+  padding: 30rpx var(--pad-card) 64rpx;
 }
 .ta {
   width: 100%;

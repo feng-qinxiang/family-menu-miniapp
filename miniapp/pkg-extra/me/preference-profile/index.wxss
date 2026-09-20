@@ -23,7 +23,7 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  padding: 42rpx;
+  padding: 42rpx;   /* 例外：整屏 hero 统计卡，留白要压住下面的大数字水印 */
   box-shadow: var(--sh-card);
 }
 .ov-bg { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; }

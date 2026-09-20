@@ -48,24 +48,24 @@
   height: 208rpx;
 }
 .pe-ava-txt {
-  width: 208rpx;
-  height: 208rpx;
-  border-radius: 50%;
+  width: var(--ava-hero);
+  height: var(--ava-hero);
+  border-radius: calc(var(--ava-hero) * var(--r-ava));
   background: var(--pop);
   border: 6rpx solid var(--c-surface);
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--anchor-contrast);
-  font-size: calc(88rpx * var(--fs-mul, 1));
+  font-size: calc(var(--ava-hero) * var(--ava-glyph) * var(--fs-mul, 1));
   font-weight: 900;
   letter-spacing: 2rpx;
   box-shadow: var(--sh-card);
 }
 .pe-ava-img {
-  width: 208rpx;
-  height: 208rpx;
-  border-radius: 50%;
+  width: var(--ava-hero);
+  height: var(--ava-hero);
+  border-radius: calc(var(--ava-hero) * var(--r-ava));
   border: 6rpx solid var(--c-surface);
   display: block;
   box-sizing: border-box;

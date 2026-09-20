@@ -276,15 +276,15 @@
   display: flex;
 }
 .avatars .av {
-  width: 72rpx;
-  height: 72rpx;
-  border-radius: 50%;
+  width: var(--ava-cmt);
+  height: var(--ava-cmt);
+  border-radius: calc(var(--ava-cmt) * var(--r-ava));
   border: 5rpx solid var(--c-surface);
   margin-left: -22rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--fs-sub);
+  font-size: calc(var(--ava-cmt) * var(--ava-glyph) * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--anchor-contrast);
   box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.12);

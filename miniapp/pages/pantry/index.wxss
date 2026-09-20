@@ -174,7 +174,7 @@
 .pcard {
   background: var(--c-surface);
   border-radius: var(--r-card);
-  padding: 12rpx 35rpx;
+  padding: 12rpx var(--pad-card);
   box-shadow: var(--sh-card);
   border: var(--bd-card);
 }
@@ -310,7 +310,7 @@
   border-radius: var(--r-card);
   border: var(--bd-card);
   box-shadow: var(--sh-soft);
-  padding: 28rpx;
+  padding: var(--pad-card);
 }
 .af-row { display: flex; gap: 16rpx; }
 .af-input {
@@ -396,7 +396,7 @@
 .pantry-empty {
   box-sizing: border-box;
   margin: 0 46rpx;
-  padding: 44rpx 32rpx;
+  padding: 44rpx var(--pad-card);
   border-radius: var(--r-card);
   background: var(--c-surface);
   border: var(--bd-card);

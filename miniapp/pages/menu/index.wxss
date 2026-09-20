@@ -128,7 +128,7 @@
 .m-stat-card {
   background: var(--c-surface);
   border-radius: var(--r-card);
-  padding: 38rpx 16rpx 34rpx;
+  padding: 38rpx 16rpx 34rpx;   /* 例外：三列并排的窄统计卡，左右必须比标准卡更窄 */
   box-shadow: var(--sh-card);
   border: var(--bd-card);
 }
@@ -186,7 +186,7 @@
   flex: 1;
   background: var(--c-surface);
   border-radius: var(--r-card);
-  padding: 28rpx 18rpx 26rpx;
+  padding: 28rpx 18rpx 26rpx;   /* 例外：两列并排的快捷卡，同上 */
   box-shadow: var(--sh-raised);
   border: var(--bd-card);
   text-align: center;
@@ -625,7 +625,7 @@
 /* 厨房总控入口横幅 */
 .m-kitchen-entry {
   margin: 26rpx 0 6rpx;
-  padding: 26rpx 30rpx;
+  padding: 26rpx var(--pad-card);
   background: var(--ink);
   color: var(--anchor-contrast);
   border-radius: var(--r-card);

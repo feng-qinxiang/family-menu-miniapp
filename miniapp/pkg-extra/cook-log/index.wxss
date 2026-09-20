@@ -277,7 +277,7 @@
   gap: 26rpx;
   background: var(--c-surface);
   border-radius: var(--r-card);
-  padding: 25rpx;
+  padding: var(--pad-card-sm);
   margin-bottom: 26rpx;
   box-shadow: var(--sh-card);
   border: var(--bd-card);

@@ -101,7 +101,10 @@ for (const file of wxmlFiles) {
     //    · 禁用占位按钮：本身不可点
     //    · 输入区域：反馈由键盘给出
     //    · custom-tab-bar 的 .tab-item：反馈在子元素 .tab-icon-wrap:active 上
-    const EXEMPT = /(dialog|sheet|modal|mask|backdrop|sl-root|loading|disabled)/i;
+    //    · .img-ph：图片失败兜底位。它是个纯 <image> 标记类，加在类名串的最后，
+    //      会让上面「末位类名像图片/图标就豁免」的判据失效（rd-step-img → rd-step-img img-ph），
+    //      所以按角色豁免，而不是靠类名写在第几位。
+    const EXEMPT = /(dialog|sheet|modal|mask|backdrop|sl-root|loading|disabled|img-ph)/i;
     const INPUT_AREA = /(input|agree|codebox|stx|editor)/i;
     if (hasEvent && !FEEDBACK.test(t.attrs) && !INPUT_LIKE
         && !MASK.test(className) && !INNER.test(lastClass)

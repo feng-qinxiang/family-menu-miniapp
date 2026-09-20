@@ -137,7 +137,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 32rpx;
+  padding: var(--pad-card);
   border-radius: var(--r-card);
 }
 .set-logout-txt {

@@ -516,7 +516,7 @@
 .res-cta { padding: 30rpx 28rpx 32rpx; }
 
 /* ============ 最近导入 ============ */
-.recent-list { background: var(--c-surface); border-radius: var(--r-card); border: var(--bd-card); box-shadow: var(--sh-soft); padding: 6rpx 28rpx; }
+.recent-list { background: var(--c-surface); border-radius: var(--r-card); border: var(--bd-card); box-shadow: var(--sh-soft); padding: 6rpx var(--pad-card); }
 .recent {
   display: flex;
   align-items: center;

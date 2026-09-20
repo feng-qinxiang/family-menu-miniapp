@@ -233,7 +233,7 @@
   position: relative;
   flex: none;
   margin: 0 46rpx 30rpx;
-  height: 400rpx;
+  height: var(--photo-focus-h);
   border-radius: 46rpx;
   overflow: hidden;
   box-shadow: 0 14rpx 36rpx rgba(0, 0, 0, 0.5);

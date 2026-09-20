@@ -36,6 +36,10 @@
  *  23. tab 页底部留白是否真的让开自定义 tabBar（含 --tabbar-h 或安全区）
  *  24. 字号是否在 12 档刻度上（标尺外的展示级尺寸走冻结白名单，禁止新增）
  *  25. 每条声明是否写成 property: value（花括号配平查不出非法声明，模拟器会整包编译失败）
+ *  26. 大图框（aspectFill 的照片位）比例是否还在横长条上、高度是否出自 --photo-*-h 规格表
+ *  27. 大图位置是否挂了 img-ph 失败兜底（图挂了就剩一个尺寸完好的空洞）
+ *  28. 卡表面（圆角走 --r-card）的左右内边距是否出自 --pad-card* 规格表
+ *  29. 头像位的圆角/字号是否由框宽推出（--r-ava / --ava-glyph），而不是各写一个数
  *
  * 退出码：有问题返回 1（可直接用于 CI）
  */
@@ -945,6 +949,163 @@ for (const file of files) {
       const line = src.slice(0, src.indexOf(decl.slice(0, 24))).split('\n').length;
       problems.push(`非法声明 ${r}:${line} -> 「${decl.slice(0, 60)}」不是 property: value 的形状 `
         + '（花括号仍然配平，所以第 3 项查不出来，但 WXSS 编译会直接失败、全站白屏）');
+    }
+  }
+}
+
+// ---- 26. 大图角色（aspectFill 的照片框）：比例不许退回横长条，高度必须出自规格表 ----
+// 实拍菜图以方图为主（assets/dishes 19 张里 16 张是 600×600，只有 3 张 3:2），
+// 而旧版面把三种大图框拉成了横长条。aspectFill 是居中裁切，所以框越扁、菜被切得越多：
+//   社区配图 588×322 → 1.83:1，方图纵向只剩 55%
+//   菜谱步骤图 515×240 → 2.15:1，只剩 47%
+//   做菜模式大图 658×400 → 1.65:1，只剩 61%
+// —— 一条鱼、一盘面被拦腰裁掉就是这么来的，而且是"每个页面都在裁、没有一处一样"。
+// 判据两条：
+//  ① 规格表里每个 token 的「容器宽 ÷ 框高」≤ 1.45（方图至少留 69% 高度）。
+//     容器宽是量出来的：rpx 已按 750 视口归一，所以任意机型上这个比例都成立。
+//  ② 登记过的大图位置，height 必须写 var(--photo-*-h)，不许在页面里退回裸 rpx
+//     ——顺带把"骨架块和真卡同高"钉住，否则加载完跳版。
+const PHOTO_TABLE = {
+  '--photo-feed-h': 588,    // 社区信息流配图（实测 308×167px，容器 588rpx）
+  '--photo-step-h': 515,    // 菜谱详情步骤图（实测 266×124px，容器 515rpx）
+  '--photo-focus-h': 658,   // 做菜模式步骤大图（750 - 左右各 46rpx）
+  '--photo-head-h': 616,    // 帖子详情头图与其骨架
+};
+const PHOTO_MAX_RATIO = 1.45;
+const PHOTO_SITES = [
+  ['pages/community/index.wxss', '.pphoto'],
+  ['pkg-extra/recipe-detail/index.wxss', '.rd-step-img'],
+  ['pkg-extra/cook-mode/index.wxss', '.stepimg'],
+  ['pkg-extra/community/post-detail/index.wxss', '.dish-img'],
+  ['pkg-extra/community/post-detail/index.wxss', '.sk-img'],
+];
+const appCssSrc = stripComments(fs.readFileSync(path.join(ROOT, 'app.wxss'), 'utf8'));
+for (const tok of Object.keys(PHOTO_TABLE)) {
+  const m = new RegExp(tok + '\\s*:\\s*(\\d+(?:\\.\\d+)?)rpx').exec(appCssSrc);
+  if (!m) {
+    problems.push(`大图规格失去出处 app.wxss -> ${tok} 没定义了（页面里 var(${tok}) 会静默失效，大图框退回各自写死）`);
+    continue;
+  }
+  const ratio = PHOTO_TABLE[tok] / parseFloat(m[1]);
+  if (ratio > PHOTO_MAX_RATIO) {
+    problems.push(`大图框裁掉太多 app.wxss -> ${tok}: ${m[1]}rpx（容器 ${PHOTO_TABLE[tok]}rpx 宽 → ${ratio.toFixed(2)}:1，`
+      + `方图纵向只剩 ${Math.round(100 / ratio)}%，一条鱼会被拦腰裁掉；上限 ${PHOTO_MAX_RATIO}:1）`);
+  }
+}
+for (const [file, cls] of PHOTO_SITES) {
+  const p = path.join(ROOT, file);
+  const src = stripComments(fs.readFileSync(p, 'utf8'));
+  const esc = cls.replace(/[$()*+.?[\\\]^{|}]/g, '\\$&');
+  const bm = new RegExp(esc + '\\s*\\{([^{}]*)\\}').exec(src);
+  if (!bm) {
+    problems.push(`大图位置找不到 ${file} -> ${cls}（类名改了要同步改第 26 项的登记表，别默默把大图角色放养）`);
+    continue;
+  }
+  const h = /(?:^|;)\s*height\s*:\s*([^;]+)/.exec(bm[1]);
+  if (!h || !/var\(\s*--photo-[a-z-]+\s*\)/.test(h[1])) {
+    problems.push(`大图高度写死 ${file} -> ${cls} -> height: ${h ? h[1].trim() : '（没有 height 声明）'}，`
+      + '没走 app.wxss 的 --photo-*-h 规格表（要改裁切比例就改表，改一处四页同步）');
+  }
+}
+
+// ---- 27. 大图位置必须挂 img-ph 失败兜底 ----
+// 图挂不出来时那块地方不是"变灰"，是**留一个尺寸完好的空洞**——
+// 实测把社区信息流第一条的 photo 指向不存在的文件，那张卡留下 440rpx 高的纯白，
+// 和"这条帖子本来没图"长得一模一样。app.wxss 的 .img-ph 用 ::before 兜底
+// （图正常时被内层图片盖住、失败时露出来），只需要类名，不需要 30 个页面各写一遍回调。
+// 这条门禁保证登记表里的大图不会哪天悄悄把类名摘掉——摘掉是静默的，截图也看不出差别。
+const IMG_PH_SITES = [
+  ['pages/community/index.wxml', 'pphoto'],
+  ['pkg-extra/recipe-detail/index.wxml', 'rd-step-img'],
+  ['pkg-extra/cook-mode/index.wxml', 'stepimg-pic'],
+  ['pkg-extra/community/post-detail/index.wxml', 'dish-img'],
+  ['components/recipe-card/index.wxml', 'rc-ph-img'],
+];
+const appWxml = fs.readFileSync(path.join(ROOT, 'app.wxss'), 'utf8');
+if (!/\.img-ph::before\s*\{[^}]*content\s*:/.test(appWxml)) {
+  problems.push('兜底失效 app.wxss -> .img-ph::before 没有 content（这个类只剩 position:relative，图挂了照样是空洞）');
+}
+for (const [file, cls] of IMG_PH_SITES) {
+  const src = fs.readFileSync(path.join(ROOT, file), 'utf8');
+  const tags = src.match(/<image[^>]*>/g) || [];
+  const hit = tags.filter((t) => new RegExp('class="[^"]*\\b' + cls + '\\b').test(t));
+  if (!hit.length) {
+    problems.push(`大图位置找不到 ${file} -> <image class="…${cls}…">（类名改了要同步改第 27 项的登记表）`);
+    continue;
+  }
+  const bare = hit.filter((t) => !/\bimg-ph\b/.test(t));
+  if (bare.length) {
+    problems.push(`大图没挂兜底 ${file} -> ${cls}：${bare.length}/${hit.length} 处缺 img-ph `
+      + '（图 404 时那里会留下一个尺寸完好的空洞，看起来像"本来就没图"）');
+  }
+}
+
+// ---- 28. 卡表面的左右内边距必须出自 --pad-card* 规格表 ----
+// 判据是"卡表面"这个视觉角色：border-radius 走 --r-card 的就是同一张卡。
+// 只钉**左右**这一个轴——纵向留白跟内容节奏走（标题卡、输入框、弹窗各有各的），
+// 左右才是并排看会对齐的那条边。实测首页「许愿池」白卡左右 28、下面那张深色主卡左右 40，
+// 两张卡左边缘齐平、里面的文字却错开 6px。
+// 确实要窄（多列并排的统计卡）就在同一行写「例外：原因」，让下一个读代码的人知道这不是漂移。
+const PAD_TOKEN = /var\(\s*--pad-card(?:-sm)?\s*\)/;
+// 圆角走 --r-card 不等于"卡表面"：按钮、标签、胶囊也用这个圆角，它们的左右留白跟字号走。
+const NOT_A_CARD = /\b(btn|button|chip|tag|pill|badge|seg|tab)\b/i;
+const PAD_SKIP = /^(0|auto|[\d.]+%|calc\(|var\(--pad)/;
+for (const file of files) {
+  if (!file.endsWith('.wxss')) continue;
+  const r = rel(file);
+  const raw = fs.readFileSync(file, 'utf8');
+  // 直接按原文切块（保留注释），这样「例外：原因」和它要豁免的那条声明必然在同一段里
+  for (const block of raw.match(/[^{}]+\{[^{}]*\}/g) || []) {
+    const body = block.slice(block.indexOf('{') + 1);
+    if (!/border-radius\s*:\s*var\(\s*--r-card\s*\)/.test(stripComments(body))) continue;
+    const sel = block.slice(0, block.indexOf('{')).replace(/\/\*[\s\S]*?\*\//g, ' ').trim().replace(/\s+/g, ' ');
+    if (NOT_A_CARD.test(sel)) continue;
+    for (const line of body.split('\n')) {
+      const pm = /(?:^|[;{\s])padding\s*:\s*([^;]+)/.exec(line);
+      if (!pm || /例外/.test(line)) continue;
+      const parts = pm[1].trim().split(/\s+/).filter(Boolean);
+      if (!parts.length || parts.length > 4) continue;
+      const horiz = parts.length === 1 ? [parts[0]]
+        : parts.length === 4 ? [parts[1], parts[3]]
+          : [parts[1]];
+      const bad = horiz.filter((v) => !PAD_TOKEN.test(v) && !PAD_SKIP.test(v));
+      if (bad.length) {
+        problems.push(`卡表面左右内边距写死 ${r} -> ${sel} -> padding: ${pm[1].trim()}，`
+          + `左右是 ${bad.join(' / ')}，没走 app.wxss 的 --pad-card / --pad-card-sm 规格表 `
+          + '（同一屏两张卡的文字会错开；确实要窄就在这一行写「例外：原因」）');
+      }
+    }
+  }
+}
+
+// ---- 29. 头像位的形状和字号必须由框宽推出（--r-ava / --ava-glyph）----
+// 同一个人的头像在社区列表是 26rpx 圆角方、点进他那条帖子变成正圆；
+// 同一个"阿"字占框宽从 36% 到 53% 都有。头像只有一个自由度（框宽），
+// 所以圆角和字号都不该再各写一个数——写了就会漂，而且漂得很安静：没人会截图对比圆角。
+// 判据：凡是 width 用了 --ava-* 档位的选择器，圆角必须是 calc(同一档 * var(--r-ava))，
+// 字号必须含 var(--ava-glyph)（两者都只在"自己声明了"的时候才要求）。
+const AVA_TOKEN = /var\(\s*(--ava-[a-z]+)\s*\)/;
+for (const file of files) {
+  if (!file.endsWith('.wxss')) continue;
+  const r = rel(file);
+  if (r === 'app.wxss') continue;
+  const src = stripComments(fs.readFileSync(file, 'utf8'));
+  for (const block of src.match(/[^{}]+\{[^{}]*\}/g) || []) {
+    const body = block.slice(block.indexOf('{') + 1);
+    const w = /(?:^|;)\s*width\s*:([^;]+)/.exec(body);
+    if (!w) continue;
+    const wm = AVA_TOKEN.exec(w[1]);
+    if (!wm) continue;
+    const sel = block.slice(0, block.indexOf('{')).trim().replace(/\s+/g, ' ');
+    const br = /(?:^|;)\s*border-radius\s*:\s*([^;]+)/.exec(body);
+    if (br && !new RegExp('var\\(\\s*' + wm[1] + '\\s*\\)\\s*\\*\\s*var\\(\\s*--r-ava\\s*\\)').test(br[1])) {
+      problems.push(`头像圆角写死 ${r} -> ${sel} -> border-radius: ${br[1].trim()}，`
+        + `应为 calc(${wm[1]} * var(--r-ava))（同一个人不该在两个页面一个是方的是个圆的）`);
+    }
+    const fs2 = /(?:^|;)\s*font-size\s*:\s*([^;]+)/.exec(body);
+    if (fs2 && !/var\(\s*--ava-glyph\s*\)/.test(fs2[1])) {
+      problems.push(`头像字号写死 ${r} -> ${sel} -> font-size: ${fs2[1].trim()}，`
+        + `应为 calc(${wm[1]} * var(--ava-glyph) * var(--fs-mul, 1))（同一个字在不同页占框宽差到 1.5 倍）`);
     }
   }
 }
