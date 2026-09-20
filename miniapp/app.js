@@ -1,4 +1,4 @@
-const { guestLogin, getVipStatus, getAuthToken } = require('./utils/api');
+const { bootstrapSession, getVipStatus, getAuthToken } = require('./utils/api');
 const { resolveConfig } = require('./utils/env');
 const features = require('./utils/features');
 
@@ -13,12 +13,15 @@ App({
   async onLaunch() {
     // 首屏先用本地缓存兜底，避免黑屏切换；最终以服务器返回为准。
     this.globalData.isVip = wx.getStorageSync('vip_status') === true;
-    // 已有登录态（手机/微信/游客）时不要再用新游客 token 覆盖，否则会降级为游客
+    // 已有登录态（手机/微信/游客）时不要再用新会话覆盖，否则会降级为游客
     if (!getAuthToken()) {
+      // 首次身份建立：优先微信静默登录，失败才降级游客。
+      // 见 utils/api.js#bootstrapSession 的注释：游客 openid 过不了微信内容机审，
+      // 社区发帖会全部堆在人工队列里发不出去。
       try {
-        await guestLogin();
+        await bootstrapSession();
       } catch (error) {
-        console.warn('guest login failed', error);
+        console.warn('session bootstrap failed', error);
       }
     }
     this.refreshVipStatus();

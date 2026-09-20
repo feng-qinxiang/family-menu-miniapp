@@ -265,8 +265,16 @@ class AdminModulesTests {
     }
 
     /**
-     * 评论审核闭环：游客（无真实微信 openid，无法机审）发的评论必须先进待审队列，
-     * 只有管理员通过后才对其他人可见；驳回后再次不可见。
+     * 评论审核闭环 + 「帖子不公开，评论也不给外人读」。
+     *
+     * 游客（无真实微信 openid，无法机审）发的评论必须先进待审队列，管理员通过后才对其他人可见；
+     * 驳回后再次不可见。
+     *
+     * ⚠ 这里还钉住了一条后加的规则：评论列表会**连同帖子本身的可见性一起过滤**
+     * （`MysqlKitchenStore#communityComments` 的 `JOIN community_post p` 那段）。
+     * 原来只过滤评论自己的 audit_status，于是运营把帖子下架（或帖子还在待审）之后，
+     * 任何人拿着帖子 id 都能把整条评论线程读出来。所以第 ① 段断言是：
+     * 评论**已经审核通过**、但帖子还没公开时，别人照样一条都看不到；帖子公开后才看得到。
      */
     @Test
     void pendingCommentIsInvisibleUntilAdminApproves() throws Exception {
@@ -306,6 +314,19 @@ class AdminModulesTests {
                             .header("X-Auth-Token", admin)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("{\"status\":\"APPROVED\"}"))
+                    .andExpect(status().isOk());
+            // ① 评论已通过、帖子仍是 PENDING：外人依然读不到（帖子可见性这道闸）
+            assertThat(jdbcTemplate.queryForObject(
+                    "SELECT audit_status FROM community_post WHERE id = ?", String.class, postId))
+                    .as("这条用例的帖子是游客发的，本来就还在待审").isEqualTo("PENDING");
+            assertThat(mockMvc.perform(get("/api/community/posts/" + postId + "/comments")
+                            .header("X-Auth-Token", other))
+                    .andExpect(status().isOk()).andReturn().getResponse().getContentAsString())
+                    .as("帖子还没公开时，别人也读不到它的评论（下架帖的评论同样按这条被挡住）").doesNotContain(idToken);
+
+            // ② 帖子公开后，已通过的评论对其他人可见
+            mockMvc.perform(post("/api/admin/posts/" + postId + "/status").header("X-Auth-Token", admin)
+                            .contentType(MediaType.APPLICATION_JSON).content("{\"status\":\"APPROVED\"}"))
                     .andExpect(status().isOk());
             assertThat(mockMvc.perform(get("/api/community/posts/" + postId + "/comments")
                             .header("X-Auth-Token", other))

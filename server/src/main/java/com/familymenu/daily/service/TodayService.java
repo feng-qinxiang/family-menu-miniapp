@@ -48,6 +48,7 @@ public class TodayService {
 
     @Transactional
     public DailyMenuView addMenuItem(long familyId, String addedByName, AddMenuItemRequest request) {
+        lockFamilyMenuWrites(familyId);
         long menuId = ensureTodayMenu(familyId);
         if (request == null || request.recipeId() == null) {
             return loadMenuView(menuId, familyId);
@@ -79,6 +80,7 @@ public class TodayService {
     /** 菜单项状态流转：todo（待做）→ cooking（烧着）→ done（上桌）。itemId 限定在本家庭今日菜单内。 */
     @Transactional
     public DailyMenuView updateItemStatus(long familyId, long itemId, String status) {
+        lockFamilyMenuWrites(familyId);
         long menuId = ensureTodayMenu(familyId);
         jdbcTemplate.update("""
                         UPDATE daily_menu_item dmi
@@ -93,6 +95,7 @@ public class TodayService {
 
     @Transactional
     public DailyMenuView removeMenuItem(long familyId, long recipeId) {
+        lockFamilyMenuWrites(familyId);
         long menuId = ensureTodayMenu(familyId);
         jdbcTemplate.update("DELETE FROM daily_menu_item WHERE daily_menu_id = ? AND recipe_id = ?", menuId, recipeId);
         rebuildShoppingList(familyId);
@@ -107,6 +110,7 @@ public class TodayService {
 
     @Transactional
     public ShoppingListView rebuildShoppingList(long familyId) {
+        lockFamilyMenuWrites(familyId);
         long menuId = ensureTodayMenu(familyId);
         long shoppingListId = ensureShoppingList(menuId, familyId);
         Map<String, Boolean> previousPurchased = loadPreviousPurchasedMap(shoppingListId);
@@ -150,6 +154,7 @@ public class TodayService {
 
     @Transactional
     public ShoppingListView togglePurchased(long familyId, long itemId, TogglePurchasedRequest request) {
+        lockFamilyMenuWrites(familyId);
         long menuId = ensureTodayMenu(familyId);
         long shoppingListId = ensureShoppingList(menuId, familyId);
         jdbcTemplate.update(
@@ -168,6 +173,7 @@ public class TodayService {
 
     @Transactional
     public ShoppingListView addShoppingItem(long familyId, AddShoppingItemRequest request) {
+        lockFamilyMenuWrites(familyId);
         long menuId = ensureTodayMenu(familyId);
         long shoppingListId = ensureShoppingList(menuId, familyId);
         String name = request == null || request.ingredientName() == null ? "" : request.ingredientName().trim();
@@ -201,6 +207,7 @@ public class TodayService {
 
     @Transactional
     public ShoppingListView deleteShoppingItem(long familyId, long itemId) {
+        lockFamilyMenuWrites(familyId);
         long menuId = ensureTodayMenu(familyId);
         long shoppingListId = ensureShoppingList(menuId, familyId);
         jdbcTemplate.update(
@@ -212,6 +219,48 @@ public class TodayService {
                 itemId, familyId
         );
         return loadShoppingListView(shoppingListId, menuId, familyId);
+    }
+
+    /**
+     * 家庭级菜单写锁：把「同一家人同时点菜 / 改单 / 勾清单」串行化。
+     *
+     * 为什么要有（实测数据，不是推理）：菜单域的写方法都是「先 ensureXxx（查不到就插一条）再改行」，
+     * 而 ensure 的插入撞唯一键时靠 catch 后**回读**兜底。问题在于这个回读发生在**同一个事务**里：
+     * 并发时所有请求都在自己的快照上看不到当天菜单，于是都去插入；赢的那个提交后，
+     * 输的四个拿到的快照仍是插入之前的，回读依然"查无此菜单" → DuplicateKeyException 逃出 catch
+     * → 全局处理器兜成 **409「记录已存在，请勿重复操作」**，而那道菜根本没进菜单。
+     *
+     * 量法：`MenuWriteRaceTests#fiveFamilyMembersOrderAtOnceNobodyGets5xxAndAllDishesStay`
+     * （5 个家人同时点菜）。把这把锁拿掉重跑，5 个请求里 **4 个 409、只有 1 个成功**；
+     * 锁在时 5/5 都是 200，菜单恰好一行、5 道菜一道不少。
+     * 修法就是这条 `FOR UPDATE`：同一家庭的写请求排队，后来者拿到锁时赢家已经提交，
+     * 它的第一次菜单读取就看得见那条已存在的菜单，走的是"直接用"，而不是"重复插入再回读"。
+     * （`uk_family_menu_date` / `uk_shopping_menu` 保留了——它们是最后一道防线，不是这里的对策。）
+     *
+     * ponytail: 粗粒度——同一家庭的写请求排队。菜单域每次写入都是毫秒级、单家庭并发量极低，
+     * 真到了瓶颈再按 (family_id, menu_date) 拆细。另一个更根本的修法是让 ensureXxx 自己变成
+     * 「INSERT ... ON DUPLICATE KEY UPDATE id=LAST_INSERT_ID(id)」一条语句取 id（不依赖回读，
+     * 也就不怕快照陈旧）；眼下这把锁已经把三条写路径全覆盖，先不做。
+     *
+     * 锁对象选 family 行：粒度正好是「一家人」，这一行永远存在（拿不到就是 familyId 已经不对，
+     * 直接 400 而不是发一个永远拿不到的锁），SELECT ... FOR UPDATE 随事务提交/回滚自动释放，
+     * 不像 GET_LOCK 那样要担心连接归还池时漏放。全库只有这一处用 family 行做锁
+     * （另一处 FOR UPDATE 在 payment_order 上，与菜单域无交集），所以不存在锁序交叉。
+     *
+     * ⚠ 必须在事务里调（本类比它加锁的写方法都带 @Transactional，就是这个前提）；
+     * 在自动提交下 FOR UPDATE 加完立刻放，等于没加。
+     * ⚠ 同一个事务里重复调是安全的（addMenuItem 会带着锁再调 rebuildShoppingList）。
+     */
+    private void lockFamilyMenuWrites(long familyId) {
+        Long locked = jdbcTemplate.query(
+                "SELECT id FROM family WHERE id = ? FOR UPDATE",
+                rs -> rs.next() ? rs.getLong(1) : null,
+                familyId
+        );
+        if (locked == null) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.BAD_REQUEST, "家庭不存在，请重新进入家庭后再试");
+        }
     }
 
     private long ensureTodayMenu(long familyId) {
@@ -243,6 +292,8 @@ public class TodayService {
             }
             return key.longValue();
         } catch (DuplicateKeyException ignored) {
+            // ⚠ 这个回读**只有在事务快照能看到赢家提交的前提下才有效**——同类写法曾在这里出过事
+            // （并发点菜 4/5 拿到 409），所以写路径一律先走 lockFamilyMenuWrites 串行化。
             Long existingMenuId = findTodayMenuId(familyId);
             if (existingMenuId != null) {
                 return existingMenuId;
@@ -290,6 +341,7 @@ public class TodayService {
         } catch (DuplicateKeyException ignored) {
             // 同一家庭的两个成员同一天首次打开清单会撞 uk_shopping_menu。
             // 与 ensureTodayMenu 一样回读已存在的那条，而不是把 500 抛给用户。
+            // 同样注意：回读有效的前提是快照够新，所以写路径都先拿 lockFamilyMenuWrites。
             Long existing = findShoppingListId(menuId);
             if (existing != null) {
                 return existing;

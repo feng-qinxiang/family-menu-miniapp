@@ -74,6 +74,12 @@ Page({
       this.setData({ isEdit: true, recipeId: options.id, pageLoading: true });
       this.loadRecipe(options.id);
     } else {
+      // 从「菜谱搜索一条都没命中 → 新建这道菜」跳来时带上菜名（options.title）：
+      // 心愿里写的是什么，表单里就填什么——省掉一次"刚看完那个词、再打字一遍"。
+      const prefillTitle = options && options.title ? String(options.title).trim().slice(0, 64) : '';
+      if (prefillTitle) {
+        this.setData({ 'form.title': prefillTitle });
+      }
       this.refreshQuality();
     }
   },

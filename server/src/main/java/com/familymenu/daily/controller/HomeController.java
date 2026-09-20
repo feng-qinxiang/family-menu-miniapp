@@ -93,7 +93,12 @@ public class HomeController {
         // 只读公开接口：未带 token 也能浏览（user 为 null 时不返回"我收藏的"标记）
         // size 夹紧：不给 ?size=999999 一次拖走全表的机会
         int safeSize = Math.min(Math.max(size, 1), 50);
-        return store.communityPosts(user == null ? 0L : user.userId(), tag, Math.max(page, 1), safeSize);
+        return store.communityPosts(user == null ? 0L : user.userId(), familyIdOf(user), tag, Math.max(page, 1), safeSize);
+    }
+
+    /** 匿名访客没有家庭，用 0 当"没有本家"的哨兵（与 userId 的 0 同一套写法）。 */
+    private static long familyIdOf(AuthUser user) {
+        return user == null || user.familyId() == null ? 0L : user.familyId();
     }
 
     /** 热门话题：社区话题 chips 数据源，公开可读（近期公开帖标签频次 top 10）。 */
@@ -106,13 +111,13 @@ public class HomeController {
     @GetMapping("/community/posts/{postId}")
     public CommunityPost communityPostDetail(@PathVariable long postId,
                                              @CurrentUser AuthUser user) {
-        return store.communityPostDetail(postId, user == null ? 0L : user.userId());
+        return store.communityPostDetail(postId, user == null ? 0L : user.userId(), familyIdOf(user));
     }
 
     @GetMapping("/me/favorites")
     @RequiresAuth
     public List<CommunityPost> myFavorites(@CurrentUser AuthUser user) {
-        return store.myFavoritePosts(user.userId());
+        return store.myFavoritePosts(user.userId(), familyIdOf(user));
     }
 
     @PostMapping("/community/posts")
@@ -137,7 +142,7 @@ public class HomeController {
                 }
             }
         }
-        return store.createCommunityPost(user.userId(), request, auditStatus);
+        return store.createCommunityPost(user.userId(), familyIdOf(user), request, auditStatus);
     }
 
     @GetMapping("/community/posts/{postId}/comments")
@@ -181,14 +186,14 @@ public class HomeController {
     @PostMapping("/community/posts/{postId}/favorite")
     @RequiresAuth
     public CommunityPost toggleCommunityFavorite(@PathVariable long postId, @CurrentUser AuthUser user) {
-        return store.toggleCommunityFavorite(postId, user.userId());
+        return store.toggleCommunityFavorite(postId, user.userId(), familyIdOf(user));
     }
 
     /** 点赞 / 取消点赞（切换语义，返回最新帖子视图）。 */
     @PostMapping("/community/posts/{postId}/like")
     @RequiresAuth
     public CommunityPost toggleCommunityLike(@PathVariable long postId, @CurrentUser AuthUser user) {
-        CommunityPost updated = store.toggleCommunityLike(postId, user.userId());
+        CommunityPost updated = store.toggleCommunityLike(postId, user.userId(), familyIdOf(user));
         // 只在"新增点赞"这一跳通知作者；自己赞自己不通知
         notifyPostAuthor(postId, user, updated.liked(), "赞了", "你的帖子收到新点赞");
         return updated;

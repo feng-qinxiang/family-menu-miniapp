@@ -33,6 +33,15 @@ function notifySessionExpired() {
   setTimeout(() => { sessionExpiredNotified = false; }, 8000);
 }
 
+// 微信续期失败、兜底成游客时用这条（不能沿用上面那句：用户没做错任何事，
+// 而且他现在的身份是游客，得说清"数据还在、重新登录能找回"）
+function notifyWechatDowngraded() {
+  if (sessionExpiredNotified) return;
+  sessionExpiredNotified = true;
+  wx.showToast({ title: '微信登录已过期，已切到游客身份，重新登录可找回', icon: 'none', duration: 3000 });
+  setTimeout(() => { sessionExpiredNotified = false; }, 8000);
+}
+
 function getDeviceId() {
   let deviceId = wx.getStorageSync(DEVICE_ID_KEY);
   if (deviceId) return deviceId;
@@ -55,10 +64,61 @@ function extractErrorMessage(data) {
 let reauthPromise = null;
 // expectedToken = 触发 401 时用的 token。期间若用户登录写了新 token（或 token 已被清），
 // 就丢弃游客 token，避免游客身份覆盖刚拿到的登录态。
-function ensureGuestSession(expectedToken) {
-  if (reauthPromise) return reauthPromise;
-  const baseline = expectedToken !== undefined ? expectedToken : getAuthToken();
-  reauthPromise = new Promise((resolve) => {
+//
+// 续期一律**保持会话种类不变**：游客续游客、微信续微信。
+// 种类一变，用户就会看到"家庭、菜单、收藏凭空消失"（那是另一个账号的数据）。
+function renewSession(baseline) {
+  const at = baseline === undefined ? getAuthToken() : baseline;
+  const login = getSessionKind() === 'login';
+  return (login ? wechatLoginSilently() : postGuestSession(at)).then((token) => token);
+}
+
+// 微信静默登录：wx.login 拿 code → 后端 jscode2session 换 openid。
+// 不需要用户授权（无弹窗），所以可以放在启动路径上。
+function wechatLoginSilently() {
+  return new Promise((resolve) => {
+    wx.login({
+      success(res) {
+        const code = res && res.code;
+        if (!code) { resolve(''); return; }
+        wechatLogin({ code })
+          .then((r) => resolve((r && r.token) || ''))
+          .catch(() => resolve(''));
+      },
+      fail() { resolve(''); }
+    });
+  });
+}
+
+// 首次身份建立：优先微信、失败降级游客。
+//
+// 为什么不是"游客优先"（2026-09-20 改）：
+//  1) 游客 openid 是 `guest-` 自造标识，微信 msgSecCheck 只认真实 openid →
+//     游客发的帖子/评论**只能**落 PENDING 人工队列（community_post.audit_status），
+//     而人工队列要 /admin、登录后台要短信验证码——社区是核心功能，上线首日却发不出任何公开内容。
+//  2) 游客账号按设备隔离且只存在本地 device_id 里，清一次小程序缓存＝换一个账号，
+//     家庭/菜谱/做菜记录全找不回来（而"绑定手机号换设备不丢数据"那张卡在个人主体下是关掉的）。
+//  微信登录成功后 openid 稳定，换设备/重装都还是同一个账号，上面两条一起解决。
+let bootstrapPromise = null;
+function bootstrapSession() {
+  if (bootstrapPromise) return bootstrapPromise;
+  const at = getAuthToken();
+  bootstrapPromise = (async () => {
+    let token = await wechatLoginSilently();
+    // 用户在这期间自己登录成功（token 变了）→ 不覆盖他的登录态，也不降级成游客
+    if (at && getAuthToken() !== at) return getAuthToken();
+    if (!token) token = await postGuestSession(at);
+    return token;
+  })().then((token) => {
+    bootstrapPromise = null;
+    return token;
+  });
+  return bootstrapPromise;
+}
+
+// 游客会话：POST /api/auth/guest（也可由 401 兜底触发）
+function postGuestSession(at) {
+  return new Promise((resolve) => {
     wx.request({
       url: `${resolveBaseUrl()}/api/auth/guest`,
       method: 'POST',
@@ -66,20 +126,34 @@ function ensureGuestSession(expectedToken) {
       timeout: 10000,
       success(res) {
         if (res.statusCode >= 200 && res.statusCode < 300 && res.data && res.data.token) {
-          if (getAuthToken() !== baseline) {
+          if (at && getAuthToken() !== at) {
             // token 已被其他流程改写（如刚登录成功），不覆盖
-            resolve(null);
+            resolve('');
             return;
           }
           setAuthToken(res.data.token, 'guest');
           resolve(res.data.token);
         } else {
-          resolve(null);
+          resolve('');
         }
       },
-      fail() { resolve(null); },
-      complete() { reauthPromise = null; }
+      fail() { resolve(''); }
     });
+  });
+}
+
+// 旧的续期入口（保持名字，401 分支与页面首屏都会走到这里）
+function ensureGuestSession(expectedToken) {
+  if (reauthPromise) return reauthPromise;
+  const baseline = expectedToken !== undefined ? expectedToken : getAuthToken();
+  const kind = getSessionKind();
+  // 还没有任何身份（页面首屏请求先于 app.js 建会话）→ 走"优先微信"的首次建立，
+  // 与 app.js 共用同一个 promise：否则页面会抢先建出一个游客会话，把微信登录挤掉。
+  const run = (!baseline && !kind) ? bootstrapSession() : renewSession(baseline);
+  reauthPromise = run.then((token) => {
+    reauthPromise = null;
+    // 续期策略是"保持会话种类"，不会把登录态降级成游客，所以这里不必再防覆盖
+    return token || null;
   });
   return reauthPromise;
 }
@@ -113,17 +187,20 @@ async function rawRequest(path, options) {
       return { ok: true, data: res.data };
     }
     if (res.statusCode === 401 && config.skipReauth !== true) {
-      if (getSessionKind() === 'login' || loginExpiredHandled) {
-        // 微信/验证码登录用户的会话过期时，静默换成游客身份会让家庭、菜单、收藏
-        // "凭空消失"而且没有任何提示。这里改为清掉登录态并明确告知需要重新登录。
-        loginExpiredHandled = true;
-        setAuthToken('');
-        if (config.silent !== true) notifySessionExpired();
-        return { ok: false, status: 401, data: res.data, sessionExpired: true };
+      // 先静默续期（保持会话种类：游客续游客、微信续微信）。
+      // 微信续期走 wx.login + jscode2session，同 openid → 同一个账号，用户无感、数据不丢。
+      // 原来这里对登录用户直接清 token + 提示，等于 30 天一到整个应用不可用
+      // （每个接口都 401，而"我的"页拿不到用户信息、连登录入口都不显示）。
+      let refreshed = await ensureGuestSession(getAuthToken());
+      let downgraded = false;
+      if (!refreshed && getSessionKind() === 'login') {
+        // 微信静默续期失败（微信接口不可用 / 凭据被改）：兜底成游客会话并**明说**。
+        // 游客身份至少能用，重新登录即可回到原账号——比整站 401 强。
+        refreshed = await postGuestSession(getAuthToken());
+        downgraded = !!refreshed;
       }
-      // 传当前 token 作基线，游客会话只在 token 未被改写时写入
-      const refreshed = await ensureGuestSession(getAuthToken());
       if (refreshed) {
+        if (downgraded) notifyWechatDowngraded();
         const retry = await performRequest(path, config);
         if (retry.res && retry.res.statusCode >= 200 && retry.res.statusCode < 300) {
           return { ok: true, data: retry.res.data };
@@ -135,6 +212,13 @@ async function rawRequest(path, options) {
           console.warn('[api] retry failed', path, retry.res && retry.res.statusCode);
         }
         return { ok: false, status: retry.res ? retry.res.statusCode : 0, data: retry.res ? retry.res.data : null };
+      }
+      if (getSessionKind() === 'login' || loginExpiredHandled) {
+        // 连兜底都建不出会话（服务端不可用）：清掉失效 token 并明确告知
+        loginExpiredHandled = true;
+        setAuthToken('');
+        if (config.silent !== true) notifySessionExpired();
+        return { ok: false, status: 401, data: res.data, sessionExpired: true };
       }
     }
     if (config.silent !== true) {
@@ -628,6 +712,7 @@ function markNotificationsRead(ids) {
 module.exports = {
   getAuthToken,
   getDeviceId,
+  bootstrapSession,
   createPaymentOrder,
   prepayOrder,
   mockPayOrder,

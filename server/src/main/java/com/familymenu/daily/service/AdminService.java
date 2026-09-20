@@ -551,6 +551,7 @@ public class AdminService {
         if (updated == 0) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "评论不存在");
         }
+        syncCommentCount(commentId);
     }
 
     /** 菜谱下架/恢复：status = REMOVED / ACTIVE。 */
@@ -735,24 +736,26 @@ public class AdminService {
         }
         jdbcTemplate.update(
                 "UPDATE community_post_comment SET audit_status = ? WHERE id = ?", target, commentId);
-        // comment_count 只统计"已通过"的评论：状态在 APPROVED 与非 APPROVED 之间切换时同步增减。
-        boolean wasCounted = previous.equals("APPROVED");
-        boolean nowCounted = target.equals("APPROVED");
-        if (wasCounted && !nowCounted) {
-            jdbcTemplate.update("""
-                    UPDATE community_post p
-                    JOIN community_post_comment c ON c.post_id = p.id
-                    SET p.comment_count = GREATEST(p.comment_count - 1, 0)
-                    WHERE c.id = ?
-                    """, commentId);
-        } else if (!wasCounted && nowCounted) {
-            jdbcTemplate.update("""
-                    UPDATE community_post p
-                    JOIN community_post_comment c ON c.post_id = p.id
-                    SET p.comment_count = p.comment_count + 1
-                    WHERE c.id = ?
-                    """, commentId);
-        }
+        syncCommentCount(commentId);
+    }
+
+    /**
+     * 帖子评论数按行重算，不做 ±1 —— 与 `syncCommunityLikeCount` 同一取舍。
+     *
+     * 原来只有「审核通过/驳回」这一条路径在维护计数，且是 ±1；运营的**软删除/恢复**完全不碰它，
+     * 于是数字会永久漂：下架一条已通过的评论（计数少减 1，卡片上永远多一条）、
+     * 恢复一条作者自删过的评论（计数该加没加）、把一条已 deleted=1 的评论审成通过（凭空多一条）。
+     * 计数口径只能有一个：`deleted = 0 AND audit_status = 'APPROVED'`，从行里数出来。
+     */
+    private void syncCommentCount(long commentId) {
+        jdbcTemplate.update("""
+                UPDATE community_post p
+                SET p.comment_count = (
+                    SELECT COUNT(*) FROM community_post_comment c
+                    WHERE c.post_id = p.id AND c.deleted = 0 AND c.audit_status = 'APPROVED'
+                )
+                WHERE p.id = (SELECT c2.post_id FROM community_post_comment c2 WHERE c2.id = ?)
+                """, commentId);
     }
 
     /** 恢复被误删的评论（软删除的逆操作）。 */
@@ -763,6 +766,7 @@ public class AdminService {
         if (updated == 0) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "评论不存在");
         }
+        syncCommentCount(commentId);
     }
 
     // ==================== 订单 / 会员 ====================

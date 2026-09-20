@@ -39,10 +39,41 @@ function formatCookedLabel(item) {
   return [when, remark].filter(Boolean).join(' · ') || '最近做过';
 }
 
+/**
+ * 身份引导卡：只对"还没有稳定身份"的人显示（微信登录过的账号不显示）。
+ *
+ * 个人主体上线时 PHONE_LOGIN 关闭、微信登录是唯一稳定身份，这张卡是它**唯一可见的入口**
+ * （其余入口在"设置 → 微信绑定"，普通用户找不到）。两件事都靠它解决：
+ *  1) 游客账号只跟着本机 device_id 走，清一次缓存/换台手机就是另一个账号，家庭、菜单、
+ *     菜谱、做菜记录全找不回来；微信登录后 openid 稳定，换设备还是同一个账号。
+ *  2) 游客 openid 是 guest- 自造标识，微信内容机审（msgSecCheck）不认 → 发的帖子/评论
+ *     只能落人工队列（其他人看不见）。登录后经机器审核即时公开。
+ */
+function buildBindCard(user) {
+  if (user && user.wechatBound) return { show: false };
+  if (features.PHONE_LOGIN) {
+    return {
+      show: true,
+      title: '绑定手机号，换设备不丢数据',
+      desc: '菜谱、菜单、做菜记录云端保存',
+      cta: '去绑定',
+      target: '/pkg-extra/auth/login-phone/index'
+    };
+  }
+  return {
+    show: true,
+    title: '微信登录，内容立刻公开',
+    desc: '游客发的帖子要人工审核；登录后经机器审核即时发布，换设备也不丢数据',
+    cta: '去登录',
+    target: '/pkg-extra/auth/login/index'
+  };
+}
+
 Page({
   data: {
     features,
     currentUser: {},
+    bindCard: { show: false },
     vipStatus: { vip: false, planName: '' },
     familyProfile: { familyId: 1, familyName: '', members: [] },
     memberCount: 0,
@@ -138,6 +169,7 @@ Page({
       this.setData({
         currentUser: currentUser || {},
         vipStatus: vipStatus || { vip: false },
+        bindCard: buildBindCard(currentUser),
         familyProfile: {
           ...(familyProfile || { familyName: '' }),
           members
@@ -169,7 +201,10 @@ Page({
   },
 
   goVip() { wx.navigateTo({ url: '/pkg-extra/vip/index' }); },
-  goPhoneBind() { wx.navigateTo({ url: '/pkg-extra/auth/login-phone/index' }); },
+  goBind() {
+    const target = this.data.bindCard && this.data.bindCard.target;
+    if (target) wx.navigateTo({ url: target, fail: () => {} });
+  },
   goWeekly() { wx.navigateTo({ url: '/pkg-extra/weekly-menu/index' }); },
   goImport() { wx.navigateTo({ url: '/pkg-extra/import/index' }); },
   goFavorites() { wx.navigateTo({ url: '/pkg-extra/favorites/index' }); },

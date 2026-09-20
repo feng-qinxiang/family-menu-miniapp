@@ -28,6 +28,10 @@ Page({
     allRecipes: [],
     list: [],
     total: 0,
+    // 关键词一条都没字面命中（用于决定是否显示「库里没有」出口区块，以及计数文案口径）
+    noExactHit: false,
+    // 当前列表是"沾边的菜"而不是字面命中（标题不做高亮，计数文案要如实说明）
+    nearbyMode: false,
     loaded: false,
     loading: false,
     loadError: false,
@@ -85,17 +89,20 @@ Page({
     const hit = SORTS.filter((x) => x.key === sortKey)[0];
     this.setData({ sortLabel: hit ? hit.label : '综合' });
     let list = this.data.allRecipes.slice();
+    let exactTotal = list.length;
+    let nearbyMode = false;
 
     if (kw) {
       const low = kw.toLowerCase();
-      list = list.filter((r) => {
-        const hay = [r.title, r.cuisine, r.summary]
-          .concat(Array.isArray(r.tasteTags) ? r.tasteTags : [])
-          .filter(Boolean)
-          .join(' ')
-          .toLowerCase();
-        return hay.indexOf(low) !== -1;
-      });
+      list = list.filter((r) => this._haystack(r).indexOf(low) !== -1);
+      exactTotal = list.length;
+      // 一条都不命中时退一步找「沾边」的：从心愿池「待挑菜」跳来最常见的情形，
+      // 就是家人想吃的那道菜自家库里还没有（"红烧排骨"匹配不到"红烧肉"）。
+      // 只找相近的、不假装命中：标题与计数文案都不改口径，另给一个出口区块。
+      if (!list.length) {
+        list = this._nearby(kw);
+        nearbyMode = list.length > 0;
+      }
     }
 
     // 筛选/排序
@@ -112,8 +119,76 @@ Page({
       list = list.filter((r) => r.cooked || r.cookCount > 0 || r.lastCookedAt);
     }
 
-    const view = list.map((r) => this._buildCard(r, kw));
-    this.setData({ list: view, total: view.length });
+    const view = list.map((r) => this._buildCard(r, nearbyMode ? '' : kw));
+    this.setData({
+      list: view,
+      total: view.length,
+      noExactHit: !!kw && exactTotal === 0,
+      nearbyMode
+    });
+  },
+
+  // 一条菜的检索文本（原名/菜系/简介/口味标签），大小写无关
+  _haystack(recipe) {
+    const r = recipe || {};
+    return [r.title, r.cuisine, r.summary]
+      .concat(Array.isArray(r.tasteTags) ? r.tasteTags : [])
+      .filter(Boolean)
+      .join(' ')
+      .toLowerCase();
+  },
+
+  // 关键词一条都不命中时的退路：按**二字片段**命中，捞出「红烧排骨 → 红烧肉 / 糖醋排骨」这类近邻。
+  // 不用单字：中文菜名里单字命中几乎必然误伤（"排"既能中"排骨"也能中"排叉"）。
+  // 命中片段多的排前面——它更可能是用户想要的那一类。
+  _nearby(kw) {
+    const k = String(kw || '').trim().toLowerCase();
+    if (k.length < 2) return [];
+    const grams = [];
+    for (let i = 0; i + 2 <= k.length; i++) {
+      const g = k.slice(i, i + 2);
+      if (grams.indexOf(g) === -1) grams.push(g);
+    }
+    const scored = [];
+    (this.data.allRecipes || []).forEach((r) => {
+      const hay = this._haystack(r);
+      let hits = 0;
+      grams.forEach((g) => {
+        if (hay.indexOf(g) !== -1) hits += 1;
+      });
+      if (hits) scored.push({ hits, r });
+    });
+    scored.sort((a, b) => b.hits - a.hits);
+    return scored.map((x) => x.r);
+  },
+
+  // 心愿挑菜挑到死路时的三个出口：自己录一道 / 从链接导入 / 去社区看看
+  createForKeyword() {
+    const kw = (this.data.keyword || '').trim();
+    if (!kw) return;
+    wx.navigateTo({
+      url: '/pkg-extra/recipe-edit/index?title=' + encodeURIComponent(kw),
+      fail: () => wx.showToast({ title: '打不开新建菜谱', icon: 'none' })
+    });
+  },
+
+  goImport() {
+    wx.navigateTo({
+      url: '/pkg-extra/import/index',
+      fail: () => wx.showToast({ title: '打不开导入', icon: 'none' })
+    });
+  },
+
+  // 空态出口：库里一道菜都没有时去录第一道（导入是另一条路，desc 里提了）
+  goAddRecipe() {
+    wx.navigateTo({
+      url: '/pkg-extra/recipe-edit/index',
+      fail: () => wx.showToast({ title: '打不开新建菜谱', icon: 'none' })
+    });
+  },
+
+  goCommunity() {
+    wx.switchTab({ url: '/pages/community/index', fail() {} });
   },
 
   // 构建卡片视图：封面兜底 + 标题高亮分段

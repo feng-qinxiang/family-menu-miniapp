@@ -41,7 +41,22 @@
         <text class="rtitle-t">找到「</text><text class="rtitle-kw pop">{{keyword || '全部'}}</text><text class="rtitle-t">」</text>
       </view>
       <view class="rcount g-fade-up g-d2">
-        共 <text class="rcount-n">{{total}}</text> 道菜 · 按「{{sortLabel}}」排列
+        <block wx:if="{{noExactHit && nearbyMode}}">没有正好叫这个的，下面是沾边的 <text class="rcount-n">{{total}}</text> 道</block>
+        <block wx:elif="{{noExactHit}}">一道都没有，看看下面的办法</block>
+        <block wx:else>共 <text class="rcount-n">{{total}}</text> 道菜 · 按「{{sortLabel}}」排列</block>
+      </view>
+
+      <!-- 关键词一条都没命中：给出路，而不是只让人「换个关键词」。
+           最常见的入口是从心愿池的「待挑菜」跳过来的——家人想吃的那道菜，自家库里本来就没有。
+           这里三个出口按"多快能吃到"排序：自己录一道 > 从链接导入 > 去社区找。 -->
+      <view wx:if="{{loaded && !loadError && noExactHit}}" class="nohit g-fade-up g-d2">
+        <view class="nohit-t">库里还没有《{{keyword}}》</view>
+        <view class="nohit-d">{{nearbyMode ? '这些是名字沾边的，也可以直接把它收进来' : '换个说法再找找，或者直接把它收进来'}}</view>
+        <view class="nohit-acts">
+          <view class="nohit-act tap-scale" bindtap="createForKeyword">＋ 新建这道菜</view>
+          <view class="nohit-act tap-scale" bindtap="goImport">从链接导入</view>
+          <view class="nohit-act tap-scale" bindtap="goCommunity">去社区找</view>
+        </view>
       </view>
 
       <!-- 排序 / 筛选 chip 横滑 -->
@@ -97,15 +112,18 @@
         bind:action="onRetry"
       />
 
-      <!-- 空状态 -->
+      <!-- 空状态：只在真的一道都没渲染出来时才出。
+           原先条件只写了 {{loaded}}，而网格是另一条 wx:if 链——所以**有结果时它照样渲染**，
+           插画会挂在结果列表下面（实测：搜「番茄」出 2 道菜，下面还有一张放大镜）。
+           有关键词时的出口在上面 nohit 区块里，这里只管「库里一道菜都没有」这一种。 -->
       <state-empty
-        wx:elif="{{loaded}}"
-        type="search"
-        title="没有找到相关菜谱"
-        desc="换个关键词，或试试上面的筛选"
-        cta="清空搜索"
+        wx:elif="{{loaded && !list.length && !keyword}}"
+        type="pop"
+        title="还没有菜谱"
+        desc="录一道拿手菜，或从链接导入"
+        cta="去添加"
         ctaStyle="ghost"
-        bind:action="onClear"
+        bind:action="goAddRecipe"
       />
 
       <view class="safe-bottom"></view>

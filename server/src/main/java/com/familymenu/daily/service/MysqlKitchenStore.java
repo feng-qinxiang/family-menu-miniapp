@@ -148,7 +148,7 @@ public class MysqlKitchenStore {
                 imported,
                 // 首页只展示 4 条，就别把 100 条连 JOIN 全捞出来：feed 的排序是
                 // like_count DESC, id DESC，所以「取第 1 页 4 条」与原来「取 100 条再 limit(4)」是同一批。
-                communityPosts(userId, null, 1, 4),
+                communityPosts(userId, familyId, null, 1, 4),
                 vipStatus(userId)
         );
     }
@@ -258,17 +258,17 @@ public class MysqlKitchenStore {
         return findRecipeCard(recipeId);
     }
 
-    public List<CommunityPost> communityPosts(long userId) {
-        return communityPosts(userId, null);
+    public List<CommunityPost> communityPosts(long userId, long viewerFamilyId) {
+        return communityPosts(userId, viewerFamilyId, null);
     }
 
     /** tag 非空时按标签过滤（JSON_CONTAINS 精确匹配，写法参照 filterRecipes）。 */
-    public List<CommunityPost> communityPosts(long userId, String tag) {
-        return communityPosts(userId, tag, 1, 100);
+    public List<CommunityPost> communityPosts(long userId, long viewerFamilyId, String tag) {
+        return communityPosts(userId, viewerFamilyId, tag, 1, 100);
     }
 
     /** 分页版：page 从 1 起。信息流此前一次拉全量（仅 LIMIT 100 护栏），帖子多了会越拖越慢。 */
-    public List<CommunityPost> communityPosts(long userId, String tag, int page, int size) {
+    public List<CommunityPost> communityPosts(long userId, long viewerFamilyId, String tag, int page, int size) {
         // 两处都是实测出来的问题，改法各对应一条：
         // ① 收藏数原来用 `LEFT JOIN (SELECT post_id, COUNT(*) ... GROUP BY post_id)`，
         //    那个派生表**没有按本页 post 收敛**，每翻一页都要把整张 community_post_favorite
@@ -288,7 +288,8 @@ public class MysqlKitchenStore {
                        CASE WHEN my_like.user_id IS NULL THEN 0 ELSE 1 END AS liked,
                        CASE WHEN p.author_user_id = ? THEN 1 ELSE 0 END AS mine,
                        r.id AS recipe_id, r.title AS recipe_title, r.source_type, r.source_url, r.cuisine,
-                       r.taste_tags_json, r.time_cost, r.servings, r.rating, r.summary, r.cover_image
+                       r.taste_tags_json, r.time_cost, r.servings, r.rating, r.summary, r.cover_image,
+                       r.is_public, r.family_id AS recipe_family_id, r.owner_user_id AS recipe_owner_id
                 FROM community_post p
                 JOIN user_account u ON u.id = p.author_user_id
                 LEFT JOIN recipe r ON r.id = p.recipe_id
@@ -324,6 +325,10 @@ public class MysqlKitchenStore {
                         null,
                         null
                 );
+                recipe = shareableRecipe(recipe, rs.getBoolean("is_public"),
+                        rs.getObject("recipe_family_id", Long.class),
+                        rs.getObject("recipe_owner_id", Long.class),
+                        userId, viewerFamilyId);
             }
             return new CommunityPost(
                     rs.getLong("id"),
@@ -374,7 +379,10 @@ public class MysqlKitchenStore {
                 .toList();
     }
 
-    public List<CommunityPost> myFavoritePosts(long userId) {
+    public List<CommunityPost> myFavoritePosts(long userId, long viewerFamilyId) {
+        // 被运营下架（REMOVED）的帖子不能再从「我的收藏」读出来：此前只按 user_id 过滤，
+        // 收藏过的人照样能看到标题、正文和图片列表，点进去却是一张「因违规已下架」的 404 页。
+        // 可见性规则与 communityPostDetail 一致。
         String sql = """
                 SELECT p.id, p.title, u.nickname AS author, p.content, p.like_count, p.comment_count, p.tags_json, p.images_json, p.audit_status,
                        (SELECT COUNT(*) FROM community_post_favorite f WHERE f.post_id = p.id) AS favorite_count,
@@ -382,13 +390,16 @@ public class MysqlKitchenStore {
                        CASE WHEN my_like.user_id IS NULL THEN 0 ELSE 1 END AS liked,
                        CASE WHEN p.author_user_id = ? THEN 1 ELSE 0 END AS mine,
                        r.id AS recipe_id, r.title AS recipe_title, r.source_type, r.source_url, r.cuisine,
-                       r.taste_tags_json, r.time_cost, r.servings, r.rating, r.summary, r.cover_image
+                       r.taste_tags_json, r.time_cost, r.servings, r.rating, r.summary, r.cover_image,
+                       r.is_public, r.family_id AS recipe_family_id, r.owner_user_id AS recipe_owner_id
                 FROM community_post_favorite my_fav
                 JOIN community_post p ON p.id = my_fav.post_id
                 JOIN user_account u ON u.id = p.author_user_id
                 LEFT JOIN recipe r ON r.id = p.recipe_id
                 LEFT JOIN community_post_like my_like ON my_like.post_id = p.id AND my_like.user_id = ?
                 WHERE my_fav.user_id = ?
+                  AND (p.audit_status = 'APPROVED'
+                       OR (p.audit_status = 'PENDING' AND p.author_user_id = ?))
                 ORDER BY my_fav.id DESC
                 """;
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
@@ -410,6 +421,10 @@ public class MysqlKitchenStore {
                         null,
                         null
                 );
+                recipe = shareableRecipe(recipe, rs.getBoolean("is_public"),
+                        rs.getObject("recipe_family_id", Long.class),
+                        rs.getObject("recipe_owner_id", Long.class),
+                        userId, viewerFamilyId);
             }
             return new CommunityPost(
                     rs.getLong("id"),
@@ -427,11 +442,11 @@ public class MysqlKitchenStore {
                     readStringList(rs.getString("images_json")),
                     rs.getString("audit_status")
             );
-        }, userId, userId, userId);
+        }, userId, userId, userId, userId);
     }
 
     @Transactional
-    public CommunityPost createCommunityPost(long userId, ApiModels.CreateCommunityPostRequest request,
+    public CommunityPost createCommunityPost(long userId, long viewerFamilyId, ApiModels.CreateCommunityPostRequest request,
                                             String auditStatus) {
         String tagsJson = writeStringList(request.tags() != null ? request.tags() : List.of());
         var keyHolder = new org.springframework.jdbc.support.GeneratedKeyHolder();
@@ -457,18 +472,24 @@ public class MysqlKitchenStore {
         if (key == null) {
             throw new IllegalStateException("community post insert failed");
         }
-        return loadCommunityPostById(key.longValue(), userId);
+        return loadCommunityPostById(key.longValue(), userId, viewerFamilyId);
     }
 
     public List<CommunityCommentItem> communityComments(long postId, long viewerUserId) {
+        // 帖子本身的可见性也要过滤：这个端点是匿名公开的（AuthInterceptor 的 PUBLIC_RULES），
+        // 原来只过滤评论自己的 audit_status，于是运营下架帖子后，任何人仍能读到它完整的评论线程。
+        // 规则与 communityPostDetail 一字不差：APPROVED 公开；PENDING 仅作者本人；REMOVED 谁都看不到。
         return jdbcTemplate.query("""
                         SELECT c.id, c.post_id, c.user_id, u.nickname AS author, c.content,
                                DATE_FORMAT(c.created_at, '%Y-%m-%d %H:%i') AS created_at, c.audit_status
                         FROM community_post_comment c
                         JOIN user_account u ON u.id = c.user_id
+                        JOIN community_post p ON p.id = c.post_id
                         WHERE c.post_id = ? AND c.deleted = 0
                           AND (c.audit_status = 'APPROVED'
                                OR (c.audit_status = 'PENDING' AND c.user_id = ?))
+                          AND (p.audit_status = 'APPROVED'
+                               OR (p.audit_status = 'PENDING' AND p.author_user_id = ?))
                         ORDER BY c.id DESC
                         LIMIT 20
                         """,
@@ -481,7 +502,7 @@ public class MysqlKitchenStore {
                         viewerUserId != 0 && viewerUserId == rs.getLong("user_id"),
                         rs.getString("audit_status")
                 ),
-                postId, viewerUserId
+                postId, viewerUserId, viewerUserId
         );
     }
 
@@ -575,11 +596,11 @@ public class MysqlKitchenStore {
         return !existed;
     }
 
-    public CommunityPost toggleCommunityFavorite(long postId, long userId) {
+    public CommunityPost toggleCommunityFavorite(long postId, long userId, long viewerFamilyId) {
         return inTxWithDeadlockRetry(() -> {
             ensureCommunityPostExists(postId);
             toggleRow("community_post_favorite", postId, userId);
-            return findCommunityPost(postId, userId);
+            return findCommunityPost(postId, userId, viewerFamilyId);
         });
     }
 
@@ -587,12 +608,12 @@ public class MysqlKitchenStore {
      * 点赞 / 取消点赞（每人每帖一次）。同步维护 community_post.like_count，
      * 保证排序（ORDER BY like_count DESC）与列表计数一致。
      */
-    public CommunityPost toggleCommunityLike(long postId, long userId) {
+    public CommunityPost toggleCommunityLike(long postId, long userId, long viewerFamilyId) {
         return inTxWithDeadlockRetry(() -> {
             ensureCommunityPostExists(postId);
             toggleRow("community_post_like", postId, userId);
             syncCommunityLikeCount(postId);
-            return findCommunityPost(postId, userId);
+            return findCommunityPost(postId, userId, viewerFamilyId);
         });
     }
 
@@ -691,11 +712,15 @@ public class MysqlKitchenStore {
                 note,
                 reportId
         );
-        // 前端审核语义：REVIEWED = 确认违规 → 帖子下架；REJECTED = 举报不成立 → 帖子保留
+        // 前端审核语义：REVIEWED = 确认违规 → 帖子下架；REJECTED / IGNORED = 举报不成立 → 帖子保持原样。
+        //
+        // ⚠ 这里曾经有个 else 分支把非下架动作一律写成 APPROVED，等于「举报点忽略 = 帖子自动放行」：
+        //   · 一条还停在 PENDING 的帖子（msgSecCheck 跑不通时就会这样）被举报后，管理员一点忽略就公开了；
+        //   · 一条已经下架的帖子，再被举报一次又悄悄恢复可见。
+        // 管理页的两个按钮只发 REMOVED / IGNORED（admin.js），「帖子保留」的正确含义是**什么都不改**——
+        // 帖子的可见性只由「内容治理」的通过/下架（updateCommunityPostAuditStatus）决定，举报处置不碰它。
         if ("REVIEWED".equals(status) || "REMOVED".equals(status)) {
             jdbcTemplate.update("UPDATE community_post SET audit_status = 'REMOVED' WHERE id = ?", postId);
-        } else {
-            jdbcTemplate.update("UPDATE community_post SET audit_status = 'APPROVED' WHERE id = ?", postId);
         }
         return findCommunityReport(reportId);
     }
@@ -1349,6 +1374,40 @@ public class MysqlKitchenStore {
         );
     }
 
+    /**
+     * 帖子关联的菜谱只发给「打得开这道菜的人」。
+     *
+     * 关联菜谱本来只被当成展示字段：`LEFT JOIN recipe r ON r.id = p.recipe_id` 之后无差别塞进响应，
+     * 于是别人家的私房菜（is_public=0 且不属于社区/公共库）会跟着帖子发到所有陌生人手里——
+     * 菜名、菜系、耗时、份量全在，点进去却是 404（菜谱详情有权限校验）。要么别发，要么点得开。
+     *
+     * 规则与 {@link #listRecipes} / 菜谱详情同一套：公共库、社区来源、本家、本人。
+     * 关掉关联时返回 null，前端卡片自然不渲染（它只认 post.recipe 存在与否）。
+     */
+    private RecipeCard shareableRecipe(RecipeCard recipe, boolean isPublic, Long recipeFamilyId, Long recipeOwnerId,
+                                       long viewerUserId, long viewerFamilyId) {
+        if (recipe == null) {
+            return null;
+        }
+        if (isPublic) {
+            return recipe;
+        }
+        if ("community".equals(recipe.sourceType())) {
+            return recipe;
+        }
+        if (recipeFamilyId == null) {
+            // 公共菜谱库（种子菜谱 family_id 为 NULL，is_public=1 那批之外的兜底）
+            return recipe;
+        }
+        if (recipeOwnerId != null && recipeOwnerId == viewerUserId) {
+            return recipe;
+        }
+        if (viewerFamilyId > 0 && recipeFamilyId == viewerFamilyId) {
+            return recipe;
+        }
+        return null;
+    }
+
     private Long findCommunityPostIdByTitle(String title) {
         return jdbcTemplate.query("""
                         SELECT id
@@ -1362,8 +1421,8 @@ public class MysqlKitchenStore {
         );
     }
 
-    private CommunityPost findCommunityPost(long postId, long userId) {
-        CommunityPost found = loadCommunityPostById(postId, userId);
+    private CommunityPost findCommunityPost(long postId, long userId, long viewerFamilyId) {
+        CommunityPost found = loadCommunityPostById(postId, userId, viewerFamilyId);
         if (found == null) {
             // 资源不存在就是 404。原来抛 IllegalArgumentException 会被全局处理器映射成 400，
             // 客户端无法区分"我参数写错了"和"这条帖已经没了"；菜谱详情走的就是 404（见 :767），
@@ -1374,7 +1433,7 @@ public class MysqlKitchenStore {
         return found;
     }
 
-    private CommunityPost loadCommunityPostById(long postId, long userId) {
+    private CommunityPost loadCommunityPostById(long postId, long userId, long viewerFamilyId) {
         String sql = """
                 SELECT p.id, p.title, u.nickname AS author, p.content, p.like_count, p.comment_count, p.tags_json, p.images_json, p.audit_status,
                        COALESCE(fav.favorite_count, 0) AS favorite_count,
@@ -1382,7 +1441,8 @@ public class MysqlKitchenStore {
                        CASE WHEN my_like.user_id IS NULL THEN 0 ELSE 1 END AS liked,
                        CASE WHEN p.author_user_id = ? THEN 1 ELSE 0 END AS mine,
                        r.id AS recipe_id, r.title AS recipe_title, r.source_type, r.source_url, r.cuisine,
-                       r.taste_tags_json, r.time_cost, r.servings, r.rating, r.summary, r.cover_image
+                       r.taste_tags_json, r.time_cost, r.servings, r.rating, r.summary, r.cover_image,
+                       r.is_public, r.family_id AS recipe_family_id, r.owner_user_id AS recipe_owner_id
                 FROM community_post p
                 JOIN user_account u ON u.id = p.author_user_id
                 LEFT JOIN recipe r ON r.id = p.recipe_id
@@ -1419,6 +1479,10 @@ public class MysqlKitchenStore {
                         null,
                         null
                 );
+                recipe = shareableRecipe(recipe, rs.getBoolean("is_public"),
+                        rs.getObject("recipe_family_id", Long.class),
+                        rs.getObject("recipe_owner_id", Long.class),
+                        userId, viewerFamilyId);
             }
             return new CommunityPost(
                     rs.getLong("id"),
@@ -1464,7 +1528,7 @@ public class MysqlKitchenStore {
      * C 端帖子详情：APPROVED 公开可见；PENDING 仅作者本人（与信息流同规则）；
      * REMOVED（运营下架 / 作者删除）一律不可见。不可见与不存在同语义，统一按 not found 抛出。
      */
-    public CommunityPost communityPostDetail(long postId, long userId) {
+    public CommunityPost communityPostDetail(long postId, long userId, long viewerFamilyId) {
         CommunityPostInfo info = communityPostInfo(postId);
         boolean visible = info != null && (
                 ContentSecurityService.STATUS_APPROVED.equals(info.auditStatus())
@@ -1484,7 +1548,7 @@ public class MysqlKitchenStore {
             throw new org.springframework.web.server.ResponseStatusException(
                     org.springframework.http.HttpStatus.NOT_FOUND, "community post not found");
         }
-        return loadCommunityPostById(postId, userId);
+        return loadCommunityPostById(postId, userId, viewerFamilyId);
     }
 
     /** 作者删帖：与运营下架同走 REMOVED，信息流/详情立即不可见，行保留供审计。 */

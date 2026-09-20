@@ -35,14 +35,14 @@
       <view class="mag-vip-go">{{vipStatus.vip ? '查看' : '开通'}} ›</view>
     </view>
 
-    <!-- 游客引导：未绑定手机号（手机号登录开关关闭时隐藏） -->
-    <view class="mag-phone tap-scale" wx:if="{{features.PHONE_LOGIN && currentUser && !currentUser.phoneBound}}" bindtap="goPhoneBind">
+    <!-- 身份引导：见 pages/me/index.js#buildBindCard。微信登录过的账号不显示 -->
+    <view class="mag-phone tap-scale" wx:if="{{bindCard.show}}" bindtap="goBind">
       <view class="mag-phone-ic"><view class="mag-phone-glyph"></view></view>
       <view class="mag-phone-mid">
-        <view class="mag-phone-t">绑定手机号，换设备不丢数据</view>
-        <view class="mag-phone-s">菜谱、菜单、做菜记录云端保存</view>
+        <view class="mag-phone-t">{{bindCard.title}}</view>
+        <view class="mag-phone-s">{{bindCard.desc}}</view>
       </view>
-      <view class="mag-phone-go">去绑定 ›</view>
+      <view class="mag-phone-go">{{bindCard.cta}} ›</view>
     </view>
 
     <!-- 加载失败态 -->

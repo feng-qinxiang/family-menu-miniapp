@@ -175,6 +175,47 @@
   font-weight: 800;
 }
 
+/* 关键词一条都没命中时的出口区块：说明 + 三个动作。
+   文案是"库里还没有"，不是"没找到"——从心愿池跳来时，事实就是自家库没收录，
+   说成"没找到"会让人以为是搜索不好使、反复换词。 */
+.nohit {
+  margin: 0 0 27rpx;
+  padding: var(--pad-card);
+  border: 2rpx dashed var(--line-deep);
+  border-radius: var(--r-card);
+  background: var(--paper-2);
+}
+.nohit-t {
+  font-size: calc(32rpx * var(--fs-mul, 1));
+  font-weight: 800;
+  color: var(--ink);
+}
+.nohit-d {
+  margin-top: 10rpx;
+  font-size: calc(25rpx * var(--fs-mul, 1));
+  color: var(--mut-strong);
+}
+.nohit-acts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  margin-top: 22rpx;
+}
+.nohit-act {
+  padding: 16rpx 26rpx;
+  border-radius: var(--r-pill);
+  background: var(--paper);
+  border: 2rpx solid var(--line);
+  font-size: calc(29rpx * var(--fs-mul, 1));
+  font-weight: 700;
+  color: var(--ink);
+}
+.nohit-act:active {
+  background: var(--pop-soft);
+  border-color: var(--pop);
+  color: var(--pop);
+}
+
 /* 排序 chip 横滑 */
 .sortrow {
   margin-bottom: 31rpx;
