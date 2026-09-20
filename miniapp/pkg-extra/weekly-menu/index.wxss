@@ -103,7 +103,7 @@
   -webkit-text-stroke: 3rpx var(--c-surface);
 }
 .wm-sub {
-  font-size: calc(26rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   color: rgba(255, 255, 255, 0.85);
   font-weight: 400;
 }
@@ -132,7 +132,7 @@
 }
 .wm-wb-d {
   display: block;
-  font-size: calc(24rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--anchor-contrast);
 }
@@ -170,7 +170,7 @@
   border: var(--bd-card);
 }
 .wm-num {
-  font-size: calc(52rpx * var(--fs-mul, 1));
+  font-size: var(--fs-stat);
   font-weight: 900;
   color: var(--ink);
   letter-spacing: -2rpx;
@@ -184,7 +184,7 @@
   margin-left: 4rpx;
 }
 .wm-cap {
-  font-size: calc(22rpx * var(--fs-mul, 1));
+  font-size: calc(23rpx * var(--fs-mul, 1));
   color: var(--mut-strong);
   font-weight: 600;
   margin-top: 8rpx;
@@ -221,7 +221,7 @@
   letter-spacing: -1rpx;
 }
 .wm-dt {
-  font-size: calc(24rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   color: var(--mut);
   font-weight: 600;
 }
@@ -251,7 +251,7 @@
 }
 .wm-dish:last-child { border-bottom: none; }
 .wm-slot {
-  font-size: calc(22rpx * var(--fs-mul, 1));
+  font-size: calc(23rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--mut-2);
   width: 40rpx;
@@ -331,7 +331,7 @@
   color: var(--pop);
 }
 .wm-es {
-  font-size: calc(22rpx * var(--fs-mul, 1));
+  font-size: calc(23rpx * var(--fs-mul, 1));
   color: var(--mut);
   margin-top: 4rpx;
 }

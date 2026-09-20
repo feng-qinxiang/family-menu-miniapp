@@ -252,11 +252,11 @@
   box-sizing: border-box;
 }
 .biometric .bm-txt {
-  font-size: calc(26rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   color: var(--mut);
 }
 .biometric .bm-alt {
-  font-size: calc(26rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   color: var(--wx);
   font-weight: 500;
   margin-top: 26rpx;

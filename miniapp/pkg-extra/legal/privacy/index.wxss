@@ -22,7 +22,7 @@
   display: inline-flex;
   align-items: center;
   gap: 14rpx;
-  font-size: calc(24rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: var(--mut-strong);
   background: var(--paper-2);
@@ -37,7 +37,7 @@
 }
 
 .intro {
-  font-size: calc(26rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   line-height: 1.85;
   color: var(--mut-strong);
   margin: 34rpx 0 4rpx;
@@ -54,7 +54,7 @@
 }
 .sec-no {
   font-family: var(--serif);
-  font-size: calc(26rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: var(--anchor-contrast);
   background: var(--pop);
@@ -68,13 +68,13 @@
   flex: none;
 }
 .sec-title {
-  font-size: calc(35rpx * var(--fs-mul, 1));
+  font-size: calc(36rpx * var(--fs-mul, 1));
   font-weight: 900;
   color: var(--ink-deep);
   letter-spacing: -0.8rpx;
 }
 .sec-body {
-  font-size: calc(26rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   line-height: 1.85;
   color: var(--mut-strong);
   margin-top: 22rpx;
@@ -113,7 +113,7 @@
   letter-spacing: -0.4rpx;
 }
 .perm-desc {
-  font-size: calc(24rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   line-height: 1.65;
   color: var(--mut-strong);
   margin-top: 8rpx;
@@ -238,7 +238,7 @@
   font-weight: 700;
 }
 .ft-text {
-  font-size: calc(24rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   line-height: 1.8;
   color: rgba(251, 248, 243, 0.82);
   margin-top: 14rpx;

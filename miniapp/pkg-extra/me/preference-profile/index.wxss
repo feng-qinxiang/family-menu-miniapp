@@ -61,7 +61,7 @@
 }
 .ov-stat:not(:last-child) { padding-right: 26rpx; }
 .ov-n {
-  font-size: calc(54rpx * var(--fs-mul, 1));
+  font-size: calc(56rpx * var(--fs-mul, 1));
   font-weight: 900;
   color: var(--anchor-contrast);
   letter-spacing: -2rpx;
@@ -70,7 +70,7 @@
 .ov-n.red { color: var(--pop); }
 .ov-u { font-size: var(--fs-sub); font-weight: 700; margin-left: 4rpx; }
 .ov-c {
-  font-size: calc(22rpx * var(--fs-mul, 1));
+  font-size: calc(23rpx * var(--fs-mul, 1));
   color: rgba(255, 255, 255, 0.78);
   margin-top: 6rpx;
   font-weight: 600;
@@ -80,7 +80,7 @@
 .empty-mini {
   text-align: center;
   color: var(--mut);
-  font-size: calc(26rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   padding: 48rpx 28rpx;
 }
 
@@ -129,14 +129,14 @@
 }
 .tcl-ct { font-size: 0.62em; font-weight: 700; opacity: 0.7; }
 .tcl-xl {
-  font-size: calc(48rpx * var(--fs-mul, 1));
+  font-size: calc(50rpx * var(--fs-mul, 1));
   padding: 25rpx 38rpx;
   background: var(--pop);
   color: var(--anchor-contrast);
   box-shadow: var(--sh-pop);
 }
 .tcl-lg {
-  font-size: calc(38rpx * var(--fs-mul, 1));
+  font-size: calc(36rpx * var(--fs-mul, 1));
   padding: 21rpx 33rpx;
   background: var(--pop-soft);
   color: var(--pop);
@@ -192,7 +192,7 @@
 .mid-sb { font-size: var(--fs-cap); color: var(--mut-strong); margin-top: 8rpx; }
 .cnt { flex: none; text-align: right; }
 .cnt-v {
-  font-size: calc(38rpx * var(--fs-mul, 1));
+  font-size: calc(36rpx * var(--fs-mul, 1));
   font-weight: 900;
   color: var(--ink-deep);
   font-family: var(--serif);

@@ -79,7 +79,7 @@
 }
 .fam-name {
   margin-top: 6rpx;
-  font-size: calc(48rpx * var(--fs-mul, 1));
+  font-size: calc(50rpx * var(--fs-mul, 1));
   font-weight: 900;
   letter-spacing: -1rpx;
   color: var(--anchor-contrast);
@@ -152,7 +152,7 @@
   align-items: center;
   justify-content: center;
   color: var(--anchor-contrast);
-  font-size: calc(37rpx * var(--fs-mul, 1));
+  font-size: calc(36rpx * var(--fs-mul, 1));
   font-weight: 800;
   font-family: var(--sans);
 }

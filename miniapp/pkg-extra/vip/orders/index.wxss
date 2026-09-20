@@ -98,7 +98,7 @@
   gap: 9rpx;
   padding: 9rpx 21rpx;
   border-radius: var(--r-pill);
-  font-size: calc(20rpx * var(--fs-mul, 1));
+  font-size: calc(21rpx * var(--fs-mul, 1));
   font-weight: 800;
   letter-spacing: 1rpx;
 }
@@ -166,7 +166,7 @@
 }
 .ocard-tag {
   margin-top: 8rpx;
-  font-size: calc(22rpx * var(--fs-mul, 1));
+  font-size: calc(23rpx * var(--fs-mul, 1));
   color: var(--mut-strong);
 }
 .ocard-price {
@@ -200,7 +200,7 @@
   border-left: 2rpx solid var(--paper-2);
 }
 .dlab {
-  font-size: calc(20rpx * var(--fs-mul, 1));
+  font-size: calc(21rpx * var(--fs-mul, 1));
   letter-spacing: 1.4rpx;
   font-weight: 800;
   text-transform: uppercase;

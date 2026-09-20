@@ -221,7 +221,7 @@
 }
 .pe-pill {
   padding: 14rpx 30rpx;
-  font-size: calc(26rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   border-radius: var(--r-pill);
 }
 /* 选中态：番茄红软底 + 红字红框（区别于全局 .chip.on 的深墨底） */
@@ -249,7 +249,7 @@
 }
 .pe-tag {
   padding: 14rpx 30rpx;
-  font-size: calc(26rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   border-radius: var(--r-pill);
 }
 .pe-tag.on {

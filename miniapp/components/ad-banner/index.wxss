@@ -37,7 +37,7 @@
   border-radius: var(--r-md);
   background: var(--pop);
   color: var(--anchor-contrast);
-  font-size: calc(24rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: var(--w-bold);
   box-shadow: var(--sh-pop);
 }
@@ -67,7 +67,7 @@
 }
 
 .notice-desc {
-  font-size: calc(22rpx * var(--fs-mul, 1));
+  font-size: calc(23rpx * var(--fs-mul, 1));
   color: var(--c-text-muted);
   margin-top: 4rpx;
 }
@@ -76,7 +76,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: calc(22rpx * var(--fs-mul, 1));
+  font-size: calc(23rpx * var(--fs-mul, 1));
   color: var(--anchor-contrast);
   margin-top: 12rpx;
   /* 触控高度 88rpx：原 8rpx 上下内边距只有约 50rpx 高，容易点空 */

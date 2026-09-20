@@ -51,7 +51,7 @@
   padding: 14rpx 28rpx;
   border-radius: var(--r-pill);
   background: var(--paper-2);
-  font-size: calc(27rpx * var(--fs-mul, 1));
+  font-size: calc(28rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: var(--mut-strong);
 }
@@ -86,7 +86,7 @@
    26rpx 的灯泡用 CSS 画出来在截图里读作"气球"，而彩色 emoji 吃不到 color、
    不跟深色档翻——标签既是单色可着色，又比小图标更好认。 */
 .k-order-tag {
-  font-size: calc(22rpx * var(--fs-mul, 1));
+  font-size: calc(23rpx * var(--fs-mul, 1));
   line-height: 1.55;
   font-weight: 800;
   letter-spacing: 1rpx;
@@ -157,7 +157,7 @@
 .k-title {
   flex: 1;
   min-width: 0;
-  font-size: calc(31rpx * var(--fs-mul, 1));
+  font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--ink);
 }
@@ -239,7 +239,7 @@
      两键横向 flex:1 且留有 14rpx 间距，加高不会互相误触 */
   min-height: 88rpx;
   border-radius: var(--r-pill);
-  font-size: calc(27rpx * var(--fs-mul, 1));
+  font-size: calc(28rpx * var(--fs-mul, 1));
   font-weight: 800;
   box-sizing: border-box;
 }

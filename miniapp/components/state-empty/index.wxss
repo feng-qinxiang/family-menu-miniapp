@@ -34,7 +34,7 @@
 
 /* 文案 */
 .se-title {
-  font-size: calc(37rpx * var(--fs-mul, 1));
+  font-size: calc(36rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--ink);
   letter-spacing: -0.8rpx;
@@ -42,7 +42,7 @@
 }
 .se-desc {
   margin-top: 16rpx;
-  font-size: calc(26rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   color: var(--mut-strong);
   line-height: 1.5;
   max-width: 480rpx;

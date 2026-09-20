@@ -36,7 +36,7 @@
   border-radius: var(--r-pill);
   background: var(--pop);
   color: var(--anchor-contrast);
-  font-size: calc(26rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: 800;
   box-shadow: var(--sh-pop);
 }
@@ -71,7 +71,7 @@
   top: 150rpx;
   right: 26rpx;
   font-family: var(--serif);
-  font-size: calc(420rpx * var(--fs-mul, 1));
+  font-size: var(--fs-hero-bignum);
   font-weight: 700;
   line-height: 1;
   color: rgba(255, 255, 255, 0.07);
@@ -103,7 +103,7 @@
   -webkit-text-stroke: 3rpx var(--c-surface);
 }
 .hero-sub {
-  font-size: calc(26rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   color: rgba(255, 255, 255, 0.85);
   line-height: 1.5;
   max-width: 560rpx;
@@ -119,8 +119,8 @@
   border-radius: var(--r-chip);
   padding: 22rpx 26rpx;
 }
-.cstat-num { font-size: calc(46rpx * var(--fs-mul, 1)); font-weight: 900; letter-spacing: -2rpx; color: var(--anchor-contrast); }
-.cstat-lab { font-size: var(--fs-mini); color: rgba(255, 255, 255, 0.7); letter-spacing: 1rpx; margin-top: 4rpx; }
+.cstat-num { font-size: var(--fs-stat); font-weight: 900; letter-spacing: -2rpx; color: var(--anchor-contrast); }
+.cstat-lab { font-size: var(--fs-mini); color: rgba(255, 255, 255, 0.7); letter-spacing: 0; margin-top: 8rpx; }
 
 /* ===================== Sheet ===================== */
 .sheet {
@@ -160,17 +160,17 @@
 .pmeta { flex: 1; min-width: 0; }
 .pname { font-size: calc(29rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--ink); letter-spacing: -0.4rpx; }
 .pstats {
-  font-size: calc(22rpx * var(--fs-mul, 1));
+  font-size: calc(23rpx * var(--fs-mul, 1));
   color: var(--mut);
   margin-top: 6rpx;
   display: flex;
   align-items: center;
   gap: 10rpx;
 }
-.pstats-heart::before { content: "\2665\FE0E"; color: var(--pop); font-size: calc(24rpx * var(--fs-mul, 1)); line-height: 1; }
-.ptime { font-size: calc(22rpx * var(--fs-mul, 1)); color: var(--mut-2); flex: none; }
+.pstats-heart::before { content: "\2665\FE0E"; color: var(--pop); font-size: calc(25rpx * var(--fs-mul, 1)); line-height: 1; }
+.ptime { font-size: calc(23rpx * var(--fs-mul, 1)); color: var(--mut-2); flex: none; }
 .ptitle { font-size: calc(36rpx * var(--fs-mul, 1)); font-weight: 900; color: var(--ink); letter-spacing: -1rpx; margin: 26rpx 0 13rpx; line-height: 1.25; }
-.pcontent { font-size: calc(26rpx * var(--fs-mul, 1)); color: var(--mut-strong); line-height: 1.6; }
+.pcontent { font-size: calc(25rpx * var(--fs-mul, 1)); color: var(--mut-strong); line-height: 1.6; }
 .pphoto { display: block; width: 100%; height: 322rpx; border-radius: var(--r-chip); margin-top: var(--r-md); }
 
 /* 关联菜谱 */
@@ -186,9 +186,9 @@
 }
 .precipe .rthumb { width: var(--tile-row-sm); height: var(--tile-row-sm); border-radius: 22rpx; flex: none; }
 .precipe .rmid { flex: 1; min-width: 0; }
-.precipe .rk { font-family: var(--serif); font-style: italic; font-size: calc(20rpx * var(--fs-mul, 1)); color: var(--gold-deep); font-weight: 700; }
+.precipe .rk { font-family: var(--serif); font-style: italic; font-size: calc(21rpx * var(--fs-mul, 1)); color: var(--gold-deep); font-weight: 700; }
 .precipe .rn { font-size: calc(28rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--ink); margin-top: 2rpx; }
-.precipe .rm { font-size: calc(22rpx * var(--fs-mul, 1)); color: var(--mut); margin-top: 6rpx; }
+.precipe .rm { font-size: calc(23rpx * var(--fs-mul, 1)); color: var(--mut); margin-top: 6rpx; }
 .precipe .rgo {
   width: 58rpx;
   height: 58rpx;
@@ -210,7 +210,7 @@
 /* 标签 */
 .ptags { display: flex; flex-wrap: wrap; gap: 14rpx; margin-top: 24rpx; }
 .p-tag {
-  font-size: calc(22rpx * var(--fs-mul, 1));
+  font-size: calc(23rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: var(--gold-deep);
   background: var(--paper-2);
@@ -231,7 +231,7 @@
   display: flex;
   align-items: center;
   gap: 10rpx;
-  font-size: calc(24rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: var(--mut);
   /* 触控高度 88rpx：原上下内边距只有 8rpx，实际可点高度约 53rpx */
@@ -265,7 +265,7 @@
 }
 .ico-warn::before { content: "\26A0\FE0E"; }
 .pa-spacer { flex: 1; }
-.pa-report { font-size: calc(22rpx * var(--fs-mul, 1)); color: var(--mut-2); font-weight: 600; display: flex; align-items: center; gap: 8rpx; }
+.pa-report { font-size: calc(23rpx * var(--fs-mul, 1)); color: var(--mut-2); font-weight: 600; display: flex; align-items: center; gap: 8rpx; }
 
 /* ===================== 加载骨架（与 .pcard 同形状，加载完不跳版） ===================== */
 .cf-skel-card {
@@ -275,8 +275,8 @@
   padding: 34rpx;
   margin-bottom: 34rpx;
 }
-.cf-skel-head { width: 84rpx; height: 84rpx; border-radius: 26rpx; background: var(--paper-2); }
-.cf-skel-line { height: 26rpx; margin-top: 26rpx; border-radius: var(--r-xs); background: var(--paper-2); }
+.cf-skel-head { width: 84rpx; height: 84rpx; border-radius: 26rpx; background: var(--skeleton); }
+.cf-skel-line { height: 26rpx; margin-top: 26rpx; border-radius: var(--r-xs); background: var(--skeleton); }
 .cf-skel-line--short { width: 55%; }
 
 /* ===================== 热门话题 ===================== */
@@ -294,12 +294,12 @@
   padding: 8rpx 20rpx;
 }
 .tchip .tt { font-size: var(--fs-sub); font-weight: 800; color: var(--ink); letter-spacing: -0.4rpx; }
-.tchip .th { font-size: calc(20rpx * var(--fs-mul, 1)); font-weight: 700; color: var(--pop); background: var(--pop-soft); padding: 4rpx 14rpx; border-radius: 20rpx; }
+.tchip .th { font-size: calc(21rpx * var(--fs-mul, 1)); font-weight: 700; color: var(--pop); background: var(--pop-soft); padding: 4rpx 14rpx; border-radius: 20rpx; }
 
 /* ===================== 流末 ===================== */
 .feed-end { display: flex; align-items: center; justify-content: center; gap: 22rpx; margin: 40rpx 0 8rpx; }
 .feed-end::before, .feed-end::after { content: ""; height: 2rpx; width: 88rpx; background: var(--c-border); }
-.feed-end text { font-size: calc(22rpx * var(--fs-mul, 1)); color: var(--mut-strong); letter-spacing: 2rpx; font-weight: 600; }
+.feed-end text { font-size: calc(23rpx * var(--fs-mul, 1)); color: var(--mut-strong); letter-spacing: 2rpx; font-weight: 600; }
 
 /* ===================== 发帖 FAB ===================== */
 .fab {
@@ -369,7 +369,7 @@
   border-radius: var(--r-pill);
   background: var(--paper-2);
   color: var(--mut-strong);
-  font-size: calc(26rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   border: 1rpx solid transparent;
 }
 .rp-reason--on {

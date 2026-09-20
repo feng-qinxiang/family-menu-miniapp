@@ -153,14 +153,14 @@
   justify-content: center;
 }
 .mkt-ring-txt .big {
-  font-size: calc(48rpx * var(--fs-mul, 1));
+  font-size: var(--fs-stat);
   font-weight: 900;
   letter-spacing: -2rpx;
   line-height: 1;
   color: var(--anchor-contrast);
 }
 .mkt-ring-txt .cap {
-  font-size: calc(20rpx * var(--fs-mul, 1));
+  font-size: calc(21rpx * var(--fs-mul, 1));
   color: rgba(255, 255, 255, 0.72);
   margin-top: 6rpx;
   letter-spacing: 1rpx;
@@ -222,7 +222,7 @@
 .mkt-gen { font-family: var(--serif); font-style: italic; font-size: var(--fs-cap); color: var(--mut); font-weight: 700; }
 .mkt-gcount {
   margin-left: auto;
-  font-size: calc(22rpx * var(--fs-mul, 1));
+  font-size: calc(23rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: var(--mut);
   background: var(--paper-2);
@@ -287,7 +287,7 @@
 .mkt-imid .src.pantry { color: var(--pine); background: var(--c-accent-soft); }
 .mkt-del {
   flex: none;
-  font-size: calc(24rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: var(--mut);
   padding: 26rpx 24rpx;   /* 触点 ≥88rpx（设计规范），原来的 64rpx 是自行放宽的 */
@@ -361,7 +361,7 @@
 .mkt-ph { color: var(--mut-2); }
 .mkt-addbtn {
   flex: none;
-  font-size: calc(26rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--anchor-contrast);
   background: var(--anchor);
@@ -374,7 +374,7 @@
 .mkt-quicks-inner { display: inline-flex; gap: 16rpx; padding: 0 46rpx; }
 .mkt-quick {
   flex: none;
-  font-size: calc(24rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: var(--mut-strong);
   background: var(--paper-2);
@@ -438,8 +438,8 @@
   border-bottom: 2rpx solid var(--paper-2);
   margin-bottom: 6rpx;
 }
-.sp-pcat-label { font-size: calc(24rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--gold-deep); letter-spacing: 1rpx; }
-.sp-pcat-count { font-size: calc(22rpx * var(--fs-mul, 1)); color: var(--mut); }
+.sp-pcat-label { font-size: calc(25rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--gold-deep); letter-spacing: 1rpx; }
+.sp-pcat-count { font-size: calc(23rpx * var(--fs-mul, 1)); color: var(--mut); }
 .sp-pitem {
   display: flex;
   align-items: center;
@@ -448,7 +448,7 @@
   border-bottom: 2rpx solid var(--paper-2);
 }
 .sp-pitem-name { flex: 1; min-width: 0; font-size: calc(28rpx * var(--fs-mul, 1)); font-weight: 700; color: var(--ink); }
-.sp-pitem-qty { font-size: calc(24rpx * var(--fs-mul, 1)); color: var(--mut-strong); font-weight: 600; }
+.sp-pitem-qty { font-size: calc(25rpx * var(--fs-mul, 1)); color: var(--mut-strong); font-weight: 600; }
 .sp-pitem-del {
   position: relative;
   width: 64rpx; height: 64rpx;   /* 适老触点 ≥64rpx（原 48rpx 偏小） */

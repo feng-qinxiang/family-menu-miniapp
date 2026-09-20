@@ -215,7 +215,7 @@
 
 .rc-add-mark {
   color: var(--anchor-contrast);
-  font-size: calc(38rpx * var(--fs-mul, 1));
+  font-size: calc(36rpx * var(--fs-mul, 1));
   font-weight: 700;
   line-height: 1;
 }
@@ -265,7 +265,7 @@
 
 .rc-row-sub-i {
   color: var(--mut);
-  font-size: calc(24rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   line-height: 1.3;
 }
 

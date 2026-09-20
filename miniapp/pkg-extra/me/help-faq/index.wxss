@@ -69,7 +69,7 @@
   padding: 40rpx 8rpx 8rpx;
   font-family: var(--serif);
   font-style: italic;
-  font-size: calc(24rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   letter-spacing: 1rpx;
   color: var(--gold-deep);
   font-weight: 700;
@@ -227,7 +227,7 @@
 .contact-p {
   display: block;
   margin-top: 12rpx;
-  font-size: calc(24rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   line-height: 1.55;
   color: rgba(255, 255, 255, 0.62);
 }

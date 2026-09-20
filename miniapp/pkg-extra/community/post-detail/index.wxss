@@ -27,7 +27,7 @@
   border-radius: 50%;
   font-family: var(--serif);
   font-weight: 700;
-  font-size: calc(38rpx * var(--fs-mul, 1));
+  font-size: calc(36rpx * var(--fs-mul, 1));
   color: var(--anchor-contrast);
   box-shadow: 0 4rpx 12rpx rgba(60, 40, 20, 0.12);
 }
@@ -197,7 +197,7 @@
 }
 /* 图标一律 22rpx 见方：.ricon-heart / .ricon-star 是定宽高的 CSS 形状，
    而 app.wxss 的 .ico-* 用 em（1em≈图标框），所以这里把字号压到 22rpx 让一排对齐。 */
-.react .ricon { font-size: calc(22rpx * var(--fs-mul, 1)); line-height: 1; }
+.react .ricon { font-size: calc(23rpx * var(--fs-mul, 1)); line-height: 1; }
 /* 几何心/星，不用 emoji */
 .ricon-heart,
 .ricon-star {
@@ -233,7 +233,7 @@
   gap: 16rpx;
 }
 .cs-title {
-  font-size: calc(38rpx * var(--fs-mul, 1));
+  font-size: calc(36rpx * var(--fs-mul, 1));
   font-weight: 900;
   color: var(--ink);
   letter-spacing: -0.8rpx;
@@ -259,7 +259,7 @@
   gap: 16rpx;
 }
 .cname {
-  font-size: calc(26rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--ink);
   flex: 1;
@@ -272,7 +272,7 @@
 }
 .ctext {
   margin-top: 10rpx;
-  font-size: calc(26rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   line-height: 1.6;
   color: var(--ink-deep);
 }
@@ -295,7 +295,7 @@
   background: var(--paper-2);
   border: 2rpx solid var(--c-border);
   padding: 0 34rpx;
-  font-size: calc(26rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   color: var(--ink);
 }
 .field-ph { color: var(--mut); }

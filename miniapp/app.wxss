@@ -45,6 +45,13 @@ page {
   --fs-sub: 25rpx;       /* 次要说明 */
   --fs-cap: 23rpx;       /* 辅助/标签 */
   --fs-mini: 21rpx;      /* 角标/统计 */
+  /* 统计卡的大数字：实测同一个角色写了 46/50/56/64/72 五种，
+     并排看就是"长得一样的卡，数字忽大忽小"。统一一档。 */
+  --fs-stat: 56rpx;
+  /* hero 右下角那枚装饰大数字：实测 366/384/404/408/410/420 都出现过，
+     同一角色六种尺寸（且 right 偏移 18/20/26/30 各写一套）。统一一档一个偏移。 */
+  --fs-hero-bignum: 420rpx;
+  --hero-bignum-right: 26rpx;
   --fs-tiny: 19rpx;      /* 极弱提示（尽量不用） */
 
   /* —— 新 token：圆角（下厨房式小圆角）—— */
@@ -292,7 +299,7 @@ page.font-lg, .font-lg {
 .container {
   box-sizing: border-box;
   min-height: 100vh;
-  padding: 22rpx 46rpx 186rpx;
+  padding: 22rpx 46rpx calc(env(safe-area-inset-bottom) + 60rpx);
 }
 .safe-bottom { padding-bottom: calc(env(safe-area-inset-bottom) + 16rpx); }
 .safe-top { padding-top: env(safe-area-inset-top); }
@@ -356,7 +363,9 @@ page.font-lg, .font-lg {
   color: var(--ink);
   letter-spacing: -2rpx;
   margin-top: 10rpx;
-  line-height: 0.96;
+  /* 原来 0.96：区块标题是组件属性拼出来的（"家里常做的菜"这种 6-7 字），
+     窄屏或大字档一换行，两行字就互相压住 2rpx。留 1.1 仍然紧凑但不咬字。 */
+  line-height: 1.1;
   font-family: var(--sans);
 }
 .shead .shead-title .pop { color: var(--pop); }
@@ -542,7 +551,7 @@ button[disabled] {
 .field-error-msg {
   display: block;
   margin-top: 8rpx;
-  font-size: calc(22rpx * var(--fs-mul, 1));
+  font-size: calc(23rpx * var(--fs-mul, 1));
   font-weight: 600;
   color: #d8342c;
 }
@@ -571,7 +580,7 @@ button[disabled] {
 .primary-btn:active, .ghost-btn:active, .accent-btn:active { transform: scale(0.98); }
 .textarea { box-sizing: border-box; width: 100%; min-height: 220rpx; padding: 24rpx; border: var(--bd-card); border-radius: var(--r-card); background: var(--c-surface); color: var(--ink); font-size: calc(28rpx * var(--fs-mul, 1)); line-height: 1.5; }
 .empty-state { display: flex; flex-direction: column; align-items: center; padding: 96rpx 28rpx; color: var(--mut); text-align: center; }
-.empty-text { margin-top: 16rpx; color: var(--mut); font-size: calc(26rpx * var(--fs-mul, 1)); }
+.empty-text { margin-top: 16rpx; color: var(--mut); font-size: calc(25rpx * var(--fs-mul, 1)); }
 .skeleton { overflow: hidden; border-radius: var(--r-card); background: var(--skeleton); }
 
 /* ============================================================

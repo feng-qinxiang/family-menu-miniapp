@@ -32,6 +32,10 @@
  *  19. JS 里置的 *Failed / *Error 状态位是否真的被 WXML 读到（置了没人读 = 失败显示成空态）
  *  20. WXML 里的图标是否用了 emoji（第 17 项只管 WXSS 的 content:，管不到渲染层）
  *  21. 行内图块（类名带 thumb）的边长是否走 app.wxss 的 --dish-thumb / --tile-* 规格表
+ *  22. var(--token, 兜底) 的兜底值是否等于 token 定义值（兜底写错平时看不见）
+ *  23. tab 页底部留白是否真的让开自定义 tabBar（含 --tabbar-h 或安全区）
+ *  24. 字号是否在 12 档刻度上（标尺外的展示级尺寸走冻结白名单，禁止新增）
+ *  25. 每条声明是否写成 property: value（花括号配平查不出非法声明，模拟器会整包编译失败）
  *
  * 退出码：有问题返回 1（可直接用于 CI）
  */
@@ -52,8 +56,11 @@ const walk = (dir, out = []) => {
   return out;
 };
 
-/** 去掉 /* *\/ 注释，避免注释里的花括号干扰配平统计 */
+/** 去掉注释，避免注释里的花括号干扰配平统计 */
 const stripComments = (src) => src.replace(/\/\*[\s\S]*?\*\//g, '');
+/** 把注释内容抹成空格但**保留换行**：这样报出来的行号仍然对得上原文件。
+    第一版直接用 stripComments 的结果算行号，注释越多的文件行号偏得越远（实测 app.wxss 报 435 实际在 442）。 */
+const blankComments = (src) => src.replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, ' '));
 
 // ---- 1. app.json 页面文件齐全（主包 + 分包） ----
 const appJsonPath = path.join(ROOT, 'app.json');
@@ -816,6 +823,129 @@ for (const file of files) {
     const line = src.slice(0, src.indexOf(block)).split('\n').length;
     problems.push(`图块边长写死 ${r}:${line} ${sel} -> width/height 是 ${w[1].trim()} / ${h[1].trim()}，`
       + '没走 app.wxss 的 --dish-thumb / --tile-* 规格表（要放新尺寸就先在表里加一个有名字的角色，别在页面里写裸数值）');
+  }
+}
+
+// ---- 22. var(--token, 兜底) 的兜底值必须等于 token 的定义值 ----
+// 兜底值平时永远看不见，所以它写错也不会被发现——直到某天 token 因为作用域/拼写/主题
+// 没解析出来，那一处就**静默变成另一套设计**（实测抓到 --r-lg 兜底 28 而 token 是 24、
+// --r-card 兜底 28 而 token 是 16、--pine 兜底写死色值绕过了主题变量）。
+// --fs-mul 是唯一的合法例外：它的兜底 1 表示"没进大字档作用域"，本来就是另一个语义。
+// --themeXxx 也是合法例外：它是 theme.json 的每档变量，兜底写浅色档值是微信要求的写法
+// （themeLocation 解析不到时要有个落点），不是"另一套设计"。
+const FALBACK_OK = new Set(['--fs-mul']);
+const FALLBACK_OK_PREFIX = ['--theme'];
+const tokenDefs = {};
+{
+  const src = blankComments(fs.readFileSync(path.join(ROOT, 'app.wxss'), 'utf8'));
+  for (const m of src.matchAll(/^\s*(--[\w-]+)\s*:\s*([^;]+);/gm)) {
+    const v = m[2].trim();
+    // 同名多处定义时取"首见值"作为基准；若某 token 在 .font-lg 里换档（只有 --fs-*），
+    // 它的兜底本来就不该等于任何一档 —— 这类一律要求"不写兜底"，所以只比对唯一值 token
+    if (tokenDefs[m[1]] === undefined) tokenDefs[m[1]] = v;
+    else if (tokenDefs[m[1]] !== v) tokenDefs[m[1]] = null;   // 多档值，跳过比对
+  }
+}
+for (const file of files) {
+  if (!file.endsWith('.wxss')) continue;
+  const r = rel(file);
+  const src = blankComments(fs.readFileSync(file, 'utf8'));
+  for (const m of src.matchAll(/var\((--[\w-]+)\s*,\s*([^)]+)\)/g)) {
+    const [full, tok, fb] = [m[0], m[1], m[2].trim()];
+    if (FALBACK_OK.has(tok) || FALLBACK_OK_PREFIX.some((pre) => tok.startsWith(pre))) continue;
+    const def = tokenDefs[tok];
+    if (def === undefined) {
+      problems.push(`兜底引用了未定义的 token ${r}:${src.slice(0, m.index).split('\n').length} -> ${full}（app.wxss 里没有 ${tok}）`);
+    } else if (def !== null && def.replace(/\s+/g, '') !== fb.replace(/\s+/g, '')) {
+      problems.push(`var() 兜底值与 token 不一致 ${r}:${src.slice(0, m.index).split('\n').length} -> ${full}，`
+        + `而 app.wxss 里 ${tok}: ${def}（token 一旦解析失败就静默变成另一套设计；要么去掉兜底，要么和 token 同值）`);
+    }
+  }
+}
+
+// ---- 23. tab 页的底部留白必须真的让开自定义 tabBar ----
+// 自定义 tabBar 是独立图层，页面内容不会被它顶开，所以每个 tab 页都要自己留出
+// calc(var(--tabbar-h) + 呼吸) 或至少含 env(safe-area-inset-bottom)。
+// 实测五个 tab 页原本各写一套：186 / 186 / 220 / 340 / env+160rpx，其中三个不含安全区
+// —— 刘海机上 tabBar 实高约 196rpx，最后一张卡就被压在下面。
+const TAB_PAGES = (app.tabBar && app.tabBar.list ? app.tabBar.list.map((t) => t.pagePath) : []);
+for (const page of TAB_PAGES) {
+  const wxssPath = path.join(ROOT, page + '.wxss');
+  if (!fs.existsSync(wxssPath)) continue;
+  const src = blankComments(fs.readFileSync(wxssPath, 'utf8'));
+  const blocks = src.match(/[^{}]+\{[^{}]*\}/g) || [];
+  for (const b of blocks) {
+    const body = b.slice(b.indexOf('{') + 1);
+    const decls = [/(?:^|;)\s*padding-bottom\s*:([^;]+)/, /(?:^|;)\s*padding\s*:([^;]+)/]
+      .map((re) => re.exec(body)).filter(Boolean).map((m) => m[1].trim());
+    for (const val of decls) {
+      // 只看"底边"是一个裸 rpx 且 ≥100rpx 的写法（小值是本侧内边距，不该管）
+      const bottom = val.split(/\s+/).pop();
+      if (!/^(\d{3,})rpx$/.test(bottom)) continue;
+      if (Number(bottom.replace('rpx', '')) < 100) continue;
+      if (/var\(--tabbar-h\)|env\(safe-area-inset-bottom\)/.test(val)) continue;
+      problems.push(`tab 页底部留白写死裸值 ${rel(wxssPath)} -> padding 底边 ${bottom} 既不含 var(--tabbar-h) 也不含 env(safe-area-inset-bottom)，`
+        + '刘海机上最后一屏会被自定义 tabBar 压住');
+    }
+  }
+}
+
+// ---- 24. 字号必须在 12 档刻度上；标尺外的显示级尺寸走冻结白名单 ----
+// 设计规范第 63 行：「禁止使用标尺外的字号（历史遗留的 22/24/26rpx 只允许出现在
+// 全局类 .tag/.section-desc/.chip 中）」。这条规则此前从没被执行：实测违规 296 处。
+// 本轮把 ≤2rpx 的 241 处就近吸附回刻度（20→21、22→23、24→25、26→25…），
+// 剩下 46 处是 40~442 的展示级尺寸（大数字、装饰字），一次性冻结：
+// 出现**新的**标尺外值即失败，要加档就先把角色写进 app.wxss 的 token 表。
+const FS_SCALE = new Set([96, 72, 56, 50, 36, 32, 29, 28, 25, 23, 21, 19]);
+const FS_FROZEN = new Set([40, 42, 44, 46, 60, 62, 66, 76, 78, 84, 88, 92, 116, 119, 150, 250, 360, 420, 442]);
+const FS_LEGACY_CTX = /(^|[\s,])(\.tag|\.chip|\.section-desc|\.sdesc)(\s|,|\{|\.|:|>|$)/;
+for (const file of files) {
+  if (!file.endsWith('.wxss')) continue;
+  const r = rel(file);
+  const src = blankComments(fs.readFileSync(file, 'utf8'));
+  for (const b of src.match(/[^{}]+\{[^{}]*\}/g) || []) {
+    const sel = b.slice(0, b.indexOf('{'));
+    // 规范第 63 行点名允许的三档历史值
+    if (FS_LEGACY_CTX.test(sel)) continue;
+    for (const m of b.matchAll(/font-size\s*:\s*calc\(\s*(\d+(?:\.\d+)?)rpx/g)) {
+      const v = Number(m[1]);
+      if (FS_SCALE.has(v) || FS_FROZEN.has(v)) continue;
+      const line = src.slice(0, src.indexOf(b)).split('\n').length;
+      problems.push(`字号不在刻度上 ${r}:${line} ${sel.trim().slice(0, 34)} -> ${v}rpx（12 档见 docs/UI设计规范.md；`
+        + '要放新的展示级尺寸，先在 app.wxss 里给它一个有名字的 token，别在页面里写裸值）');
+    }
+  }
+}
+
+// ---- 25. 每条声明必须写成 property: value ----
+// 第 3 项只数花括号配不配平，查不出"括号都在、但声明本身是垃圾"的写法。
+// 这条是被自己的事故逼出来的：一个批量脚本把 `background: var(--paper-2)` 改成
+// `var(--skeleton)r(--paper-2)`（偏移量算错，覆盖了属性名前缀），
+// 花括号照样配平、静态检查全绿，**模拟器整包 WXSS 编译失败、所有页面白屏**。
+// 判据：块内以 `;` 分隔的每一段，必须是「标识符 : 值」的形状；
+// 允许 @media/@keyframes 等 at-rule 与嵌套选择器，避免误伤。
+const badDecls = new Set();
+const DECL_OK_HEAD = /^(@|\*|\/\*|from|to|to\s*\{|%\s*$|[.#&a-zA-Z:_\[][^:]*\{\s*$)/;
+for (const file of files) {
+  if (!file.endsWith('.wxss')) continue;
+  const r = rel(file);
+  const src = blankComments(fs.readFileSync(file, 'utf8'));
+  for (const b of src.match(/[^{}]+\{([^{}]*)\}/g) || []) {
+    const body = b.slice(b.indexOf('{') + 1, b.lastIndexOf('}'));
+    for (const raw of body.split(';')) {
+      const decl = raw.trim();
+      if (!decl || DECL_OK_HEAD.test(decl)) continue;
+      if (/^[a-zA-Z-][a-zA-Z0-9-]*\s*:/.test(decl)) continue;      // 正常声明
+      if (/^[a-zA-Z-][a-zA-Z0-9-]*\s*$/.test(decl)) continue;      // 只写属性名等着下一段（少见，放过）
+      // 同一个坏声明往往出现在好几个块里（比如整页骨架样式），按「文件 + 内容」去重，
+      // 否则一条错误刷屏四五遍，反而把别的问题埋掉
+      const key = r + '::' + decl;
+      if (badDecls.has(key)) continue;
+      badDecls.add(key);
+      const line = src.slice(0, src.indexOf(decl.slice(0, 24))).split('\n').length;
+      problems.push(`非法声明 ${r}:${line} -> 「${decl.slice(0, 60)}」不是 property: value 的形状 `
+        + '（花括号仍然配平，所以第 3 项查不出来，但 WXSS 编译会直接失败、全站白屏）');
+    }
   }
 }
 

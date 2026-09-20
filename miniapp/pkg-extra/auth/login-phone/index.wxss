@@ -208,7 +208,7 @@
   transform: rotate(-45deg) translateY(-2rpx);
 }
 .lp-agree-tx {
-  font-size: calc(22rpx * var(--fs-mul, 1));
+  font-size: calc(23rpx * var(--fs-mul, 1));
   line-height: 1.6;
   color: var(--mut-strong);
 }

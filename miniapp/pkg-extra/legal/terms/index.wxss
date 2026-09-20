@@ -43,7 +43,7 @@
   align-items: center;
   gap: 14rpx;
   margin-top: 24rpx;
-  font-size: calc(24rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   color: var(--mut-strong);
 }
 .effdate-ico {
@@ -130,7 +130,7 @@
 
 .footnote {
   margin-top: 58rpx;
-  font-size: calc(24rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   line-height: 1.75;
   color: var(--mut);
   text-align: center;

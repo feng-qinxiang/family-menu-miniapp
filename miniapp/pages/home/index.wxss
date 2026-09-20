@@ -82,11 +82,12 @@
   z-index: 2;
 }
 .mh-ico-glyph {
-  font-size: calc(26rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--anchor-contrast);
-  line-height: 26rpx;
-  height: 26rpx;
+  /* 原来写死 line-height/height: 26rpx，而字号会随 --fs-mul 放大到 28.75rpx
+     ——大字档下这个字符撑出自己 26rpx 的盒子，在 88rpx 圆钮里就不居中了。 */
+  line-height: 1;
   display: block;
   text-align: center;
 }
@@ -132,7 +133,7 @@
 .mh-hero-title.t6 { font-size: calc(76rpx * var(--fs-mul, 1)); }
 .mh-hero-title.t7 { font-size: calc(66rpx * var(--fs-mul, 1)); }
 .mh-hero-title.t9 { font-size: calc(56rpx * var(--fs-mul, 1)); }
-.mh-hero-title.t11 { font-size: calc(52rpx * var(--fs-mul, 1)); }
+.mh-hero-title.t11 { font-size: calc(50rpx * var(--fs-mul, 1)); }
 
 /* 暖光叠层：底部暖金 radial 提亮，对标 home-final.html */
 .mh-hero-glow {
@@ -199,7 +200,7 @@
   border: 2rpx solid rgba(255, 255, 255, 0.55);
 }
 .mh-shuffle-tx {
-  font-size: calc(26rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: var(--anchor-contrast);
   letter-spacing: 1rpx;
@@ -284,7 +285,7 @@
   box-shadow: var(--sh-soft);
 }
 .mh-sa-t { font-size: calc(28rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--ink); }
-.mh-sa-s { font-size: calc(22rpx * var(--fs-mul, 1)); color: var(--mut-strong); font-weight: 600; }
+.mh-sa-s { font-size: calc(23rpx * var(--fs-mul, 1)); color: var(--mut-strong); font-weight: 600; }
 
 /* + 图标（菜单暗卡等仍用） */
 .mh-ico-plus, .mh-ico-plus-dark {
@@ -393,10 +394,11 @@
 }
 .mh-mc-stats { display: flex; gap: 50rpx; }
 .mh-mc-num {
-  font-size: calc(46rpx * var(--fs-mul, 1));
+  font-size: var(--fs-stat);
   font-weight: 900;
   color: var(--anchor-contrast);
   line-height: 1;
+  letter-spacing: -2rpx;
 }
 .mh-mc-u {
   font-size: var(--fs-cap);
@@ -407,7 +409,7 @@
 .mh-mc-cap {
   font-size: var(--fs-mini);
   color: rgba(255, 255, 255, 0.6);
-  letter-spacing: 1rpx;
+  letter-spacing: 0;
   margin-top: 8rpx;
 }
 .mh-mc-acts {
@@ -421,7 +423,7 @@
   background: transparent;
   color: rgba(255, 255, 255, 0.85);
   border: 2rpx solid rgba(255, 255, 255, 0.35);
-  font-size: calc(26rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: 700;
   padding: 22rpx 32rpx;
   min-height: 88rpx;
@@ -434,7 +436,7 @@
   gap: 8rpx;
   background: var(--pop);
   color: var(--anchor-contrast);
-  font-size: calc(26rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: 800;
   padding: 22rpx 36rpx;
   min-height: 88rpx;
@@ -470,7 +472,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: calc(26rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: var(--mut-strong);
   background: var(--paper-2);
@@ -508,7 +510,7 @@
 }
 .fp-wish-head--toggle { cursor: pointer; }
 .fp-wish-eyebrow {
-  font-size: calc(22rpx * var(--fs-mul, 1));
+  font-size: calc(23rpx * var(--fs-mul, 1));
   font-weight: 800;
   letter-spacing: 2rpx;
   color: var(--gold-deep);
@@ -521,7 +523,7 @@
 }
 .fp-wish-count {
   margin-left: 16rpx;
-  font-size: calc(22rpx * var(--fs-mul, 1));
+  font-size: calc(23rpx * var(--fs-mul, 1));
   color: var(--mut-strong);
   font-weight: 600;
 }
@@ -544,7 +546,7 @@
   border-radius: var(--r-pill);
   background: var(--pop);
   color: var(--anchor-contrast);
-  font-size: calc(24rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: 800;
   box-shadow: var(--sh-pop);
 }
@@ -564,14 +566,14 @@
 /* 待挑菜标记：纯文本心愿点击直达按关键词搜菜 */
 .fp-wish-pending {
   flex: none;
-  font-size: calc(20rpx * var(--fs-mul, 1));
+  font-size: calc(21rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: var(--gold-deep);
   background: rgba(176, 137, 73, 0.12);
   border-radius: 20rpx;
   padding: 6rpx 14rpx;
 }
-.fp-wish-by { font-size: calc(22rpx * var(--fs-mul, 1)); color: var(--mut-strong); font-weight: 600; }
+.fp-wish-by { font-size: calc(23rpx * var(--fs-mul, 1)); color: var(--mut-strong); font-weight: 600; }
 .fp-wish-del {
   position: relative;
   width: 64rpx;   /* 视觉 64rpx，热区由 ::after 撑到 88rpx */
@@ -641,7 +643,7 @@
 }
 .mh-hero--empty .mh-greet .mh-hi {
   color: var(--gold);
-  font-size: calc(24rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
 }
 .mh-hero--empty .mh-greet .mh-name {
   color: var(--anchor-contrast);
@@ -651,7 +653,7 @@
 .mh-empty-eyebrow {
   font-family: var(--serif);
   font-style: italic;
-  font-size: calc(24rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   color: var(--gold);
   font-weight: 700;
   letter-spacing: 1rpx;
@@ -667,7 +669,7 @@
 }
 .mh-empty-headline .pop { color: var(--pop); }
 .mh-empty-sub {
-  font-size: calc(26rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   color: rgba(255,255,255,0.55);
   line-height: 1.55;
   margin-bottom: 36rpx;
@@ -778,7 +780,7 @@
   border-radius: 50%;
   border: 3rpx solid rgba(232, 71, 42, 0.18);
 }
-.wish-modal-ic-glyph { font-size: calc(70rpx * var(--fs-mul, 1)); font-weight: 900; line-height: 1; color: var(--pop); }
+.wish-modal-ic-glyph { font-size: calc(72rpx * var(--fs-mul, 1)); font-weight: 900; line-height: 1; color: var(--pop); }
 .wish-modal-title { font-size: calc(40rpx * var(--fs-mul, 1)); font-weight: 900; color: var(--ink); letter-spacing: -1rpx; line-height: 1.25; }
 .wish-modal-sub { margin-top: 14rpx; font-size: calc(28rpx * var(--fs-mul, 1)); color: var(--mut-strong); line-height: 1.55; }
 .wish-modal-bd { padding: 44rpx 52rpx 0; }
@@ -826,7 +828,7 @@
   /* 与真实 hero（--photo-hero-h）一致，避免加载完成时高度跳变 */
   height: var(--photo-hero-h);
   border-radius: 0 0 var(--r-card) var(--r-card);
-  background: var(--paper-2);
+  background: var(--skeleton);
 }
 .mh-skel-slots {
   display: flex;
@@ -837,7 +839,7 @@
   width: 120rpx;
   height: 64rpx;
   border-radius: var(--r-chip);
-  background: var(--paper-2);
+  background: var(--skeleton);
 }
 .mh-skel-cards {
   display: flex;
@@ -857,13 +859,13 @@
   width: 100%;
   height: 288rpx;   /* = .rc-ph 的 288rpx */
   border-radius: var(--r-card);
-  background: var(--paper-2);
+  background: var(--skeleton);
 }
 .mh-skel-line {
   margin-top: 16rpx;
   height: 24rpx;
   border-radius: 12rpx;
-  background: var(--paper-2);
+  background: var(--skeleton);
   width: 80%;
 }
 .mh-skel-line.strong {
@@ -882,7 +884,7 @@
 }
 .mh-load-error--full {
   min-height: 72vh;
-  padding: calc(env(safe-area-inset-top) + 120rpx) 48rpx 120rpx;
+  padding: calc(env(safe-area-inset-top) + 120rpx) 48rpx calc(var(--tabbar-h) + 40rpx);
   justify-content: center;
 }
 .mh-load-error--soft {
@@ -929,7 +931,7 @@
 .mh-load-error-desc {
   margin-top: 14rpx;
   max-width: 480rpx;
-  font-size: calc(26rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   line-height: 1.5;
   color: var(--mut-strong);
 }

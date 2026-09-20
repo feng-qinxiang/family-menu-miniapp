@@ -48,7 +48,7 @@
 .nbtn.keep.on .keep-ic { border-color: var(--anchor-contrast); }
 .nbtn.keep.on .keep-ic::after { background: var(--cook-mark); }
 .keep-tx {
-  font-size: calc(24rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--pop);
   letter-spacing: 1rpx;
@@ -139,7 +139,7 @@
 }
 @keyframes cookspin { to { transform: rotate(360deg); } }
 .loading-tx {
-  font-size: calc(26rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   color: var(--cook-ink-mut);
   font-family: var(--serif);
   font-style: italic;
@@ -213,7 +213,7 @@
   flex: none;
 }
 .bgchip-tx {
-  font-size: calc(26rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: var(--cook-ink);
 }
@@ -223,7 +223,7 @@
 }
 .bgchip-go {
   margin-left: auto;
-  font-size: calc(26rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--cook-pop);
 }
@@ -327,7 +327,7 @@
   align-items: center;
   gap: 14rpx;
   /* 配料标签同步放大一档，与步骤正文匹配 */
-  font-size: calc(30rpx * var(--fs-mul, 1));
+  font-size: calc(28rpx * var(--fs-mul, 1));
   font-weight: 600;
   color: var(--cook-ink);
   background: var(--cook-surface);

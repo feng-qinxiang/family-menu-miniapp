@@ -78,7 +78,7 @@
 }
 .set-desc {
   margin-top: 4rpx;
-  font-size: calc(22rpx * var(--fs-mul, 1));
+  font-size: calc(23rpx * var(--fs-mul, 1));
   color: var(--mut-strong);
   line-height: 1.4;
 }

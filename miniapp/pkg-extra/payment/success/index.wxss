@@ -50,7 +50,7 @@
   margin-top: 20rpx;
   max-width: 540rpx;
   text-align: center;
-  font-size: calc(26rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   line-height: 1.55;
   color: var(--mut-strong);
 }
@@ -67,7 +67,7 @@
   color: var(--gold);
   font-family: var(--serif);
   font-style: italic;
-  font-size: calc(24rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: 700;
   letter-spacing: 1rpx;
 }
@@ -130,7 +130,7 @@
   justify-content: space-between;
   padding: 24rpx 0;
   border-bottom: var(--bd-card);
-  font-size: calc(26rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
 }
 .ps-orow:last-child {
   border-bottom: none;

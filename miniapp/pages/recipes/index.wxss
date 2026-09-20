@@ -84,7 +84,7 @@
   position: relative;
 }
 .rx-avd-glyph { width: 22rpx; height: 22rpx; border-radius: 50%; background: var(--pop); }
-.rx-avd-t { font-size: calc(20rpx * var(--fs-mul, 1)); font-weight: 700; color: var(--pop-deep); }
+.rx-avd-t { font-size: calc(21rpx * var(--fs-mul, 1)); font-weight: 700; color: var(--pop-deep); }
 .rx-avd-dot {
   position: absolute; top: -4rpx; right: -4rpx;
   width: 12rpx; height: 12rpx; border-radius: 50%;
@@ -215,7 +215,7 @@
 .rx-loadmore {
   display: flex; align-items: center; justify-content: center; gap: 14rpx;
   margin: 4rpx 46rpx 0; padding: 30rpx 0;
-  font-size: calc(24rpx * var(--fs-mul, 1)); font-weight: 700; color: var(--mut);
+  font-size: calc(25rpx * var(--fs-mul, 1)); font-weight: 700; color: var(--mut);
   border-top: 2rpx solid var(--paper-2);
 }
 .rx-loadmore-chev {
@@ -228,8 +228,8 @@
 
 /* 骨架 */
 .rx-skel { background: var(--c-surface); border-radius: var(--r-card); overflow: hidden; border: var(--bd-card); padding-bottom: var(--r-md); }
-.rx-skel-cover { height: 226rpx; background: var(--paper-2); }
-.rx-skel-line { height: var(--r-md); margin: 20rpx 25rpx 0; border-radius: var(--r-xs); background: var(--paper-2); }
+.rx-skel-cover { height: 226rpx; background: var(--skeleton); }
+.rx-skel-line { height: var(--r-md); margin: 20rpx 25rpx 0; border-radius: var(--r-xs); background: var(--skeleton); }
 .rx-skel-line.strong { height: 30rpx; width: 60%; }
 /* ===== 餐盘 tray ===== */
 .rx-tray {
@@ -245,9 +245,9 @@
 }
 .rx-tray-copy { flex: 1; min-width: 0; }
 .rx-tray-t { font-size: var(--fs-cap); font-weight: 800; }
-.rx-tray-s { font-size: calc(22rpx * var(--fs-mul, 1)); color: rgba(255,255,255,.62); margin-top: 4rpx; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.rx-tray-s { font-size: calc(23rpx * var(--fs-mul, 1)); color: rgba(255,255,255,.62); margin-top: 4rpx; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .rx-tray-mini {
-  flex: none; font-size: calc(22rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--gold);
+  flex: none; font-size: calc(23rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--gold);
   background: rgba(255,255,255,.12); padding: 14rpx 20rpx; border-radius: var(--r-pill);
 }
 .rx-tray-go {

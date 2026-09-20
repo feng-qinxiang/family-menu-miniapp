@@ -67,7 +67,7 @@
 }
 .st-h5-light { color: var(--anchor-contrast); font-weight: 700; }
 .st-p {
-  font-size: calc(24rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   color: var(--mut-strong);
   margin-top: 4rpx;
   overflow: hidden;

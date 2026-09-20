@@ -65,7 +65,7 @@
 }
 .brandbar .logo-glyph {
   color: var(--anchor-contrast);
-  font-size: calc(38rpx * var(--fs-mul, 1));
+  font-size: calc(36rpx * var(--fs-mul, 1));
   font-weight: 900;
 }
 .brandbar .bt { color: var(--anchor-contrast); display: flex; flex-direction: column; }
@@ -249,9 +249,9 @@
   background: var(--pop);
   border-color: var(--pop);
 }
-.agree .box .check { color: var(--anchor-contrast); font-size: calc(24rpx * var(--fs-mul, 1)); font-weight: 900; }
+.agree .box .check { color: var(--anchor-contrast); font-size: calc(25rpx * var(--fs-mul, 1)); font-weight: 900; }
 .agree .tx {
-  font-size: calc(22rpx * var(--fs-mul, 1));
+  font-size: calc(23rpx * var(--fs-mul, 1));
   color: var(--mut-strong);
   line-height: 1.6;
 }

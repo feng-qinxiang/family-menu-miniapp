@@ -16,7 +16,7 @@
   align-items: center;
   gap: 10rpx;
   padding: 14rpx 8rpx;
-  font-size: calc(24rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: var(--gold-deep);
 }

@@ -38,7 +38,7 @@
   padding: 56rpx 0 0;
 }
 .code-label-tx {
-  font-size: calc(22rpx * var(--fs-mul, 1));
+  font-size: calc(23rpx * var(--fs-mul, 1));
   letter-spacing: 2rpx;
   font-weight: 800;
   text-transform: uppercase;
@@ -48,7 +48,7 @@
   display: flex;
   align-items: center;
   gap: 10rpx;
-  font-size: calc(24rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: var(--mut-strong);
 }
@@ -161,7 +161,7 @@
 .ln-tx {
   font-family: var(--serif);
   font-style: italic;
-  font-size: calc(24rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   letter-spacing: 1rpx;
   color: var(--gold-deep);
   font-weight: 700;
@@ -239,7 +239,7 @@
   align-items: center;
   gap: 10rpx;
   margin-top: 10rpx;
-  font-size: calc(24rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   color: var(--mut-strong);
 }
 .home-ic {
@@ -297,7 +297,7 @@
   color: var(--mut-strong);
 }
 .count {
-  font-size: calc(24rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   color: var(--mut-strong);
   font-weight: 700;
 }

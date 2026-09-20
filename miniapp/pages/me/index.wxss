@@ -34,7 +34,7 @@
   top: 120rpx;
   right: 20rpx;
   font-family: var(--serif);
-  font-size: calc(410rpx * var(--fs-mul, 1));
+  font-size: var(--fs-hero-bignum);
   font-weight: 700;
   line-height: 1;
   color: rgba(255, 255, 255, 0.07);
@@ -93,7 +93,7 @@
   -webkit-text-stroke: 3rpx var(--c-surface);
 }
 .mag-hero-sub {
-  font-size: calc(26rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   color: rgba(255, 255, 255, 0.85);
   text-shadow: 0 2rpx 8rpx rgba(20, 14, 8, 0.55);
 }
@@ -124,14 +124,14 @@
 .mavt-e { background: var(--c-info); }
 .mag-fam-lbl {
   margin-left: 26rpx;
-  font-size: calc(24rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   color: rgba(255, 255, 255, 0.85);
   text-shadow: 0 2rpx 8rpx rgba(20, 14, 8, 0.55);
 }
 .mag-fam-lbl .b { color: var(--anchor-contrast); font-weight: 800; font-size: calc(29rpx * var(--fs-mul, 1)); }
 .mag-manage {
   margin-left: auto;
-  font-size: calc(24rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--anchor-contrast);
   background: var(--pop);
@@ -206,10 +206,10 @@
   box-shadow: var(--sh-raised);
 }
 .mag-snum {
-  font-size: calc(64rpx * var(--fs-mul, 1));
+  font-size: var(--fs-stat);
   font-weight: 900;
   color: var(--ink);
-  letter-spacing: -3rpx;
+  letter-spacing: -2rpx;
   line-height: 1;
 }
 .mag-snum.num-skel {
@@ -326,7 +326,7 @@
 .mag-tmid { flex: 1; min-width: 0; }
 .mag-tname { font-size: calc(32rpx * var(--fs-mul, 1)); font-weight: 700; color: var(--ink); }
 .mag-tvip {
-  font-size: calc(18rpx * var(--fs-mul, 1));
+  font-size: calc(19rpx * var(--fs-mul, 1));
   font-weight: 800;
   letter-spacing: 1rpx;
   color: var(--ink-deep);
@@ -335,8 +335,8 @@
   border-radius: var(--r-xs);
   margin-left: 10rpx;
 }
-.mag-tdesc { margin-top: 6rpx; font-size: calc(22rpx * var(--fs-mul, 1)); color: var(--mut-strong); }
-.mag-tarrow { flex: none; font-size: calc(38rpx * var(--fs-mul, 1)); color: var(--mut-2); }
+.mag-tdesc { margin-top: 6rpx; font-size: calc(23rpx * var(--fs-mul, 1)); color: var(--mut-strong); }
+.mag-tarrow { flex: none; font-size: calc(36rpx * var(--fs-mul, 1)); color: var(--mut-2); }
 
 /* ---------- 口味偏好 ---------- */
 .mag-pref { padding: 38rpx 34rpx; }
@@ -381,12 +381,12 @@
 }
 .mag-srow.last { border-bottom: none; }
 .mag-sname { font-size: calc(32rpx * var(--fs-mul, 1)); font-weight: 600; color: var(--ink); }
-.mag-sarrow { font-size: calc(38rpx * var(--fs-mul, 1)); color: var(--mut-2); }
+.mag-sarrow { font-size: calc(36rpx * var(--fs-mul, 1)); color: var(--mut-2); }
 
 /* ---------- 页脚版本号 ---------- */
 .mag-footer {
   text-align: center;
-  font-size: calc(22rpx * var(--fs-mul, 1));
+  font-size: calc(23rpx * var(--fs-mul, 1));
   color: var(--mut-2);
   padding: 40rpx 0 60rpx;
 }
@@ -435,7 +435,7 @@
 .mag-phone-mid { flex: 1; min-width: 0; }
 .mag-phone-t { font-size: calc(28rpx * var(--fs-mul, 1)); font-weight: 600; color: var(--ink-deep); }
 .mag-phone-s { margin-top: 6rpx; font-size: calc(23rpx * var(--fs-mul, 1)); color: var(--mut-strong); }
-.mag-phone-go { font-size: calc(26rpx * var(--fs-mul, 1)); color: var(--pop); font-weight: 600; flex-shrink: 0; }
+.mag-phone-go { font-size: calc(25rpx * var(--fs-mul, 1)); color: var(--pop); font-weight: 600; flex-shrink: 0; }
 
 /* ---------- 加载失败态 ---------- */
 .mag-load-error {
@@ -453,7 +453,7 @@
 }
 .mag-load-error-desc {
   margin-top: 12rpx;
-  font-size: calc(24rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   color: var(--mut-strong);
   word-break: break-all;
 }
@@ -467,6 +467,6 @@
   border-radius: var(--r-pill);
   background: var(--anchor);
   color: var(--anchor-contrast);
-  font-size: calc(26rpx * var(--fs-mul, 1));
+  font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: 700;
 }
