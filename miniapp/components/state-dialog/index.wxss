@@ -11,7 +11,7 @@
   backdrop-filter: blur(6rpx);
   -webkit-backdrop-filter: blur(6rpx);
   opacity: 0;
-  transition: opacity 0.26s var(--g-power2-out, ease);
+  transition: opacity 0.26s var(--g-power2-out);
 }
 .sd-mask--show { opacity: 1; }
 

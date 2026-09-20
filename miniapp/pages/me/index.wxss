@@ -135,7 +135,7 @@
   font-weight: 800;
   color: var(--anchor-contrast);
   background: var(--pop);
-  padding: 16rpx 28rpx;
+  padding: 26rpx 28rpx;   /* 触点补到 88rpx */
   border-radius: var(--r-pill);
 }
 
@@ -200,10 +200,10 @@
 .mag-stat {
   flex: 1;
   background: var(--c-surface);
-  border-radius: var(--r-md);
+  border-radius: var(--r-card);   /* 统计卡回到全站卡片标准 16rpx */
   padding: 30rpx 26rpx;
   border: var(--bd-card);
-  box-shadow: var(--sh-soft), 0 26rpx 58rpx rgba(120, 70, 30, 0.1);
+  box-shadow: var(--sh-raised);
 }
 .mag-snum {
   font-size: calc(64rpx * var(--fs-mul, 1));
@@ -227,7 +227,7 @@
      两处一起收敛到紧凑行图块规格 --tile-row-sm(104rpx)。 */
   width: var(--tile-row-sm);
   height: var(--tile-row-sm);
-  border-radius: var(--r-md);
+  border-radius: var(--r-chip);   /* = 真卡 .mag-thumb 的圆角，原来骨架是 --r-md(24)、真卡 30 */
   background: var(--skeleton);
   flex: none;
 }
@@ -441,7 +441,7 @@
 .mag-load-error {
   margin: 40rpx 0;
   padding: 56rpx 40rpx;
-  border-radius: var(--r-lg, 28rpx);
+  border-radius: var(--r-lg);
   background: var(--c-surface);
   box-shadow: var(--sh-card);
   text-align: center;

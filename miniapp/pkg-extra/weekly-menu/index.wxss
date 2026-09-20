@@ -164,9 +164,9 @@
 .wm-scell {
   flex: 1;
   background: var(--c-surface);
-  border-radius: 34rpx;
+  border-radius: var(--r-card);
   padding: 28rpx 26rpx;
-  box-shadow: var(--sh-soft), 0 26rpx 58rpx rgba(120, 70, 30, 0.12);
+  box-shadow: var(--sh-raised);
   border: var(--bd-card);
 }
 .wm-num {
@@ -195,7 +195,7 @@
   border-radius: var(--r-card);
   padding: 30rpx 32rpx 16rpx;
   margin-bottom: 26rpx;
-  box-shadow: var(--sh-soft), 0 30rpx 70rpx rgba(120, 70, 30, 0.13);
+  box-shadow: var(--sh-raised);
   border: var(--bd-card);
 }
 .wm-daycard.today {

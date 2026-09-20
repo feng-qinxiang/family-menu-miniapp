@@ -62,7 +62,7 @@
   top: 17rpx;
   left: 17rpx;
   padding: var(--r-xs) 15rpx;
-  font-size: calc(18rpx * var(--fs-mul, 1));
+  font-size: var(--fs-mini);   /* 角标按设计规范是 --fs-mini(21)，原来 18 已低于全站最小档 */
 }
 
 .rc-badge {
@@ -74,7 +74,7 @@
   border-radius: var(--r-pill);
   background: rgba(40, 30, 20, 0.5);
   color: var(--anchor-contrast);
-  font-size: calc(18rpx * var(--fs-mul, 1));
+  font-size: var(--fs-mini);   /* 角标按设计规范是 --fs-mini(21)，原来 18 已低于全站最小档 */
   font-weight: 800;
   line-height: 1.2;
 }

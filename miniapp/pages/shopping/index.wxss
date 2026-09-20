@@ -236,11 +236,11 @@
   align-items: center;
   gap: 26rpx;
   background: var(--c-surface);
-  border-radius: 34rpx;
+  border-radius: var(--r-card);
   padding: 28rpx 30rpx;
   margin-bottom: 22rpx;
   border: var(--bd-card);
-  box-shadow: var(--sh-soft), 0 24rpx 50rpx rgba(120, 70, 30, 0.1);
+  box-shadow: var(--sh-raised);
 }
 .mkt-check {
   width: 52rpx;
@@ -290,7 +290,7 @@
   font-size: calc(24rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: var(--mut);
-  padding: 20rpx 24rpx;   /* 适老触点高度 ≥64rpx（24 字号 + 40 上下 padding） */
+  padding: 26rpx 24rpx;   /* 触点 ≥88rpx（设计规范），原来的 64rpx 是自行放宽的 */
   border-radius: var(--r-sm);
   background: var(--paper-2);
 }
@@ -330,7 +330,7 @@
   align-items: center;
   background: var(--c-surface);
   border: 3rpx dashed var(--line-deep);
-  border-radius: 34rpx;
+  border-radius: var(--r-card);
   padding: 22rpx 24rpx;
 }
 .mkt-add-ic {
@@ -394,7 +394,9 @@
   margin-bottom: 22rpx;
   padding: 28rpx 30rpx;
 }
-.mkt-sk-dot { width: var(--r-sheet); height: var(--r-sheet); border-radius: 18rpx; flex: none; }
+/* 骨架里的"方框"替身是 .mkt-check（52rpx、圆角 18），
+   原来写成 var(--r-sheet)=20rpx，勾选框加载完会长大一圈 */
+.mkt-sk-dot { width: 52rpx; height: 52rpx; border-radius: 18rpx; flex: none; }
 .mkt-sk-lines { flex: 1; }
 .mkt-sk-line { height: 22rpx; border-radius: var(--r-xs); margin-top: 14rpx; width: 60%; }
 .mkt-sk-line.strong { width: 40%; height: 30rpx; margin-top: 0; }

@@ -185,9 +185,9 @@
 .m-quick-card {
   flex: 1;
   background: var(--c-surface);
-  border-radius: 34rpx;
+  border-radius: var(--r-card);
   padding: 28rpx 18rpx 26rpx;
-  box-shadow: var(--sh-soft), 0 24rpx 50rpx rgba(120, 70, 30, 0.1);
+  box-shadow: var(--sh-raised);
   border: var(--bd-card);
   text-align: center;
 }
@@ -319,7 +319,9 @@
   flex: none;
   border: 2rpx solid var(--c-border);
   border-radius: var(--r-chip);
-  padding: 16rpx 26rpx;
+  /* 文字 24 + 上下 16 ≈ 69rpx，够不到设计规范的 88rpx 触点；
+     行内还有别的可点元素，所以只能长自己、不能用 .hit-88 撑热区抢邻居的点击 */
+  padding: 26rpx;
   background: var(--paper);
   /* 防误触：与右侧"开始做/上桌"操作区拉开间距，弱化存在感（破坏性操作不该和主操作同热区） */
   margin-right: 20rpx;
@@ -562,7 +564,7 @@
 .m-load-error {
   margin: 40rpx 0;
   padding: 56rpx 40rpx;
-  border-radius: var(--r-lg, 28rpx);
+  border-radius: var(--r-lg);
   background: var(--c-surface);
   box-shadow: var(--sh-card);
   text-align: center;
@@ -595,7 +597,7 @@
 /* ---------- 骨架屏（首次加载） ---------- */
 .m-skel-card {
   height: 160rpx;
-  border-radius: var(--r-lg, 28rpx);
+  border-radius: var(--r-lg);
   background: var(--skeleton);
   margin-bottom: 20rpx;
 }
@@ -611,7 +613,9 @@
   background: var(--skeleton);
 }
 .m-skel-dish {
-  height: 120rpx;
+  /* 替身是 .m-row：上下内边距 25×2 + 图块 --dish-thumb(146) ≈ 196rpx。
+     原来 120rpx，数据回来每一行都要往下坠 76rpx，长菜单能看出整块在跳。 */
+  height: 196rpx;
   border-radius: var(--r-md);
   background: var(--skeleton);
   margin-bottom: 16rpx;
@@ -624,7 +628,7 @@
   padding: 26rpx 30rpx;
   background: var(--ink);
   color: var(--anchor-contrast);
-  border-radius: var(--r-card, 28rpx);
+  border-radius: var(--r-card);
   display: flex;
   align-items: center;
   justify-content: space-between;
