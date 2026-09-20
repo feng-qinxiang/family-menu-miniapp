@@ -2,7 +2,9 @@
 .kitchen {
   min-height: 100vh;
   background: var(--paper);
-  padding: 0 26rpx 40rpx;
+  /* 左右留白原来偷偷用 26rpx，全站其它页都是 46rpx——同一排卡片在这页明显更宽。
+     底部必须含安全区，否则最后一张灶台卡的操作行压在 home indicator 上。 */
+  padding: 0 46rpx calc(env(safe-area-inset-bottom) + 40rpx);
   box-sizing: border-box;
 }
 

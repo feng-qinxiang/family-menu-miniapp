@@ -192,12 +192,17 @@
 }
 .rd-dot.have { background: var(--pine); }
 .rd-dot.miss { background: var(--pop); }
-.rd-iname { flex: 1; }
+/* flex:1 不给 min-width:0 时，长食材名拒绝收缩，会把右边的用量顶出卡片右缘 */
+.rd-iname { flex: 1; min-width: 0; }
 .rd-iname-h {
   font-size: calc(28rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--ink);
-  letter-spacing: -0.4rpx;
+  /* 原来有 letter-spacing: -0.4rpx——28rpx 的中文上收 0.4rpx 看不出紧凑，
+     只让最后一个字的右侧空隙变得不均匀。全站同类微负值一并去掉。 */
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .rd-note {
   font-size: calc(22rpx * var(--fs-mul, 1));
@@ -378,8 +383,9 @@
   align-items: center;
   justify-content: space-between;
 }
-.rd-who { font-size: calc(28rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--ink); }
-.rd-when { font-size: var(--fs-mini); color: var(--mut); }
+/* 昵称可能很长（微信允许 16 字），不收缩就会把右侧时间挤出屏幕 */
+.rd-who { font-size: calc(28rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--ink); min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; margin-right: 12rpx; }
+.rd-when { font-size: var(--fs-mini); color: var(--mut); flex: none; }
 .rd-stars { display: flex; gap: 4rpx; margin: 8rpx 0 12rpx; }
 .rd-star {
   width: 24rpx;

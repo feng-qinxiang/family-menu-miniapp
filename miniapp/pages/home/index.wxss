@@ -33,7 +33,9 @@
   position: absolute;
   top: calc(env(safe-area-inset-top) + 90rpx);
   left: 46rpx;
-  right: 46rpx;
+  /* 首帧兜底要和 utils/capsule.js 的 FALLBACK_RIGHT（96px）一致：
+     JS 把 capsuleRight 塞进来之前，这两枚 88rpx 图标按钮会压在微信胶囊下面。 */
+  right: 96px;
   z-index: 10;
   display: flex;
   align-items: center;
@@ -230,7 +232,9 @@
   margin-top: -50rpx;
   background: var(--paper);
   border-radius: var(--r-sheet) var(--r-sheet) 0 0;
-  padding: 44rpx 0 186rpx;
+  /* 底部留白必须含 tabBar 实高（--tabbar-h 已带安全区）。
+     原来写死 186rpx：刘海机上 tabBar 实高 196rpx，最后一张卡被压在下面。 */
+  padding: 44rpx 0 calc(var(--tabbar-h) + 40rpx);
   z-index: 20;
 }
 .mh-pad { padding: 0 46rpx; }

@@ -2,7 +2,7 @@
 <view class="cook {{fontScale === 'lg' ? 'font-lg' : ''}}" style="--sbh: {{statusBarHeight}}px;">
 
   <!-- 顶部：返回 X + 菜名步数 + 计时入口 -->
-  <view class="topbar" style="padding-top: {{statusBarHeight}}px; padding-right: {{capsulePad || 19}}px;">
+  <view class="topbar" style="padding-top: {{statusBarHeight}}px; padding-right: {{capsulePad || 96}}px;">
     <view class="nbtn tap-scale" catchtap="onClose">
       <view class="ic-x"></view>
     </view>

@@ -6,7 +6,9 @@
 .recipes-mag {
   min-height: 100vh;
   background: var(--paper);
-  padding-bottom: 340rpx;
+  /* 这一页底部还浮着"已选托盘"，所以留白比别的 tab 页多一截；
+     但基准仍是 --tabbar-h（含安全区）+ 托盘高，而不是原来那个没来由的 340rpx */
+  padding-bottom: calc(var(--tabbar-h) + 148rpx);
 }
 
 /* ===== HERO（轻量头部） ===== */

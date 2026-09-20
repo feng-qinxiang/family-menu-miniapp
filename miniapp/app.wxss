@@ -558,7 +558,7 @@ button[disabled] {
 .muted { color: var(--mut); }
 .title { color: var(--ink); font-weight: 800; }
 .subtitle { color: var(--mut-strong); }
-.divider { height: 2rpx; margin: 24rpx 0; background: #f1ece2; }
+.divider { height: 2rpx; margin: 24rpx 0; background: var(--paper-2); }
 .row { display: flex; align-items: center; justify-content: space-between; }
 .primary-btn { box-sizing: border-box; display: flex; align-items: center; justify-content: center; min-height: 88rpx; border-radius: var(--r-card); background: var(--pop); color: #fff; font-size: var(--fs-btn); font-weight: 800; box-shadow: var(--sh-pop); }
 .ghost-btn { box-sizing: border-box; display: flex; align-items: center; justify-content: center; min-height: 88rpx; border-radius: var(--r-card); background: var(--c-surface); color: var(--ink); border: var(--bd-card); font-size: var(--fs-btn); font-weight: 700; }

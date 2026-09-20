@@ -125,7 +125,7 @@
   z-index: 20;
   background: var(--paper);
   border-radius: var(--r-sheet) var(--r-sheet) 0 0;
-  padding: 50rpx 46rpx calc(env(safe-area-inset-bottom) + 160rpx);
+  padding: 50rpx 46rpx calc(var(--tabbar-h) + 40rpx);
 }
 .psheet .shead { margin-top: 8rpx; }
 .psheet .shead:first-child { margin-top: 0; }
@@ -183,7 +183,9 @@
   align-items: center;
   gap: 25rpx;
   padding: 27rpx 0;
-  border-bottom: 1rpx solid var(--paper-2);
+  /* 行分隔线全站统一 2rpx + --paper-2：原来是 1rpx（在 2x 屏上会渲染成半像素灰，
+     有的机型看得见、有的一阵有一阵没） */
+  border-bottom: 2rpx solid var(--paper-2);
 }
 .pitem:last-child { border-bottom: none; }
 .pi-dot {

@@ -443,7 +443,7 @@
   align-items: center;
   gap: 18rpx;
   padding: 18rpx 0;
-  border-bottom: 1rpx solid var(--c-border-light);
+  border-bottom: 2rpx solid var(--paper-2);
 }
 .sp-pitem-name { flex: 1; min-width: 0; font-size: calc(28rpx * var(--fs-mul, 1)); font-weight: 700; color: var(--ink); }
 .sp-pitem-qty { font-size: calc(24rpx * var(--fs-mul, 1)); color: var(--mut-strong); font-weight: 600; }

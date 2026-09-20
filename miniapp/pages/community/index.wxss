@@ -45,7 +45,7 @@
 .community-scroll {
   height: 100vh;
   box-sizing: border-box;
-  padding-bottom: 220rpx;
+  padding-bottom: calc(var(--tabbar-h) + 40rpx);
 }
 
 /* ===================== Hero ===================== */
@@ -354,7 +354,9 @@
 .pf-submit { flex: 2; }
 
 /* 自定义 TabBar 实高 96rpx + 24rpx 内边距 + 安全区，占位必须跟着走 */
-.safe-bottom { height: calc(env(safe-area-inset-bottom) + 132rpx); }
+/* 原来这里重定义了全局 .safe-bottom（全局是 padding-bottom，这里是 height，
+   同一个类名两套盒模型，且 132rpx 与 tabBar 实高 128rpx 对不上）。
+   底部留白已由上面 .community-scroll 的 padding-bottom 统一负责，不再覆盖全局类。 */
 /* 举报弹层 */
 .rp-reasons {
   display: flex;

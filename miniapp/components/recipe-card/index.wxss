@@ -191,7 +191,9 @@
 
 .rc-d-grid .rc-meta {
   margin-top: 12rpx;
-  font-size: calc(22rpx * var(--fs-mul, 1));
+  /* 原来是 22rpx，而基线 .rc-meta 是 --fs-cap(23rpx)——同一张卡的同一行差 1rpx，
+     首页横滑与菜谱网格并排看就是"字忽大忽小"。回到同一个 token。 */
+  font-size: var(--fs-cap);
   font-weight: 600;
 }
 

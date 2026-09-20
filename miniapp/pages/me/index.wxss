@@ -4,7 +4,7 @@
    px→rpx ×1.923（设计稿 390px 宽）
    ============================================================ */
 .me-mag {
-  padding: 0 0 186rpx;
+  padding: 0 0 calc(var(--tabbar-h) + 40rpx);   /* 同首页：原来 186rpx 不含安全区 */
   background: var(--paper);
 }
 
@@ -377,7 +377,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 38rpx 0;
-  border-bottom: 1.5rpx solid var(--paper-2);
+  border-bottom: 2rpx solid var(--paper-2);
 }
 .mag-srow.last { border-bottom: none; }
 .mag-sname { font-size: calc(32rpx * var(--fs-mul, 1)); font-weight: 600; color: var(--ink); }
