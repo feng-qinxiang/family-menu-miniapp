@@ -66,7 +66,8 @@
 - `utils/env.js` 新增真机开发版分支：`develop` 环境 + 非 devtools 平台 → 走 `DEV_LAN_BASE`
   （当前预填 `http://192.168.1.83:9088`，Mac 局域网 IP 变了要更新）。开发者工具行为不变
   （运行时实测：devtools→localhost、mock 真机→局域网地址）；static-check 门禁不受影响。
-- 本地服务已在 `*:9088` 监听（`cd server && DB_PASSWORD=123456 ./mvnw spring-boot:run`）。
+- 本地服务已在 `*:9088` 监听（`bash server/dev-server.sh start|status|stop`——重启电脑后
+  手机连不上就先跑 `start`；启动成功会顺带打印手机要连的局域网地址）。
 - `auto_preview` 已把开发版（主包 1.31MB / 总 1.74MB）推到登录开发者工具的微信账号。
 
 **手机操作步骤**（真机三项的公共前置）：
