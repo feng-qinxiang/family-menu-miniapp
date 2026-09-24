@@ -77,6 +77,8 @@
 4. 若连不上：确认 `DEV_LAN_BASE` 里的 IP 还是电脑当前 IP（`ipconfig getifaddr en0`，
    查不到再试 `en1`——2026-09-25 实测同一台 Mac 的地址会从 en0 漂到 en1，IP 本身没变），
    且 macOS 防火墙没有拦 Java（系统设置 → 网络 → 防火墙，放行或临时关闭）。
+5. 预览过期（超过 ~24h）就重推：`wechatide -c ZCode auto_preview --project <项目路径>/miniapp`
+   （本机 CLI 已授权；后端没起就先 `bash server/dev-server.sh start`）。
 
 **三项核对清单**（做完在前后打钩，别用模拟器结论冒充）：
 - [ ] **相册授权弹窗**：菜谱编辑 → 选封面图 → 首次应弹「相册/摄像头」权限弹窗；拒绝后再点，
