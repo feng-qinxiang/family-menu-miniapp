@@ -124,8 +124,8 @@
   box-shadow: var(--sh-card);
 }
 .rc-img {
-  width: 138rpx;
-  height: 138rpx;
+  width: var(--tile-rc);
+  height: var(--tile-rc);
   border-radius: var(--r-chip);
   flex: none;
 }

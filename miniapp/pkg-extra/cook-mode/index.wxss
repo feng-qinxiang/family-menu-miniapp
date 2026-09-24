@@ -172,6 +172,19 @@
   padding: 0 46rpx;
   margin: 8rpx 0 30rpx;
 }
+/* 进度段可点的一次性提示（只显示 4 秒）：不做常驻 UI，沉浸页上常驻提示是噪音 */
+.dots-hint {
+  display: block;
+  margin: -18rpx 46rpx 12rpx;
+  text-align: center;
+  font-size: var(--fs-cap, 22rpx);
+  color: var(--cook-ink-mut);
+  animation: dots-hint-fade 4s ease-in forwards;
+}
+@keyframes dots-hint-fade {
+  0%, 70% { opacity: 1; }
+  100% { opacity: 0; }
+}
 .dot {
   flex: 1;
   position: relative;

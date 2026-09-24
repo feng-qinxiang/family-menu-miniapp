@@ -109,11 +109,25 @@ Page({
     this._servings = Number(options && options.servings) || 0;
     try { this.data.fontScale = wx.getStorageSync('font_scale') || 'normal'; } catch (e) {}
     this.setData({ statusBarHeight: sbh, capsulePad, recipeId });
+    this._maybeShowDotsHint();
     this.loadDetail(recipeId);
+  },
+
+  // 进度段可点但没有任何可见可供性（R4 遗留的观感决策，现按 coach-mark 落地）：
+  // 只在第一次进烹饪模式时提示一次，4 秒后淡出——常驻提示在沉浸页上是噪音
+  _maybeShowDotsHint() {
+    const KEY = 'cook_dots_hint_seen';
+    let seen = false;
+    try { seen = !!wx.getStorageSync(KEY); } catch (e) {}
+    if (seen) return;
+    try { wx.setStorageSync(KEY, true); } catch (e) {}
+    this.setData({ dotsHint: true });
+    this._dotsHintTimer = setTimeout(() => this.setData({ dotsHint: false }), 4000);
   },
 
   onUnload() {
     this.stopTicker();
+    this._clearDotsHintTimer();
     // 页面要销毁了，把还在跑的槽落一次盘：靠 tick 落不够（可能已经停在 00:00 无 tick 的状态）
     this.persistSlots();
     if (wx.setKeepScreenOn) {
@@ -122,12 +136,20 @@ Page({
   },
 
   onHide() {
+    this._clearDotsHintTimer();
     // 只停 tick 省电，不动任何槽的基准：回到前台第一拍就会把后台流逝的秒数一次追平
     this.stopTicker();
   },
 
   onShow() {
+    if (this.data.dotsHint) {
+      this._dotsHintTimer = setTimeout(() => this.setData({ dotsHint: false }), 4000);
+    }
     this.ensureTicker();
+  },
+
+  _clearDotsHintTimer() {
+    if (this._dotsHintTimer) { clearTimeout(this._dotsHintTimer); this._dotsHintTimer = null; }
   },
 
   slot(i) {

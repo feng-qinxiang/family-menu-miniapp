@@ -6,12 +6,12 @@
 
 | 角色 | 四条主线 | 全站（含未归类） |
 | --- | --- | --- |
-| 图块尺寸 | 4 | 16 |
+| 图块尺寸 | 0 | 13 |
 | 圆角 | 32 | 54 |
 | 加载态 | 3 | 4 |
 | 空态 | 2 | 3 |
 
-已命名的规格：图块 10 个 token、圆角 10 个 token。这两个数**不该无脑涨**——每加一个 token 都要能说出它是哪个角色。
+已命名的规格：图块 14 个 token、圆角 10 个 token。这两个数**不该无脑涨**——每加一个 token 都要能说出它是哪个角色。
 
 ## 逐页读数
 
@@ -32,17 +32,17 @@
 | 页面 | 图块尺寸 | 圆角取值 | 加载态 | 空态 | 裸 rpx | 裸 px | emoji | CSS 图标 | 未声明组件 | 置了没人读的状态位 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | `pkg-extra/cook-log` | --dish-thumb | --r-card / --r-md / --r-pill / --r-sheet / --r-sm / --r-xs / 10rpx / 20rpx / 50% | 骨架屏 | state-empty | 91 | 0 | 0 | 0 | — | — |
-| `pkg-extra/cook-mode` | — | --r-pill / 2rpx / 32rpx / 38rpx / 3rpx / 44rpx / 46rpx / 4rpx / 50% / 6rpx | 手写 spinner | state-empty | 133 | 0 | 0 | 15 | — | — |
+| `pkg-extra/cook-mode` | — | --r-pill / 2rpx / 32rpx / 38rpx / 3rpx / 44rpx / 46rpx / 4rpx / 50% / 6rpx | 手写 spinner | state-empty | 135 | 0 | 0 | 15 | — | — |
 | `pkg-extra/kitchen` | --tile-cover | --r-card / --r-pill / 0 0 14rpx 0 / 14rpx / 50% | 手写 spinner | state-empty | 53 | 0 | 0 | 0 | — | — |
 | `pkg-extra/recipe-detail` | --dish-thumb | --r-chip / --r-md / --r-pill / --r-sheet / --r-sm / --r-xs / 20rpx / 21rpx / 24rpx / 26rpx / 28rpx / 2rpx / 3rpx / 50% | 骨架屏 | state-empty | 170 | 0 | 0 | 5 | — | — |
-| `pkg-extra/recipe-edit` | --tile-pick / 48rpx / 88rpx | --r-card / --r-pill / 50% | state-loading | 无 | 93 | 0 | 0 | 0 | — | — |
+| `pkg-extra/recipe-edit` | --ctl-x / --tap-min / --tile-pick | --r-card / --r-pill / 50% | state-loading | 无 | 89 | 0 | 0 | 0 | — | — |
 
 ### 社区
 
 | 页面 | 图块尺寸 | 圆角取值 | 加载态 | 空态 | 裸 rpx | 裸 px | emoji | CSS 图标 | 未声明组件 | 置了没人读的状态位 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `pages/community` | --ava-row / --tile-row-sm / 132rpx | --r-ava / --r-card / --r-chip / --r-pill / --r-sheet / --r-xs / 0.2em 0.2em 0.2em 0.06em / 12rpx / 20rpx / 22rpx / 26rpx / 28rpx / 4rpx / 50% | 骨架屏 | state-empty | 164 | 0 | 0 | 10 | — | — |
-| `pkg-extra/community/post-detail` | --ava-cmt / --ava-head / 138rpx | --r-ava / --r-card / --r-chip / --r-pill / 12rpx / 14rpx / 26rpx / 2rpx / 50% | 骨架屏 | state-empty | 88 | 0 | 0 | 7 | — | — |
+| `pages/community` | --ava-row / --tile-img-pick / --tile-row-sm | --r-ava / --r-card / --r-chip / --r-pill / --r-sheet / --r-xs / 0.2em 0.2em 0.2em 0.06em / 12rpx / 20rpx / 22rpx / 26rpx / 28rpx / 4rpx / 50% | 骨架屏 | state-empty | 160 | 0 | 0 | 10 | — | — |
+| `pkg-extra/community/post-detail` | --ava-cmt / --ava-head / --tile-rc | --r-ava / --r-card / --r-chip / --r-pill / 12rpx / 14rpx / 26rpx / 2rpx / 50% | 骨架屏 | state-empty | 86 | 0 | 0 | 7 | — | — |
 
 ### 冰箱
 
@@ -91,5 +91,5 @@
 
 ## 已接受的债务（不是待办）
 
-- 全站裸 rpx 共 **3688** 处。本轮**不做 `--sp-*` 全量替换**：现有 spacing token 只有 6 档，而各页众数值（20/28/36rpx 等）压根没有对应 token，全量替换等于在零视觉断言的 CI 下重做 1.3 万行样式——与当初放弃 `--fs-*` 改名同形。**只在某一轮已经要改那个块时顺手用 token**。
+- 全站裸 rpx 共 **3680** 处。本轮**不做 `--sp-*` 全量替换**：现有 spacing token 只有 6 档，而各页众数值（20/28/36rpx 等）压根没有对应 token，全量替换等于在零视觉断言的 CI 下重做 1.3 万行样式——与当初放弃 `--fs-*` 改名同形。**只在某一轮已经要改那个块时顺手用 token**。
 - 裸 px 3 处：px 在小程序里不随屏宽缩放，出现即应逐个确认（不是批量替换对象）。

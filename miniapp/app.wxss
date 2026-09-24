@@ -15,7 +15,7 @@ page {
   --mut-2: var(--themeMut2, #b3a795);
   --mut-strong: var(--themeMutStrong, #6b5f50);    /* 强调次要文字（比 --mut 更深一档） */
   --gold: var(--themeGold, #f4d9a8);
-  --gold-deep: var(--themeGoldDeep, #b08949);
+  --gold-deep: var(--themeGoldDeep, #a58145);
   --pop: var(--themePop, #e8472a);
   --pop-soft: var(--themePopSoft, #fdece6);
   --pine: var(--themePine, #2f4a3a);
@@ -72,6 +72,10 @@ page {
   --tile-cover: 168rpx;   /* 卡片主图（厨房总控的灶台卡） */
   --tile-grid: 177rpx;    /* 两列封面格（收藏页的帖子封面） */
   --tile-pick: 148rpx;    /* 图片选择网格的一格（菜谱编辑/导入） */
+  --tile-img-pick: 132rpx;/* 发帖弹层的选图格（弹层宽度下 3 列的密度，与 --tile-pick 不同角色） */
+  --tile-rc: 138rpx;      /* 帖子详情里「关联菜谱」卡的缩略图 */
+  --ctl-x: 48rpx;         /* 圆形删除钮直径（几何件，字形与命中区随大字档等比放大） */
+  --tap-min: 88rpx;       /* 全站最小命中区（::after 扩热区用） */
   /* 头像两档：同一个作者在社区列表是 84rpx、点进详情是 92rpx——同一个人换了个头。
      两档各有密度理由，但必须**有名字**，否则下一个页面会写第三个数。 */
   --ava-row: 84rpx;       /* 行内头像（社区列表、我的页成员堆叠） */

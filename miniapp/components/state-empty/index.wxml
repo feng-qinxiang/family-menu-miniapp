@@ -5,8 +5,13 @@
     <image wx:if="{{type === 'pop' || type === 'recipes'}}" class="se-icon"
       src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc1OCcgaGVpZ2h0PSc1OCcgdmlld0JveD0nMCAwIDY0IDY0JyBmaWxsPSdub25lJyBzdHJva2U9JyNlODQ3MmEnIHN0cm9rZS13aWR0aD0nMi42JyBzdHJva2UtbGluZWNhcD0ncm91bmQnIHN0cm9rZS1saW5lam9pbj0ncm91bmQnPjxlbGxpcHNlIGN4PSczMicgY3k9JzQwJyByeD0nMjInIHJ5PSc5Jy8+PGVsbGlwc2UgY3g9JzMyJyBjeT0nNDAnIHJ4PScxMScgcnk9JzQuMicgc3Ryb2tlLXdpZHRoPScyLjInIG9wYWNpdHk9Jy41NScvPjxwYXRoIGQ9J00xNiA0MGMwLTIgNC00IDE2LTRzMTYgMiAxNiA0JyBvcGFjaXR5PScuMzUnLz48cGF0aCBkPSdNNDQgMTZsLTMgOU01MCAxNmwtMS41IDknIG9wYWNpdHk9Jy43Jy8+PC9zdmc+"
       mode="aspectFit" />
-    <!-- 无网络（gray/offline） -->
-    <image wx:elif="{{type === 'gray' || type === 'offline'}}" class="se-icon"
+    <!-- 业务空态（gray）：与 pop 同形的空盘、中性棕描边——曾与 offline 共用断网图标，
+         空菜单/已删帖会被误读成网络故障 -->
+    <image wx:elif="{{type === 'gray'}}" class="se-icon"
+      src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc1OCcgaGVpZ2h0PSc1OCcgdmlld0JveD0nMCAwIDY0IDY0JyBmaWxsPSdub25lJyBzdHJva2U9JyM3YTZlNWQnIHN0cm9rZS13aWR0aD0nMi42JyBzdHJva2UtbGluZWNhcD0ncm91bmQnIHN0cm9rZS1saW5lam9pbj0ncm91bmQnPjxlbGxpcHNlIGN4PSczMicgY3k9JzQwJyByeD0nMjInIHJ5PSc5Jy8+PGVsbGlwc2UgY3g9JzMyJyBjeT0nNDAnIHJ4PScxMScgcnk9JzQuMicgc3Ryb2tlLXdpZHRoPScyLjInIG9wYWNpdHk9Jy41NScvPjxwYXRoIGQ9J00xNiA0MGMwLTIgNC00IDE2LTRzMTYgMiAxNiA0JyBvcGFjaXR5PScuMzUnLz48cGF0aCBkPSdNNDQgMTZsLTMgOU01MCAxNmwtMS41IDknIG9wYWNpdHk9Jy43Jy8+PC9zdmc+"
+      mode="aspectFit" />
+    <!-- 无网络（offline） -->
+    <image wx:elif="{{type === 'offline'}}" class="se-icon"
       src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc1OCcgaGVpZ2h0PSc1OCcgdmlld0JveD0nMCAwIDY0IDY0JyBmaWxsPSdub25lJyBzdHJva2U9JyM3YTZlNWQnIHN0cm9rZS13aWR0aD0nMi42JyBzdHJva2UtbGluZWNhcD0ncm91bmQnIHN0cm9rZS1saW5lam9pbj0ncm91bmQnPjxwYXRoIGQ9J00xMCAyNmMxMi41LTExIDMxLjUtMTEgNDQgMCcgb3BhY2l0eT0nLjQnLz48cGF0aCBkPSdNMTggMzRjOC03IDIwLTcgMjggMCcgb3BhY2l0eT0nLjY1Jy8+PHBhdGggZD0nTTI2IDQyYzMuNS0zIDguNS0zIDEyIDAnLz48Y2lyY2xlIGN4PSczMicgY3k9JzUwJyByPScxLjYnIGZpbGw9JyM3YTZlNWQnIHN0cm9rZT0nbm9uZScvPjxwYXRoIGQ9J001MCAxNkwxNCA1Micgc3Ryb2tlPScjZTg0NzJhJyBzdHJva2Utd2lkdGg9JzMnLz48L3N2Zz4="
       mode="aspectFit" />
     <!-- 无搜索结果（gold/search） -->

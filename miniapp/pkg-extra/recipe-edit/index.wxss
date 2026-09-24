@@ -45,8 +45,8 @@ page { background: var(--paper); }
   position: absolute;
   top: 16rpx;
   right: 16rpx;
-  width: 48rpx;
-  height: 48rpx;
+  width: var(--ctl-x);
+  height: var(--ctl-x);
   border-radius: 50%;
   background: rgba(40, 30, 20, 0.45);
   color: #fff;
@@ -59,8 +59,8 @@ page { background: var(--paper); }
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 88rpx;
-  height: 88rpx;
+  width: var(--tap-min);
+  height: var(--tap-min);
   transform: translate(-50%, -50%);
 }
 .rc-addcover {

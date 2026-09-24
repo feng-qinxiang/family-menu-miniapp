@@ -451,8 +451,8 @@
 }
 .pf-img {
   position: relative;
-  width: 132rpx;
-  height: 132rpx;
+  width: var(--tile-img-pick);
+  height: var(--tile-img-pick);
 }
 .pf-img image {
   width: 100%;
@@ -489,8 +489,8 @@
 }
 .pf-img-add {
   /* 方格必须与 .pf-img 同宽才能对上下面的图片网格，所以只放大 ＋ 字形 */
-  width: 132rpx;
-  height: 132rpx;
+  width: var(--tile-img-pick);
+  height: var(--tile-img-pick);
   border: 2rpx dashed var(--line-deep);
   border-radius: 12rpx;
   display: flex;

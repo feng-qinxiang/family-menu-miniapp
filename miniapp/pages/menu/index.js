@@ -27,6 +27,8 @@ function buildToday() {
 
 function mealTimeLabel() {
   const h = new Date().getHours();
+  // 与首页 greetingText() 同口径：0-6 点是深夜，不是早餐
+  if (h < 6) return '夜宵时间';
   if (h < 10) return '早餐时间';
   if (h < 15) return '午餐时间';
   if (h < 21) return '晚餐时间';

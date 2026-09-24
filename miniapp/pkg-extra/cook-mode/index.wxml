@@ -56,6 +56,7 @@
         aria-label="跳到第 {{index + 1}} 步"
       ></view>
     </view>
+    <text wx:if="{{dotsHint}}" class="dots-hint">轻点进度条，可直接跳到那一步</text>
 
     <!-- 步骤大图 -->
     <view class="stepimg g-fade-in">
