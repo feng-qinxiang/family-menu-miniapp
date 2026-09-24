@@ -36,14 +36,43 @@ const ENV_CONFIG = {
 function resolveConfig() {
   const env = getEnv();
   const config = ENV_CONFIG[env] || ENV_CONFIG.develop;
-  assertNotPlaceholder(env, config);
-  return config;
+  let resolved = config;
+  // 真机开发版（预览二维码/真机调试）连不上上面的 localhost——它指的是手机自己。
+  // 这类运行时改走电脑的局域网地址（DEV_LAN_BASE 定义在下方哨兵区之后）。
+  if (env === 'develop' && !isDevtools()) {
+    if (DEV_LAN_BASE) {
+      resolved = { apiBaseUrl: DEV_LAN_BASE };
+      console.log('[env] 真机开发版走局域网后端: ' + DEV_LAN_BASE);
+    } else {
+      console.error(
+        '[env] 真机开发版还没配 DEV_LAN_BASE（utils/env.js）: 填电脑的局域网 IP，' +
+        '例如 http://192.168.1.5:9088；手机和电脑须同一 Wi-Fi，并在手机端打开调试后重启小程序。'
+      );
+    }
+  }
+  assertNotPlaceholder(env, resolved);
+  return resolved;
+}
+
+// 拿运行平台：devtools=开发者工具；ios/android=真机。拿不到按开发工具处理，保持旧行为。
+function isDevtools() {
+  try {
+    const info = wx.getSystemInfoSync();
+    return !info || !info.platform || info.platform === 'devtools';
+  } catch (e) {
+    return true;
+  }
 }
 
 // 占位域名哨兵：体验版/正式版仍指向 example.com 时，全站接口会静默失败，
 // 排查成本很高。这里在解析配置时打一条醒目的 error（每个环境只打一次）。
 const PLACEHOLDER_PATTERN = /example\.com/i;
 const warnedEnvs = {};
+
+// 真机开发版专用：电脑的局域网地址。Mac 查法：`ipconfig getifaddr en0`。
+// 手机和电脑连同一个 Wi-Fi；IP 变了这里要跟着改。填错/不填只影响真机开发版
+// （会打一条上面的 error 提示），开发者工具与体验版/正式版都不受影响。
+const DEV_LAN_BASE = 'http://192.168.1.83:9088';
 
 function assertNotPlaceholder(env, config) {
   if (env === 'develop' || warnedEnvs[env]) return;
