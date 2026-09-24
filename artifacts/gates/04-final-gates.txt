@@ -1,0 +1,52 @@
+===== node miniapp/test/static-check.js =====
+包体积：主包 1.4MB / 2MB · 分包 pkg-extra 0.57MB / 2MB
+检查了 300 个文件（其中 84 个 .js 过了语法解析）
+
+⚠ 提审前需部署方填写（不阻断 CI，但缺了就等着被驳回）：
+  · utils/legal-config.js -> operatorName: 【请填写运营者名称】（带占位符提交会被审核驳回）
+  · utils/legal-config.js -> operatorContact: 【请填写联系方式】（带占位符提交会被审核驳回）
+  · utils/env.js -> trial: https://test-api.example.com（换成已备案 HTTPS 域名，并同步小程序后台的服务器域名白名单）
+  · utils/env.js -> release: https://api.example.com（换成已备案 HTTPS 域名，并同步小程序后台的服务器域名白名单）
+✔ 小程序静态检查通过
+exit=0
+===== node miniapp/test/dish-logic.test.js =====
+dish-logic.test.js: all assertions passed
+exit=0
+===== node miniapp/test/kitchen-logic.test.js =====
+kitchen-logic.test: 全部断言通过 ✔
+exit=0
+===== node miniapp/test/pantry-match.test.js =====
+pantry-match.test: 全部断言通过 ✔
+exit=0
+===== node miniapp/test/pantry-delete.test.js =====
+pantry-delete.test: 全部断言通过 ✔
+exit=0
+===== node miniapp/test/api-empty-payload.test.js =====
+api-empty-payload.test: 全部断言通过 ✔
+exit=0
+===== node miniapp/test/post-share.test.js =====
+post-share.test: 全部断言通过 ✔
+exit=0
+===== node miniapp/test/cook-finish.test.js =====
+cook-finish.test: 全部断言通过 ✔
+exit=0
+===== node miniapp/test/favorites-cover.test.js =====
+✔ 收藏页封面口径：4 条通过
+exit=0
+===== node miniapp/test/interaction-audit.js =====
+交互体检：49 个页面模板 / 300 个文件
+
+A. 有事件但缺按下反馈：0 处
+
+B. 疑似「可点但无事件」（已剔除 4 处已确认误报）：0 处
+
+C. 声明尺寸小于 88rpx 的可点类（已剔除 2 处刻意尺寸）：0 处
+
+（B / C 只报告不判定：靠类名与尺寸启发式识别，文本链接类小热区属正常，需按元素性质人工判断）
+exit=0
+===== node miniapp/test/ui-ledger.js =====
+UI 台账：49 个页面 -> artifacts/ui-ledger/ledger.md
+四条主线·没名字的裸值种数：图块尺寸=4 · 圆角=32 · 加载态=3 · 空态=2（图块 token 10 个 / 圆角 token 10 个）
+全站·没名字的裸值种数：图块尺寸=16 · 圆角=54 · 加载态=4 · 空态=3
+裸 rpx 3688 · 裸 px 3 · 未声明组件 0 · 死状态位 0 · emoji 图标 0 页
+exit=0

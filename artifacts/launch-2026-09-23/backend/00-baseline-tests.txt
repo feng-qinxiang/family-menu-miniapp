@@ -1,0 +1,43 @@
+# 基线（改动前）后端全量测试 — 2026-09-23 01:28:40
+命令: DROP DATABASE fm_be_test_db; TEST_DB_NAME=fm_be_test_db AUTH_DEV_OTP_ENABLED=true ./mvnw -B -o test
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.317 s -- in com.familymenu.daily.MockPayDisabledTests
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.401 s -- in com.familymenu.daily.AdminBootstrapDisabledTests
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.190 s -- in com.familymenu.daily.FamilyMenuDailyApplicationTests
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.202 s -- in com.familymenu.daily.AdminFamilyDataTests
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.318 s -- in com.familymenu.daily.SubscribeTemplateConfigTests
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.061 s -- in com.familymenu.daily.SessionTokenTests
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.082 s -- in com.familymenu.daily.ShoppingListSourceTests
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.002 s -- in com.familymenu.daily.config.UploadPathNormalizerTests
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.006 s -- in com.familymenu.daily.config.UploadSignerTests
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.350 s -- in com.familymenu.daily.payment.WechatPaySignatureTests
+[INFO] Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.199 s -- in com.familymenu.daily.ProfilePreferenceTests
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.472 s -- in com.familymenu.daily.CommunityWriteRaceTests
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.009 s -- in com.familymenu.daily.HealthEndpointTests
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.102 s -- in com.familymenu.daily.CommunityFeedUnionTests
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.139 s -- in com.familymenu.daily.AdminSecurityTests
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.200 s -- in com.familymenu.daily.CommunityWriteVisibilityTests
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.145 s -- in com.familymenu.daily.CommunityPostRecipeScopeTests
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.093 s -- in com.familymenu.daily.LaunchHardeningTests
+[INFO] Tests run: 24, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.611 s -- in com.familymenu.daily.EndpointCoverageTests
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.153 s -- in com.familymenu.daily.SmsGatewayMisconfigTests
+[INFO] Tests run: 11, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.377 s -- in com.familymenu.daily.PaymentFlowTests
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.242 s -- in com.familymenu.daily.AdminRbacTests
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.215 s -- in com.familymenu.daily.DemoSeedDisabledTests
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.232 s -- in com.familymenu.daily.UploadSignedAccessTests
+[INFO] Tests run: 23, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.787 s -- in com.familymenu.daily.AdminModulesTests
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.005 s -- in com.familymenu.daily.service.AvoidTagFilterTests
+[INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.004 s -- in com.familymenu.daily.service.PantryDeductionTests
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.128 s -- in com.familymenu.daily.CoreFlowInvariantsTests
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.115 s -- in com.familymenu.daily.SubscribeMessageTests
+[INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.009 s -- in com.familymenu.daily.AdminUiAssetsTests
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.054 s -- in com.familymenu.daily.RecipeLibraryScopeTests
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.260 s -- in com.familymenu.daily.DemoSeedEnabledTests
+[INFO] Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.455 s -- in com.familymenu.daily.CoreFlowTests
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.096 s -- in com.familymenu.daily.MenuWriteRaceTests
+[INFO] Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.231 s -- in com.familymenu.daily.AdminBootstrapLoginTests
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.102 s -- in com.familymenu.daily.CommunityPostsByRecipeTests
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.140 s -- in com.familymenu.daily.PhoneBindSecurityTests
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.043 s -- in com.familymenu.daily.VipActivateRemovedTests
+[INFO] Tests run: 213, Failures: 0, Errors: 0, Skipped: 0
+[INFO] BUILD SUCCESS
+EXIT=0

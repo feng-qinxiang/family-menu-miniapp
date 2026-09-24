@@ -1,3 +1,4 @@
+const features = require('../../utils/features');
 const {
   createCommunityPost,
   getCommunityPosts,
@@ -11,6 +12,7 @@ const { chooseAndUpload } = require('../../utils/upload');
 const { withTabSelect } = require('../../behaviors/tab-select');
 const { withScrollReveal } = require('../../behaviors/scroll-reveal');
 const { onPhotoError: markPhotoBroken } = require('../../utils/image');
+const { takePendingRecipe } = require('../../utils/post-share');
 
 const reportReasons = ['内容不实', '步骤不全', '疑似搬运', '其他'];
 // 信息流分页：后端 /api/community/posts 已支持 page/size（上限 50）
@@ -49,7 +51,7 @@ Page({
     reportTargetId: '',
     reportDesc: '',
     showPostForm: false,
-    postForm: { title: '', content: '', tagsText: '', images: [] },
+    postForm: { title: '', content: '', tagsText: '', images: [], recipeId: 0, recipeTitle: '' },
     hotTopics: HOT_TOPICS,
     hasMore: false,
     // 当前话题过滤（后端 feed tag 参数）；'' = 不限
@@ -57,6 +59,9 @@ Page({
   },
 
   onLoad() {
+    // 个人主体没有「社交-社区/论坛」类目，COMMUNITY 关闭时整页不可达：
+    // 入口（tabBar/首页/我的）已隐藏，但审核员可用页面路径直达，所以这里守一道。
+    if (!features.COMMUNITY) { features.leaveToHome(); return; }
     let sbh = 0;
     try {
       sbh = (wx.getWindowInfo ? wx.getWindowInfo().statusBarHeight : wx.getSystemInfoSync().statusBarHeight) || 0;
@@ -68,12 +73,36 @@ Page({
   },
 
   onShow() {
+      if (!features.COMMUNITY) { features.leaveToHome(); return; }
       withTabSelect(this);
       // 大字模式（适老）：与其余 tab 页保持一致，onShow 读一次以便设置页切换后回来生效
       let fontScale = 'normal';
       try { fontScale = wx.getStorageSync('font_scale') || 'normal'; } catch (e) { fontScale = 'normal'; }
       if (fontScale !== this.data.fontScale) this.setData({ fontScale });
+      // 从做菜页「晒一晒」过来（切 tab 不能带 query，只能 storage 交接）：打开发帖层并带上这道菜
+      this.consumePendingRecipe();
       Promise.resolve(this.loadPosts(this._hasLoaded === true)).then(() => { this._hasLoaded = true; });
+    },
+
+    // 一次性交接：takePendingRecipe 取完即清，从帖子详情返回时不会再弹一次
+    consumePendingRecipe() {
+      const pending = takePendingRecipe();
+      if (!pending) return;
+      this.setData({
+        showPostForm: true,
+        postForm: {
+          ...this.data.postForm,
+          recipeId: pending.recipeId,
+          recipeTitle: pending.title,
+          // 只有用户自己还没写标题时才预填，别覆盖他正在打的字
+          title: this.data.postForm.title || (pending.title ? `${pending.title} 出锅了` : '')
+        }
+      });
+    },
+
+    // 发帖层里的「关联」行：点 × 去掉关联，回到普通发帖
+    clearPostDish() {
+      this.setData({ 'postForm.recipeId': 0, 'postForm.recipeTitle': '' });
     },
 
     // 页面滚动在内层 scroll-view，页面级 onPullDownRefresh 不会触发；
@@ -351,6 +380,15 @@ Page({
   },
 
   togglePostForm() {
+    // 从 FAB 打开时清掉可能残留的关联菜（「晒一晒」那条动线已经消费过了）；
+    // 关闭时保留，避免手滑关掉再打开把关联弄丢
+    if (!this.data.showPostForm && (this.data.postForm.recipeId || this.data.postForm.recipeTitle)) {
+      this.setData({
+        showPostForm: true,
+        postForm: { ...this.data.postForm, recipeId: 0, recipeTitle: '' }
+      });
+      return;
+    }
     this.setData({ showPostForm: !this.data.showPostForm });
   },
 
@@ -389,7 +427,7 @@ Page({
 
   async submitPost() {
     if (this.data.postSubmitting) return;
-    const { title, content, tagsText } = this.data.postForm;
+    const { title, content, tagsText, recipeId } = this.data.postForm;
     if (!title.trim()) {
       wx.showToast({ title: '请输入标题', icon: 'none' });
       return;
@@ -406,14 +444,16 @@ Page({
         title: title.trim(),
         content: content.trim(),
         tags,
-        images: (this.data.postForm.images || []).filter(Boolean)
+        images: (this.data.postForm.images || []).filter(Boolean),
+        // 关联了菜就带上：帖子里长出菜谱卡片，那道菜的详情页也会出现这条帖子
+        recipeId: recipeId || undefined
       });
     } catch (err) {
       this.setData({ postSubmitting: false });
       wx.showToast({ title: '发布失败，请重试', icon: 'none' });
       return;
     }
-    this.setData({ showPostForm: false, postForm: { title: '', content: '', tagsText: '', images: [] }, postSubmitting: false });
+    this.setData({ showPostForm: false, postForm: { title: '', content: '', tagsText: '', images: [], recipeId: 0, recipeTitle: '' }, postSubmitting: false });
     // 机审未过（PENDING）时先审后发：只有作者本人可见，文案要说清，别让用户以为发了没人理
     const pending = created && created.auditStatus === 'PENDING';
     await this.loadPosts();

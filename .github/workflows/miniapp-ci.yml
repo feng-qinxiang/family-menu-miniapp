@@ -33,6 +33,33 @@ jobs:
       - name: 纯逻辑单测（厨房/库存/周菜单）
         run: node miniapp/test/kitchen-logic.test.js
 
+      # 「冰箱里有没有」的唯一口径：与服务端扣库存同一套（名称+单位+数字用量），
+      # 它错了不会崩，只会让页面说"齐了"而库存一项不扣。
+      - name: 纯逻辑单测（冰箱匹配口径）
+        run: node miniapp/test/pantry-match.test.js
+
+      # 删除库存的 404 语义：后端改契约后，重复删/竞态删不能闪「删除失败」。
+      - name: 纯逻辑单测（删除库存 404 语义）
+        run: node miniapp/test/pantry-delete.test.js
+
+      # 帖子详情曾经把「200 + 空 body」渲染成「帖子不存在或已删除」：读接口的空 body 必须在
+      # utils/api.js 里变成带文案的失败，同时不许误伤空数组/空对象的正常返回与写接口的 204。
+      - name: 纯逻辑单测（2xx 空 body 口径）
+        run: node miniapp/test/api-empty-payload.test.js
+
+      # 晒一晒的跨 tab 交接（一次性 storage）：取一次就撕、跳转失败也要撕。
+      # 两条都靠读写顺序成立，静默坏掉的表现是「社区页凭空弹出一次发帖层」。
+      - name: 纯逻辑单测（晒一晒交接）
+        run: node miniapp/test/post-share.test.js
+
+      - name: 做菜收尾回归（防重/失败保留/跳转失败）
+        run: node miniapp/test/cook-finish.test.js
+
+      # 收藏页帖子卡封面口径：帖子自己的图 → 关联菜谱封面 → 不放图。
+      # 这条错了只会在卡片上配错图：实测一道无配图的「周末烤的面包」被配成扬州炒饭的本地图。
+      - name: 纯逻辑单测（收藏页封面口径）
+        run: node miniapp/test/favorites-cover.test.js
+
       # A 类（绑了事件却没按下反馈）是机械判定、没有误报，脚本对它 exit 1；
       # B / C 靠类名与尺寸启发式，文本链接本就不该有 88rpx 热区，脚本只报告不影响退出码。
       - name: 交互体检（A 类阻断，B/C 报告）

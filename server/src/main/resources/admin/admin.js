@@ -199,6 +199,10 @@
     }).then(function (res) {
       if (res.status === 401 && !opts.allow401) {
         logout(true);
+        // 操作到一半会话失效（令牌过期、被服务端撤销、账号被封禁）时，只把人丢回登录页会看到
+        // 上一次留在页面上的旧提示（比如绿色的「已退出」），像是自己点了退出。这里把原因写清楚。
+        // 登录页自己的 401（验证码错）走 allow401，不会落到这里。
+        setLoginMsg('登录已失效，请重新登录', 'error');
         throw new Error('登录已失效，请重新登录');
       }
       return res.text().then(function (text) {
@@ -239,6 +243,24 @@
       'stroke-linejoin="round" stroke-linecap="round"/></svg>';
   }
 
+  /**
+   * x 轴标签抽样：只画下标间隔为 step 的标签，位置均匀、永不重叠。
+   *
+   * 锚点在**末尾**（最新那天）而不是开头 —— 趋势图右边那天是"今天"，必须标出来。
+   * 原来的写法是 `i % step === 0 || i === n - 1`：为了补上末尾那个标签，
+   * 它和前一个采样标签的距离不再受 step 约束，实测柱状图里 09-21 的右边界
+   * 与 09-22 的左边界落在同一个 x=1344 上，两个日期贴成 "09-2109-22"。
+   */
+  function axisStep(n, maxLabels) {
+    if (n <= maxLabels) return 1;
+    return Math.ceil((n - 1) / (maxLabels - 1));
+  }
+
+  /** 该下标是否要画标签（末尾对齐抽样） */
+  function axisLabelAt(i, n, step) {
+    return (n - 1 - i) % step === 0;
+  }
+
   /** 折线图：cfg = { labels, series:[{name,color,values}], height } */
   function lineChart(cfg) {
     var labels = cfg.labels || [];
@@ -262,9 +284,9 @@
       out.push('<text class="axis" x="' + (padL - 8) + '" y="' + (gy + 4) + '" text-anchor="end">' +
         Math.round(top * (4 - g) / 4) + '</text>');
     }
-    var step = Math.max(1, Math.ceil(n / 7));
+    var step = axisStep(n, 7);
     labels.forEach(function (lb, i) {
-      if (i % step === 0 || i === n - 1) {
+      if (axisLabelAt(i, n, step)) {
         out.push('<text class="axis" x="' + x(i) + '" y="' + (H - 7) + '" text-anchor="middle">' +
           escapeHtml(fmtDate(lb)) + '</text>');
       }
@@ -286,7 +308,8 @@
   function barChart(cfg) {
     var labels = cfg.labels || [];
     var values = cfg.values || [];
-    var W = 520, H = cfg.height || 250;
+    // 与 lineChart 同一 viewBox 尺寸：两张趋势卡等宽时图表渲染高度才一致
+    var W = 760, H = cfg.height || 250;
     var padL = 50, padR = 12, padT = 14, padB = 26;
     var innerW = W - padL - padR, innerH = H - padT - padB;
     var max = Math.max.apply(null, values.concat([1]));
@@ -303,7 +326,7 @@
       out.push('<text class="axis" x="' + (padL - 8) + '" y="' + (gy + 4) + '" text-anchor="end">' +
         fmt(Math.round(top * (4 - g) / 4)) + '</text>');
     }
-    var step = Math.max(1, Math.ceil(n / 6));
+    var step = axisStep(n, 6);
     values.forEach(function (v, i) {
       var cx = padL + slot * i + slot / 2;
       var h = innerH * (v / top);
@@ -311,7 +334,7 @@
       out.push('<rect class="bar" x="' + (cx - bw / 2).toFixed(1) + '" y="' + by.toFixed(1) + '" width="' + bw.toFixed(1) +
         '" height="' + Math.max(h, v > 0 ? 2 : 0).toFixed(1) + '" rx="3" fill="' + cfg.color + '">' +
         '<title>' + escapeHtml(fmtDate(labels[i]) + ' · ' + fmt(v)) + '</title></rect>');
-      if (i % step === 0 || i === n - 1) {
+      if (axisLabelAt(i, n, step)) {
         out.push('<text class="axis" x="' + cx.toFixed(1) + '" y="' + (H - 7) + '" text-anchor="middle">' +
           escapeHtml(fmtDate(labels[i])) + '</text>');
       }
@@ -327,7 +350,7 @@
     var btn = $('sendOtpBtn');
     btn.disabled = true;
     btn.textContent = '发送中…';
-    request('/api/admin/auth/otp', { method: 'POST', body: { phone: phone } })
+    request('/api/admin/auth/otp', { method: 'POST', body: { phone: phone }, allow401: true })
       .then(function (res) {
         // devCode 仅在服务端 auth.dev-otp-enabled=true 时回显（生产默认关闭），这里只是消费
         setLoginMsg(res && res.devCode ? ('调试验证码（仅开发环境）：' + res.devCode) : '验证码已发送', 'ok');
@@ -337,7 +360,35 @@
         setLoginMsg(err.message, 'error');
         btn.disabled = false;
         btn.textContent = '获取验证码';
+        // 503 = 短信网关没接（SMS_PROVIDER=noop）且没开 dev OTP：验证码永远发不出去。
+        // 只报错的话登录页就成了死胡同 —— 页面上没有任何一条能进后台的路，
+        // 也没告诉运维要设哪个变量。这里补上分流提示。
+        if (err && err.status === 503) suggestLoginWorkaround();
       });
+  }
+
+  /**
+   * 验证码发不出去时的出口提示：引导登录可用就切过去，不可用就写明要设的环境变量。
+   * 只在 503（服务端明说发不出码）时调用，正常环境不会看到。
+   */
+  function suggestLoginWorkaround() {
+    var canBootstrap = !$('authTabBootstrap').hidden;
+    if (canBootstrap) {
+      showAuthTab('bootstrap');
+      setBootstrapMsg('短信网关未接入时用上面的引导令牌登录；' +
+        '或在服务端设 AUTH_DEV_OTP_ENABLED=true 重启（本地验证码固定 246810）。', 'ok');
+      return;
+    }
+    setLoginMsg('验证码发不出去：服务端既没接短信网关（SMS_PROVIDER），也没开本地验证码。' +
+      '两个办法二选一 —— 设 AUTH_DEV_OTP_ENABLED=true 重启（验证码固定 246810），' +
+      '或设 ADMIN_BOOTSTRAP_TOKEN + ADMIN_BOOTSTRAP_PHONE 重启后用「引导令牌」登录。', 'error');
+  }
+
+  function setBootstrapMsg(text, kind) {
+    var el = $('bootstrapMsg');
+    if (!el) return;
+    el.textContent = text || '';
+    el.className = 'msg' + (kind ? ' ' + kind : '');
   }
 
   function startCountdown(btn, seconds) {
@@ -359,7 +410,7 @@
     var btn = $('loginBtn');
     btn.disabled = true;
     setLoginMsg('');
-    request('/api/admin/auth/login', { method: 'POST', body: { phone: phone, code: code } })
+    request('/api/admin/auth/login', { method: 'POST', body: { phone: phone, code: code }, allow401: true })
       .then(function (res) {
         state.token = res.token;
         state.nickname = res.nickname || '管理员';
@@ -381,24 +432,61 @@
   }
 
   /**
+   * 登录方式切换（验证码 / 引导令牌）。
+   *
+   * 引导登录是否可用由服务端渲染进 <body data-bootstrap-login>（见 AdminPageController）：
+   * 前端不再打接口探测。原来那次探测（空令牌打引导接口，404 才隐藏）有两个代价：
+   * 它会占掉该端点 5 次/分钟的限流额度，同一分钟刷新登录页到第 6 次时连真正的引导登录
+   * 都会吃 429「操作过于频繁」，把唯一进得去的入口关掉；而且空令牌必然收到 401，
+   * 控制台里会一直挂着一条看起来像故障的报错。
+   * 服务端本来就知道答案，直接写进页面：一次请求都不用花，也不会误判。
+   */
+  function setupAuthTabs() {
+    var tabs = $('authTabs');
+    tabs.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-authtab]');
+      if (btn) showAuthTab(btn.getAttribute('data-authtab'));
+    });
+
+    // 只有一个选项时整条切换栏不显示：一个按钮的分段控件只是噪音
+    var available = document.body.getAttribute('data-bootstrap-login') === 'true';
+    $('authTabBootstrap').hidden = !available;
+    tabs.hidden = !available;
+    $('authSwitchHint').hidden = !available;
+    if (!available) showAuthTab('otp');
+  }
+
+  /** 切换登录方式分段控件（「引导登录」失败时也要能程序化切过去） */
+  function showAuthTab(key) {
+    var boot = key === 'bootstrap';
+    var tabOtp = $('authTabOtp');
+    var tabBoot = $('authTabBootstrap');
+    tabOtp.className = 'auth-tab' + (boot ? '' : ' on');
+    tabBoot.className = 'auth-tab' + (boot ? ' on' : '');
+    tabOtp.setAttribute('aria-selected', boot ? 'false' : 'true');
+    tabBoot.setAttribute('aria-selected', boot ? 'true' : 'false');
+    $('authPaneOtp').hidden = boot;
+    $('authPaneBootstrap').hidden = !boot;
+    if (boot) $('bootstrapToken').focus();
+  }
+
+  /**
    * 引导登录：短信网关未接入（验证码发不出去）时进后台的唯一入口。
    * 令牌与登录目标都在服务端（ADMIN_BOOTSTRAP_TOKEN / ADMIN_BOOTSTRAP_PHONE），
    * 前端只负责把令牌提交上去，页面里不含任何账号信息。
    */
   function bootstrapLogin() {
     var input = $('bootstrapToken');
-    var msgEl = $('bootstrapMsg');
     var token = (input.value || '').trim();
-    var setMsg = function (text, kind) { msgEl.textContent = text || ''; msgEl.className = 'msg' + (kind ? ' ' + kind : ''); };
-    if (!token) { setMsg('请输入引导令牌', 'error'); return; }
+    if (!token) { setBootstrapMsg('请输入引导令牌', 'error'); return; }
     var btn = $('bootstrapBtn');
     btn.disabled = true;
-    setMsg('');
+    setBootstrapMsg('');
     // allow401：令牌错误时不该触发「登录已失效」的全局登出逻辑
     request('/api/admin/auth/bootstrap', { method: 'POST', body: { token: token }, allow401: true })
       .then(function (res) {
         input.value = '';
-        setMsg('');
+        setBootstrapMsg('');
         state.token = res.token;
         state.nickname = res.nickname || '管理员';
         try { sessionStorage.setItem(TOKEN_KEY, res.token); } catch (e) {}
@@ -407,7 +495,7 @@
       })
       .catch(function (err) {
         // 404 = 服务端没配令牌（端点视同不存在），翻译成可执行的提示，而不是「请求失败 404」
-        setMsg(err.status === 404
+        setBootstrapMsg(err.status === 404
           ? '服务端未开启引导登录：请设置环境变量 ADMIN_BOOTSTRAP_TOKEN 与 ADMIN_BOOTSTRAP_PHONE 后重启'
           : err.message, 'error');
         btn.disabled = false;
@@ -421,6 +509,7 @@
     loadingCard();
     request('/api/admin/me').then(function (me) {
       state.role = me.role;
+      state.userId = me.userId;
       state.roleName = me.roleName || '管理员';
       state.permissions = me.permissions || [];
       state.nickname = me.nickname || state.nickname;
@@ -696,11 +785,16 @@
   }
 
   /**
-   * 页头：标题 + 说明 + 右侧操作；筛选类控件放第二行（toolbar）
+   * 页头：说明 + 右侧操作；筛选类控件放第二行（toolbar）。
    * 这样"这是什么页面"和"能做什么操作"层次分明，不会挤成一坨。
+   *
+   * **不含标题** —— 标题由顶栏的 `#pageTitle`（面包屑 + h1）承担，两边都渲染会在
+   * 同一个屏幕上重复一次同样的字，实测 13 个页面的 pageHead 标题与 NAV label 逐字相同。
+   * 说明与操作都是可选的；两者都没有时返回空串，否则会留下一条悬空的分隔线。
    */
-  function pageHead(title, desc, actionsHtml) {
-    return '<div class="page-head"><div><h2>' + escapeHtml(title) + '</h2>' +
+  function pageHead(desc, actionsHtml) {
+    if (!desc && !actionsHtml) return '';
+    return '<div class="page-head"><div>' +
       (desc ? '<p class="page-desc">' + escapeHtml(desc) + '</p>' : '') + '</div>' +
       (actionsHtml ? '<div class="page-actions">' + actionsHtml + '</div>' : '') + '</div>';
   }
@@ -981,7 +1075,7 @@
 
   function renderReports() {
     var rows = state.reports;
-    var head = pageHead('举报审核', '用户举报的帖子在这里处置：下架或忽略',
+    var head = pageHead('用户举报的帖子在这里处置：下架或忽略',
       '<button class="btn small" id="exportReports">导出 Excel</button>') +
       toolbar(chips([['PENDING', '待处理'], ['REMOVED', '已下架'], ['IGNORED', '已忽略'], ['', '全部']], state.reportFilter, 'rptfilter'));
     var body = rows.length ? rows.map(function (r) {
@@ -996,7 +1090,7 @@
         '<td>' + escapeHtml(r.reason || '') + '</td>' +
         '<td class="clamp" title="' + escapeHtml(r.description || '') + '">' + escapeHtml(r.description || '—') + '</td>' +
         '<td>' + escapeHtml(r.reporter || '—') + '</td>' +
-        '<td>' + pill + '</td><td title="' + escapeHtml(r.createdAt || '') + '">' + fmtTime(r.createdAt) + '</td><td class="actions">' +
+        '<td>' + pill + '</td><td class="nowrap" title="' + escapeHtml(r.createdAt || '') + '">' + fmtTime(r.createdAt) + '</td><td class="actions">' +
         (pending
           ? '<button class="btn small" data-postdetail="' + escapeHtml(String(r.postId)) + '">查看帖子</button>' +
             '<button class="btn small danger" data-review="' + escapeHtml(String(r.reportId)) + '" data-status="REMOVED">下架帖子</button>' +
@@ -1046,9 +1140,9 @@
 
   function renderPosts() {
     var rows = state.posts;
-    var head = pageHead('内容治理', '先审后发：待审核的帖子只有作者本人可见',
+    var head = pageHead('先审后发：待审核的帖子只有作者本人可见',
       '<button class="btn small" id="exportPosts">导出 Excel</button>') +
-      toolbar(chips([['PENDING', '待审核'], ['', '全部'], ['APPROVED', '已发布'], ['REMOVED', '已下架']], state.postFilter, 'postfilter'));
+      toolbar(chips([['PENDING', '待审核'], ['APPROVED', '已发布'], ['REMOVED', '已下架'], ['', '全部']], state.postFilter, 'postfilter'));
     var body = rows.length ? rows.map(function (p) {
       var removed = p.auditStatus === 'REMOVED';
       var pending = p.auditStatus === 'PENDING';
@@ -1073,11 +1167,11 @@
       return '<tr><td class="pick"><input type="checkbox" data-pick="posts:' + escapeHtml(String(p.id)) +
           '"' + (state.picked.posts[p.id] ? ' checked' : '') + ' /></td>' +
         '<td class="num">' + escapeHtml(String(p.id)) + '</td>' +
-        '<td>' + escapeHtml(p.title || '') + '</td>' +
+        '<td class="clamp" title="' + escapeHtml(p.title || '') + '">' + escapeHtml(p.title || '') + '</td>' +
         '<td><div class="cell-user">' + avatarHtml(p.author) + '<span class="name">' + escapeHtml(p.author || '—') + '</span></div></td>' +
         '<td>' + pill + '</td>' +
         '<td class="num">' + fmtNum(p.likeCount) + '</td><td class="num">' + fmtNum(p.commentCount) + '</td>' +
-        '<td title="' + escapeHtml(p.createdAt || '') + '">' + fmtTime(p.createdAt) + '</td>' +
+        '<td class="nowrap" title="' + escapeHtml(p.createdAt || '') + '">' + fmtTime(p.createdAt) + '</td>' +
         '<td class="actions">' + actions + '</td></tr>';
     }).join('') : tableEmpty(9, { icon: 'file', title: '暂无帖子', desc: '用户发布的帖子会先进入待审核队列，在这里通过或下架。当前筛选条件下没有记录。' });
     var pickedCount = pickedIds('posts').length;
@@ -1128,7 +1222,7 @@
 
   function renderComments() {
     var rows = state.comments;
-    var head = pageHead('评论管理', '「待审核」是机审无法判定的评论：作者本人可见，其他人看不到，需要你通过或驳回',
+    var head = pageHead('「待审核」是机审无法判定的评论：作者本人可见，其他人看不到，需要你通过或驳回',
       '') +
       toolbar(chips([['PENDING', '待审核'], ['APPROVED', '已通过'], ['REMOVED', '已驳回'], ['', '全部']], state.commentFilter, 'cmtfilter') +
         '<input id="commentPostFilter" type="search" placeholder="按帖子 ID 过滤" value="' + escapeHtml(state.commentPostId) + '" class="text-input" style="width:130px" />' +
@@ -1161,7 +1255,7 @@
         '<td><div class="cell-user">' + avatarHtml(c.authorNickname) +
           '<span class="name">' + escapeHtml(c.authorNickname || ('用户' + c.authorUserId)) + '</span></div></td>' +
         '<td class="clamp" title="' + escapeHtml(c.content || '') + '">' + escapeHtml(c.content || '') + '</td>' +
-        '<td>' + pill + '</td><td title="' + escapeHtml(c.createdAt || '') + '">' + fmtTime(c.createdAt) + '</td>' +
+        '<td>' + pill + '</td><td class="nowrap" title="' + escapeHtml(c.createdAt || '') + '">' + fmtTime(c.createdAt) + '</td>' +
         '<td class="actions">' + actions + '</td></tr>';
     }).join('') : tableEmpty(8, { icon: 'comment', title: '暂无评论', desc: '机审无法判定的评论会进入待审核队列，作者本人可见、其他人看不到。' });
     var pickedCount = pickedIds('comments').length;
@@ -1215,14 +1309,15 @@
 
   function renderRecipes() {
     var rows = state.recipes;
-    var head = pageHead('菜谱治理', '下架后用户端不再展示该菜谱',
+    var head = pageHead('下架后用户端不再展示该菜谱',
       '') +
       toolbar(chips([['ACTIVE', '在线'], ['REMOVED', '已下架'], ['', '全部']], state.recipeFilter, 'recipefilter') +
         '<input id="recipeSearch" type="search" placeholder="按标题搜索" value="' + escapeHtml(state.recipeKeyword) + '" class="text-input" style="width:180px" />' +
         '<button class="btn small" id="recipeSearchBtn">搜索</button>');
     var body = rows.length ? rows.map(function (r) {
       var removed = r.status === 'REMOVED';
-      return '<tr><td class="num">' + escapeHtml(String(r.recipeId)) + '</td><td>' + escapeHtml(r.title || '') + '</td>' +
+      return '<tr><td class="num">' + escapeHtml(String(r.recipeId)) + '</td>' +
+        '<td class="clamp" title="' + escapeHtml(r.title || '') + '">' + escapeHtml(r.title || '') + '</td>' +
         '<td><div class="cell-user">' + avatarHtml(r.ownerNickname) + '<span class="name">' +
           escapeHtml(r.ownerNickname || '—') + '</span></div></td>' +
         '<td>' + escapeHtml(r.cuisine || '—') + '</td>' +
@@ -1375,7 +1470,7 @@
 
   function renderFeedback() {
     var rows = state.feedback;
-    var head = pageHead('反馈工单', '用户提交的 bug / 建议 / 投诉',
+    var head = pageHead('用户提交的 bug / 建议 / 投诉',
       '<button class="btn small" id="exportFeedback">导出 Excel</button>') +
       toolbar(chips([['OPEN', '待处理'], ['PROCESSING', '处理中'], ['CLOSED', '已关闭'], ['', '全部']], state.feedbackFilter, 'fbfilter'));
     var body = rows.length ? rows.map(function (f) {
@@ -1436,7 +1531,7 @@
 
   function renderImports() {
     var rows = state.imports;
-    var head = pageHead('导入审核', '外部来源（链接 / 图片 OCR）解析出的菜谱，通过后才入库',
+    var head = pageHead('外部来源（链接 / 图片 OCR）解析出的菜谱，通过后才入库',
       '') +
       toolbar(chips([['PENDING', '待审核'], ['APPROVED', '已通过'], ['REJECTED', '已驳回'], ['', '全部']], state.importFilter, 'importfilter'));
     var body = rows.length ? rows.map(function (im) {
@@ -1529,7 +1624,7 @@
   function renderFamilies() {
     var p = state.families;
     var rows = p.items || [];
-    var head = pageHead('家庭与成员', '每个家庭有多少人、多少菜谱与菜单；点「查看」看成员、菜单与库存',
+    var head = pageHead('每个家庭有多少人、多少菜谱与菜单；点「查看」看成员、菜单与库存',
       '<button class="btn small" id="exportFamilies">导出 Excel</button>') +
       toolbar(searchBoxHtml('familySearch', '搜家庭名 / 创建者昵称', state.familyKeyword, 'familySearchBtn'));
     var body = rows.length ? rows.map(function (f) {
@@ -1541,7 +1636,7 @@
         '<td class="num">' + fmtNum(f.memberCount) + '</td>' +
         '<td class="num">' + fmtNum(f.recipeCount) + '</td>' +
         '<td class="num">' + fmtNum(f.menuCount) + '</td>' +
-        '<td title="' + escapeHtml(f.createdAt || '') + '">' + fmtTime(f.createdAt) + '</td>' +
+        '<td class="nowrap" title="' + escapeHtml(f.createdAt || '') + '">' + fmtTime(f.createdAt) + '</td>' +
         '<td class="actions"><button class="btn small" data-famdetail="' + escapeHtml(String(f.familyId)) +
           '">查看</button></td></tr>';
     }).join('') : tableEmpty(8, {
@@ -1670,7 +1765,7 @@
   function renderMenus() {
     var p = state.menus;
     var rows = p.items || [];
-    var head = pageHead('今日菜单', '各家庭每天点了哪些菜。默认按日期倒序，可用日期筛选某一天',
+    var head = pageHead('各家庭每天点了哪些菜。默认按日期倒序，可用日期筛选某一天',
       '<button class="btn small" id="exportMenus">导出 Excel</button>') +
       toolbar(dayFilterHtml('menu', state.menuDate) +
         searchBoxHtml('menuSearch', '搜家庭名', state.menuKeyword, 'menuSearchBtn'));
@@ -1680,11 +1775,11 @@
           escapeHtml(m.familyName || ('家庭 #' + m.familyId)) + '</button></td>' +
         '<td class="num">' + escapeHtml(String(m.menuDate || '')) + '</td>' +
         '<td><span class="pill ' + (m.status === 'READY' ? 'ok' : '') + '">' + escapeHtml(MENU_STATUS[m.status] || m.status || '—') + '</span></td>' +
-        '<td class="clamp">' + escapeHtml(m.meals || '—') + '</td>' +
-        '<td class="clamp">' + escapeHtml(m.cookProgress || '—') + '</td>' +
+        '<td class="clamp" title="' + escapeHtml(m.meals || '') + '">' + escapeHtml(m.meals || '—') + '</td>' +
+        '<td class="clamp" title="' + escapeHtml(m.cookProgress || '') + '">' + escapeHtml(m.cookProgress || '—') + '</td>' +
         '<td class="num">' + fmtNum(m.itemCount) + '</td>' +
         '<td class="clamp" title="' + escapeHtml(m.dishes || '') + '">' + escapeHtml(m.dishes || '—') + '</td>' +
-        '<td title="' + escapeHtml(m.updatedAt || '') + '">' + fmtTime(m.updatedAt) + '</td></tr>';
+        '<td class="nowrap" title="' + escapeHtml(m.updatedAt || '') + '">' + fmtTime(m.updatedAt) + '</td></tr>';
     }).join('') : tableEmpty(9, {
       icon: 'book',
       title: '这几天没有菜单',
@@ -1714,10 +1809,10 @@
   function renderShopping() {
     var p = state.shopping;
     var rows = p.items || [];
-    var head = pageHead('购物清单', '清单由当天菜单的食材自动汇总，家庭在买菜时逐项勾选',
+    var head = pageHead('清单由当天菜单的食材自动汇总，家庭在买菜时逐项勾选',
       '<button class="btn small" id="exportShopping">导出 Excel</button>') +
       toolbar(dayFilterHtml('shop', state.shoppingDate) +
-        chips([['', '全部'], ['OPEN', '进行中'], ['CLOSED', '已结束']], state.shoppingFilter, 'shopfilter'));
+        chips([['OPEN', '进行中'], ['CLOSED', '已结束'], ['', '全部']], state.shoppingFilter, 'shopfilter'));
     var body = rows.length ? rows.map(function (s) {
       var total = Number(s.totalCount || 0);
       var bought = Number(s.purchasedCount || 0);
@@ -1730,7 +1825,7 @@
         '<td class="num">' + fmtNum(bought) + ' / ' + fmtNum(total) + '</td>' +
         '<td><span class="pill ' + (s.status === 'OPEN' ? 'info' : '') + '">' +
           escapeHtml(LIST_STATUS[s.status] || s.status || '') + '</span></td>' +
-        '<td title="' + escapeHtml(s.createdAt || '') + '">' + fmtTime(s.createdAt) + '</td></tr>';
+        '<td class="nowrap" title="' + escapeHtml(s.createdAt || '') + '">' + fmtTime(s.createdAt) + '</td></tr>';
     }).join('') : tableEmpty(7, {
       icon: 'cart',
       title: '没有购物清单',
@@ -1759,7 +1854,7 @@
   function renderPantry() {
     var p = state.pantry;
     var rows = p.items || [];
-    var head = pageHead('家庭库存', '家庭现有食材与保质期；过期的会标红，方便解释"为什么推荐里没有这道菜"',
+    var head = pageHead('家庭现有食材与保质期；过期的会标红，方便解释"为什么推荐里没有这道菜"',
       '<button class="btn small" id="exportPantry">导出 Excel</button>') +
       toolbar(searchBoxHtml('pantrySearch', '搜食材 / 家庭名', state.pantryKeyword, 'pantrySearchBtn'));
     var body = rows.length ? rows.map(function (i) {
@@ -1771,7 +1866,7 @@
         '<td class="num">' + escapeHtml(((i.amount || '') + (i.unit || '')) || '适量') + '</td>' +
         '<td class="num">' + (i.expiresAt ? escapeHtml(String(i.expiresAt)) : '—') + '</td>' +
         '<td><span class="pill' + exp.cls + '">' + escapeHtml(exp.text) + '</span></td>' +
-        '<td title="' + escapeHtml(i.addedAt || '') + '">' + fmtTime(i.addedAt) + '</td></tr>';
+        '<td class="nowrap" title="' + escapeHtml(i.addedAt || '') + '">' + fmtTime(i.addedAt) + '</td></tr>';
     }).join('') : tableEmpty(7, {
       icon: 'box',
       title: '没有库存记录',
@@ -1798,7 +1893,7 @@
   function renderUsers() {
     var p = state.users;
     var rows = p.items || [];
-    var head = pageHead('用户管理', '检索账号、授予权限、封禁、人工开通会员',
+    var head = pageHead('检索账号、授予权限、封禁、人工开通会员',
       '') +
       toolbar('<input id="userSearch" type="search" placeholder="搜昵称 / 手机号 / openid" value="' + escapeHtml(state.userKeyword) + '" class="text-input" style="width:240px" />' +
         '<button class="btn small" id="userSearchBtn">搜索</button>' +
@@ -1806,6 +1901,12 @@
         '<button class="btn small" id="exportUsers">导出 Excel</button>');
     var body = rows.length ? rows.map(function (u) {
       var banned = u.status === 'BANNED';
+      // 服务端不允许改自己的角色（AdminService.setAdminRole → 403「不能修改自己的角色」）。
+      // 这个按钮原来照常渲染，点「保存角色」必然失败 —— 巡检 B2 的确认路径正是这么吃到 403 的
+      // （两条：空提交 + 填值提交）。改成禁用并在 title 里说明原因，而不是把按钮删掉：
+      // 同一列里少一个按钮，读的人得先怀疑自己是不是看错了行。
+      // 封禁一侧不用管：能看到这页的一定是管理员，自己的行 u.admin 恒为真，那边本来就不渲染。
+      var self = state.userId != null && String(u.userId) === String(state.userId);
       return '<tr><td class="num">' + escapeHtml(String(u.userId)) + '</td>' +
         '<td><div class="cell-user">' + avatarHtml(u.nickname, u.avatarUrl) +
           '<div><div class="name">' + escapeHtml(u.nickname || '') + '</div>' +
@@ -1813,9 +1914,10 @@
         '<td>' + escapeHtml(u.phone || '—') + '</td>' +
         '<td>' + (u.admin ? '<span class="pill info">' + escapeHtml(roleLabel(u.adminRole)) + '</span>' : '<span class="pill">普通用户</span>') + '</td>' +
         '<td>' + (banned ? '<span class="pill bad">已封禁</span>' : '<span class="pill ok">正常</span>') + '</td>' +
-        '<td title="' + escapeHtml(u.createdAt || '') + '">' + fmtTime(u.createdAt) + '</td><td class="actions">' +
+        '<td class="nowrap" title="' + escapeHtml(u.createdAt || '') + '">' + fmtTime(u.createdAt) + '</td><td class="actions">' +
         (can('USER_MANAGE')
-          ? '<button class="btn small' + (u.admin ? ' danger' : '') + '" data-role="' + escapeHtml(String(u.userId)) + '">' +
+          ? '<button class="btn small' + (u.admin ? ' danger' : '') + '" data-role="' + escapeHtml(String(u.userId)) + '"' +
+              (self ? ' disabled title="不能修改自己的角色"' : '') + '>' +
               (u.admin ? '调整角色' : '设为管理员') + '</button>' +
             '<button class="btn small" data-vip="' + escapeHtml(String(u.userId)) + '">开通会员</button>' +
             (u.admin ? '' : (banned
@@ -1932,15 +2034,14 @@
     var rows = state.orders;
     var paid = rows.filter(function (o) { return o.status === 'PAID'; });
     var revenue = paid.reduce(function (a, o) { return a + Number(o.amountFen || 0); }, 0);
-    var head = pageHead('订单管理',
-      '共 ' + fmtNum(state.orderTotal) + ' 笔 · 本页已支付 ' + paid.length + ' 笔 ' + fmtMoney(revenue),
+    var head = pageHead('共 ' + fmtNum(state.orderTotal) + ' 笔 · 本页已支付 ' + paid.length + ' 笔 ' + fmtMoney(revenue),
       '<button class="btn small" id="exportOrders">导出 Excel</button>') +
-      toolbar(chips([['', '全部'], ['PENDING', '待支付'], ['PAID', '已支付'], ['CLOSED', '已关闭'], ['REFUNDED', '已退款']], state.orderFilter, 'orderfilter') +
+      toolbar(chips([['PENDING', '待支付'], ['PAID', '已支付'], ['CLOSED', '已关闭'], ['REFUNDED', '已退款'], ['', '全部']], state.orderFilter, 'orderfilter') +
         dateRangeHtml('order', state.orderFrom, state.orderTo));
     var body = rows.length ? rows.map(function (o) {
       var pill = o.status === 'PAID' ? 'ok' : (o.status === 'PENDING' ? 'pending' : 'bad');
       return '<tr><td class="num">' + escapeHtml(String(o.orderId)) + '</td>' +
-        '<td>' + escapeHtml(o.outTradeNo) + '</td>' +
+        '<td class="clamp" title="' + escapeHtml(o.outTradeNo || '') + '">' + escapeHtml(o.outTradeNo) + '</td>' +
         '<td><div class="cell-user">' + avatarHtml(o.payerNickname) +
           '<div><div class="name">' + escapeHtml(o.payerNickname || ('用户 #' + o.payerUserId)) + '</div>' +
           '<div class="sub">#' + escapeHtml(String(o.payerUserId)) + '</div></div></div></td>' +
@@ -1948,7 +2049,7 @@
         '<td class="num">' + fmtMoney(o.amountFen) + '</td>' +
         '<td><span class="pill ' + pill + '">' + escapeHtml(ORDER_STATUS[o.status] || o.status) + '</span></td>' +
         '<td>' + escapeHtml(o.paymentMethod ? (PAY_METHOD[o.paymentMethod] || o.paymentMethod) : '—') + '</td>' +
-        '<td title="下单 ' + escapeHtml(o.createdAt || '') + (o.paidAt ? ' / 支付 ' + escapeHtml(o.paidAt) : '') + '">' +
+        '<td class="nowrap" title="下单 ' + escapeHtml(o.createdAt || '') + (o.paidAt ? ' / 支付 ' + escapeHtml(o.paidAt) : '') + '">' +
         fmtTime(o.paidAt || o.createdAt) + '</td>' +
         '<td class="actions">' +
         (can('ORDER_MANAGE')
@@ -2024,7 +2125,7 @@
   function renderAudit() {
     var rows = state.audit;
     var kw = (state.auditKeyword || '').trim();
-    var head = pageHead('审计日志', '所有管理写操作都会留痕' + (kw ? '（已按「' + kw + '」过滤）' : ''),
+    var head = pageHead('所有管理写操作都会留痕' + (kw ? '（已按「' + kw + '」过滤）' : ''),
       '<button class="btn small" id="exportAudit">导出 Excel</button>') +
       toolbar('<input id="auditSearch" type="search" placeholder="搜操作人 / 动作 / 对象 / 详情" value="' +
         escapeHtml(state.auditKeyword) + '" class="text-input" style="width:260px" />' +
@@ -2039,7 +2140,7 @@
         '<td>' + escapeHtml((AUDIT_TARGET[a.targetType] || a.targetType) + (a.targetId ? ' #' + a.targetId : '')) + '</td>' +
         '<td class="clamp" title="' + escapeHtml(a.detail || '') + '">' + escapeHtml(a.detail || '—') + '</td>' +
         '<td><span class="pill ' + (a.result === 'OK' ? 'ok' : 'bad') + '">' + escapeHtml(AUDIT_RESULT[a.result] || a.result) + '</span></td>' +
-        '<td title="' + escapeHtml(a.createdAt || '') + '">' + fmtTime(a.createdAt) + '</td></tr>';
+        '<td class="nowrap" title="' + escapeHtml(a.createdAt || '') + '">' + fmtTime(a.createdAt) + '</td></tr>';
     }).join('') : tableEmpty(7, { icon: 'shield', title: '没有匹配的操作记录', desc: '所有管理写操作都会自动留痕。换个关键词或调整日期区间再试。' });
     setPageHeader('共 ' + fmtNum(state.auditTotal) + ' 条');
     $('panelRoot').innerHTML = '<div class="card">' + head +
@@ -2311,11 +2412,16 @@
   function openRoleDialog(userId) {
     var u = findUser(userId);
     var current = u.admin ? (u.adminRole || 'SUPER') : '';
+    // 非管理员时不能把「取消管理员」列进去：它的 value 是空串，而 current 也是空串，
+    // 于是它成了默认选中项 —— 运营点「设为管理员」再点「保存角色」，发出去的是 revoke，
+    // 人没提权反而被清空了全部登录会话（实测 userId 155：确认后 /api/auth/me 直接 401）。
+    // 非管理员只给角色选项，并要求显式选择。
+    var options = u.admin ? ROLE_OPTIONS : ROLE_OPTIONS.filter(function (o) { return o.value; });
     openModal({
       title: '设置管理端角色',
       desc: '「' + (u.nickname || ('用户 ' + userId)) + '」当前：' +
         (u.admin ? roleLabel(u.adminRole) : '非管理员'),
-      body: '<div class="plan-grid">' + ROLE_OPTIONS.map(function (o) {
+      body: '<div class="plan-grid">' + options.map(function (o) {
         return '<label class="plan-option role-option">' +
           '<input type="radio" name="rolePick" value="' + o.value + '"' + (o.value === current ? ' checked' : '') + ' />' +
           '<span class="role-name">' + escapeHtml(o.name) + '<small>' + escapeHtml(o.desc) + '</small></span></label>';
@@ -2325,6 +2431,7 @@
         var el = root.querySelector('input[name="rolePick"]:checked');
         return { role: el ? el.value : '' };
       },
+      validate: function (v) { return v.role ? '' : '请选择要授予的角色'; },
       onConfirm: function (v) {
         return request('/api/admin/users/' + encodeURIComponent(userId) + '/role', {
           method: 'POST', body: { role: v.role }
@@ -2658,11 +2765,12 @@
   });
 
   $('loginForm').addEventListener('submit', login);
-  // 引导登录：短信网关未接入时的后台入口（服务端未配令牌时点击会提示未开启）
+  // 引导登录：短信网关未接入时的后台入口（服务端未配令牌时整条切换栏不显示）
   $('bootstrapBtn').addEventListener('click', bootstrapLogin);
   $('bootstrapToken').addEventListener('keydown', function (e) {
     if (e.key === 'Enter') { e.preventDefault(); bootstrapLogin(); }
   });
+  setupAuthTabs();
 
   // 恢复会话（刷新页面时）
   try {
@@ -2671,8 +2779,16 @@
       state.token = saved;
       request('/api/auth/me').then(function (me) {
         if (me && me.admin) { state.nickname = me.nickname || '管理员'; showApp(); }
-        else { logout(true); }
-      }).catch(function () { logout(true); });
+        else {
+          logout(true);
+          // 静默回到登录页会让人以为"后台坏了"，这里说明原因
+          setLoginMsg('该账号没有运营后台权限', 'error');
+        }
+      }).catch(function (err) {
+        logout(true);
+        // 401 分支已经清过会话，这里把被吞掉的「登录已失效」显式还给用户
+        setLoginMsg((err && err.message) || '登录已失效，请重新登录', 'error');
+      });
     }
   } catch (e) {}
 })();

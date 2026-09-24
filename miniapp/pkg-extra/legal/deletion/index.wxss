@@ -1,0 +1,3 @@
+/* pages/legal/deletion · 注销账号（静态二级页）
+   排版与隐私政策是同一套：直接复用它的样式，别在这里再抄一份（改一处两边一起生效） */
+@import "../privacy/index.wxss";

@@ -23,8 +23,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  * 这些行为此前只有人工走查证据，没有测试兜底：待审帖泄露、邀请加入后归属错乱、
  * 重复点菜写出多条菜单项，都是上线后会直接被用户看见的问题。
+ *
+ * properties 里钉住演示数据开关：newGuest() 会按 app.seed-demo-data 给新家庭预建
+ * "今天的菜单"（4 道菜）。这里的断言数的是整张菜单，本地开着 APP_SEED_DEMO_DATA=true
+ * 联调时把种子那 4 道也算进去，就会变成"连点三次落了好几条"的假红。
+ * 环境变量优先级高于 application.properties，只有这一层压得住。
  */
-@SpringBootTest
+@SpringBootTest(properties = "app.seed-demo-data=false")
 @AutoConfigureMockMvc
 class CoreFlowInvariantsTests {
 

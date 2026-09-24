@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -176,8 +178,10 @@ public final class ApiModels {
             @Size(max = 512) String sourceUrl,
             @NotBlank @Size(max = 32) String cuisine,
             @NotEmpty @Size(max = 20) List<String> tasteTags,
-            Integer timeCost,
-            Integer servings,
+            // 范围必须挡住：负数会原样入库并渲染成「-10 分钟 · 0 人份」；
+            // 0 是历史数据里的「没填」哨兵，保留
+            @Min(0) @Max(1440) Integer timeCost,
+            @Min(0) @Max(99) Integer servings,
             @NotEmpty @Size(max = 50) List<RecipeStep> steps,
             @NotEmpty @Size(max = 50) List<IngredientItem> ingredients,
             @Size(max = 255) String summary,
@@ -381,11 +385,11 @@ public final class ApiModels {
     }
 
     public record UpdateRecipeRequest(
-            String title,
-            String cuisine,
-            List<String> tasteTags,
-            Integer timeCost,
-            Integer servings,
+            @Size(max = 128) String title,
+            @Size(max = 32) String cuisine,
+            @Size(max = 20) List<String> tasteTags,
+            @Min(0) @Max(1440) Integer timeCost,
+            @Min(0) @Max(99) Integer servings,
             List<RecipeStep> steps,
             List<IngredientItem> ingredients,
             String summary,
@@ -421,7 +425,7 @@ public final class ApiModels {
 
     public record AddShoppingItemRequest(
             @NotBlank String ingredientName,
-            String amount,
+            @jakarta.validation.constraints.Pattern(regexp = "^\\s*[^-]*$", message = "用量不能为负数") String amount,
             String unit
     ) {
     }
@@ -470,7 +474,9 @@ public final class ApiModels {
 
     public record AddPantryItemRequest(
             @NotBlank String ingredientName,
-            String amount,
+            // 只挡「负数量」这一种明显的手滑（用户把 "-5" 打进自由文本输入框）。
+            // 空值放行（= 没填），"适量/少许/2 个" 这类自由文本照旧。
+            @jakarta.validation.constraints.Pattern(regexp = "^\\s*[^-]*$", message = "用量不能为负数") String amount,
             String unit,
             String expiresAt
     ) {

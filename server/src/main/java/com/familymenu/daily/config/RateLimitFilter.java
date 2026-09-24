@@ -14,8 +14,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * 轻量内存限流：保护少数"可被脚本刷"的公开/低门槛端点。
@@ -60,8 +63,16 @@ public class RateLimitFilter extends OncePerRequestFilter {
     private final ConcurrentHashMap<String, long[]> counters = new ConcurrentHashMap<>();
     private final boolean enabled;
 
-    public RateLimitFilter(@Value("${ratelimit.enabled:true}") boolean enabled) {
+    /** 反代地址白名单：只有对端是这里面的地址时才采信 X-Forwarded-For。 */
+    private final Set<String> trustedProxies;
+
+    public RateLimitFilter(@Value("${ratelimit.enabled:true}") boolean enabled,
+                           @Value("${ratelimit.trusted-proxies:127.0.0.1,::1,0:0:0:0:0:0:0:1}") String trustedProxies) {
         this.enabled = enabled;
+        this.trustedProxies = Arrays.stream(trustedProxies.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     @Override
@@ -116,9 +127,29 @@ public class RateLimitFilter extends OncePerRequestFilter {
         }
     }
 
-    /** nginx 之后由 ForwardedHeaderFilter/forward-headers-strategy 还原真实 IP */
-    private static String clientIp(HttpServletRequest request) {
-        String ip = request.getRemoteAddr();
-        return ip == null ? "unknown" : ip;
+    /**
+     * 限流桶按哪个 IP 计数。
+     *
+     * forward-headers-strategy=native 让 Tomcat 的 RemoteIpValve 用 X-Forwarded-For 改写
+     * remoteAddr —— 只要对端地址"看起来像内网"，它就会采信客户端自带的 XFF。于是任何能直连
+     * 9088 的人换一个 XFF 就换一个桶，限流等于没有（实测：轮换 XFF 连打 8 次引导登录，
+     * 8 次全部越过 5 次/分钟的限额进到控制器；同一轮不带该头时第 6 次就 429）。
+     *
+     * 这里改用阀保存下来的原始 TCP 对端地址判断：只有反代本机（默认回环）才认 XFF，
+     * 其余一律按真实对端计数 —— 伪造头换不到新桶。nginx 不在本机时用
+     * RATELIMIT_TRUSTED_PROXIES 把它的地址加进来。
+     *
+     * 代价（已知）：本机上的其它进程仍可伪造 XFF。拿本机权限已经不需要绕过限流了，可接受。
+     * ponytail: 单实例内存计数，多实例部署时每个实例各自计数。
+     */
+    private String clientIp(HttpServletRequest request) {
+        // RemoteIpValve 改写 remoteAddr 时会把原值存进这个属性（requestAttributesEnabled 默认开）
+        Object original = request.getAttribute("org.apache.catalina.AccessLog.RemoteAddr");
+        String peer = original == null ? request.getRemoteAddr() : String.valueOf(original);
+        if (peer == null) {
+            return "unknown";
+        }
+        // 可信反代：remoteAddr 已被它写成真实客户端地址，用它分桶才有意义
+        return trustedProxies.contains(peer) ? request.getRemoteAddr() : peer;
     }
 }

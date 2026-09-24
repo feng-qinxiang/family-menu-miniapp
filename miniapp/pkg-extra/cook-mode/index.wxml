@@ -12,7 +12,9 @@
     </view>
     <view class="tap-scale nbtn keep {{running ? 'on' : ''}}" catchtap="toggleTimer">
       <view class="ic-clock-sm keep-ic"></view>
-      <text class="keep-tx">计时</text>
+      <!-- 计时跑着的时候这里显示本步剩余时间：步骤正文 + 计时卡在下方滚动区里，
+           而做菜时手机常放在一臂外，倒计时得有个不随滚动跑掉的地方 -->
+      <text class="keep-tx">{{running ? timerText : '计时'}}</text>
     </view>
   </view>
 
@@ -75,12 +77,14 @@
       <view class="stepeyebrow">正在烹饪</view>
       <view class="steptext">{{steps[current].text}}</view>
 
-      <!-- 食材 tags（点一下勾选：备齐一样勾一样） -->
-      <view wx:if="{{ingredients.length}}" class="ings">
+      <!-- 食材 tags（点一下勾选：备齐一样勾一样）。当前步骤正文里点到名的料会高亮：
+           服务端步骤与配料之间没有结构化关联，靠 utils/dish-logic.js 的文本匹配挑出来，
+           匹配不到就整排保持中性（不高亮也不压暗），任何一条都不会被藏起来 -->
+      <view wx:if="{{ingredients.length}}" class="ings {{hasStepHit ? 'has-hit' : ''}}">
         <view
           wx:for="{{ingredients}}"
           wx:key="name"
-          class="ing tap-scale {{item.checked ? 'checked' : ''}}"
+          class="ing tap-scale {{item.checked ? 'checked' : ''}} {{item.use ? 'on' : ''}}"
           data-idx="{{index}}"
           catchtap="toggleIng"
         >
@@ -117,8 +121,10 @@
         <view class="ic-arrow-l"></view>
         <text>上一步</text>
       </view>
-      <view class="btn next tap-scale" catchtap="onNext">
-        <text wx:if="{{current < total - 1}}">下一步：{{steps[current + 1].cn}}</text>
+      <view class="btn next tap-scale" catchtap="onNext" aria-disabled="{{finishing}}">
+        <text wx:if="{{finishing}}">正在记录…</text>
+        <text wx:elif="{{finished}}">已记录 · 查看记录</text>
+        <text wx:elif="{{current < total - 1}}">下一步：{{steps[current + 1].cn}}</text>
         <text wx:else>完成 · 记一笔</text>
         <view class="ic-arrow-r"></view>
       </view>

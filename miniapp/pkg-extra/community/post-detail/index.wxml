@@ -13,8 +13,8 @@
   <state-empty
     wx:elif="{{loadError || !post}}"
     type="offline"
-    title="{{loadErrorDesc ? '内容不可见' : '帖子不存在或已删除'}}"
-    desc="{{loadErrorDesc || '可能已被作者删除或网络开小差，换个网络再试试'}}"
+    title="{{loadErrorDesc ? '内容不可见' : '暂时看不到这条分享'}}"
+    desc="{{loadErrorDesc || '可能还在审核，也可能是网络问题，稍后再试一次'}}"
     cta="{{loadErrorDesc ? '返回' : '重新加载'}}"
     bind:action="{{loadErrorDesc ? 'noop' : 'onRetry'}}"
   ></state-empty>

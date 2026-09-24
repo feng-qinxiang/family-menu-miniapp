@@ -34,6 +34,31 @@
 
 ## 变更历史
 
+### 2026-09-22 - /admin 展示改版（宽度、吸顶、列纪律、登录入口）
+
+**变更内容**:
+
+1. **卡片宽度兜底与内容宽度上限**：新增 `--content-max: 1440px`（顶栏与面板一起收口，大屏不再把 9 列表格拉到 1600px、把「作者」列撑到 400px）；宽表的横向兜底从 `@media (max-width:1240px)` 换成 `@container panel (max-width:1140px)`，查询容器挂在 `.panel-root` 上。
+2. **表头吸顶分层**：`thead th` 从 `top:0; z-index:1` 改为 `top: var(--topbar-h); z-index:2`，表头贴在顶栏下方而不是钻到它背后（`--topbar-h` 从 60px 校正为 72px 的真实高度）。
+3. **列纪律**：`td.num`/`td.nowrap` 补 `nowrap`（日期/时间列折行会把行高从 49px 顶到 61px）；时间列统一 `class="nowrap" title=…`；`td.clamp` 一律带 `title`；`--cell-clamp` 300px→220px；单元格 padding 9px→8px；两行身份单元格 `line-height: 1.35`。
+4. **看板**：`.split-2` 改等宽 `1fr 1fr` + `align-items: stretch`；两张趋势图统一 viewBox 尺寸；x 轴标签改为末尾锚定的均匀抽样（`axisStep`/`axisLabelAt`）。
+5. **页头**：`pageHead` 去掉与顶栏重复的 `<h2>`，签名从 `(title, desc, actions)` 变成 `(desc, actions)`，13 个调用点同步。
+6. **登录页**：引导登录从 `<details>` 折叠区改为与验证码并列的分段切换（`.auth-tabs`/`.auth-tab`/`.auth-pane`）；可用性改由服务端渲染进 `<body data-bootstrap-login>`（`AdminPageController` 会读 `admin.bootstrap-token`/`admin.bootstrap-phone`），前端不再打接口探测。
+7. **登录失败的三种情况各自说清**：登录/发码/引导三处请求补 `allow401`（验证码输错不再被当成「登录已失效」清会话）；「获取验证码」返回 503（`SMS_PROVIDER=noop` 且没开 dev 验证码）时自动分流到引导登录，或写明要设的两个环境变量。
+8. **用户页不再提供注定失败的操作**：自己的那一行「调整角色」改为禁用（`title` 说明原因），`state.userId` 由 `/api/admin/me` 下发。
+
+**变更理由**: 在本地 9088 实例上按 1280/1440/1920 三档逐页量过，确认五处实测缺陷：1280 窗口下内容治理表溢出卡片 219px（旧兜底量的是视口宽度而不是内容区宽度，视口 1280 时内容区只有 992px）；吸顶表头被顶栏盖住；今日菜单的日期列折行导致行高 61px；看板柱状图末尾两个日期标签贴在同一个 x 上；每个列表页标题出现两次。
+
+**影响范围**: `admin.css` / `admin.js` / `index.html` 三个前端文件 + `AdminPageController`（只多做一件事：把「引导登录是否可用」渲染进页面）+ 新增 `AdminUiAssetsTests`。**不动任何接口契约、数据结构与鉴权，不引入任何前端依赖与构建工具**（保持零构建）。
+
+**验证**: `AdminUiAssetsTests` 8 条绿（`mvn -q -Dtest=AdminUiAssetsTests test`），另跑 `AdminRbacTests` 5 条、`AdminBootstrapLoginTests` 9 条、`AdminBootstrapDisabledTests` 3 条，全绿；无头 Chrome 在 1280/1440/1920 三档逐页跑完 14 个列表页与登录页——整页横向滚动 0px、数据行行高 45–50px、每页标题只出现一次、`td.clamp` 都带 `title`、看板两张趋势图等高且相邻 x 轴标签间距 68–114px（下限 8px）、登录页引导入口在 401（已配置）下可见并可来回切换；逐页截图与量化结果存 `artifacts/admin-refresh-2026-09-22/`。
+
+登录这块另做了一轮**全量点击巡检**（272 步：13 个列表页的筛选/搜索/日期区间/排序/翻页/批量勾选 + 每类行内按钮 + 每个弹窗的取消与确认两条路径 + 11 个导出域各一次 + 登录三条路径 + 服务端吊销会话后的刷新），修完只剩 3 条 4xx，且三条都是**故意输错**的负路径（错验证码、错引导令牌、人工删会话后刷新），0 个未捕获异常、0 个 console error；`sweep-errors-all.json` 与完整运行日志存 `artifacts/admin-sweep-2026-09-22/`，修前那几份清单留在同目录 `pre-fix/`（其中 `sweep-errors-expired.json` 是限流把引导入口关掉的原始证据：A1-5/A1-6 两条 429）。新增的那条静态断言做过反向验证：把 `disabled` 分支去掉，`ownRowCannotOfferTheRoleActionTheServerRefuses` 当场失败。
+
+**决策依据**: 兜底用容器查询而不是媒体查询——决定"放不放得下"的是内容区宽度（视口 − 侧栏 − 外边距），视口阈值必须把侧栏宽度算进去，这正是旧阈值漏掉的地方；查询容器挂 `.panel-root` 而非 `.main`，因为卡片宽 = `.panel-root` 内容宽，大屏下 `.main` 更宽会误判。**已知取舍**：容器查询量的是容器宽度而非每张表的宽度，所以内容区窄于 1140px（视口 1280）时所有列表页的卡片都会成为滚动容器、表头不再吸顶，包括本来塞得下的表；要精确到单表只能运行时量宽度，CSS 表达不了，此处按"1280 下不给整页留横向滚动条"取舍。页内标题删除而非改名，因为 13 处与 NAV label 逐字相同，删掉不丢信息。
+
+**登录入口为什么从"前端探测"改成"服务端渲染"**：探测（空令牌打 `POST /api/admin/auth/bootstrap`，404 才隐藏）有两个代价，实测都能复现——该端点限流 5 次/分钟，且 `RateLimitFilter` 的计数在 `allow()` 里先自增再比较、不看响应码，于是同一分钟刷新登录页 6 次，第 6 次连真正的引导登录也吃 429「操作过于频繁」，把短信网关未接入时唯一进得去的入口关掉了；空令牌又必然 401，控制台里常挂一条看起来像故障的报错。服务端本来就知道 `ADMIN_BOOTSTRAP_TOKEN` 配没配，渲染进页面即可，一次请求都不花。**本地登录的正确姿势**（这轮排查中反复用到，写在这里免得下次再翻）：`ADMIN_OPENIDS=guest_default` 把平台账号提为管理员（`ADMIN_OPENIDS` 只升权、启动时执行一次；不设它库里一个管理员都没有，验证码登录会 403「没找到该手机号+管理员的账号」，引导登录也会 403 并提示去设 `ADMIN_OPENIDS`），然后 `AUTH_DEV_OTP_ENABLED=true` 用手机号 `13800138000` + 固定验证码 `246810` 登录，或设 `ADMIN_BOOTSTRAP_TOKEN` + `ADMIN_BOOTSTRAP_PHONE=13800138000` 走「引导令牌」。`admin.bootstrap-token` 与 `admin.bootstrap-phone` **两个都配**才算可用（只配一个时端点按 404 处理，视同没有这个后门）。
+
 ### 2026-09-13 - /admin 运营后台与小程序术语、流程、习惯对齐
 
 **变更内容**:

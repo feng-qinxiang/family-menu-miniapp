@@ -1,0 +1,362 @@
+{
+ "steps_with_errors": [
+  {
+   "id": "s001",
+   "label": "A0 打开登录页",
+   "errs": {
+    "http": [
+     [
+      401,
+      "http://127.0.0.1:9088/api/admin/auth/bootstrap",
+      "application/json"
+     ]
+    ],
+    "exceptions": [],
+    "console": [],
+    "logs": [
+     [
+      "error",
+      "Failed to load resource: the server responded with a status of 401 ()",
+      "http://127.0.0.1:9088/api/admin/auth/bootstrap"
+     ]
+    ],
+    "csp_style": 0
+   }
+  },
+  {
+   "id": "s003",
+   "label": "A1-1 刷新登录页（探测限流额度）",
+   "errs": {
+    "http": [
+     [
+      401,
+      "http://127.0.0.1:9088/api/admin/auth/bootstrap",
+      "application/json"
+     ]
+    ],
+    "exceptions": [],
+    "console": [],
+    "logs": [
+     [
+      "error",
+      "Failed to load resource: the server responded with a status of 401 ()",
+      "http://127.0.0.1:9088/api/admin/auth/bootstrap"
+     ]
+    ],
+    "csp_style": 0
+   }
+  },
+  {
+   "id": "s004",
+   "label": "A1-2 刷新登录页（探测限流额度）",
+   "errs": {
+    "http": [
+     [
+      401,
+      "http://127.0.0.1:9088/api/admin/auth/bootstrap",
+      "application/json"
+     ]
+    ],
+    "exceptions": [],
+    "console": [],
+    "logs": [
+     [
+      "error",
+      "Failed to load resource: the server responded with a status of 401 ()",
+      "http://127.0.0.1:9088/api/admin/auth/bootstrap"
+     ]
+    ],
+    "csp_style": 0
+   }
+  },
+  {
+   "id": "s005",
+   "label": "A1-3 刷新登录页（探测限流额度）",
+   "errs": {
+    "http": [
+     [
+      429,
+      "http://127.0.0.1:9088/api/admin/auth/bootstrap",
+      "application/json"
+     ]
+    ],
+    "exceptions": [],
+    "console": [],
+    "logs": [
+     [
+      "error",
+      "Failed to load resource: the server responded with a status of 429 ()",
+      "http://127.0.0.1:9088/api/admin/auth/bootstrap"
+     ]
+    ],
+    "csp_style": 0
+   }
+  },
+  {
+   "id": "s006",
+   "label": "A1-4 刷新登录页（探测限流额度）",
+   "errs": {
+    "http": [
+     [
+      429,
+      "http://127.0.0.1:9088/api/admin/auth/bootstrap",
+      "application/json"
+     ]
+    ],
+    "exceptions": [],
+    "console": [],
+    "logs": [
+     [
+      "error",
+      "Failed to load resource: the server responded with a status of 429 ()",
+      "http://127.0.0.1:9088/api/admin/auth/bootstrap"
+     ]
+    ],
+    "csp_style": 0
+   }
+  },
+  {
+   "id": "s007",
+   "label": "A1-5 刷新登录页（探测限流额度）",
+   "errs": {
+    "http": [
+     [
+      429,
+      "http://127.0.0.1:9088/api/admin/auth/bootstrap",
+      "application/json"
+     ]
+    ],
+    "exceptions": [],
+    "console": [],
+    "logs": [
+     [
+      "error",
+      "Failed to load resource: the server responded with a status of 429 ()",
+      "http://127.0.0.1:9088/api/admin/auth/bootstrap"
+     ]
+    ],
+    "csp_style": 0
+   }
+  },
+  {
+   "id": "s008",
+   "label": "A1-6 刷新登录页（探测限流额度）",
+   "errs": {
+    "http": [
+     [
+      429,
+      "http://127.0.0.1:9088/api/admin/auth/bootstrap",
+      "application/json"
+     ]
+    ],
+    "exceptions": [],
+    "console": [],
+    "logs": [
+     [
+      "error",
+      "Failed to load resource: the server responded with a status of 429 ()",
+      "http://127.0.0.1:9088/api/admin/auth/bootstrap"
+     ]
+    ],
+    "csp_style": 0
+   }
+  },
+  {
+   "id": "s009",
+   "label": "A2 获取验证码（dev 回显）",
+   "errs": {
+    "http": [
+     [
+      429,
+      "http://127.0.0.1:9088/api/admin/auth/otp",
+      "application/json"
+     ]
+    ],
+    "exceptions": [],
+    "console": [],
+    "logs": [
+     [
+      "error",
+      "Failed to load resource: the server responded with a status of 429 ()",
+      "http://127.0.0.1:9088/api/admin/auth/otp"
+     ]
+    ],
+    "csp_style": 0
+   }
+  },
+  {
+   "id": "s010",
+   "label": "A3 错误验证码登录",
+   "errs": {
+    "http": [
+     [
+      401,
+      "http://127.0.0.1:9088/api/admin/auth/login",
+      "application/json"
+     ]
+    ],
+    "exceptions": [],
+    "console": [],
+    "logs": [
+     [
+      "error",
+      "Failed to load resource: the server responded with a status of 401 ()",
+      "http://127.0.0.1:9088/api/admin/auth/login"
+     ]
+    ],
+    "csp_style": 0
+   }
+  },
+  {
+   "id": "s011",
+   "label": "A4 正确验证码登录（246810）",
+   "errs": {
+    "http": [
+     [
+      401,
+      "http://127.0.0.1:9088/api/admin/auth/login",
+      "application/json"
+     ]
+    ],
+    "exceptions": [],
+    "console": [],
+    "logs": [
+     [
+      "error",
+      "Failed to load resource: the server responded with a status of 401 ()",
+      "http://127.0.0.1:9088/api/admin/auth/login"
+     ]
+    ],
+    "csp_style": 0
+   }
+  },
+  {
+   "id": "s013",
+   "label": "A6 引导令牌（错误）",
+   "errs": {
+    "http": [
+     [
+      401,
+      "http://127.0.0.1:9088/api/admin/auth/bootstrap",
+      "application/json"
+     ]
+    ],
+    "exceptions": [],
+    "console": [],
+    "logs": [
+     [
+      "error",
+      "Failed to load resource: the server responded with a status of 401 ()",
+      "http://127.0.0.1:9088/api/admin/auth/bootstrap"
+     ]
+    ],
+    "csp_style": 0
+   }
+  }
+ ],
+ "all_steps": 11,
+ "meta": {
+  "login": {
+   "repeat_refresh": [
+    {
+     "tabsHidden": false,
+     "tabBootHidden": false,
+     "hintHidden": false
+    },
+    {
+     "tabsHidden": false,
+     "tabBootHidden": false,
+     "hintHidden": false
+    },
+    {
+     "tabsHidden": false,
+     "tabBootHidden": false,
+     "hintHidden": false
+    },
+    {
+     "tabsHidden": false,
+     "tabBootHidden": false,
+     "hintHidden": false
+    },
+    {
+     "tabsHidden": false,
+     "tabBootHidden": false,
+     "hintHidden": false
+    },
+    {
+     "tabsHidden": false,
+     "tabBootHidden": false,
+     "hintHidden": false
+    }
+   ],
+   "otp_msg": "发送过于频繁，请稍后再试",
+   "bad_code_msg": "登录已失效，请重新登录",
+   "logged_in": false,
+   "bad_boot_msg": "引导令牌不正确",
+   "boot_logged_in": true
+  },
+  "expired": {
+   "loginShown": false,
+   "appHidden": false,
+   "msg": "已退出",
+   "token": "broken-token-387f91"
+  },
+  "exports": [
+   {
+    "kind": "users",
+    "status": 401,
+    "body": "{\"error\":\"登录已失效，请重新登录\"}"
+   },
+   {
+    "kind": "orders",
+    "status": 401,
+    "body": "{\"error\":\"登录已失效，请重新登录\"}"
+   },
+   {
+    "kind": "audit",
+    "status": 401,
+    "body": "{\"error\":\"登录已失效，请重新登录\"}"
+   },
+   {
+    "kind": "posts",
+    "status": 401,
+    "body": "{\"error\":\"登录已失效，请重新登录\"}"
+   },
+   {
+    "kind": "comments",
+    "status": 401,
+    "body": "{\"error\":\"登录已失效，请重新登录\"}"
+   },
+   {
+    "kind": "feedback",
+    "status": 401,
+    "body": "{\"error\":\"登录已失效，请重新登录\"}"
+   },
+   {
+    "kind": "reports",
+    "status": 401,
+    "body": "{\"error\":\"登录已失效，请重新登录\"}"
+   },
+   {
+    "kind": "families",
+    "status": 401,
+    "body": "{\"error\":\"登录已失效，请重新登录\"}"
+   },
+   {
+    "kind": "menus",
+    "status": 401,
+    "body": "{\"error\":\"登录已失效，请重新登录\"}"
+   },
+   {
+    "kind": "shopping",
+    "status": 401,
+    "body": "{\"error\":\"登录已失效，请重新登录\"}"
+   },
+   {
+    "kind": "pantry",
+    "status": 401,
+    "body": "{\"error\":\"登录已失效，请重新登录\"}"
+   }
+  ]
+ }
+}

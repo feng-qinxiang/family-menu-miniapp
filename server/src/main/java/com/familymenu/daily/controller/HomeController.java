@@ -87,13 +87,20 @@ public class HomeController {
 
     @GetMapping("/community/posts")
     public List<CommunityPost> communityPosts(@RequestParam(required = false) String tag,
+                                             @RequestParam(required = false) Long recipeId,
                                              @RequestParam(defaultValue = "1") int page,
                                              @RequestParam(defaultValue = "20") int size,
                                              @CurrentUser AuthUser user) {
         // 只读公开接口：未带 token 也能浏览（user 为 null 时不返回"我收藏的"标记）
         // size 夹紧：不给 ?size=999999 一次拖走全表的机会
         int safeSize = Math.min(Math.max(size, 1), 50);
-        return store.communityPosts(user == null ? 0L : user.userId(), familyIdOf(user), tag, Math.max(page, 1), safeSize);
+        long viewer = user == null ? 0L : user.userId();
+        // 按菜谱取帖（菜谱详情页「大家晒的」）：语料是「这道菜」，与全站信息流不是一件事，
+        // 走单独一条只按 recipe_id 收口的 SQL；带 tag 的信息流照旧。
+        if (recipeId != null && recipeId > 0) {
+            return store.communityPostsByRecipe(recipeId, viewer, familyIdOf(user), safeSize);
+        }
+        return store.communityPosts(viewer, familyIdOf(user), tag, Math.max(page, 1), safeSize);
     }
 
     /** 匿名访客没有家庭，用 0 当"没有本家"的哨兵（与 userId 的 0 同一套写法）。 */

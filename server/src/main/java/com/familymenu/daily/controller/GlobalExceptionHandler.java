@@ -44,11 +44,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(Map.of("error", msg));
     }
 
+    /**
+     * 代码里的 IllegalStateException 全是内部失败（"insert failed, no generated key: <SQL>"、
+     * "wechat access_token failed: <微信原文>"、"WechatPay not configured"……），
+     * 原样回给客户端等于把 SQL 和第三方报错贴到用户脸上。消息只进日志，响应固定文案。
+     */
     @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<Map<String, String>> handleIllegalState(IllegalStateException ex) {
-        log.warn("illegal state: {}", ex.getMessage());
-        String msg = ex.getMessage() == null || ex.getMessage().isBlank() ? "当前状态无法继续" : ex.getMessage();
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", msg));
+    public ResponseEntity<Map<String, String>> handleIllegalState(IllegalStateException ex,
+                                                                  HttpServletRequest request) {
+        log.warn("illegal state on {} {}: {}", request.getMethod(), request.getRequestURI(), ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", "当前状态无法继续，请稍后重试"));
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
@@ -104,6 +109,49 @@ public class GlobalExceptionHandler {
             org.springframework.web.HttpRequestMethodNotSupportedException ex) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
                 .body(Map.of("error", "请求方法不支持"));
+    }
+
+    /** 内容类型不对（例如给 JSON 接口发 text/plain）是客户端问题：415，且不该在日志里记成 ERROR。 */
+    @ExceptionHandler(org.springframework.web.HttpMediaTypeNotSupportedException.class)
+    public ResponseEntity<Map<String, String>> handleMediaTypeNotSupported(
+            org.springframework.web.HttpMediaTypeNotSupportedException ex) {
+        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
+                .body(Map.of("error", "请求内容类型不支持"));
+    }
+
+    /** 上传超过 20MB：413（真机拍图很容易撞到，报"服务器内部错误"会让用户重试同一张图）。 */
+    @ExceptionHandler(org.springframework.web.multipart.MaxUploadSizeExceededException.class)
+    public ResponseEntity<Map<String, String>> handleUploadTooLarge(
+            org.springframework.web.multipart.MaxUploadSizeExceededException ex) {
+        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE)
+                .body(Map.of("error", "文件过大，请压缩后重试"));
+    }
+
+    /** 上传接口收到不是 multipart 的请求：400，不是 500（实测 JSON 打 /api/upload 曾报"服务器内部错误"）。 */
+    @ExceptionHandler(org.springframework.web.multipart.MultipartException.class)
+    public ResponseEntity<Map<String, String>> handleMultipart(
+            org.springframework.web.multipart.MultipartException ex) {
+        return ResponseEntity.badRequest().body(Map.of("error", "请上传文件"));
+    }
+
+    /**
+     * multipart 里没有名为 file 的 part：同样是客户端问题，400。
+     *
+     * 它继承的是 ServletException（不是 MultipartException），所以上面那个处理器接不住，
+     * 以前会一路掉到最后的兜底里 —— 用户看到"服务器内部错误"，日志里多一条 ERROR 堆栈。
+     * 字段名写错、旧版客户端、提交了空表单都会走到这里。
+     */
+    @ExceptionHandler(org.springframework.web.multipart.support.MissingServletRequestPartException.class)
+    public ResponseEntity<Map<String, String>> handleMissingPart(
+            org.springframework.web.multipart.support.MissingServletRequestPartException ex) {
+        return ResponseEntity.badRequest().body(Map.of("error", "请上传文件"));
+    }
+
+    /** 缺必填 query 参数（如邀请码为空）：400，不是 500。 */
+    @ExceptionHandler(org.springframework.web.bind.MissingServletRequestParameterException.class)
+    public ResponseEntity<Map<String, String>> handleMissingParam(
+            org.springframework.web.bind.MissingServletRequestParameterException ex) {
+        return ResponseEntity.badRequest().body(Map.of("error", "缺少必填参数：" + ex.getParameterName()));
     }
 
     @ExceptionHandler(Exception.class)

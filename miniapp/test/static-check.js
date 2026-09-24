@@ -1139,6 +1139,39 @@ for (const file of files) {
   }
 }
 
+// ---- 31. 传给 nav-bar 的 status-bar-height 必须在页面 data 里声明过 ----
+// 事故形态不响但一直响：页面把 `status-bar-height="{{statusBarHeight}}"` 绑到一个 data 里
+// **没有声明**的字段，首帧传进去的是 undefined，组件属性是 Number 类型 → 控制台每进一次刷一条
+// 「expected <Number> but got non-number value. Used 0 instead」，顶部栏高度只能等组件
+// attached 里自己回填（多一帧跳动）。修 recipe-detail 时实测：全站只有它一处漏声明。
+// 判据：WXML 里绑的字段名要能在同目录 index.js 的 data 块里找到 `key:`。
+for (const file of files) {
+  if (!file.endsWith('.wxml')) continue;
+  const src = fs.readFileSync(file, 'utf8');
+  const bound = [...src.matchAll(/status-bar-height="\{\{\s*([A-Za-z0-9_.]+)\s*\}\}"/g)].map((m) => m[1]);
+  if (!bound.length) continue;
+  const jsPath = file.replace(/\.wxml$/, '.js');
+  if (!fs.existsSync(jsPath)) continue;
+  const code = fs.readFileSync(jsPath, 'utf8');
+  const at = code.search(/data:\s*\{/);
+  let block = '';
+  if (at >= 0) {
+    const open = code.indexOf('{', at);
+    let depth = 0;
+    for (let i = open; i < code.length; i += 1) {
+      if (code[i] === '{') depth += 1;
+      else if (code[i] === '}') { depth -= 1; if (!depth) { block = code.slice(open, i); break; } }
+    }
+  }
+  for (const key of new Set(bound)) {
+    if (!new RegExp(`(^|[^A-Za-z0-9_.])${key.replace(/\./g, '\\.')}\\s*:`).test(block)) {
+      problems.push(`nav-bar 高度字段没声明 ${rel(jsPath)} -> status-bar-height="{{${key}}}"，`
+        + `但 data 里没有 \`${key}\`（首帧传 undefined：控制台刷「expected <Number> but got non-number」，`
+        + '顶栏高度要等组件自己回填，会跳一帧）');
+    }
+  }
+}
+
 // ---- 提审前必须由部署方填写的项（只报告、不阻断）----
 // 为什么不阻断：这两个值只有部署方能给（要等 ICP 备案下来的域名、以及运营者本人姓名/联系方式），
 // 在拿到之前把 CI 判红只会淹没其它真正需要看的失败。所以每次运行都显式列出来，
@@ -1166,6 +1199,30 @@ if (fs.existsSync(envPath)) {
     }
   });
 }
+
+// 社区开关覆盖面：COMMUNITY 关闭（个人主体）时，凡是能把用户带进 UGC 的入口都必须自查。
+// 只挡住 tabBar 是不够的——分享卡片、历史栈、页面路径直达都能进页面，所以每个入口各自守一道。
+// 这层只防"守卫被顺手删掉"，防不了"新增入口忘了加"，但后者在评审里看得见，前者看不见。
+[
+  ['utils/constants.js', 'COMMUNITY'],
+  ['utils/tabs.js', 'COMMUNITY'],
+  ['utils/post-share.js', 'COMMUNITY'],
+  ['pages/community/index.js', 'features.COMMUNITY'],
+  ['pages/me/index.wxml', 'features.COMMUNITY'],
+  ['pages/home/index.js', 'features.COMMUNITY'],
+  ['pkg-extra/community/post-detail/index.js', 'features.COMMUNITY'],
+  ['pkg-extra/favorites/index.js', 'features.COMMUNITY'],
+  ['pkg-extra/recipe-detail/index.js', 'features.COMMUNITY'],
+  ['pkg-extra/recipe-detail/index.wxml', 'showCommunity'],
+  ['pkg-extra/kitchen/index.js', 'features.COMMUNITY'],
+  ['pkg-extra/kitchen/index.wxml', 'showCommunity']
+].forEach(([rel, marker]) => {
+  const p = path.join(ROOT, rel);
+  if (!fs.existsSync(p)) { problems.push(`社区开关覆盖：${rel} 不存在`); return; }
+  if (!fs.readFileSync(p, 'utf8').includes(marker)) {
+    problems.push(`社区开关覆盖：${rel} 不再包含 ${marker}（COMMUNITY 关闭时这个入口会把用户送进 UGC）`);
+  }
+});
 
 console.log(`检查了 ${files.length} 个文件（其中 ${jsChecked} 个 .js 过了语法解析）`);
 if (preflight.length) {

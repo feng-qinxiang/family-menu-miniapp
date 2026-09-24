@@ -445,6 +445,48 @@
   align-items: center;
   justify-content: center;
 }
+
+/* —— 大家晒的（这道菜的社区作品） ——
+   一行一件：左边帖首图（没配图时退成作者首字，不留空洞），右边标题 + 作者/赞数。 */
+.rd-work {
+  display: flex;
+  align-items: center;
+  gap: 21rpx;
+  padding: 22rpx 0;
+  border-bottom: 2rpx solid var(--paper-2);
+}
+.rd-work:last-child { border-bottom: none; }
+.rd-work-thumb {
+  flex: none;
+  width: var(--dish-thumb);
+  height: var(--dish-thumb);
+  border-radius: var(--r-md);
+}
+.rd-work-thumb--none {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper-2);
+  color: var(--mut-strong);
+  font-family: var(--serif);
+  font-size: calc(36rpx * var(--fs-mul, 1));
+  font-weight: 900;
+}
+.rd-work-body {
+  flex: 1;
+  min-width: 0;
+}
+.rd-work-title {
+  color: var(--ink);
+  font-size: calc(28rpx * var(--fs-mul, 1));
+  font-weight: 700;
+  line-height: 1.4;
+}
+.rd-work-meta {
+  margin-top: 10rpx;
+  color: var(--mut-strong);
+  font-size: calc(23rpx * var(--fs-mul, 1));
+}
 /* ===== 底部 footbar ===== */
 .rd-footbar {
   position: fixed;

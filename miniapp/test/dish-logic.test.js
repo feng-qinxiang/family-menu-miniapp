@@ -8,7 +8,8 @@ const {
   filterBySlot,
   recipesFromPosts,
   todayDateKey,
-  parseLocalDate
+  parseLocalDate,
+  ingredientsInStep
 } = require('../utils/dish-logic');
 
 // decorateHero：按字数分档（<=5 默认，6→t6，7-8→t7，9-10→t9，>=11→t11）
@@ -55,5 +56,20 @@ assert.strictEqual(parsed.getMonth(), 8);
 assert.strictEqual(parsed.getDate(), 10);
 assert.strictEqual(parseLocalDate(''), null);
 assert.strictEqual(parseLocalDate('not-a-date'), null);
+
+// ingredientsInStep：当前步用到哪几样配料（做菜模式高亮用；匹配不到就全不高亮）
+assert.deepStrictEqual(ingredientsInStep('锅中放少许油，加冰糖小火炒至枣红色', ['五花肉', '冰糖', '生抽']), [1]);
+assert.deepStrictEqual(
+  ingredientsInStep('加料酒、生抽、老抽、八角、桂皮，加开水没过肉', ['五花肉', '冰糖', '生抽', '老抽', '料酒', '八角', '桂皮']),
+  [2, 3, 4, 5, 6]
+);
+// 短名字被长名字包含时丢弃：冰糖命中，就不再把「糖」也算这一步的料
+assert.deepStrictEqual(ingredientsInStep('加冰糖', ['糖', '冰糖']), [1]);
+// 名字里带空格 / 步骤里带空格都算命中
+assert.deepStrictEqual(ingredientsInStep('五花肉 切块焯水', ['五花肉']), [0]);
+// 一步没提到任何配料 → 不高亮（而不是退化成"全都算"）
+assert.deepStrictEqual(ingredientsInStep('大火收汁即可', ['五花肉', '冰糖']), []);
+assert.deepStrictEqual(ingredientsInStep('', ['盐']), []);
+assert.deepStrictEqual(ingredientsInStep('加盐', null), []);
 
 console.log('dish-logic.test.js: all assertions passed');

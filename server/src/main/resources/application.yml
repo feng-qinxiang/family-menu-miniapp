@@ -1,7 +1,19 @@
 server:
   port: ${SERVER_PORT:9088}
-  # 部署在 nginx 之后：让 Spring 采信 X-Forwarded-* 头，否则限流/日志里全是代理 IP
+  # 部署在 nginx 之后：让 Spring 采信 X-Forwarded-* 头，否则限流/日志里全是代理 IP。
+  #
+  # ⚠ 采信 X-Forwarded-For 的代价：Tomcat 会从右往左取第一个非内网地址当客户端 IP，
+  #   所以**反代必须覆盖这个头**（nginx 写 `$remote_addr`，不要写 `$proxy_add_x_forwarded_for`）。
+  #   若代理把客户端自带的 XFF 追加进去，且真实客户端本身是内网/回环地址（本机联调、VPN、
+  #   再套一层代理），取到的就是客户端伪造的值。
+  #   ✅ 限流侧已经不吃这个亏：RateLimitFilter 只用**原始 TCP 对端地址**判断该不该采信 XFF
+  #   （见 ratelimit.trusted-proxies，默认只信回环 = 本机反代），伪造 XFF 换不到新的限流桶。
+  #   日志/审计里的客户端 IP 仍然来自这里，该覆盖还是要覆盖。
+  #   样例见 server/deploy/nginx.conf.example。
   forward-headers-strategy: native
+  # 优雅停机：docker stop / 滚动发布时先停止接新请求，等在途请求（发帖、上传、支付回调）做完再退出。
+  # Boot 3.2 默认是 immediate（直接掐断）；上限 20s，需小于 compose 的 stop_grace_period（30s）。
+  shutdown: graceful
   tomcat:
     # 默认 200 线程远大于连接池（默认 10），请求会排队等连接；给一个保守上限
     threads:
@@ -10,6 +22,8 @@ server:
 spring:
   application:
     name: family-menu-daily-server
+  lifecycle:
+    timeout-per-shutdown-phase: 20s
   datasource:
     url: jdbc:mysql://${DB_HOST:127.0.0.1}:${DB_PORT:3306}/${DB_NAME:family_menu_daily_db}?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: ${DB_USERNAME:root}
@@ -67,8 +81,18 @@ wechat:
     mock-pay-enabled: ${WECHAT_PAY_MOCK_ENABLED:false}
 
 sms:
-  # 短信网关供应商：noop=未接入（落库 + 日志告警），后续可接 aliyun/tencent。
+  # 短信网关供应商：noop=未接入（落库 + 日志告警）；tencent=腾讯云短信（TencentSmsGateway）。
+  # 其他值启动即失败（StartupSafetyGuard），不再静默回落到 noop。
   provider: ${SMS_PROVIDER:noop}
+  # SMS_PROVIDER=tencent 时五项必填（缺任何一项启动失败）。模板需只含一个变量 {1}=验证码。
+  # 密钥用子账号、只授予 QcloudSMSFullAccess，禁止写进代码或本文件。
+  tencent:
+    secret-id: ${SMS_TENCENT_SECRET_ID:}
+    secret-key: ${SMS_TENCENT_SECRET_KEY:}
+    sdk-app-id: ${SMS_TENCENT_SDK_APP_ID:}      # 短信应用 SDKAppID（1400 开头）
+    sign-name: ${SMS_TENCENT_SIGN_NAME:}        # 已审核通过的签名内容
+    template-id: ${SMS_TENCENT_TEMPLATE_ID:}    # 已审核通过的验证码模板 ID
+    region: ${SMS_TENCENT_REGION:ap-guangzhou}
 
 auth:
   # 安全默认关闭：开发态固定验证码(246810)与验证码明文回显仅供联调，
@@ -105,6 +129,15 @@ admin:
 
 cors:
   allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:9088,http://127.0.0.1:9088}
+
+ratelimit:
+  enabled: ${RATELIMIT_ENABLED:true}
+  # 只有对端是这些地址时，才相信它转发的 X-Forwarded-For 并据此分桶。
+  # 默认只信回环（= 反代和本应用同机，项目默认的 nginx-on-localhost 部署形态）：
+  # 此时从局域网/公网直连 9088 的人，无论怎么伪造 XFF 都只会落回自己的真实 IP 桶，
+  # 后台钥匙与验证码接口无法靠换头绕过限流。
+  # 反代在另一台机器上时，把它的地址加进来（例：RATELIMIT_TRUSTED_PROXIES=127.0.0.1,10.0.0.5）。
+  trusted-proxies: ${RATELIMIT_TRUSTED_PROXIES:127.0.0.1,::1,0:0:0:0:0:0:0:1}
 
 logging:
   level:

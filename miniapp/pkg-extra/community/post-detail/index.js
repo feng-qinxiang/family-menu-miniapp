@@ -1,4 +1,5 @@
 // pages/community/post-detail · 帖子详情（全新页）
+const features = require('../../../utils/features');
 const api = require('../../../utils/api');
 const { onPhotoError: markPhotoBroken } = require('../../../utils/image');
 
@@ -85,11 +86,25 @@ Page({
   },
 
   onLoad(options) {
+  // COMMUNITY 关闭（个人主体）时帖子详情不可达：详情页能被分享出去，
+  // 审核员/被分享者都能直达，所以这里必须自查（与社区首页同一条规则）。
+  if (!features.COMMUNITY) { features.leaveToHome(); return; }
   // 大字模式档位：进页读取（设置页改完回来重进生效）
   let fontScale = 'normal';
   try { fontScale = wx.getStorageSync('font_scale') || 'normal'; } catch (e) { fontScale = 'normal'; }
   if (fontScale !== this.data.fontScale) this.setData({ fontScale });
     const postId = (options && options.postId) || '';
+    // 缺 postId（分享链接被截断、dataset.id 丢了、被外部直接唤起）时不要发那个必然失败的请求：
+    // 原来它会落到「帖子不存在或已删除」的空态，用户以为自己的帖子被删了，其实是链接的问题。
+    if (!postId) {
+      this.setData({
+        postId: '',
+        loading: false,
+        loadError: true,
+        loadErrorDesc: '这个链接缺少帖子编号，请从社区列表重新打开'
+      });
+      return;
+    }
     this.setData({ postId });
     this.loadAll(postId);
   },

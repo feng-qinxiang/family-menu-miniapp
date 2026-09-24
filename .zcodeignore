@@ -1,0 +1,94 @@
+/.idea/
+/*.iml
+# IDEA 在子模块里也会生成工程元数据（用 IDEA 打开 server/ 就会出现）
+.idea/
+*.iml
+/node_modules/
+/dist/
+/coverage/
+/target/
+/server/target/
+/miniapp/miniprogram_npm/
+*.log
+.DS_Store
+Thumbs.db
+*.class
+*.jar
+*.war
+.env
+.env.*
+!.env.example
+# 用户上传的图片/视频（运行时产物，不进仓库）
+/uploads/
+/server/uploads/
+/project.private.config.json
+# 直接打开 miniapp/ 时开发者工具会在子目录另生成一份，属本机状态，不入库
+/miniapp/project.private.config.json
+/miniapp/project.config.json
+/ui-preview.html
+/.zcode/
+/artifacts/ui-baseline/
+/artifacts/_probe_shot.png
+/artifacts/_ui_home_after*.png
+# 本地工具目录。mvn.sh 是给 Git Bash 用的 Maven 绕过脚本（mvnw 在该环境下会报 classworlds 找不到），
+# 需要随仓库分发，所以只忽略目录内其它内容。
+/.tools/*
+!/.tools/mvn.sh
+/*.ps1
+/artifacts/p2/
+/artifacts/_p2_*.png
+/artifacts/_stage.png
+
+# 本地开发覆盖配置（Spring Boot 自动加载工作目录下的 config/，见 server/config/application.yml）
+# 里面放的是「开发模式验证码」这类只应存在于本机的开关，绝不能进仓库
+/server/config/
+
+# 本地工具状态与开发者工具预览产物
+/.workbuddy/
+/preview-qr.png
+
+# Claude Code 本地（个人）设置，不应共享
+/.claude/settings.local.json
+
+# 端到端测试证据截图（体积大、可随时重新生成）：仓库只保留报告 md
+/artifacts/**/*.png
+/artifacts/**/*.jpg
+# 数据库备份（含全量业务数据，绝不进仓库）
+/artifacts/**/*.sql
+/demo-cleanup-backup-*.sql
+artifacts/ui-audit/phase2/
+# UI 台账：入库的是人读的 ledger.md（收敛曲线的证据），机器读的两份随时可重生成
+/artifacts/ui-ledger/ledger.json
+/artifacts/ui-ledger/last.json
+
+# ===== ↑ 以上同步自 .gitignore（「从 .gitignore 同步」只重写以上部分）=====
+.git/
+.hg/
+.svn/
+node_modules/
+bower_components/
+jspm_packages/
+__pycache__/
+site-packages/
+venv/
+coverage/
+htmlcov/
+lcov-report/
+cmakefiles/
+cmake-build-*/
+bazel-*/
+pods/
+deriveddata/
+storybook-static/
+playwright-report/
+test-results/
+allure-results/
+allure-report/
+cdk.out/
+*.egg-info/
+*.dist-info/
+eggs/
+pip-wheel-metadata/
+wheels/
+# ----- ↑ 以上为 ZCode 默认排除规则（自定义规则请写在本行下方，不会被同步/恢复改动）-----
+# 自定义规则写在下方（本行提示可删除）

@@ -37,6 +37,8 @@ services:
   app:
     build: .
     restart: unless-stopped
+    # 配合 server.shutdown=graceful（在途请求最多等 20s）；docker 默认只给 10s 就 SIGKILL
+    stop_grace_period: 30s
     depends_on:
       mysql:
         condition: service_healthy
@@ -66,6 +68,13 @@ services:
       # 用法见 .env.example；用完请立刻删掉并重启容器。
       ADMIN_BOOTSTRAP_PHONE: ${ADMIN_BOOTSTRAP_PHONE:-}
       ADMIN_BOOTSTRAP_TOKEN: ${ADMIN_BOOTSTRAP_TOKEN:-}
+      # 短信网关（留空 = noop）；tencent 需要下面 5 项全部填写，见 .env.example
+      SMS_PROVIDER: ${SMS_PROVIDER:-noop}
+      SMS_TENCENT_SECRET_ID: ${SMS_TENCENT_SECRET_ID:-}
+      SMS_TENCENT_SECRET_KEY: ${SMS_TENCENT_SECRET_KEY:-}
+      SMS_TENCENT_SDK_APP_ID: ${SMS_TENCENT_SDK_APP_ID:-}
+      SMS_TENCENT_SIGN_NAME: ${SMS_TENCENT_SIGN_NAME:-}
+      SMS_TENCENT_TEMPLATE_ID: ${SMS_TENCENT_TEMPLATE_ID:-}
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-}
       UPLOAD_DIR: /app/uploads
       # 上传链接签名密钥：prod profile 下缺失会让 UploadSigner 构造期直接抛异常，

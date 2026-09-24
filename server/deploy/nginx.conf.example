@@ -47,7 +47,11 @@ server {
         proxy_http_version 1.1;
         proxy_set_header Host              $host;
         proxy_set_header X-Real-IP         $remote_addr;
-        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        # 必须用 $remote_addr 覆盖，不能写 $proxy_add_x_forwarded_for：
+        # 后者会把客户端自带的 X-Forwarded-For 拼在最左边，而应用（Tomcat RemoteIpValve）
+        # 从右往左取第一个非内网地址 —— 真实客户端是内网/回环时（本机联调、VPN、再套一层代理），
+        # 取到的就是客户端自己伪造的那段，限流桶可被任意切换（实测：7 次后台引导登录全部放行）。
+        proxy_set_header X-Forwarded-For   $remote_addr;
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_set_header Connection        "";
         # 支付回调等长请求

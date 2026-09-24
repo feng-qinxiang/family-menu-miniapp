@@ -135,6 +135,31 @@
         </view>
       </view>
 
+      <!-- 大家晒的：这道菜的社区作品（做菜 → 社区 的回程路，帖子点进去能再回到这道菜） -->
+      <!-- COMMUNITY 关闭（个人主体）时整块隐藏：入口与请求一起收掉，见 utils/features.js -->
+      <block wx:if="{{showCommunity}}">
+      <section-head eyebrow="邻居们的做法" title="大家" popPart="晒的" hint="{{works.length ? works.length + ' 条' : ''}}" />
+      <view class="card rd-card">
+        <block wx:if="{{works.length}}">
+          <view class="rd-work tap-scale" wx:for="{{works}}" wx:key="id" data-id="{{item.id}}" bindtap="openWork">
+            <image wx:if="{{item.cover}}" class="rd-work-thumb" src="{{item.cover}}" mode="aspectFill" />
+            <view wx:else class="rd-work-thumb rd-work-thumb--none">{{item.initial}}</view>
+            <view class="rd-work-body">
+              <view class="rd-work-title clamp-2">{{item.title}}</view>
+              <view class="rd-work-meta">{{item.author}} · {{item.likeCount}} 赞{{item.pending ? ' · 审核中' : ''}}</view>
+            </view>
+          </view>
+        </block>
+        <view wx:else class="rd-empty-mini">还没有人晒这道菜</view>
+
+        <view class="rd-rev-entry tap-scale" bindtap="composeWork">
+          <view class="rd-meav">晒</view>
+          <view class="rd-fakein ellipsis">晒我的作品 · 照片和心得留给邻居们看</view>
+          <view class="rd-gobtn tap-scale">去晒</view>
+        </view>
+      </view>
+      </block>
+
     </view>
   </scroll-view>
 

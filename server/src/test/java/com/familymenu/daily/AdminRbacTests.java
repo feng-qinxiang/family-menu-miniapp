@@ -97,6 +97,9 @@ class AdminRbacTests {
                 .andExpect(status().isOk())
                 .andReturn();
         long postId = objectMapper.readTree(post.getResponse().getContentAsString()).get("id").asLong();
+        // 帖子过审后再评论：写路径按可见性放行（PENDING 只有作者能动，见 CommunityWriteVisibilityTests），
+        // 而这里的评论者与发帖人不是同一个账号。
+        jdbcTemplate.update("UPDATE community_post SET audit_status = 'APPROVED' WHERE id = ?", postId);
 
         mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
                         .post("/api/community/posts/" + postId + "/comments")

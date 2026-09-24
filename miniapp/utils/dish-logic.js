@@ -82,4 +82,47 @@ function parseLocalDate(value) {
   return Number.isNaN(d.getTime()) ? null : d;
 }
 
-module.exports = { decorateHero, filterBySlot, recipesFromPosts, todayDateKey, parseLocalDate };
+/**
+ * 当前步骤用到了哪几样配料（做菜模式：把这一步要下的料挑出来高亮）。
+ *
+ * 为什么只能靠文本匹配：服务端的 `recipe_step` 只有 text/image/video，步骤与配料之间
+ * **没有结构化关联**（对比 Mealie：它的配方编辑器允许把配料直接挂到某一步上，
+ * https://docs.mealie.io/documentation/getting-started/faq ），所以这是「提示」不是「断言」——
+ * 匹配不到就一条都不高亮（全中性），永远不隐藏任何配料：漏掉的配料在备菜时必须还能看见、还能勾。
+ * ponytail: 上限就在这里——同一个名字出现在两步、或步骤只写"下料"不写名字，都只能靠字符包含。
+ * 升级路径明确：`recipe_step` 加一列（或一张 step_ingredient 关联表），录入端先支持挂料，
+ * 这个函数就从"猜"退回"读"，页面接口不用动。
+ *
+ * 匹配规则（从简、可预期）：
+ * ① 步骤文本里出现配料名即命中（去掉空格再比，中文菜谱里「五花肉 」与「五花肉」是一回事）；
+ * ② 命中集合里，被更长命中项包含的短名字去掉——「冰糖」命中时不再把「糖」也算一步的料，
+ *    否则一步能点亮半屏（盐/糖/油 这类单字调料尤其明显）；
+ * ③ 空步骤 / 空配料 → 空数组。
+ *
+ * @param {string} stepText 当前步骤正文
+ * @param {string[]} names 整份配料的名字（同序返回下标）
+ * @returns {number[]} 命中的配料下标
+ */
+function ingredientsInStep(stepText, names) {
+  const text = String(stepText || '').replace(/\s+/g, '');
+  if (!text || !Array.isArray(names) || !names.length) return [];
+  const hits = [];
+  names.forEach((raw, idx) => {
+    const name = String(raw || '').replace(/\s+/g, '');
+    if (name && text.indexOf(name) !== -1) hits.push({ idx, name });
+  });
+  if (hits.length < 2) return hits.map((h) => h.idx);
+  // 长名字优先：短名字被长名字包含时丢弃（「糖」vs「冰糖」）
+  const kept = hits.filter((h) => !hits.some((o) => o !== h && o.name.length > h.name.length
+    && o.name.indexOf(h.name) !== -1));
+  return kept.map((h) => h.idx);
+}
+
+module.exports = {
+  decorateHero,
+  filterBySlot,
+  recipesFromPosts,
+  todayDateKey,
+  parseLocalDate,
+  ingredientsInStep
+};

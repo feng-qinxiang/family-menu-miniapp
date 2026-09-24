@@ -1,0 +1,40 @@
+{
+  "guest_login": 200,
+  "create_post": {
+    "status": 200,
+    "id": 2,
+    "auditStatus": "PENDING",
+    "mine": true
+  },
+  "feed": {
+    "status": 200,
+    "new_post_in_feed": true
+  },
+  "author_sees_own_pending": {
+    "status": 200,
+    "body": {
+      "id": 2,
+      "title": "上桌验收 aadc0d",
+      "author": "家人",
+      "content": "无图纯文字，走人工审核",
+      "likeCount": 0,
+      "commentCount": 0,
+      "favoriteCount": 0,
+      "favorited": false,
+      "liked": false,
+      "tags": [],
+      "recipe": null,
+      "mine": true,
+      "images": [],
+      "auditStatus": "PENDING"
+    }
+  },
+  "anonymous": {
+    "status": 404,
+    "body": "{\"error\":\"community post not found\"}"
+  },
+  "missing_id": {
+    "status": 404,
+    "body": "{\"error\":\"community post not found\"}"
+  }
+}

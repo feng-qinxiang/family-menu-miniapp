@@ -9,7 +9,7 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232f4a3a'/%3E%3Ctext x='16' y='22' font-size='17' font-family='sans-serif' font-weight='700' fill='%23fff' text-anchor='middle'%3E%E5%AE%B6%3C/text%3E%3C/svg%3E" />
   <link rel="stylesheet" href="/admin/admin.css" />
 </head>
-<body>
+<body data-bootstrap-login="__ADMIN_BOOTSTRAP_AVAILABLE__">
   <!-- JS 关闭时的兜底提示（后台完全依赖 JS，白屏会让人以为是故障） -->
   <noscript>
     <div class="login-wrap">
@@ -40,34 +40,48 @@
       <section class="login-panel">
         <h2>登录</h2>
         <p class="login-hint">使用已绑定手机号的管理员账号登录</p>
-        <form id="loginForm" autocomplete="off">
-          <label for="phone">手机号</label>
-          <div class="field">
-            <span class="field-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2.6"/><path d="M11 18.4h2"/></svg>
-            </span>
-            <input id="phone" name="phone" type="tel" inputmode="numeric" maxlength="11" placeholder="请输入 11 位手机号" required />
-          </div>
 
-          <label for="code">验证码</label>
-          <div class="field-row">
+        <!-- 登录方式：验证码 / 引导令牌。
+             引导登录从折叠区提出来是因为：短信网关没接入时它是唯一进得去的入口，
+             藏在折叠区里的代价是「后台打不开」。是否展示由服务端渲染进 <body
+             data-bootstrap-login>（见 AdminPageController），前端不打接口探测。 -->
+        <div class="auth-tabs" id="authTabs" role="tablist" aria-label="登录方式" hidden>
+          <button type="button" class="auth-tab on" id="authTabOtp" data-authtab="otp"
+                  role="tab" aria-selected="true" aria-controls="authPaneOtp">验证码登录</button>
+          <button type="button" class="auth-tab" id="authTabBootstrap" data-authtab="bootstrap"
+                  role="tab" aria-selected="false" aria-controls="authPaneBootstrap">引导令牌</button>
+        </div>
+        <p class="login-hint" id="authSwitchHint" hidden>本环境可能未接短信网关，没收到验证码就用「引导令牌」。</p>
+
+        <div class="auth-pane" id="authPaneOtp" role="tabpanel" aria-labelledby="authTabOtp">
+          <form id="loginForm" autocomplete="off">
+            <label for="phone">手机号</label>
             <div class="field">
               <span class="field-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5.6c0 4.2-2.9 7.9-7 9.4-4.1-1.5-7-5.2-7-9.4V6l7-3z"/><path d="M9.2 12.1l2 2 3.6-3.8"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2.6"/><path d="M11 18.4h2"/></svg>
               </span>
-              <input id="code" name="code" type="text" inputmode="numeric" maxlength="6" placeholder="6 位验证码" required />
+              <input id="phone" name="phone" type="tel" inputmode="numeric" maxlength="11" placeholder="请输入 11 位手机号" required />
             </div>
-            <button id="sendOtpBtn" type="button" class="btn ghost">获取验证码</button>
-          </div>
 
-          <button id="loginBtn" type="submit" class="btn primary block">登 录</button>
-          <div id="loginMsg" class="msg" role="alert" aria-live="polite"></div>
-        </form>
+            <label for="code">验证码</label>
+            <div class="field-row">
+              <div class="field">
+                <span class="field-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5.6c0 4.2-2.9 7.9-7 9.4-4.1-1.5-7-5.2-7-9.4V6l7-3z"/><path d="M9.2 12.1l2 2 3.6-3.8"/></svg>
+                </span>
+                <input id="code" name="code" type="text" inputmode="numeric" maxlength="6" placeholder="6 位验证码" required />
+              </div>
+              <button id="sendOtpBtn" type="button" class="btn ghost">获取验证码</button>
+            </div>
+
+            <button id="loginBtn" type="submit" class="btn primary block">登 录</button>
+            <div id="loginMsg" class="msg" role="alert" aria-live="polite"></div>
+          </form>
+        </div>
 
         <!-- 引导登录：仅在服务端设置了 ADMIN_BOOTSTRAP_TOKEN 时可用（否则接口返回 404）。
-             短信网关未接入时这是唯一能进后台的入口，进去后应立刻移除该环境变量。 -->
-        <details class="login-bootstrap">
-          <summary>收不到验证码？用引导登录</summary>
+             进去后应立刻移除该环境变量。 -->
+        <div class="auth-pane" id="authPaneBootstrap" role="tabpanel" aria-labelledby="authTabBootstrap" hidden>
           <p class="login-bootstrap-tip">
             服务端设置了 <code>ADMIN_BOOTSTRAP_TOKEN</code> 时可用。
             登录成功后请立刻从环境变量移除该令牌并重启应用。
@@ -81,7 +95,7 @@
           </div>
           <button id="bootstrapBtn" type="button" class="btn ghost">引导登录</button>
           <div id="bootstrapMsg" class="msg" role="alert" aria-live="polite"></div>
-        </details>
+        </div>
 
         <p class="login-note">登录与所有管理操作都会写入审计日志</p>
       </section>

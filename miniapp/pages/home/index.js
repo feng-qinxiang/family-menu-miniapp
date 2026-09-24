@@ -15,6 +15,7 @@ const {
 const { runGuarded } = require('../../utils/interaction');
 const { animateNumber, stopNumberAnim } = require('../../utils/count-up');
 const { sourceLabels, mealTypeLabels, SLOTS, cuisinePinyin } = require('../../utils/constants');
+const features = require('../../utils/features');
 const { fallbackDishImg, recipeDishImg, onImgError } = require('../../utils/image');
 const { decorateHero, filterBySlot, todayDateKey } = require('../../utils/dish-logic');
 const { withTabSelect } = require('../../behaviors/tab-select');
@@ -580,7 +581,8 @@ Page({
     if (!dashboard) return [];
     const all = []
       .concat(dashboard.ownedRecipes || [])
-      .concat(dashboard.communityRecipes || [])
+      // 社区菜谱：COMMUNITY 关闭（个人主体）时后端不再下发，这里也不并进来
+      .concat(features.COMMUNITY ? (dashboard.communityRecipes || []) : [])
       .concat(dashboard.importedRecipes || []);
     const seen = new Set();
     const list = [];

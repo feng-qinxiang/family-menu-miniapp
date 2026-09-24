@@ -60,3 +60,6 @@ artifacts/ui-audit/phase2/
 # UI 台账：入库的是人读的 ledger.md（收敛曲线的证据），机器读的两份随时可重生成
 /artifacts/ui-ledger/ledger.json
 /artifacts/ui-ledger/last.json
+
+# ZCode/Cursor 会话本地探测脚本与启动日志（一次性调试产物，可能含本机令牌，不入库）
+/.cursor/

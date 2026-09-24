@@ -234,15 +234,28 @@ async function rawRequest(path, options) {
   return { ok: false, status: 0, data: null };
 }
 
+// 2xx 却没有 payload（空字符串 / null）时的统一文案；写接口返回 204 是常态，所以只看读接口。
+// 不把它转成失败，页面就只能自己猜：帖子详情曾把「200 + 空 body」渲染成「帖子不存在或已删除」，
+// 用户什么都没做错却被告知内容没了（后端 2026-09-23 把那条路的 200 空 body 改成了 404，
+// 这里补上客户端这一半：任何读接口再出现空 body，页面都会拿到一句可展示的失败文案）。
+const EMPTY_READ_MSG = '数据异常，请重试';
+function emptyReadMessage(result, config) {
+  if (!result.ok) return '';
+  if (String(config.method || 'GET').toUpperCase() !== 'GET') return '';
+  const data = result.data;
+  return (data === null || data === undefined || data === '') ? EMPTY_READ_MSG : '';
+}
+
 function request(path, options) {
   const config = options || {};
   return rawRequest(path, config).then((result) => {
-    if (result.ok) return result.data;
+    const emptyMsg = emptyReadMessage(result, config);
+    if (result.ok && !emptyMsg) return result.data;
     // 静默降级为显式 opt-in：仅声明了 fallback 的调用（如 getCurrentUser）保留"失败=默认值"；
     // 其余失败一律 reject，由页面 catch/loadError 分支处理，禁止伪装成空数据。
     if (typeof config.fallback === 'function') return config.fallback();
     // 用户可见文案必须中文（经页面 loadError/toast 直出）；status 挂在 error.status 供调试
-    const error = new Error(extractErrorMessage(result.data) || '网络请求失败，请稍后重试');
+    const error = new Error(emptyMsg || extractErrorMessage(result.data) || '网络请求失败，请稍后重试');
     error.status = result.status;
     error.data = result.data;
     throw error;
@@ -250,9 +263,11 @@ function request(path, options) {
 }
 
 function requestStrict(path, options) {
-  return rawRequest(path, options || {}).then((result) => {
-    if (result.ok) return result.data;
-    const error = new Error(extractErrorMessage(result.data) || '网络请求失败，请稍后重试');
+  const config = options || {};
+  return rawRequest(path, config).then((result) => {
+    const emptyMsg = emptyReadMessage(result, config);
+    if (result.ok && !emptyMsg) return result.data;
+    const error = new Error(emptyMsg || extractErrorMessage(result.data) || '网络请求失败，请稍后重试');
     error.status = result.status;
     error.data = result.data;
     throw error;
@@ -267,9 +282,11 @@ function getRecipes(source) {
   return request(`/api/recipes?source=${encodeURIComponent(source || 'all')}`, { silent: true });
 }
 
-function getCommunityPosts(tag, page, size) {
+function getCommunityPosts(tag, page, size, recipeId) {
   const params = [];
   if (tag) params.push(`tag=${encodeURIComponent(tag)}`);
+  // 按菜谱取帖（菜谱详情页「大家晒的」）：与 tag 互斥用法，同一条信息流接口
+  if (recipeId) params.push(`recipeId=${encodeURIComponent(recipeId)}`);
   if (page) params.push(`page=${encodeURIComponent(page)}`);
   if (size) params.push(`size=${encodeURIComponent(size)}`);
   const q = params.length ? `?${params.join('&')}` : '';
@@ -609,8 +626,17 @@ function addPantryItem(payload) {
 }
 
 function deletePantryItem(itemId) {
+  // 后端语义（2026-09-23 起）：DELETE 影响 0 行返回 404——目标已被删、重复删、
+  // 或不属于本家庭。对调用方来说"要删的东西已经不在了"就是成功，所以 404 一律
+  // 按成功返回：否则连点两次/两端同时删，第二次会闪一句"删除失败"。
+  // silent：rawRequest 会在返回前先弹一次服务端文案（如"库存条目不存在"），
+  // 既然要吞掉 404，就不能让它先弹；真实失败的提示由调用方 catch 负责。
   return requestStrict(`/api/pantry/${encodeURIComponent(itemId)}`, {
-    method: 'DELETE'
+    method: 'DELETE',
+    silent: true
+  }).catch((err) => {
+    if (err && err.status === 404) return null;
+    throw err;
   });
 }
 

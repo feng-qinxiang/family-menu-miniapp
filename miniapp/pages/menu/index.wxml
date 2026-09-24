@@ -78,7 +78,7 @@
       <view class="m-quick-card tap-scale" bindtap="goShopping">
         <view class="m-quick-icon"><view class="m-ic-basket"></view></view>
         <view class="m-quick-title">菜篮子</view>
-        <view class="m-quick-sub">{{shoppingPending ? shoppingPending + ' 样待买' : '食材已齐'}}</view>
+        <view class="m-quick-sub">{{basketText}}</view>
       </view>
       <view class="m-quick-card tap-scale" bindtap="goWeekly">
         <view class="m-quick-icon"><view class="m-ic-cal"></view></view>

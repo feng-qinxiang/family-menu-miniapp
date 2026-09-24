@@ -280,8 +280,17 @@ class AdminModulesTests {
     void pendingCommentIsInvisibleUntilAdminApproves() throws Exception {
         long[] id = new long[1];
         String admin = adminToken(id);
-        long postId = newPost();
         String author = guestLogin();
+        // 帖子保持待审（不调 newPost()，它会把帖子过审）：这条用例正是要钉住"帖子没公开时，
+        // 已过审的评论对别人也不可见"。评论由作者本人发 —— 待审帖只有作者能动。
+        MvcResult createdPost = mockMvc.perform(post("/api/community/posts")
+                        .header("X-Auth-Token", author)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"待审评论用例帖 " + System.nanoTime()
+                                + "\",\"content\":\"这条帖故意留在待审状态。\"}"))
+                .andExpect(status().isOk())
+                .andReturn();
+        long postId = objectMapper.readTree(createdPost.getResponse().getContentAsString()).get("id").asLong();
         String other = guestLogin();
         String content = "待审评论-" + System.nanoTime();
         long commentId = 0;
@@ -841,7 +850,12 @@ class AdminModulesTests {
                                 + "\",\"content\":\"由测试自己创建，用于后台治理流程。\"}"))
                 .andExpect(status().isOk())
                 .andReturn();
-        return objectMapper.readTree(created.getResponse().getContentAsString()).get("id").asLong();
+        long postId = objectMapper.readTree(created.getResponse().getContentAsString()).get("id").asLong();
+        // 直接过审：游客发帖过不了机审 → PENDING，而写路径（评论/点赞）现在按可见性放行
+        // （PENDING 只有作者能动，见 CommunityWriteVisibilityTests）。这些用例测的是后台治理，
+        // 评论者与发帖人不是同一个账号，所以先把帖子过审，别让审核队列挡住治理流程。
+        jdbcTemplate.update("UPDATE community_post SET audit_status = 'APPROVED' WHERE id = ?", postId);
+        return postId;
     }
 
     private Long postId() throws Exception {

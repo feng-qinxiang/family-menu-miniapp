@@ -561,6 +561,23 @@ public class AdminController {
     /** 导出上限：再大就该走离线任务了，别让一次导出把内存和数据库拖垮。 */
     private static final int EXPORT_MAX_ROWS = 5000;
 
+    /**
+     * 每种导出落在哪个权限域上：导出只是手段，能不能看这批数据由域权限决定。
+     * 与 {@link com.familymenu.daily.auth.AdminRole} 的矩阵一一对应（例如菜单/清单/库存同属家庭侧只读数据，走 USER_VIEW）。
+     */
+    private static final Map<String, AdminPermission> EXPORT_DOMAIN_PERMISSION = Map.ofEntries(
+            Map.entry("users", AdminPermission.USER_VIEW),
+            Map.entry("families", AdminPermission.USER_VIEW),
+            Map.entry("menus", AdminPermission.USER_VIEW),
+            Map.entry("shopping", AdminPermission.USER_VIEW),
+            Map.entry("pantry", AdminPermission.USER_VIEW),
+            Map.entry("orders", AdminPermission.ORDER_VIEW),
+            Map.entry("feedback", AdminPermission.FEEDBACK_HANDLE),
+            Map.entry("audit", AdminPermission.AUDIT_VIEW),
+            Map.entry("posts", AdminPermission.CONTENT_MODERATE),
+            Map.entry("comments", AdminPermission.COMMENT_MODERATE),
+            Map.entry("reports", AdminPermission.REPORT_REVIEW));
+
     /** 购物清单状态 → 中文：导出是给运营看的表，直接吐英文枚举没人看得懂。 */
     private static final Map<String, String> LIST_STATUS_LABEL = Map.of("OPEN", "进行中", "CLOSED", "已结束");
 
@@ -584,6 +601,18 @@ public class AdminController {
         List<List<Object>> rows;
         Set<Integer> moneyCols = Set.of();
         String k = kind == null ? "" : kind.trim().toLowerCase();
+
+        // 导出按「域」再校验一次权限。EXPORT 只说明"允许导出"，不代表"允许导出任意域"：
+        // 内容审核员没有 USER_VIEW/AUDIT_VIEW（列表接口 403），却能把这几个域整份拉成 Excel
+        // （实测：export/users、export/audit 对 MODERATOR 均 200），等于用导出绕过权限矩阵。
+        AdminPermission domain = EXPORT_DOMAIN_PERMISSION.get(k);
+        if (domain != null) {
+            AdminRole role = AdminRole.of(actor.admin(), actor.adminRole());
+            if (role == null || !role.allows(domain)) {
+                throw new org.springframework.web.server.ResponseStatusException(HttpStatus.FORBIDDEN,
+                        "当前角色没有导出该数据的权限");
+            }
+        }
 
         switch (k) {
             case "users" -> {
@@ -713,7 +742,10 @@ public class AdminController {
         while (all.size() < EXPORT_MAX_ROWS) {
             AdminPage<T> chunk = fetch.apply(page, 200);
             all.addAll(chunk.items());
-            if (chunk.items().size() < 200 || all.size() >= chunk.total()) {
+            // 判断「到底了」要用响应自己的 size，不能拿请求时写死的 200 比：
+            // 各列表的 size 上限不同（用户列表封顶 100），拿 200 比会让第一页 100 < 200
+            // 被当成最后一页 —— 106 个用户的导出静默只剩 100 行，审计还记 success。
+            if (chunk.items().size() < chunk.size() || all.size() >= chunk.total()) {
                 break;
             }
             page++;

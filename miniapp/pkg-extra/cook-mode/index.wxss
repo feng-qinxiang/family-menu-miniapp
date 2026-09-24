@@ -5,7 +5,11 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  /* height 而不是 min-height：这页是「一屏内换步」的沉浸页，底部 上一步/下一步 必须常驻屏内。
+     写成 min-height 时容器高度由内容决定（长步骤正文 + 计时卡能把页面撑到 900px 以上），
+     flex:1 的正文区拿不到收缩目标，footer 被顶到屏外——实测 390×844 上 footer 底边在 y=911，
+     整条主按钮在折线以下，做菜时得先把页面滚一下才点得到「下一步」。 */
+  height: 100vh;
   background: var(--cook-bg);
   color: var(--cook-ink);
 }
@@ -361,6 +365,23 @@
   border-left: 4rpx solid var(--pop);
   border-bottom: 4rpx solid var(--pop);
   transform: rotate(-45deg) translateX(2rpx);
+}
+/* 当前这一步要点名的料：边框+底色一起动。暗底上只改字色/字重，一臂外用余光扫不出来 */
+.ings.has-hit .ing:not(.on) {
+  opacity: 0.45;
+}
+.ing.on {
+  background: rgba(232, 71, 42, 0.18);
+  border-color: rgba(232, 71, 42, 0.55);
+  font-weight: 800;
+}
+.ing.on .dotmark {
+  opacity: 1;
+  box-shadow: inset 0 0 0 2rpx var(--pop);
+}
+/* 勾过的料如果正是这一步要用的，别被 .ing.checked 的淡出盖掉（备齐了也还得看得见它在哪） */
+.ing.on.checked {
+  opacity: 1;
 }
 
 /* 计时卡 */

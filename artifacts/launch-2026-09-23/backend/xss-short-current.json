@@ -1,0 +1,10 @@
+{
+ "seed": {
+  "nickname": 200,
+  "family": 200,
+  "post": 200,
+  "report": 200
+ },
+ "fails": [],
+ "verdict": "PASS"
+}

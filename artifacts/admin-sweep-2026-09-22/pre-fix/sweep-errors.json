@@ -1,0 +1,442 @@
+{
+ "steps_with_errors": [
+  {
+   "id": "s001",
+   "label": "A0 打开登录页",
+   "errs": {
+    "http": [
+     [
+      401,
+      "http://127.0.0.1:9088/api/admin/auth/bootstrap",
+      "application/json"
+     ]
+    ],
+    "exceptions": [],
+    "console": [],
+    "logs": [
+     [
+      "error",
+      "Failed to load resource: the server responded with a status of 401 ()",
+      "http://127.0.0.1:9088/api/admin/auth/bootstrap"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "s003",
+   "label": "A1-1 刷新登录页（探测限流额度）",
+   "errs": {
+    "http": [
+     [
+      401,
+      "http://127.0.0.1:9088/api/admin/auth/bootstrap",
+      "application/json"
+     ]
+    ],
+    "exceptions": [],
+    "console": [],
+    "logs": [
+     [
+      "error",
+      "Failed to load resource: the server responded with a status of 401 ()",
+      "http://127.0.0.1:9088/api/admin/auth/bootstrap"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "s004",
+   "label": "A1-2 刷新登录页（探测限流额度）",
+   "errs": {
+    "http": [
+     [
+      401,
+      "http://127.0.0.1:9088/api/admin/auth/bootstrap",
+      "application/json"
+     ]
+    ],
+    "exceptions": [],
+    "console": [],
+    "logs": [
+     [
+      "error",
+      "Failed to load resource: the server responded with a status of 401 ()",
+      "http://127.0.0.1:9088/api/admin/auth/bootstrap"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "s005",
+   "label": "A1-3 刷新登录页（探测限流额度）",
+   "errs": {
+    "http": [
+     [
+      401,
+      "http://127.0.0.1:9088/api/admin/auth/bootstrap",
+      "application/json"
+     ]
+    ],
+    "exceptions": [],
+    "console": [],
+    "logs": [
+     [
+      "error",
+      "Failed to load resource: the server responded with a status of 401 ()",
+      "http://127.0.0.1:9088/api/admin/auth/bootstrap"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "s006",
+   "label": "A1-4 刷新登录页（探测限流额度）",
+   "errs": {
+    "http": [
+     [
+      401,
+      "http://127.0.0.1:9088/api/admin/auth/bootstrap",
+      "application/json"
+     ]
+    ],
+    "exceptions": [],
+    "console": [],
+    "logs": [
+     [
+      "error",
+      "Failed to load resource: the server responded with a status of 401 ()",
+      "http://127.0.0.1:9088/api/admin/auth/bootstrap"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "s007",
+   "label": "A1-5 刷新登录页（探测限流额度）",
+   "errs": {
+    "http": [
+     [
+      429,
+      "http://127.0.0.1:9088/api/admin/auth/bootstrap",
+      "application/json"
+     ]
+    ],
+    "exceptions": [],
+    "console": [],
+    "logs": [
+     [
+      "error",
+      "Failed to load resource: the server responded with a status of 429 ()",
+      "http://127.0.0.1:9088/api/admin/auth/bootstrap"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "s008",
+   "label": "A1-6 刷新登录页（探测限流额度）",
+   "errs": {
+    "http": [
+     [
+      429,
+      "http://127.0.0.1:9088/api/admin/auth/bootstrap",
+      "application/json"
+     ]
+    ],
+    "exceptions": [],
+    "console": [],
+    "logs": [
+     [
+      "error",
+      "Failed to load resource: the server responded with a status of 429 ()",
+      "http://127.0.0.1:9088/api/admin/auth/bootstrap"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "s010",
+   "label": "A3 错误验证码登录",
+   "errs": {
+    "http": [
+     [
+      401,
+      "http://127.0.0.1:9088/api/admin/auth/login",
+      "application/json"
+     ]
+    ],
+    "exceptions": [],
+    "console": [],
+    "logs": [
+     [
+      "error",
+      "Failed to load resource: the server responded with a status of 401 ()",
+      "http://127.0.0.1:9088/api/admin/auth/login"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "s011",
+   "label": "A4 正确验证码登录（246810）",
+   "errs": {
+    "http": [],
+    "exceptions": [],
+    "console": [],
+    "logs": [
+     [
+      "error",
+      "Applying inline style violates the following Content Security Policy directive 'style-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-tpWMbUlP5Uw0VavQx+88OMYf+mw5b4WiOzPF2oUguaY='), or a nonce ('nonce-...') is required to enable inline execution. Note that hashes do not apply to event handlers, style attributes and javascript: navigations unless the 'unsafe-hashes' keyword is present. The action has been blocked.",
+      "http://127.0.0.1:9088/admin/admin.js"
+     ],
+     [
+      "error",
+      "Applying inline style violates the following Content Security Policy directive 'style-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-B0MzMJmooYSLHC3UgQM8qoIPgKTYDgK3Cy0MJDiBe+A='), or a nonce ('nonce-...') is required to enable inline execution. Note that hashes do not apply to event handlers, style attributes and javascript: navigations unless the 'unsafe-hashes' keyword is present. The action has been blocked.",
+      "http://127.0.0.1:9088/admin/admin.js"
+     ],
+     [
+      "error",
+      "Applying inline style violates the following Content Security Policy directive 'style-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-+GSFEFRNW7owrBBjTdxxeIOfGwLBwAOISH3sePaKc2I='), or a nonce ('nonce-...') is required to enable inline execution. Note that hashes do not apply to event handlers, style attributes and javascript: navigations unless the 'unsafe-hashes' keyword is present. The action has been blocked.",
+      "http://127.0.0.1:9088/admin/admin.js"
+     ],
+     [
+      "error",
+      "Applying inline style violates the following Content Security Policy directive 'style-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-1NkfmhNaD94k7thbpTCKG0dKnMcxprj9kdSKzKR6K/k='), or a nonce ('nonce-...') is required to enable inline execution. Note that hashes do not apply to event handlers, style attributes and javascript: navigations unless the 'unsafe-hashes' keyword is present. The action has been blocked.",
+      "http://127.0.0.1:9088/admin/admin.js"
+     ],
+     [
+      "error",
+      "Applying inline style violates the following Content Security Policy directive 'style-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-SjEraOI97e6PbklVpwlzMTmP9UtN5ApUV4KlnQqi5ws='), or a nonce ('nonce-...') is required to enable inline execution. Note that hashes do not apply to event handlers, style attributes and javascript: navigations unless the 'unsafe-hashes' keyword is present. The action has been blocked.",
+      "http://127.0.0.1:9088/admin/admin.js"
+     ],
+     [
+      "error",
+      "Applying inline style violates the following Content Security Policy directive 'style-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-KWPk8mGMCjd5x+kcP1x4ne9d4XqZwPEIdWLzu+/YRJM='), or a nonce ('nonce-...') is required to enable inline execution. Note that hashes do not apply to event handlers, style attributes and javascript: navigations unless the 'unsafe-hashes' keyword is present. The action has been blocked.",
+      "http://127.0.0.1:9088/admin/admin.js"
+     ],
+     [
+      "error",
+      "Applying inline style violates the following Content Security Policy directive 'style-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-LwoYSIU7H7ALhCK8JF+HKTq2AdcpkrZ9eK1pLP9iv6U='), or a nonce ('nonce-...') is required to enable inline execution. Note that hashes do not apply to event handlers, style attributes and javascript: navigations unless the 'unsafe-hashes' keyword is present. The action has been blocked.",
+      "http://127.0.0.1:9088/admin/admin.js"
+     ],
+     [
+      "error",
+      "Applying inline style violates the following Content Security Policy directive 'style-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-E2j6DUbzTlZ1niGIpE4DkrHsxwmxE4+adhT1kDw41lk='), or a nonce ('nonce-...') is required to enable inline execution. Note that hashes do not apply to event handlers, style attributes and javascript: navigations unless the 'unsafe-hashes' keyword is present. The action has been blocked.",
+      "http://127.0.0.1:9088/admin/admin.js"
+     ],
+     [
+      "error",
+      "Applying inline style violates the following Content Security Policy directive 'style-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-4m5DrzWq5fpYtMLXgW4IKPyNWL5GuOJSQa2MwaAcxDw='), or a nonce ('nonce-...') is required to enable inline execution. Note that hashes do not apply to event handlers, style attributes and javascript: navigations unless the 'unsafe-hashes' keyword is present. The action has been blocked.",
+      "http://127.0.0.1:9088/admin/admin.js"
+     ],
+     [
+      "error",
+      "Applying inline style violates the following Content Security Policy directive 'style-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-z//yY9uxz+ri+Wb/RGVh3eJ+znJVswpFKMwPvO/263k='), or a nonce ('nonce-...') is required to enable inline execution. Note that hashes do not apply to event handlers, style attributes and javascript: navigations unless the 'unsafe-hashes' keyword is present. The action has been blocked.",
+      "http://127.0.0.1:9088/admin/admin.js"
+     ],
+     [
+      "error",
+      "Applying inline style violates the following Content Security Policy directive 'style-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-1wY26mDdBeKwEXt5+mwryIne8je4UUEGrUJ3m9xLa+s='), or a nonce ('nonce-...') is required to enable inline execution. Note that hashes do not apply to event handlers, style attributes and javascript: navigations unless the 'unsafe-hashes' keyword is present. The action has been blocked.",
+      "http://127.0.0.1:9088/admin/admin.js"
+     ],
+     [
+      "error",
+      "Applying inline style violates the following Content Security Policy directive 'style-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-aWg1IZSxVHqbgOMz0os95r20E5zyf1YKgmJ1UbFuBN4='), or a nonce ('nonce-...') is required to enable inline execution. Note that hashes do not apply to event handlers, style attributes and javascript: navigations unless the 'unsafe-hashes' keyword is present. The action has been blocked.",
+      "http://127.0.0.1:9088/admin/admin.js"
+     ],
+     [
+      "error",
+      "Applying inline style violates the following Content Security Policy directive 'style-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-Eve4LgJqpH/WZUuCndUr6UOWGIPCYC2pbCmlNdhv/Us='), or a nonce ('nonce-...') is required to enable inline execution. Note that hashes do not apply to event handlers, style attributes and javascript: navigations unless the 'unsafe-hashes' keyword is present. The action has been blocked.",
+      "http://127.0.0.1:9088/admin/admin.js"
+     ],
+     [
+      "error",
+      "Applying inline style violates the following Content Security Policy directive 'style-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-1NkfmhNaD94k7thbpTCKG0dKnMcxprj9kdSKzKR6K/k='), or a nonce ('nonce-...') is required to enable inline execution. Note that hashes do not apply to event handlers, style attributes and javascript: navigations unless the 'unsafe-hashes' keyword is present. The action has been blocked.",
+      "http://127.0.0.1:9088/admin/admin.js"
+     ],
+     [
+      "error",
+      "Applying inline style violates the following Content Security Policy directive 'style-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-tpWMbUlP5Uw0VavQx+88OMYf+mw5b4WiOzPF2oUguaY='), or a nonce ('nonce-...') is required to enable inline execution. Note that hashes do not apply to event handlers, style attributes and javascript: navigations unless the 'unsafe-hashes' keyword is present. The action has been blocked.",
+      "http://127.0.0.1:9088/admin/admin.js"
+     ],
+     [
+      "error",
+      "Applying inline style violates the following Content Security Policy directive 'style-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-B0MzMJmooYSLHC3UgQM8qoIPgKTYDgK3Cy0MJDiBe+A='), or a nonce ('nonce-...') is required to enable inline execution. Note that hashes do not apply to event handlers, style attributes and javascript: navigations unless the 'unsafe-hashes' keyword is present. The action has been blocked.",
+      "http://127.0.0.1:9088/admin/admin.js"
+     ],
+     [
+      "error",
+      "Applying inline style violates the following Content Security Policy directive 'style-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-+GSFEFRNW7owrBBjTdxxeIOfGwLBwAOISH3sePaKc2I='), or a nonce ('nonce-...') is required to enable inline execution. Note that hashes do not apply to event handlers, style attributes and javascript: navigations unless the 'unsafe-hashes' keyword is present. The action has been blocked.",
+      "http://127.0.0.1:9088/admin/admin.js"
+     ],
+     [
+      "error",
+      "Applying inline style violates the following Content Security Policy directive 'style-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-1NkfmhNaD94k7thbpTCKG0dKnMcxprj9kdSKzKR6K/k='), or a nonce ('nonce-...') is required to enable inline execution. Note that hashes do not apply to event handlers, style attributes and javascript: navigations unless the 'unsafe-hashes' keyword is present. The action has been blocked.",
+      "http://127.0.0.1:9088/admin/admin.js"
+     ],
+     [
+      "error",
+      "Applying inline style violates the following Content Security Policy directive 'style-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-SjEraOI97e6PbklVpwlzMTmP9UtN5ApUV4KlnQqi5ws='), or a nonce ('nonce-...') is required to enable inline execution. Note that hashes do not apply to event handlers, style attributes and javascript: navigations unless the 'unsafe-hashes' keyword is present. The action has been blocked.",
+      "http://127.0.0.1:9088/admin/admin.js"
+     ],
+     [
+      "error",
+      "Applying inline style violates the following Content Security Policy directive 'style-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-KWPk8mGMCjd5x+kcP1x4ne9d4XqZwPEIdWLzu+/YRJM='), or a nonce ('nonce-...') is required to enable inline execution. Note that hashes do not apply to event handlers, style attributes and javascript: navigations unless the 'unsafe-hashes' keyword is present. The action has been blocked.",
+      "http://127.0.0.1:9088/admin/admin.js"
+     ],
+     [
+      "error",
+      "Applying inline style violates the following Content Security Policy directive 'style-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-LwoYSIU7H7ALhCK8JF+HKTq2AdcpkrZ9eK1pLP9iv6U='), or a nonce ('nonce-...') is required to enable inline execution. Note that hashes do not apply to event handlers, style attributes and javascript: navigations unless the 'unsafe-hashes' keyword is present. The action has been blocked.",
+      "http://127.0.0.1:9088/admin/admin.js"
+     ],
+     [
+      "error",
+      "Applying inline style violates the following Content Security Policy directive 'style-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-E2j6DUbzTlZ1niGIpE4DkrHsxwmxE4+adhT1kDw41lk='), or a nonce ('nonce-...') is required to enable inline execution. Note that hashes do not apply to event handlers, style attributes and javascript: navigations unless the 'unsafe-hashes' keyword is present. The action has been blocked.",
+      "http://127.0.0.1:9088/admin/admin.js"
+     ],
+     [
+      "error",
+      "Applying inline style violates the following Content Security Policy directive 'style-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-4m5DrzWq5fpYtMLXgW4IKPyNWL5GuOJSQa2MwaAcxDw='), or a nonce ('nonce-...') is required to enable inline execution. Note that hashes do not apply to event handlers, style attributes and javascript: navigations unless the 'unsafe-hashes' keyword is present. The action has been blocked.",
+      "http://127.0.0.1:9088/admin/admin.js"
+     ],
+     [
+      "error",
+      "Applying inline style violates the following Content Security Policy directive 'style-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-z//yY9uxz+ri+Wb/RGVh3eJ+znJVswpFKMwPvO/263k='), or a nonce ('nonce-...') is required to enable inline execution. Note that hashes do not apply to event handlers, style attributes and javascript: navigations unless the 'unsafe-hashes' keyword is present. The action has been blocked.",
+      "http://127.0.0.1:9088/admin/admin.js"
+     ],
+     [
+      "error",
+      "Applying inline style violates the following Content Security Policy directive 'style-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-1wY26mDdBeKwEXt5+mwryIne8je4UUEGrUJ3m9xLa+s='), or a nonce ('nonce-...') is required to enable inline execution. Note that hashes do not apply to event handlers, style attributes and javascript: navigations unless the 'unsafe-hashes' keyword is present. The action has been blocked.",
+      "http://127.0.0.1:9088/admin/admin.js"
+     ],
+     [
+      "error",
+      "Applying inline style violates the following Content Security Policy directive 'style-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-aWg1IZSxVHqbgOMz0os95r20E5zyf1YKgmJ1UbFuBN4='), or a nonce ('nonce-...') is required to enable inline execution. Note that hashes do not apply to event handlers, style attributes and javascript: navigations unless the 'unsafe-hashes' keyword is present. The action has been blocked.",
+      "http://127.0.0.1:9088/admin/admin.js"
+     ],
+     [
+      "error",
+      "Applying inline style violates the following Content Security Policy directive 'style-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-Eve4LgJqpH/WZUuCndUr6UOWGIPCYC2pbCmlNdhv/Us='), or a nonce ('nonce-...') is required to enable inline execution. Note that hashes do not apply to event handlers, style attributes and javascript: navigations unless the 'unsafe-hashes' keyword is present. The action has been blocked.",
+      "http://127.0.0.1:9088/admin/admin.js"
+     ],
+     [
+      "error",
+      "Applying inline style violates the following Content Security Policy directive 'style-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-1NkfmhNaD94k7thbpTCKG0dKnMcxprj9kdSKzKR6K/k='), or a nonce ('nonce-...') is required to enable inline execution. Note that hashes do not apply to event handlers, style attributes and javascript: navigations unless the 'unsafe-hashes' keyword is present. The action has been blocked.",
+      "http://127.0.0.1:9088/admin/admin.js"
+     ],
+     [
+      "error",
+      "Applying inline style violates the following Content Security Policy directive 'style-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-v0ohjgWrXH1tnjESsaiLDdpi8kFgF5469B18EPd13KU='), or a nonce ('nonce-...') is required to enable inline execution. Note that hashes do not apply to event handlers, style attributes and javascript: navigations unless the 'unsafe-hashes' keyword is present. The action has been blocked.",
+      "http://127.0.0.1:9088/admin/admin.js"
+     ],
+     [
+      "error",
+      "Applying inline style violates the following Content Security Policy directive 'style-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-dWf5rNix94/TZq/I7iugPiAOeH3t0Oz3hHTW0Y/0+ZQ='), or a nonce ('nonce-...') is required to enable inline execution. Note that hashes do not apply to event handlers, style attributes and javascript: navigations unless the 'unsafe-hashes' keyword is present. The action has been blocked.",
+      "http://127.0.0.1:9088/admin/admin.js"
+     ],
+     [
+      "error",
+      "Applying inline style violates the following Content Security Policy directive 'style-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-7coGQJKselB2EFrk6ehnJpMd1a5FdUNjb2Qy/i6JvAg='), or a nonce ('nonce-...') is required to enable inline execution. Note that hashes do not apply to event handlers, style attributes and javascript: navigations unless the 'unsafe-hashes' keyword is present. The action has been blocked.",
+      "http://127.0.0.1:9088/admin/admin.js"
+     ],
+     [
+      "error",
+      "Applying inline style violates the following Content Security Policy directive 'style-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-gMISlzdT3+hyDnlRuf7xYL5559PT8q1swf0w5HCESQc='), or a nonce ('nonce-...') is required to enable inline execution. Note that hashes do not apply to event handlers, style attributes and javascript: navigations unless the 'unsafe-hashes' keyword is present. The action has been blocked.",
+      "http://127.0.0.1:9088/admin/admin.js"
+     ],
+     [
+      "error",
+      "Applying inline style violates the following Content Security Policy directive 'style-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-ksGPa9rBx3qdJd85P0QDyQNATrJagvS5YtLUpHxWuto='), or a nonce ('nonce-...') is required to enable inline execution. Note that hashes do not apply to event handlers, style attributes and javascript: navigations unless the 'unsafe-hashes' keyword is present. The action has been blocked.",
+      "http://127.0.0.1:9088/admin/admin.js"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "s013",
+   "label": "A6 引导令牌（错误）",
+   "errs": {
+    "http": [
+     [
+      429,
+      "http://127.0.0.1:9088/api/admin/auth/bootstrap",
+      "application/json"
+     ]
+    ],
+    "exceptions": [],
+    "console": [],
+    "logs": [
+     [
+      "error",
+      "Failed to load resource: the server responded with a status of 429 ()",
+      "http://127.0.0.1:9088/api/admin/auth/bootstrap"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "s014",
+   "label": "A7 引导令牌（正确）",
+   "errs": {
+    "http": [
+     [
+      429,
+      "http://127.0.0.1:9088/api/admin/auth/bootstrap",
+      "application/json"
+     ]
+    ],
+    "exceptions": [],
+    "console": [],
+    "logs": [
+     [
+      "error",
+      "Failed to load resource: the server responded with a status of 429 ()",
+      "http://127.0.0.1:9088/api/admin/auth/bootstrap"
+     ]
+    ]
+   }
+  }
+ ],
+ "all_steps": 11,
+ "meta": {
+  "login": {
+   "repeat_refresh": [
+    {
+     "tabsHidden": false,
+     "tabBootHidden": false,
+     "hintHidden": false
+    },
+    {
+     "tabsHidden": false,
+     "tabBootHidden": false,
+     "hintHidden": false
+    },
+    {
+     "tabsHidden": false,
+     "tabBootHidden": false,
+     "hintHidden": false
+    },
+    {
+     "tabsHidden": false,
+     "tabBootHidden": false,
+     "hintHidden": false
+    },
+    {
+     "tabsHidden": false,
+     "tabBootHidden": false,
+     "hintHidden": false
+    },
+    {
+     "tabsHidden": false,
+     "tabBootHidden": false,
+     "hintHidden": false
+    }
+   ],
+   "otp_msg": "调试验证码（仅开发环境）：246810",
+   "bad_code_msg": "登录已失效，请重新登录",
+   "logged_in": true,
+   "bad_boot_msg": "操作过于频繁，请稍后再试",
+   "boot_logged_in": false
+  }
+ }
+}

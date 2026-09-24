@@ -1,0 +1,143 @@
+{
+  "empty_body_endpoints": [],
+  "all": [
+    {
+      "path": "/api/home/dashboard",
+      "status": 200,
+      "bytes": 5624,
+      "empty_body": false
+    },
+    {
+      "path": "/api/recipes?source=all",
+      "status": 200,
+      "bytes": 4269,
+      "empty_body": false
+    },
+    {
+      "path": "/api/recipes/1",
+      "status": 200,
+      "bytes": 639,
+      "empty_body": false
+    },
+    {
+      "path": "/api/community/posts?size=5",
+      "status": 200,
+      "bytes": 2,
+      "empty_body": false
+    },
+    {
+      "path": "/api/community/topics",
+      "status": 200,
+      "bytes": 2,
+      "empty_body": false
+    },
+    {
+      "path": "/api/community/posts/2",
+      "status": 404,
+      "bytes": 36,
+      "empty_body": false
+    },
+    {
+      "path": "/api/community/posts/2/comments",
+      "status": 200,
+      "bytes": 2,
+      "empty_body": false
+    },
+    {
+      "path": "/api/me/favorites",
+      "status": 200,
+      "bytes": 2,
+      "empty_body": false
+    },
+    {
+      "path": "/api/me/feedbacks",
+      "status": 200,
+      "bytes": 2,
+      "empty_body": false
+    },
+    {
+      "path": "/api/vip/status",
+      "status": 200,
+      "bytes": 104,
+      "empty_body": false
+    },
+    {
+      "path": "/api/family/profile",
+      "status": 200,
+      "bytes": 154,
+      "empty_body": false
+    },
+    {
+      "path": "/api/cook-history",
+      "status": 200,
+      "bytes": 2,
+      "empty_body": false
+    },
+    {
+      "path": "/api/daily-menu/today",
+      "status": 200,
+      "bytes": 77,
+      "empty_body": false
+    },
+    {
+      "path": "/api/wishes",
+      "status": 200,
+      "bytes": 2,
+      "empty_body": false
+    },
+    {
+      "path": "/api/shopping-list/today",
+      "status": 200,
+      "bytes": 76,
+      "empty_body": false
+    },
+    {
+      "path": "/api/auth/me",
+      "status": 200,
+      "bytes": 197,
+      "empty_body": false
+    },
+    {
+      "path": "/api/weekly-menu/current",
+      "status": 200,
+      "bytes": 4158,
+      "empty_body": false
+    },
+    {
+      "path": "/api/preference/profile",
+      "status": 200,
+      "bytes": 71,
+      "empty_body": false
+    },
+    {
+      "path": "/api/pantry",
+      "status": 200,
+      "bytes": 2,
+      "empty_body": false
+    },
+    {
+      "path": "/api/pantry/match",
+      "status": 200,
+      "bytes": 2,
+      "empty_body": false
+    },
+    {
+      "path": "/api/payment/plans",
+      "status": 200,
+      "bytes": 159,
+      "empty_body": false
+    },
+    {
+      "path": "/api/payment/orders",
+      "status": 200,
+      "bytes": 2,
+      "empty_body": false
+    },
+    {
+      "path": "/api/notifications",
+      "status": 200,
+      "bytes": 28,
+      "empty_body": false
+    }
+  ]
+}

@@ -2,7 +2,7 @@ package com.familymenu.daily.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
  * 落库（由 AuthService 完成）+ 日志告警；dev 模式下 AuthService 会在响应中回显 devCode，
  * 此处仅补一条 WARN，不静默假装发送成功。
  *
- * 注意：使用 @Configuration + @Bean + @ConditionalOnMissingBean，
+ * 注意：使用 @Configuration + @Bean（按 sms.provider 条件注册），
  * 避免 @Component 自引用导致条件评估失败的 Spring Boot 已知问题。
  */
 public class NoopSmsGateway implements SmsGateway {
@@ -39,11 +39,15 @@ public class NoopSmsGateway implements SmsGateway {
         return false;
     }
 
-    /** 默认 SMS 网关注册：若已有其他 SmsGateway Bean（如阿里云/腾讯云实现）则跳过。 */
+    /**
+     * 默认 SMS 网关注册：sms.provider 不是已接入的供应商时生效。
+     * 用属性而不是 @ConditionalOnMissingBean 判断：后者对组件扫描出来的 TencentSmsGateway
+     * 求值顺序不确定，可能两个都注册导致注入歧义。未知供应商名由 StartupSafetyGuard 启动时拒绝。
+     */
     @Configuration
     static class Config {
         @Bean
-        @ConditionalOnMissingBean(SmsGateway.class)
+        @ConditionalOnExpression("'${sms.provider:noop}'.trim().toLowerCase() != 'tencent'")
         SmsGateway noopSmsGateway() {
             return new NoopSmsGateway();
         }

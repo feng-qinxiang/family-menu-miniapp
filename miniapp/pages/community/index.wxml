@@ -214,6 +214,15 @@
       bindinput="onPostInput"
       data-field="tagsText"
     />
+    <!-- 内容规范提示：UGC 页面提审要求「发布前可见的规范告知」，
+         与服务端 msgSecCheck/imgSecCheck + 运营后台举报审核配套 -->
+    <view class="muted pf-hint">请勿发布违法违规、侵权、广告或与美食无关的内容；违规内容会被删除，账号可能被封禁。</view>
+    <!-- 关联的菜：从做菜页「晒一晒」过来时带上，发布后帖子里会带出这道菜的卡片 -->
+    <view wx:if="{{postForm.recipeId}}" class="pf-dish">
+      <view class="pf-dish-tag">这道菜</view>
+      <view class="pf-dish-name ellipsis">{{postForm.recipeTitle || '关联的菜'}}</view>
+      <view class="pf-dish-x tap-scale" catchtap="clearPostDish" aria-label="取消关联">×</view>
+    </view>
     <!-- 配图：最多 6 张，点了就选（相册/相机），可删 -->
     <view class="pf-imgs">
       <view wx:for="{{postForm.images}}" wx:key="*this" class="pf-img">

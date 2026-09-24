@@ -64,7 +64,9 @@ async function runGuarded(ctx, key, task, opts) {
     const result = await task();
     if (loadingTitle) wx.hideLoading();
     const text = resolveText(options.success, result, '');
-    if (text) wx.showToast({ title: text, icon: options.icon || 'success' });
+    // 带 icon 的 toast 文案超过 7 个汉字会被截断（实测「已记录 · 冰箱扣了 1 项」只显示出「已记录 · 冰箱」），
+    // 长文案一律转 icon:'none'：对勾可以不要，要说的话不能被吃掉。ponytail: 按字数判据足够，真机若仍截断就再放宽
+    if (text) wx.showToast({ title: text, icon: options.icon || (text.length > 7 ? 'none' : 'success') });
     return result;
   } catch (err) {
     if (loadingTitle) wx.hideLoading();

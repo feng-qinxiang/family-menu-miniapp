@@ -1,0 +1,544 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------------< com.familymenu:family-menu-daily-server >---------------
+[INFO] Building family-menu-daily-server 0.1.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ family-menu-daily-server ---
+[INFO] Copying 2 resources from src/main/resources to target/classes
+[INFO] Copying 7 resources from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ family-menu-daily-server ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ family-menu-daily-server ---
+[INFO] Copying 1 resource from src/test/resources to target/test-classes
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ family-menu-daily-server ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- surefire:3.1.2:test (default-test) @ family-menu-daily-server ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.familymenu.daily.MockPayDisabledTests
+12:21:34.872 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.familymenu.daily.MockPayDisabledTests]: MockPayDisabledTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+12:21:34.968 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.familymenu.daily.FamilyMenuDailyApplication for test class com.familymenu.daily.MockPayDisabledTests
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.0)
+
+2026-09-23T12:21:35.243+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.MockPayDisabledTests  : Starting MockPayDisabledTests using Java 21.0.12.1 with PID 13053 (started by xx in /Users/xx/cx/家庭点菜小程序/server)
+2026-09-23T12:21:35.244+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.MockPayDisabledTests  : No active profile set, falling back to 1 default profile: "default"
+2026-09-23T12:21:35.894+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-09-23T12:21:36.010+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@49edcb30
+2026-09-23T12:21:36.011+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-09-23T12:21:36.230+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.AuthService   : WeChat credentials not configured. /api/auth/login will reject real WeChat codes; only /api/auth/guest is available.
+2026-09-23T12:21:36.303+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.WechatClient  : Wechat disabled: app-id/app-secret not configured. Content security check and subscribe message will be skipped.
+2026-09-23T12:21:36.375+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.SubscribeMessageService    : SubscribeMessage disabled: no template id configured (set WECHAT_SUBSCRIBE_TEMPLATE_WISH / WECHAT_SUBSCRIBE_TEMPLATE_MEAL to enable)
+2026-09-23T12:21:36.631+08:00  INFO 13053 --- [family-menu-daily-server] [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-09-23T12:21:36.631+08:00  INFO 13053 --- [family-menu-daily-server] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-09-23T12:21:36.631+08:00  INFO 13053 --- [family-menu-daily-server] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-09-23T12:21:36.642+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.MockPayDisabledTests  : Started MockPayDisabledTests in 1.585 seconds (process running for 2.603)
+2026-09-23T12:21:36.643+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.SeedRunner    : 演示数据播种已关闭 (app.seed-demo-data=false)：只保留公共菜谱库
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+WARNING: A Java agent has been loaded dynamically (/Users/xx/.m2/repository/net/bytebuddy/byte-buddy-agent/1.14.10/byte-buddy-agent-1.14.10.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.504 s -- in com.familymenu.daily.MockPayDisabledTests
+[INFO] Running com.familymenu.daily.AdminBootstrapDisabledTests
+2026-09-23T12:21:37.249+08:00  INFO 13053 --- [family-menu-daily-server] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.familymenu.daily.AdminBootstrapDisabledTests]: AdminBootstrapDisabledTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-23T12:21:37.251+08:00  INFO 13053 --- [family-menu-daily-server] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.familymenu.daily.FamilyMenuDailyApplication for test class com.familymenu.daily.AdminBootstrapDisabledTests
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.0)
+
+2026-09-23T12:21:37.269+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.daily.AdminBootstrapDisabledTests    : Starting AdminBootstrapDisabledTests using Java 21.0.12.1 with PID 13053 (started by xx in /Users/xx/cx/家庭点菜小程序/server)
+2026-09-23T12:21:37.270+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.daily.AdminBootstrapDisabledTests    : No active profile set, falling back to 1 default profile: "default"
+2026-09-23T12:21:37.370+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
+2026-09-23T12:21:37.373+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-2 - Added connection com.mysql.cj.jdbc.ConnectionImpl@3ba8ef4e
+2026-09-23T12:21:37.373+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
+2026-09-23T12:21:37.422+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.AuthService   : WeChat credentials not configured. /api/auth/login will reject real WeChat codes; only /api/auth/guest is available.
+2026-09-23T12:21:37.433+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.WechatClient  : Wechat disabled: app-id/app-secret not configured. Content security check and subscribe message will be skipped.
+2026-09-23T12:21:37.435+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.SubscribeMessageService    : SubscribeMessage disabled: no template id configured (set WECHAT_SUBSCRIBE_TEMPLATE_WISH / WECHAT_SUBSCRIBE_TEMPLATE_MEAL to enable)
+2026-09-23T12:21:37.504+08:00  INFO 13053 --- [family-menu-daily-server] [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-09-23T12:21:37.504+08:00  INFO 13053 --- [family-menu-daily-server] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-09-23T12:21:37.504+08:00  INFO 13053 --- [family-menu-daily-server] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-09-23T12:21:37.508+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.daily.AdminBootstrapDisabledTests    : Started AdminBootstrapDisabledTests in 0.254 seconds (process running for 3.468)
+2026-09-23T12:21:37.508+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.SeedRunner    : 演示数据播种已关闭 (app.seed-demo-data=false)：只保留公共菜谱库
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.309 s -- in com.familymenu.daily.AdminBootstrapDisabledTests
+[INFO] Running com.familymenu.daily.FamilyMenuDailyApplicationTests
+2026-09-23T12:21:37.557+08:00  INFO 13053 --- [family-menu-daily-server] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.familymenu.daily.FamilyMenuDailyApplicationTests]: FamilyMenuDailyApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-23T12:21:37.558+08:00  INFO 13053 --- [family-menu-daily-server] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.familymenu.daily.FamilyMenuDailyApplication for test class com.familymenu.daily.FamilyMenuDailyApplicationTests
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.0)
+
+2026-09-23T12:21:37.573+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.FamilyMenuDailyApplicationTests    : Starting FamilyMenuDailyApplicationTests using Java 21.0.12.1 with PID 13053 (started by xx in /Users/xx/cx/家庭点菜小程序/server)
+2026-09-23T12:21:37.573+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.FamilyMenuDailyApplicationTests    : No active profile set, falling back to 1 default profile: "default"
+2026-09-23T12:21:37.655+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Starting...
+2026-09-23T12:21:37.658+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-3 - Added connection com.mysql.cj.jdbc.ConnectionImpl@1b868ef0
+2026-09-23T12:21:37.659+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Start completed.
+2026-09-23T12:21:37.692+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.AuthService   : WeChat credentials not configured. /api/auth/login will reject real WeChat codes; only /api/auth/guest is available.
+2026-09-23T12:21:37.701+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.WechatClient  : Wechat disabled: app-id/app-secret not configured. Content security check and subscribe message will be skipped.
+2026-09-23T12:21:37.703+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.SubscribeMessageService    : SubscribeMessage disabled: no template id configured (set WECHAT_SUBSCRIBE_TEMPLATE_WISH / WECHAT_SUBSCRIBE_TEMPLATE_MEAL to enable)
+2026-09-23T12:21:37.756+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.FamilyMenuDailyApplicationTests    : Started FamilyMenuDailyApplicationTests in 0.196 seconds (process running for 3.717)
+2026-09-23T12:21:37.757+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.SeedRunner    : 演示数据播种已关闭 (app.seed-demo-data=false)：只保留公共菜谱库
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.208 s -- in com.familymenu.daily.FamilyMenuDailyApplicationTests
+[INFO] Running com.familymenu.daily.AdminFamilyDataTests
+2026-09-23T12:21:37.766+08:00  INFO 13053 --- [family-menu-daily-server] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.familymenu.daily.AdminFamilyDataTests]: AdminFamilyDataTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-23T12:21:37.766+08:00  INFO 13053 --- [family-menu-daily-server] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.familymenu.daily.FamilyMenuDailyApplication for test class com.familymenu.daily.AdminFamilyDataTests
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.224 s -- in com.familymenu.daily.AdminFamilyDataTests
+[INFO] Running com.familymenu.daily.SubscribeTemplateConfigTests
+2026-09-23T12:21:37.991+08:00  INFO 13053 --- [family-menu-daily-server] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.familymenu.daily.SubscribeTemplateConfigTests]: SubscribeTemplateConfigTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-23T12:21:37.993+08:00  INFO 13053 --- [family-menu-daily-server] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.familymenu.daily.FamilyMenuDailyApplication for test class com.familymenu.daily.SubscribeTemplateConfigTests
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.0)
+
+2026-09-23T12:21:38.004+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.daily.SubscribeTemplateConfigTests   : Starting SubscribeTemplateConfigTests using Java 21.0.12.1 with PID 13053 (started by xx in /Users/xx/cx/家庭点菜小程序/server)
+2026-09-23T12:21:38.004+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.daily.SubscribeTemplateConfigTests   : No active profile set, falling back to 1 default profile: "default"
+2026-09-23T12:21:38.085+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Starting...
+2026-09-23T12:21:38.088+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-4 - Added connection com.mysql.cj.jdbc.ConnectionImpl@16a14076
+2026-09-23T12:21:38.088+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Start completed.
+2026-09-23T12:21:38.112+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.AuthService   : WeChat credentials not configured. /api/auth/login will reject real WeChat codes; only /api/auth/guest is available.
+2026-09-23T12:21:38.118+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.WechatClient  : Wechat disabled: app-id/app-secret not configured. Content security check and subscribe message will be skipped.
+2026-09-23T12:21:38.119+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.SubscribeMessageService    : SubscribeMessage enabled for kinds=[meal, wish] miniprogramState=formal
+2026-09-23T12:21:38.161+08:00  INFO 13053 --- [family-menu-daily-server] [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-09-23T12:21:38.161+08:00  INFO 13053 --- [family-menu-daily-server] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-09-23T12:21:38.161+08:00  INFO 13053 --- [family-menu-daily-server] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-09-23T12:21:38.163+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.daily.SubscribeTemplateConfigTests   : Started SubscribeTemplateConfigTests in 0.168 seconds (process running for 4.124)
+2026-09-23T12:21:38.164+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.SeedRunner    : 演示数据播种已关闭 (app.seed-demo-data=false)：只保留公共菜谱库
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.359 s -- in com.familymenu.daily.SubscribeTemplateConfigTests
+[INFO] Running com.familymenu.daily.SessionTokenTests
+2026-09-23T12:21:38.351+08:00  INFO 13053 --- [family-menu-daily-server] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.familymenu.daily.SessionTokenTests]: SessionTokenTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-23T12:21:38.352+08:00  INFO 13053 --- [family-menu-daily-server] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.familymenu.daily.FamilyMenuDailyApplication for test class com.familymenu.daily.SessionTokenTests
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.083 s -- in com.familymenu.daily.SessionTokenTests
+[INFO] Running com.familymenu.daily.ShoppingListSourceTests
+2026-09-23T12:21:38.435+08:00  INFO 13053 --- [family-menu-daily-server] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.familymenu.daily.ShoppingListSourceTests]: ShoppingListSourceTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-23T12:21:38.437+08:00  INFO 13053 --- [family-menu-daily-server] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.familymenu.daily.FamilyMenuDailyApplication for test class com.familymenu.daily.ShoppingListSourceTests
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.110 s -- in com.familymenu.daily.ShoppingListSourceTests
+[INFO] Running com.familymenu.daily.config.UploadPathNormalizerTests
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.003 s -- in com.familymenu.daily.config.UploadPathNormalizerTests
+[INFO] Running com.familymenu.daily.config.UploadSignerTests
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.011 s -- in com.familymenu.daily.config.UploadSignerTests
+[INFO] Running com.familymenu.daily.config.StartupSafetyGuardTests
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.007 s -- in com.familymenu.daily.config.StartupSafetyGuardTests
+[INFO] Running com.familymenu.daily.payment.WechatPaySignatureTests
+2026-09-23T12:21:38.888+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.f.daily.payment.WechatPayService       : [WechatPay] signature verify error: Illegal base64 character 2d
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.438 s -- in com.familymenu.daily.payment.WechatPaySignatureTests
+[INFO] Running com.familymenu.daily.ProfilePreferenceTests
+2026-09-23T12:21:39.008+08:00  INFO 13053 --- [family-menu-daily-server] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.familymenu.daily.ProfilePreferenceTests]: ProfilePreferenceTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-23T12:21:39.009+08:00  INFO 13053 --- [family-menu-daily-server] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.familymenu.daily.FamilyMenuDailyApplication for test class com.familymenu.daily.ProfilePreferenceTests
+[INFO] Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.216 s -- in com.familymenu.daily.ProfilePreferenceTests
+[INFO] Running com.familymenu.daily.CommunityWriteRaceTests
+2026-09-23T12:21:39.224+08:00  INFO 13053 --- [family-menu-daily-server] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.familymenu.daily.CommunityWriteRaceTests]: CommunityWriteRaceTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-23T12:21:39.225+08:00  INFO 13053 --- [family-menu-daily-server] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.familymenu.daily.FamilyMenuDailyApplication for test class com.familymenu.daily.CommunityWriteRaceTests
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.0)
+
+2026-09-23T12:21:39.236+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.daily.CommunityWriteRaceTests        : Starting CommunityWriteRaceTests using Java 21.0.12.1 with PID 13053 (started by xx in /Users/xx/cx/家庭点菜小程序/server)
+2026-09-23T12:21:39.236+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.daily.CommunityWriteRaceTests        : No active profile set, falling back to 1 default profile: "default"
+2026-09-23T12:21:39.303+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-5 - Starting...
+2026-09-23T12:21:39.305+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-5 - Added connection com.mysql.cj.jdbc.ConnectionImpl@37596b44
+2026-09-23T12:21:39.306+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-5 - Start completed.
+2026-09-23T12:21:39.334+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.AuthService   : WeChat credentials not configured. /api/auth/login will reject real WeChat codes; only /api/auth/guest is available.
+2026-09-23T12:21:39.340+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.WechatClient  : Wechat disabled: app-id/app-secret not configured. Content security check and subscribe message will be skipped.
+2026-09-23T12:21:39.341+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.SubscribeMessageService    : SubscribeMessage disabled: no template id configured (set WECHAT_SUBSCRIBE_TEMPLATE_WISH / WECHAT_SUBSCRIBE_TEMPLATE_MEAL to enable)
+2026-09-23T12:21:39.379+08:00  INFO 13053 --- [family-menu-daily-server] [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-09-23T12:21:39.380+08:00  INFO 13053 --- [family-menu-daily-server] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-09-23T12:21:39.380+08:00  INFO 13053 --- [family-menu-daily-server] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-09-23T12:21:39.383+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.daily.CommunityWriteRaceTests        : Started CommunityWriteRaceTests in 0.155 seconds (process running for 5.343)
+2026-09-23T12:21:39.383+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.SeedRunner    : 演示数据播种已关闭 (app.seed-demo-data=false)：只保留公共菜谱库
+2026-09-23T12:21:39.434+08:00  INFO 13053 --- [family-menu-daily-server] [pool-3-thread-1] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:39.434+08:00  INFO 13053 --- [family-menu-daily-server] [pool-3-thread-2] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:39.442+08:00  INFO 13053 --- [family-menu-daily-server] [pool-3-thread-2] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:39.442+08:00  INFO 13053 --- [family-menu-daily-server] [pool-3-thread-1] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:39.485+08:00  WARN 13053 --- [family-menu-daily-server] [pool-4-thread-2] c.f.daily.service.MysqlKitchenStore      : 并发冲突，重启事务（第 1 次重试）：PreparedStatementCallback; SQL [UPDATE community_post p
+SET p.like_count = (SELECT COUNT(*) FROM community_post_like l WHERE l.post_id = p.id)
+WHERE p.id = ?
+]; Deadlock found when trying to get lock; try restarting transaction
+2026-09-23T12:21:39.510+08:00  WARN 13053 --- [family-menu-daily-server] [pool-5-thread-1] c.f.daily.service.MysqlKitchenStore      : 并发冲突，重启事务（第 1 次重试）：PreparedStatementCallback; SQL [UPDATE community_post p
+SET p.like_count = (SELECT COUNT(*) FROM community_post_like l WHERE l.post_id = p.id)
+WHERE p.id = ?
+]; Deadlock found when trying to get lock; try restarting transaction
+2026-09-23T12:21:39.592+08:00  WARN 13053 --- [family-menu-daily-server] [pool-6-thread-1] c.f.daily.service.MysqlKitchenStore      : 并发冲突，重启事务（第 1 次重试）：PreparedStatementCallback; Deadlock found when trying to get lock; try restarting transaction
+2026-09-23T12:21:39.598+08:00  WARN 13053 --- [family-menu-daily-server] [pool-6-thread-1] c.f.daily.service.MysqlKitchenStore      : 并发冲突，重启事务（第 2 次重试）：冰箱库存被同时改动，本次扣减需要重试
+2026-09-23T12:21:39.636+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.daily.service.MysqlKitchenStore      : 忽略重复的做菜记录：family=35 recipe=101 user=35 已存在 id=5
+2026-09-23T12:21:39.659+08:00  WARN 13053 --- [family-menu-daily-server] [pool-7-thread-1] c.f.daily.service.MysqlKitchenStore      : 并发冲突，重启事务（第 1 次重试）：PreparedStatementCallback; SQL [SELECT id FROM cook_history WHERE family_id = ? AND recipe_id = ? AND user_id = ? AND score IS NULL AND cooked_at >= NOW() - INTERVAL 60 SECOND ORDER BY id DESC LIMIT 1 FOR UPDATE]; Deadlock found when trying to get lock; try restarting transaction
+2026-09-23T12:21:39.660+08:00  INFO 13053 --- [family-menu-daily-server] [pool-7-thread-1] c.f.daily.service.MysqlKitchenStore      : 忽略重复的做菜记录：family=36 recipe=101 user=36 已存在 id=6
+2026-09-23T12:21:39.689+08:00  WARN 13053 --- [family-menu-daily-server] [pool-8-thread-1] c.f.daily.service.MysqlKitchenStore      : 并发冲突，重启事务（第 1 次重试）：PreparedStatementCallback; Deadlock found when trying to get lock; try restarting transaction
+2026-09-23T12:21:39.689+08:00  INFO 13053 --- [family-menu-daily-server] [pool-8-thread-1] c.f.daily.service.MysqlKitchenStore      : 忽略重复的做菜记录：family=36 recipe=101 user=36 已存在 id=7
+2026-09-23T12:21:39.694+08:00  WARN 13053 --- [family-menu-daily-server] [pool-9-thread-1] c.f.daily.service.MysqlKitchenStore      : 并发冲突，重启事务（第 1 次重试）：PreparedStatementCallback; SQL [SELECT id FROM cook_history WHERE family_id = ? AND recipe_id = ? AND user_id = ? AND score IS NULL AND cooked_at >= NOW() - INTERVAL 60 SECOND ORDER BY id DESC LIMIT 1 FOR UPDATE]; Deadlock found when trying to get lock; try restarting transaction
+2026-09-23T12:21:39.695+08:00  INFO 13053 --- [family-menu-daily-server] [pool-9-thread-1] c.f.daily.service.MysqlKitchenStore      : 忽略重复的做菜记录：family=36 recipe=101 user=36 已存在 id=9
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.474 s -- in com.familymenu.daily.CommunityWriteRaceTests
+[INFO] Running com.familymenu.daily.HealthEndpointTests
+2026-09-23T12:21:39.698+08:00  INFO 13053 --- [family-menu-daily-server] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.familymenu.daily.HealthEndpointTests]: HealthEndpointTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-23T12:21:39.699+08:00  INFO 13053 --- [family-menu-daily-server] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.familymenu.daily.FamilyMenuDailyApplication for test class com.familymenu.daily.HealthEndpointTests
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.009 s -- in com.familymenu.daily.HealthEndpointTests
+[INFO] Running com.familymenu.daily.CommunityFeedUnionTests
+2026-09-23T12:21:39.707+08:00  INFO 13053 --- [family-menu-daily-server] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.familymenu.daily.CommunityFeedUnionTests]: CommunityFeedUnionTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-23T12:21:39.708+08:00  INFO 13053 --- [family-menu-daily-server] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.familymenu.daily.FamilyMenuDailyApplication for test class com.familymenu.daily.CommunityFeedUnionTests
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.130 s -- in com.familymenu.daily.CommunityFeedUnionTests
+[INFO] Running com.familymenu.daily.AdminSecurityTests
+2026-09-23T12:21:39.837+08:00  INFO 13053 --- [family-menu-daily-server] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.familymenu.daily.AdminSecurityTests]: AdminSecurityTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-23T12:21:39.839+08:00  INFO 13053 --- [family-menu-daily-server] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.familymenu.daily.FamilyMenuDailyApplication for test class com.familymenu.daily.AdminSecurityTests
+2026-09-23T12:21:39.983+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.AdminService  : admin grant: actor=45 target=46 admin=true
+2026-09-23T12:21:40.007+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.AdminService  : admin grant: actor=45 target=46 admin=false
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.186 s -- in com.familymenu.daily.AdminSecurityTests
+[INFO] Running com.familymenu.daily.CommunityWriteVisibilityTests
+2026-09-23T12:21:40.024+08:00  INFO 13053 --- [family-menu-daily-server] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.familymenu.daily.CommunityWriteVisibilityTests]: CommunityWriteVisibilityTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-23T12:21:40.027+08:00  INFO 13053 --- [family-menu-daily-server] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.familymenu.daily.FamilyMenuDailyApplication for test class com.familymenu.daily.CommunityWriteVisibilityTests
+2026-09-23T12:21:40.066+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:40.087+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:40.118+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:40.159+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:40.180+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:40.189+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.186 s -- in com.familymenu.daily.CommunityWriteVisibilityTests
+[INFO] Running com.familymenu.daily.CommunityPostRecipeScopeTests
+2026-09-23T12:21:40.211+08:00  INFO 13053 --- [family-menu-daily-server] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.familymenu.daily.CommunityPostRecipeScopeTests]: CommunityPostRecipeScopeTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-23T12:21:40.212+08:00  INFO 13053 --- [family-menu-daily-server] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.familymenu.daily.FamilyMenuDailyApplication for test class com.familymenu.daily.CommunityPostRecipeScopeTests
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.086 s -- in com.familymenu.daily.CommunityPostRecipeScopeTests
+[INFO] Running com.familymenu.daily.LaunchHardeningTests
+2026-09-23T12:21:40.298+08:00  INFO 13053 --- [family-menu-daily-server] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.familymenu.daily.LaunchHardeningTests]: LaunchHardeningTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-23T12:21:40.299+08:00  INFO 13053 --- [family-menu-daily-server] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.familymenu.daily.FamilyMenuDailyApplication for test class com.familymenu.daily.LaunchHardeningTests
+2026-09-23T12:21:40.384+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.AuthService   : session without active family, userId=57
+2026-09-23T12:21:40.386+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.AuthService   : session without active family, userId=57
+2026-09-23T12:21:40.388+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.AuthService   : session without active family, userId=57
+2026-09-23T12:21:40.391+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.AuthService   : session without active family, userId=57
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.096 s -- in com.familymenu.daily.LaunchHardeningTests
+[INFO] Running com.familymenu.daily.EndpointCoverageTests
+2026-09-23T12:21:40.395+08:00  INFO 13053 --- [family-menu-daily-server] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.familymenu.daily.EndpointCoverageTests]: EndpointCoverageTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-23T12:21:40.396+08:00  INFO 13053 --- [family-menu-daily-server] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.familymenu.daily.FamilyMenuDailyApplication for test class com.familymenu.daily.EndpointCoverageTests
+2026-09-23T12:21:40.559+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:40.617+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:40.636+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:40.636+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity image not configured: queued for manual review
+2026-09-23T12:21:40.742+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:40.764+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:40.775+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:40.813+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:40.869+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:40.939+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:41.057+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:41.061+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+[INFO] Tests run: 25, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.715 s -- in com.familymenu.daily.EndpointCoverageTests
+[INFO] Running com.familymenu.daily.SmsGatewayMisconfigTests
+2026-09-23T12:21:41.110+08:00  INFO 13053 --- [family-menu-daily-server] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.familymenu.daily.SmsGatewayMisconfigTests]: SmsGatewayMisconfigTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-23T12:21:41.111+08:00  INFO 13053 --- [family-menu-daily-server] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.familymenu.daily.FamilyMenuDailyApplication for test class com.familymenu.daily.SmsGatewayMisconfigTests
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.0)
+
+2026-09-23T12:21:41.121+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.daily.SmsGatewayMisconfigTests       : Starting SmsGatewayMisconfigTests using Java 21.0.12.1 with PID 13053 (started by xx in /Users/xx/cx/家庭点菜小程序/server)
+2026-09-23T12:21:41.121+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.daily.SmsGatewayMisconfigTests       : No active profile set, falling back to 1 default profile: "default"
+2026-09-23T12:21:41.191+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-6 - Starting...
+2026-09-23T12:21:41.195+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-6 - Added connection com.mysql.cj.jdbc.ConnectionImpl@2ca9e25a
+2026-09-23T12:21:41.195+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-6 - Start completed.
+2026-09-23T12:21:41.220+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.AuthService   : WeChat credentials not configured. /api/auth/login will reject real WeChat codes; only /api/auth/guest is available.
+2026-09-23T12:21:41.220+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.AuthService   : 短信网关未配置（SMS_PROVIDER=noop）且未开启 dev OTP：管理后台 /admin 无法用验证码登录（/api/admin/auth/otp 会返回 503）。应急入口：设置 ADMIN_BOOTSTRAP_TOKEN + ADMIN_BOOTSTRAP_PHONE 后用「引导登录」进后台。本地联调也可用 AUTH_DEV_OTP_ENABLED=true。小程序端不受影响（游客/微信）。
+2026-09-23T12:21:41.225+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.WechatClient  : Wechat disabled: app-id/app-secret not configured. Content security check and subscribe message will be skipped.
+2026-09-23T12:21:41.226+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.SubscribeMessageService    : SubscribeMessage disabled: no template id configured (set WECHAT_SUBSCRIBE_TEMPLATE_WISH / WECHAT_SUBSCRIBE_TEMPLATE_MEAL to enable)
+2026-09-23T12:21:41.261+08:00  INFO 13053 --- [family-menu-daily-server] [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-09-23T12:21:41.261+08:00  INFO 13053 --- [family-menu-daily-server] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-09-23T12:21:41.261+08:00  INFO 13053 --- [family-menu-daily-server] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-09-23T12:21:41.264+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.daily.SmsGatewayMisconfigTests       : Started SmsGatewayMisconfigTests in 0.152 seconds (process running for 7.225)
+2026-09-23T12:21:41.265+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.SeedRunner    : 演示数据播种已关闭 (app.seed-demo-data=false)：只保留公共菜谱库
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.174 s -- in com.familymenu.daily.SmsGatewayMisconfigTests
+[INFO] Running com.familymenu.daily.PaymentFlowTests
+2026-09-23T12:21:41.285+08:00  INFO 13053 --- [family-menu-daily-server] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.familymenu.daily.PaymentFlowTests]: PaymentFlowTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-23T12:21:41.287+08:00  INFO 13053 --- [family-menu-daily-server] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.familymenu.daily.FamilyMenuDailyApplication for test class com.familymenu.daily.PaymentFlowTests
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.0)
+
+2026-09-23T12:21:41.297+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.familymenu.daily.PaymentFlowTests    : Starting PaymentFlowTests using Java 21.0.12.1 with PID 13053 (started by xx in /Users/xx/cx/家庭点菜小程序/server)
+2026-09-23T12:21:41.297+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.familymenu.daily.PaymentFlowTests    : No active profile set, falling back to 1 default profile: "default"
+2026-09-23T12:21:41.362+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-7 - Starting...
+2026-09-23T12:21:41.365+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-7 - Added connection com.mysql.cj.jdbc.ConnectionImpl@71702d3f
+2026-09-23T12:21:41.365+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-7 - Start completed.
+2026-09-23T12:21:41.390+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.AuthService   : WeChat credentials not configured. /api/auth/login will reject real WeChat codes; only /api/auth/guest is available.
+2026-09-23T12:21:41.403+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.WechatClient  : Wechat disabled: app-id/app-secret not configured. Content security check and subscribe message will be skipped.
+2026-09-23T12:21:41.404+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.SubscribeMessageService    : SubscribeMessage disabled: no template id configured (set WECHAT_SUBSCRIBE_TEMPLATE_WISH / WECHAT_SUBSCRIBE_TEMPLATE_MEAL to enable)
+2026-09-23T12:21:41.440+08:00  INFO 13053 --- [family-menu-daily-server] [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-09-23T12:21:41.440+08:00  INFO 13053 --- [family-menu-daily-server] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-09-23T12:21:41.440+08:00  INFO 13053 --- [family-menu-daily-server] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-09-23T12:21:41.444+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.familymenu.daily.PaymentFlowTests    : Started PaymentFlowTests in 0.156 seconds (process running for 7.405)
+2026-09-23T12:21:41.444+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.SeedRunner    : 演示数据播种已关闭 (app.seed-demo-data=false)：只保留公共菜谱库
+2026-09-23T12:21:41.553+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.f.daily.controller.PaymentController   : [WechatPay] notify failed: WechatPay not configured
+2026-09-23T12:21:41.635+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.f.daily.payment.PaymentService         : [Payment] WechatPay not configured, prepay returns mockMode for outTradeNo=FMD20260923122141868370
+[INFO] Tests run: 11, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.413 s -- in com.familymenu.daily.PaymentFlowTests
+[INFO] Running com.familymenu.daily.AdminRbacTests
+2026-09-23T12:21:41.699+08:00  INFO 13053 --- [family-menu-daily-server] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.familymenu.daily.AdminRbacTests]: AdminRbacTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-23T12:21:41.700+08:00  INFO 13053 --- [family-menu-daily-server] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.familymenu.daily.FamilyMenuDailyApplication for test class com.familymenu.daily.AdminRbacTests
+2026-09-23T12:21:41.747+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.AdminService  : admin role change: actor=96 target=98 role=MODERATOR
+2026-09-23T12:21:41.820+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.AuthService   : admin permission denied: userId=99 role=SUPPORT need=COMMENT_MODERATE
+2026-09-23T12:21:41.822+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.AuthService   : admin permission denied: userId=99 role=SUPPORT need=AUDIT_VIEW
+2026-09-23T12:21:41.824+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.AuthService   : admin permission denied: userId=99 role=SUPPORT need=USER_MANAGE
+2026-09-23T12:21:41.827+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.AuthService   : admin permission denied: userId=99 role=SUPPORT need=USER_MANAGE
+2026-09-23T12:21:41.869+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:41.876+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:41.896+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.AuthService   : admin permission denied: userId=100 role=MODERATOR need=USER_VIEW
+2026-09-23T12:21:41.897+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.AuthService   : admin permission denied: userId=100 role=MODERATOR need=ORDER_VIEW
+2026-09-23T12:21:41.899+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.AuthService   : admin permission denied: userId=100 role=MODERATOR need=AUDIT_VIEW
+2026-09-23T12:21:41.900+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.AuthService   : admin permission denied: userId=100 role=MODERATOR need=USER_MANAGE
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.251 s -- in com.familymenu.daily.AdminRbacTests
+[INFO] Running com.familymenu.daily.DemoSeedDisabledTests
+2026-09-23T12:21:41.950+08:00  INFO 13053 --- [family-menu-daily-server] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.familymenu.daily.DemoSeedDisabledTests]: DemoSeedDisabledTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-23T12:21:41.950+08:00  INFO 13053 --- [family-menu-daily-server] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.familymenu.daily.FamilyMenuDailyApplication for test class com.familymenu.daily.DemoSeedDisabledTests
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.0)
+
+2026-09-23T12:21:41.960+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.daily.DemoSeedDisabledTests          : Starting DemoSeedDisabledTests using Java 21.0.12.1 with PID 13053 (started by xx in /Users/xx/cx/家庭点菜小程序/server)
+2026-09-23T12:21:41.960+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.daily.DemoSeedDisabledTests          : No active profile set, falling back to 1 default profile: "default"
+2026-09-23T12:21:42.020+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-8 - Starting...
+2026-09-23T12:21:42.022+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-8 - Added connection com.mysql.cj.jdbc.ConnectionImpl@6dd65b79
+2026-09-23T12:21:42.022+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-8 - Start completed.
+2026-09-23T12:21:42.047+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.AuthService   : WeChat credentials not configured. /api/auth/login will reject real WeChat codes; only /api/auth/guest is available.
+2026-09-23T12:21:42.052+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.WechatClient  : Wechat disabled: app-id/app-secret not configured. Content security check and subscribe message will be skipped.
+2026-09-23T12:21:42.059+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.SubscribeMessageService    : SubscribeMessage disabled: no template id configured (set WECHAT_SUBSCRIBE_TEMPLATE_WISH / WECHAT_SUBSCRIBE_TEMPLATE_MEAL to enable)
+2026-09-23T12:21:42.118+08:00  INFO 13053 --- [family-menu-daily-server] [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-09-23T12:21:42.118+08:00  INFO 13053 --- [family-menu-daily-server] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-09-23T12:21:42.119+08:00  INFO 13053 --- [family-menu-daily-server] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 1 ms
+2026-09-23T12:21:42.121+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.daily.DemoSeedDisabledTests          : Started DemoSeedDisabledTests in 0.17 seconds (process running for 8.082)
+2026-09-23T12:21:42.122+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.SeedRunner    : 演示数据播种已关闭 (app.seed-demo-data=false)：只保留公共菜谱库
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.233 s -- in com.familymenu.daily.DemoSeedDisabledTests
+[INFO] Running com.familymenu.daily.UploadSignedAccessTests
+2026-09-23T12:21:42.183+08:00  INFO 13053 --- [family-menu-daily-server] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.familymenu.daily.UploadSignedAccessTests]: UploadSignedAccessTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-23T12:21:42.183+08:00  INFO 13053 --- [family-menu-daily-server] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.familymenu.daily.FamilyMenuDailyApplication for test class com.familymenu.daily.UploadSignedAccessTests
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.0)
+
+2026-09-23T12:21:42.192+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.daily.UploadSignedAccessTests        : Starting UploadSignedAccessTests using Java 21.0.12.1 with PID 13053 (started by xx in /Users/xx/cx/家庭点菜小程序/server)
+2026-09-23T12:21:42.192+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.daily.UploadSignedAccessTests        : No active profile set, falling back to 1 default profile: "default"
+2026-09-23T12:21:42.263+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-9 - Starting...
+2026-09-23T12:21:42.266+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-9 - Added connection com.mysql.cj.jdbc.ConnectionImpl@4515dfae
+2026-09-23T12:21:42.266+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-9 - Start completed.
+2026-09-23T12:21:42.290+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.AuthService   : WeChat credentials not configured. /api/auth/login will reject real WeChat codes; only /api/auth/guest is available.
+2026-09-23T12:21:42.297+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.WechatClient  : Wechat disabled: app-id/app-secret not configured. Content security check and subscribe message will be skipped.
+2026-09-23T12:21:42.298+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.SubscribeMessageService    : SubscribeMessage disabled: no template id configured (set WECHAT_SUBSCRIBE_TEMPLATE_WISH / WECHAT_SUBSCRIBE_TEMPLATE_MEAL to enable)
+2026-09-23T12:21:42.344+08:00  INFO 13053 --- [family-menu-daily-server] [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-09-23T12:21:42.344+08:00  INFO 13053 --- [family-menu-daily-server] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-09-23T12:21:42.345+08:00  INFO 13053 --- [family-menu-daily-server] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 1 ms
+2026-09-23T12:21:42.347+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.daily.UploadSignedAccessTests        : Started UploadSignedAccessTests in 0.162 seconds (process running for 8.308)
+2026-09-23T12:21:42.347+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.SeedRunner    : 演示数据播种已关闭 (app.seed-demo-data=false)：只保留公共菜谱库
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.316 s -- in com.familymenu.daily.UploadSignedAccessTests
+[INFO] Running com.familymenu.daily.AdminModulesTests
+2026-09-23T12:21:42.499+08:00  INFO 13053 --- [family-menu-daily-server] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.familymenu.daily.AdminModulesTests]: AdminModulesTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-23T12:21:42.500+08:00  INFO 13053 --- [family-menu-daily-server] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.familymenu.daily.FamilyMenuDailyApplication for test class com.familymenu.daily.AdminModulesTests
+2026-09-23T12:21:42.546+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:42.559+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:42.619+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:42.664+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:42.753+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:42.865+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.AdminService  : admin set user status: actor=125 target=126 status=BANNED
+2026-09-23T12:21:42.904+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.AdminService  : admin set user status: actor=125 target=126 status=ACTIVE
+2026-09-23T12:21:42.978+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.AdminService  : admin close order: actor=130 order=ADMIN-TEST-94023730684833
+2026-09-23T12:21:42.987+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.AdminService  : admin refund order: actor=130 order=ADMIN-TEST-94023730684833 payer=131 days=365
+2026-09-23T12:21:43.076+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:43.123+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:43.143+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:43.181+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:43.199+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:43.208+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:43.311+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.AdminService  : admin import review: actor=147 import=1 status=APPROVED
+2026-09-23T12:21:43.315+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.AdminService  : admin import review: actor=147 import=1 status=REJECTED
+2026-09-23T12:21:43.349+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:43.391+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:43.402+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+[INFO] Tests run: 23, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.918 s -- in com.familymenu.daily.AdminModulesTests
+[INFO] Running com.familymenu.daily.service.TencentSmsGatewayTests
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.007 s -- in com.familymenu.daily.service.TencentSmsGatewayTests
+[INFO] Running com.familymenu.daily.service.AvoidTagFilterTests
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.005 s -- in com.familymenu.daily.service.AvoidTagFilterTests
+[INFO] Running com.familymenu.daily.service.PantryDeductionTests
+[INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.006 s -- in com.familymenu.daily.service.PantryDeductionTests
+[INFO] Running com.familymenu.daily.CoreFlowInvariantsTests
+2026-09-23T12:21:43.437+08:00  INFO 13053 --- [family-menu-daily-server] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.familymenu.daily.CoreFlowInvariantsTests]: CoreFlowInvariantsTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-23T12:21:43.437+08:00  INFO 13053 --- [family-menu-daily-server] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.familymenu.daily.FamilyMenuDailyApplication for test class com.familymenu.daily.CoreFlowInvariantsTests
+2026-09-23T12:21:43.499+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.146 s -- in com.familymenu.daily.CoreFlowInvariantsTests
+[INFO] Running com.familymenu.daily.SubscribeMessageTests
+2026-09-23T12:21:43.584+08:00  INFO 13053 --- [family-menu-daily-server] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.familymenu.daily.SubscribeMessageTests]: SubscribeMessageTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-23T12:21:43.585+08:00  INFO 13053 --- [family-menu-daily-server] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.familymenu.daily.FamilyMenuDailyApplication for test class com.familymenu.daily.SubscribeMessageTests
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.128 s -- in com.familymenu.daily.SubscribeMessageTests
+[INFO] Running com.familymenu.daily.AdminUiAssetsTests
+[INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.007 s -- in com.familymenu.daily.AdminUiAssetsTests
+[INFO] Running com.familymenu.daily.RecipeLibraryScopeTests
+2026-09-23T12:21:43.720+08:00  INFO 13053 --- [family-menu-daily-server] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.familymenu.daily.RecipeLibraryScopeTests]: RecipeLibraryScopeTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-23T12:21:43.721+08:00  INFO 13053 --- [family-menu-daily-server] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.familymenu.daily.FamilyMenuDailyApplication for test class com.familymenu.daily.RecipeLibraryScopeTests
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.094 s -- in com.familymenu.daily.RecipeLibraryScopeTests
+[INFO] Running com.familymenu.daily.DemoSeedEnabledTests
+2026-09-23T12:21:43.815+08:00  INFO 13053 --- [family-menu-daily-server] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.familymenu.daily.DemoSeedEnabledTests]: DemoSeedEnabledTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-23T12:21:43.816+08:00  INFO 13053 --- [family-menu-daily-server] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.familymenu.daily.FamilyMenuDailyApplication for test class com.familymenu.daily.DemoSeedEnabledTests
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.0)
+
+2026-09-23T12:21:43.836+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.DemoSeedEnabledTests  : Starting DemoSeedEnabledTests using Java 21.0.12.1 with PID 13053 (started by xx in /Users/xx/cx/家庭点菜小程序/server)
+2026-09-23T12:21:43.836+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.DemoSeedEnabledTests  : No active profile set, falling back to 1 default profile: "default"
+2026-09-23T12:21:43.923+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-10 - Starting...
+2026-09-23T12:21:43.926+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-10 - Added connection com.mysql.cj.jdbc.ConnectionImpl@5b3847f5
+2026-09-23T12:21:43.926+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-10 - Start completed.
+2026-09-23T12:21:43.950+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.AuthService   : WeChat credentials not configured. /api/auth/login will reject real WeChat codes; only /api/auth/guest is available.
+2026-09-23T12:21:43.957+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.WechatClient  : Wechat disabled: app-id/app-secret not configured. Content security check and subscribe message will be skipped.
+2026-09-23T12:21:43.959+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.SubscribeMessageService    : SubscribeMessage disabled: no template id configured (set WECHAT_SUBSCRIBE_TEMPLATE_WISH / WECHAT_SUBSCRIBE_TEMPLATE_MEAL to enable)
+2026-09-23T12:21:43.996+08:00  INFO 13053 --- [family-menu-daily-server] [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-09-23T12:21:43.996+08:00  INFO 13053 --- [family-menu-daily-server] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-09-23T12:21:43.996+08:00  INFO 13053 --- [family-menu-daily-server] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-09-23T12:21:43.998+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.DemoSeedEnabledTests  : Started DemoSeedEnabledTests in 0.18 seconds (process running for 9.959)
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.268 s -- in com.familymenu.daily.DemoSeedEnabledTests
+[INFO] Running com.familymenu.daily.CoreFlowTests
+2026-09-23T12:21:44.083+08:00  INFO 13053 --- [family-menu-daily-server] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.familymenu.daily.CoreFlowTests]: CoreFlowTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-23T12:21:44.084+08:00  INFO 13053 --- [family-menu-daily-server] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.familymenu.daily.FamilyMenuDailyApplication for test class com.familymenu.daily.CoreFlowTests
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.0)
+
+2026-09-23T12:21:44.092+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.familymenu.daily.CoreFlowTests       : Starting CoreFlowTests using Java 21.0.12.1 with PID 13053 (started by xx in /Users/xx/cx/家庭点菜小程序/server)
+2026-09-23T12:21:44.093+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.familymenu.daily.CoreFlowTests       : No active profile set, falling back to 1 default profile: "default"
+2026-09-23T12:21:44.180+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-11 - Starting...
+2026-09-23T12:21:44.184+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-11 - Added connection com.mysql.cj.jdbc.ConnectionImpl@42eeb996
+2026-09-23T12:21:44.185+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-11 - Start completed.
+2026-09-23T12:21:44.210+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.AuthService   : WeChat credentials not configured. /api/auth/login will reject real WeChat codes; only /api/auth/guest is available.
+2026-09-23T12:21:44.215+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.WechatClient  : Wechat disabled: app-id/app-secret not configured. Content security check and subscribe message will be skipped.
+2026-09-23T12:21:44.216+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.SubscribeMessageService    : SubscribeMessage disabled: no template id configured (set WECHAT_SUBSCRIBE_TEMPLATE_WISH / WECHAT_SUBSCRIBE_TEMPLATE_MEAL to enable)
+2026-09-23T12:21:44.253+08:00  INFO 13053 --- [family-menu-daily-server] [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-09-23T12:21:44.253+08:00  INFO 13053 --- [family-menu-daily-server] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-09-23T12:21:44.253+08:00  INFO 13053 --- [family-menu-daily-server] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-09-23T12:21:44.256+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.familymenu.daily.CoreFlowTests       : Started CoreFlowTests in 0.17 seconds (process running for 10.216)
+2026-09-23T12:21:44.256+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.SeedRunner    : 演示数据播种已关闭 (app.seed-demo-data=false)：只保留公共菜谱库
+2026-09-23T12:21:44.381+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.f.daily.service.NoopSmsGateway         : [SMS] 短信网关未配置，验证码未发送 (phone=***6333)。配置 SMS_PROVIDER 接入真实供应商。
+2026-09-23T12:21:44.412+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:44.482+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:44.486+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:44.490+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:44.493+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:44.496+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:44.499+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.ContentSecurityService     : ContentSecurity not configured: content queued for manual review
+2026-09-23T12:21:44.591+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.f.daily.service.NoopSmsGateway         : [SMS] 短信网关未配置，验证码未发送 (phone=***9208)。配置 SMS_PROVIDER 接入真实供应商。
+[INFO] Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.571 s -- in com.familymenu.daily.CoreFlowTests
+[INFO] Running com.familymenu.daily.MenuWriteRaceTests
+2026-09-23T12:21:44.655+08:00  INFO 13053 --- [family-menu-daily-server] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.familymenu.daily.MenuWriteRaceTests]: MenuWriteRaceTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-23T12:21:44.656+08:00  INFO 13053 --- [family-menu-daily-server] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.familymenu.daily.FamilyMenuDailyApplication for test class com.familymenu.daily.MenuWriteRaceTests
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.093 s -- in com.familymenu.daily.MenuWriteRaceTests
+[INFO] Running com.familymenu.daily.AdminBootstrapLoginTests
+2026-09-23T12:21:44.749+08:00  INFO 13053 --- [family-menu-daily-server] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.familymenu.daily.AdminBootstrapLoginTests]: AdminBootstrapLoginTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-23T12:21:44.749+08:00  INFO 13053 --- [family-menu-daily-server] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.familymenu.daily.FamilyMenuDailyApplication for test class com.familymenu.daily.AdminBootstrapLoginTests
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.0)
+
+2026-09-23T12:21:44.758+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.daily.AdminBootstrapLoginTests       : Starting AdminBootstrapLoginTests using Java 21.0.12.1 with PID 13053 (started by xx in /Users/xx/cx/家庭点菜小程序/server)
+2026-09-23T12:21:44.758+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.daily.AdminBootstrapLoginTests       : No active profile set, falling back to 1 default profile: "default"
+2026-09-23T12:21:44.820+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-12 - Starting...
+2026-09-23T12:21:44.823+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-12 - Added connection com.mysql.cj.jdbc.ConnectionImpl@21fca5d3
+2026-09-23T12:21:44.823+08:00  INFO 13053 --- [family-menu-daily-server] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-12 - Start completed.
+2026-09-23T12:21:44.846+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.AuthService   : WeChat credentials not configured. /api/auth/login will reject real WeChat codes; only /api/auth/guest is available.
+2026-09-23T12:21:44.848+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.f.d.controller.AdminAuthController     : 管理后台「引导登录」已开启（ADMIN_BOOTSTRAP_TOKEN 已设置）：任何人拿到该令牌都能以 ***0001 账号进入后台并绕过验证码。仅在进不去后台时临时使用，用完请立刻移除该环境变量并重启应用。
+2026-09-23T12:21:44.850+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.WechatClient  : Wechat disabled: app-id/app-secret not configured. Content security check and subscribe message will be skipped.
+2026-09-23T12:21:44.852+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.d.service.SubscribeMessageService    : SubscribeMessage disabled: no template id configured (set WECHAT_SUBSCRIBE_TEMPLATE_WISH / WECHAT_SUBSCRIBE_TEMPLATE_MEAL to enable)
+2026-09-23T12:21:44.897+08:00  INFO 13053 --- [family-menu-daily-server] [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-09-23T12:21:44.898+08:00  INFO 13053 --- [family-menu-daily-server] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-09-23T12:21:44.898+08:00  INFO 13053 --- [family-menu-daily-server] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-09-23T12:21:44.900+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.f.daily.AdminBootstrapLoginTests       : Started AdminBootstrapLoginTests in 0.15 seconds (process running for 10.861)
+2026-09-23T12:21:44.900+08:00  INFO 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.SeedRunner    : 演示数据播种已关闭 (app.seed-demo-data=false)：只保留公共菜谱库
+2026-09-23T12:21:44.911+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.AuthService   : admin bootstrap login: userId=188 —— 进去后请立刻移除环境变量 ADMIN_BOOTSTRAP_TOKEN 并重启
+2026-09-23T12:21:44.959+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.familymenu.daily.service.AuthService   : admin bootstrap login: userId=192 —— 进去后请立刻移除环境变量 ADMIN_BOOTSTRAP_TOKEN 并重启
+[INFO] Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.245 s -- in com.familymenu.daily.AdminBootstrapLoginTests
+[INFO] Running com.familymenu.daily.CommunityPostsByRecipeTests
+2026-09-23T12:21:44.994+08:00  INFO 13053 --- [family-menu-daily-server] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.familymenu.daily.CommunityPostsByRecipeTests]: CommunityPostsByRecipeTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-23T12:21:44.995+08:00  INFO 13053 --- [family-menu-daily-server] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.familymenu.daily.FamilyMenuDailyApplication for test class com.familymenu.daily.CommunityPostsByRecipeTests
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.116 s -- in com.familymenu.daily.CommunityPostsByRecipeTests
+[INFO] Running com.familymenu.daily.PhoneBindSecurityTests
+2026-09-23T12:21:45.112+08:00  INFO 13053 --- [family-menu-daily-server] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.familymenu.daily.PhoneBindSecurityTests]: PhoneBindSecurityTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-23T12:21:45.114+08:00  INFO 13053 --- [family-menu-daily-server] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.familymenu.daily.FamilyMenuDailyApplication for test class com.familymenu.daily.PhoneBindSecurityTests
+2026-09-23T12:21:45.129+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.f.daily.service.NoopSmsGateway         : [SMS] 短信网关未配置，验证码未发送 (phone=***4250)。配置 SMS_PROVIDER 接入真实供应商。
+2026-09-23T12:21:45.167+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.f.daily.service.NoopSmsGateway         : [SMS] 短信网关未配置，验证码未发送 (phone=***2708)。配置 SMS_PROVIDER 接入真实供应商。
+2026-09-23T12:21:45.202+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.f.daily.service.NoopSmsGateway         : [SMS] 短信网关未配置，验证码未发送 (phone=***2666)。配置 SMS_PROVIDER 接入真实供应商。
+2026-09-23T12:21:45.235+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.f.daily.service.NoopSmsGateway         : [SMS] 短信网关未配置，验证码未发送 (phone=***9000)。配置 SMS_PROVIDER 接入真实供应商。
+2026-09-23T12:21:45.252+08:00  WARN 13053 --- [family-menu-daily-server] [           main] c.f.daily.service.NoopSmsGateway         : [SMS] 短信网关未配置，验证码未发送 (phone=***9000)。配置 SMS_PROVIDER 接入真实供应商。
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.147 s -- in com.familymenu.daily.PhoneBindSecurityTests
+[INFO] Running com.familymenu.daily.VipActivateRemovedTests
+2026-09-23T12:21:45.259+08:00  INFO 13053 --- [family-menu-daily-server] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.familymenu.daily.VipActivateRemovedTests]: VipActivateRemovedTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-23T12:21:45.259+08:00  INFO 13053 --- [family-menu-daily-server] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.familymenu.daily.FamilyMenuDailyApplication for test class com.familymenu.daily.VipActivateRemovedTests
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.035 s -- in com.familymenu.daily.VipActivateRemovedTests
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 221, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  12.662 s
+[INFO] Finished at: 2026-09-23T12:21:45+08:00
+[INFO] ------------------------------------------------------------------------

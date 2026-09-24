@@ -11,10 +11,12 @@ import com.familymenu.daily.dto.ApiModels.PreferenceProfile;
 import com.familymenu.daily.dto.ApiModels.RecipeCard;
 import com.familymenu.daily.dto.ApiModels.WeeklyMenuDay;
 import com.familymenu.daily.dto.ApiModels.WeeklyMenuView;
+import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
@@ -232,19 +234,37 @@ public class EnhancedService {
 
     @Transactional
     public void deletePantryItem(long familyId, long itemId) {
-        jdbcTemplate.update("DELETE FROM pantry_item WHERE id = ? AND family_id = ?", itemId, familyId);
+        int deleted = jdbcTemplate.update(
+                "DELETE FROM pantry_item WHERE id = ? AND family_id = ?", itemId, familyId);
+        if (deleted == 0) {
+            // 与 deleteCommunityPost / 读路径同一套语义：条目不存在 / 不是本家的 / 已经删过，都算 404。
+            // 修前这里的 0 行结果被静默吞掉，接口照样回 200 ——
+            // 于是「删别人家的库存」和「删不存在的 id」在客户端看起来都是成功，前端只能靠刷新列表猜。
+            // 注意 SQL 本身一直带 family_id 过滤，越权删不掉数据；错的只是响应契约。
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "库存条目不存在");
+        }
     }
 
+    /**
+     * 冰箱里「能做什么」：判定口径与 {@link PantryDeduction}（真正扣库存的那套）**逐字一致**——
+     * 名称与单位都归一后完全相等、两边用量都要能解析出数字，不做同义词/包含式匹配。
+     *
+     * 为什么必须一致：这一份数字会被冰箱页当成权威数据展示（`3/3` → 「食材都有，直接开火」），
+     * 也会驱动首页推荐排序。原来这里用 {@code IngredientMatcher}（同义词 + 双向子串 + 不看单位），
+     * 实测同一台冰箱同一道菜：这里给 `3/3 不缺`，做完菜只扣得动 1 行（`紫菜 包` 对不上 `紫菜 8g`、
+     * 冰箱里的 `葱` 不等于菜谱要的 `香葱`）——页面说"食材都有"，开火后冰箱几乎没动。
+     */
     public List<PantryMatchResult> matchRecipesWithPantry(long familyId, long userId) {
         List<PantryItem> pantry = listPantry(familyId);
         if (pantry.isEmpty()) {
             return List.of();
         }
-        Set<String> pantryCanon = pantry.stream()
-                .map(p -> IngredientMatcher.canonical(p.ingredientName()))
-                .filter(s -> !s.isEmpty())
+        // 用量写「适量/少许」的行不入索引：扣减侧不会动它们，这里也就不该说"有"
+        Set<String> pantryKeys = pantry.stream()
+                .filter(p -> PantryDeduction.parseAmount(p.amount()) != null)
+                .map(p -> stockKey(p.ingredientName(), p.unit()))
                 .collect(Collectors.toSet());
-        if (pantryCanon.isEmpty()) {
+        if (pantryKeys.isEmpty()) {
             return List.of();
         }
 
@@ -256,32 +276,36 @@ public class EnhancedService {
         Map<Long, RecipeCard> byId = recipes.stream()
                 .collect(Collectors.toMap(RecipeCard::id, r -> r, (a, b) -> a, LinkedHashMap::new));
 
-        Map<Long, List<String>> ingredientsByRecipe = new HashMap<>();
+        Map<Long, List<String[]>> ingredientsByRecipe = new HashMap<>();
         jdbcTemplate.query("""
-                SELECT recipe_id, ingredient_name
+                SELECT recipe_id, ingredient_name, unit, amount
                 FROM recipe_ingredient
                 WHERE recipe_id IN (%s)
                 """.formatted(buildPlaceholders(byId.size())),
                 rs -> {
                     long rid = rs.getLong("recipe_id");
-                    String name = rs.getString("ingredient_name");
-                    ingredientsByRecipe.computeIfAbsent(rid, k -> new ArrayList<>()).add(name);
+                    ingredientsByRecipe.computeIfAbsent(rid, k -> new ArrayList<>())
+                            .add(new String[]{rs.getString("ingredient_name"), rs.getString("unit"),
+                                    rs.getString("amount")});
                 },
                 byId.keySet().toArray());
 
         List<PantryMatchResult> results = new ArrayList<>();
         for (Map.Entry<Long, RecipeCard> entry : byId.entrySet()) {
-            List<String> ingredients = ingredientsByRecipe.get(entry.getKey());
+            List<String[]> ingredients = ingredientsByRecipe.get(entry.getKey());
             if (ingredients == null || ingredients.isEmpty()) {
                 continue;
             }
             int matched = 0;
             List<String> missing = new ArrayList<>();
-            for (String ing : ingredients) {
-                if (IngredientMatcher.matches(ing, pantryCanon)) {
+            for (String[] ing : ingredients) {
+                String name = ing[0];
+                // 与 PantryDeduction.plan 同一判据：名称|单位都对得上，且菜谱这侧用量可解析
+                if (PantryDeduction.parseAmount(ing[2]) != null
+                        && pantryKeys.contains(stockKey(name, ing[1]))) {
                     matched++;
-                } else if (ing != null && !ing.isBlank()) {
-                    missing.add(ing);
+                } else if (name != null && !name.isBlank()) {
+                    missing.add(name);
                 }
             }
             if (matched > 0) {
@@ -292,6 +316,11 @@ public class EnhancedService {
 
         results.sort(Comparator.comparingDouble(PantryMatchResult::matchRate).reversed());
         return results.stream().limit(10).toList();
+    }
+
+    /** 冰箱与菜谱共用的索引键：名称 + 单位都归一，与 PantryDeduction 的 key 写法一致。 */
+    private static String stockKey(String name, String unit) {
+        return PantryDeduction.normalize(name) + "|" + PantryDeduction.normalize(unit);
     }
 
     private String buildPlaceholders(int n) {
@@ -305,4 +334,5 @@ public class EnhancedService {
         }
         return sb.toString();
     }
+
 }

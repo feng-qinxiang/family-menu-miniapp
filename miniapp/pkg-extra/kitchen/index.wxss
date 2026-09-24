@@ -204,6 +204,14 @@
 .k-clock.running {
   color: var(--pop);
 }
+/* 没在计时：写「未计时」而不是给一个 --:-- 的空表盘。
+   --:-- 读起来像计时器坏了，而这里要回答的是「这口灶现在有没有在跑」。 */
+.k-clock.idle {
+  font-size: calc(25rpx * var(--fs-mul, 1));
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--mut);
+}
 .k-tbtns {
   display: flex;
   gap: 12rpx;

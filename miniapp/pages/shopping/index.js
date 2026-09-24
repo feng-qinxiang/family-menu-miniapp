@@ -10,9 +10,11 @@ const {
   toggleShoppingPurchased
 } = require('../../utils/api');
 const { withScrollReveal, dispose: disposeScrollReveal } = require('../../behaviors/scroll-reveal');
+const { indexPantry, pantryHas } = require('../../utils/pantry-match');
 
 const { recipeDishImg, localDishByIngredient } = require('../../utils/image');
 const { INGREDIENT_CATEGORIES, categoryOf } = require('../../utils/ingredients');
+const { shoppingEmptyReason } = require('../../utils/kitchen');
 
 function pantryCategory(name) {
   return categoryOf(name);
@@ -47,6 +49,7 @@ Page({
     navSolid: false,
     pantryCategories: [],
     pantryCount: 0,
+    pantryError: false,
     newPantryItem: { ingredientName: '', amount: '', unit: '' },
     showPantryForm: false,
     shoppingList: {
@@ -60,6 +63,9 @@ Page({
     purchasedItems: [],
     groupedPending: [],
     groupedPurchased: [],
+    // 空清单的原因（'no-menu' / 'no-ingredients'）与对应文案，由 buildShoppingState 填
+    emptyReason: '',
+    emptyState: { title: '', desc: '', cta: '' },
     summary: {
       totalCount: 0,
       pendingCount: 0,
@@ -124,11 +130,18 @@ Page({
     this.loadShoppingList();
   },
 
+  // 空态出口：没点菜去挑菜，点了菜没录用料去补用料——两条路都落在菜谱页
+  goRecipes() {
+    wx.switchTab({ url: '/pages/recipes/index', fail() {} });
+  },
+
   setPantryView(pantryItems) {
     const items = Array.isArray(pantryItems) ? pantryItems : [];
     this.setData({
       pantryCategories: groupPantry(items),
-      pantryCount: items.length
+      pantryCount: items.length,
+      // 拉到数据就说明这次没失败（重试成功后失败态要自动消失）
+      pantryError: false
     });
   },
 
@@ -136,13 +149,22 @@ Page({
     const { tab } = e.currentTarget.dataset;
     if (!tab || tab === this.data.tab) return;
     this.setData({ tab });
-    if (tab === 'pantry') {
-      getPantryItems()
-        .then((items) => this.setPantryView(items))
-        .catch(() => {
-          wx.showToast({ title: '库存刷新失败', icon: 'none' });
-        });
-    }
+    if (tab === 'pantry') this.loadPantry();
+  },
+
+  // 冰箱列表单独拉一次：失败要留失败态（和待买清单一样给「重新加载」）。
+  // 否则断网时用户看到的是「冰箱还空着」——库存明明还在，只是没拉到
+  loadPantry() {
+    this.setData({ pantryError: false });
+    return getPantryItems()
+      .then((items) => this.setPantryView(items))
+      .catch((err) => {
+        this.setData({ pantryError: true });
+      });
+  },
+
+  retryPantry() {
+    this.loadPantry();
   },
 
   togglePantryForm() {
@@ -379,18 +401,27 @@ Page({
     const purchasedCount = purchasedItems.length;
     const pendingCount = pendingItems.length;
     const progressPercent = totalCount ? Math.round((purchasedCount / totalCount) * 100) : 0;
+    // 清单为空时的原因（'no-menu' / 'no-ingredients'）：文案与出路都按它分岔，
+    // 见 utils/kitchen.js#shoppingEmptyReason 里"为什么不能只说一句"的注释
+    const emptyReason = shoppingEmptyReason((context.todayMenu && context.todayMenu.items || []).length, totalCount);
     return {
       shoppingList: { ...normalized, items },
       pendingItems,
       purchasedItems,
       groupedPending: this.groupItems(pendingItems),
       groupedPurchased: this.groupItems(purchasedItems),
+      emptyReason,
+      emptyState: emptyReason === 'no-ingredients'
+        ? { title: '还没有要买的', desc: '今天点的菜还没录用料，去菜谱里补上就能自动生成', cta: '去菜谱' }
+        : { title: '今天还没点菜', desc: '先去菜谱挑几道，买菜清单会跟着长出来', cta: '去点菜' },
       summary: {
         totalCount,
         pendingCount,
         purchasedCount,
         progressPercent,
-        statusText: totalCount ? (pendingCount ? `还差 ${pendingCount} 样` : '今天买齐了') : '今天不用买'
+        statusText: totalCount
+          ? (pendingCount ? `还差 ${pendingCount} 样` : '今天买齐了')
+          : (emptyReason === 'no-ingredients' ? '这几道菜还没录食材' : '今天还没点菜')
       }
     };
   },
@@ -398,13 +429,16 @@ Page({
   enrichItems(items, context) {
     const menuItems = context.todayMenu && Array.isArray(context.todayMenu.items) ? context.todayMenu.items : [];
     const pantryItems = Array.isArray(context.pantryItems) ? context.pantryItems : [];
+    const pantryIndex = indexPantry(pantryItems);
     return items.map((item) => {
       // 后端已在清单条目上返回来源菜谱（今日菜单回溯），优先使用；本地匹配仅作旧数据兜底
       const backendSources = Array.isArray(item.sourceRecipes) ? item.sourceRecipes.filter(Boolean) : [];
       const sourceRecipes = backendSources.length
         ? backendSources.slice(0, 2)
         : this.findSourceRecipes(item.ingredientName, menuItems);
-      const inPantry = pantryItems.some((pantryItem) => this.sameIngredient(pantryItem.ingredientName, item.ingredientName));
+      // 「库存里已有」用与服务端扣库存同一口径（utils/pantry-match）：
+      // 原来只比名字（还带双向子串），"冰箱里有紫菜 1 包"会被当成"紫菜 8g 够了"
+      const inPantry = pantryHas(pantryIndex, item.ingredientName, item.unit, item.amount);
       const category = this.resolveCategory(item.ingredientName);
       return {
         ...item,

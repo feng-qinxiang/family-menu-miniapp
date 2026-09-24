@@ -1,7 +1,7 @@
 // kitchen-logic.test · 厨房总控纯逻辑断言（零依赖，node 直跑）
 const assert = require('assert');
 const {
-  fmtClock, buildKitchenOrder, pickMainStove, stepProgressText, secondsLeft, restoreTimerSlots
+  fmtClock, buildKitchenOrder, pickMainStove, stepProgressText, secondsLeft, restoreTimerSlots, shoppingEmptyReason
 } = require('../utils/kitchen');
 
 // fmtClock
@@ -65,5 +65,14 @@ assert.deepStrictEqual([restored[3].running, restored[3].baseLeft], [false, 120]
 assert.deepStrictEqual([restored[4].running, restored[4].baseLeft], [false, 0], '到点的槽留在 00:00 而不是消失');
 assert.deepStrictEqual(restoreTimerSlots(null, 6, NOW), {}, '没存过 = 空槽集');
 assert.deepStrictEqual(restoreTimerSlots('脏值', 6, NOW), {}, '存储里是脏值也不炸');
+
+// shoppingEmptyReason：清单为空的原因（文案与出路都按它分岔）
+// 反向判据：任何"有东西要买/已买齐"的组合都必须返回 ''，不能落进空态分支
+assert.strictEqual(shoppingEmptyReason(0, 0), 'no-menu', '没点菜 → no-menu（新人第一屏，最常见）');
+assert.strictEqual(shoppingEmptyReason(3, 0), 'no-ingredients', '点了菜却没清单 → 归到"没录用料"这一支');
+assert.strictEqual(shoppingEmptyReason(0, 5), '', '清单有 5 样、菜单为空（手加条目）→ 不是空态');
+assert.strictEqual(shoppingEmptyReason(3, 5), '', '有菜有清单 → 不是空态');
+assert.strictEqual(shoppingEmptyReason(undefined, undefined), 'no-menu', '还没加载出来时按"没点菜"兜底，不炸');
+assert.strictEqual(shoppingEmptyReason('2', '1'), '', '字符串数字（后端 JSON 边界）同样算数');
 
 console.log('kitchen-logic.test: 全部断言通过 ✔');

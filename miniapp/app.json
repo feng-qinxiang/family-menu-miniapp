@@ -41,6 +41,7 @@
         "me/about/index",
         "legal/terms/index",
         "legal/privacy/index",
+        "legal/deletion/index",
         "me/profile-edit/index"
       ]
     }

@@ -43,8 +43,10 @@ public final class PlanCatalog {
 
     /** 兼容历史调用：接受 code 或中文展示名（如 "家庭月卡"），均解析为套餐；无法解析抛 400。 */
     public static Plan requireCodeOrDisplayName(String value) {
+        // 空值不能回退到年卡：这是"人工开通会员"这类写操作的入参，
+        // 少传一个字段就静默送出 365 天（代价最大的那一档），比报错危险得多。
         if (value == null || value.isBlank()) {
-            return require("annual");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "请选择套餐：" + PLANS.keySet());
         }
         String trimmed = value.trim();
         Plan byCode = PLANS.get(trimmed);

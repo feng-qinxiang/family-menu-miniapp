@@ -1,0 +1,41 @@
+<!-- pages/legal/deletion · 注销账号（静态二级页）-->
+<nav-bar title="注销账号" show-back="{{true}}" status-bar-height="{{statusBarHeight}}"></nav-bar>
+
+<view class="page {{fontScale === 'lg' ? 'font-lg' : ''}}">
+  <view class="body">
+    <!-- Hero -->
+    <view class="eyebrow eyebrow-serif g-fade-up">注销账号</view>
+    <view class="doctitle g-fade-up g-d1">
+      不用的账号<text class="pop">可以注销</text>
+    </view>
+    <view class="effective g-fade-up g-d2">
+      <text class="effective-dot"></text>处理时限：15 个工作日
+    </view>
+    <view class="intro g-fade-up g-d3">{{intro}}</view>
+
+    <!-- 文字分组 01~04 -->
+    <view
+      class="sec g-fade-up"
+      wx:for="{{sections}}"
+      wx:key="no"
+      style="animation-delay: {{0.18 + index * 0.06}}s;"
+    >
+      <view class="sec-head">
+        <text class="sec-no">{{item.no}}</text>
+        <text class="sec-title">{{item.title}}</text>
+      </view>
+      <view class="sec-body">{{item.body}}</view>
+    </view>
+
+    <!-- 联系框：申请注销的唯一通道，联系方式取自 legal-config 单一来源 -->
+    <view class="card-dark footnote g-fade-up g-d8">
+      <view class="deco-circle"></view>
+      <view class="ft-eb">申请注销</view>
+      <view class="ft-text">运营者：{{operatorName}}</view>
+      <view class="ft-text">请通过以下方式联系运营者提出注销申请，我们会在 15 个工作日内完成删除或匿名化：</view>
+      <view class="ft-mail tap-scale" catchtap="onCopyContact">{{operatorContact}}</view>
+    </view>
+
+    <view class="safe-bottom"></view>
+  </view>
+</view>

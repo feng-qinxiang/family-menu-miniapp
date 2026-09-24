@@ -26,6 +26,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -225,7 +227,10 @@ public class MysqlKitchenStore {
 
     @Transactional
     public RecipeCard createRecipe(CreateRecipeRequest request, long ownerUserId, long familyId) {
-        String sourceType = normalizeSourceType(request.sourceType());
+        // 用户建的菜谱只能是 owned / imported：community 是平台菜谱库的标记，
+        // 所有读路径都把 source_type='community' 当作"全站可见"。以前客户端传 sourceType=community
+        // 就能让自己的菜谱绕过机审和家庭隔离直接出现在每个家庭的菜谱库里。
+        String sourceType = "imported".equals(normalizeSourceType(request.sourceType())) ? "imported" : "owned";
         long recipeId = insertRecipe(
                 ownerUserId,
                 familyId,
@@ -267,6 +272,73 @@ public class MysqlKitchenStore {
         return communityPosts(userId, viewerFamilyId, tag, 1, 100);
     }
 
+    /**
+     * 帖子行的投影。信息流与「按菜谱取帖」共用，三条 ? 依次是：
+     * mine 判定的 userId、我的收藏 my_fav.user_id、我的点赞 my_like.user_id。
+     */
+    private static final String COMMUNITY_POST_SELECT = """
+            SELECT p.id, p.title, u.nickname AS author, p.content, p.like_count, p.comment_count, p.tags_json, p.images_json, p.audit_status,
+                   (SELECT COUNT(*) FROM community_post_favorite f WHERE f.post_id = p.id) AS favorite_count,
+                   CASE WHEN my_fav.user_id IS NULL THEN 0 ELSE 1 END AS favorited,
+                   CASE WHEN my_like.user_id IS NULL THEN 0 ELSE 1 END AS liked,
+                   CASE WHEN p.author_user_id = ? THEN 1 ELSE 0 END AS mine,
+                   r.id AS recipe_id, r.title AS recipe_title, r.source_type, r.source_url, r.cuisine,
+                   r.taste_tags_json, r.time_cost, r.servings, r.rating, r.summary, r.cover_image,
+                   r.is_public, r.family_id AS recipe_family_id, r.owner_user_id AS recipe_owner_id
+            FROM community_post p
+            JOIN user_account u ON u.id = p.author_user_id
+            LEFT JOIN recipe r ON r.id = p.recipe_id
+            LEFT JOIN community_post_favorite my_fav ON my_fav.post_id = p.id AND my_fav.user_id = ?
+            LEFT JOIN community_post_like my_like ON my_like.post_id = p.id AND my_like.user_id = ?
+            """;
+
+    /**
+     * 帖子行 → CommunityPost。信息流 / 帖子详情 / 我的收藏 / 按菜谱取帖四条读路径共用这一处映射。
+     * 关联菜谱的可见性（shareableRecipe）也在这里：少改一条路径就会把别人家的私房菜随帖子发出去
+     * （CommunityPostRecipeScopeTests 就是按这个判据把每条路径各钉一遍的）。
+     */
+    private CommunityPost mapCommunityPost(ResultSet rs, long userId, long viewerFamilyId) throws SQLException {
+        RecipeCard recipe = null;
+        long recipeId = rs.getLong("recipe_id");
+        if (!rs.wasNull()) {
+            recipe = new RecipeCard(
+                    recipeId,
+                    rs.getString("recipe_title"),
+                    rs.getString("source_type"),
+                    rs.getString("cuisine"),
+                    readStringList(rs.getString("taste_tags_json")),
+                    rs.getInt("time_cost"),
+                    rs.getInt("servings"),
+                    rs.getDouble("rating"),
+                    rs.getString("source_url"),
+                    rs.getString("summary"),
+                    rs.getString("cover_image"),
+                    null,
+                    null
+            );
+            recipe = shareableRecipe(recipe, rs.getBoolean("is_public"),
+                    rs.getObject("recipe_family_id", Long.class),
+                    rs.getObject("recipe_owner_id", Long.class),
+                    userId, viewerFamilyId);
+        }
+        return new CommunityPost(
+                rs.getLong("id"),
+                rs.getString("title"),
+                rs.getString("author"),
+                rs.getString("content"),
+                rs.getInt("like_count"),
+                rs.getInt("comment_count"),
+                rs.getInt("favorite_count"),
+                rs.getBoolean("favorited"),
+                rs.getBoolean("liked"),
+                readStringList(rs.getString("tags_json")),
+                recipe,
+                rs.getBoolean("mine"),
+                readStringList(rs.getString("images_json")),
+                rs.getString("audit_status")
+        );
+    }
+
     /** 分页版：page 从 1 起。信息流此前一次拉全量（仅 LIMIT 100 护栏），帖子多了会越拖越慢。 */
     public List<CommunityPost> communityPosts(long userId, long viewerFamilyId, String tag, int page, int size) {
         // 两处都是实测出来的问题，改法各对应一条：
@@ -279,23 +351,12 @@ public class MysqlKitchenStore {
         //    拆成 UNION ALL 两段：每段单条件命中 (audit_status, like_count DESC, id DESC)，
         //    顺序由索引给出；两段各取 offset+size 条再合并，保证分页不重不漏
         //    （状态互斥，同一条帖不会同时出现在两段里）。
-        int offset = (Math.max(page, 1) - 1) * size;
+        // 分页先按 long 算再夹紧：page 给到 42949673 时 (page-1)*size 在 int 上溢出成负数，
+        // `LIMIT ... OFFSET -50` 直接是 MySQL 1064 → 500（实测 page=42949673&size=50 报
+        // BadSqlGrammarException；page=42949672 还好，边界正好在上面的 +size 处）。
+        int offset = (int) Math.min((long) (Math.max(page, 1) - 1) * size, Integer.MAX_VALUE - (long) size);
         int fetch = offset + size;
-        String select = """
-                SELECT p.id, p.title, u.nickname AS author, p.content, p.like_count, p.comment_count, p.tags_json, p.images_json, p.audit_status,
-                       (SELECT COUNT(*) FROM community_post_favorite f WHERE f.post_id = p.id) AS favorite_count,
-                       CASE WHEN my_fav.user_id IS NULL THEN 0 ELSE 1 END AS favorited,
-                       CASE WHEN my_like.user_id IS NULL THEN 0 ELSE 1 END AS liked,
-                       CASE WHEN p.author_user_id = ? THEN 1 ELSE 0 END AS mine,
-                       r.id AS recipe_id, r.title AS recipe_title, r.source_type, r.source_url, r.cuisine,
-                       r.taste_tags_json, r.time_cost, r.servings, r.rating, r.summary, r.cover_image,
-                       r.is_public, r.family_id AS recipe_family_id, r.owner_user_id AS recipe_owner_id
-                FROM community_post p
-                JOIN user_account u ON u.id = p.author_user_id
-                LEFT JOIN recipe r ON r.id = p.recipe_id
-                LEFT JOIN community_post_favorite my_fav ON my_fav.post_id = p.id AND my_fav.user_id = ?
-                LEFT JOIN community_post_like my_like ON my_like.post_id = p.id AND my_like.user_id = ?
-                """;
+        String select = COMMUNITY_POST_SELECT;
         String tagFilter = " AND (? IS NULL OR JSON_CONTAINS(p.tags_json, JSON_QUOTE(?)))\n";
         // ⚠ 每个 UNION 分支必须**整段加括号**，否则分支里的 ORDER BY ... LIMIT 会被当成作用于
         // 整个 union，MySQL 直接 1064 语法错误（改完第一版就是 6 个测试全 500，报在 'UNION ALL' 那一行）。
@@ -306,52 +367,43 @@ public class MysqlKitchenStore {
                 + "(" + select + "WHERE p.audit_status = 'PENDING' AND p.author_user_id = ?" + tagFilter
                 + "ORDER BY p.like_count DESC, p.id DESC LIMIT ?)\n"
                 + ") merged ORDER BY merged.like_count DESC, merged.id DESC LIMIT ? OFFSET ?";
-        return jdbcTemplate.query(sql, (rs, rowNum) -> {
-            RecipeCard recipe = null;
-            long recipeId = rs.getLong("recipe_id");
-            if (!rs.wasNull()) {
-                recipe = new RecipeCard(
-                        recipeId,
-                        rs.getString("recipe_title"),
-                        rs.getString("source_type"),
-                        rs.getString("cuisine"),
-                        readStringList(rs.getString("taste_tags_json")),
-                        rs.getInt("time_cost"),
-                        rs.getInt("servings"),
-                        rs.getDouble("rating"),
-                        rs.getString("source_url"),
-                        rs.getString("summary"),
-                        rs.getString("cover_image"),
-                        null,
-                        null
-                );
-                recipe = shareableRecipe(recipe, rs.getBoolean("is_public"),
-                        rs.getObject("recipe_family_id", Long.class),
-                        rs.getObject("recipe_owner_id", Long.class),
-                        userId, viewerFamilyId);
-            }
-            return new CommunityPost(
-                    rs.getLong("id"),
-                    rs.getString("title"),
-                    rs.getString("author"),
-                    rs.getString("content"),
-                    rs.getInt("like_count"),
-                    rs.getInt("comment_count"),
-                    rs.getInt("favorite_count"),
-                    rs.getBoolean("favorited"),
-                    rs.getBoolean("liked"),
-                    readStringList(rs.getString("tags_json")),
-                    recipe,
-                    rs.getBoolean("mine"),
-                    readStringList(rs.getString("images_json")),
-                    rs.getString("audit_status")
-            );
-        }, // 第一段：mine / my_fav / my_like / tag×2 / LIMIT
+        return jdbcTemplate.query(sql, (rs, rowNum) -> mapCommunityPost(rs, userId, viewerFamilyId),
+            // 第一段：mine / my_fav / my_like / tag×2 / LIMIT
             userId, userId, userId, tag, tag, fetch,
             // 第二段：同上，多一个 author_user_id
             userId, userId, userId, userId, tag, tag, fetch,
             // 外层分页
             size, offset);
+    }
+
+    /**
+     * 某道菜相关的帖子（菜谱详情页「大家晒的」）。
+     *
+     * 与信息流同一条可见性语义：APPROVED 公开；PENDING 只有作者本人看得见（他刚发、还没过机审，
+     * 自己得能看见）。为什么不复用带 tag 的那个方法：那一条是 tag 过滤 + 两段 UNION ALL + 外层
+     * 再排序分页的老 SQL，多塞一个 IN 条件要动它的参数位置；这里单条件直查 recipe_id，
+     * idx_post_recipe 就能收住，读路径也更短。两条都用 mapCommunityPost，菜谱可见性不会分叉。
+     *
+     * 调用方固定给小的 limit（详情页只铺一屏），不分页：菜谱详情不是信息流，翻页交给社区页。
+     */
+    public List<CommunityPost> communityPostsByRecipe(long recipeId, long userId, long viewerFamilyId, int limit) {
+        String sql = "SELECT * FROM (\n"
+                + "(" + COMMUNITY_POST_SELECT
+                + "WHERE p.recipe_id = ? AND p.audit_status = 'APPROVED'\n"
+                + "ORDER BY p.like_count DESC, p.id DESC LIMIT ?)\n"
+                + "UNION ALL\n"
+                + "(" + COMMUNITY_POST_SELECT
+                + "WHERE p.recipe_id = ? AND p.audit_status = 'PENDING' AND p.author_user_id = ?\n"
+                + "ORDER BY p.like_count DESC, p.id DESC LIMIT ?)\n"
+                + ") merged ORDER BY merged.like_count DESC, merged.id DESC LIMIT ?";
+        return jdbcTemplate.query(sql,
+                (rs, rowNum) -> mapCommunityPost(rs, userId, viewerFamilyId),
+                // 第一段：mine / my_fav / my_like / recipeId / LIMIT
+                userId, userId, userId, recipeId, limit,
+                // 第二段：同上，多一个 author_user_id
+                userId, userId, userId, recipeId, userId, limit,
+                // 外层再收一次（两段各自 LIMIT，合并后最多 2×limit）
+                limit);
     }
 
     /**
@@ -518,7 +570,7 @@ public class MysqlKitchenStore {
             throw new IllegalArgumentException("comment content required");
         }
         String status = auditStatus == null ? ContentSecurityService.STATUS_PENDING : auditStatus;
-        ensureCommunityPostExists(postId);
+        ensureCommunityPostExists(postId, userId);
         // 取回自己刚插的那一行的 id。原来回显用的是"该帖最新一条评论"（下面 ORDER BY c.id DESC LIMIT 1），
         // 两个人同时评论时，后到的那条会把先到的顶掉——A 发完看到的就是 B 的文字。
         KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -598,9 +650,9 @@ public class MysqlKitchenStore {
 
     public CommunityPost toggleCommunityFavorite(long postId, long userId, long viewerFamilyId) {
         return inTxWithDeadlockRetry(() -> {
-            ensureCommunityPostExists(postId);
+            ensureCommunityPostExists(postId, userId);
             toggleRow("community_post_favorite", postId, userId);
-            return findCommunityPost(postId, userId, viewerFamilyId);
+            return communityPostDetail(postId, userId, viewerFamilyId);
         });
     }
 
@@ -610,10 +662,10 @@ public class MysqlKitchenStore {
      */
     public CommunityPost toggleCommunityLike(long postId, long userId, long viewerFamilyId) {
         return inTxWithDeadlockRetry(() -> {
-            ensureCommunityPostExists(postId);
+            ensureCommunityPostExists(postId, userId);
             toggleRow("community_post_like", postId, userId);
             syncCommunityLikeCount(postId);
-            return findCommunityPost(postId, userId, viewerFamilyId);
+            return communityPostDetail(postId, userId, viewerFamilyId);
         });
     }
 
@@ -634,7 +686,7 @@ public class MysqlKitchenStore {
 
     @Transactional
     public void reportCommunityPost(long postId, long userId, CommunityReportRequest request) {
-          ensureCommunityPostExists(postId);
+          ensureCommunityPostExists(postId, userId);
           String reason = request == null || request.reason() == null ? "" : request.reason().trim();
           if (reason.isBlank()) {
               reason = "内容不实";
@@ -941,6 +993,27 @@ public class MysqlKitchenStore {
             throw new org.springframework.web.server.ResponseStatusException(
                     org.springframework.http.HttpStatus.FORBIDDEN, "recipe not accessible");
         }
+        // 幂等：同一个人在同一分钟里对同一道菜的「纯记录」只落一条。
+        // 连点模态框「确定」会 22ms 内发两次请求（实测两条 cook_history + 冰箱扣两遍），
+        // 页面级防重（runGuarded）挡不住已发出/重试的请求，所以这里再兜一层。
+        // FOR UPDATE 先锁住 (family_id, recipe_id) 这段索引：并发的那一次会等前者提交后
+        // 才做判断，避免两边都探到"没记过"。
+        // 带评分的记录不参与去重——那是用户主动写的一条新评价。
+        // ponytail: 去重窗口是固定 60s；要做到请求级精确，得让客户端带幂等键并落唯一索引。
+        if (request.score() == null) {
+            Long duplicateId = jdbcTemplate.query(
+                    "SELECT id FROM cook_history WHERE family_id = ? AND recipe_id = ? AND user_id = ?"
+                            + " AND score IS NULL AND cooked_at >= NOW() - INTERVAL 60 SECOND"
+                            + " ORDER BY id DESC LIMIT 1 FOR UPDATE",
+                    rs -> rs.next() ? rs.getLong(1) : null,
+                    familyId, request.recipeId(), userId
+            );
+            if (duplicateId != null) {
+                log.info("忽略重复的做菜记录：family={} recipe={} user={} 已存在 id={}",
+                        familyId, request.recipeId(), userId, duplicateId);
+                return cookHistoryById(duplicateId, 0);
+            }
+        }
         var keyHolder = new org.springframework.jdbc.support.GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement("""
@@ -978,28 +1051,48 @@ public class MysqlKitchenStore {
         // 做完菜 → 按菜谱标准用量回写冰箱（ADR-0009 方案 A）。与上面同一事务：
         // 扣错了不能只留下一条做菜历史，而库存悄悄少了。
         int pantryDeducted = deductPantryForRecipe(familyId, request.recipeId());
-        return jdbcTemplate.queryForObject("""
-                        SELECT ch.id, ch.recipe_id, r.title AS recipe_title,
-                               DATE_FORMAT(ch.cooked_at, '%Y-%m-%d %H:%i') AS cooked_at,
-                               ch.score, ch.remark, u.nickname AS cooked_by_name
-                        FROM cook_history ch
-                        JOIN recipe r ON r.id = ch.recipe_id
-                        JOIN user_account u ON u.id = ch.user_id
-                        WHERE ch.id = ?
-                        """,
-                (rs, rowNum) -> new CookHistoryItem(
-                        rs.getLong("id"),
-                        rs.getLong("recipe_id"),
-                        rs.getString("recipe_title"),
-                        rs.getString("cooked_at"),
-                        rs.getObject("score", Integer.class),
-                        rs.getString("remark"),
-                        rs.getString("cooked_by_name"),
-                        pantryDeducted
-                ),
-                key.longValue()
-        );
+        return cookHistoryById(key.longValue(), pantryDeducted);
     }
+
+    /**
+     * 同一份做菜历史按 id 取回并带上「这一笔扣了几项」。
+     * 幂等命中时也走这里（pantryDeducted 传 0：这一笔确实什么都没扣）。
+     *
+     * FOR SHARE 不是多余的：上面那次幂等判断是**锁定读**（FOR UPDATE），看得见并发请求刚提交的行；
+     * 这里若用普通快照读，REPEATABLE READ 的事务快照还停在对方提交之前 —— 同一事务里刚查到的
+     * id，紧接着按主键却查不到，EmptyResultDataAccessException 会变成递给用户的 404。
+     * （实测：两个人同时上桌，一条 200、一条 404。）
+     */
+    private CookHistoryItem cookHistoryById(long id, int pantryDeducted) {
+        try {
+            CookHistoryItem item = jdbcTemplate.queryForObject("""
+                            SELECT ch.id, ch.recipe_id, r.title AS recipe_title,
+                                   DATE_FORMAT(ch.cooked_at, '%Y-%m-%d %H:%i') AS cooked_at,
+                                   ch.score, ch.remark, u.nickname AS cooked_by_name
+                            FROM cook_history ch
+                            JOIN recipe r ON r.id = ch.recipe_id
+                            JOIN user_account u ON u.id = ch.user_id
+                            WHERE ch.id = ?
+                            FOR SHARE
+                            """,
+                    (rs, rowNum) -> new CookHistoryItem(
+                            rs.getLong("id"),
+                            rs.getLong("recipe_id"),
+                            rs.getString("recipe_title"),
+                            rs.getString("cooked_at"),
+                            rs.getObject("score", Integer.class),
+                            rs.getString("remark"),
+                            rs.getString("cooked_by_name"),
+                            pantryDeducted
+                    ),
+                    id
+            );
+            return item;
+        } catch (org.springframework.dao.EmptyResultDataAccessException ex) {
+            throw ex;
+        }
+    }
+
 
     /**
      * 按菜谱用量扣减本家庭冰箱库存，返回被改动的行数（0 = 什么都没扣，前端据此决定要不要提这句）。
@@ -1421,18 +1514,6 @@ public class MysqlKitchenStore {
         );
     }
 
-    private CommunityPost findCommunityPost(long postId, long userId, long viewerFamilyId) {
-        CommunityPost found = loadCommunityPostById(postId, userId, viewerFamilyId);
-        if (found == null) {
-            // 资源不存在就是 404。原来抛 IllegalArgumentException 会被全局处理器映射成 400，
-            // 客户端无法区分"我参数写错了"和"这条帖已经没了"；菜谱详情走的就是 404（见 :767），
-            // 社区这三处对齐同一个语义。
-            throw new org.springframework.web.server.ResponseStatusException(
-                    org.springframework.http.HttpStatus.NOT_FOUND, "community post not found");
-        }
-        return found;
-    }
-
     private CommunityPost loadCommunityPostById(long postId, long userId, long viewerFamilyId) {
         String sql = """
                 SELECT p.id, p.title, u.nickname AS author, p.content, p.like_count, p.comment_count, p.tags_json, p.images_json, p.audit_status,
@@ -1548,7 +1629,19 @@ public class MysqlKitchenStore {
             throw new org.springframework.web.server.ResponseStatusException(
                     org.springframework.http.HttpStatus.NOT_FOUND, "community post not found");
         }
-        return loadCommunityPostById(postId, userId, viewerFamilyId);
+        CommunityPost post = loadCommunityPostById(postId, userId, viewerFamilyId);
+        if (post == null) {
+            // 闸门放行了却拼不出这一行：社区读路径的可见性判据取自 communityPostInfo（不连 user_account），
+            // 而取行用的 loadCommunityPostById 内连 user_account，而 community_post.author_user_id
+            // **没有外键**（见 schema.sql，只有 idx_post_author），所以「作者账号行缺失」是可达状态：
+            // 两个判据打架时它返回 null。原来这一路直接 return null → Spring 序列化成 200 + 空 body，
+            // 客户端拿不到任何错误文案，只能把空响应渲染成「帖子不存在或已删除」（实测截图
+            // artifacts/launch-2026-09-23/miniapp/74b-post-detail-report.png：标题与「重新加载」按钮都走
+            // loadErrorDesc 为空的那一支）。让两个判据对齐：读不出行 = 不可见 = 404，且必须带文案。
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.NOT_FOUND, "community post not found");
+        }
+        return post;
     }
 
     /** 作者删帖：与运营下架同走 REMOVED，信息流/详情立即不可见，行保留供审计。 */
@@ -1558,7 +1651,11 @@ public class MysqlKitchenStore {
                 postId, userId
         );
         if (updated == 0) {
-            throw new IllegalArgumentException("community post not found or not yours");
+            // 与读路径同一个语义（见 findCommunityPost）：帖子不在 / 不是你的 / 已经删过了都算 404。
+            // 抛 IllegalArgumentException 会被全局处理器映射成 400，客户端无法区分
+            // 「我参数写错了」和「这条帖已经没了」——删除按钮点第二次就会看到 400。
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.NOT_FOUND, "帖子不存在或已删除");
         }
     }
 
@@ -1570,7 +1667,9 @@ public class MysqlKitchenStore {
                 String.class, commentId, postId, userId
         );
         if (statuses.isEmpty()) {
-            throw new IllegalArgumentException("comment not found or not yours");
+            // 同 deleteCommunityPost：评论不存在 / 不是你的 / 已经删过了统一 404，不再用 400 冒充「参数错」
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.NOT_FOUND, "评论不存在或已删除");
         }
         jdbcTemplate.update("UPDATE community_post_comment SET deleted = 1 WHERE id = ?", commentId);
         if (ContentSecurityService.STATUS_APPROVED.equals(statuses.get(0))) {
@@ -1581,15 +1680,26 @@ public class MysqlKitchenStore {
         }
     }
 
-    private void ensureCommunityPostExists(long postId) {
-        Integer exists = jdbcTemplate.query("""
-                        SELECT 1
-                        FROM community_post
-                        WHERE id = ?
-                        LIMIT 1
-                        """,
+    /**
+     * 帖子对某人的可见性，与 {@link #communityPostDetail} 一字不差：
+     * APPROVED 公开 / PENDING 仅作者本人 / REMOVED 谁都看不到。
+     * 读路径与写路径共用这一处，别再各写一套（少改一条就漏一条，见 CommunityWriteVisibilityTests）。
+     */
+    private static final String POST_VISIBLE_TO_VIEWER =
+            " (audit_status = 'APPROVED' OR (audit_status = 'PENDING' AND author_user_id = ?)) ";
+
+    /**
+     * 写路径（点赞 / 收藏 / 评论 / 举报）的前置闸门：判据是「这人看得到吗」，不是「这行存在吗」。
+     *
+     * 原来只查 `SELECT 1 FROM community_post WHERE id = ?`，于是拿 id 直接打过来时：
+     * 待审（PENDING）和已下架（REMOVED）的帖子照样能点赞、收藏、评论、举报 —— 而点赞/收藏的响应
+     * 会把标题正文原样回显，等于把详情页的可见性闸门整条绕开（实测：运营下架后他人点赞仍 200 且读回正文）。
+     */
+    private void ensureCommunityPostExists(long postId, long viewerUserId) {
+        Integer exists = jdbcTemplate.query("SELECT 1 FROM community_post WHERE id = ? AND"
+                        + POST_VISIBLE_TO_VIEWER + "LIMIT 1",
                 rs -> rs.next() ? 1 : null,
-                postId
+                postId, viewerUserId
         );
         if (exists == null) {
             // 资源不存在就是 404。原来抛 IllegalArgumentException 会被全局处理器映射成 400，

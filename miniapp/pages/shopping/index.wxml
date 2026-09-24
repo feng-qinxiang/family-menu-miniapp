@@ -14,7 +14,7 @@
       <view class="mkt-hero-left">
         <text class="mkt-tag">今日菜篮</text>
         <view class="mkt-hero-title title-stroke">今天<text class="pop">买菜</text></view>
-        <view class="mkt-hero-sub">{{summary.statusText}}，已买 <text class="b">{{summary.purchasedCount}}/{{summary.totalCount}}</text> 样</view>
+        <view class="mkt-hero-sub">{{summary.statusText}}<text wx:if="{{summary.totalCount}}">，已买 <text class="b">{{summary.purchasedCount}}/{{summary.totalCount}}</text> 样</text></view>
       </view>
 
       <!-- 采购进度环 -->
@@ -70,9 +70,14 @@
         <state-empty type="offline" title="清单没加载出来" desc="网络开小差了，检查后再试" cta="重新加载" bind:action="retryLoad" />
       </view>
 
-      <!-- 空态 -->
+      <!-- 空态：原因两种（没点菜 / 点了的菜没录用料），文案与出路都由 emptyState 给 -->
       <view wx:elif="{{!shoppingList.items.length}}" class="mkt-pad">
-        <state-empty title="今天不用买" desc="今晚的菜都在库存里，歇一歇吧"></state-empty>
+        <state-empty
+          title="{{emptyState.title}}"
+          desc="{{emptyState.desc}}"
+          cta="{{emptyState.cta}}"
+          bind:action="goRecipes"
+        ></state-empty>
       </view>
 
       <!-- 待买分组 -->
@@ -161,8 +166,12 @@
     <!-- 家里已有（库存）视图 -->
     <block wx:if="{{tab === 'pantry'}}">
       <view class="sp-pantry-wrap">
+        <!-- 失败态：断网时不能再显示「冰箱还空着」——库存还在，只是没拉到 -->
+        <view wx:if="{{pantryError}}" class="sp-pantry-empty">
+          <state-empty type="offline" title="冰箱没加载出来" desc="网络开小差了，检查后再试" cta="重新加载" bind:action="retryPantry" />
+        </view>
         <!-- 分类列表 -->
-        <view wx:if="{{pantryCategories.length}}">
+        <view wx:elif="{{pantryCategories.length}}">
           <view class="sp-pcat" wx:for="{{pantryCategories}}" wx:key="key">
             <view class="sp-pcat-head">
               <text class="sp-pcat-label">{{item.label}}</text>
@@ -177,7 +186,7 @@
             </view>
           </view>
         </view>
-        <view class="sp-pantry-empty" wx:elif="{{!pantryCategories.length}}">
+        <view class="sp-pantry-empty" wx:else>
           <state-empty title="冰箱还空着" desc="把家里的食材记下来，点菜时可以先用现有的" />
         </view>
 

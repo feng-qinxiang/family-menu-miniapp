@@ -151,4 +151,23 @@ class AdminSecurityTests {
             jdbcTemplate.update("UPDATE user_account SET is_admin = 0 WHERE id = ?", adminId);
         }
     }
+
+    /**
+     * /admin 的 CSP 必须放行内联样式属性，同时把脚本锁死在 'self'。
+     *
+     * admin.js 画图表宽度、图例色点、搜索框宽度用的是内联 style 属性，CSP3 起这些属性归 style-src 管：
+     * 只写 'self' 时它们会被整批丢弃（柱子没宽度、图例没颜色），且每次渲染在控制台刷几十条 CSP 报错 ——
+     * 实测每渲染一个页面约 30 条，看起来像后台坏了。放宽的只是样式，script-src 仍然是 'self'。
+     */
+    @Test
+    void adminCspAllowsInlineStylesButKeepsScriptsLocked() throws Exception {
+        String csp = mockMvc.perform(get("/admin/"))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getHeader("Content-Security-Policy");
+        assertThat(csp).as("内联样式属性被 CSP 拦掉会导致图表与搜索框样式失效 + 控制台报错")
+                .contains("style-src 'self' 'unsafe-inline'");
+        assertThat(csp).contains("script-src 'self'");
+        assertThat(csp).as("脚本不许跟着一起放宽").doesNotContain("script-src 'self' 'unsafe-inline'");
+        assertThat(csp).contains("frame-ancestors 'none'");
+    }
 }

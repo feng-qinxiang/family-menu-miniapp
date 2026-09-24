@@ -2,6 +2,8 @@
 const api = require('../../utils/api');
 const { recipeDishImg, stepDishImg, onPhotoError: markPhotoBroken } = require('../../utils/image');
 const { restoreTimerSlots } = require('../../utils/kitchen');
+const { ingredientsInStep } = require('../../utils/dish-logic');
+const { runGuarded } = require('../../utils/interaction');
 
 // 数字补零
 function pad2(n) {
@@ -44,6 +46,8 @@ Page({
     fontScale: 'normal',
     loading: true,
     loadError: false,
+    finishing: false,
+    finished: false,
     recipeId: '',
     recipe: null,
     dishName: '',
@@ -53,6 +57,7 @@ Page({
     current: 0,        // 当前步索引
     total: 0,
     dots: [],          // 进度点状态：done|now|''
+    hasStepHit: false, // 当前步是否点到了料（决定其余 chips 压不压暗）
 
     // 计时器（下面这几个只是「当前步那个槽」的视图，真实状态在 _slots 里）
     timerTotal: 0,     // 本步总秒数
@@ -321,6 +326,7 @@ Page({
 
   // 切换到指定步骤
   gotoStep(idx) {
+    if (this.data.finishing || this.data.finished) return;
     const { steps } = this.data;
     if (!steps.length) return;
     const i = Math.max(0, Math.min(idx, steps.length - 1));
@@ -336,9 +342,21 @@ Page({
       sl.total = seconds;
       sl.baseLeft = seconds;
     }
+    // 这一步要用哪几样料：命中就在这排 chips 上标出来（匹配不到就是一条都不标）
+    const ings = this.data.ingredients;
+    let hitIdx = [];
+    let ingredients = ings;
+    if (ings && ings.length) {
+      hitIdx = ingredientsInStep(step.text, ings.map((it) => it.name));
+      ingredients = ings.map((it, k) => (it.use === (hitIdx.indexOf(k) !== -1)
+        ? it
+        : { ...it, use: hitIdx.indexOf(k) !== -1 }));
+    }
     this.setData({
       current: i,
       dots,
+      ingredients,
+      hasStepHit: hitIdx.length > 0,
       stepTop: this.data.stepTop === 0 ? 0.01 : 0
     });
     this.renderTimers();
@@ -495,69 +513,65 @@ Page({
     this.loadDetail(this.data.recipeId);
   },
 
-  // 完成 → 先请用户打个真实评分，再写做菜记录 + 回做菜记录页
-  onFinish() {
-    // 这道菜走完了，所有步的计时一起作废：gotoLog 是 navigateTo，本页还留在栈里，
-    // 不清空的话用户从做菜记录页退回来会看到"这步还剩 12:04"继续倒数。
-    this.stopTicker();
-    this._slots = {};
-    // 烹饪走完，清掉本地续做进度
-    try {
-      if (this.data.recipeId) {
-        wx.removeStorageSync(this.progressKey(this.data.recipeId));
-        wx.removeStorageSync(this.timersKey(this.data.recipeId));
-      }
-    } catch (e) {
-      // 清不掉无碍，下次进来至多回到末步再点一次完成
-    }
-    // 菜单联动：走完烹饪流程即视为这道菜上桌，静默回写菜单状态
-    if (this._menuItemId) {
-      // 尽力而为：失败时这道菜在厨房总控里仍是"待做"。不弹窗打断跳转，但必须留痕可查
-      api.updateMenuItemStatus(this._menuItemId, 'done').catch((err) => {
-        console.warn('[cook-mode] 菜单状态回写失败', this._menuItemId, err);
-      });
-      this._menuItemId = '';
-    }
+  // 完成 → 先请用户打个真实评分，保存成功后才清进度、上桌和离开。
+  async onFinish() {
     const { recipeId, recipe } = this.data;
+    if (!recipeId) return;
     const title = recipe ? recipe.title : '';
     const gotoLog = () => {
       const url = `/pkg-extra/cook-log/index?recipeId=${encodeURIComponent(recipeId)}&title=${encodeURIComponent(title)}`;
-      wx.navigateTo({
+      // 替换本页，返回记录页时不会再回到可重复扣库存的「完成」按钮。
+      wx.redirectTo({
         url,
-        fail: () => {
-          wx.showToast({ title: '完成本次烹饪', icon: 'success' });
-          setTimeout(() => this.onClose(), 800);
-        }
+        fail: () => wx.showToast({ title: '已记录，记录页暂时打不开', icon: 'none' })
       });
     };
-    if (!recipeId) {
-      gotoLog();
+    if (this.data.finishing) return;
+    if (this.data.finished) {
+      gotoLog(); // 跳转失败后仅重试查看记录，不再写第二笔。
       return;
     }
-    // 真实评分（含「不评分」），不再默认写死 5 分
-    wx.showActionSheet({
-      itemList: ['⭐⭐⭐⭐⭐ 超好吃', '⭐⭐⭐⭐ 不错', '⭐⭐⭐ 一般', '先不评分'],
-      success: async (sheet) => {
-        const score = [5, 4, 3, null][sheet.tapIndex];
-        try {
-          const payload = { recipeId, remark: '' };
-          if (score != null) payload.score = score;
-          await api.addCookHistory(payload);
-        } catch (err) {
-          wx.showToast({ title: '记录保存失败', icon: 'none' });
-        }
-        gotoLog();
-      },
-      fail: async () => {
-        // 用户取消评分也记录一笔（不带分）。静默吞掉失败会让人以为记上了：
-        // 下面紧接着就跳去做菜记录页，页面上看不出少了一条
-        try {
-          await api.addCookHistory({ recipeId, remark: '' });
-        } catch (err) {
-          wx.showToast({ title: '记录保存失败', icon: 'none' });
-        }
-        gotoLog();
+    // ponytail: 防重限定本页实例；提交成功但回包丢失的重试，还需服务端幂等键。
+    await runGuarded(this, 'finish', async () => {
+      const score = await new Promise((resolve) => {
+        wx.showActionSheet({
+          itemList: ['⭐⭐⭐⭐⭐ 超好吃', '⭐⭐⭐⭐ 不错', '⭐⭐⭐ 一般', '先不评分'],
+          success: (sheet) => resolve([5, 4, 3, null][sheet.tapIndex]),
+          fail: () => resolve(null) // 保留原语义：取消评分也记一笔，不带分。
+        });
+      });
+      const payload = { recipeId, remark: '' };
+      if (score != null) payload.score = score;
+      const record = await api.addCookHistory(payload);
+      this.setData({ finished: true });
+      this.stopTicker();
+      this._slots = {};
+      this.renderTimers();
+      try {
+        wx.removeStorageSync(this.progressKey(recipeId));
+        wx.removeStorageSync(this.timersKey(recipeId));
+      } catch (e) {
+        // 已保存的完成态仍保留，不能因清存储失败再提交一次。
       }
+      let menuFailed = false;
+      if (this._menuItemId) {
+        try {
+          await api.updateMenuItemStatus(this._menuItemId, 'done');
+          this._menuItemId = '';
+        } catch (err) {
+          menuFailed = true;
+          console.warn('[cook-mode] 菜单状态回写失败', this._menuItemId, err);
+        }
+      }
+      const deducted = (record && record.pantryDeducted) || 0;
+      wx.showToast({
+        title: menuFailed ? '已记录，上桌状态未同步' : (deducted ? `已记录 · 冰箱扣了 ${deducted} 项` : '已记录'),
+        icon: 'none'
+      });
+      gotoLog();
+    }, {
+      onBusyChange: (finishing) => this.setData({ finishing }),
+      fail: '保存未确认，请先查看做菜记录'
     });
   },
 

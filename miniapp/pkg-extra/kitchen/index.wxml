@@ -75,7 +75,7 @@
 
           <!-- 计时行 -->
           <view class="k-timer" wx:if="{{item.status !== 'done'}}">
-            <text class="k-clock {{item.timer && item.timer.running ? 'running' : ''}}">{{item.timerText || '--:--'}}</text>
+            <text class="k-clock {{item.timer && item.timer.running ? 'running' : ''}} {{item.timer ? '' : 'idle'}}">{{item.timer ? item.timerText : '未计时'}}</text>
             <view class="k-tbtns">
               <view
                 class="k-tbtn tap-scale {{item.timer && item.timer.running ? 'on' : ''}}"
@@ -95,6 +95,16 @@
               catchtap="startCook"
             >{{item.status === 'cooking' ? '继续做 ›' : '开做 ›'}}</view>
             <view class="k-act ghost tap-scale" data-id="{{item.recipeId}}" data-index="{{index}}" catchtap="markCooked">上桌</view>
+          </view>
+          <!-- 已上桌：晒到社区。菜刚出锅、照片刚拍，是「做菜 → 社区」最自然的入口 -->
+          <!-- COMMUNITY 关闭时这条动作行整个不渲染（否则用户看到的是空动作行） -->
+          <view class="k-acts" wx:elif="{{showCommunity}}">
+            <view
+              class="k-act ghost tap-scale"
+              data-id="{{item.recipeId}}"
+              data-title="{{item.title}}"
+              catchtap="shareCooked"
+            >晒到邻里厨房 ›</view>
           </view>
         </view>
       </view>

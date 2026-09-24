@@ -15,6 +15,8 @@ const { mealTypeLabels, mealOrder } = require('../../utils/constants');
 const { animateNumber, stopNumberAnim } = require('../../utils/count-up');
 const { fallbackDishImg, recipeDishImg, LOCAL_DISHES } = require('../../utils/image');
 const { runGuarded } = require('../../utils/interaction');
+const { shoppingEmptyReason } = require('../../utils/kitchen');
+const { indexPantry, pantryHas } = require('../../utils/pantry-match');
 const subscribe = require('../../utils/subscribe');
 
 function buildToday() {
@@ -49,10 +51,6 @@ function resolveImage(recipe, seed) {
   return localDishImage(seed);
 }
 
-function normalizeName(name) {
-  return (name || '').toString().toLowerCase().trim();
-}
-
 // 做菜顺序建议（轻量统筹）：同一餐 ≥2 道待做菜时，按耗时倒排——
 // 先开工最耗时的（炖煮类），空档再做快手菜，尽量同时上桌（对齐同行逆排程思路的简化版）
 function buildCookOrder(list) {
@@ -80,6 +78,8 @@ Page({
     shoppingTotal: 0,
     shoppingDone: 0,
     shoppingPercent: 0,
+    // 菜篮子磁贴副标题（loadToday 里按清单为空的原因算，见 utils/kitchen.js#shoppingEmptyReason）
+    basketText: '还没点菜',
     pantryReadyCount: 0,
     weeklyDays: [],
     loading: true,
@@ -141,13 +141,14 @@ Page({
       // 文案同步为「最多 N 份」，避免多道菜时被误读成"几个人吃"。
       const maxServings = items.reduce((max, it) => Math.max(max, (it.recipe && it.recipe.servings) || 0), 0);
 
-      const pantrySet = new Set(pantryItems.map(p => normalizeName(p.ingredientName || p.name)));
+      const pantryIndex = indexPantry(pantryItems);
       const pendingItems = shoppingItems.filter(i => !i.purchased);
       const purchasedItems = shoppingItems.filter(i => i.purchased);
-      const pantryReadyCount = pendingItems.filter(i => {
-        const n = normalizeName(i.ingredientName || i.name);
-        return Array.from(pantrySet).some(p => p && (p === n || p.includes(n) || n.includes(p)));
-      }).length;
+      // 与详情页/买菜页/服务端扣库存同一口径（utils/pantry-match）：
+      // 单位对不上、用量解析不出数字的都不算「能用现有食材」
+      const pantryReadyCount = pendingItems.filter(i =>
+        pantryHas(pantryIndex, i.ingredientName || i.name, i.unit, i.amount)
+      ).length;
       const shoppingPercent = shoppingItems.length === 0 ? 0
         : Math.round(purchasedItems.length * 100 / shoppingItems.length);
 
@@ -188,6 +189,13 @@ Page({
         (heroItem && heroItem.recipeId) || 'hot-sour-soup'
       );
 
+      // 菜篮子磁贴副标题：清单为空有两种原因，别都说成「食材已齐」
+      // （清单只按菜谱用料聚合、不看冰箱，见 utils/kitchen.js#shoppingEmptyReason）
+      const basketReason = shoppingEmptyReason(totalCount, shoppingItems.length);
+      const basketText = basketReason === 'no-menu' ? '还没点菜'
+        : basketReason === 'no-ingredients' ? '没录食材'
+        : (pendingItems.length ? pendingItems.length + ' 样待买' : '食材已齐');
+
       this.setData({
         todayMenu: items,
         mealGroups: groups,
@@ -200,6 +208,7 @@ Page({
         shoppingTotal: shoppingItems.length,
         shoppingDone: purchasedItems.length,
         shoppingPercent,
+        basketText,
         pantryReadyCount,
         weeklyDays: weeklyDays.map((day, idx) => {
           const recipes = Array.isArray(day.recipes) ? day.recipes : [];

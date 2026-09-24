@@ -1,0 +1,375 @@
+{
+ "pages": {
+  "dashboard": {
+   "title": "数据看板",
+   "skeleton": 0,
+   "errCard": 0,
+   "rows": 0,
+   "xssNodes": 0,
+   "xssRan": 0
+  },
+  "posts": {
+   "title": "内容治理",
+   "skeleton": 0,
+   "errCard": 0,
+   "rows": 7,
+   "xssNodes": 0,
+   "xssRan": 0
+  },
+  "comments": {
+   "title": "评论管理",
+   "skeleton": 0,
+   "errCard": 0,
+   "rows": 1,
+   "xssNodes": 0,
+   "xssRan": 0
+  },
+  "reports": {
+   "title": "举报审核",
+   "skeleton": 0,
+   "errCard": 0,
+   "rows": 1,
+   "xssNodes": 0,
+   "xssRan": 0
+  },
+  "imports": {
+   "title": "导入审核",
+   "skeleton": 0,
+   "errCard": 0,
+   "rows": 1,
+   "xssNodes": 0,
+   "xssRan": 0
+  },
+  "users": {
+   "title": "用户管理",
+   "skeleton": 0,
+   "errCard": 0,
+   "rows": 14,
+   "xssNodes": 0,
+   "xssRan": 0
+  },
+  "families": {
+   "title": "家庭与成员",
+   "skeleton": 0,
+   "errCard": 0,
+   "rows": 10,
+   "xssNodes": 0,
+   "xssRan": 0
+  },
+  "menus": {
+   "title": "今日菜单",
+   "skeleton": 0,
+   "errCard": 0,
+   "rows": 10,
+   "xssNodes": 0,
+   "xssRan": 0
+  },
+  "shopping": {
+   "title": "购物清单",
+   "skeleton": 0,
+   "errCard": 0,
+   "rows": 10,
+   "xssNodes": 0,
+   "xssRan": 0
+  },
+  "pantry": {
+   "title": "家庭库存",
+   "skeleton": 0,
+   "errCard": 0,
+   "rows": 50,
+   "xssNodes": 0,
+   "xssRan": 0
+  },
+  "orders": {
+   "title": "订单管理",
+   "skeleton": 0,
+   "errCard": 0,
+   "rows": 1,
+   "xssNodes": 0,
+   "xssRan": 0
+  },
+  "feedback": {
+   "title": "反馈工单",
+   "skeleton": 0,
+   "errCard": 0,
+   "rows": 1,
+   "xssNodes": 0,
+   "xssRan": 0
+  },
+  "recipes": {
+   "title": "菜谱治理",
+   "skeleton": 0,
+   "errCard": 0,
+   "rows": 1,
+   "xssNodes": 0,
+   "xssRan": 0
+  },
+  "audit": {
+   "title": "审计日志",
+   "skeleton": 0,
+   "errCard": 0,
+   "rows": 50,
+   "xssNodes": 0,
+   "xssRan": 0
+  }
+ },
+ "checks": [
+  {
+   "name": "登录页首屏（全新 profile）",
+   "ok": true,
+   "detail": "bootstrap=true 4xx/5xx=无 控制台错误=0 异常=0"
+  },
+  {
+   "name": "页面 dashboard",
+   "ok": true,
+   "detail": "标题=数据看板 行=0 骨架=0 错误卡=0 4xx/5xx=无 异常=0"
+  },
+  {
+   "name": "页面 posts",
+   "ok": true,
+   "detail": "标题=内容治理 行=7 骨架=0 错误卡=0 4xx/5xx=无 异常=0"
+  },
+  {
+   "name": "页面 comments",
+   "ok": true,
+   "detail": "标题=评论管理 行=1 骨架=0 错误卡=0 4xx/5xx=无 异常=0"
+  },
+  {
+   "name": "页面 reports",
+   "ok": true,
+   "detail": "标题=举报审核 行=1 骨架=0 错误卡=0 4xx/5xx=无 异常=0"
+  },
+  {
+   "name": "页面 imports",
+   "ok": true,
+   "detail": "标题=导入审核 行=1 骨架=0 错误卡=0 4xx/5xx=无 异常=0"
+  },
+  {
+   "name": "页面 users",
+   "ok": true,
+   "detail": "标题=用户管理 行=14 骨架=0 错误卡=0 4xx/5xx=无 异常=0"
+  },
+  {
+   "name": "页面 families",
+   "ok": true,
+   "detail": "标题=家庭与成员 行=10 骨架=0 错误卡=0 4xx/5xx=无 异常=0"
+  },
+  {
+   "name": "页面 menus",
+   "ok": true,
+   "detail": "标题=今日菜单 行=10 骨架=0 错误卡=0 4xx/5xx=无 异常=0"
+  },
+  {
+   "name": "页面 shopping",
+   "ok": true,
+   "detail": "标题=购物清单 行=10 骨架=0 错误卡=0 4xx/5xx=无 异常=0"
+  },
+  {
+   "name": "页面 pantry",
+   "ok": true,
+   "detail": "标题=家庭库存 行=50 骨架=0 错误卡=0 4xx/5xx=无 异常=0"
+  },
+  {
+   "name": "页面 orders",
+   "ok": true,
+   "detail": "标题=订单管理 行=1 骨架=0 错误卡=0 4xx/5xx=无 异常=0"
+  },
+  {
+   "name": "页面 feedback",
+   "ok": true,
+   "detail": "标题=反馈工单 行=1 骨架=0 错误卡=0 4xx/5xx=无 异常=0"
+  },
+  {
+   "name": "页面 recipes",
+   "ok": true,
+   "detail": "标题=菜谱治理 行=1 骨架=0 错误卡=0 4xx/5xx=无 异常=0"
+  },
+  {
+   "name": "页面 audit",
+   "ok": true,
+   "detail": "标题=审计日志 行=50 骨架=0 错误卡=0 4xx/5xx=无 异常=0"
+  },
+  {
+   "name": "reports 筛选#0",
+   "ok": true,
+   "detail": "行=1 4xx/5xx=无 异常=0"
+  },
+  {
+   "name": "reports 筛选#1",
+   "ok": true,
+   "detail": "行=1 4xx/5xx=无 异常=0"
+  },
+  {
+   "name": "reports 筛选#2",
+   "ok": true,
+   "detail": "行=1 4xx/5xx=无 异常=0"
+  },
+  {
+   "name": "reports 筛选#3",
+   "ok": true,
+   "detail": "行=1 4xx/5xx=无 异常=0"
+  },
+  {
+   "name": "posts 筛选#0",
+   "ok": true,
+   "detail": "行=1 4xx/5xx=无 异常=0"
+  },
+  {
+   "name": "posts 筛选#1",
+   "ok": true,
+   "detail": "行=1 4xx/5xx=无 异常=0"
+  },
+  {
+   "name": "posts 筛选#2",
+   "ok": true,
+   "detail": "行=7 4xx/5xx=无 异常=0"
+  },
+  {
+   "name": "posts 筛选#3",
+   "ok": true,
+   "detail": "行=7 4xx/5xx=无 异常=0"
+  },
+  {
+   "name": "recipes 筛选#0",
+   "ok": true,
+   "detail": "行=1 4xx/5xx=无 异常=0"
+  },
+  {
+   "name": "recipes 筛选#1",
+   "ok": true,
+   "detail": "行=20 4xx/5xx=无 异常=0"
+  },
+  {
+   "name": "recipes 筛选#2",
+   "ok": true,
+   "detail": "行=20 4xx/5xx=无 异常=0"
+  },
+  {
+   "name": "dashboard 分页",
+   "ok": true,
+   "detail": "无分页控件（数据不足一页，跳过）"
+  },
+  {
+   "name": "posts 分页",
+   "ok": true,
+   "detail": "无分页控件（数据不足一页，跳过）"
+  },
+  {
+   "name": "comments 分页往返",
+   "ok": true,
+   "detail": "第1页 1 行 → 第2页 1 行 → 回第1页 1 行；4xx/5xx=无"
+  },
+  {
+   "name": "reports 分页",
+   "ok": true,
+   "detail": "无分页控件（数据不足一页，跳过）"
+  },
+  {
+   "name": "imports 分页",
+   "ok": true,
+   "detail": "无分页控件（数据不足一页，跳过）"
+  },
+  {
+   "name": "users 分页往返",
+   "ok": true,
+   "detail": "第1页 14 行 → 第2页 14 行 → 回第1页 14 行；4xx/5xx=无"
+  },
+  {
+   "name": "families 分页往返",
+   "ok": true,
+   "detail": "第1页 10 行 → 第2页 10 行 → 回第1页 10 行；4xx/5xx=无"
+  },
+  {
+   "name": "menus 分页往返",
+   "ok": true,
+   "detail": "第1页 10 行 → 第2页 10 行 → 回第1页 10 行；4xx/5xx=无"
+  },
+  {
+   "name": "shopping 分页往返",
+   "ok": true,
+   "detail": "第1页 10 行 → 第2页 10 行 → 回第1页 10 行；4xx/5xx=无"
+  },
+  {
+   "name": "pantry 分页往返",
+   "ok": true,
+   "detail": "第1页 50 行 → 第2页 6 行 → 回第1页 50 行；4xx/5xx=无"
+  },
+  {
+   "name": "orders 分页往返",
+   "ok": true,
+   "detail": "第1页 1 行 → 第2页 1 行 → 回第1页 1 行；4xx/5xx=无"
+  },
+  {
+   "name": "feedback 分页往返",
+   "ok": true,
+   "detail": "第1页 1 行 → 第2页 1 行 → 回第1页 1 行；4xx/5xx=无"
+  },
+  {
+   "name": "recipes 分页",
+   "ok": true,
+   "detail": "无分页控件（数据不足一页，跳过）"
+  },
+  {
+   "name": "audit 分页往返",
+   "ok": true,
+   "detail": "第1页 50 行 → 第2页 50 行 → 回第1页 50 行；4xx/5xx=无"
+  },
+  {
+   "name": "导出 users",
+   "ok": true,
+   "detail": "200 3189 字节 magic=PK"
+  },
+  {
+   "name": "导出 orders",
+   "ok": true,
+   "detail": "200 2667 字节 magic=PK"
+  },
+  {
+   "name": "导出 audit",
+   "ok": true,
+   "detail": "200 8844 字节 magic=PK"
+  },
+  {
+   "name": "导出 posts",
+   "ok": true,
+   "detail": "200 2928 字节 magic=PK"
+  },
+  {
+   "name": "导出 comments",
+   "ok": true,
+   "detail": "200 2993 字节 magic=PK"
+  },
+  {
+   "name": "导出 feedback",
+   "ok": true,
+   "detail": "200 2546 字节 magic=PK"
+  },
+  {
+   "name": "导出 reports",
+   "ok": true,
+   "detail": "200 2507 字节 magic=PK"
+  },
+  {
+   "name": "导出 families",
+   "ok": true,
+   "detail": "200 2964 字节 magic=PK"
+  },
+  {
+   "name": "导出 menus",
+   "ok": true,
+   "detail": "200 3033 字节 magic=PK"
+  },
+  {
+   "name": "导出 shopping",
+   "ok": true,
+   "detail": "200 2938 字节 magic=PK"
+  },
+  {
+   "name": "导出 pantry",
+   "ok": true,
+   "detail": "200 4655 字节 magic=PK"
+  }
+ ],
+ "failures": [],
+ "verdict": "PASS"
+}

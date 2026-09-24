@@ -50,6 +50,9 @@ class EndpointCoverageTests {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
+
     private String guestLogin() throws Exception {
         MvcResult result = mockMvc.perform(post("/api/auth/guest")
                         .header("X-Device-Id", "coverage-test-" + System.nanoTime()))
@@ -171,6 +174,38 @@ class EndpointCoverageTests {
         for (JsonNode item : json(after)) {
             assertThat(item.get("id").asLong()).isNotEqualTo(itemId);
         }
+    }
+
+    /**
+     * 删库存的错误契约：不存在 / 不是本家的 / 已经删过，一律 404。
+     *
+     * 修前这三种情况都回 200（UPDATE 的 0 行结果被吞掉），客户端只能靠重新拉列表猜自己删没删成功；
+     * 越权删别人家的条目也是"看起来成功"。SQL 一直带 family_id 过滤，删不掉数据，错的是响应契约。
+     */
+    @Test
+    void pantryDeleteReportsNotFoundInsteadOfSilentSuccess() throws Exception {
+        String owner = guestLogin();
+        String other = guestLogin();
+
+        MvcResult added = postJson("/api/pantry", owner, Map.of(
+                "ingredientName", "越权库存" + System.nanoTime(), "amount", "1"));
+        long itemId = json(added).get("id").asLong();
+
+        // 别人家的条目：404，且行必须还在
+        mockMvc.perform(delete("/api/pantry/" + itemId).header("X-Auth-Token", other))
+                .andExpect(status().isNotFound());
+        assertThat(jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM pantry_item WHERE id = ?", Long.class, itemId)).isEqualTo(1L);
+
+        // 本家删除成功；再删一次（已经没了）同样 404，而不是静默 200
+        mockMvc.perform(delete("/api/pantry/" + itemId).header("X-Auth-Token", owner))
+                .andExpect(status().isOk());
+        mockMvc.perform(delete("/api/pantry/" + itemId).header("X-Auth-Token", owner))
+                .andExpect(status().isNotFound());
+
+        // 从来没存在过的 id
+        mockMvc.perform(delete("/api/pantry/99999999").header("X-Auth-Token", owner))
+                .andExpect(status().isNotFound());
     }
 
     // ==================== 今日菜单 / 购物清单 ====================
@@ -378,11 +413,15 @@ class EndpointCoverageTests {
         long commentId = json(commented).get("commentId").asLong();
 
         String other = guestLogin();
+        // 别人删不动：与「详情读取不存在」同一个语义 —— 404 而不是 400。
+        // 400 会让客户端以为"我参数写错了"，而且这条英文文案会被 api.js 的
+        // showServerError 原样弹成 toast（"community post not found or not yours"）。
+        // 「不是你的帖」「已经删过」「根本不存在」三种情况都收敛到 404，状态码仍然探测不出帖子是否存在。
         mockMvc.perform(delete("/api/community/posts/" + postId).header("X-Auth-Token", other))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
         mockMvc.perform(delete("/api/community/posts/" + postId + "/comments/" + commentId)
                         .header("X-Auth-Token", other))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
 
         mockMvc.perform(delete("/api/community/posts/" + postId + "/comments/" + commentId)
                         .header("X-Auth-Token", token))
@@ -400,11 +439,11 @@ class EndpointCoverageTests {
         mockMvc.perform(get("/api/community/posts/" + postId).header("X-Auth-Token", token))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("该分享因违规已被下架"));
-        // 重复删除：仍是 400。删除走的是 `WHERE id=? AND author_user_id=? AND status<>'REMOVED'`，
-        // "已经删了"和"不是你的帖"故意合并成一条文案，避免外人用状态码探测某条帖是否存在。
-        // （详情读取的"不存在"才是 404，见上面那条断言。）
+        // 重复删除：404（不是 400）。删除走的是 `WHERE id=? AND author_user_id=? AND status<>'REMOVED'`，
+        // "已经删了"和"不是你的帖"故意合并成一条文案，避免外人用状态码探测某条帖是否存在；
+        // 两者都与「详情读取的"不存在"」统一为 404，客户端不必区分"参数错"和"已经没了"。
         mockMvc.perform(delete("/api/community/posts/" + postId).header("X-Auth-Token", token))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 
     /** 互动通知：他人点赞后，作者消息中心出现 kind=com 的站内信。 */
@@ -415,6 +454,9 @@ class EndpointCoverageTests {
                 "title", "通知测试帖子 " + System.nanoTime(),
                 "content", "被赞通知覆盖"));
         long postId = json(created).get("id").asLong();
+        // 游客发帖过不了机审 → PENDING，别人本来就不该点得动（见 CommunityWriteVisibilityTests）。
+        // 这条用例测的是"点赞 → 通知"，所以先按运营的口径把它过审。
+        jdbcTemplate.update("UPDATE community_post SET audit_status = 'APPROVED' WHERE id = ?", postId);
 
         String liker = guestLogin();
         mockMvc.perform(post("/api/community/posts/" + postId + "/like")
@@ -587,5 +629,21 @@ class EndpointCoverageTests {
 
         mockMvc.perform(get("/api/cook-history").header("X-Auth-Token", token))
                 .andExpect(status().isOk());
+    }
+
+    /**
+     * 客户端把请求体搞错（内容类型不是 JSON / 上传没带 multipart）是 4xx，不是 500。
+     * 实测这两条原来都走 GlobalExceptionHandler 的兜底 → 500「服务器内部错误」，
+     * 用户在真机上只会反复重试同一个错请求，日志里还多两条 ERROR 噪音。
+     */
+    @Test
+    void wrongBodyShapeIsAClientErrorNot500() throws Exception {
+        String token = guestLogin();
+        mockMvc.perform(post("/api/community/posts").header("X-Auth-Token", token)
+                        .contentType(MediaType.TEXT_PLAIN).content("not json at all"))
+                .andExpect(status().isUnsupportedMediaType());
+        mockMvc.perform(post("/api/upload").header("X-Auth-Token", token)
+                        .contentType(MediaType.APPLICATION_JSON).content("{}"))
+                .andExpect(status().isBadRequest());
     }
 }

@@ -1,0 +1,138 @@
+{
+ "steps_with_errors": [
+  {
+   "id": "s010",
+   "label": "A3 错误验证码登录",
+   "errs": {
+    "http": [
+     [
+      403,
+      "http://127.0.0.1:18082/api/admin/auth/login",
+      "application/json"
+     ]
+    ],
+    "exceptions": [],
+    "console": [],
+    "logs": [
+     [
+      "error",
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "http://127.0.0.1:18082/api/admin/auth/login"
+     ]
+    ],
+    "csp_style": 0
+   }
+  },
+  {
+   "id": "s011",
+   "label": "A4 正确验证码登录（246810）",
+   "errs": {
+    "http": [
+     [
+      403,
+      "http://127.0.0.1:18082/api/admin/auth/login",
+      "application/json"
+     ]
+    ],
+    "exceptions": [],
+    "console": [],
+    "logs": [
+     [
+      "error",
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "http://127.0.0.1:18082/api/admin/auth/login"
+     ]
+    ],
+    "csp_style": 0
+   }
+  },
+  {
+   "id": "s013",
+   "label": "A6 引导令牌（错误）",
+   "errs": {
+    "http": [
+     [
+      401,
+      "http://127.0.0.1:18082/api/admin/auth/bootstrap",
+      "application/json"
+     ]
+    ],
+    "exceptions": [],
+    "console": [],
+    "logs": [
+     [
+      "error",
+      "Failed to load resource: the server responded with a status of 401 ()",
+      "http://127.0.0.1:18082/api/admin/auth/bootstrap"
+     ]
+    ],
+    "csp_style": 0
+   }
+  },
+  {
+   "id": "s014",
+   "label": "A7 引导令牌（正确）",
+   "errs": {
+    "http": [
+     [
+      403,
+      "http://127.0.0.1:18082/api/admin/auth/bootstrap",
+      "application/json"
+     ]
+    ],
+    "exceptions": [],
+    "console": [],
+    "logs": [
+     [
+      "error",
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "http://127.0.0.1:18082/api/admin/auth/bootstrap"
+     ]
+    ],
+    "csp_style": 0
+   }
+  }
+ ],
+ "all_steps": 4,
+ "meta": {
+  "login": {
+   "repeat_refresh": [
+    {
+     "tabsHidden": false,
+     "tabBootHidden": false,
+     "hintHidden": false
+    },
+    {
+     "tabsHidden": false,
+     "tabBootHidden": false,
+     "hintHidden": false
+    },
+    {
+     "tabsHidden": false,
+     "tabBootHidden": false,
+     "hintHidden": false
+    },
+    {
+     "tabsHidden": false,
+     "tabBootHidden": false,
+     "hintHidden": false
+    },
+    {
+     "tabsHidden": false,
+     "tabBootHidden": false,
+     "hintHidden": false
+    },
+    {
+     "tabsHidden": false,
+     "tabBootHidden": false,
+     "hintHidden": false
+    }
+   ],
+   "otp_msg": "调试验证码（仅开发环境）：246810",
+   "bad_code_msg": "该账号不是管理员",
+   "logged_in": false,
+   "bad_boot_msg": "引导令牌不正确",
+   "boot_logged_in": false
+  }
+ }
+}

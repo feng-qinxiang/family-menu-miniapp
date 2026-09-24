@@ -81,7 +81,15 @@
   --nav-w: 236px;
   --ctl-h: 32px;
   --ctl-h-sm: 28px;
-  --topbar-h: 60px;
+  /* 顶栏高度：面包屑 + 标题两行加内边距的真实高度。
+     它同时是表头吸顶的下沉量 —— 值偏小表头会被顶栏压住一条。 */
+  --topbar-h: 72px;
+  /* 内容宽度上限：大屏不再把 9 列表格拉到 1600px、把「作者」列撑到 400px */
+  --content-max: 1440px;
+  /* 长文本列的截断宽度（td.clamp）。
+     220px ≈ 15 个汉字，再宽就会把「今日菜单」9 列表格撑到卡片外面（280px 时该表要 1139px，
+     1440 窗口下卡片只有 1110px 可用）—— 截断短一点，换来的是整张表在 1440 下不用横向滚动。 */
+  --cell-clamp: 220px;
 
   /* ---- 层级（统一管理，避免各处乱写 z-index） ---- */
   --z-sticky: 20;
@@ -344,22 +352,40 @@ td.actions .btn.danger:hover { background: var(--danger-soft); border-color: tra
 .msg { margin-top: 14px; font-size: 13px; min-height: 20px; }
 .msg.error { color: var(--danger); }
 .msg.ok { color: var(--ok); }
-.login-note { margin: auto 0 0; padding-top: 26px; font-size: 12px; color: var(--mut); }
-
-/* 引导登录：默认折叠，不影响正常登录流程的视觉重心 */
-.login-bootstrap { margin-top: 20px; padding-top: 14px; border-top: 1px solid var(--line); }
-.login-bootstrap > summary {
-  cursor: pointer;
-  font-size: 12.5px;
-  color: var(--mut);
-  list-style: none;
-  transition: color .16s;
+/* 登录方式切换：验证码 / 引导令牌两个并列选项。
+   引导登录从折叠区提出来是因为：短信网关没接入时它是唯一进得去的入口，
+   藏在 <details> 里的代价是"后台打不开"。可用性由前端探一次接口决定（未配置则整块隐藏）。 */
+.auth-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 4px;
+  margin: 0 0 22px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-2);
 }
-.login-bootstrap > summary::-webkit-details-marker { display: none; }
-.login-bootstrap > summary::before { content: '› '; display: inline-block; transition: transform .16s; }
-.login-bootstrap[open] > summary::before { content: '⌄ '; }
-.login-bootstrap > summary:hover { color: var(--pop); }
-.login-bootstrap-tip { margin: 10px 0 14px; font-size: 12px; line-height: 1.7; color: var(--mut); }
+.auth-tab {
+  height: 34px;
+  border: 0;
+  border-radius: var(--r-md);
+  background: transparent;
+  color: var(--mut);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background .14s, color .14s, box-shadow .14s;
+}
+.auth-tab:hover { color: var(--ink); }
+.auth-tab.on {
+  background: var(--surface);
+  color: var(--ink);
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+}
+.auth-pane[hidden] { display: none; }
+.login-bootstrap-tip { margin: 0 0 16px; font-size: 12.5px; line-height: 1.7; color: var(--mut); }
 .login-bootstrap-tip code {
   padding: 1px 5px;
   border-radius: var(--r-sm);
@@ -367,7 +393,10 @@ td.actions .btn.danger:hover { background: var(--danger-soft); border-color: tra
   background: var(--paper-2);
   font-size: 11.5px;
 }
-.login-bootstrap .btn { width: 100%; height: 46px; margin-top: 12px; }
+/* 只给「登录 / 引导登录」两个主按钮铺满：.auth-pane 现在也包着验证码表单，
+   用后代选择器会把「获取验证码」一起撑满并顶下 20px。 */
+#loginBtn, #bootstrapBtn { width: 100%; height: 46px; margin-top: 20px; }
+.login-note { margin: auto 0 0; padding-top: 26px; font-size: 12px; color: var(--mut); }
 
 /* ============================================================================
    主框架：左导航 + 右内容
@@ -474,6 +503,10 @@ td.actions .btn.danger:hover { background: var(--danger-soft); border-color: tra
 }
 
 .main { min-width: 0; padding: 0 26px 60px; }
+
+/* 大屏收口：内容区与顶栏同宽同左边界，超出部分两侧留白。
+   顶栏必须一起收，否则标题贴在最左边、内容缩到中间，两者对不齐。 */
+.topbar, .panel-root { width: 100%; max-width: var(--content-max); margin-inline: auto; }
 
 .topbar {
   display: flex;
@@ -676,12 +709,11 @@ td.actions .btn.danger:hover { background: var(--danger-soft); border-color: tra
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
-  padding-bottom: 14px;
-  margin-bottom: 14px;
-  border-bottom: 1px solid var(--line);
+  padding-bottom: 12px;
 }
-.page-head h2 { margin: 0; font-size: var(--fs-18); font-weight: 700; letter-spacing: .01em; }
-.page-head .page-desc { margin: 3px 0 0; font-size: var(--fs-12); color: var(--mut); max-width: 72ch; }
+/* 页内不再渲染标题（顶栏已有），说明就是页头唯一的一行文字。
+   页头下也不再画分隔线：紧挨着的 .toolbar 自带一条，两条线并排只是噪音。 */
+.page-head .page-desc { margin: 0; font-size: var(--fs-12); color: var(--mut); max-width: 72ch; }
 .page-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 
 /* 筛选/工具栏：与标题分行，控件统一高度对齐 */
@@ -822,7 +854,9 @@ tr.empty-row > td {
 /* ============================================================================
    图表
    ========================================================================== */
-.split-2 { display: grid; grid-template-columns: 1.35fr 1fr; gap: 16px; align-items: start; }
+/* 两栏等宽 + 子卡片等高：1.35fr/1fr 时右栏图表被压小，两张趋势卡差 19px，
+   热门内容与最近注册差 183px（3 条 vs 6 条），旁边留一个洞。 */
+.split-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: stretch; }
 .split-2 > .card { margin-bottom: 0; }
 .chart-wrap { width: 100%; overflow: hidden; }
 .chart { width: 100%; height: auto; display: block; }
@@ -843,7 +877,7 @@ tr.empty-row > td {
 table { width: 100%; border-collapse: collapse; font-size: var(--fs-13); }
 th, td {
   text-align: left;
-  padding: 9px 12px;
+  padding: 8px 12px;
   border-bottom: 1px solid var(--line);
   vertical-align: middle;
 }
@@ -857,16 +891,20 @@ th {
   background: var(--surface-2);
   user-select: none;
 }
-thead th { position: sticky; top: 0; z-index: 1; box-shadow: inset 0 -1px 0 var(--line-2); }
+/* 表头吸顶在顶栏之下（不是 y=0）：顶栏 z-index 更高且不透明，
+   写 top:0 时整行表头会钻到顶栏背后 —— 45 行的列表里最需要表头时看不见表头。 */
+thead th { position: sticky; top: var(--topbar-h); z-index: 2; box-shadow: inset 0 -1px 0 var(--line-2); }
 tbody tr { transition: background .1s; }
 tbody tr:hover { background: var(--hover); }
 tbody tr:last-child td { border-bottom: none; }
 td.actions { white-space: nowrap; text-align: right; }
 td.actions .btn + .btn { margin-left: 6px; }
-td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+/* 数字列右对齐 + 不折行：日期/时间/ID 折成两行会把行高从 48px 顶到 61px */
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.nowrap { white-space: nowrap; }
 td.id-cell { color: var(--mut); font-variant-numeric: tabular-nums; }
 
-.cell-user { display: flex; align-items: center; gap: 9px; }
+.cell-user { display: flex; align-items: center; gap: 9px; line-height: 1.35; }
 .avatar {
   width: 30px;
   height: 30px;
@@ -1024,7 +1062,7 @@ th.sortable.sorted .sort-ind { opacity: 1; color: var(--pop); }
 th.pick, td.pick { width: 34px; padding-right: 0; }
 th.pick input, td.pick input { cursor: pointer; accent-color: var(--pop); }
 
-td.clamp { max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+td.clamp { max-width: var(--cell-clamp); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .nav-backdrop { display: none; }
 
@@ -1148,6 +1186,37 @@ td.clamp { max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-sp
   .split-2 { grid-template-columns: 1fr; }
 }
 
+/* 宽表兜底：内容区放不下最宽的表格时，卡片内部横向滚动，而不是让表格画到卡片外面
+   （表格画出去会带出整页横向滚动条，右侧「操作」列直接被切掉）。
+   代价是卡片成了滚动容器、表头不再吸顶（滚动容器里 position:sticky 失效）。
+   阈值量的是**容器**宽度而不是"这张表到底多宽"，所以内容区一旦窄于阈值，**所有**列表页的
+   卡片都会变成滚动容器、表头都不再吸顶 —— 包括本来塞得下的那些表（实测 1280 窗口：
+   内容区 981px，家庭库存表只有 939px，也照样失去吸顶）。要做到"只有真放不下的表才滚动"
+   必须运行时逐个量宽度，CSS 表达不了；这一条按"1280 下不给整页留横向滚动条"取舍。
+
+   用容器查询而不是媒体查询：媒体查询量的是**视口**宽度，而这里真正决定「放不放得下」的
+   是**内容区**宽度（视口 − 侧栏 236px − 外边距）。写视口阈值时必须把侧栏宽度算进去，
+   1240px 的旧阈值就是这么漏掉的：视口 1280 时内容区只有 992px，媒体查询不触发，
+   而 9 列的今日菜单要 1139px，于是实测溢出 149px、整页横向滚动 142px。
+
+   查询容器挂在 .panel-root 上而不是 .main 上：卡片宽 = .panel-root 内容宽（卡片是它的
+   block 子元素），而 .main 在大屏下比卡片宽 —— 查 .main 会以为放得下，其实卡片已经被
+   --content-max 收窄了。
+   阈值推法：最宽的表格（今日菜单，9 列，实测 1079px）自然宽度 + 卡片内边距 40px + 描边 2px
+   ≈ 1121px，取 1140px 留余量。结果：1440 / 1920 窗口下卡片不滚动、表头照常吸顶；
+   1280 窗口下内容区只有 992px，阈值生效，今日菜单在卡片内横向滚动（更新时间列要滑一下），
+   换来的是整页不再出现横向滚动条。
+   加了列或放宽了 --cell-clamp 都要重算这个数。 */
+.panel-root { container: panel / inline-size; }
+
+@container panel (max-width: 1140px) {
+  .card { overflow-x: auto; }
+  /* 表格按内容撑开、横向滚动。原来写死 min-width: 660px，
+     9 列被硬挤进去后每格都换行，行高从 49px 涨到 109px。 */
+  .card > table { min-width: max-content; }
+  .card > table td, .card > table th { white-space: nowrap; }
+}
+
 @media (max-width: 900px) {
   .app-shell { grid-template-columns: minmax(0, 1fr); }
   .sidebar {
@@ -1172,13 +1241,8 @@ td.clamp { max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-sp
   .topbar { flex-wrap: wrap; }
   .page-meta { display: none; }
   .quick-jump { display: none; }
-  .card { padding: 16px; overflow-x: auto; }
-  /* 窄屏：表格按内容撑开、横向滚动。
-     原来写死 min-width: 660px，9 列被硬挤进去后每格都换行，行高从 49px 涨到 109px。*/
-  .card > table { min-width: max-content; }
-  .card > table td, .card > table th { white-space: nowrap; }
+  .card { padding: 16px; }
   .text-input.grow { flex: 1 1 150px; }
-  td.clamp { max-width: 170px; }
 }
 
 @media (max-width: 860px) {

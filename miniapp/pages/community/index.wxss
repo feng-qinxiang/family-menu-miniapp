@@ -349,9 +349,48 @@
   line-height: 1.5;
 }
 .pf-ph { color: var(--mut-2); }
+
+/* 关联的菜（「晒一晒」带过来的那道）：与输入框同一套描边圆角，
+   读作「这条帖子会带出这张菜卡」，与普通发帖区分开。 */
+.pf-dish {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  box-sizing: border-box;
+  min-height: 88rpx;
+  padding: 0 var(--pad-card-sm);
+  margin-bottom: 20rpx;
+  border: var(--bd-card);
+  border-radius: var(--r-card);
+  background: var(--c-surface);
+}
+.pf-dish-tag {
+  flex-shrink: 0;
+  padding: 4rpx 14rpx;
+  border-radius: var(--r-pill);
+  background: var(--pop-soft);
+  color: var(--pop);
+  font-size: calc(21rpx * var(--fs-mul, 1));
+  font-weight: 700;
+}
+.pf-dish-name {
+  flex: 1;
+  color: var(--ink);
+  font-size: calc(28rpx * var(--fs-mul, 1));
+}
+.pf-dish-x {
+  flex-shrink: 0;
+  width: 88rpx;   /* 触控热区按 88rpx 标准走：这是「取消关联」，误点代价小但也不能点不中 */
+  text-align: right;
+  color: var(--mut-2);
+  font-size: calc(32rpx * var(--fs-mul, 1));
+}
+
 .pf-actions { display: flex; gap: 20rpx; margin-top: 8rpx; }
 .pf-cancel { flex: 1; }
 .pf-submit { flex: 2; }
+/* 内容规范提示：紧跟正文输入框的小字说明（颜色复用全局 .muted） */
+.pf-hint { margin: 4rpx 4rpx 0; font-size: var(--fs-cap); line-height: 1.5; }
 
 /* 自定义 TabBar 实高 96rpx + 24rpx 内边距 + 安全区，占位必须跟着走 */
 /* 原来这里重定义了全局 .safe-bottom（全局是 padding-bottom，这里是 height，

@@ -100,4 +100,29 @@ class RecipeLibraryScopeTests {
         }
         assertThat(found).as("刚创建的菜谱应能在列表里看到").isTrue();
     }
+
+    /** 客户端传 sourceType=community 不能把私有菜谱变成全站可见（绕过机审与家庭隔离）。 */
+    @Test
+    void clientCannotSelfPublishAsCommunityRecipe() throws Exception {
+        String author = guestLogin();
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("title", "越权公开测试 " + System.nanoTime());
+        body.put("sourceType", "community");
+        body.put("cuisine", "家常");
+        body.put("tasteTags", List.of("清淡"));
+        body.put("steps", List.of("切菜"));
+        body.put("ingredients", List.of(Map.of("name", "番茄", "amount", "2", "unit", "个")));
+        MvcResult created = mockMvc.perform(post("/api/recipes")
+                        .header("X-Auth-Token", author)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(body)))
+                .andExpect(status().isOk())
+                .andReturn();
+        JsonNode card = objectMapper.readTree(created.getResponse().getContentAsString(StandardCharsets.UTF_8));
+        assertThat(card.path("sourceType").asText()).isEqualTo("owned");
+
+        String stranger = guestLogin();
+        mockMvc.perform(get("/api/recipes/" + card.get("id").asLong()).header("X-Auth-Token", stranger))
+                .andExpect(status().isNotFound());
+    }
 }

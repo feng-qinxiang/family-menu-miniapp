@@ -1,0 +1,398 @@
+{
+ "steps_with_errors": [
+  {
+   "id": "s001",
+   "label": "A0 打开登录页",
+   "errs": {
+    "http": [],
+    "exceptions": [],
+    "console": [],
+    "logs": [
+     [
+      "error",
+      "Failed to load resource: the server responded with a status of 404 ()",
+      "http://127.0.0.1:18082/api/admin/auth/bootstrap"
+     ]
+    ],
+    "csp_style": 0
+   }
+  },
+  {
+   "id": "s010",
+   "label": "A3 错误验证码登录",
+   "errs": {
+    "http": [
+     [
+      401,
+      "http://127.0.0.1:18082/api/admin/auth/login",
+      "application/json"
+     ]
+    ],
+    "exceptions": [],
+    "console": [],
+    "logs": [
+     [
+      "error",
+      "Failed to load resource: the server responded with a status of 401 ()",
+      "http://127.0.0.1:18082/api/admin/auth/login"
+     ]
+    ],
+    "csp_style": 0
+   }
+  },
+  {
+   "id": "s013",
+   "label": "A6 引导令牌（错误）",
+   "errs": {
+    "http": [
+     [
+      401,
+      "http://127.0.0.1:18082/api/admin/auth/bootstrap",
+      "application/json"
+     ]
+    ],
+    "exceptions": [],
+    "console": [],
+    "logs": [
+     [
+      "error",
+      "Failed to load resource: the server responded with a status of 401 ()",
+      "http://127.0.0.1:18082/api/admin/auth/bootstrap"
+     ]
+    ],
+    "csp_style": 0
+   }
+  },
+  {
+   "id": "s210",
+   "label": "C1 会话被服务端吊销后刷新",
+   "errs": {
+    "http": [
+     [
+      401,
+      "http://127.0.0.1:18082/api/admin/recipes?keyword=&status=",
+      "application/json"
+     ]
+    ],
+    "exceptions": [],
+    "console": [],
+    "logs": [
+     [
+      "error",
+      "Failed to load resource: the server responded with a status of 401 ()",
+      "http://127.0.0.1:18082/api/admin/recipes?keyword=&status="
+     ]
+    ],
+    "csp_style": 0
+   }
+  }
+ ],
+ "all_steps": 440,
+ "meta": {
+  "login": {
+   "repeat_refresh": [
+    {
+     "tabsHidden": false,
+     "tabBootHidden": false,
+     "hintHidden": false
+    },
+    {
+     "tabsHidden": false,
+     "tabBootHidden": false,
+     "hintHidden": false
+    },
+    {
+     "tabsHidden": false,
+     "tabBootHidden": false,
+     "hintHidden": false
+    },
+    {
+     "tabsHidden": false,
+     "tabBootHidden": false,
+     "hintHidden": false
+    },
+    {
+     "tabsHidden": false,
+     "tabBootHidden": false,
+     "hintHidden": false
+    },
+    {
+     "tabsHidden": false,
+     "tabBootHidden": false,
+     "hintHidden": false
+    }
+   ],
+   "otp_msg": "调试验证码（仅开发环境）：246810",
+   "bad_code_msg": "验证码错误或已过期",
+   "logged_in": true,
+   "bad_boot_msg": "引导令牌不正确",
+   "boot_logged_in": true
+  },
+  "modal_actions": {
+   "dashboard|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-role\":\"18\"},\"x\":\"设为管理员\"}": "弹窗「设置管理端角色」→取消（保存角色 / 内容 82 字，输入 3 个）",
+   "dashboard|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-vip\":\"18\"},\"x\":\"开通会员\"}": "弹窗「人工开通会员」→取消（确认开通 / 内容 29 字，输入 2 个）",
+   "dashboard|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-userstatus\":\"18\",\"data-on\":\"BANNED\"},\"x\":\"封禁\"}": "弹窗「封禁该账号？」→取消（确认封禁 / 内容 0 字，输入 0 个）",
+   "dashboard|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-role\":\"17\"},\"x\":\"设为管理员\"}": "弹窗「设置管理端角色」→取消（保存角色 / 内容 82 字，输入 3 个）",
+   "dashboard|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-vip\":\"17\"},\"x\":\"开通会员\"}": "弹窗「人工开通会员」→取消（确认开通 / 内容 29 字，输入 2 个）",
+   "dashboard|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-userstatus\":\"17\",\"data-on\":\"BANNED\"},\"x\":\"封禁\"}": "弹窗「封禁该账号？」→取消（确认封禁 / 内容 0 字，输入 0 个）",
+   "dashboard|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-role\":\"16\"},\"x\":\"设为管理员\"}": "弹窗「设置管理端角色」→取消（保存角色 / 内容 82 字，输入 3 个）",
+   "dashboard|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-vip\":\"16\"},\"x\":\"开通会员\"}": "弹窗「人工开通会员」→取消（确认开通 / 内容 29 字，输入 2 个）",
+   "dashboard|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-userstatus\":\"16\",\"data-on\":\"BANNED\"},\"x\":\"封禁\"}": "弹窗「封禁该账号？」→取消（确认封禁 / 内容 0 字，输入 0 个）",
+   "dashboard|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-role\":\"15\"},\"x\":\"设为管理员\"}": "弹窗「设置管理端角色」→取消（保存角色 / 内容 82 字，输入 3 个）",
+   "dashboard|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-vip\":\"15\"},\"x\":\"开通会员\"}": "弹窗「人工开通会员」→取消（确认开通 / 内容 29 字，输入 2 个）",
+   "dashboard|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-userstatus\":\"15\",\"data-on\":\"BANNED\"},\"x\":\"封禁\"}": "弹窗「封禁该账号？」→取消（确认封禁 / 内容 0 字，输入 0 个）",
+   "dashboard|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-role\":\"14\"},\"x\":\"调整角色\"}": "弹窗「设置管理端角色」→取消（保存角色 / 内容 105 字，输入 4 个）",
+   "dashboard|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-vip\":\"14\"},\"x\":\"开通会员\"}": "弹窗「人工开通会员」→取消（确认开通 / 内容 29 字，输入 2 个）",
+   "dashboard|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-role\":\"13\"},\"x\":\"调整角色\"}": "弹窗「设置管理端角色」→取消（保存角色 / 内容 105 字，输入 4 个）",
+   "dashboard|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-vip\":\"13\"},\"x\":\"开通会员\"}": "弹窗「人工开通会员」→取消（确认开通 / 内容 29 字，输入 2 个）",
+   "dashboard|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-role\":\"12\"},\"x\":\"调整角色\"}": "弹窗「设置管理端角色」→取消（保存角色 / 内容 105 字，输入 4 个）",
+   "dashboard|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-vip\":\"12\"},\"x\":\"开通会员\"}": "弹窗「人工开通会员」→取消（确认开通 / 内容 29 字，输入 2 个）",
+   "dashboard|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-role\":\"11\"},\"x\":\"调整角色\"}": "弹窗「设置管理端角色」→取消（保存角色 / 内容 105 字，输入 4 个）",
+   "dashboard|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-vip\":\"11\"},\"x\":\"开通会员\"}": "弹窗「人工开通会员」→取消（确认开通 / 内容 29 字，输入 2 个）",
+   "dashboard|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-role\":\"9\"},\"x\":\"调整角色\"}": "弹窗「设置管理端角色」→取消（保存角色 / 内容 105 字，输入 4 个）",
+   "dashboard|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-vip\":\"9\"},\"x\":\"开通会员\"}": "弹窗「人工开通会员」→取消（确认开通 / 内容 29 字，输入 2 个）",
+   "dashboard|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-role\":\"5\"},\"x\":\"调整角色\"}": "弹窗「设置管理端角色」→取消（保存角色 / 内容 105 字，输入 4 个）",
+   "dashboard|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-vip\":\"5\"},\"x\":\"开通会员\"}": "弹窗「人工开通会员」→取消（确认开通 / 内容 29 字，输入 2 个）",
+   "dashboard|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-role\":\"4\"},\"x\":\"调整角色\"}": "弹窗「设置管理端角色」→取消（保存角色 / 内容 105 字，输入 4 个）",
+   "dashboard|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-vip\":\"4\"},\"x\":\"开通会员\"}": "弹窗「人工开通会员」→取消（确认开通 / 内容 29 字，输入 2 个）",
+   "dashboard|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-role\":\"3\"},\"x\":\"调整角色\"}": "弹窗「设置管理端角色」→取消（保存角色 / 内容 105 字，输入 4 个）",
+   "dashboard|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-vip\":\"3\"},\"x\":\"开通会员\"}": "弹窗「人工开通会员」→取消（确认开通 / 内容 29 字，输入 2 个）",
+   "dashboard|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-role\":\"2\"},\"x\":\"设为管理员\"}": "弹窗「设置管理端角色」→取消（保存角色 / 内容 82 字，输入 3 个）",
+   "dashboard|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-vip\":\"2\"},\"x\":\"开通会员\"}": "弹窗「人工开通会员」→取消（确认开通 / 内容 29 字，输入 2 个）",
+   "dashboard|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-userstatus\":\"2\",\"data-on\":\"BANNED\"},\"x\":\"封禁\"}": "弹窗「封禁该账号？」→取消（确认封禁 / 内容 0 字，输入 0 个）",
+   "dashboard|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-vip\":\"1\"},\"x\":\"开通会员\"}": "弹窗「人工开通会员」→取消（确认开通 / 内容 29 字，输入 2 个）",
+   "posts|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-bulk\":\"posts:APPROVED\"},\"x\":\"批量恢复/通过\"}": "弹窗「批量通过？」→取消（确认处理 / 内容 0 字，输入 0 个）",
+   "posts|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-bulk\":\"posts:REMOVED\"},\"x\":\"批量下架\"}": "弹窗「批量下架？」→取消（确认处理 / 内容 0 字，输入 0 个）",
+   "posts|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-postdetail\":\"7\"},\"x\":\"详情\"}": "弹窗「帖子详情 · 注销探针帖」→取消（关闭 / 内容 19 字，输入 0 个）",
+   "posts|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-poststatus\":\"7\",\"data-on\":\"REMOVED\"},\"x\":\"下架\"}": "弹窗「下架该帖子？」→取消（确认下架 / 内容 0 字，输入 0 个）",
+   "posts|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-postdetail\":\"6\"},\"x\":\"详情\"}": "弹窗「帖子详情 · 注销探针帖」→取消（关闭 / 内容 19 字，输入 0 个）",
+   "posts|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-poststatus\":\"6\",\"data-on\":\"REMOVED\"},\"x\":\"下架\"}": "弹窗「下架该帖子？」→取消（确认下架 / 内容 0 字，输入 0 个）",
+   "posts|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-postdetail\":\"5\"},\"x\":\"详情\"}": "弹窗「帖子详情 · 越权探针帖 A」→取消（关闭 / 内容 27 字，输入 0 个）",
+   "posts|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-poststatus\":\"5\",\"data-on\":\"REMOVED\"},\"x\":\"下架\"}": "弹窗「下架该帖子？」→取消（确认下架 / 内容 0 字，输入 0 个）",
+   "posts|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-postdetail\":\"4\"},\"x\":\"详情\"}": "弹窗「帖子详情 · 越权探针帖 A」→取消（关闭 / 内容 27 字，输入 0 个）",
+   "posts|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-poststatus\":\"4\",\"data-on\":\"REMOVED\"},\"x\":\"下架\"}": "弹窗「下架该帖子？」→取消（确认下架 / 内容 0 字，输入 0 个）",
+   "posts|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-postdetail\":\"3\"},\"x\":\"详情\"}": "弹窗「帖子详情 · 我把西兰花步骤改顺手了」→取消（关闭 / 内容 64 字，输入 0 个）",
+   "posts|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-poststatus\":\"3\",\"data-on\":\"REMOVED\"},\"x\":\"下架\"}": "弹窗「下架该帖子？」→取消（确认下架 / 内容 0 字，输入 0 个）",
+   "posts|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-postdetail\":\"2\"},\"x\":\"详情\"}": "弹窗「帖子详情 · 下班 20 分钟快手餐」→取消（关闭 / 内容 55 字，输入 0 个）",
+   "posts|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-poststatus\":\"2\",\"data-on\":\"REMOVED\"},\"x\":\"下架\"}": "弹窗「下架该帖子？」→取消（确认下架 / 内容 0 字，输入 0 个）",
+   "posts|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-postdetail\":\"1\"},\"x\":\"详情\"}": "弹窗「帖子详情 · 周末家常三菜一汤」→取消（关闭 / 内容 63 字，输入 0 个）",
+   "posts|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-poststatus\":\"1\",\"data-on\":\"REMOVED\"},\"x\":\"下架\"}": "弹窗「下架该帖子？」→取消（确认下架 / 内容 0 字，输入 0 个）",
+   "comments|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-bulk\":\"comments:APPROVED\"},\"x\":\"批量通过\"}": "弹窗「批量通过？」→取消（确认处理 / 内容 0 字，输入 0 个）",
+   "comments|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-bulk\":\"comments:REMOVED\"},\"x\":\"批量驳回\"}": "弹窗「批量驳回？」→取消（确认处理 / 内容 0 字，输入 0 个）",
+   "comments|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-cmtdel\":\"5\"},\"x\":\"删除\"}": "弹窗「删除该评论？」→取消（确认删除 / 内容 0 字，输入 0 个）",
+   "comments|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-cmtdel\":\"4\"},\"x\":\"删除\"}": "弹窗「删除该评论？」→取消（确认删除 / 内容 0 字，输入 0 个）",
+   "comments|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-cmtdel\":\"3\"},\"x\":\"删除\"}": "弹窗「删除该评论？」→取消（确认删除 / 内容 0 字，输入 0 个）",
+   "comments|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-cmtdel\":\"2\"},\"x\":\"删除\"}": "弹窗「删除该评论？」→取消（确认删除 / 内容 0 字，输入 0 个）",
+   "comments|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-cmtdel\":\"1\"},\"x\":\"删除\"}": "弹窗「删除该评论？」→取消（确认删除 / 内容 0 字，输入 0 个）",
+   "users|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-role\":\"18\"},\"x\":\"设为管理员\"}": "弹窗「设置管理端角色」→取消（保存角色 / 内容 82 字，输入 3 个）",
+   "users|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-vip\":\"18\"},\"x\":\"开通会员\"}": "弹窗「人工开通会员」→取消（确认开通 / 内容 29 字，输入 2 个）",
+   "users|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-userstatus\":\"18\",\"data-on\":\"BANNED\"},\"x\":\"封禁\"}": "弹窗「封禁该账号？」→取消（确认封禁 / 内容 0 字，输入 0 个）",
+   "users|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-role\":\"17\"},\"x\":\"设为管理员\"}": "弹窗「设置管理端角色」→取消（保存角色 / 内容 82 字，输入 3 个）",
+   "users|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-vip\":\"17\"},\"x\":\"开通会员\"}": "弹窗「人工开通会员」→取消（确认开通 / 内容 29 字，输入 2 个）",
+   "users|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-userstatus\":\"17\",\"data-on\":\"BANNED\"},\"x\":\"封禁\"}": "弹窗「封禁该账号？」→取消（确认封禁 / 内容 0 字，输入 0 个）",
+   "users|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-role\":\"16\"},\"x\":\"设为管理员\"}": "弹窗「设置管理端角色」→取消（保存角色 / 内容 82 字，输入 3 个）",
+   "users|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-vip\":\"16\"},\"x\":\"开通会员\"}": "弹窗「人工开通会员」→取消（确认开通 / 内容 29 字，输入 2 个）",
+   "users|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-userstatus\":\"16\",\"data-on\":\"BANNED\"},\"x\":\"封禁\"}": "弹窗「封禁该账号？」→取消（确认封禁 / 内容 0 字，输入 0 个）",
+   "users|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-role\":\"15\"},\"x\":\"设为管理员\"}": "弹窗「设置管理端角色」→取消（保存角色 / 内容 82 字，输入 3 个）",
+   "users|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-vip\":\"15\"},\"x\":\"开通会员\"}": "弹窗「人工开通会员」→取消（确认开通 / 内容 29 字，输入 2 个）",
+   "users|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-userstatus\":\"15\",\"data-on\":\"BANNED\"},\"x\":\"封禁\"}": "弹窗「封禁该账号？」→取消（确认封禁 / 内容 0 字，输入 0 个）",
+   "users|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-role\":\"14\"},\"x\":\"调整角色\"}": "弹窗「设置管理端角色」→取消（保存角色 / 内容 105 字，输入 4 个）",
+   "users|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-vip\":\"14\"},\"x\":\"开通会员\"}": "弹窗「人工开通会员」→取消（确认开通 / 内容 29 字，输入 2 个）",
+   "users|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-role\":\"13\"},\"x\":\"调整角色\"}": "弹窗「设置管理端角色」→取消（保存角色 / 内容 105 字，输入 4 个）",
+   "users|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-vip\":\"13\"},\"x\":\"开通会员\"}": "弹窗「人工开通会员」→取消（确认开通 / 内容 29 字，输入 2 个）",
+   "users|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-role\":\"12\"},\"x\":\"调整角色\"}": "弹窗「设置管理端角色」→取消（保存角色 / 内容 105 字，输入 4 个）",
+   "users|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-vip\":\"12\"},\"x\":\"开通会员\"}": "弹窗「人工开通会员」→取消（确认开通 / 内容 29 字，输入 2 个）",
+   "users|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-role\":\"11\"},\"x\":\"调整角色\"}": "弹窗「设置管理端角色」→取消（保存角色 / 内容 105 字，输入 4 个）",
+   "users|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-vip\":\"11\"},\"x\":\"开通会员\"}": "弹窗「人工开通会员」→取消（确认开通 / 内容 29 字，输入 2 个）",
+   "users|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-role\":\"9\"},\"x\":\"调整角色\"}": "弹窗「设置管理端角色」→取消（保存角色 / 内容 105 字，输入 4 个）",
+   "users|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-vip\":\"9\"},\"x\":\"开通会员\"}": "弹窗「人工开通会员」→取消（确认开通 / 内容 29 字，输入 2 个）",
+   "users|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-role\":\"5\"},\"x\":\"调整角色\"}": "弹窗「设置管理端角色」→取消（保存角色 / 内容 105 字，输入 4 个）",
+   "users|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-vip\":\"5\"},\"x\":\"开通会员\"}": "弹窗「人工开通会员」→取消（确认开通 / 内容 29 字，输入 2 个）",
+   "users|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-role\":\"4\"},\"x\":\"调整角色\"}": "弹窗「设置管理端角色」→取消（保存角色 / 内容 105 字，输入 4 个）",
+   "users|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-vip\":\"4\"},\"x\":\"开通会员\"}": "弹窗「人工开通会员」→取消（确认开通 / 内容 29 字，输入 2 个）",
+   "users|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-role\":\"3\"},\"x\":\"调整角色\"}": "弹窗「设置管理端角色」→取消（保存角色 / 内容 105 字，输入 4 个）",
+   "users|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-vip\":\"3\"},\"x\":\"开通会员\"}": "弹窗「人工开通会员」→取消（确认开通 / 内容 29 字，输入 2 个）",
+   "users|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-role\":\"2\"},\"x\":\"设为管理员\"}": "弹窗「设置管理端角色」→取消（保存角色 / 内容 82 字，输入 3 个）",
+   "users|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-vip\":\"2\"},\"x\":\"开通会员\"}": "弹窗「人工开通会员」→取消（确认开通 / 内容 29 字，输入 2 个）",
+   "users|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-userstatus\":\"2\",\"data-on\":\"BANNED\"},\"x\":\"封禁\"}": "弹窗「封禁该账号？」→取消（确认封禁 / 内容 0 字，输入 0 个）",
+   "users|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-vip\":\"1\"},\"x\":\"开通会员\"}": "弹窗「人工开通会员」→取消（确认开通 / 内容 29 字，输入 2 个）",
+   "families|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"10\"},\"x\":\"查看\"}": "弹窗「家庭 · 周末厨房」→取消（关闭 / 内容 244 字，输入 0 个）",
+   "families|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"9\"},\"x\":\"查看\"}": "弹窗「家庭 · 周末厨房」→取消（关闭 / 内容 263 字，输入 0 个）",
+   "families|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"8\"},\"x\":\"查看\"}": "弹窗「家庭 · 周末厨房」→取消（关闭 / 内容 244 字，输入 0 个）",
+   "families|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"7\"},\"x\":\"查看\"}": "弹窗「家庭 · 周末厨房」→取消（关闭 / 内容 263 字，输入 0 个）",
+   "families|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"6\"},\"x\":\"查看\"}": "弹窗「家庭 · 周末厨房」→取消（关闭 / 内容 244 字，输入 0 个）",
+   "families|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"5\"},\"x\":\"查看\"}": "弹窗「家庭 · 周末厨房」→取消（关闭 / 内容 270 字，输入 0 个）",
+   "families|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"4\"},\"x\":\"查看\"}": "弹窗「家庭 · 周末厨房」→取消（关闭 / 内容 258 字，输入 0 个）",
+   "families|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"3\"},\"x\":\"查看\"}": "弹窗「家庭 · 周末厨房」→取消（关闭 / 内容 244 字，输入 0 个）",
+   "families|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"2\"},\"x\":\"查看\"}": "弹窗「家庭 · 周末厨房」→取消（关闭 / 内容 264 字，输入 0 个）",
+   "families|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"1\"},\"x\":\"查看\"}": "弹窗「家庭 · 平台菜谱库」→取消（关闭 / 内容 369 字，输入 0 个）",
+   "menus|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"10\"},\"x\":\"周末厨房\"}": "弹窗「家庭 · 周末厨房」→取消（关闭 / 内容 244 字，输入 0 个）",
+   "menus|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"9\"},\"x\":\"周末厨房\"}": "弹窗「家庭 · 周末厨房」→取消（关闭 / 内容 263 字，输入 0 个）",
+   "menus|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"8\"},\"x\":\"周末厨房\"}": "弹窗「家庭 · 周末厨房」→取消（关闭 / 内容 244 字，输入 0 个）",
+   "menus|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"7\"},\"x\":\"周末厨房\"}": "弹窗「家庭 · 周末厨房」→取消（关闭 / 内容 263 字，输入 0 个）",
+   "menus|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"6\"},\"x\":\"周末厨房\"}": "弹窗「家庭 · 周末厨房」→取消（关闭 / 内容 244 字，输入 0 个）",
+   "menus|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"5\"},\"x\":\"周末厨房\"}": "弹窗「家庭 · 周末厨房」→取消（关闭 / 内容 270 字，输入 0 个）",
+   "menus|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"4\"},\"x\":\"周末厨房\"}": "弹窗「家庭 · 周末厨房」→取消（关闭 / 内容 258 字，输入 0 个）",
+   "menus|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"3\"},\"x\":\"周末厨房\"}": "弹窗「家庭 · 周末厨房」→取消（关闭 / 内容 244 字，输入 0 个）",
+   "menus|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"2\"},\"x\":\"周末厨房\"}": "弹窗「家庭 · 周末厨房」→取消（关闭 / 内容 264 字，输入 0 个）",
+   "menus|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"1\"},\"x\":\"平台菜谱库\"}": "弹窗「家庭 · 平台菜谱库」→取消（关闭 / 内容 369 字，输入 0 个）",
+   "shopping|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"10\"},\"x\":\"周末厨房\"}": "弹窗「家庭 · 周末厨房」→取消（关闭 / 内容 244 字，输入 0 个）",
+   "shopping|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"9\"},\"x\":\"周末厨房\"}": "弹窗「家庭 · 周末厨房」→取消（关闭 / 内容 263 字，输入 0 个）",
+   "shopping|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"8\"},\"x\":\"周末厨房\"}": "弹窗「家庭 · 周末厨房」→取消（关闭 / 内容 244 字，输入 0 个）",
+   "shopping|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"7\"},\"x\":\"周末厨房\"}": "弹窗「家庭 · 周末厨房」→取消（关闭 / 内容 263 字，输入 0 个）",
+   "shopping|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"6\"},\"x\":\"周末厨房\"}": "弹窗「家庭 · 周末厨房」→取消（关闭 / 内容 244 字，输入 0 个）",
+   "shopping|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"5\"},\"x\":\"周末厨房\"}": "弹窗「家庭 · 周末厨房」→取消（关闭 / 内容 270 字，输入 0 个）",
+   "shopping|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"4\"},\"x\":\"周末厨房\"}": "弹窗「家庭 · 周末厨房」→取消（关闭 / 内容 258 字，输入 0 个）",
+   "shopping|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"3\"},\"x\":\"周末厨房\"}": "弹窗「家庭 · 周末厨房」→取消（关闭 / 内容 244 字，输入 0 个）",
+   "shopping|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"2\"},\"x\":\"周末厨房\"}": "弹窗「家庭 · 周末厨房」→取消（关闭 / 内容 264 字，输入 0 个）",
+   "shopping|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"1\"},\"x\":\"平台菜谱库\"}": "弹窗「家庭 · 平台菜谱库」→取消（关闭 / 内容 369 字，输入 0 个）",
+   "pantry|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"10\"},\"x\":\"周末厨房\"}": "弹窗「家庭 · 周末厨房」→取消（关闭 / 内容 244 字，输入 0 个）",
+   "pantry|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"9\"},\"x\":\"周末厨房\"}": "弹窗「家庭 · 周末厨房」→取消（关闭 / 内容 263 字，输入 0 个）",
+   "pantry|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"8\"},\"x\":\"周末厨房\"}": "弹窗「家庭 · 周末厨房」→取消（关闭 / 内容 244 字，输入 0 个）",
+   "pantry|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"7\"},\"x\":\"周末厨房\"}": "弹窗「家庭 · 周末厨房」→取消（关闭 / 内容 263 字，输入 0 个）",
+   "pantry|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"5\"},\"x\":\"周末厨房\"}": "弹窗「家庭 · 周末厨房」→取消（关闭 / 内容 270 字，输入 0 个）",
+   "pantry|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"6\"},\"x\":\"周末厨房\"}": "弹窗「家庭 · 周末厨房」→取消（关闭 / 内容 244 字，输入 0 个）",
+   "pantry|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"4\"},\"x\":\"周末厨房\"}": "弹窗「家庭 · 周末厨房」→取消（关闭 / 内容 258 字，输入 0 个）",
+   "pantry|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"3\"},\"x\":\"周末厨房\"}": "弹窗「家庭 · 周末厨房」→取消（关闭 / 内容 244 字，输入 0 个）",
+   "pantry|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"2\"},\"x\":\"周末厨房\"}": "弹窗「家庭 · 周末厨房」→取消（关闭 / 内容 264 字，输入 0 个）",
+   "pantry|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-famdetail\":\"1\"},\"x\":\"平台菜谱库\"}": "弹窗「家庭 · 平台菜谱库」→取消（关闭 / 内容 369 字，输入 0 个）",
+   "orders|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-orderrefund\":\"SEED-DEMO-ANNUAL-0001\"},\"x\":\"标记退款\"}": "弹窗「标记为已退款并回收会员权益？」→取消（确认标记退款 / 内容 0 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipedetail\":\"112\"},\"x\":\"查看详情\"}": "弹窗「菜谱详情 · 注销探针菜」→取消（关闭 / 内容 50 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipestatus\":\"112\",\"data-on\":\"REMOVED\"},\"x\":\"下架\"}": "弹窗「下架该菜谱？」→取消（确认下架 / 内容 0 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipedetail\":\"111\"},\"x\":\"查看详情\"}": "弹窗「菜谱详情 · 注销探针菜」→取消（关闭 / 内容 50 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipestatus\":\"111\",\"data-on\":\"REMOVED\"},\"x\":\"下架\"}": "弹窗「下架该菜谱？」→取消（确认下架 / 内容 0 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipedetail\":\"110\"},\"x\":\"查看详情\"}": "弹窗「菜谱详情 · 越权探针菜 A」→取消（关闭 / 内容 54 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipestatus\":\"110\",\"data-on\":\"REMOVED\"},\"x\":\"下架\"}": "弹窗「下架该菜谱？」→取消（确认下架 / 内容 0 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipedetail\":\"109\"},\"x\":\"查看详情\"}": "弹窗「菜谱详情 · 改了」→取消（关闭 / 内容 54 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipestatus\":\"109\",\"data-on\":\"REMOVED\"},\"x\":\"下架\"}": "弹窗「下架该菜谱？」→取消（确认下架 / 内容 0 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipedetail\":\"108\"},\"x\":\"查看详情\"}": "弹窗「菜谱详情 · 家常拌面」→取消（关闭 / 内容 89 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipestatus\":\"108\",\"data-on\":\"REMOVED\"},\"x\":\"下架\"}": "弹窗「下架该菜谱？」→取消（确认下架 / 内容 0 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipedetail\":\"107\"},\"x\":\"查看详情\"}": "弹窗「菜谱详情 · 扬州炒饭」→取消（关闭 / 内容 95 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipestatus\":\"107\",\"data-on\":\"REMOVED\"},\"x\":\"下架\"}": "弹窗「下架该菜谱？」→取消（确认下架 / 内容 0 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipedetail\":\"106\"},\"x\":\"查看详情\"}": "弹窗「菜谱详情 · 鲜肉馄饨」→取消（关闭 / 内容 99 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipestatus\":\"106\",\"data-on\":\"REMOVED\"},\"x\":\"下架\"}": "弹窗「下架该菜谱？」→取消（确认下架 / 内容 0 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipedetail\":\"105\"},\"x\":\"查看详情\"}": "弹窗「菜谱详情 · 牛肉炒西兰花」→取消（关闭 / 内容 95 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipestatus\":\"105\",\"data-on\":\"REMOVED\"},\"x\":\"下架\"}": "弹窗「下架该菜谱？」→取消（确认下架 / 内容 0 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipedetail\":\"104\"},\"x\":\"查看详情\"}": "弹窗「菜谱详情 · 酸辣汤」→取消（关闭 / 内容 95 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipestatus\":\"104\",\"data-on\":\"REMOVED\"},\"x\":\"下架\"}": "弹窗「下架该菜谱？」→取消（确认下架 / 内容 0 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipedetail\":\"103\"},\"x\":\"查看详情\"}": "弹窗「菜谱详情 · 香菇滑鸡」→取消（关闭 / 内容 99 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipestatus\":\"103\",\"data-on\":\"REMOVED\"},\"x\":\"下架\"}": "弹窗「下架该菜谱？」→取消（确认下架 / 内容 0 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipedetail\":\"102\"},\"x\":\"查看详情\"}": "弹窗「菜谱详情 · 青椒土豆丝」→取消（关闭 / 内容 91 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipestatus\":\"102\",\"data-on\":\"REMOVED\"},\"x\":\"下架\"}": "弹窗「下架该菜谱？」→取消（确认下架 / 内容 0 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipedetail\":\"101\"},\"x\":\"查看详情\"}": "弹窗「菜谱详情 · 紫菜蛋花汤」→取消（关闭 / 内容 85 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipestatus\":\"101\",\"data-on\":\"REMOVED\"},\"x\":\"下架\"}": "弹窗「下架该菜谱？」→取消（确认下架 / 内容 0 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipedetail\":\"8\"},\"x\":\"查看详情\"}": "弹窗「菜谱详情 · 糖醋排骨」→取消（关闭 / 内容 137 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipestatus\":\"8\",\"data-on\":\"REMOVED\"},\"x\":\"下架\"}": "弹窗「下架该菜谱？」→取消（确认下架 / 内容 0 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipedetail\":\"7\"},\"x\":\"查看详情\"}": "弹窗「菜谱详情 · 蒜蓉西兰花」→取消（关闭 / 内容 106 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipestatus\":\"7\",\"data-on\":\"REMOVED\"},\"x\":\"下架\"}": "弹窗「下架该菜谱？」→取消（确认下架 / 内容 0 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipedetail\":\"6\"},\"x\":\"查看详情\"}": "弹窗「菜谱详情 · 麻婆豆腐」→取消（关闭 / 内容 134 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipestatus\":\"6\",\"data-on\":\"REMOVED\"},\"x\":\"下架\"}": "弹窗「下架该菜谱？」→取消（确认下架 / 内容 0 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipedetail\":\"5\"},\"x\":\"查看详情\"}": "弹窗「菜谱详情 · 可乐鸡翅」→取消（关闭 / 内容 120 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipestatus\":\"5\",\"data-on\":\"REMOVED\"},\"x\":\"下架\"}": "弹窗「下架该菜谱？」→取消（确认下架 / 内容 0 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipedetail\":\"4\"},\"x\":\"查看详情\"}": "弹窗「菜谱详情 · 酸辣土豆丝」→取消（关闭 / 内容 120 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipestatus\":\"4\",\"data-on\":\"REMOVED\"},\"x\":\"下架\"}": "弹窗「下架该菜谱？」→取消（确认下架 / 内容 0 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipedetail\":\"3\"},\"x\":\"查看详情\"}": "弹窗「菜谱详情 · 清炒时蔬」→取消（关闭 / 内容 97 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipestatus\":\"3\",\"data-on\":\"REMOVED\"},\"x\":\"下架\"}": "弹窗「下架该菜谱？」→取消（确认下架 / 内容 0 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipedetail\":\"2\"},\"x\":\"查看详情\"}": "弹窗「菜谱详情 · 红烧肉」→取消（关闭 / 内容 169 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipestatus\":\"2\",\"data-on\":\"REMOVED\"},\"x\":\"下架\"}": "弹窗「下架该菜谱？」→取消（确认下架 / 内容 0 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipedetail\":\"1\"},\"x\":\"查看详情\"}": "弹窗「菜谱详情 · 番茄炒蛋」→取消（关闭 / 内容 141 字，输入 0 个）",
+   "recipes|{\"t\":\"button\",\"i\":\"\",\"a\":{\"data-recipestatus\":\"1\",\"data-on\":\"REMOVED\"},\"x\":\"下架\"}": "弹窗「下架该菜谱？」→取消（确认下架 / 内容 0 字，输入 0 个）"
+  },
+  "expired": {
+   "loginShown": true,
+   "appHidden": true,
+   "msg": "登录已失效，请重新登录",
+   "token": null
+  },
+  "exports": [
+   {
+    "kind": "users",
+    "status": 200,
+    "bytes": 3189,
+    "ct": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "cd": "attachment; filename=\"export.xlsx\"; filename*=UTF-8''%E7%94%",
+    "magic": "PK"
+   },
+   {
+    "kind": "orders",
+    "status": 200,
+    "bytes": 2667,
+    "ct": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "cd": "attachment; filename=\"export.xlsx\"; filename*=UTF-8''%E8%AE%",
+    "magic": "PK"
+   },
+   {
+    "kind": "audit",
+    "status": 200,
+    "bytes": 8378,
+    "ct": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "cd": "attachment; filename=\"export.xlsx\"; filename*=UTF-8''%E5%AE%",
+    "magic": "PK"
+   },
+   {
+    "kind": "posts",
+    "status": 200,
+    "bytes": 2928,
+    "ct": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "cd": "attachment; filename=\"export.xlsx\"; filename*=UTF-8''%E5%B8%",
+    "magic": "PK"
+   },
+   {
+    "kind": "comments",
+    "status": 200,
+    "bytes": 2993,
+    "ct": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "cd": "attachment; filename=\"export.xlsx\"; filename*=UTF-8''%E8%AF%",
+    "magic": "PK"
+   },
+   {
+    "kind": "feedback",
+    "status": 200,
+    "bytes": 2546,
+    "ct": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "cd": "attachment; filename=\"export.xlsx\"; filename*=UTF-8''%E5%8F%",
+    "magic": "PK"
+   },
+   {
+    "kind": "reports",
+    "status": 200,
+    "bytes": 2507,
+    "ct": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "cd": "attachment; filename=\"export.xlsx\"; filename*=UTF-8''%E4%B8%",
+    "magic": "PK"
+   },
+   {
+    "kind": "families",
+    "status": 200,
+    "bytes": 2964,
+    "ct": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "cd": "attachment; filename=\"export.xlsx\"; filename*=UTF-8''%E5%AE%",
+    "magic": "PK"
+   },
+   {
+    "kind": "menus",
+    "status": 200,
+    "bytes": 3033,
+    "ct": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "cd": "attachment; filename=\"export.xlsx\"; filename*=UTF-8''%E8%8F%",
+    "magic": "PK"
+   },
+   {
+    "kind": "shopping",
+    "status": 200,
+    "bytes": 2938,
+    "ct": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "cd": "attachment; filename=\"export.xlsx\"; filename*=UTF-8''%E8%B4%",
+    "magic": "PK"
+   },
+   {
+    "kind": "pantry",
+    "status": 200,
+    "bytes": 4655,
+    "ct": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "cd": "attachment; filename=\"export.xlsx\"; filename*=UTF-8''%E5%BA%",
+    "magic": "PK"
+   }
+  ]
+ }
+}

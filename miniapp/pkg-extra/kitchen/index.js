@@ -1,11 +1,13 @@
 // pages/kitchen/index · 厨房总控（多菜并行：状态总览 + 每菜计时 + 一键上桌）
 // 定位：做饭时的一屏总览——今天这一餐每道菜做到哪、哪口灶在计时，不用逐个进烹饪模式。
 // 纯逻辑在 utils/kitchen.js（有 node 断言），本页只管数据与事件。
+const features = require('../../utils/features');
 const api = require('../../utils/api');
 const { recipeDishImg } = require('../../utils/image');
 const { mealTypeLabels, mealOrder } = require('../../utils/constants');
 const { runGuarded } = require('../../utils/interaction');
 const subscribe = require('../../utils/subscribe');
+const { composePostWithRecipe } = require('../../utils/post-share');
 const {
   fmtClock, buildKitchenOrder, pickMainStove, stepProgressText,
   secondsLeft, progressKey, timerKey
@@ -31,7 +33,9 @@ Page({
     items: [],        // 当前餐次视图模型（含 timer / timerText / main）
     orderText: '',
     doneCount: 0,
-    allDone: false
+    allDone: false,
+    // COMMUNITY 关闭（个人主体）时隐藏「晒到邻里厨房」按钮，见 utils/features.js
+    showCommunity: features.COMMUNITY
   },
 
   _timer: null,        // 共享 1s tick（多计时器单一驱动）
@@ -317,6 +321,15 @@ Page({
     wx.navigateTo({
       url: `/pkg-extra/cook-mode/index?id=${id}&menuItemId=${item || ''}`,
       fail: () => wx.showToast({ title: '页面打开失败，请重试', icon: 'none' })
+    });
+  },
+
+  // 晒到社区：把这道菜交给社区 tab 的发帖层（tab 页 switchTab 带不了 query，走 storage 交接）
+  shareCooked(e) {
+    if (!features.COMMUNITY) return; // 按钮已隐藏，这里挡住残留的历史栈调用
+    const { id, title } = e.currentTarget.dataset;
+    composePostWithRecipe(id, title).catch(() => {
+      wx.showToast({ title: '社区没打开，稍后再试', icon: 'none' });
     });
   },
 

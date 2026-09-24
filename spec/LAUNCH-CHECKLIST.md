@@ -1,5 +1,30 @@
 # 上线清单（个人主体版）
 
+> ## 本轮记录（2026-09-25 R11：上线准备复核 + 三主线实操巡场）
+>
+> **对照上一轮「仍要 owner 做的」六项，本轮把其中可以在本机落地的全部做完，其余边界如实标注：**
+>
+> 1. **管理后台（mock 短信）实测通过**——`SMS_PROVIDER=noop` + `AUTH_DEV_OTP_ENABLED=true` + bootstrap 令牌起本地服务：
+>    `/admin` 登录页双通道都在且如实提示「没接短信网关就用引导令牌」；验证码路径真点通过
+>    （请求 → 页面回显 dev 码 246810 + 60s 冷却 → 登录进数据看板）；`POST /api/admin/auth/bootstrap`
+>    正确令牌 200 发会话、错误令牌 401；用户管理/审计日志页真实数据渲染，无令牌打 `/api/admin/**` 一律 401。
+>    noop 网关没有假装发送成功（`configured()=false` 语义生效）。
+>    **真实网关仍待 owner**：`TencentSmsGateway` 代码已就位，接上 `SMS_PROVIDER=tencent` + 五项密钥即可，代码无需改。
+> 2. **生产库迁移彩排全过**（脚本无改动）：临时库建 `schema.sql`（27 表）→ 3 个迁移脚本各跑 2 遍幂等；
+>    再把 3 个索引 DROP 后重跑（覆盖「存量库缺索引」路径）也全部正确重建。生产执行命令见 §「部署方待办」第 4 条。
+>    **生产库本身仍要 owner 执行**（本机够不到）。
+> 3. **三主线实操巡场（模拟器，开发者工具自动化真点）**：
+>    点菜（首页 hero「加到菜单」→ 今日菜单卡变「今日菜单 · 晚餐 糖醋排骨」+「买」红点角标出现）；
+>    做菜（详情 → 沉浸模式：步骤配料跟随、进度段点跳、起 10 分钟计时器后跳步 → 后台条「第三步还剩 09:29 · 回去›」
+>    按墙钟续走 →「完成 · 记一笔」落库 + 跳记录页）；**做完菜扣冰箱 UI 全流程**（family 造库存 鸡蛋 10/番茄 5 →
+>    UI 做番茄炒蛋 → 鸡蛋 7/番茄 3，冰箱页显示与「临期待用」提醒同步正确）；社区（feed → 详情 → 点赞 toggle →
+>    评论落库 PENDING 且作者可见）；console 全程 **0 error / 0 warn**。测后数据已清（做菜记录/库存/菜单/清单/点赞/评论）。
+> 4. **本轮修的唯一缺陷：演示种子计数无背书行**——详见 CHANGELOG Fixed 首条。后端测试改后复跑 **223 项 / 0 失败**。
+> 5. **真机三项维持待办**（相册授权弹窗、深色整体回归、小屏弹层内滚动）：模拟器 CLI 无切机型工具、
+>    `simulator_refresh` 不重读 `theme.json`、原生面板截图够不到——三条证据边界和上轮判定一致，没有用模拟器结论冒充。
+> 6. **本机工具环境更新**：本机已有 node v22.16.0（上轮记录的「没有 node」已过时），11 条前端门禁全部
+>    `exit 0`；MySQL 8.4 本地常驻。
+>
 > ## 接手须知（2026-09-19 第六轮更新：转入「全链路实操 + UI 细节管理」，共 8 轮 R1~R8）
 >
 > **本轮的取向（owner 定的四条，别再重新问）**：
@@ -9,25 +34,33 @@
 > ④ 深色/小屏＝**模拟器能逼近多少算多少，逐项标注证据边界**。
 > owner 同时明确：备案域名 / 运营者信息 / 短信网关 / 生产库迁移 / 真机三项**继续推迟**，本轮不碰。
 >
-> **R1~R8 全部完成**（八轮：止血状态缺陷 → 图标标准 → UI 台账与规格表 → 做菜计时/跳步 →
-> 端到端与弹层/深色取证 → 后端读路径与执行计划 → 写路径竞态与 404 语义 → 购物清单 N+1 与时钟口径）。
-> 证据在下面「第六轮 R1 … R8」八张表里，每行都写了"怎么量的、修复前测到什么、修复后测到什么"。
+> **R1~R9 全部完成**（九轮：止血状态缺陷 → 图标标准 → UI 台账与规格表 → 做菜计时/跳步 →
+> 端到端与弹层/深色取证 → 后端读路径与执行计划 → 写路径竞态与 404 语义 → 购物清单 N+1 与时钟口径 →
+> **做菜→社区闭环与三条主线实操巡场**）；**第八轮 R10（2026-09-21）做菜主线重排**：主按钮回屏内、
+> 配料跟着步子高亮、顶栏常驻倒计时、nav-bar 首帧不再收 `undefined`——见「第八轮 R10」表。
+> 证据在下面「第六轮 R1 … R8」「第七轮 R9」「第八轮 R10」各张表里，每行都写了"怎么量的、修复前测到什么、修复后测到什么"。
 > **R8 之后又接了五批 UI 细节（末批 U1~U5，2026-09-20）**：照片裁切比例、图挂了的空洞、卡内边距、
 > 头像形状与字/框比、骨架与真卡对齐——判据同样是量出来的，其中"空态块高度三种写法"一条**量下来是误报**，
 > 记在 U1~U5 那张表里没改。
-> 当前门禁：`miniapp-ci` 五条步骤（静态检查 **29 项** + 两份纯逻辑 + 交互体检 + UI 台账）、
-> `server-ci` **188 项**（181 + 本轮新增 7）。
+> 当前门禁：`miniapp-ci` 九条步骤（静态检查 **31 项** + 五份纯逻辑（点菜 / 厨房 / 冰箱口径 / 晒一晒交接 /
+> 收藏页封面）+ 做菜收尾回归 + 交互体检 + UI 台账）、
+> `server-ci` **198 项**（本地同款命令实测 198/0；比上一版多两条：连点去重的
+> `repeatConfirmWithinTheWindowDeductsOnce`，与并发连点不再 404 的 `simultaneousDoubleClickIsNotA404`）。
 > 仍要 owner 做的：上线六项（备案域名 / 运营者信息 / 短信网关 / 生产库三条迁移 / 真机三项 / 两条收尾）
-> ＋ 本轮新增两条待决（浅色档金色小字要不要压暗、做菜进度段要不要给可点提示）。
+> ＋ 两条待决（浅色档金色小字要不要压暗、做菜进度段要不要给可点提示）。
 >
 > ⚠ R2 把一条计划里的判断**推翻了一半**：被列成"文字当图标"违规的 8 处里只有 2 处（kitchen 的 💡🎉）
 > 是真违规，`❝ ⤴  ★ ✦` 都是默认文字呈现的 BMP 字符、本来就能着色；首页 hero 的「买」「谱」判定为**保留**。
 > 理由与判据写在 R2 那张表里，owner 要翻案看同一行。
 >
-> **当前状态（刚核过，不是回忆）**：`git log origin/master..HEAD` 为空、工作区无改动；
-> `server-ci / build-and-test` = success（**30 个测试类 / 181 项**，全新 MySQL 库）、
-> `miniapp-ci / static-check` = success（四条前端门禁，静态检查编号到第 **20** 项）。
-> ⚠ `miniapp-ci` 只有**一个 job 名**却按顺序跑完四条门禁（static-check / dish-logic / kitchen-logic / interaction-audit），
+> **当前状态（2026-09-21 回报复核）**：工作区仍有未提交的 R9 / R10 与本次做菜收尾修复，**尚未提交、推送**。
+> 最近一次本地后端全量：`./mvnw -B -o test` = **198 项 / 0 失败 / 0 错误，BUILD SUCCESS**；本次动了后端
+> （做菜记录窗口去重；以及并发时"同一事务里刚查到的 id 又查不出行"导致其中一人拿 404，见 CHANGELOG）。
+> 本次前端九条检查全过；本机没有 node，用开发者工具自带 Electron 当 node 跑（v22.16.0，与 CI 的 Node 20 有版本差，
+> 新增的 `cook-finish.test.js` 等已写入 workflow，但**远端 CI 尚未执行这批改动**）。
+> 最近一次 CI 读数（R8）：`server-ci / build-and-test` = success、`miniapp-ci / static-check` = success。
+> ⚠ `miniapp-ci` 只有**一个 job 名**却按顺序跑完全部门禁（static-check / dish-logic / kitchen-logic /
+> pantry-match / post-share / cook-finish / favorites-cover / interaction-audit / ui-ledger），
 > 别看到只有一个 check 名字就以为只跑了静态自检。两个 workflow 都带 `paths` 过滤
 > （`miniapp/**` / `server/**`），所以**纯文档提交不触发任何 run 是正常的**，不是漏跑。
 >
@@ -39,9 +72,9 @@
 >     -c credential.helper='!gh auth git-credential' push origin master
 > ```
 > 改 `.github/workflows/**` 时 `gh` 的 token 必须带 `workflow` scope：
-> `gh auth refresh --hostname github.com --scopes workflow`。本轮没动 workflow 文件。
+> `gh auth refresh --hostname github.com --scopes workflow`。本次工作区包含 workflow 改动。
 >
-> ### 后面上线**只差 owner 的动作**，代码侧我能做的都做完并推上去了
+> ### 部署方待办（代码仍有待办，见「回报复核」；当前改动尚未推送）
 >
 > 按依赖顺序，每条都给了可直接抄的命令/文件位置：
 >
@@ -122,7 +155,7 @@
 >
 > **仍然卡在部署方手上、代码无法代劳的**：ICP 备案域名（`miniapp/utils/env.js`）、
 > 运营者姓名与联系方式（`miniapp/utils/legal-config.js`）、真实短信网关
-> （不接则谁也绑不了手机号、`/admin` 进不去）、生产库执行 §7 列的两个迁移脚本、
+> （不接则谁也绑不了手机号、`/admin` 进不去）、生产库执行 §7 列的三条索引迁移（手册见 §7：备份/执行/校验/回滚）、
 > 真机三项（相册授权弹窗、深色整体回归、小屏弹层内滚动）。
 >
 > 其余细节见 §7「CI 的真实状态」、§8 逐条清单，以及「跨家庭数据隔离（IDOR）实测结论」。
@@ -160,6 +193,12 @@
 
 代码已按个人主体裁剪完毕（支付/手机号登录用开关隐藏，主包 < 2MB）。
 **社区（邻里厨房）保留上线**：发帖/评论已接微信 msgSecCheck 机审 + 站内举报人工审核队列双重机制。
+**但主体类型要先定**：个人主体拿不到「社交-社区/论坛」类目，社区 UGC 必须整体下线；
+企业主体才保留。开关已补彻底（`miniapp/utils/features.js` 的 `COMMUNITY`，覆盖 tabBar、
+社区首页、帖子详情、收藏页、首页社区菜谱、菜谱详情「大家晒的」、厨房「晒到邻里厨房」、
+`utils/post-share.js`），当前值为 `true` = 企业主体路线；若是个人主体，把它改成 `false` 即可，
+其余代码不用动（`static-check` 的「社区开关覆盖面」防回退）。
+以下提审前仍缺一项代码能力：**账号注销**（后端无该接口，见 `handoff-to-backend.md`）。
 以下是**提审前必须人工完成**的运营侧事项，按顺序执行。
 
 ## 1. 服务器与域名（硬前提）
@@ -401,7 +440,81 @@
 
 
 
+### 第七轮 R9（2026-09-20）：做菜 → 社区闭环 + 三条主线的实操巡场
+
+> owner 这轮的取向：**"以家庭点菜 / 家庭做菜 / 社区为核心"去看真实操作**——先按用户动线在模拟器里走一遍，
+> 量出来的缺陷才修；上线六项（备案域名 / 运营者信息 / 短信网关 / 生产库迁移 / 真机三项）继续推迟，本轮不碰。
+> 判据同样是**量出来的**：能给出坐标、行数、执行计划或断言条数的，才写进下面这张表。
+
+| 项 | 结果 | 证据：怎么量的 / 修复前测到什么 / 修复后测到什么 |
+| --- | --- | --- |
+| 「晒到邻里厨房」闭环（做菜 → 社区 → 回菜谱） | ✅ | **怎么走**：厨房总控「已上桌」卡点「晒到邻里厨房」→ 落到社区 tab 并弹出发帖层（标题预填「红烧肉 出锅了」、关联行「这道菜 红烧肉」）→ 发布 → 帖子里长出「关联菜谱 红烧肉」卡 → 点卡片进菜谱详情，「大家晒的」出现这条帖子（`works[0].title = 红烧肉 出锅了`）。<br>**取一次就撕**：关掉发帖层 → 切到今日 tab 再切回社区，发帖层**没有**再弹（`showPostForm=false`）——这是交接单被清掉的直接证据（不清的话每次 `onShow` 都会重弹）。<br>证据截图：`artifacts/tour-2026-09-20/41-after-share-tap.png`（入口）、`42-composer-linked.png`（发帖层带菜）、`45-post-detail-recipe-card.png`（帖内菜谱卡）、`66-quicknav-hidden-at-bottom.png`（菜谱页「大家晒的」）。 |
+| 悬浮快捷键压住新的「去晒」按钮 | ✅ | **怎么量**：`wx.createSelectorQuery().boundingClientRect()` 取两个元素在 390×844 视口里的真实矩形——悬浮键 `top 520 / bottom 623`，最后一屏那行「晒我的作品 / 去晒」`top 537 / bottom 590`（用 `sips` 裁右下角 350×400 复核过：圆形回顶键正压在那个深色按钮上）。<br>**为什么只能改悬浮键**：那行是页面最后一个元素，内容到底后不会再动，所以"滚到底就把它收起来"才是真的不挡；判据用滚动的 `scrollHeight` 与窗口高度比（差 40px 内算到底），不写死像素。<br>**修复后**：`scrollTopTo=800`（中途）→ `showQuickNav=true`；`scrollTopTo=4000`（到底）→ `false`，截图里「去晒」完整可点。取不到窗口高度时退回旧行为（常显），不让它变成"有时不出现"的谜。 |
+| 跳转失败会把交接单留成一颗雷 | ✅ | **修复前**：`composePostWithRecipe` 的 `fail` 只 reject、不撕单——下次用户自己点开社区 tab 时，会凭空弹出发帖层，还带着一道他早就不记得的菜。<br>**修复后**：`fail` 里先 `clearPending()` 再 reject（`utils/post-share.js` 的 `clearPending` 同时服务"取用"与"失败"两条路径）。<br>**怎么钉住**：新增 `miniapp/test/post-share.test.js`（零依赖、手搓最小 `wx` 桩、已挂 `miniapp-ci` 第 3 步），4 组断言覆盖：取一次就撕 / 空脏数据不出事 / 跳成功才留着单子 / 跳失败与写不进 storage 都当场 reject 且不留单。<br>**反向验证**：删掉 `fail` 分支里的 `clearPending()` → 断言当场失败（"跳转失败却留着交接单"）；还原后通过。第一版变异脚本因为少缩进了一个空格而静默没改到文件，是 python 里的 `assert old in s` 把它挡下来的——**验门禁前先证明你真把代码改坏了**。 |
+| 购物清单为空时文案是编的 | ✅ | **修复前**：清单为空永远显示「今晚的菜都在库存里，歇一歇吧」，而 `TodayService#rebuildShoppingList` 只把菜单里各道菜的用料聚合起来、**全程不看冰箱**——"清单为空"不可能等于"菜都在库存里"。点了菜却没录用料的人被指向"歇一歇"，被堵在死路上。<br>**修复后**：按原因分岔（`utils/kitchen.js#shoppingEmptyReason`）——没点菜 → 「今天还没点菜 / 先去菜谱挑几道，买菜清单会跟着长出来 / 去点菜」；点了菜却没清单 → 「还没有要买的 / 今天点的菜还没录用料，去菜谱里补上就能自动生成 / 去菜谱」。统计文案与菜单页菜篮子磁贴副标题（原来也写死"食材已齐"）共用同一处判据。<br>**断言**：`kitchen-logic.test.js` +6 条，含反向判据「清单有 5 样、菜单为空（手加条目）→ 不是空态」与字符串数字（后端 JSON 边界）。 |
+| 没在计时的灶位显示 `--:--` | ✅ | 厨房总控的计时行原来在"没有计时"时也画一个表盘读作 `--:--`，像计时器坏了；而这一行要回答的是「这口灶现在有没有在跑」。改成「未计时」（灰字、小一号、`.k-clock.idle`），有计时才出现表盘。截图：`artifacts/tour-2026-09-20/60-kitchen-idle-timer.png`（红绕肉已上桌 + 番茄炒蛋「未计时」两态同屏）。 |
+| 按菜取帖的读路径（`?recipeId=N`）执行计划 | ✅ | **怎么量**：本地 MySQL 灌 2000 行合成帖（其中 recipe_id=2 / 3 各 37 帖）后 `ANALYZE TABLE` + `EXPLAIN ANALYZE`，跑完 `DELETE` 清干净。<br>**结果**：两段各自 `Index lookup on p using idx_post_recipe (recipe_id=2)`，各扫 37 行 → 过滤审核态 → 排序取 3；外层 derived 只有 5 行，整条 **0.3ms**。**没有**退化成"按 `idx_post_audit` 扫全表找这道菜"。<br>**为什么加一个参数而不是复用 tag 那条 SQL**：信息流那条是 tag 过滤 + 两段 UNION ALL + 外层再排序分页，多塞一个 IN 条件要动它的参数位置；这里单条件直查，`.dot` 与信息流**共用同一个 `COMMUNITY_POST_SELECT` 与 `mapCommunityPost`**，所以菜谱可见性（别人家的私房菜不随帖外泄）不会分叉——`CommunityPostsByRecipeTests` 4 条把这条钉住了（第 4 条读路径）。 |
+| 全量回归 | ✅ | `server-ci` 同款命令（`server/` 下 `./mvnw -B -o test`）：**196 项 / 0 失败**（本轮新增 `CommunityPostsByRecipeTests` 4 条）。`miniapp-ci` 六条步骤全绿：静态检查 29 项 `✔`、dish-logic、kitchen-logic、post-share、交互体检（A 类 0 处）、UI 台账（裸 rpx 3660 → 3686，新增的都是带角色名的 token 引用与注释行）。<br>⚠ 本机没有 node，四道前端门禁是用开发者工具自带的 Electron 当 node 跑的（`ELECTRON_RUN_AS_NODE=1 /Applications/wechatwebdevtools.app/Contents/MacOS/Electron`，v22.16.0），与 CI 的 Node 20 有版本差，**结论以 CI 为准**。 |
+| 证据边界 | ⚠ | ① 深色档仍是**按 token 算对比度**、不是像素级：新增的 `.pf-dish-tag`（`--pop` on `--pop-soft`）浅色 3.41:1 / 深色 5.22:1、`.rd-work-thumb--none`（`--mut-strong` on `--paper-2`）5.23:1、`.rd-work-meta`（`--mut-strong` on `--c-surface`）浅 6.2 / 深 8.55、`.k-clock.idle`（`--mut` on 卡面）4.98——浅色档那个 3.41 是**小号加粗**的"这道菜"标签，与全站 `--pop` on `--pop-soft` 的既有用法同值，没有变差也没有变好。<br>② 相册授权弹窗够不到：`wx.showActionSheet`（计时选时长、收尾评分）与相册都是**原生面板**，`simulator_screenshot` 只截得到 WebView（截图里只剩一层变暗的遮罩），所以这两条动线的"面板本身长什么样"仍属真机项。<br>③ 小屏弹层内滚动没量：模拟器只能给一档尺寸，只能按"弹层内容超过一屏时 `state-sheet` 自己滚"这一条推断，未验证。 |
+
+### 第八轮 R10（2026-09-21）：做菜主线按「手机放一臂外、手上有油」重排 + 配料跟着步子走
+
+> 取向与 R9 同一套：模拟器里检查做菜页导航、步骤和计时显示，**量出来的才修**；本轮未完成原生评分面板到落库的全链路验收；
+> 上线六项（备案域名 / 运营者信息 / 短信网关 / 生产库迁移 / 真机三项）继续推迟，本轮不碰。
+> 本轮起点是 owner 的一句"看做菜的操作"——于是把做菜模式的三个元素放进同一个判据里比：
+> **哪些东西必须始终在屏内**（主按钮、倒计时）、**哪些只是"这一步的事"**（这一步要下的料）。
+
+| 项 | 结果 | 证据：怎么量的 / 修复前测到什么 / 修复后测到什么 |
+| --- | --- | --- |
+| 做菜模式主按钮（下一步 / 完成·记一笔）被顶到折线以下 | ✅ | **怎么量**：`wx.createSelectorQuery().boundingClientRect()` 取 `.cook / .body / .footer / .btn.next` 在 390×844 视口里的真实矩形。<br>**修复前**：`.cook` 高 **911**（= 顶栏 100 + 进度段 23 + 步骤图 257+15 + 正文区 405 + 页脚 112）、`.footer` 底边 **y=911**、「下一步」底边 **y=863**，全部在窗口 844 之外；页面 `scrollHeight` 911 → 整页可滚，主按钮**只有顶部 34px 露在屏内**，做菜时得先把页面滚一下才点得到（小屏更糟：固定部分就有 505px，屏越矮露得越少）。<br>**根因**：根节点 `min-height: 100vh` → 容器高度由内容决定，`.body/.stepwrap` 的 `flex: 1` 在自动高度容器里拿不到收缩目标。<br>**修复后**（`height: 100vh`）：`.cook` 844、`.footer` 底边 **844**、「下一步」底边 **796**（安全区底 810 之上，不再压住 Home 指示条）、`scrollHeight` **844**（不再整页滚）、正文区自己滚 338px。截图：`artifacts/audit-2026-09-21/22-cookmode-step5-fixed.png`（修复后）、`05-cookmode-step5.png`（修复前，页脚只剩一截）。<br>**404 失败态实测**：`id=999999` 仍居中（`27-cookmode-error.png`）；无步骤空态没有实测。 |
+| 每一步都摆出整份配料，却不告诉你这一步要用哪几样 | ✅ | **修复前**：红烧肉 5 步 × 7 样料，chips 在每一步长得一模一样；第 4 步「加料酒、生抽、老抽、八角、桂皮」得自己在整排里挑。<br>**怎么修**：`utils/dish-logic.js` 新增纯函数 `ingredientsInStep(stepText, names)`——步骤正文里点到名的料高亮（描边+底色+圆点点亮），其余压暗；**长名优先**（「冰糖」命中时不再把「糖」也算上），**一步都没命中就整排保持中性**，任何配料都不隐藏（备菜时还得能勾）。<br>**实测**：第 4 步 `[生抽,老抽,料酒,八角,桂皮] = on`、`[五花肉,冰糖] = dim`（`25-ing-highlight-step4.png`）；第 5 步「大火收汁」`hasStepHit=false` → 全中性（`22-…`）。<br>**断言**：`dish-logic.test.js` +6 组（含"短名被长名包含时丢弃""带空格也算命中""没有命中就返回空数组，不许退化成全都算"）。 |
+| 计时跑起来后，剩余时间只在滚动区里的计时卡上 | ✅ | **怎么发现**：把页脚修回屏内后，正文区自己滚——45 分钟的炖煮步骤里，计时卡会被滚出可视区，而论断"手上有油、手机放一臂外"时最需要一直看得见的就是它。<br>**怎么修**：顶栏那枚「计时」胶囊在计时运行时显示本步剩余时间（实测 `41:58`，`26-topbar-timer.png`），暂停/未开始仍是「计时」两个字；不改布局、不动计时槽逻辑。 |
+| 菜谱详情首帧把 `undefined` 传给 nav-bar | ✅ | **怎么发现**：`get_simulator_console --command "grep -i warn"` 里只有这一条，反复出现：`property "statusBarHeight" of "components/nav-bar/index" received type-uncompatible value: expected <Number> but got non-number value`。<br>**根因**：`recipe-detail/index.wxml` 三处 `status-bar-height="{{statusBarHeight}}"`，而 `data` 里没声明这个字段（骨架屏在 onLoad 之前就渲染），首帧传 `undefined`，顶栏高度只能等组件 `attached` 回填、跳一帧。<br>**修复后**：`grep -i warn` **0 条命中**（原来 2 条）。<br>**怎么钉住**：`static-check` 第 31 项——WXML 绑的 `status-bar-height` 字段必须在同目录 `index.js` 的 `data` 块里声明过。**反向验证**：删掉那行默认值 → 门禁报 `nav-bar 高度字段没声明 pkg-extra/recipe-detail/index.js`；还原即绿。 |
+| 全量回归 | ✅ | `server-ci` 同款命令（`server/` 下 `./mvnw -B -o test`）：**196 项 / 0 失败 / 0 错误，BUILD SUCCESS**（本轮没动后端，跑它是为了排除"改了前端顺手带坏别的"）。`miniapp-ci` 六条步骤全绿：静态检查 **31 项** `✔`、dish-logic（+6 断言）、kitchen-logic、post-share、交互体检（A 类 0 处）、UI 台账（裸 rpx 3660 → 3687，本轮 +1 来自新加的 `.ing.on` 描边）。本机 node v22.16.0，与 CI 的 Node 20 有版本差，**结论以 CI 为准**。 |
+| 证据边界 | ⚠ | ① `wx.showActionSheet`（计时选时长、做菜收尾评分）与相册都是**原生面板**，`simulator_screenshot` 只截得到 WebView：本轮又一次确认（点「计时」胶囊后截图只剩页面本身，data 却已按选择结果变化），所以"面板本身长什么样"仍属真机项。<br>② 小屏（375×667 档）**没有实测**，模拟器只给一档尺寸；上面的结论可以推出"固定部分 505px 在 667 高的屏上会占掉 76%"，但 `.stepimg` 是否该按屏高再收一档，等真机。<br>③ 深色档这一轮**没重新取证**（`simulator_refresh` 不重读 `theme.json`，老问题）；新增的 `.ing.on` 用的是恒定暗底页的 `--cook-*`/品牌红常量，不随主题翻转。 |
+
+### 回报复核（2026-09-21）：按当前代码筛选审计与开源建议
+
+完成通知中的报告早于部分现有修复；以下以当前工作区为准，本次未改后端或生产库。
+
+- **已存在的后端修复**：`reviewCommunityReport` 忽略举报时保留原审核态；`myFavoritePosts`、
+  `communityComments` 已过滤帖子的可见性；`AdminService` 的删除/恢复/审核评论路径已重算公开评论数。
+  `TodayService` 各写入口先取家庭行锁，再读菜单和重建清单，因此报告中的旧并发交错不直接适用于当前路径。
+  本次没有为旧报告再加 `FOR SHARE`、唯一键或迁移；现有并发回归见 `MenuWriteRaceTests`。
+- **本次追加做菜收尾修复**：`onFinish` 复用 `runGuarded`，锁从评分面板持续到请求结束；
+  保存成功后才清续做/计时、回写上桌并 `redirectTo` 到记录页。跳转失败只允许查看记录，不重复提交；
+  保存未确认时留在本页保留进度，提示先查看记录；菜单回写失败与记录保存失败分开提示。
+  `cook-finish.test.js` 直接执行真实 Page 方法，用 wx/API 替身覆盖评分面板连点、在途请求连点、保存失败、
+  取消/不评分、导航失败及菜单回写失败，已挂入 `miniapp-ci`。**尚无服务端幂等键**：成功回包丢失、跨页面或跨设备重复提交仍需后续处理。
+- **本次验证**：前端七条脚本全过（静态 31 项，289 文件/78 JS，交互阻断 0），没有重新跑后端。
+  模拟器仅注入 `finishing`/`finished` 验证新按钮文案，未调用真实保存：
+  `artifacts/audit-2026-09-21/30-cook-finishing-ui-only.png`、`31-cook-finished-ui-only.png`。
+  390×844 下按钮 219×52、底边 y=796，安全区底 810；文字完整。注入状态已恢复、已回首页。
+  **这些截图不是评分面板或服务端扣库存的端到端证据**；原生评分与真机三项仍未验。
+
+开源资料复核后，保留能对应到本项目的结论：
+
+- [KitchenOwl 做菜页源码](https://github.com/TomBursch/kitchenowl/blob/main/kitchenowl/lib/pages/recipe_cooking_page.dart)
+  确认单步视图、常亮、字号调节、当前步食材突出显示；
+  [Mealie 官方 FAQ](https://docs.mealie.io/documentation/getting-started/faq) 说明步骤关联食材。
+  本项目已有单步/大字/常亮，R10 已补配料高亮，但仍是文本提示，不等同于结构化关联。
+- [Mealie v2.5.0 发布说明](https://github.com/mealie-recipes/mealie/releases/tag/v2.5.0)
+  明确因仅屏幕亮且前台时工作而移除计时器。本项目可按时间戳恢复剩余时间，但这**不代表后台能准时响铃**；
+  做菜页与厨房总控各存一份计时也仍是实际缺口，不能简单取一个槽就宣称多步骤计时已互通。
+- 调研列出的“缺少步骤保存、购物分类、备注、单位分开”需纠正：`cook_progress_*` 已存步骤，
+  买菜页 `groupItems` 已按分类展示，`CookHistoryItem.remark` 与记录页已支持备注，
+  自动清单已按“名称+单位”分组（同单位数字累加、不同单位分行）。**缺的是配料勾选持久化、单位换算、
+  份量贯穿菜单/清单/库存扣减、需求减库存减已购的差额计算**，不是这些基础能力全没做。
+
+确认仍在、未在本次顺带改动的代码待办（不能宣称只剩部署操作）：
+
+1. 菜谱详情、菜单/买菜提示与服务端的食材匹配口径不同；需区分“建议可替代”与可实际扣减库存。
+2. 买菜页“家里已有”缺失败/重试态；收藏页缺返回刷新、仍用无关本地图填无图帖子。
+3. 两页计时未互通；菜谱详情记录/评价成功提示未说明库存扣减；本页防重尚不能替代服务端幂等。
+4. 首页与菜谱/收藏全量读取仍需联动服务端搜索分页及前端加载改造，不能直接加 LIMIT 导致搜索漏菜。
+
 ## 3b. 后端 / 数据库上线前审计（2026-09-19 三轮，逐条实测过才写）
+
 
 方法：全量读 13 个 controller + 18 个 service/config + `schema.sql` + 两份 profile + compose/Dockerfile/nginx 样例，
 再用本地 MySQL 的 `EXPLAIN` / `information_schema` 复核。**结论里凡是「实测」二字都对应一条可重跑的查询**。
@@ -524,6 +637,20 @@ dev 库行数极少（cook_history 26 行、community_post 3 行），所以 `ro
 > 并在点「获取验证码」后直接显示在登录页上。不配置的话该接口返回 503 并提示去开这个开关——
 > 因为短信网关是 noop，码根本发不出去。
 
+> 💡 **本地怎么一路登进 `/admin`**（2026-09-23 在全新库上实测通过；只需环境变量，不需要手敲 SQL）：
+> ```bash
+> APP_SEED_DEMO_DATA=true AUTH_DEV_OTP_ENABLED=true \
+> ADMIN_BOOTSTRAP_TOKEN=local-dev-bootstrap ADMIN_BOOTSTRAP_PHONE=13800138000 \
+> SERVER_PORT=18082 DB_NAME=<本地库> SMS_PROVIDER=noop java -jar target/*.jar
+> ```
+> 然后打开 `http://127.0.0.1:18082/admin/`，两条路任选：
+> ① 手机号 `13800138000` + 验证码 `246810`（dev 回显）；② 引导令牌 `local-dev-bootstrap`。
+> 演示种子会把 `13800138000` 这个账号（`id=1`，公共菜谱库的持有账号）一并提为管理员
+> —— 没有这一步，两条路都会以 403「该账号不是管理员」收场，因为库里的手机号账号默认不是管理员。
+> 该提权写在 `data-demo.sql` 里，只在 `app.seed-demo-data=true` 时执行，
+> 而 prod profile 下该开关由 `StartupSafetyGuard` 启动即失败，**生产不可能走到这里**。
+> 反过来，`app.seed-demo-data=false` 的干净库要进后台，仍必须走上面第 1~4 步（`ADMIN_OPENIDS` 白名单）。
+
 > ⚠️ **前置依赖：短信网关**。后台登录与手机号绑定都走验证码，
 > 而当前短信实现是 `NoopSmsGateway`（只打 WARN，不真发短信）。
 > 也就是说：**没接真实短信供应商之前，谁也绑不了手机号、进而谁也登不进 `/admin`**。
@@ -583,6 +710,43 @@ dev 库行数极少（cook_history 26 行、community_post 3 行），所以 `ro
   后台权限由 `is_admin` + `admin_role` 共同决定（角色为空视为 SUPER）。如需强隔离，后续要加独立的管理员会话类型。
 - 生产**严禁**设置 `AUTH_DEV_OTP_ENABLED=true`（固定验证码）和 `WECHAT_PAY_MOCK_ENABLED=true`（免付款开通）。
   这两个开关现在已在 `application-prod.yml` 里硬钉为 false，环境变量覆盖不了。
+
+### 6.4 账号注销与数据删除（当前是人工通道，不是自助）
+
+**现状（2026-09-23 核查）**：代码里**没有**自助注销端点，小程序里也**没有**注销入口；
+只有 `pkg-extra/legal/privacy` 的隐私说明里写着「账号注销后将在 15 个工作日内删除或匿名化」。
+也就是说这句承诺目前没有可执行的通道——这是提审前要处理的合规缺口（见 §8 的待拍板项）。
+
+在上线前要么补自助注销，要么至少让用户能发起申请。**在补齐之前的临时人工通道**如下
+（2026-09-23 在本地库实测 12 项全过，脚本与输出见
+`artifacts/launch-2026-09-23/backend/06-account-purge.log`、`purge-probe-387f91.py`）：
+
+1. **备份**：`mysqldump -u<user> -p --single-transaction <库> > backup-$(date +%F-%H%M).sql`
+2. **确认目标账号**（务必先看清楚是哪一行，本操作不可逆）：
+   `SELECT id, openid, nickname, phone_number, status FROM user_account WHERE phone_number = '<申请注销的手机号>';`
+3. **执行匿名化**（把 `<uid>` 换成上一步的 id）。选匿名化而不是 `DELETE`，是为了不动
+   `payment_order` / 审计日志 / 家庭会员的外键——删行会让「已注销用户是家庭年卡付款人」这类引用断掉：
+   ```sql
+   START TRANSACTION;
+   DELETE FROM user_session WHERE user_id = <uid>;
+   UPDATE user_account
+      SET openid = CONCAT('guest-deleted-', id),   -- 唯一且不可登录：guest- 前缀不是真 openid，设备哈希也撞不上
+          unionid = NULL, nickname = '已注销用户', avatar_url = NULL,
+          phone_number = NULL, session_key = NULL,
+          gender = NULL, birthday = NULL, taste_tags_json = NULL,
+          is_admin = 0, admin_role = NULL,
+          status = 'BANNED'                        -- 复用封禁态断掉登录，不需要改任何代码
+    WHERE id = <uid>;
+   COMMIT;
+   ```
+4. **校验**：旧 token 再请求应得 401；`SELECT nickname, phone_number, status FROM user_account WHERE id=<uid>;`
+   应显示「已注销用户 / NULL / BANNED」；该用户历史帖子仍在（作者显示为已注销用户）。
+5. **回滚**：本操作只改 `user_account` 一行 + 删会话行，用第 1 步的备份还原该行即可
+   （`user_session` 不必还原，重登会重新签发）。**注意**：注销后同一台设备再次登录会拿到一个**全新账号**，
+   旧数据不会回来——这正是预期行为，但也意味着"误注销"必须靠备份救。
+6. **没覆盖到的**（需要拍板，别当成已解决）：① 用户作为家庭 owner 时的所有权转移；
+   ② 社区的帖子/评论正文是否也要删除（当前只匿名作者，正文保留）；
+   ③ 财务记录的法定保留期（订单目前一并保留）。
 
 ---
 
@@ -645,7 +809,10 @@ java -Duser.timezone=Asia/Shanghai -jar target/family-menu-daily-server-0.1.0-SN
   - 新库：`sql/create-database.sql` + `src/main/resources/schema.sql`（后者可重复执行）
   - 旧库补列：`sql/migrate-legacy.sql`（一次性，列已存在会报错，可加 `--force`）
   - 旧库补索引：`sql/migrate-import-source-index.sql`（一次性；`import_source` 建表时漏了审核队列索引，
-    后台「导入审核」列表会随数据增长退化成全表扫。重复执行报 Duplicate key name，可加 `--force`）
+    后台「导入审核」列表会随数据增长退化成全表扫。**重复执行安全**——2026-09-23 改为
+    `information_schema` + `PREPARE` 判断，与下面做菜记录那份同一套写法；此前直接 `ADD KEY`，
+    第二次执行会报 1061 Duplicate key name，只能靠 `--force` 兜底，而 `--force` 会把
+    「库名写错/权限不足」这类真错误一起吞掉，已不再需要也不建议再加）
   - 旧库升级信息流索引：`sql/migrate-post-feed-index.sql`（2026-09-19 新增；
     社区 feed 按 `like_count DESC, id DESC` 排序，旧索引只到 `like_count`，第二排序键不在索引里。
     脚本是「先 DROP 再 ADD」，**重复执行安全**（第二次只是重建），大表请低峰期跑。
@@ -670,6 +837,46 @@ java -Duser.timezone=Asia/Shanghai -jar target/family-menu-daily-server-0.1.0-SN
     （本地开发库跑完实测，脚本用 `information_schema` + `PREPARE` 判断，**重复执行安全**——
     MySQL 8.4 不支持 `DROP INDEX IF EXISTS`，实测 ERROR 1064，所以没沿用上面那份「先删后建」写法）。
     已钉成 `LaunchHardeningTests.cookHistoryHasFamilyLeadingIndexes`（同时校验 schema.sql 文本与库里的真实列序）。
+- **三条索引迁移的执行手册**（备份 → 执行 → 校验 → 回滚）。2026-09-23 在本地库
+  `fm_migrate_check` 上逐条实测过：把索引退回迁移前的旧形状后各跑两遍，三条都 `rc=0`、幂等，
+  EXPLAIN 均不再出现 `type=ALL` / `Using filesort`（命令与输出见
+  `artifacts/launch-2026-09-23/backend/03-migrations.log`，可重跑脚本
+  `artifacts/launch-2026-09-23/backend/verify-migrations.sh`）。
+  1. **备份**（索引变更本身不动数据，但回滚要靠它兜底；大表上 DDL 中断也可能留下临时表）：
+     `mysqldump -u<user> -p --single-transaction --routines --triggers <prod_db> > backup-$(date +%F-%H%M).sql`
+  2. **执行**（三条互相独立，可分开跑；全程不写业务数据）：
+     ```
+     mysql -u<user> -p <prod_db> < server/sql/migrate-import-source-index.sql
+     mysql -u<user> -p <prod_db> < server/sql/migrate-post-feed-index.sql
+     mysql -u<user> -p <prod_db> < server/sql/migrate-cook-history-family-index.sql
+     ```
+     `migrate-post-feed-index.sql` 含一次 DROP + ADD，是唯一会短暂改结构的；三条都请低峰期执行。
+     只要退出码是 0 就算成功——脚本末尾自带 `EXPLAIN` 自检，输出里有行是正常的。
+  3. **校验**（期望看到 4 条索引，列序如下）：
+     ```sql
+     SELECT table_name, index_name, GROUP_CONCAT(column_name ORDER BY seq_in_index) cols
+     FROM information_schema.statistics
+     WHERE table_schema = DATABASE() AND index_name IN
+       ('idx_import_source_audit','idx_post_audit','idx_cook_history_family','idx_cook_history_family_recipe')
+     GROUP BY table_name, index_name;
+     -- 期望：community_post/idx_post_audit=audit_status,like_count,id
+     --       cook_history/idx_cook_history_family=family_id,cooked_at
+     --       cook_history/idx_cook_history_family_recipe=family_id,recipe_id
+     --       import_source/idx_import_source_audit=audit_status,id
+     ```
+     再跑一遍最重的那条查询确认不再全表扫：
+     `EXPLAIN SELECT id FROM cook_history WHERE family_id=1 ORDER BY cooked_at DESC LIMIT 50;` → `type=ref`，
+     `Extra` 里应是 `Using index`（不应出现 `Using filesort`）。
+  4. **回滚**（只在索引导致计划变差/写入变慢时才需要；索引本身不改变任何数据）：
+     ```sql
+     ALTER TABLE cook_history DROP INDEX idx_cook_history_family, DROP INDEX idx_cook_history_family_recipe;
+     ALTER TABLE import_source DROP INDEX idx_import_source_audit;
+     ALTER TABLE community_post DROP INDEX idx_post_audit;
+     ALTER TABLE community_post ADD INDEX idx_post_audit (audit_status, like_count);   -- 还原成迁移前的旧形状
+     ```
+     回滚后应用**不需要重启**（索引是服务端结构，SQL 里没有硬编码索引名）；
+     若已备份且想整体还原，用第 1 步的 dump 导入到空库再切流量。
+  5. 三条都不动 `data.sql` / `schema.sql`，全新库直接由 `schema.sql` 建出同样的索引，**不需要**跑迁移。
 - 老库如需清理历史演示数据（多个重名"周末厨房"、种子账号）：
   `mysql -u<user> -p <库名> < server/sql/cleanup-demo-data.sql`（先备份，脚本只删明确的演示账号）
 - 老库如需清理废弃会员列，手动执行一次：

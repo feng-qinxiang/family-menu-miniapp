@@ -1,0 +1,648 @@
+{
+ "login": {
+  "1280": {
+   "tabsHidden": false,
+   "bootTabHidden": false,
+   "bootPaneHidden": true,
+   "otpPaneHidden": false,
+   "hintHidden": false,
+   "pageOv": 0,
+   "afterClickBoot": {
+    "bootPaneHidden": false,
+    "otpPaneHidden": true,
+    "bootTabClass": "auth-tab on"
+   },
+   "backToOtp": {
+    "bootPaneHidden": true,
+    "otpPaneHidden": false
+   }
+  },
+  "1440": {
+   "tabsHidden": false,
+   "bootTabHidden": false,
+   "bootPaneHidden": true,
+   "otpPaneHidden": false,
+   "hintHidden": false,
+   "pageOv": 0,
+   "afterClickBoot": {
+    "bootPaneHidden": false,
+    "otpPaneHidden": true,
+    "bootTabClass": "auth-tab on"
+   },
+   "backToOtp": {
+    "bootPaneHidden": true,
+    "otpPaneHidden": false
+   }
+  },
+  "1920": {
+   "tabsHidden": false,
+   "bootTabHidden": false,
+   "bootPaneHidden": true,
+   "otpPaneHidden": false,
+   "hintHidden": false,
+   "pageOv": 0,
+   "afterClickBoot": {
+    "bootPaneHidden": false,
+    "otpPaneHidden": true,
+    "bootTabClass": "auth-tab on"
+   },
+   "backToOtp": {
+    "bootPaneHidden": true,
+    "otpPaneHidden": false
+   }
+  }
+ },
+ "widths": {
+  "1280": {
+   "viewport": {
+    "w": 1280,
+    "h": 900
+   },
+   "pages": [
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 0,
+     "rows": 0,
+     "rowH": 0,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "dashboard",
+     "heading": "数据看板"
+    },
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 1,
+     "rows": 6,
+     "rowH": 47,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "posts",
+     "heading": "内容治理"
+    },
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 1,
+     "rows": 2,
+     "rowH": 47,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "comments",
+     "heading": "评论管理"
+    },
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 1,
+     "rows": 0,
+     "rowH": 0,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "reports",
+     "heading": "举报审核"
+    },
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 1,
+     "rows": 1,
+     "rowH": 45,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "imports",
+     "heading": "导入审核"
+    },
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 1,
+     "rows": 20,
+     "rowH": 50,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "users",
+     "heading": "用户管理"
+    },
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 1,
+     "rows": 20,
+     "rowH": 50,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "families",
+     "heading": "家庭与成员"
+    },
+    {
+     "pageOv": 0,
+     "cardOv": 140,
+     "tables": 1,
+     "rows": 21,
+     "rowH": 47,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "menus",
+     "heading": "今日菜单"
+    },
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 1,
+     "rows": 20,
+     "rowH": 47,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "shopping",
+     "heading": "购物清单"
+    },
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 1,
+     "rows": 50,
+     "rowH": 47,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "pantry",
+     "heading": "家庭库存"
+    },
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 1,
+     "rows": 1,
+     "rowH": 50,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "orders",
+     "heading": "订单管理"
+    },
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 1,
+     "rows": 1,
+     "rowH": 47,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "feedback",
+     "heading": "反馈工单"
+    },
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 1,
+     "rows": 18,
+     "rowH": 47,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "recipes",
+     "heading": "菜谱治理"
+    },
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 1,
+     "rows": 0,
+     "rowH": 0,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "audit",
+     "heading": "审计日志"
+    }
+   ],
+   "charts": [
+    {
+     "labels": 5,
+     "minGap": 75,
+     "chartH": 145
+    },
+    {
+     "labels": 5,
+     "minGap": 68,
+     "chartH": 145
+    }
+   ],
+   "sticky": {
+    "pantry": {
+     "scrollY": 900,
+     "thTop": -698,
+     "topbarBottom": 72,
+     "thZ": "2"
+    }
+   },
+   "navMissing": []
+  },
+  "1440": {
+   "viewport": {
+    "w": 1440,
+    "h": 900
+   },
+   "pages": [
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 0,
+     "rows": 0,
+     "rowH": 0,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "dashboard",
+     "heading": "数据看板"
+    },
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 1,
+     "rows": 6,
+     "rowH": 47,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "posts",
+     "heading": "内容治理"
+    },
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 1,
+     "rows": 2,
+     "rowH": 47,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "comments",
+     "heading": "评论管理"
+    },
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 1,
+     "rows": 0,
+     "rowH": 0,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "reports",
+     "heading": "举报审核"
+    },
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 1,
+     "rows": 1,
+     "rowH": 45,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "imports",
+     "heading": "导入审核"
+    },
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 1,
+     "rows": 20,
+     "rowH": 50,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "users",
+     "heading": "用户管理"
+    },
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 1,
+     "rows": 20,
+     "rowH": 50,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "families",
+     "heading": "家庭与成员"
+    },
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 1,
+     "rows": 21,
+     "rowH": 47,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "menus",
+     "heading": "今日菜单"
+    },
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 1,
+     "rows": 20,
+     "rowH": 47,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "shopping",
+     "heading": "购物清单"
+    },
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 1,
+     "rows": 50,
+     "rowH": 47,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "pantry",
+     "heading": "家庭库存"
+    },
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 1,
+     "rows": 1,
+     "rowH": 50,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "orders",
+     "heading": "订单管理"
+    },
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 1,
+     "rows": 1,
+     "rowH": 47,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "feedback",
+     "heading": "反馈工单"
+    },
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 1,
+     "rows": 18,
+     "rowH": 47,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "recipes",
+     "heading": "菜谱治理"
+    },
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 1,
+     "rows": 0,
+     "rowH": 0,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "audit",
+     "heading": "审计日志"
+    }
+   ],
+   "charts": [
+    {
+     "labels": 5,
+     "minGap": 89,
+     "chartH": 171
+    },
+    {
+     "labels": 5,
+     "minGap": 81,
+     "chartH": 171
+    }
+   ],
+   "sticky": {
+    "pantry": {
+     "scrollY": 900,
+     "thTop": 72,
+     "topbarBottom": 72,
+     "thZ": "2"
+    }
+   },
+   "navMissing": []
+  },
+  "1920": {
+   "viewport": {
+    "w": 1920,
+    "h": 900
+   },
+   "pages": [
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 0,
+     "rows": 0,
+     "rowH": 0,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "dashboard",
+     "heading": "数据看板"
+    },
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 1,
+     "rows": 6,
+     "rowH": 47,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "posts",
+     "heading": "内容治理"
+    },
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 1,
+     "rows": 2,
+     "rowH": 47,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "comments",
+     "heading": "评论管理"
+    },
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 1,
+     "rows": 0,
+     "rowH": 0,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "reports",
+     "heading": "举报审核"
+    },
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 1,
+     "rows": 1,
+     "rowH": 45,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "imports",
+     "heading": "导入审核"
+    },
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 1,
+     "rows": 20,
+     "rowH": 50,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "users",
+     "heading": "用户管理"
+    },
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 1,
+     "rows": 20,
+     "rowH": 50,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "families",
+     "heading": "家庭与成员"
+    },
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 1,
+     "rows": 21,
+     "rowH": 47,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "menus",
+     "heading": "今日菜单"
+    },
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 1,
+     "rows": 20,
+     "rowH": 47,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "shopping",
+     "heading": "购物清单"
+    },
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 1,
+     "rows": 50,
+     "rowH": 47,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "pantry",
+     "heading": "家庭库存"
+    },
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 1,
+     "rows": 1,
+     "rowH": 50,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "orders",
+     "heading": "订单管理"
+    },
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 1,
+     "rows": 1,
+     "rowH": 47,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "feedback",
+     "heading": "反馈工单"
+    },
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 1,
+     "rows": 18,
+     "rowH": 47,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "recipes",
+     "heading": "菜谱治理"
+    },
+    {
+     "pageOv": 0,
+     "cardOv": 0,
+     "tables": 1,
+     "rows": 0,
+     "rowH": 0,
+     "clampNoTitle": 0,
+     "wrapped": 0,
+     "titleDup": 1,
+     "tab": "audit",
+     "heading": "审计日志"
+    }
+   ],
+   "charts": [
+    {
+     "labels": 5,
+     "minGap": 114,
+     "chartH": 220
+    },
+    {
+     "labels": 5,
+     "minGap": 104,
+     "chartH": 220
+    }
+   ],
+   "sticky": {
+    "pantry": {
+     "scrollY": 900,
+     "thTop": 72,
+     "topbarBottom": 72,
+     "thZ": "2"
+    }
+   },
+   "navMissing": []
+  }
+ }
+}

@@ -817,7 +817,12 @@ public class AdminService {
     @Transactional
     public void grantVip(long actorUserId, long targetUserId, String planCode, Integer durationDays) {
         PlanCatalog.Plan plan = PlanCatalog.requireCodeOrDisplayName(planCode);
-        int days = durationDays == null || durationDays <= 0 ? plan.durationDays() : durationDays;
+        // 负数是操作员手滑（少写一位、粘错符号），原样落到「按套餐默认天数」等于免费送一整个周期。
+        // 只有 null/0 才代表「没填，用套餐默认」；负数一律 400，别猜用户想要什么。
+        if (durationDays != null && durationDays < 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "开通天数不能为负数");
+        }
+        int days = durationDays == null || durationDays == 0 ? plan.durationDays() : durationDays;
         membershipService.grant(targetUserId, plan.code(), days);
         log.info("admin grant vip: actor={} target={} plan={} days={}", actorUserId, targetUserId, plan.code(), days);
     }
@@ -1364,4 +1369,5 @@ public class AdminService {
                 rs.getString("created_at")
         );
     }
+
 }

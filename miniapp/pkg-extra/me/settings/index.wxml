@@ -74,7 +74,7 @@
         data-key="{{item.key}}"
         bindtap="onAboutTap"
       >
-        <view class="set-ic"><text class="set-glyph">{{item.icon === 'doc' ? '约' : item.icon === 'shield' ? '隐' : item.icon === 'info' ? '关' : '馈'}}</text></view>
+        <view class="set-ic"><text class="set-glyph">{{item.icon === 'doc' ? '约' : item.icon === 'shield' ? '隐' : item.icon === 'del' ? '销' : item.icon === 'info' ? '关' : '馈'}}</text></view>
         <view class="set-mid"><view class="set-name">{{item.name}}</view></view>
         <text wx:if="{{item.value}}" class="set-val">{{item.value}}</text>
         <view class="set-chev"></view>

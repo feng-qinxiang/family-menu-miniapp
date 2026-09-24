@@ -16,10 +16,41 @@ VALUES
 ('seed-mao', '猫猫', '');
 
 -- Community posts
+-- 计数一律不许手写数字：like_count/comment_count 只有背书行（下面的 INSERT）才算数。
+-- 点赞 toggle 是「从行重算」（MysqlKitchenStore#syncCommunityLikeCount，防并发漂移），
+-- 手写的 128 没有对应点赞行，第一次真实点赞就会当场塌成 1，feed 排序和卡片数字对不上。
 INSERT IGNORE INTO community_post (id, recipe_id, author_user_id, title, content, like_count, comment_count, tags_json, audit_status)
 VALUES
-(1, 6, 1, '分享我的麻婆豆腐做法', '用嫩豆腐口感更好，关键是最后勾芡要薄，让汤汁裹住豆腐。花椒粉一定要最后撒，香气才足。', 12, 3, '["川菜","下饭","辣"]', 'APPROVED'),
-(2, 8, 1, '糖醋排骨的秘诀', '排骨先炸后炒是关键，糖醋汁比例 2:3:4（糖:醋:水），最后大火收汁挂上亮油。', 8, 1, '["粤菜","宴客","酸甜"]', 'APPROVED');
+(1, 6, 1, '分享我的麻婆豆腐做法', '用嫩豆腐口感更好，关键是最后勾芡要薄，让汤汁裹住豆腐。花椒粉一定要最后撒，香气才足。', 0, 0, '["川菜","下饭","辣"]', 'APPROVED'),
+(2, 8, 1, '糖醋排骨的秘诀', '排骨先炸后炒是关键，糖醋汁比例 2:3:4（糖:醋:水），最后大火收汁挂上亮油。', 0, 0, '["粤菜","宴客","酸甜"]', 'APPROVED');
+
+-- 点赞与评论落真实行（种子账号来点互动），计数从行数派生，和运行时同一口径
+INSERT IGNORE INTO community_post_like (post_id, user_id)
+SELECT p.id, u.id
+FROM community_post p
+JOIN user_account u ON u.openid IN ('seed-aunt-ning', 'seed-zhou', 'seed-mao')
+WHERE p.id IN (1, 2) AND p.author_user_id <> u.id;
+
+-- 评论表没有 (post_id, user_id) 唯一键（同一人可以对同一帖评多条），
+-- 幂等靠 NOT EXISTS 按内容判重，否则 SeedRunner 每次重启都会把评论翻一倍。
+INSERT INTO community_post_comment (post_id, user_id, content, audit_status)
+SELECT p.id, u.id, c.content, 'APPROVED'
+FROM community_post p
+JOIN (
+    SELECT 1 AS post_id, 'seed-aunt-ning' AS openid, '收藏了，周末就按这个做，孩子特别爱吃。' AS content
+    UNION ALL SELECT 1, 'seed-mao', '最后撒花椒那步学到了，之前一直先撒，香气味儿都炒没了。'
+    UNION ALL SELECT 2, 'seed-zhou', '收汁那个亮油的状态照着做了一次，真的挂得住。'
+) c ON c.post_id = p.id
+JOIN user_account u ON u.openid = c.openid
+WHERE NOT EXISTS (
+    SELECT 1 FROM community_post_comment x
+    WHERE x.post_id = p.id AND x.user_id = u.id AND x.content = c.content
+);
+
+UPDATE community_post p
+SET p.like_count = (SELECT COUNT(*) FROM community_post_like l WHERE l.post_id = p.id),
+    p.comment_count = (SELECT COUNT(*) FROM community_post_comment c WHERE c.post_id = p.id AND c.deleted = 0 AND c.audit_status = 'APPROVED')
+WHERE p.id IN (1, 2);
 
 UPDATE community_post
 SET title = '我把西兰花步骤改顺手了',
@@ -44,6 +75,12 @@ WHERE p.title = '我把西兰花步骤改顺手了';
 
 -- Demo expansion: richer data for linkage and presentation
 UPDATE user_account SET phone_number = '13800138000', current_family_id = 1 WHERE id = 1;
+-- 本地联调专用：让上面这个持有演示手机号的账号成为管理员。
+-- 否则「AUTH_DEV_OTP_ENABLED=true 用 13800138000 登录 /admin」会在校验完验证码后被
+-- 「该账号不是管理员」挡回去（ADMIN_BOOTSTRAP_TOKEN 同样要账号先 is_admin=1），
+-- 本地开发者只能手敲 UPDATE 提权，等于文档里的本地入口跑不通。
+-- 生产绝不会执行本文件：app.seed-demo-data 在 prod profile 下由 StartupSafetyGuard 启动即失败。
+UPDATE user_account SET is_admin = 1 WHERE id = 1;
 UPDATE user_account SET current_family_id = 1 WHERE openid IN ('seed-aunt-ning', 'seed-zhou', 'seed-mao');
 
 -- Demo membership: 平台账号持一份年卡，共享给家庭，演示用未来到期日（见 ADR-0002/0005）

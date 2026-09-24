@@ -26,6 +26,8 @@ Page({
     aboutList: [
       { key: 'agreement', name: '用户协议', icon: 'doc', value: '' },
       { key: 'privacy', name: '隐私政策', icon: 'shield', value: '' },
+      // 注销入口：隐私政策承诺「15 个工作日内删除或匿名化」，这一行是那条承诺的可执行通道
+      { key: 'deletion', name: '注销账号', icon: 'del', value: '' },
       { key: 'about', name: '关于我们', icon: 'info', value: 'v1.0.0' },
       { key: 'feedback', name: '意见反馈', icon: 'msg', value: '' },
     ],
@@ -250,6 +252,7 @@ Page({
     const routes = {
       agreement: '/pkg-extra/legal/terms/index',
       privacy: '/pkg-extra/legal/privacy/index',
+      deletion: '/pkg-extra/legal/deletion/index',
       about: '/pkg-extra/me/about/index',
       feedback: '/pkg-extra/me/feedback/index',
     };

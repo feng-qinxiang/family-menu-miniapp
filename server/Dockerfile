@@ -30,8 +30,9 @@ ENV SPRING_PROFILES_ACTIVE=prod \
 
 EXPOSE 9088
 
-# 健康检查：/api/payment/plans 是公开只读接口，适合做探活
+# 健康检查：/healthz 会真打一次库（SELECT 1），库断了返回 503；
+# 以前探的是 /api/payment/plans（纯内存数据），数据库挂了容器照样显示 healthy。
 HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
-    CMD ["sh", "-c", "wget -qO- http://127.0.0.1:9088/api/payment/plans > /dev/null || exit 1"]
+    CMD ["sh", "-c", "wget -qO- http://127.0.0.1:9088/healthz > /dev/null || exit 1"]
 
 ENTRYPOINT ["java", "-XX:MaxRAMPercentage=75", "-jar", "/app/app.jar"]

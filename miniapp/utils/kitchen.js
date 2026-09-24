@@ -69,6 +69,23 @@ function restoreTimerSlots(saved, stepCount, now) {
   return out;
 }
 
+/**
+ * 买菜清单为空的原因：''（有东西要买/已买齐）| 'no-menu' | 'no-ingredients'。
+ *
+ * 为什么值得单独一个函数：清单原来只有一句空态文案「今晚的菜都在库存里」，
+ * 而那是**编的**——`TodayService#rebuildShoppingList` 只把菜单里各道菜的用料聚合起来，
+ * 全程不看冰箱库存，所以"清单为空"永远不可能是"菜都在库存里"。
+ * 两种原因对应两条完全不同的出路（去点菜 vs 去补用料），糊成一句就把人堵在死路上。
+ *
+ * 'no-ingredients' 是防御分支，不是常见路径：菜谱编辑器与 `CreateRecipeRequest.ingredients`
+ * 的 `@NotEmpty` 都拦住了"零用料菜谱"，所以正常动线走不到它。留着是因为一旦走到
+ * （老数据、直连 API、将来放宽校验），原来的文案会把"没录用料"说成"都买齐了"。
+ */
+function shoppingEmptyReason(menuItemCount, totalCount) {
+  if ((Number(totalCount) || 0) > 0) return '';
+  return (Number(menuItemCount) || 0) > 0 ? 'no-ingredients' : 'no-menu';
+}
+
 // 存储键：进度按菜谱（跟 cook-mode 共用），计时按菜单项（每道菜各自一个灶）
 function progressKey(recipeId) {
   return `cook_progress_${recipeId}`;
@@ -77,4 +94,4 @@ function timerKey(menuItemId) {
   return `kitchen_timer_${menuItemId}`;
 }
 
-module.exports = { fmtClock, buildKitchenOrder, pickMainStove, stepProgressText, secondsLeft, restoreTimerSlots, progressKey, timerKey };
+module.exports = { fmtClock, buildKitchenOrder, pickMainStove, stepProgressText, secondsLeft, restoreTimerSlots, progressKey, timerKey, shoppingEmptyReason };

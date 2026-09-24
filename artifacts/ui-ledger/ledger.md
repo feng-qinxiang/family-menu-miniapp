@@ -24,7 +24,7 @@
 | `pages/recipes` | — | --r-card / --r-chip / --r-md / --r-pill / --r-sheet / --r-sm / --r-xs / 26rpx / 34rpx / 38rpx / 50% | 骨架屏 | state-empty | 111 | 1 | 0 | 0 | — | — |
 | `pages/shopping` | --tile-chip | --r-card / --r-md / --r-pill / --r-sheet / --r-sm / --r-xs / 12rpx / 18rpx / 22rpx / 50% | 骨架屏 | state-empty | 121 | 0 | 0 | 0 | — | — |
 | `pkg-extra/favorites` | --tile-grid | --r-card / --r-md / 12rpx / 50% / 6rpx | 骨架屏 | state-empty | 36 | 0 | 0 | 0 | — | — |
-| `pkg-extra/recipes/search` | — | --r-card / --r-chip / --r-xs / 2rpx / 4rpx / 50% | state-loading | state-empty | 60 | 0 | 0 | 4 | — | — |
+| `pkg-extra/recipes/search` | — | --r-card / --r-chip / --r-pill / --r-xs / 2rpx / 4rpx / 50% | state-loading | state-empty | 70 | 0 | 0 | 4 | — | — |
 | `pkg-extra/weekly-menu` | --tile-row-sm | --r-card / --r-pill / --r-sheet / --r-xs / 25rpx / 28rpx / 4rpx / 50% | state-loading | state-empty | 75 | 0 | 0 | 0 | — | — |
 
 ### 做菜
@@ -32,16 +32,16 @@
 | 页面 | 图块尺寸 | 圆角取值 | 加载态 | 空态 | 裸 rpx | 裸 px | emoji | CSS 图标 | 未声明组件 | 置了没人读的状态位 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | `pkg-extra/cook-log` | --dish-thumb | --r-card / --r-md / --r-pill / --r-sheet / --r-sm / --r-xs / 10rpx / 20rpx / 50% | 骨架屏 | state-empty | 91 | 0 | 0 | 0 | — | — |
-| `pkg-extra/cook-mode` | — | --r-pill / 2rpx / 32rpx / 38rpx / 3rpx / 44rpx / 46rpx / 4rpx / 50% / 6rpx | 手写 spinner | state-empty | 132 | 0 | 0 | 15 | — | — |
-| `pkg-extra/kitchen` | --tile-cover | --r-card / --r-pill / 0 0 14rpx 0 / 14rpx / 50% | 手写 spinner | state-empty | 52 | 0 | 0 | 0 | — | — |
-| `pkg-extra/recipe-detail` | — | --r-chip / --r-md / --r-pill / --r-sheet / --r-sm / --r-xs / 20rpx / 21rpx / 24rpx / 26rpx / 28rpx / 2rpx / 3rpx / 50% | 骨架屏 | state-empty | 163 | 0 | 0 | 5 | — | — |
+| `pkg-extra/cook-mode` | — | --r-pill / 2rpx / 32rpx / 38rpx / 3rpx / 44rpx / 46rpx / 4rpx / 50% / 6rpx | 手写 spinner | state-empty | 133 | 0 | 0 | 15 | — | — |
+| `pkg-extra/kitchen` | --tile-cover | --r-card / --r-pill / 0 0 14rpx 0 / 14rpx / 50% | 手写 spinner | state-empty | 53 | 0 | 0 | 0 | — | — |
+| `pkg-extra/recipe-detail` | --dish-thumb | --r-chip / --r-md / --r-pill / --r-sheet / --r-sm / --r-xs / 20rpx / 21rpx / 24rpx / 26rpx / 28rpx / 2rpx / 3rpx / 50% | 骨架屏 | state-empty | 170 | 0 | 0 | 5 | — | — |
 | `pkg-extra/recipe-edit` | --tile-pick / 48rpx / 88rpx | --r-card / --r-pill / 50% | state-loading | 无 | 93 | 0 | 0 | 0 | — | — |
 
 ### 社区
 
 | 页面 | 图块尺寸 | 圆角取值 | 加载态 | 空态 | 裸 rpx | 裸 px | emoji | CSS 图标 | 未声明组件 | 置了没人读的状态位 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `pages/community` | --ava-row / --tile-row-sm / 132rpx | --r-ava / --r-card / --r-chip / --r-pill / --r-sheet / --r-xs / 0.2em 0.2em 0.2em 0.06em / 12rpx / 20rpx / 22rpx / 26rpx / 28rpx / 4rpx / 50% | 骨架屏 | state-empty | 155 | 0 | 0 | 10 | — | — |
+| `pages/community` | --ava-row / --tile-row-sm / 132rpx | --r-ava / --r-card / --r-chip / --r-pill / --r-sheet / --r-xs / 0.2em 0.2em 0.2em 0.06em / 12rpx / 20rpx / 22rpx / 26rpx / 28rpx / 4rpx / 50% | 骨架屏 | state-empty | 164 | 0 | 0 | 10 | — | — |
 | `pkg-extra/community/post-detail` | --ava-cmt / --ava-head / 138rpx | --r-ava / --r-card / --r-chip / --r-pill / 12rpx / 14rpx / 26rpx / 2rpx / 50% | 骨架屏 | state-empty | 88 | 0 | 0 | 7 | — | — |
 
 ### 冰箱
@@ -62,6 +62,7 @@
 | `pkg-extra/family/join` | --ava-cmt / 116rpx / 46rpx | --r-ava / --r-md / --r-xs / 2rpx / 50% | 无 | state-empty | 90 | 0 | 0 | 0 | — | — |
 | `pkg-extra/family/members` | — | --r-pill / --r-sm / --r-xs / 0 0 7rpx 7rpx / 2rpx / 50% | 无 | state-empty | 82 | 0 | 0 | 0 | — | — |
 | `pkg-extra/import` | --tile-row-sm / 160rpx / 200rpx / 36rpx / 40rpx / 88rpx | --r-card / --r-md / --r-pill / --r-sheet / --r-sm / --r-xs / 18rpx / 20rpx / 22rpx / 26rpx / 28rpx / 50% / 6rpx / 6rpx 6rpx 14rpx 14rpx | 无 | 自绘 | 171 | 0 | 0 | 9 | — | — |
+| `pkg-extra/legal/deletion` | — | — | 无 | 无 | 0 | 0 | 0 | 0 | — | — |
 | `pkg-extra/legal/privacy` | — | --r-pill / --r-sm / 18rpx 18rpx 0 0 / 4rpx / 50% / 6rpx | 无 | 无 | 74 | 0 | 0 | 10 | — | — |
 | `pkg-extra/legal/terms` | — | --r-pill / 2rpx / 50% / 5rpx | 无 | 无 | 44 | 0 | 0 | 0 | — | — |
 | `pkg-extra/me/about` | — | --r-card / --r-md / --r-pill / --r-xs / 26rpx / 50% / 58rpx | 无 | 无 | 73 | 0 | 0 | 1 | — | — |
@@ -90,5 +91,5 @@
 
 ## 已接受的债务（不是待办）
 
-- 全站裸 rpx 共 **3660** 处。本轮**不做 `--sp-*` 全量替换**：现有 spacing token 只有 6 档，而各页众数值（20/28/36rpx 等）压根没有对应 token，全量替换等于在零视觉断言的 CI 下重做 1.3 万行样式——与当初放弃 `--fs-*` 改名同形。**只在某一轮已经要改那个块时顺手用 token**。
+- 全站裸 rpx 共 **3688** 处。本轮**不做 `--sp-*` 全量替换**：现有 spacing token 只有 6 档，而各页众数值（20/28/36rpx 等）压根没有对应 token，全量替换等于在零视觉断言的 CI 下重做 1.3 万行样式——与当初放弃 `--fs-*` 改名同形。**只在某一轮已经要改那个块时顺手用 token**。
 - 裸 px 3 处：px 在小程序里不随屏宽缩放，出现即应逐个确认（不是批量替换对象）。

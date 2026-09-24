@@ -237,7 +237,14 @@ public class PaymentService {
     /** 切换会员共享范围（SELF/FAMILY），仅购买者本人可改。 */
     @Transactional
     public void updateShareScope(long payerUserId, String shareScope) {
-        String scope = "SELF".equalsIgnoreCase(shareScope) ? "SELF" : "FAMILY";
+        // 收紧到白名单：原来「不是 SELF 就按 FAMILY」是 fail-open —— 客户端写错一个值（"NOPE"、
+        // 大小写混写、字段改名后的空串）都会被静默当成「共享给全家」，把会员摊给本不想共享的人。
+        // 现在只有 SELF / FAMILY 两个合法值，其余一律 400。
+        String requested = shareScope == null ? "" : shareScope.trim().toUpperCase(java.util.Locale.ROOT);
+        if (!"SELF".equals(requested) && !"FAMILY".equals(requested)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "共享范围只能是 SELF 或 FAMILY");
+        }
+        String scope = requested;
         int rows = jdbcTemplate.update(
                 "UPDATE user_membership SET share_scope = ?, updated_at = NOW() WHERE payer_user_id = ?",
                 scope, payerUserId
@@ -300,5 +307,6 @@ public class PaymentService {
                 payerUserId
         );
     }
+
 }
 

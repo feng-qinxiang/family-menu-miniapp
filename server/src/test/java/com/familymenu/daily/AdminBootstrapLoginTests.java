@@ -144,4 +144,20 @@ class AdminBootstrapLoginTests {
                 .isEqualTo(401);
         assertThat(bootstrap(TOKEN + "x").getResponse().getStatus()).isEqualTo(401);
     }
+
+    /**
+     * 配了令牌时，登录页必须把「引导令牌」入口渲染出来（配没配由服务端写进 <body>）。
+     * 顺手钉住 /admin/index.html 这条直连地址走的是同一套渲染 —— 否则从这里进来的人
+     * 会在短信网关没接的环境里看到一条死胡同。
+     */
+    @Test
+    void loginPageAdvertisesBootstrapWhenConfigured() throws Exception {
+        for (String path : new String[]{"/admin/", "/admin/index.html"}) {
+            String html = mockMvc.perform(get(path))
+                    .andExpect(status().isOk())
+                    .andReturn().getResponse().getContentAsString();
+            assertThat(html).as(path).contains("data-bootstrap-login=\"true\"");
+            assertThat(html).as(path).doesNotContain("__ADMIN_BOOTSTRAP_AVAILABLE__");
+        }
+    }
 }

@@ -59,7 +59,11 @@ public class AuthInterceptor implements HandlerInterceptor {
             // 社区只读浏览（帖子列表 + 评论列表 + 话题榜）：UGC 已按审核状态过滤，可匿名查看
             "GET /api/community/posts",
             "GET /api/community/posts/",
-            "GET /api/community/topics"
+            "GET /api/community/topics",
+            // 邀请码落地页：用户拿到邀请码时还没有任何会话（也可能会话已过期），
+            // 这一步就是让他先看清"要加入的是谁家"。枚举风险由 RateLimitFilter
+            // 的 20 次/分钟兜住（那条规则本来就是为这个端点写的）。
+            "GET /api/family/join-preview"
     );
 
     private final AuthService authService;

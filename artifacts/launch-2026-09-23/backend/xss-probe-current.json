@@ -1,0 +1,98 @@
+{
+ "seed": {
+  "nickname": 400,
+  "recipe": 200,
+  "post": 200,
+  "comment": 200,
+  "report": 400,
+  "feedback": 200,
+  "pantry": 200,
+  "wish": 200,
+  "family": 400
+ },
+ "pages": {
+  "dashboard": {
+   "xss": 0,
+   "badNodes": 0,
+   "literal": 0
+  },
+  "posts": {
+   "xss": 0,
+   "badNodes": 0,
+   "literal": 1
+  },
+  "comments": {
+   "xss": 0,
+   "badNodes": 0,
+   "literal": 1
+  },
+  "reports": {
+   "xss": 0,
+   "badNodes": 0,
+   "literal": 0
+  },
+  "imports": {
+   "xss": 0,
+   "badNodes": 0,
+   "literal": 0
+  },
+  "users": {
+   "xss": 0,
+   "badNodes": 0,
+   "literal": 0
+  },
+  "families": {
+   "xss": 0,
+   "badNodes": 0,
+   "literal": 0
+  },
+  "menus": {
+   "xss": 0,
+   "badNodes": 0,
+   "literal": 0
+  },
+  "shopping": {
+   "xss": 0,
+   "badNodes": 0,
+   "literal": 0
+  },
+  "pantry": {
+   "xss": 0,
+   "badNodes": 0,
+   "literal": 1
+  },
+  "orders": {
+   "xss": 0,
+   "badNodes": 0,
+   "literal": 0
+  },
+  "feedback": {
+   "xss": 0,
+   "badNodes": 0,
+   "literal": 1
+  },
+  "recipes": {
+   "xss": 0,
+   "badNodes": 0,
+   "literal": 1
+  },
+  "audit": {
+   "xss": 0,
+   "badNodes": 0,
+   "literal": 0
+  },
+  "posts#detail": {
+   "xss": 0,
+   "badNodes": 0,
+   "literal": 1
+  },
+  "recipes#detail": {
+   "xss": 0,
+   "badNodes": 0,
+   "literal": 1
+  }
+ },
+ "verdict": "PASS",
+ "executed_in": [],
+ "exceptions": []
+}
