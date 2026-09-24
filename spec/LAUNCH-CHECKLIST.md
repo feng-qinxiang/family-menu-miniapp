@@ -100,7 +100,10 @@
 >    模拟器都给不了证据：相册是原生面板够不到；`simulator_refresh` 不重读 `theme.json` 所以深色只能算对比度；
 >    小屏只能靠真机手感。**这三条别用模拟器结论冒充已验**。
 > 6. **两条本轮新留的收尾**：① 登录状态下打开一次 `…/issues/new/choose`，确认「问题反馈 / 功能建议」
->    两个模板显示出来（匿名访问会 302 到登录页、`community/health` 接口 404，本机无法机器确认）；
+>    两个模板显示出来（匿名访问会 302 到登录页）。2026-09-25 补充机检结论：`community/profile`
+>    API 已恢复可访问，但它对**含 YAML 表单模板的仓库一律报 `issue_template: null`**
+>    （microsoft/vscode 同样报 null——端点只认老式 `ISSUE_TEMPLATE.md`，别当成模板没挂上）；
+>    三个模板文件确认在远端、schema 复核无误，最后只差登录浏览器看一眼选择页，10 秒的事；
 >    ② `GET /api/recipes`、`/api/recipes/filter`、`/api/me/favorites` 三个列表**没有 LIMIT**，
 >    但前端「菜谱」页拿整份列表做本地搜索/筛选，加 LIMIT 会改坏功能——要连着前端分页一起改，属功能改动。
 >
