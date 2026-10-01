@@ -94,6 +94,7 @@ Page({
     familyName: '',
     dateText: '',
     members: [],
+    waiting: 0,
     slots: [],
     currentSlot: 'dinner',
     ask: '晚饭吃什么',
@@ -158,10 +159,10 @@ Page({
       const family = res[2] || {};
       this._me = (res[3] && res[3].nickname) || '我';
       this._toneMap = {};
-      const members = (family.members || []).slice(0, 5).map((m, i) => {
+      this._members = (family.members || []).slice(0, 6).map((m, i) => {
         const name = m.nickname || '家人';
         this._toneMap[name] = 'tone-' + (i % TONES);
-        return { key: String(m.userId || i), initial: name.slice(0, 1), tone: this._toneMap[name] };
+        return { key: String(m.userId || i), name, initial: name.slice(0, 1), tone: this._toneMap[name] };
       });
       this._menu = (res[1] && Array.isArray(res[1].items) ? res[1].items : []).map((it) => {
         const r = it.recipe || { id: it.recipeId };
@@ -185,7 +186,6 @@ Page({
         loading: false,
         loaded: true,
         familyName: family.familyName || '我的家',
-        members,
         often: recipes.filter((r) => r.cookCount > 0).sort((a, b) => b.cookCount - a.cookCount).slice(0, OFTEN_SIZE)
       });
       this.applySlot();
@@ -200,8 +200,10 @@ Page({
 
   toOrder(o) {
     const st = STATUS[o.status] || STATUS.todo;
+    const mine = !!o.who && o.who === this._me;
     return Object.assign({}, o, {
-      initial: (o.who || '?').slice(0, 1),
+      whoText: o.who ? (mine ? '我点的' : o.who + '点的') : '',
+      initial: mine ? '我' : (o.who || '?').slice(0, 1),
       tone: toneOf(o.who, this._toneMap || {}),
       level: levelOf(o.timeCost),
       statusText: st.text,
@@ -215,8 +217,20 @@ Page({
     const slot = this.data.currentSlot;
     const orders = filterBySlot(menu, slot);
     const picked = {};
-    orders.forEach((o) => { picked[String(o.recipeId)] = true; });
+    const whoSet = {};
+    orders.forEach((o) => {
+      picked[String(o.recipeId)] = true;
+      if (o.who) whoSet[o.who] = true;
+    });
+    // 家人进度：谁已经点了这顿（头像亮 + 勾），还差几个人
+    // 自己的头像和单子里一样显示「我」，不然同一个人两处写法不一致
+    const members = (this._members || []).map((m) => Object.assign({}, m, {
+      initial: m.name === this._me ? '我' : m.initial,
+      ordered: !!whoSet[m.name]
+    }));
     this.setData({
+      members,
+      waiting: members.filter((m) => !m.ordered).length,
       ask: MEAL[slot].ask,
       mealLabel: MEAL[slot].label,
       slots: SLOTS.map((s) => ({ key: s.key, label: MEAL[s.key].label, count: filterBySlot(menu, s.key).length })),

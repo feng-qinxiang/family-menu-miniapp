@@ -1,8 +1,9 @@
 /* ============================================================
    首页风格预览 · 方案 E「家庭点菜单」
+   一屏一张主卡：这顿的点菜单（家人进度 + 已点 + 做菜顺序 + 开始做菜），
+   下面是两列新手菜，点「+」直接进单子。不再有悬浮底栏（正式版有 tabbar，会叠两层）。
    尺寸沿用 TDesign 规格（间距 16/24/32/48，圆角 12/18/24，字重 400/600）。
    主色只给：餐次角标、「+」、「开始做菜」。状态三色：待做灰 / 在做橙 / 做好绿。
-   家人四色（红/橙/绿/蓝）只出现在头像上，同一个人全站同色。
    ============================================================ */
 page {
   --e-bg: #f5f5f5;
@@ -12,6 +13,8 @@ page {
   --e-ink-2: rgba(0, 0, 0, 0.6);
   --e-ink-3: rgba(0, 0, 0, 0.4);
   --e-line: rgba(0, 0, 0, 0.06);
+  --e-chip-on: #1f1f1f;
+  --e-chip-on-ink: #ffffff;
   --e-brand: var(--pop);
   --e-brand-soft: #fff1ed;
   --e-orange: #e37318;
@@ -29,67 +32,69 @@ page {
 .pe-wrap { padding: 0 var(--e-gutter); }
 .pe-press { opacity: 0.7; }
 
-/* 1. 顶栏 */
-.pe-top { padding: 0 var(--e-gutter) 32rpx; background: linear-gradient(var(--e-card), var(--e-bg)); }
-.pe-fam { display: flex; align-items: center; gap: 16rpx; min-height: 64rpx; }
-.pe-avas { display: flex; align-items: center; min-height: 88rpx; margin: -12rpx 0; }
+/* 1. 顶栏：小字日期 → 大字问句 → 餐次 chips */
+.pe-top { padding: 0 var(--e-gutter) 32rpx; }
+.pe-date { min-height: 64rpx; display: flex; align-items: center; font-size: var(--fs-cap); color: var(--e-ink-3); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.pe-ask { margin-top: 8rpx; font-size: var(--fs-hero-sm); font-weight: 600; line-height: 1.25; letter-spacing: 1rpx; }
+.pe-chips { display: flex; gap: 16rpx; margin-top: 12rpx; }
+/* 外层 88rpx 热区，里层画 64rpx 胶囊 */
+.pe-chip { height: 88rpx; display: flex; align-items: center; }
+.pe-chip-in {
+  height: 64rpx; padding: 0 28rpx; display: flex; align-items: center; gap: 8rpx;
+  border-radius: 999rpx; background: var(--e-card); color: var(--e-ink-2); font-size: var(--fs-body);
+}
+.pe-chip.is-on .pe-chip-in { background: var(--e-chip-on); color: var(--e-chip-on-ink); font-weight: 600; }
+.pe-chip-badge {
+  min-width: 32rpx; height: 32rpx; padding: 0 8rpx; box-sizing: border-box; border-radius: 16rpx;
+  background: var(--e-brand); color: #fff; font-size: var(--fs-mini); font-weight: 600; line-height: 32rpx; text-align: center;
+}
+.pe-tip { display: flex; align-items: center; justify-content: space-between; margin: 0 var(--e-gutter) 16rpx; padding: 0 24rpx; border-radius: var(--e-r-md); background: var(--e-brand-soft); }
+.pe-tip-text { font-size: var(--fs-cap); color: var(--e-brand); }
+.pe-tip-retry { min-height: 88rpx; min-width: 88rpx; display: flex; align-items: center; justify-content: center; font-weight: 600; color: var(--e-brand); }
+
+/* 2. 主卡：点菜单 */
+.pe-ticket { padding: 0 28rpx 28rpx; border-radius: var(--e-r-lg); background: var(--e-card); box-shadow: var(--e-shadow); }
+.pe-ticket-head { display: flex; align-items: baseline; justify-content: space-between; padding: 32rpx 0 8rpx; }
+.pe-ticket-title { font-size: var(--fs-h2); font-weight: 600; }
+.pe-ticket-sum { font-size: var(--fs-cap); color: var(--e-ink-3); }
+
+/* 家人进度 */
+.pe-family { display: flex; align-items: center; gap: 16rpx; min-height: 88rpx; border-bottom: 1rpx solid var(--e-line); }
+.pe-avas { display: flex; align-items: center; flex-shrink: 0; }
 .pe-ava {
-  width: 52rpx; height: 52rpx; margin-left: -14rpx; box-sizing: border-box; border-radius: 50%; border: 4rpx solid var(--e-card);
+  width: 52rpx; height: 52rpx; margin-left: -12rpx; box-sizing: border-box; border-radius: 50%; border: 4rpx solid var(--e-card);
   display: flex; align-items: center; justify-content: center; font-size: var(--fs-mini); font-weight: 600; color: #fff;
 }
 .pe-ava:first-child { margin-left: 0; }
-.pe-ava-add { background: var(--e-fill); color: var(--e-ink-3); font-size: var(--fs-body); font-weight: 400; }
+.pe-ava.is-off { background: var(--e-fill); color: var(--e-ink-3); }
 .tone-0 { background: #e8472a; }
 .tone-1 { background: #e37318; }
 .tone-2 { background: #2ba471; }
 .tone-3 { background: #0052d9; }
 .tone-x { background: #a6a6a6; }
-.pe-fam-name { font-size: var(--fs-cap); color: var(--e-ink-3); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-.pe-ask { margin-top: 12rpx; font-size: var(--fs-hero-sm); font-weight: 600; line-height: 1.25; letter-spacing: 1rpx; }
+.pe-family-text { flex: 1; min-width: 0; font-size: var(--fs-cap); color: var(--e-ink-2); }
+.pe-family-go { flex-shrink: 0; font-size: var(--fs-cap); color: var(--e-brand); font-weight: 600; }
 
-.pe-tip { display: flex; align-items: center; justify-content: space-between; margin: 0 var(--e-gutter) 16rpx; padding: 0 24rpx; border-radius: var(--e-r-md); background: var(--e-brand-soft); }
-.pe-tip-text { font-size: var(--fs-cap); color: var(--e-brand); }
-.pe-tip-retry { min-height: 88rpx; min-width: 88rpx; display: flex; align-items: center; justify-content: center; font-weight: 600; color: var(--e-brand); }
-
-/* 2. 餐次分段 */
-.pe-seg { display: flex; padding: 6rpx; border-radius: var(--e-r-md); background: #ebebeb; }
-.pe-seg-item {
-  flex: 1; height: 88rpx; display: flex; align-items: center; justify-content: center; gap: 8rpx;
-  border-radius: var(--e-r-sm); font-size: var(--fs-body); color: var(--e-ink-2);
-}
-.pe-seg-item.is-on { background: var(--e-card); color: var(--e-ink); font-weight: 600; box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06); }
-.pe-seg-badge {
-  min-width: 32rpx; height: 32rpx; padding: 0 8rpx; box-sizing: border-box; border-radius: 16rpx;
-  background: var(--e-brand); color: #fff; font-size: var(--fs-mini); font-weight: 600; line-height: 32rpx; text-align: center;
-}
-
-/* 3. 点菜单 */
-.pe-ticket { margin-top: 24rpx; padding: 0 24rpx 8rpx; border-radius: var(--e-r-lg); background: var(--e-card); box-shadow: var(--e-shadow); }
-.pe-ticket-head { display: flex; align-items: baseline; justify-content: space-between; padding: 28rpx 0 8rpx; }
-.pe-ticket-title { font-size: var(--fs-lg); font-weight: 600; }
-.pe-ticket-sum { font-size: var(--fs-cap); color: var(--e-ink-3); }
-.pe-order { display: flex; align-items: center; gap: 24rpx; padding: 20rpx 0; border-bottom: 1rpx solid var(--e-line); }
-.pe-order:last-of-type { border-bottom: 0; }
+/* 已点 */
+.pe-order { display: flex; align-items: center; gap: 24rpx; padding: 24rpx 0; border-bottom: 1rpx solid var(--e-line); }
 .pe-order-pic { position: relative; flex-shrink: 0; }
-.pe-order-img { width: 112rpx; height: 112rpx; display: block; border-radius: var(--e-r-sm); background: var(--e-fill); }
-/* 点菜人头像压在菜图右下角：一眼看出「这是谁要吃的」 */
+.pe-order-img { width: 120rpx; height: 120rpx; display: block; border-radius: var(--e-r-md); background: var(--e-fill); }
 .pe-order-ava {
   position: absolute; right: -8rpx; bottom: -8rpx; width: 40rpx; height: 40rpx; box-sizing: border-box;
   border-radius: 50%; border: 3rpx solid var(--e-card);
   display: flex; align-items: center; justify-content: center; font-size: var(--fs-tiny); font-weight: 600; color: #fff;
 }
 .pe-order-info { flex: 1; min-width: 0; }
-.pe-order-name { font-size: var(--fs-body); font-weight: 600; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-.pe-order-name.is-done { color: var(--e-ink-3); }
+.pe-order-name { font-size: var(--fs-lg); font-weight: 600; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.pe-order-name.is-done { color: var(--e-ink-3); text-decoration: line-through; }
 .pe-order-meta { display: flex; flex-wrap: wrap; gap: 16rpx; margin-top: 8rpx; font-size: var(--fs-cap); color: var(--e-ink-3); }
 .pe-who { color: var(--e-ink-2); }
 .pe-status { flex-shrink: 0; padding: 4rpx 16rpx; border-radius: 8rpx; font-size: var(--fs-cap); }
 .pe-status.is-todo { background: var(--e-fill); color: var(--e-ink-2); }
 .pe-status.is-cooking { background: var(--e-orange-soft); color: var(--e-orange); }
 .pe-status.is-done { background: var(--e-green-soft); color: var(--e-green); }
-
 /* 做菜顺序 */
-.pe-steps { margin: 8rpx 0 16rpx; padding: 20rpx 24rpx; border-radius: var(--e-r-md); background: var(--e-orange-soft); }
+.pe-steps { margin-top: 24rpx; padding: 20rpx 24rpx; border-radius: var(--e-r-md); background: var(--e-orange-soft); }
 .pe-steps-title { font-size: var(--fs-cap); color: var(--e-orange); }
 .pe-steps-row { display: flex; flex-wrap: wrap; gap: 12rpx 24rpx; margin-top: 12rpx; }
 .pe-step { display: flex; align-items: center; gap: 8rpx; min-width: 0; }
@@ -99,8 +104,15 @@ page {
 }
 .pe-step-name { font-size: var(--fs-cap); font-weight: 600; color: var(--e-ink); }
 
+/* 开始做菜：主卡里的主按钮，取代悬浮底栏 */
+.pe-cta {
+  margin-top: 24rpx; height: 104rpx; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  border-radius: var(--e-r-md); background: var(--e-brand); color: #fff; font-size: var(--fs-lg); font-weight: 600; line-height: 1.3;
+}
+.pe-start-note { font-size: var(--fs-mini); font-weight: 400; opacity: 0.85; }
+
 /* 空单 */
-.pe-ticket-empty { padding: 32rpx 0 32rpx; text-align: center; }
+.pe-ticket-empty { padding: 40rpx 0 8rpx; text-align: center; }
 .pe-empty-text { font-size: var(--fs-lg); font-weight: 600; color: var(--e-ink); }
 .pe-empty-sub { margin-top: 8rpx; font-size: var(--fs-cap); color: var(--e-ink-3); }
 .pe-empty-acts { display: flex; gap: 16rpx; margin-top: 32rpx; }
@@ -112,25 +124,23 @@ page {
 .pe-act-ghost { background: var(--e-fill); color: var(--e-ink); }
 .pe-act-share { background: var(--e-brand-soft); color: var(--e-brand); }
 
-/* 4. 新手也能做 */
+/* 3. 新手也能做：两列网格 */
 .pe-sec { margin-top: 48rpx; }
 .pe-sec-head { display: flex; align-items: baseline; gap: 16rpx; margin-bottom: 16rpx; }
-.pe-sec-title { font-size: var(--fs-lg); font-weight: 600; }
+.pe-sec-title { font-size: var(--fs-h2); font-weight: 600; }
 .pe-sec-sub { font-size: var(--fs-cap); color: var(--e-ink-3); }
-.pe-hs { width: 750rpx; margin-left: calc(-1 * var(--e-gutter)); white-space: nowrap; }
-.pe-hs-track { display: inline-flex; gap: 16rpx; padding: 0 var(--e-gutter) 8rpx; }
+.pe-grid { display: flex; flex-wrap: wrap; gap: 16rpx; }
 .pe-easy {
-  position: relative; width: 264rpx; flex-shrink: 0; box-sizing: border-box; border: 3rpx solid transparent;
-  border-radius: var(--e-r-md); background: var(--e-card); overflow: hidden; white-space: normal; box-shadow: var(--e-shadow);
-  transform: translateZ(0);
+  position: relative; width: calc((100% - 16rpx) / 2); box-sizing: border-box; border: 3rpx solid transparent;
+  border-radius: var(--e-r-md); background: var(--e-card); overflow: hidden; box-shadow: var(--e-shadow); transform: translateZ(0);
 }
 .pe-easy.is-picked { border-color: var(--e-brand); }
-.pe-easy-img { width: 100%; height: 200rpx; display: block; background: var(--e-fill); }
+.pe-easy-img { width: 100%; height: 250rpx; display: block; background: var(--e-fill); }
 .pe-easy-body { padding: 16rpx 20rpx 20rpx; }
 .pe-easy-name { font-size: var(--fs-body); font-weight: 600; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .pe-easy-meta { margin-top: 4rpx; font-size: var(--fs-cap); color: var(--e-ink-3); }
 /* 「+」压在图片右下角（外卖小程序同款），视觉 56rpx，热区 88rpx */
-.pe-easy .pe-plus { position: absolute; right: 0; top: 140rpx; }
+.pe-easy .pe-plus { position: absolute; right: 4rpx; top: 180rpx; }
 .pe-plus { width: 88rpx; height: 88rpx; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
 .pe-plus-dot {
   width: 56rpx; height: 56rpx; border-radius: 50%; background: var(--e-brand); color: #fff;
@@ -138,7 +148,7 @@ page {
 }
 .pe-plus-dot.is-on { background: var(--e-card); color: var(--e-brand); font-size: var(--fs-body); line-height: 56rpx; font-weight: 600; }
 
-/* 5. 家里常做 */
+/* 4. 家里常做 */
 .pe-list { padding: 0 8rpx 0 24rpx; border-radius: var(--e-r-lg); background: var(--e-card); box-shadow: var(--e-shadow); }
 .pe-row { display: flex; align-items: center; gap: 24rpx; padding: 16rpx 0; border-bottom: 1rpx solid var(--e-line); }
 .pe-row:last-child { border-bottom: 0; }
@@ -147,39 +157,17 @@ page {
 .pe-row-name { font-size: var(--fs-body); font-weight: 600; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .pe-row-meta { margin-top: 4rpx; font-size: var(--fs-cap); color: var(--e-ink-3); }
 
-/* 6. 底部结算条 */
-.pe-bar {
-  position: fixed; left: 24rpx; right: 24rpx; bottom: calc(env(safe-area-inset-bottom) + 16rpx); z-index: 10;
-  display: flex; align-items: center; gap: 20rpx; padding: 12rpx 12rpx 12rpx 20rpx;
-  border-radius: 999rpx; background: #1f1f1f; box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.18);
-}
-.pe-bar-pot { position: relative; width: 72rpx; height: 72rpx; flex-shrink: 0; border-radius: 50%; background: #333; display: flex; align-items: center; justify-content: center; }
-.pe-bar-ico { width: 40rpx; height: 40rpx; }
-.pe-bar-badge {
-  position: absolute; top: -6rpx; right: -6rpx; min-width: 32rpx; height: 32rpx; padding: 0 8rpx; box-sizing: border-box;
-  border-radius: 16rpx; background: var(--e-brand); color: #fff; font-size: var(--fs-mini); font-weight: 600; line-height: 32rpx; text-align: center;
-}
-.pe-bar-info { flex: 1; min-width: 0; }
-.pe-bar-main { font-size: var(--fs-body); font-weight: 600; color: #fff; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-.pe-bar-main.is-mut { color: rgba(255, 255, 255, 0.6); font-weight: 400; }
-.pe-bar-sub { margin-top: 2rpx; font-size: var(--fs-mini); color: rgba(255, 255, 255, 0.55); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-.pe-bar-btn {
-  flex-shrink: 0; height: 88rpx; padding: 0 40rpx; display: flex; align-items: center;
-  border-radius: 999rpx; background: var(--e-brand); color: #fff; font-size: var(--fs-btn); font-weight: 600;
-}
-.pe-bar-btn.is-mut { background: #3a3a3a; }
-
 .pe-fail { padding: 160rpx 48rpx; text-align: center; }
 .pe-fail-title { font-size: var(--fs-h2); font-weight: 600; }
 .pe-fail-desc { margin: 16rpx 0 48rpx; color: var(--e-ink-2); }
 .pe-btn { display: inline-flex; align-items: center; height: 88rpx; padding: 0 64rpx; border-radius: var(--e-r-md); background: var(--e-brand); color: #fff; font-weight: 600; }
 
 .pe-sk { background: #ebebeb; border-radius: var(--e-r-lg); }
-.pe-sk-seg { height: 100rpx; }
-.pe-sk-ticket { height: 420rpx; margin-top: 24rpx; }
-.pe-sk-row { height: 300rpx; margin-top: 48rpx; }
+.pe-sk-ticket { height: 480rpx; }
+.pe-sk-row { height: 360rpx; margin-top: 48rpx; }
 
-.pe-bottom-space { height: calc(env(safe-area-inset-bottom) + 200rpx); }
+/* 正式版底部是 tabbar，留出它的高度（token 已含安全区） */
+.pe-bottom-space { height: calc(var(--tabbar-h) + 32rpx); }
 
 @media (prefers-color-scheme: dark) {
   page {
@@ -190,11 +178,12 @@ page {
     --e-ink-2: rgba(255, 255, 255, 0.55);
     --e-ink-3: rgba(255, 255, 255, 0.35);
     --e-line: rgba(255, 255, 255, 0.08);
+    --e-chip-on: #f2f2f2;
+    --e-chip-on-ink: #141414;
     --e-brand-soft: #3a2420;
     --e-orange-soft: #3a2a1a;
     --e-green-soft: #16302a;
     --e-shadow: none;
   }
-  .pe-seg, .pe-sk { background: #2c2c2c; }
-  .pe-bar { background: #2e2e2e; }
+  .pe-sk { background: #2c2c2c; }
 }
