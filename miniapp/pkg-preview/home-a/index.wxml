@@ -1,0 +1,163 @@
+<!-- 首页风格预览 · 方案 A「清爽卡片流」：白底 + 卡片组织信息，层级靠字重和留白，红色每屏只给一个主操作 -->
+<view class="pa {{fontScale === 'lg' ? 'font-lg' : ''}}" style="padding-top: {{capsuleTop}};">
+
+  <!-- 1. 顶部一行：问候 + 家庭名（右侧让开微信胶囊） -->
+  <view class="pa-top" style="padding-right: {{capsuleRight}};">
+    <view class="pa-hello">{{greeting}}{{nickname ? '，' + nickname : ''}}</view>
+    <view wx:if="{{loaded}}" class="pa-family">{{familyName}}</view>
+    <view wx:else class="pa-sk pa-sk-family"></view>
+  </view>
+
+  <!-- 刷新失败但已有内容：顶部提示条，内容保留 -->
+  <view wx:if="{{loadError && loaded && !loading}}" class="pa-banner">
+    <text class="pa-banner-text">刷新失败：{{loadError}}</text>
+    <view class="pa-banner-retry tap-dim" bindtap="onRetry">重试</view>
+  </view>
+
+  <!-- 加载中骨架：与真实布局同尺寸，加载完不跳版 -->
+  <block wx:if="{{loading && !loaded}}">
+    <view class="pa-sk pa-sk-today"></view>
+    <view class="pa-sk pa-sk-h"></view>
+    <view class="pa-sk-row">
+      <view class="pa-sk pa-sk-rec"></view>
+      <view class="pa-sk pa-sk-rec"></view>
+    </view>
+    <view class="pa-sk pa-sk-h"></view>
+    <view class="pa-grid">
+      <view wx:for="{{[1, 2, 3, 4]}}" wx:key="*this" class="pa-sk pa-sk-cell"></view>
+    </view>
+  </block>
+
+  <!-- 从未加载成功：整页失败态 -->
+  <view wx:elif="{{loadError && !loaded}}" class="pa-fail">
+    <view class="pa-fail-title">首页没加载出来</view>
+    <view class="pa-fail-desc">{{loadError}}</view>
+    <view class="pa-btn pa-btn-dark tap-scale" bindtap="onRetry">重新加载</view>
+  </view>
+
+  <block wx:elif="{{loaded}}">
+    <!-- 2. 今天吃什么：餐次 + 已点几道 + 唯一的红色主操作 -->
+    <view class="pa-today">
+      <view class="pa-today-head">
+        <view class="pa-today-title">今天吃什么</view>
+        <view class="pa-today-date">{{dateText}}</view>
+      </view>
+
+      <view class="pa-seg">
+        <view
+          wx:for="{{slots}}"
+          wx:key="key"
+          class="pa-seg-item {{currentSlot === item.key ? 'is-on' : ''}}"
+          hover-class="pa-seg-press"
+          data-slot="{{item.key}}"
+          bindtap="selectSlot"
+        >{{item.label}}餐</view>
+      </view>
+
+      <view class="pa-stat">
+        <view class="pa-stat-main">
+          <block wx:if="{{slotCount}}">
+            <text class="pa-stat-num">{{slotCount}}</text>
+            <text class="pa-stat-unit">道已点</text>
+          </block>
+          <text wx:else class="pa-stat-empty">{{slotLabel}}还没点菜</text>
+        </view>
+        <view wx:if="{{slotCount}}" class="pa-stack">
+          <image
+            wx:for="{{slotPics}}"
+            wx:key="key"
+            class="pa-stack-img"
+            src="{{item.img}}"
+            mode="aspectFill"
+            data-path="slotPics[{{index}}].img"
+            data-seed="{{item.seed}}"
+            binderror="onPicError"
+          />
+          <view wx:if="{{slotMore}}" class="pa-stack-more">+{{slotMore}}</view>
+        </view>
+      </view>
+
+      <view class="pa-btn pa-btn-pop tap-scale" bindtap="onPrimary">{{slotCount ? '查看' + slotLabel + '菜单' : '开始挑' + slotLabel}}</view>
+    </view>
+
+    <!-- 3. 推荐：横滑大卡，每张一个加入按钮 -->
+    <view class="pa-head">
+      <view class="pa-head-title">为你推荐</view>
+      <view wx:if="{{canShuffle}}" class="pa-head-link tap-dim" bindtap="onShuffle">换一批</view>
+    </view>
+    <scroll-view wx:if="{{recs.length}}" class="pa-hs" scroll-x enhanced show-scrollbar="{{false}}">
+      <view class="pa-hs-track">
+        <view
+          wx:for="{{recs}}"
+          wx:key="id"
+          class="pa-rec tap-scale"
+          data-title="{{item.title}}"
+          bindtap="onRecipeTap"
+        >
+          <image
+            class="pa-rec-img"
+            src="{{item.dishImg}}"
+            mode="aspectFill"
+            data-path="recs[{{index}}].dishImg"
+            data-seed="{{item.id}}"
+            binderror="onPicError"
+          />
+          <view class="pa-rec-body">
+            <view class="pa-rec-info">
+              <view class="pa-rec-name">{{item.title}}</view>
+              <view class="pa-meta">{{item.meta}}</view>
+            </view>
+            <view
+              class="pa-btn-sm tap-scale {{item.joined ? 'is-joined' : ''}}"
+              data-title="{{item.title}}"
+              data-joined="{{item.joined}}"
+              catchtap="onAdd"
+            >{{item.joined ? '已加入' : '＋ 加入'}}</view>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+    <view wx:else class="pa-empty">菜谱库还是空的，先去导入或新建几道菜</view>
+
+    <!-- 4. 菜谱网格：两列、图片比例统一、菜名两行截断 -->
+    <block wx:if="{{grid.length}}">
+      <view class="pa-head">
+        <view class="pa-head-title">家里的菜谱</view>
+        <view class="pa-head-link tap-dim" bindtap="onSeeAll">全部 {{total}}</view>
+      </view>
+      <view class="pa-grid">
+        <view
+          wx:for="{{grid}}"
+          wx:key="id"
+          class="pa-cell tap-scale"
+          data-title="{{item.title}}"
+          bindtap="onRecipeTap"
+        >
+          <image
+            class="pa-cell-img"
+            src="{{item.dishImg}}"
+            mode="aspectFill"
+            data-path="grid[{{index}}].dishImg"
+            data-seed="{{item.id}}"
+            binderror="onPicError"
+          />
+          <view class="pa-cell-body">
+            <view class="pa-cell-name">{{item.title}}</view>
+            <view class="pa-cell-foot">
+              <view class="pa-meta pa-cell-meta">{{item.meta}}</view>
+              <view
+                class="pa-btn-ico tap-scale {{item.joined ? 'is-joined' : ''}}"
+                data-title="{{item.title}}"
+                data-joined="{{item.joined}}"
+                catchtap="onAdd"
+              ><view class="pa-plus"></view></view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </block>
+  </block>
+
+  <!-- 模拟真实 tab 页：预览页本身没有 tabBar，底部让出同样高度 -->
+  <view class="pa-tabbar-space"></view>
+</view>

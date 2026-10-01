@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "首页预览 B",
+  "navigationStyle": "custom",
+  "enablePullDownRefresh": true,
+  "backgroundColor": "#f5f4f1",
+  "usingComponents": {}
+}

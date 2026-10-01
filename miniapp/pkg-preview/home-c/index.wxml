@@ -1,0 +1,114 @@
+<!-- 首页风格预览 · 方案 C「暖色精致沉浸」：照片和文字分开放，像一本排版讲究的家庭食谱 -->
+<view class="hc {{fontScale === 'lg' ? 'font-lg' : ''}}">
+
+  <!-- 1 顶部：日期 + 问候 + 这一顿的标题；右侧让开微信胶囊 -->
+  <view class="hc-head" style="padding-top: {{capsuleTop}};">
+    <view class="hc-eyebrow" style="padding-right: {{capsuleRight}};">{{dateLine}}<text wx:if="{{greeting}}"> · {{greeting}}</text></view>
+    <view class="hc-headline">{{loading ? ' ' : headline}}</view>
+  </view>
+
+  <!-- 加载中：骨架与真实版面同高，加载完不跳版 -->
+  <view wx:if="{{loading}}" class="hc-body" aria-label="加载中">
+    <view class="hc-card hc-sk-card">
+      <view class="hc-sk hc-sk-photo shimmer"></view>
+      <view class="hc-sk hc-sk-line hc-sk-w60 shimmer"></view>
+      <view class="hc-sk hc-sk-line hc-sk-w90 shimmer"></view>
+      <view class="hc-sk-pair">
+        <view class="hc-sk hc-sk-pill shimmer"></view>
+        <view class="hc-sk hc-sk-pill hc-sk-pill-s shimmer"></view>
+      </view>
+    </view>
+    <view class="hc-sk hc-sk-seg shimmer"></view>
+    <view class="hc-sk-moods">
+      <view class="hc-sk hc-sk-mood shimmer" wx:for="{{[1,2,3,4]}}" wx:key="*this"></view>
+    </view>
+  </view>
+
+  <!-- 失败：可重试 -->
+  <view wx:elif="{{loadError}}" class="hc-body">
+    <view class="hc-card hc-state">
+      <view class="hc-state-title">今天的菜单没取到</view>
+      <view class="hc-state-desc">{{loadError}}</view>
+      <view class="hc-btn hc-btn-primary hc-state-retry tap-scale" bindtap="reload" aria-role="button">重新加载</view>
+    </view>
+  </view>
+
+  <view wx:else class="hc-body">
+
+    <!-- 2 今日推荐：图在上、字在下，不压图 -->
+    <view wx:if="{{hero}}" class="hc-card hc-hero">
+      <view class="hc-hero-photo hc-press" bindtap="openRecipe" data-title="{{hero.title}}" aria-role="button" aria-label="查看{{hero.title}}">
+        <image wx:if="{{hero.img}}" class="hc-hero-img {{hero.broken ? 'img-broken' : ''}}" src="{{hero.img}}" mode="aspectFill" binderror="onPhotoError" data-err-key="hero.broken"></image>
+        <view wx:else class="hc-ph hc-ph-hero"><text class="hc-ph-char">{{hero.initial}}</text><text class="hc-ph-note">还没有这道菜的实拍</text></view>
+      </view>
+      <view class="hc-hero-info">
+        <view class="hc-kicker">今日推荐<text wx:if="{{hero.match}}"> · 现有食材够 {{hero.match}}%</text></view>
+        <view class="hc-hero-name">{{hero.title}}</view>
+        <view wx:if="{{hero.summary}}" class="hc-hero-desc">{{hero.summary}}</view>
+        <view wx:if="{{hero.meta}}" class="hc-hero-meta">{{hero.meta}}</view>
+      </view>
+      <view class="hc-hero-actions">
+        <view class="hc-btn hc-btn-primary tap-scale" bindtap="addHero" aria-role="button">{{heroInMenu ? '已在' + slotWord : '加到' + slotWord}}</view>
+        <view class="hc-btn hc-btn-ghost tap-scale" bindtap="shuffleHero" aria-role="button">换一道</view>
+      </view>
+    </view>
+    <view wx:else class="hc-card hc-state">
+      <view class="hc-state-title">菜谱库还是空的</view>
+      <view class="hc-state-desc">先添加或导入几道家常菜，这里就会给出推荐</view>
+    </view>
+
+    <!-- 3 餐次分段 + 今日已点：一行，安静的分段控件 -->
+    <view class="hc-meal">
+      <view class="hc-seg" aria-role="tablist">
+        <view wx:for="{{slots}}" wx:key="key" class="hc-seg-item hc-press {{currentSlot === item.key ? 'is-on' : ''}}" bindtap="selectSlot" data-key="{{item.key}}" aria-role="tab" aria-selected="{{currentSlot === item.key}}">{{item.label}}</view>
+      </view>
+      <view class="hc-ordered tap-dim" bindtap="openOrdered" aria-role="button">
+        <text class="hc-ordered-num">{{menuFailed ? '—' : slotCount}}</text>
+        <text class="hc-ordered-unit">{{menuFailed ? '未取到' : '道已点'}}</text>
+      </view>
+    </view>
+    <view wx:if="{{!menuFailed && slotPreview}}" class="hc-meal-note">{{slotLabel}}：{{slotPreview}}</view>
+
+    <!-- 4 按心情挑：横滑，每个入口一张小图 -->
+    <view wx:if="{{moods.length}}" class="hc-section">
+      <view class="hc-sec-head">
+        <view class="hc-sec-title">按心情挑</view>
+        <view class="hc-sec-sub">从家里的菜谱里归出来的</view>
+      </view>
+      <scroll-view class="hc-moods" scroll-x enhanced show-scrollbar="{{false}}">
+        <view class="hc-moods-track">
+          <view wx:for="{{moods}}" wx:key="key" class="hc-mood hc-press {{activeMood === item.key ? 'is-on' : ''}}" bindtap="selectMood" data-key="{{item.key}}" aria-role="button" aria-label="{{item.label}}，{{item.count}} 道">
+            <view class="hc-mood-pic">
+              <image wx:if="{{item.img}}" class="hc-mood-img {{item.broken ? 'img-broken' : ''}}" src="{{item.img}}" mode="aspectFill" binderror="onPhotoError" data-err-key="moods[{{index}}].broken"></image>
+              <view wx:else class="hc-ph"><text class="hc-ph-char hc-ph-char-s">{{item.initial}}</text></view>
+            </view>
+            <view class="hc-mood-name">{{item.label}}</view>
+            <view class="hc-mood-count">{{item.count}} 道</view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 5 菜谱流：两列，图上字下 -->
+    <view wx:if="{{total > 1}}" class="hc-section">
+      <view class="hc-sec-head hc-sec-row">
+        <view class="hc-sec-title">{{activeMood ? activeMoodLabel : '家里常做'}}</view>
+        <view wx:if="{{activeMood}}" class="hc-clear tap-dim" bindtap="clearMood" aria-role="button">看全部</view>
+      </view>
+      <view wx:if="{{feed.length}}" class="hc-grid">
+        <view wx:for="{{feed}}" wx:key="id" class="hc-item hc-press" bindtap="openRecipe" data-title="{{item.title}}" aria-role="button" aria-label="{{item.title}}">
+          <view class="hc-item-pic">
+            <image wx:if="{{item.img}}" class="hc-item-img {{item.broken ? 'img-broken' : ''}}" src="{{item.img}}" mode="aspectFill" lazy-load binderror="onPhotoError" data-err-key="feed[{{index}}].broken"></image>
+            <view wx:else class="hc-ph"><text class="hc-ph-char">{{item.initial}}</text><text class="hc-ph-note">暂无实拍</text></view>
+          </view>
+          <view class="hc-item-name">{{item.title}}</view>
+          <view wx:if="{{item.feedMeta}}" class="hc-item-meta">{{item.feedMeta}}</view>
+        </view>
+      </view>
+      <view wx:else class="hc-feed-empty">这一类除了上面推荐的，暂时没有别的菜</view>
+    </view>
+  </view>
+
+  <!-- 模拟真实 tab 页：底部让出 tabBar 高度 -->
+  <view class="hc-tabbar-space"></view>
+</view>

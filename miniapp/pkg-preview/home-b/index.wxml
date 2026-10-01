@@ -1,0 +1,134 @@
+<!-- 风格预览 B「餐桌仪表盘」：一屏交代这一顿的状态（吃什么 / 谁想吃什么 / 缺什么 / 冰箱能做什么） -->
+<view class="hb {{fontScale === 'lg' ? 'font-lg' : ''}}">
+
+  <!-- ① 紧凑顶栏：日期 + 问候（第一行贴胶囊高度，右侧让开胶囊）；餐次分段独占第二行 -->
+  <view class="hb-top" style="padding-top: {{capsuleTop}};">
+    <view class="hb-top-row" style="padding-right: {{capsuleRight}};">
+      <text class="hb-date">{{dateLabel}}</text>
+      <text class="hb-greet">{{greeting}}</text>
+    </view>
+    <view class="hb-seg" aria-role="tablist">
+      <view wx:for="{{slots}}" wx:key="key"
+        class="hb-seg-item {{currentSlot === item.key ? 'on' : ''}}"
+        data-slot="{{item.key}}" bindtap="selectSlot"
+        aria-role="tab" aria-selected="{{currentSlot === item.key}}" aria-label="{{item.label}}餐">
+        <text>{{item.label}}餐</text>
+        <text wx:if="{{slotCounts[item.key]}}" class="hb-seg-n">{{slotCounts[item.key]}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 骨架：与真卡同结构同高，加载完不跳版 -->
+  <view wx:if="{{loading}}" class="hb-body">
+    <view class="hb-card hb-sk-table shimmer"></view>
+    <view class="hb-grid">
+      <view class="hb-sk-tile shimmer"></view>
+      <view class="hb-sk-tile shimmer"></view>
+      <view class="hb-sk-tile shimmer"></view>
+      <view class="hb-sk-tile shimmer"></view>
+    </view>
+    <view class="hb-card hb-sk-list shimmer"></view>
+  </view>
+
+  <!-- 全部接口都失败：整页失败态，可重试 -->
+  <view wx:elif="{{allFailed}}" class="hb-body">
+    <view class="hb-card hb-fail">
+      <text class="hb-fail-t">首页数据没加载出来</text>
+      <text class="hb-fail-d">网络或服务暂时不可用，数据没有丢</text>
+      <view class="hb-cta hb-fail-retry tap-scale" bindtap="retry" aria-role="button" aria-label="重新加载">重新加载</view>
+    </view>
+  </view>
+
+  <view wx:else class="hb-body">
+    <!-- ② 今日餐桌状态卡：吃什么 + 几道 / 多久 / 缺几样 + 唯一主操作 -->
+    <view class="hb-card hb-table">
+      <view class="hb-table-head">
+        <text class="hb-table-name">{{slotLabel}} · 今日餐桌</text>
+        <text class="hb-state {{tableTone}}">{{tableState}}</text>
+      </view>
+
+      <view class="hb-strip">
+        <view wx:for="{{strip}}" wx:key="id" class="hb-strip-cell tap-scale"
+          data-label="{{item.title}}" bindtap="onTap" aria-role="button" aria-label="{{item.title}}">
+          <image class="hb-strip-thumb" src="{{item.img}}" mode="aspectFill" lazy-load
+            data-index="{{index}}" binderror="onStripImgError" />
+          <view wx:if="{{item.status === 'done'}}" class="hb-strip-done">已上桌</view>
+          <view wx:elif="{{item.status === 'cooking'}}" class="hb-strip-done hot">烧着</view>
+        </view>
+        <view wx:if="{{stripMore}}" class="hb-strip-cell hb-strip-pad tap-scale"
+          data-label="查看全部 {{tableCount}} 道" bindtap="onTap" aria-role="button" aria-label="还有 {{stripMore}} 道">
+          <text class="hb-strip-glyph">+{{stripMore}}</text>
+        </view>
+        <view wx:for="{{stripPad}}" wx:key="*this" class="hb-strip-cell hb-strip-pad tap-scale"
+          data-label="去菜谱挑一道" bindtap="onTap" aria-role="button" aria-label="加一道菜">
+          <text class="hb-strip-glyph">+</text>
+        </view>
+      </view>
+
+      <view class="hb-status">
+        <block wx:if="{{menuFailed}}"><text>菜单 — · 没加载出来</text></block>
+        <block wx:elif="{{tableCount}}">
+          <text class="hb-status-n">{{tableCount}}</text><text> 道</text>
+          <text wx:if="{{tableMinutes}}" class="hb-status-sep">·</text><text>{{tableMinutes}}</text>
+          <text wx:if="{{tableMissing}}" class="hb-status-sep">·</text>
+          <text class="{{tableMissingWarn ? 'hb-warn' : ''}}">{{tableMissing}}</text>
+        </block>
+        <block wx:else><text>这一餐还没点菜，从下面挑或看看许愿</text></block>
+      </view>
+
+      <view class="hb-actions">
+        <view class="hb-cta tap-scale" bindtap="onPrimary" aria-role="button" aria-label="{{primaryLabel}}">{{primaryLabel}}</view>
+        <view class="hb-ghost tap-scale" data-label="改菜单" bindtap="onTap" aria-role="button" aria-label="改菜单">改菜单</view>
+      </view>
+    </view>
+
+    <!-- ③ 2×2 bento：数字是主角，一块只回答一个问题 -->
+    <view class="hb-grid">
+      <view class="hb-tile tap-scale" data-label="许愿池" bindtap="onTap" aria-role="button" aria-label="许愿 {{wishFailed ? '未加载' : wishCount + ' 条'}}">
+        <view class="hb-tile-head"><view class="hb-tile-mark mk-wish"></view><text class="hb-tile-k">家人想吃</text><text class="hb-tile-go">›</text></view>
+        <view class="hb-tile-v"><text class="hb-num">{{wishFailed ? '—' : wishCount}}</text><text class="hb-unit">条</text></view>
+        <text class="hb-tile-sub">{{wishSub}}</text>
+      </view>
+      <view class="hb-tile tap-scale" data-label="购物清单" bindtap="onTap" aria-role="button" aria-label="待买 {{shopFailed ? '未加载' : shopPending + ' 样'}}">
+        <view class="hb-tile-head"><view class="hb-tile-mark mk-shop"></view><text class="hb-tile-k">待买</text><text class="hb-tile-go">›</text></view>
+        <view class="hb-tile-v"><text class="hb-num">{{shopFailed ? '—' : shopPending}}</text><text class="hb-unit">样</text></view>
+        <text class="hb-tile-sub">{{shopSub}}</text>
+      </view>
+      <view class="hb-tile tap-scale" data-label="冰箱" bindtap="onTap" aria-role="button" aria-label="冰箱可做 {{pantryFailed ? '未加载' : canCook + ' 道'}}">
+        <view class="hb-tile-head"><view class="hb-tile-mark mk-pantry"></view><text class="hb-tile-k">冰箱可做</text><text class="hb-tile-go">›</text></view>
+        <view class="hb-tile-v"><text class="hb-num">{{pantryFailed ? '—' : canCook}}</text><text class="hb-unit">道</text></view>
+        <text class="hb-tile-sub">{{pantrySub}}</text>
+      </view>
+      <view class="hb-tile tap-scale" data-label="做菜记录" bindtap="onTap" aria-role="button" aria-label="本周已做 {{cookFailed ? '未加载' : weekCooked + ' 道'}}">
+        <view class="hb-tile-head"><view class="hb-tile-mark mk-cook"></view><text class="hb-tile-k">本周已做</text><text class="hb-tile-go">›</text></view>
+        <view class="hb-tile-v"><text class="hb-num">{{cookFailed ? '—' : weekCooked}}</text><text class="hb-unit">道</text></view>
+        <text class="hb-tile-sub">{{cookSub}}</text>
+      </view>
+    </view>
+
+    <!-- ④ 推荐：单列横向条目，一行一道，右侧直接「加入」 -->
+    <view class="hb-sec">
+      <text class="hb-sec-t">适合{{slotLabel}}</text>
+      <view class="hb-sec-more tap-scale" bindtap="shuffleRecs" aria-role="button" aria-label="换一批推荐">换一批</view>
+    </view>
+    <view class="hb-card hb-list">
+      <view wx:if="{{recFailed}}" class="hb-list-empty">推荐 — · 菜谱没加载出来</view>
+      <view wx:elif="{{!recs.length}}" class="hb-list-empty">菜谱库还是空的，先导入或新建一道</view>
+      <view wx:for="{{recs}}" wx:key="id" class="hb-row" hover-class="hb-row-on"
+        data-label="{{item.title}}" bindtap="onTap" aria-role="button" aria-label="{{item.title}}">
+        <image class="hb-row-thumb" src="{{item.img}}" mode="aspectFill" lazy-load
+          data-index="{{index}}" binderror="onRecImgError" />
+        <view class="hb-row-main">
+          <text class="hb-row-name">{{item.title}}</text>
+          <text class="hb-row-meta">{{item.meta}}</text>
+        </view>
+        <view class="hb-add tap-scale {{item.added ? 'done' : ''}}"
+          data-label="{{item.added ? '已在今日菜单' : '加入' + slotLabel}}" catchtap="onTap"
+          aria-role="button" aria-label="{{item.added ? '已在今日菜单' : '加入' + slotLabel}}">
+          <!-- 外层 88rpx 高是命中区，里面 60rpx 是看得见的小按钮 -->
+          <text class="hb-add-pill">{{item.added ? '已加' : '加入'}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

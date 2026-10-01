@@ -1,0 +1,133 @@
+/* 方案 C「暖色精致沉浸」：暖米纸底 + 深咖墨字 + 一个收敛的焦糖赭作强调。
+   配色只在本页 page 上定义局部变量，不碰 app.wxss；深色档给一套暖深色副本，结构不变。 */
+page {
+  --hc-paper: #f6f0e6;       /* 纸底 */
+  --hc-card: #fffcf7;        /* 卡面（比纸底亮一档，靠明度分层而不是描边） */
+  --hc-sunk: #ede4d6;        /* 凹陷面：分段控件底、骨架 */
+  --hc-ink: #2b2118;         /* 标题墨色 */
+  --hc-ink-2: #5a4b3c;       /* 正文 */
+  --hc-mut: #766857;         /* 辅助信息（纸底上 4.7:1） */
+  --hc-line: #e3d8c7;        /* 细分隔 / 次级按钮描边 */
+  --hc-accent: #b5532f;      /* 焦糖赭：主按钮、选中态（白字 4.9:1） */
+  --hc-accent-ink: #ffffff;
+  --hc-accent-soft: #f3e3d6; /* 无图占位底 */
+  --hc-shadow: 0 8rpx 28rpx rgba(92, 62, 34, 0.08);
+  --hc-r-lg: 28rpx;          /* 卡片 / 大图 */
+  --hc-r-md: 20rpx;          /* 小图 / 列表图 */
+  --hc-gutter: 32rpx;
+  background: var(--hc-paper);
+}
+@media (prefers-color-scheme: dark) {
+  page {
+    --hc-paper: #1d1813;
+    --hc-card: #28211a;
+    --hc-sunk: #332a21;
+    --hc-ink: #f2e9dc;
+    --hc-ink-2: #d4c6b3;
+    --hc-mut: #a89884;
+    --hc-line: #3d3329;
+    --hc-accent: #d27a52;
+    --hc-accent-ink: #1d1813;
+    --hc-accent-soft: #3a2c21;
+    --hc-shadow: 0 8rpx 28rpx rgba(0, 0, 0, 0.35);
+  }
+}
+
+.hc { min-height: 100vh; background: var(--hc-paper); color: var(--hc-ink); }
+.hc-body { padding: 0 var(--hc-gutter); }
+
+/* 按下反馈：大面积元素用轻缩放，避免整卡猛缩 */
+.hc-press { transition: transform 0.16s ease, opacity 0.16s ease; }
+.hc-press:active { transform: scale(0.98); opacity: 0.92; }
+
+/* ---------- 1 顶部 ---------- */
+.hc-head { padding-left: var(--hc-gutter); padding-right: var(--hc-gutter); padding-bottom: 28rpx; }
+.hc-eyebrow { min-height: 64rpx; display: flex; align-items: center; color: var(--hc-mut); font-size: var(--fs-cap); letter-spacing: 2rpx; }
+.hc-headline { margin-top: 12rpx; min-height: 70rpx; color: var(--hc-ink); font-size: var(--fs-hero-sm); font-weight: 600; line-height: 1.25; letter-spacing: 1rpx; }
+
+/* ---------- 卡 ---------- */
+.hc-card { background: var(--hc-card); border-radius: var(--hc-r-lg); box-shadow: var(--hc-shadow); }
+
+/* ---------- 2 今日推荐 ---------- */
+.hc-hero { padding: 20rpx 20rpx 32rpx; }
+.hc-hero-photo { height: 460rpx; border-radius: var(--hc-r-md); overflow: hidden; background: var(--hc-sunk); }
+.hc-hero-img { display: block; width: 100%; height: 100%; }
+.hc-hero-info { padding: 32rpx 12rpx 0; }
+.hc-kicker { color: var(--hc-accent); font-size: var(--fs-cap); font-weight: 600; letter-spacing: 4rpx; }
+.hc-hero-name { margin-top: 12rpx; color: var(--hc-ink); font-size: calc(44rpx * var(--fs-mul, 1)); font-weight: 600; line-height: 1.3; }
+.hc-hero-desc { margin-top: 12rpx; color: var(--hc-ink-2); font-size: var(--fs-body); line-height: 1.6; }
+.hc-hero-meta { margin-top: 16rpx; color: var(--hc-mut); font-size: var(--fs-cap); }
+.hc-hero-actions { display: flex; gap: 20rpx; padding: 32rpx 12rpx 0; }
+
+/* ---------- 按钮：一种高度、一种圆角，主次只靠填充区分 ---------- */
+.hc-btn { box-sizing: border-box; min-height: 88rpx; padding: 0 36rpx; display: flex; align-items: center; justify-content: center; border-radius: 44rpx; font-size: var(--fs-btn); font-weight: 600; }
+.hc-btn-primary { flex: 1; background: var(--hc-accent); color: var(--hc-accent-ink); }
+.hc-btn-ghost { background: transparent; color: var(--hc-ink); border: 2rpx solid var(--hc-line); }
+
+/* ---------- 无图占位：不拿别的菜冒充 ---------- */
+.hc-ph { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--hc-accent-soft); }
+.hc-ph-char { color: var(--hc-accent); font-size: var(--fs-hero-sm); font-weight: 600; line-height: 1.2; }
+.hc-ph-char-s { font-size: var(--fs-h2); }
+.hc-ph-note { margin-top: 8rpx; color: var(--hc-ink-2); font-size: var(--fs-mini); }
+.hc-ph-hero .hc-ph-char { font-size: var(--fs-hero-lg); }
+
+/* ---------- 3 餐次分段 + 已点 ---------- */
+.hc-meal { display: flex; align-items: center; gap: 24rpx; margin-top: 40rpx; }
+.hc-seg { flex: 1; display: flex; padding: 6rpx; border-radius: 48rpx; background: var(--hc-sunk); }
+.hc-seg-item { flex: 1; min-height: 88rpx; display: flex; align-items: center; justify-content: center; border-radius: 42rpx; color: var(--hc-mut); font-size: var(--fs-sub); }
+.hc-seg-item.is-on { background: var(--hc-card); color: var(--hc-ink); font-weight: 600; box-shadow: var(--hc-shadow); }
+.hc-ordered { min-height: 88rpx; min-width: 120rpx; display: flex; align-items: baseline; justify-content: flex-end; padding-top: 22rpx; box-sizing: border-box; }
+.hc-ordered-num { color: var(--hc-ink); font-size: var(--fs-h2); font-weight: 600; }
+.hc-ordered-unit { margin-left: 6rpx; color: var(--hc-mut); font-size: var(--fs-cap); }
+.hc-meal-note { margin-top: 16rpx; padding: 0 8rpx; color: var(--hc-mut); font-size: var(--fs-cap); line-height: 1.5; }
+
+/* ---------- 区块标题 ---------- */
+.hc-section { margin-top: 56rpx; }
+.hc-sec-head { margin-bottom: 24rpx; }
+.hc-sec-row { display: flex; align-items: center; justify-content: space-between; }
+.hc-sec-title { color: var(--hc-ink); font-size: var(--fs-h2); font-weight: 600; line-height: 1.3; }
+.hc-sec-sub { margin-top: 6rpx; color: var(--hc-mut); font-size: var(--fs-cap); }
+.hc-clear { min-height: 88rpx; display: flex; align-items: center; padding-left: 24rpx; color: var(--hc-accent); font-size: var(--fs-sub); }
+
+/* ---------- 4 按心情挑 ---------- */
+.hc-moods { margin: 0 calc(0rpx - var(--hc-gutter)); width: auto; white-space: nowrap; }
+.hc-moods-track { display: inline-flex; gap: 20rpx; padding: 4rpx var(--hc-gutter) 12rpx; }
+.hc-mood { width: 168rpx; padding: 12rpx 12rpx 20rpx; border-radius: var(--hc-r-lg); background: var(--hc-card); box-shadow: var(--hc-shadow); white-space: normal; }
+.hc-mood.is-on { background: var(--hc-accent-soft); }
+.hc-mood-pic { width: 144rpx; height: 144rpx; border-radius: var(--hc-r-md); overflow: hidden; background: var(--hc-sunk); }
+.hc-mood-img { display: block; width: 100%; height: 100%; }
+.hc-mood-name { margin-top: 14rpx; padding: 0 4rpx; color: var(--hc-ink); font-size: var(--fs-sub); font-weight: 600; line-height: 1.3; }
+.hc-mood.is-on .hc-mood-name { color: var(--hc-accent); }
+.hc-mood-count { margin-top: 4rpx; padding: 0 4rpx; color: var(--hc-mut); font-size: var(--fs-mini); }
+
+/* ---------- 5 菜谱流（两列） ---------- */
+.hc-grid { display: flex; flex-wrap: wrap; justify-content: space-between; }
+.hc-item { width: calc((100% - 24rpx) / 2); margin-bottom: 36rpx; }
+.hc-item-pic { height: 250rpx; border-radius: var(--hc-r-md); overflow: hidden; background: var(--hc-sunk); }
+.hc-item-img { display: block; width: 100%; height: 100%; }
+.hc-item-name { margin-top: 16rpx; color: var(--hc-ink); font-size: var(--fs-lg); font-weight: 600; line-height: 1.35; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hc-item-meta { margin-top: 6rpx; color: var(--hc-mut); font-size: var(--fs-cap); }
+.hc-feed-empty { padding: 40rpx 0; color: var(--hc-mut); font-size: var(--fs-sub); text-align: center; }
+
+/* ---------- 状态：失败 / 空 ---------- */
+.hc-state { padding: 64rpx 40rpx; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.hc-state-title { color: var(--hc-ink); font-size: var(--fs-h2); font-weight: 600; line-height: 1.3; }
+.hc-state-desc { margin-top: 12rpx; color: var(--hc-mut); font-size: var(--fs-sub); line-height: 1.6; }
+.hc-state-retry { margin-top: 40rpx; flex: none; min-width: 280rpx; }
+
+/* ---------- 骨架：与真实版面同尺寸 ---------- */
+.hc-sk { background: var(--hc-sunk); border-radius: 12rpx; }
+.hc-sk-card { padding: 20rpx 20rpx 32rpx; }
+.hc-sk-photo { height: 460rpx; border-radius: var(--hc-r-md); }
+.hc-sk-line { height: 32rpx; margin: 28rpx 12rpx 0; }
+.hc-sk-w60 { width: 60%; height: 44rpx; }
+.hc-sk-w90 { width: 86%; }
+.hc-sk-pair { display: flex; gap: 20rpx; padding: 32rpx 12rpx 0; }
+.hc-sk-pill { flex: 1; height: 88rpx; border-radius: 44rpx; }
+.hc-sk-pill-s { flex: none; width: 200rpx; }
+.hc-sk-seg { height: 100rpx; margin-top: 40rpx; border-radius: 48rpx; }
+.hc-sk-moods { display: flex; gap: 20rpx; margin-top: 56rpx; overflow: hidden; }
+.hc-sk-mood { flex: none; width: 168rpx; height: 236rpx; border-radius: var(--hc-r-lg); }
+
+/* 模拟 tab 页可视高度 */
+.hc-tabbar-space { height: calc(var(--tabbar-h) + 40rpx); }

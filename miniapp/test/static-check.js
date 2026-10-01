@@ -681,7 +681,7 @@ for (const file of files) {
 // 判据只认「带连字符的标签」（小程序内置标签里非连字符的占多数，自定义组件命名必须含连字符），
 // BUILTIN 列出微信自带的连字符标签，避免把 scroll-view 当成漏声明。
 const WXML_BUILTIN_HYPHENATED = new Set([
-  'scroll-view', 'cover-view', 'cover-image', 'movable-area', 'movable-view',
+  'scroll-view', 'swiper-item', 'cover-view', 'cover-image', 'movable-area', 'movable-view',
   'match-media', 'page-container', 'root-portal', 'navigation-bar', 'keyboard-accessory',
   'page-meta', 'share-element', 'voip-room', 'snapshot', 'editor',
   'official-account', 'open-data', 'xr-frame-attention-blob', 'xr-frame-scene'

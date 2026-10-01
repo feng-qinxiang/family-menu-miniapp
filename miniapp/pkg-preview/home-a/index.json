@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "首页预览 A",
+  "navigationStyle": "custom",
+  "enablePullDownRefresh": true,
+  "usingComponents": {}
+}

@@ -1,0 +1,169 @@
+<!-- 首页风格预览 · 方案 D：TDesign 零售首页骨架（搜索 → 轮播 → tabs → 双列流）+ 下厨房式大图内容 -->
+<view class="pd {{fontScale === 'lg' ? 'font-lg' : ''}}">
+
+  <!-- 1. 顶栏：家庭名 + 日期；右侧让开胶囊 -->
+  <view class="pd-top" style="padding-top: {{capsuleTop}};">
+    <view class="pd-brand" style="padding-right: {{capsuleRight}};">
+      <text class="pd-family">{{loaded ? familyName : '家庭点菜'}}</text>
+      <text class="pd-date">{{dateText}}</text>
+    </view>
+    <!-- 搜索：TDesign 零售同款 64rpx 胶囊，点击跳搜索页 -->
+    <view class="pd-search" hover-class="pd-press" bindtap="onSearch">
+      <image class="pd-search-ico" src="/assets/icons/lucide/search.svg" mode="aspectFit" />
+      <text class="pd-search-ph">搜菜名、食材，比如 番茄</text>
+    </view>
+  </view>
+
+  <view wx:if="{{loadError && loaded && !loading}}" class="pd-banner-tip">
+    <text class="pd-tip-text">刷新失败：{{loadError}}</text>
+    <view class="pd-tip-retry" hover-class="pd-press" bindtap="onRetry">重试</view>
+  </view>
+
+  <!-- 骨架 -->
+  <block wx:if="{{loading && !loaded}}">
+    <view class="pd-wrap">
+      <view class="pd-sk pd-sk-hero"></view>
+      <view class="pd-meals">
+        <view wx:for="{{[1, 2, 3]}}" wx:key="*this" class="pd-sk pd-sk-meal"></view>
+      </view>
+      <view class="pd-cols">
+        <view class="pd-col"><view class="pd-sk pd-sk-card"></view></view>
+        <view class="pd-col"><view class="pd-sk pd-sk-card pd-sk-short"></view></view>
+      </view>
+    </view>
+  </block>
+
+  <view wx:elif="{{loadError && !loaded}}" class="pd-fail">
+    <view class="pd-fail-title">首页没加载出来</view>
+    <view class="pd-fail-desc">{{loadError}}</view>
+    <view class="pd-btn" hover-class="pd-press" bindtap="onRetry">重新加载</view>
+  </view>
+
+  <block wx:elif="{{loaded}}">
+    <view class="pd-wrap">
+      <!-- 2. 大图轮播：评分最高的几道菜，菜名压在图上 -->
+      <view wx:if="{{banners.length}}" class="pd-hero">
+        <swiper class="pd-swiper" circular autoplay interval="4500" duration="400" bindchange="onBannerChange">
+          <swiper-item wx:for="{{banners}}" wx:key="id">
+            <view class="pd-slide" hover-class="pd-press" data-title="{{item.title}}" bindtap="onRecipeTap">
+              <image
+                class="pd-slide-img"
+                src="{{item.dishImg}}"
+                mode="aspectFill"
+                data-path="banners[{{index}}].dishImg"
+                data-seed="{{item.title}}"
+                binderror="onPicError"
+              />
+              <view class="pd-slide-mask"></view>
+              <view class="pd-slide-text">
+                <text class="pd-slide-kicker">今日推荐</text>
+                <text class="pd-slide-title">{{item.title}}</text>
+                <text class="pd-slide-meta">{{item.meta}}</text>
+              </view>
+            </view>
+          </swiper-item>
+        </swiper>
+        <view class="pd-dots">
+          <view wx:for="{{banners}}" wx:key="id" class="pd-dot {{index === bannerIdx ? 'is-on' : ''}}"></view>
+        </view>
+      </view>
+
+      <!-- 3. 今日三餐：一行三格，已点显示首道菜图，未点显示「去挑」 -->
+      <view class="pd-sec-head">
+        <text class="pd-sec-title">今日三餐</text>
+      </view>
+      <view class="pd-meals">
+        <view
+          wx:for="{{meals}}"
+          wx:key="key"
+          class="pd-meal"
+          hover-class="pd-press"
+          data-label="{{item.label}}"
+          data-count="{{item.count}}"
+          bindtap="onMeal"
+        >
+          <image
+            wx:if="{{item.img}}"
+            class="pd-meal-img"
+            src="{{item.img}}"
+            mode="aspectFill"
+            data-path="meals[{{index}}].img"
+            data-seed="{{item.seed}}"
+            binderror="onPicError"
+          />
+          <view wx:else class="pd-meal-empty">
+            <text class="pd-meal-plus">+</text>
+          </view>
+          <view class="pd-meal-label">{{item.label}}</view>
+          <view class="pd-meal-sub {{item.count ? '' : 'is-todo'}}">{{item.count ? item.count + ' 道' : '去挑选'}}</view>
+        </view>
+      </view>
+
+      <!-- 4. 分类 tabs：文字 + 选中下划线（TDesign t-tabs 样式），横向可滑 -->
+      <view class="pd-tabs-wrap">
+        <scroll-view class="pd-tabs" scroll-x enhanced show-scrollbar="{{false}}">
+          <view class="pd-tabs-track">
+            <view
+              wx:for="{{tabs}}"
+              wx:key="key"
+              class="pd-tab {{currentTab === item.key ? 'is-on' : ''}}"
+              hover-class="pd-press"
+              data-key="{{item.key}}"
+              bindtap="onTab"
+            >{{item.label}}</view>
+          </view>
+        </scroll-view>
+        <view class="pd-tabs-all" hover-class="pd-press" bindtap="onSeeAll">全部 {{total}}</view>
+      </view>
+
+      <!-- 5. 双列瀑布流：图高三档，白卡只放菜名 + meta + 加号 -->
+      <view wx:if="{{colL.length}}" class="pd-cols">
+        <view class="pd-col">
+          <view wx:for="{{colL}}" wx:key="id" class="pd-card" hover-class="pd-press" data-title="{{item.title}}" bindtap="onRecipeTap">
+            <image
+              class="pd-card-img"
+              style="height: {{item.imgH}}rpx;"
+              src="{{item.dishImg}}"
+              mode="aspectFill"
+              data-path="colL[{{index}}].dishImg"
+              data-seed="{{item.title}}"
+              binderror="onPicError"
+            />
+            <view class="pd-card-body">
+              <view class="pd-card-title">{{item.title}}</view>
+              <view class="pd-card-foot">
+                <text class="pd-card-meta">{{item.meta}}</text>
+                <view class="pd-add tap-scale" data-title="{{item.title}}" catchtap="onAdd"><view class="pd-add-dot">+</view></view>
+              </view>
+            </view>
+          </view>
+        </view>
+        <view class="pd-col">
+          <view wx:for="{{colR}}" wx:key="id" class="pd-card" hover-class="pd-press" data-title="{{item.title}}" bindtap="onRecipeTap">
+            <image
+              class="pd-card-img"
+              style="height: {{item.imgH}}rpx;"
+              src="{{item.dishImg}}"
+              mode="aspectFill"
+              data-path="colR[{{index}}].dishImg"
+              data-seed="{{item.title}}"
+              binderror="onPicError"
+            />
+            <view class="pd-card-body">
+              <view class="pd-card-title">{{item.title}}</view>
+              <view class="pd-card-foot">
+                <text class="pd-card-meta">{{item.meta}}</text>
+                <view class="pd-add tap-scale" data-title="{{item.title}}" catchtap="onAdd"><view class="pd-add-dot">+</view></view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view wx:else class="pd-empty">这个分类还没有菜谱</view>
+
+      <view wx:if="{{total > 10}}" class="pd-more" hover-class="pd-press" bindtap="onSeeAll">查看全部 {{total}} 道菜谱</view>
+    </view>
+  </block>
+
+  <view class="pd-tabbar-space"></view>
+</view>

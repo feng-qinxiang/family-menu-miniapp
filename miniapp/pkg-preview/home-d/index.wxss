@@ -1,0 +1,125 @@
+/* ============================================================
+   首页风格预览 · 方案 D
+   尺寸直接取 TDesign 小程序 token：间距 16/24/32/48，圆角 12/18/24，
+   字号 24/28/32/36/48、字重只用 400/600。灰底 #f5f5f5 + 白卡（TDesign 零售首页同款），
+   品牌红只出现在：tab 选中下划线、轮播指示点、卡片加号。深色档在末尾整组覆盖。
+   ============================================================ */
+page {
+  --d-bg: #f5f5f5;
+  --d-card: #ffffff;
+  --d-fill: #eeeeee;
+  --d-ink: rgba(0, 0, 0, 0.9);
+  --d-ink-2: rgba(0, 0, 0, 0.6);
+  --d-ink-3: rgba(0, 0, 0, 0.4);
+  --d-brand: var(--pop);
+  --d-gutter: 24rpx;   /* TDesign 零售首页左右边距 */
+  --d-gap: 16rpx;      /* 双列间距 */
+  --d-r-sm: 12rpx;
+  --d-r-md: 18rpx;
+  --d-r-lg: 24rpx;
+  background: var(--d-bg);
+}
+.pd { min-height: 100vh; background: var(--d-bg); color: var(--d-ink); font-size: var(--fs-body); }
+.pd-wrap { padding: 0 var(--d-gutter); }
+.pd-press { opacity: 0.7; }
+
+/* 1. 顶栏 + 搜索：白到灰的渐变（零售模板 header 同款） */
+.pd-top { padding-left: var(--d-gutter); padding-right: var(--d-gutter); padding-bottom: 24rpx; background: linear-gradient(var(--d-card), var(--d-bg)); }
+.pd-brand { display: flex; align-items: baseline; gap: 16rpx; min-height: 64rpx; }
+.pd-family { font-size: var(--fs-h2); font-weight: 600; line-height: 1.4; }
+.pd-date { font-size: var(--fs-cap); color: var(--d-ink-3); }
+.pd-search {
+  display: flex; align-items: center; gap: 12rpx; height: 72rpx; margin-top: 16rpx;
+  padding: 0 24rpx; border-radius: 999rpx; background: var(--d-card); position: relative;
+}
+.pd-search::after { content: ''; position: absolute; left: 0; right: 0; top: -8rpx; bottom: -8rpx; }
+.pd-search-ico { width: 36rpx; height: 36rpx; flex-shrink: 0; }
+.pd-search-ph { font-size: var(--fs-body); color: var(--d-ink-3); }
+
+/* 刷新失败提示条 */
+.pd-banner-tip { display: flex; align-items: center; justify-content: space-between; margin: 0 var(--d-gutter) 16rpx; padding: 16rpx 24rpx; border-radius: var(--d-r-md); background: #fff1ed; }
+.pd-tip-text { font-size: var(--fs-cap); color: var(--d-brand); }
+.pd-tip-retry { min-height: 88rpx; min-width: 88rpx; display: flex; align-items: center; justify-content: center; font-weight: 600; color: var(--d-brand); }
+
+/* 2. 轮播：零售模板 300rpx，菜品图放大到 360rpx，文字压在底部渐变上 */
+.pd-hero { position: relative; }
+.pd-swiper { height: 360rpx; border-radius: var(--d-r-lg); overflow: hidden; transform: translateZ(0); }
+.pd-slide { position: relative; width: 100%; height: 100%; }
+.pd-slide-img { width: 100%; height: 100%; display: block; }
+.pd-slide-mask { position: absolute; left: 0; right: 0; bottom: 0; height: 60%; background: linear-gradient(transparent, rgba(0, 0, 0, 0.55)); }
+.pd-slide-text { position: absolute; left: 32rpx; right: 32rpx; bottom: 32rpx; display: flex; flex-direction: column; gap: 4rpx; color: #fff; }
+.pd-slide-kicker { font-size: var(--fs-cap); opacity: 0.85; }
+.pd-slide-title { font-size: var(--fs-h2); font-weight: 600; line-height: 1.3; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.pd-slide-meta { font-size: var(--fs-cap); opacity: 0.85; }
+.pd-dots { position: absolute; right: 32rpx; bottom: 40rpx; display: flex; gap: 8rpx; }
+.pd-dot { width: 12rpx; height: 6rpx; border-radius: 6rpx; background: rgba(255, 255, 255, 0.55); transition: width 0.2s; }
+.pd-dot.is-on { width: 32rpx; background: #fff; }
+
+/* 3. 今日三餐：三等分白卡 */
+.pd-sec-head { display: flex; align-items: center; justify-content: space-between; margin: 32rpx 0 16rpx; }
+.pd-sec-title { font-size: var(--fs-lg); font-weight: 600; }
+.pd-meals { display: flex; gap: var(--d-gap); }
+.pd-meal { flex: 1; min-width: 0; padding: 16rpx; border-radius: var(--d-r-md); background: var(--d-card); }
+.pd-meal-img, .pd-meal-empty { width: 100%; height: 144rpx; border-radius: var(--d-r-sm); display: block; }
+.pd-meal-empty { display: flex; align-items: center; justify-content: center; background: var(--d-fill); }
+.pd-meal-plus { font-size: var(--fs-h1); font-weight: 400; color: var(--d-ink-3); line-height: 1; }
+.pd-meal-label { margin-top: 12rpx; font-size: var(--fs-body); font-weight: 600; }
+.pd-meal-sub { font-size: var(--fs-cap); color: var(--d-ink-2); }
+.pd-meal-sub.is-todo { color: var(--d-ink-3); }
+
+/* 4. 分类 tabs：t-tabs 同款，80rpx 行高，选中加粗 + 品牌色短下划线 */
+.pd-tabs-wrap { display: flex; align-items: center; margin: 24rpx calc(-1 * var(--d-gutter)) 8rpx 0; }
+.pd-tabs { flex: 1; min-width: 0; white-space: nowrap; }
+.pd-tabs-track { display: inline-flex; padding-right: 24rpx; }
+.pd-tab { position: relative; height: 88rpx; line-height: 88rpx; padding: 0 24rpx; font-size: var(--fs-body); color: var(--d-ink-2); }
+.pd-tab:first-child { padding-left: 0; }
+.pd-tab.is-on { color: var(--d-ink); font-weight: 600; }
+.pd-tab.is-on::after { content: ''; position: absolute; left: 50%; bottom: 12rpx; width: 32rpx; height: 6rpx; margin-left: -16rpx; border-radius: 6rpx; background: var(--d-brand); }
+.pd-tab:first-child.is-on::after { left: calc(50% - 12rpx); }
+.pd-tabs-all { flex-shrink: 0; height: 88rpx; line-height: 88rpx; padding: 0 var(--d-gutter); font-size: var(--fs-cap); color: var(--d-ink-3); }
+
+/* 5. 双列瀑布 */
+.pd-cols { display: flex; align-items: flex-start; gap: var(--d-gap); }
+.pd-col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--d-gap); }
+.pd-card { border-radius: var(--d-r-md); background: var(--d-card); overflow: hidden; transform: translateZ(0); }
+.pd-card-img { width: 100%; display: block; background: var(--d-fill); }
+.pd-card-body { padding: 16rpx 16rpx 8rpx 20rpx; }
+.pd-card-title {
+  font-size: var(--fs-body); font-weight: 600; line-height: 1.45;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.pd-card-foot { display: flex; align-items: center; justify-content: space-between; gap: 8rpx; }
+.pd-card-meta { flex: 1; min-width: 0; font-size: var(--fs-cap); color: var(--d-ink-3); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+/* 加号：视觉 48rpx，热区撑到 88rpx */
+.pd-add { position: relative; flex-shrink: 0; width: 88rpx; height: 88rpx; margin: -16rpx -16rpx -16rpx 0; display: flex; align-items: center; justify-content: center; }
+.pd-add-dot { width: 48rpx; height: 48rpx; border-radius: 50%; background: var(--d-brand); color: #fff; font-size: var(--fs-h2); line-height: 44rpx; text-align: center; }
+
+.pd-empty { padding: 96rpx 0; text-align: center; font-size: var(--fs-body); color: var(--d-ink-3); }
+.pd-more { margin-top: 24rpx; height: 88rpx; line-height: 88rpx; text-align: center; border-radius: var(--d-r-md); background: var(--d-card); font-size: var(--fs-body); color: var(--d-ink-2); }
+
+/* 失败态 / 按钮 */
+.pd-fail { padding: 160rpx 48rpx; text-align: center; }
+.pd-fail-title { font-size: var(--fs-h2); font-weight: 600; }
+.pd-fail-desc { margin: 16rpx 0 48rpx; font-size: var(--fs-body); color: var(--d-ink-2); }
+.pd-btn { display: inline-flex; align-items: center; justify-content: center; height: 88rpx; padding: 0 64rpx; border-radius: var(--d-r-md); background: var(--d-brand); color: #fff; font-weight: 600; }
+
+/* 骨架 */
+.pd-sk { background: var(--d-fill); border-radius: var(--d-r-md); }
+.pd-sk-hero { height: 360rpx; border-radius: var(--d-r-lg); }
+.pd-sk-meal { flex: 1; height: 248rpx; margin-top: 32rpx; }
+.pd-sk-card { height: 480rpx; margin-top: 32rpx; }
+.pd-sk-short { height: 380rpx; }
+
+.pd-tabbar-space { height: calc(var(--tabbar-h) + 32rpx); }
+
+@media (prefers-color-scheme: dark) {
+  page {
+    --d-bg: #141414;
+    --d-card: #242424;
+    --d-fill: #2c2c2c;
+    --d-ink: rgba(255, 255, 255, 0.9);
+    --d-ink-2: rgba(255, 255, 255, 0.55);
+    --d-ink-3: rgba(255, 255, 255, 0.35);
+  }
+  .pd-banner-tip { background: #3a2420; }
+}
