@@ -72,31 +72,29 @@ function buildBindCard(user) {
 Page({
   data: {
     features,
-    currentUser: {},
     bindCard: { show: false },
     vipStatus: { vip: false, planName: '' },
     familyProfile: { familyId: 1, familyName: '', members: [] },
     memberCount: 0,
-    profileInitial: '',
     monthCookCount: 0,
     savedCount: 0,
-    streakDays: 0,
     cookHistory: [],
     prefBars: [],
-    favoriteCuisine: '',
     appVersion: 'v1.0.0',
     loading: true,
     loadError: '',
     // 兜底必须含安全区：写死 51px 在刘海机上会让标题顶进状态栏
-    capsuleTop: 'calc(env(safe-area-inset-top) + 90rpx)'
+    capsuleTop: 'calc(env(safe-area-inset-top) + 90rpx)',
+    capsuleRight: '96px'
   },
 
   onLoad() {
-    this.setData({ capsuleTop: getCapsule().top });
+    const capsule = getCapsule();
+    this.setData({ capsuleTop: capsule.top, capsuleRight: capsule.right });
   },
 
   onShow() {
-    withTabSelect(this, 3);
+    withTabSelect(this);
     let fontScale = 'normal';
     try { fontScale = wx.getStorageSync('font_scale') || 'normal'; } catch (e) { fontScale = 'normal'; }
     if (fontScale !== this.data.fontScale) this.setData({ fontScale });
@@ -145,7 +143,6 @@ Page({
       }
 
       const monthCookCount = (preference && preference.totalCooks) || history.length;
-      const favoriteCuisine = (preference && preference.favoriteCuisine) || '';
 
       // 口味偏好进度条：菜系偏好 + 口味标签偏好合并取前 3
       const cuisineBars = (preference && Array.isArray(preference.cuisinePrefs) ? preference.cuisinePrefs : [])
@@ -167,7 +164,6 @@ Page({
       const prefBars = [...cuisineBars, ...tagBars].slice(0, 3);
 
       this.setData({
-        currentUser: currentUser || {},
         vipStatus: vipStatus || { vip: false },
         bindCard: buildBindCard(currentUser),
         familyProfile: {
@@ -175,13 +171,10 @@ Page({
           members
         },
         memberCount: members.length,
-        profileInitial: ((currentUser && currentUser.nickname) || '家').slice(0, 1),
         monthCookCount,
         savedCount,
-        streakDays: (preference && preference.streakDays) || enrichedHistory.length,
         cookHistory: enrichedHistory,
         prefBars,
-        favoriteCuisine,
         loading: false,
         loadError: ''
       }, () => withScrollReveal(this, { item: '.mag-hrow' }));

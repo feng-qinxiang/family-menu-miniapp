@@ -126,6 +126,7 @@
           <view class="fp-wish-text ellipsis">{{item.text}}</view>
           <view class="tap-scale fp-wish-pending" wx:if="{{!item.recipeId}}" catchtap="pickForWish" data-text="{{item.text}}" data-id="{{item.id}}" data-slot="{{item.slot}}">待挑菜 ›</view>
           <view class="fp-wish-by">{{item.by}}</view>
+          <view class="fp-wish-edit tap-scale" catchtap="editWish" data-id="{{item.id}}">改</view>
           <view class="fp-wish-del tap-scale" catchtap="removeWish" data-id="{{item.id}}">×</view>
         </view>
       </view>
@@ -280,8 +281,8 @@
       <view class="wish-modal-ic">
         <text class="wish-modal-ic-glyph">味</text>
       </view>
-      <view class="wish-modal-title">{{heroMealWord}}想吃什么？</view>
-      <view class="wish-modal-sub">写下来，家人都能看到</view>
+      <view class="wish-modal-title">{{wishEditId ? '改一下这个心愿' : heroMealWord + '想吃什么？'}}</view>
+      <view class="wish-modal-sub">{{wishEditId ? '改完家里人都能看到新文案' : '写下来，家人都能看到'}}</view>
     </view>
     <view class="wish-modal-bd">
       <input
@@ -297,8 +298,8 @@
       />
     </view>
     <view class="wish-modal-ft">
-      <view class="wish-btn-cancel tap-scale" catchtap="closeWishModal">算了</view>
-      <view class="wish-btn-ok tap-scale {{wishInput ? '' : 'off'}}" catchtap="confirmWish">许愿 ✦</view>
+      <view class="wish-btn-cancel tap-scale" catchtap="closeWishModal">{{wishEditId ? '不改了' : '算了'}}</view>
+      <view class="wish-btn-ok tap-scale {{wishInput ? '' : 'off'}}" catchtap="confirmWish">{{wishEditId ? (wishEditing ? '保存中…' : '保存 ✓') : '许愿 ✦'}}</view>
     </view>
   </view>
 </root-portal>

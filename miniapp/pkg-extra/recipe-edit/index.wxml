@@ -159,11 +159,16 @@
 </state-sheet>
 
 <state-sheet visible="{{mediaSheet.visible}}" title="{{mediaSheet.mode === 'video' ? '教学视频' : (mediaSheet.mode === 'cover' ? '封面' : '步骤配图')}}" bind:close="closeMediaSheet">
+  <!-- 上传失败留的原路径：重试即重传，不必让用户从头再挑一次 -->
+  <view wx:if="{{pendingUpload}}" class="rc-retry">
+    <view class="rc-retry-txt">上次上传没成功</view>
+    <view class="rc-retry-btn tap-scale {{uploading ? 'is-busy' : ''}}" catchtap="retryUpload">重试</view>
+  </view>
   <view wx:if="{{mediaSheet.mode === 'video'}}" class="rc-pick">
-    <view class="rc-pick-btn tap-scale" catchtap="pickVideoFromAlbum">从相册或拍摄</view>
+    <view class="rc-pick-btn tap-scale {{uploading ? 'is-busy' : ''}}" catchtap="pickVideoFromAlbum">从相册或拍摄</view>
   </view>
   <view wx:else class="rc-pick">
-    <view class="rc-pick-btn tap-scale" catchtap="pickImageFromAlbum">从相册或拍摄</view>
+    <view class="rc-pick-btn tap-scale {{uploading ? 'is-busy' : ''}}" catchtap="pickImageFromAlbum">从相册或拍摄</view>
     <view class="rc-pick-grid">
       <image
         wx:for="{{pickerImages}}"

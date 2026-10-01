@@ -142,7 +142,7 @@
       <view class="card rd-card">
         <block wx:if="{{works.length}}">
           <view class="rd-work tap-scale" wx:for="{{works}}" wx:key="id" data-id="{{item.id}}" bindtap="openWork">
-            <image wx:if="{{item.cover}}" class="rd-work-thumb" src="{{item.cover}}" mode="aspectFill" />
+            <image wx:if="{{item.cover}}" class="rd-work-thumb" src="{{item.cover}}" mode="aspectFill" lazy-load />
             <view wx:else class="rd-work-thumb rd-work-thumb--none">{{item.initial}}</view>
             <view class="rd-work-body">
               <view class="rd-work-title clamp-2">{{item.title}}</view>

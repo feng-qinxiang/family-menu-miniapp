@@ -96,7 +96,7 @@
         bindtap="onDishTap"
       >
         <text class="wm-slot">午</text>
-        <image class="wm-thumb" src="{{item.lunch.image}}" mode="aspectFill" />
+        <image class="wm-thumb" src="{{item.lunch.image}}" mode="aspectFill" lazy-load />
         <view class="wm-dmid">
           <view class="wm-dname ellipsis">{{item.lunch.title}}</view>
           <view class="wm-dmeta">{{item.lunch.cuisine}} · {{item.lunch.timeCost}} 分钟</view>
@@ -120,7 +120,7 @@
         bindtap="onDishTap"
       >
         <text class="wm-slot">晚</text>
-        <image class="wm-thumb" src="{{item.dinner.image}}" mode="aspectFill" />
+        <image class="wm-thumb" src="{{item.dinner.image}}" mode="aspectFill" lazy-load />
         <view class="wm-dmid">
           <view class="wm-dname ellipsis">{{item.dinner.title}}</view>
           <view class="wm-dmeta">{{item.dinner.cuisine}} · {{item.dinner.timeCost}} 分钟</view>

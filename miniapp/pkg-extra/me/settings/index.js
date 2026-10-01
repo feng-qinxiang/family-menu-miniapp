@@ -219,8 +219,10 @@ Page({
   },
 
   _doClearCache() {
-    // 需要保留的本地键：身份锚点、登录态、显示偏好、口味偏好、心愿缓存
-    const KEEP_KEYS = ['device_id', 'auth_token', 'font_scale', 'profile_prefs_v1', 'family_wishes_v1'];
+    // 需要保留的本地键：身份锚点、登录态、显示偏好、口味偏好、心愿缓存、待补发许愿
+    // wish_pending_v1 必须留下：那是离线期间还没发出去的许愿，
+    // 清掉就等于用户以为"联网后自动同步"的心愿被静默销毁（队列存在的意义就是扛住网络失败）。
+    const KEEP_KEYS = ['device_id', 'auth_token', 'font_scale', 'profile_prefs_v1', 'family_wishes_v1', 'wish_pending_v1'];
     try {
       const kept = {};
       KEEP_KEYS.forEach((key) => {

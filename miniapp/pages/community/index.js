@@ -1,4 +1,5 @@
 const features = require('../../utils/features');
+const { getCapsule } = require('../../utils/capsule');
 const {
   createCommunityPost,
   getCommunityPosts,
@@ -32,7 +33,9 @@ const HOT_TOPICS = [
 Page({
   onPhotoError(e) { markPhotoBroken(e, this); },
   data: {
-      statusBarHeight: 0,
+    // 紧凑页头避让胶囊；兜底值与 utils/capsule.js 一致，量到真实值前不偏位
+    capsuleTop: 'calc(env(safe-area-inset-top) + 90rpx)',
+    capsuleRight: '96px',
     fontScale: 'normal',
     // 信息流回顶键（滚深出现）
     showBackTop: false,
@@ -62,13 +65,8 @@ Page({
     // 个人主体没有「社交-社区/论坛」类目，COMMUNITY 关闭时整页不可达：
     // 入口（tabBar/首页/我的）已隐藏，但审核员可用页面路径直达，所以这里守一道。
     if (!features.COMMUNITY) { features.leaveToHome(); return; }
-    let sbh = 0;
-    try {
-      sbh = (wx.getWindowInfo ? wx.getWindowInfo().statusBarHeight : wx.getSystemInfoSync().statusBarHeight) || 0;
-    } catch (e) {
-      sbh = 0;
-    }
-    this.setData({ statusBarHeight: sbh });
+    const capsule = getCapsule();
+    this.setData({ capsuleTop: capsule.top, capsuleRight: capsule.right });
     this.loadTopics();
   },
 
@@ -380,7 +378,7 @@ Page({
   },
 
   togglePostForm() {
-    // 从 FAB 打开时清掉可能残留的关联菜（「晒一晒」那条动线已经消费过了）；
+    // 从页头「+ 发帖」打开时清掉可能残留的关联菜（「晒一晒」那条动线已经消费过了）；
     // 关闭时保留，避免手滑关掉再打开把关联弄丢
     if (!this.data.showPostForm && (this.data.postForm.recipeId || this.data.postForm.recipeTitle)) {
       this.setData({

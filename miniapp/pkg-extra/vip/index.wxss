@@ -186,7 +186,7 @@
 .vip-col-on { color: var(--pop); }
 .vip-tick { color: var(--mut-2); font-size: calc(32rpx * var(--fs-mul, 1)); font-weight: 900; }
 .vip-tick.on { color: var(--pop); }
-.vip-cross { color: var(--line-deep); font-size: calc(25rpx * var(--fs-mul, 1)); }
+.vip-cross { color: var(--mut-strong); font-size: calc(25rpx * var(--fs-mul, 1)); }
 .vip-cell-txt { font-size: calc(23rpx * var(--fs-mul, 1)); font-weight: 700; color: var(--mut); }
 
 /* ===== 套餐 ===== */
@@ -285,6 +285,9 @@
   gap: 10rpx;
   font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: 700;
+  /* --success(#3a9d5d) 是恒定值、不随主题翻转：直接写在浅色档只有 3.22:1，低于 AA。
+     --pine 才是随主题走的那一个（浅 #2f4a3a / 深 #4e6b58），所以默认用它，
+     深色档再换到 --success（5.00:1）补足对比 —— 两档各取自己更高的那个。 */
   color: var(--pine);
 }
 .vip-sdot {
@@ -292,6 +295,10 @@
   height: 14rpx;
   border-radius: 50%;
   background: var(--pine);
+}
+@media (prefers-color-scheme: dark) {
+  .vip-synced { color: var(--success); }
+  .vip-sdot { background: var(--success); }
 }
 
 /* ===== CTA ===== */

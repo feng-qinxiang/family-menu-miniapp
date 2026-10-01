@@ -1,5 +1,5 @@
 const { getRecipeDetail, saveRecipe, updateRecipe } = require('../../utils/api');
-const { chooseAndUpload, chooseVideo, uploadFile } = require('../../utils/upload');
+const { chooseImage, chooseVideo, uploadFile } = require('../../utils/upload');
 const { LOCAL_DISHES, recipeDishImg } = require('../../utils/image');
 const { cuisineList } = require('../../utils/constants');
 
@@ -62,6 +62,10 @@ Page({
     tagsLabel: '未选',
     pickSheet: { visible: false, mode: 'cuisine' },
     mediaSheet: { visible: false, mode: 'image', index: 0 },
+    // 上传失败的暂存：失败后不再只弹 toast 就把用户刚选的图丢掉，
+    // 而是留下面板和原临时路径，给一个「重试」入口（tempPath 不能落库，但可以重传）。
+    pendingUpload: null,
+    uploading: false,
     pickerImages: PICKER_IMAGES
   },
 
@@ -286,7 +290,8 @@ Page({
   },
 
   closeMediaSheet() {
-    this.setData({ 'mediaSheet.visible': false });
+    // 关面板即放弃这次失败的上传：临时路径留着也没入口再用，下次选图会产生新的
+    this.setData({ 'mediaSheet.visible': false, pendingUpload: null });
   },
 
   pickLocalImage(e) {
@@ -303,41 +308,64 @@ Page({
     });
   },
 
-  async pickImageFromAlbum() {
-    const urls = await chooseAndUpload(1);
-    // 上传失败会返回空串（不再回退本地临时路径），必须按空值拦截
-    if (!urls.length || !urls[0]) {
-      wx.showToast({ title: '上传失败，请重试', icon: 'none' });
+  // 统一的「传完落地」：成功才写进表单并关面板；失败留 pendingUpload 供重试。
+  // 三个入口（封面 / 步骤图 / 视频）共用，避免各自维护一份「失败只弹 toast」的分支。
+  _applyUpload(tempPath, url) {
+    if (!url) {
+      this.setData({ pendingUpload: { tempPath, mode: this.data.mediaSheet.mode }, uploading: false });
+      wx.showToast({ title: '上传失败，可点重试', icon: 'none' });
       return;
     }
-    if (this.data.mediaSheet.mode === 'cover') {
-      this.setData({ 'form.coverImage': urls[0], 'mediaSheet.visible': false });
+    const mode = this.data.mediaSheet.mode;
+    if (mode === 'video') {
+      this.setData({ 'form.videoUrl': url, 'mediaSheet.visible': false, pendingUpload: null, uploading: false });
+      return;
+    }
+    if (mode === 'cover') {
+      this.setData({ 'form.coverImage': url, 'mediaSheet.visible': false, pendingUpload: null, uploading: false });
       return;
     }
     const index = this.data.mediaSheet.index;
     this.setData({
-      [`form.steps[${index}].image`]: urls[0],
-      'mediaSheet.visible': false
+      [`form.steps[${index}].image`]: url,
+      'mediaSheet.visible': false,
+      pendingUpload: null,
+      uploading: false
     });
   },
 
+  // 真的在传：给 loading 反馈，防止网络慢时用户以为没反应又点一次
+  _uploadTemp(tempPath) {
+    this.setData({ uploading: true });
+    wx.showLoading({ title: '上传中', mask: true });
+    return uploadFile(tempPath).then((url) => {
+      wx.hideLoading();
+      this._applyUpload(tempPath, url);
+    });
+  },
+
+  async pickImageFromAlbum() {
+    if (this.data.uploading) return;
+    const paths = await chooseImage(1);
+    if (!paths.length || !paths[0]) return; // 用户取消，不提示
+    return this._uploadTemp(paths[0]);
+  },
+
+  // 上传失败后的重试：复用原临时路径，不必让用户重挑一次
+  retryUpload() {
+    const pending = this.data.pendingUpload;
+    if (!pending || !pending.tempPath || this.data.uploading) return;
+    return this._uploadTemp(pending.tempPath);
+  },
+
   async pickVideoFromAlbum() {
+    if (this.data.uploading) return;
     const path = await chooseVideo();
     if (!path) {
       wx.showToast({ title: '没有选到视频', icon: 'none' });
       return;
     }
-    wx.showLoading({ title: '上传中', mask: true });
-    const url = await uploadFile(path);
-    wx.hideLoading();
-    if (!url) {
-      wx.showToast({ title: '上传失败', icon: 'none' });
-      return;
-    }
-    this.setData({
-      'form.videoUrl': url,
-      'mediaSheet.visible': false
-    });
+    return this._uploadTemp(path);
   },
 
   removeLessonVideo() {

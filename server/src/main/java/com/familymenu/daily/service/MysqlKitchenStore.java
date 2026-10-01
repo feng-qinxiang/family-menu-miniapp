@@ -366,7 +366,10 @@ public class MysqlKitchenStore {
                 + "UNION ALL\n"
                 + "(" + select + "WHERE p.audit_status = 'PENDING' AND p.author_user_id = ?" + tagFilter
                 + "ORDER BY p.like_count DESC, p.id DESC LIMIT ?)\n"
-                + ") merged ORDER BY merged.like_count DESC, merged.id DESC LIMIT ? OFFSET ?";
+                // 作者自己的待审帖置顶：它刚发、0 赞，按热度排会被挤出第一页，作者就以为发帖失败了
+                // （CoreFlowInvariantsTests 在库里攒够 20 条有赞帖后稳定复现）。这一段只有作者本人看得到，
+                // 置顶不影响别人的信息流；两段各取 offset+size 条，换外层排序键仍然分页不重不漏。
+                + ") merged ORDER BY (merged.audit_status = 'PENDING') DESC, merged.like_count DESC, merged.id DESC LIMIT ? OFFSET ?";
         return jdbcTemplate.query(sql, (rs, rowNum) -> mapCommunityPost(rs, userId, viewerFamilyId),
             // 第一段：mine / my_fav / my_like / tag×2 / LIMIT
             userId, userId, userId, tag, tag, fetch,
@@ -395,7 +398,8 @@ public class MysqlKitchenStore {
                 + "(" + COMMUNITY_POST_SELECT
                 + "WHERE p.recipe_id = ? AND p.audit_status = 'PENDING' AND p.author_user_id = ?\n"
                 + "ORDER BY p.like_count DESC, p.id DESC LIMIT ?)\n"
-                + ") merged ORDER BY merged.like_count DESC, merged.id DESC LIMIT ?";
+                // 与 communityPosts 同一口径：作者自己的待审帖置顶，否则 0 赞的新帖会被 LIMIT 截掉
+                + ") merged ORDER BY (merged.audit_status = 'PENDING') DESC, merged.like_count DESC, merged.id DESC LIMIT ?";
         return jdbcTemplate.query(sql,
                 (rs, rowNum) -> mapCommunityPost(rs, userId, viewerFamilyId),
                 // 第一段：mine / my_fav / my_like / recipeId / LIMIT

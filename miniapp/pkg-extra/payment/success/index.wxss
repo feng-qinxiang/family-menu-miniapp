@@ -64,7 +64,7 @@
   padding: 14rpx 30rpx;
   border-radius: var(--r-pill);
   background: var(--anchor);
-  color: var(--gold);
+  color: var(--anchor-contrast);
   font-family: var(--serif);
   font-style: italic;
   font-size: calc(25rpx * var(--fs-mul, 1));

@@ -71,7 +71,7 @@
       <view class="lp-box tap-scale {{agreed ? 'is-on' : ''}}" catchtap="onToggleAgree">
         <view wx:if="{{agreed}}" class="lp-check"></view>
       </view>
-      <text class="tap-dim lp-agree-tx" catchtap="onToggleAgree">我已阅读并同意<text class="tap-dim lp-link" catchtap="onProtocol">用户协议</text>与<text class="tap-dim lp-link" catchtap="onProtocol">隐私政策</text>，验证码仅用于登录验证你的身份。</text>
+      <text class="tap-dim lp-agree-tx" catchtap="onToggleAgree">我已阅读并同意<text class="tap-dim lp-link" catchtap="onProtocol">用户协议</text>与<text class="tap-dim lp-link" catchtap="onPrivacy">隐私政策</text>，验证码仅用于登录验证你的身份。</text>
     </view>
 
     <!-- 分隔 -->

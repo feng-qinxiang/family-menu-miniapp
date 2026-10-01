@@ -481,7 +481,7 @@ function removeTodayMenuRecipe(recipeId) {
 
 // 菜单项状态流转：todo（待做）/ cooking（烧着）/ done（上桌）
 function updateMenuItemStatus(itemId, status) {
-  return requestStrict(`/api/daily-menu/today/items/${itemId}/status`, {
+  return requestStrict(`/api/daily-menu/today/items/${encodeURIComponent(itemId)}/status`, {
     method: 'PATCH',
     data: { status }
   });
@@ -505,8 +505,17 @@ function addWish(payload) {
   return requestStrict('/api/wishes', { method: 'POST', data: payload });
 }
 
+// PUT 语义：整条替换。请求体 { text, recipeId? }，与 addWish 的区别是
+// 不带 date/slot（许愿的日期餐次由服务端按原记录返回，改餐次不是编辑文案的职责）。
+function updateWish(wishId, data) {
+  return requestStrict(`/api/wishes/${encodeURIComponent(wishId)}`, {
+    method: 'PUT',
+    data
+  });
+}
+
 function removeWish(wishId) {
-  return requestStrict(`/api/wishes/${wishId}`, { method: 'DELETE' });
+  return requestStrict(`/api/wishes/${encodeURIComponent(wishId)}`, { method: 'DELETE' });
 }
 
 function getShoppingList() {
@@ -622,6 +631,15 @@ function addPantryItem(payload) {
   return requestStrict('/api/pantry', {
     method: 'POST',
     data: payload
+  });
+}
+
+// PUT 语义：整条替换 { ingredientName, amount, unit, expiresAt }，
+// expiresAt 传空串/null 即清空到期日（服务端写 NULL）。
+function updatePantryItem(itemId, data) {
+  return requestStrict(`/api/pantry/${encodeURIComponent(itemId)}`, {
+    method: 'PUT',
+    data
   });
 }
 
@@ -768,6 +786,7 @@ module.exports = {
   getNotifications,
   getPantryItems,
   getPantryMatch,
+  updatePantryItem,
   getPreferenceProfile,
   getRecipeDetail,
   getRecipes,
@@ -782,6 +801,7 @@ module.exports = {
   announceMeal,
   getWishes,
   addWish,
+  updateWish,
   removeWish,
   getShoppingList,
   rebuildShoppingList,

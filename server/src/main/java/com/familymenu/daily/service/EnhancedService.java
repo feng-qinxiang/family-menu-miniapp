@@ -9,10 +9,12 @@ import com.familymenu.daily.dto.ApiModels.PantryMatchResult;
 import com.familymenu.daily.dto.ApiModels.PreferenceItem;
 import com.familymenu.daily.dto.ApiModels.PreferenceProfile;
 import com.familymenu.daily.dto.ApiModels.RecipeCard;
+import com.familymenu.daily.dto.ApiModels.UpdatePantryItemRequest;
 import com.familymenu.daily.dto.ApiModels.WeeklyMenuDay;
 import com.familymenu.daily.dto.ApiModels.WeeklyMenuView;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -189,38 +191,64 @@ public class EnhancedService {
 
     // ========== Pantry ==========
 
+    /**
+     * 库存条目的列清单：listPantry 与 updatePantryItem 的回读共用同一份，
+     * 保证「列表里长什么样」和「编辑后返回什么」逐字一致（含 DATE_FORMAT 出来的字符串形态）。
+     */
+    private static final String PANTRY_COLUMNS = """
+            SELECT id, ingredient_name, amount, unit,
+                   DATE_FORMAT(expires_at, '%Y-%m-%d') AS expires_at,
+                   DATE_FORMAT(created_at, '%Y-%m-%d') AS added_at,
+                   user_id
+            FROM pantry_item WHERE family_id = ?
+            """;
+
+    private static final RowMapper<PantryItem> PANTRY_ROW_MAPPER = (rs, n) -> new PantryItem(
+            rs.getLong("id"),
+            rs.getString("ingredient_name"),
+            rs.getString("amount"),
+            rs.getString("unit"),
+            rs.getString("expires_at"),
+            rs.getString("added_at"),
+            // 建列之前的历史行 user_id 为 NULL；getLong 会把 NULL 变成 0，
+            // 那样前端会把"不知道是谁加的"显示成"1 号用户加的"，所以这里必须显式判空。
+            rs.getObject("user_id") == null ? null : rs.getLong("user_id")
+    );
+
     public List<PantryItem> listPantry(long familyId) {
-        return jdbcTemplate.query("""
-                SELECT id, ingredient_name, amount, unit,
-                       DATE_FORMAT(expires_at, '%Y-%m-%d') AS expires_at,
-                       DATE_FORMAT(created_at, '%Y-%m-%d') AS added_at
-                FROM pantry_item WHERE family_id = ? ORDER BY created_at DESC
-                """, (rs, n) -> new PantryItem(
-                rs.getLong("id"),
-                rs.getString("ingredient_name"),
-                rs.getString("amount"),
-                rs.getString("unit"),
-                rs.getString("expires_at"),
-                rs.getString("added_at")
-        ), familyId);
+        return jdbcTemplate.query(PANTRY_COLUMNS + " ORDER BY created_at DESC", PANTRY_ROW_MAPPER, familyId);
+    }
+
+    /**
+     * 回读一条库存条目；不存在 / 不是本家的返回 null。
+     * 与 listPantry 共用同一条 SELECT + 同一个 RowMapper，响应字段不会两边漂。
+     */
+    private PantryItem findPantryItem(long familyId, long itemId) {
+        return jdbcTemplate.query(PANTRY_COLUMNS + " AND id = ?", PANTRY_ROW_MAPPER, familyId, itemId)
+                .stream().findFirst().orElse(null);
     }
 
     @Transactional
-    public PantryItem addPantryItem(long familyId, AddPantryItemRequest req) {
+    public PantryItem addPantryItem(long familyId, Long userId, AddPantryItemRequest req) {
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement("""
-                    INSERT INTO pantry_item (family_id, ingredient_name, amount, unit, expires_at)
-                    VALUES (?, ?, ?, ?, ?)
+                    INSERT INTO pantry_item (family_id, user_id, ingredient_name, amount, unit, expires_at)
+                    VALUES (?, ?, ?, ?, ?, ?)
                     """, Statement.RETURN_GENERATED_KEYS);
             ps.setLong(1, familyId);
-            ps.setString(2, req.ingredientName());
-            ps.setString(3, req.amount() == null ? "" : req.amount());
-            ps.setString(4, req.unit() == null ? "" : req.unit());
-            if (req.expiresAt() != null && !req.expiresAt().isBlank()) {
-                ps.setString(5, req.expiresAt());
+            if (userId == null) {
+                ps.setNull(2, Types.BIGINT);
             } else {
-                ps.setNull(5, Types.DATE);
+                ps.setLong(2, userId);
+            }
+            ps.setString(3, req.ingredientName());
+            ps.setString(4, req.amount() == null ? "" : req.amount());
+            ps.setString(5, req.unit() == null ? "" : req.unit());
+            if (req.expiresAt() != null && !req.expiresAt().isBlank()) {
+                ps.setString(6, req.expiresAt());
+            } else {
+                ps.setNull(6, Types.DATE);
             }
             return ps;
         }, keyHolder);
@@ -229,7 +257,62 @@ public class EnhancedService {
             throw new IllegalStateException("pantry insert failed");
         }
         return new PantryItem(key.longValue(), req.ingredientName(), req.amount(), req.unit(),
-                req.expiresAt(), LocalDate.now().format(DATE_FMT));
+                req.expiresAt(), LocalDate.now().format(DATE_FMT), userId);
+    }
+
+    /**
+     * 库存条目编辑（PUT：整条替换）。
+     *
+     * <p>归属校验是<b>家庭级</b>的（WHERE id = ? AND family_id = ?），与同资源的
+     * {@link #deletePantryItem} 逐字一致：冰箱是全家共用一池，列表查询本身就是
+     * {@code WHERE family_id = ?}，不做用户维度过滤。{@code user_id} 只用于展示/审计，
+     * 不参与校验——否则"妈妈加的鸡蛋"爸爸就改不动了。
+     *
+     * <p><b>为什么不照抄 deletePantryItem 的 {@code changed == 0 -> 404}：</b>
+     * MySQL 的 UPDATE 默认按「实际改变的行数」计，把四个字段都改回原值会返回 0 行，
+     * 于是"点开条目、什么都没改就保存"会被误报成「库存条目不存在」。
+     * 本仓改走<b>幂等写</b>：不做行数判定，改完直接回读该行返回（读到没有才 404），
+     * 0 行与 1 行在这里语义相同——都表示"改完就是这个样子"。
+     *
+     * <p>已核实本机连接串没有打开该语义差异：application.yml:28 的 jdbc url 只带
+     * useUnicode / characterEncoding / useSSL / serverTimezone / allowPublicKeyRetrieval，
+     * <b>没有 useAffectedRows</b>。Connector/J 8.x 在缺省（useAffectedRows=false）下走
+     * CLIENT_FOUND_ROWS，UPDATE 回报的是<b>匹配</b>行数——实测同值 UPDATE 返回 1、不存在返回 0。
+     * 也就是说"同值更新"在当前配置下并不会返回 0；但结论不变：把正确性建立在
+     * 一个可以被连接串参数悄悄改写的数字上是脆的，所以这里不依赖它。
+     *
+     * ponytail: 无乐观条件，末次写入胜。冰箱编辑与「做菜扣库存」
+     * （MysqlKitchenStore.deductPantryForRecipe，以「读到的原值」当 WHERE 条件）会争抢同一行
+     * amount：那边是绝对量扣减、这边是绝对量覆盖，两者没有可自动合并的语义
+     * （「用户改成 5」和「扣掉 2」谁赢没有唯一正确答案），乐观条件只能把冲突显性化成 409，
+     * 而加锁会让一次普通编辑在家人同时开火时直接失败。
+     * 天花板：并发时先写的那次会被后写的静默盖掉。
+     * 升级路径：UPDATE 的 WHERE 追加 {@code AND amount <=> ?}（原值），0 行则回 409 让客户端
+     * 刷新后重试；需要"先改再扣"的顺序保证时，再把整段包进 SELECT ... FOR UPDATE。
+     */
+    @Transactional
+    public PantryItem updatePantryItem(long familyId, long itemId, UpdatePantryItemRequest req) {
+        // expiresAt 为空/空白/null 一律写 NULL：与 addPantryItem 同一口径。
+        // 用 setNull 而不是 setString(null)——后者在部分驱动上会写成字符串 "null"。
+        jdbcTemplate.update("""
+                UPDATE pantry_item
+                SET ingredient_name = ?, amount = ?, unit = ?, expires_at = ?
+                WHERE id = ? AND family_id = ?
+                """,
+                req.ingredientName(),
+                req.amount() == null ? "" : req.amount(),
+                req.unit() == null ? "" : req.unit(),
+                // 空串必须转成 null：直接把 "" 写进 DATE 列，MySQL 严格模式报 Incorrect date value，
+                // 被 GlobalExceptionHandler 转成 400「数据不符合要求」（EditEndpointsTests 实测）。
+                req.expiresAt() == null || req.expiresAt().isBlank() ? null : req.expiresAt().trim(),
+                itemId,
+                familyId);
+        PantryItem updated = findPantryItem(familyId, itemId);
+        if (updated == null) {
+            // 走到这里只有两种情况：条目不存在，或它属于别的家庭。都与 DELETE 同语义报 404。
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "库存条目不存在");
+        }
+        return updated;
     }
 
     @Transactional

@@ -33,9 +33,12 @@
         <view class="vu-badge">推荐</view>
         <view class="vu-tick">{{selectedPlan==='yearly' ? '✓' : ''}}</view>
         <view class="vu-ptop">
-          <view class="vu-pname">年卡</view>
-          <view class="vu-pprice"><text class="vu-yuan">¥</text>99<text class="vu-per">/年</text></view>
-          <view class="vu-pnote"><text class="vu-del">¥138</text> 每月仅 8.3 元</view>
+          <view class="vu-pname">{{planMap.yearly.planName}}</view>
+          <view class="vu-pprice"><text class="vu-yuan">¥</text>{{planMap.yearly.price}}<text class="vu-per">{{planMap.yearly.unit}}</text></view>
+          <view class="vu-pnote">
+            <text wx:if="{{planMap.yearly.original}}" class="vu-del">¥{{planMap.yearly.original}}</text>
+            <text wx:if="{{planMap.yearly.perMonth}}">每月仅 {{planMap.yearly.perMonth}} 元</text>
+          </view>
         </view>
       </view>
       <view
@@ -45,8 +48,8 @@
       >
         <view class="vu-tick">{{selectedPlan==='monthly' ? '✓' : ''}}</view>
         <view class="vu-ptop">
-          <view class="vu-pname">月卡</view>
-          <view class="vu-pprice"><text class="vu-yuan">¥</text>19.9<text class="vu-per">/月</text></view>
+          <view class="vu-pname">{{planMap.monthly.planName}}</view>
+          <view class="vu-pprice"><text class="vu-yuan">¥</text>{{planMap.monthly.price}}<text class="vu-per">{{planMap.monthly.unit}}</text></view>
           <view class="vu-pnote">随时取消 · 灵活体验</view>
         </view>
       </view>
@@ -56,19 +59,19 @@
     <section-head ext-class="vu-shead g-fade-up g-d4" title="价格明细" />
     <view class="card vu-detail g-fade-up g-d4">
       <block wx:if="{{selectedPlan==='yearly'}}">
-        <view class="vu-drow"><text class="vu-k">年卡原价</text><text class="vu-v"><text class="vu-del">¥138.00</text></text></view>
-        <view class="vu-drow disc"><text class="vu-k">限时优惠</text><text class="vu-v">- ¥39.00</text></view>
+        <view class="vu-drow" wx:if="{{plan.original}}"><text class="vu-k">{{plan.planName}}原价</text><text class="vu-v"><text class="vu-del">¥{{plan.original}}</text></text></view>
+        <view class="vu-drow disc" wx:if="{{plan.discount}}"><text class="vu-k">限时优惠</text><text class="vu-v">- ¥{{plan.discount}}</text></view>
         <view class="vu-dline"></view>
-        <view class="vu-drow total"><text class="vu-k">实付金额</text><text class="vu-v-big"><text class="vu-yuan">¥</text>99.00</text></view>
-        <view class="vu-savetip">
+        <view class="vu-drow total"><text class="vu-k">实付金额</text><text class="vu-v-big"><text class="vu-yuan">¥</text>{{plan.priceFull}}</text></view>
+        <view class="vu-savetip" wx:if="{{plan.offText}}">
           <view class="vu-star-mark"></view>
-          已为你省下 ¥39，相当于 7.2 折
+          {{plan.offText}}
         </view>
       </block>
       <block wx:else>
-        <view class="vu-drow"><text class="vu-k">月卡价格</text><text class="vu-v">¥19.90</text></view>
+        <view class="vu-drow"><text class="vu-k">月卡价格</text><text class="vu-v">¥{{plan.priceFull}}</text></view>
         <view class="vu-dline"></view>
-        <view class="vu-drow total"><text class="vu-k">实付金额</text><text class="vu-v-big"><text class="vu-yuan">¥</text>19.90</text></view>
+        <view class="vu-drow total"><text class="vu-k">实付金额</text><text class="vu-v-big"><text class="vu-yuan">¥</text>{{plan.priceFull}}</text></view>
         <view class="vu-savetip">
           <view class="vu-star-mark"></view>
           随时取消，灵活体验家庭同步

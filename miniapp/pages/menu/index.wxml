@@ -130,6 +130,7 @@
             class="m-thumb"
             src="{{dish.dishImage}}"
             mode="aspectFill"
+            lazy-load
             data-group="{{gIdx}}"
             data-dish="{{dishIndex}}"
             data-seed="{{dish.recipeId || (dish.recipe && dish.recipe.title)}}"

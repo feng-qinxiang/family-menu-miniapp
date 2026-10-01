@@ -55,6 +55,7 @@
                 class="ic-img"
                 src="{{n.avatar}}"
                 mode="aspectFill"
+                lazy-load
               />
               <view wx:else class="ic-svg ic-{{n.icon}}"></view>
             </view>
@@ -74,6 +75,7 @@
                   class="thumb-dish"
                   src="{{n.thumb}}"
                   mode="aspectFill"
+                  lazy-load
                 />
                 <view wx:else class="nfoot-spacer"></view>
                 <view

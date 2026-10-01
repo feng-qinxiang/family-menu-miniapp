@@ -7,125 +7,19 @@
   background: var(--paper);
 }
 
-/* 顶部返回浮层（透明叠在 hero 上）*/
-.nav-float {
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 0;
-  z-index: 50;
-}
-
-/* ============ Hero ============ */
-.phero {
-  position: relative;
-  height: var(--photo-hero-h);
-  overflow: hidden;
-}
-.phero-img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-}
-.phero-mask {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: linear-gradient(180deg,
-    rgba(20, 14, 8, 0.5) 0%,
-    rgba(20, 14, 8, 0) 28%,
-    rgba(20, 14, 8, 0.18) 52%,
-    rgba(20, 14, 8, 0.9) 100%);
-}
-.phero-bignum {
-  position: absolute;
-  top: 162rpx;
-  right: 26rpx;
-  z-index: 2;
-  font-family: var(--serif);
-  font-size: var(--fs-hero-bignum);
+/* 页头下的统计一行字（.cpt-head 内）：空库不渲染；临期段用 --pop-deep 做真实警示 */
+.pstat-line {
+  margin-top: 12rpx;
+  font-size: var(--fs-sub);
   font-weight: 700;
-  line-height: 1;
-  color: rgba(255, 255, 255, 0.07);
-  pointer-events: none;
+  color: var(--mut);
 }
-.phero-copy {
-  position: absolute;
-  left: 46rpx;
-  right: 46rpx;
-  bottom: var(--hero-body-above-sheet);
-  z-index: 10;
-}
-.phero-tag {
-  display: inline-block;
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: var(--fs-cap);
-  letter-spacing: 3rpx;
-  font-weight: 700;
-  color: var(--anchor-contrast);
-  background: var(--pop);
-  padding: 12rpx 27rpx;
-  border-radius: var(--r-xs);
-}
-.phero-title {
-  font-size: var(--fs-hero-xl);
-  line-height: 0.9;
-  letter-spacing: -6rpx;
-  margin: 30rpx 0 22rpx;
-}
-.phero-sub {
-  font-size: calc(25rpx * var(--fs-mul, 1));
-  color: rgba(255, 255, 255, 0.85);
-  font-weight: 400;
-  text-shadow: 0 2rpx 8rpx rgba(20, 14, 8, 0.55);
-}
-.phero-stats {
-  display: flex;
-  margin-top: 34rpx;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1rpx solid rgba(255, 255, 255, 0.18);
-  border-radius: 34rpx;
-  overflow: hidden;
-}
-.phstat {
-  flex: 1;
-  padding: 25rpx 27rpx;
-  position: relative;
-}
-.phstat + .phstat::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 27rpx;
-  bottom: 27rpx;
-  width: 1rpx;
-  background: rgba(255, 255, 255, 0.2);
-}
-.phstat-n {
-  font-size: var(--fs-stat);
-  font-weight: 900;
-  color: var(--anchor-contrast);
-  letter-spacing: -2rpx;
-}
-.phstat-n.warn { color: var(--pop); }
-.phstat-c {
-  font-size: var(--fs-mini);
-  color: rgba(255, 255, 255, 0.7);
-  margin-top: 8rpx;
-  letter-spacing: 0;
-}
+.pstat-warn { color: var(--pop-deep); }
 
-/* ============ Sheet 内容层 ============ */
+/* ============ 内容层 ============ */
+/* 底部留白含 tabBar 实高（--tabbar-h 已带安全区），最后一张卡不会被压住 */
 .psheet {
-  position: relative;
-  margin-top: -50rpx;
-  z-index: 20;
-  background: var(--paper);
-  border-radius: var(--r-sheet) var(--r-sheet) 0 0;
-  padding: 50rpx 46rpx calc(var(--tabbar-h) + 40rpx);
+  padding: 0 var(--ctl-x, 48rpx) calc(var(--tabbar-h) + 40rpx);
 }
 .psheet .shead { margin-top: 8rpx; }
 .psheet .shead:first-child { margin-top: 0; }
@@ -156,7 +50,7 @@
 }
 .cat-ic-veg::after { background: var(--pine); border-radius: var(--r-sm) 4rpx var(--r-sm) var(--r-sm); }
 .cat-ic-meat::after { background: var(--gold-deep); border-radius: 50% 50% 45% 45%; }
-.cat-ic-season::after { background: var(--pop); border-radius: 6rpx 6rpx 10rpx 10rpx; }
+.cat-ic-season::after { background: var(--orange); border-radius: 6rpx 6rpx 10rpx 10rpx; }
 .cat-ic-other::after { background: var(--mut); border-radius: var(--r-xs); }
 .cat-h3 {
   font-size: calc(32rpx * var(--fs-mul, 1));
@@ -195,7 +89,7 @@
   background: var(--mut-2);
   flex: none;
 }
-.pitem.warn .pi-dot { background: var(--pop); }
+.pitem.warn .pi-dot { background: var(--pop-deep); }
 .pi-mid { flex: 1; min-width: 0; }
 .pi-nm {
   font-size: calc(32rpx * var(--fs-mul, 1));
@@ -208,7 +102,7 @@
   color: var(--mut-strong);
   margin-top: 8rpx;
 }
-.pi-ex.red { color: var(--pop); font-weight: 700; }
+.pi-ex.red { color: var(--pop-deep); font-weight: 700; }
 .pi-qt {
   font-size: var(--fs-sub);
   font-weight: 700;
@@ -254,11 +148,62 @@
 .pi-del-x::before { transform: rotate(45deg); }
 .pi-del-x::after { transform: rotate(-45deg); }
 
+/* 编辑：与删除同一套几何（视觉 77rpx，热区由 ::after 撑到 --tap-min） */
+.pi-edit {
+  position: relative;
+  width: 77rpx;
+  height: 77rpx;
+  border-radius: 23rpx;
+  background: var(--paper-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+.pi-edit::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--tap-min);
+  height: var(--tap-min);
+  transform: translate(-50%, -50%);
+}
+.pi-edit-pen {
+  width: 26rpx;
+  height: 26rpx;
+  position: relative;
+}
+/* 铅笔：一条斜杆 + 笔尖（纯 CSS，与 .pi-del-x 同族画法） */
+.pi-edit-pen::before {
+  content: "";
+  position: absolute;
+  left: 3rpx;
+  top: 10rpx;
+  width: 22rpx;
+  height: 6rpx;
+  border-radius: 2rpx;
+  background: var(--mut);
+  transform: rotate(-45deg);
+}
+.pi-edit-pen::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-left: 5rpx solid transparent;
+  border-right: 5rpx solid transparent;
+  border-top: 9rpx solid var(--mut);
+  transform: rotate(-45deg);
+}
+
 /* ============ 添加卡 ============ */
 .addcard {
   margin-top: 27rpx;
   background: var(--pop-soft);
-  border: 3rpx dashed rgba(232, 71, 42, 0.35);
+  border: 3rpx dashed var(--pop-mist);
   border-radius: 38rpx;
   padding: 29rpx 31rpx;
   display: flex;
@@ -327,6 +272,10 @@
 .af-date { width: 100%; margin-top: 16rpx; }
 .af-ph { color: var(--mut); }
 .af-submit { margin-top: 24rpx; }
+/* 编辑弹层的按钮行（与家属页 .avoid-actions 同一范式） */
+.af-actions { display: flex; gap: 20rpx; margin-top: 28rpx; }
+.af-cancel { flex: 1; }
+.af-save { flex: 1.6; }
 
 /* ============ 匹配卡 ============ */
 .mcard {
@@ -361,7 +310,7 @@
 }
 .mc-miss {
   font-size: var(--fs-cap);
-  color: var(--pop);
+  color: var(--pop-deep);
   font-weight: 700;
   margin-top: 13rpx;
 }
@@ -387,7 +336,7 @@
 }
 .mc-bar-i {
   height: 100%;
-  background: var(--pop);
+  background: var(--gold-deep);
   border-radius: 6rpx;
 }
 .mc-bar-i.full { background: var(--pine); }

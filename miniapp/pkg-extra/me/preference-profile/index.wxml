@@ -83,7 +83,7 @@
         bindtap="onTapDish"
       >
         <text class="rk {{item.rank === 1 ? 'one' : ''}}">{{item.rank}}</text>
-        <image class="tmb" src="{{item.img}}" mode="aspectFill"></image>
+        <image class="tmb" src="{{item.img}}" mode="aspectFill" lazy-load></image>
         <view class="mid">
           <view class="mid-h ellipsis">{{item.title}}</view>
           <view class="mid-sb ellipsis">{{item.sub}}</view>

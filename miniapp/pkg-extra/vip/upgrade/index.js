@@ -1,11 +1,15 @@
 const { getVipStatus } = require('../../../utils/api');
 const { loadPlans, FALLBACK, trimYuan } = require('../../../utils/plans');
 
+const MONTHS_OF_YEAR = 12;
+
 // 后端套餐 → 本页展示结构（价格/折数由后端金额算出，不写死营销数字）
-function toViewPlan(plan) {
+function toViewPlan(plan, unitMonth) {
   const priceNumber = plan.priceNumber;
   const originalNumber = Number(plan.original);
   const hasOriginal = isFinite(originalNumber) && originalNumber > priceNumber;
+  // 折合月价：年卡按 12 个月摊，月卡本身即月价
+  const perMonth = priceNumber ? priceNumber / unitMonth : 0;
   return {
     planCode: plan.planCode,
     planName: plan.planName,
@@ -13,12 +17,22 @@ function toViewPlan(plan) {
     priceFull: plan.priceFull,
     original: hasOriginal ? plan.original : '',
     discount: hasOriginal ? (originalNumber - priceNumber).toFixed(2) : '',
-    off: hasOriginal ? String(Math.round((priceNumber / originalNumber) * 100) / 10) : ''
+    off: hasOriginal ? String(Math.round((priceNumber / originalNumber) * 100) / 10) : '',
+    // —— 卡片与价格明细的展示派生值（模板里不再出现任何价格数字）——
+    perMonth: perMonth ? String(Math.round(perMonth * 10) / 10) : '',
+    unit: unitMonth === MONTHS_OF_YEAR ? '/年' : '/月',
+    // 促销句整体在 js 拼：写进模板要靠三元表达式拼字符串，难读且易漂
+    offText: hasOriginal
+      ? `已为你省下 ¥${(originalNumber - priceNumber).toFixed(2)}，相当于 ${Math.round((priceNumber / originalNumber) * 100) / 10} 折`
+      : ''
   };
 }
 
 function fallbackPlanMap() {
-  return { yearly: toViewPlan(FALLBACK.yearly), monthly: toViewPlan(FALLBACK.monthly) };
+  return {
+    yearly: toViewPlan(FALLBACK.yearly, MONTHS_OF_YEAR),
+    monthly: toViewPlan(FALLBACK.monthly, 1)
+  };
 }
 
 Page({
@@ -27,7 +41,9 @@ Page({
     isVip: false,
     planName: '',
     selectedPlan: 'yearly',
-    plan: toViewPlan(FALLBACK.yearly),
+    // 两张套餐卡同屏渲染，各自要取自己的价格：故按 key 存一份视图模型
+    plan: toViewPlan(FALLBACK.yearly, MONTHS_OF_YEAR),
+    planMap: fallbackPlanMap(),
     benefits: [
       { icon: '家', title: '最多 8 位家人共享', desc: '邀请全家加入，菜单清单实时同步' },
       { icon: '藏', title: '无限收藏菜谱', desc: '家庭菜谱库不限数量，随时回看' },
@@ -58,11 +74,11 @@ Page({
   // 套餐价格走后端权威目录（/api/payment/plans），失败回退本地默认
   async loadPlanCatalog() {
     const plans = await loadPlans();
-    this._planMap = {
-      yearly: toViewPlan(plans.yearly),
-      monthly: toViewPlan(plans.monthly)
+    const planMap = {
+      yearly: toViewPlan(plans.yearly, MONTHS_OF_YEAR),
+      monthly: toViewPlan(plans.monthly, 1)
     };
-    this.setData({ plan: this._planMap[this.data.selectedPlan] || this._planMap.yearly });
+    this.setData({ planMap, plan: planMap[this.data.selectedPlan] || planMap.yearly });
   },
 
   onShow() {
@@ -102,7 +118,7 @@ Page({
 
   selectPlan(e) {
     const key = e.currentTarget.dataset.plan;
-    const map = this._planMap || fallbackPlanMap();
+    const map = this.data.planMap || fallbackPlanMap();
     if (!map[key] || key === this.data.selectedPlan) return;
     this.setData({ selectedPlan: key, plan: map[key] });
   },

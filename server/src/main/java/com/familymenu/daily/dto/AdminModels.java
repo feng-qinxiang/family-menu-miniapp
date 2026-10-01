@@ -385,6 +385,18 @@ public final class AdminModels {
     ) {
     }
 
+    /**
+     * 运营修正库存条目的请求（PUT 语义：整条替换）。
+     * expiresAt 为空/空白/null 都写 NULL（清掉保质期）；格式由 AdminService 校验，非法给 400。
+     */
+    public record AdminPantryUpdateRequest(
+            String ingredientName,
+            String amount,
+            String unit,
+            String expiresAt
+    ) {
+    }
+
     /** 家庭详情：成员 + 最近菜单 + 购物清单 + 库存，一次拉全供后台下钻。 */
     public record AdminFamilyDetail(
             AdminFamilyItem family,

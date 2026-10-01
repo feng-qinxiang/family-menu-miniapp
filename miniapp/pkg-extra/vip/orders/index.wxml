@@ -55,9 +55,7 @@
       <!-- 产品 -->
       <view class="ocard-top">
         <view class="ocard-ic {{item.iconGold ? 'ocard-ic--gold' : ''}}">
-          <image class="ocard-ic-img"
-            src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScyNicgaGVpZ2h0PScyNicgdmlld0JveD0nMCAwIDI0IDI0JyBmaWxsPSdub25lJyBzdHJva2U9J3t7aXRlbS5pY29uQ29sb3J9fScgc3Ryb2tlLXdpZHRoPScyJyBzdHJva2UtbGluZWNhcD0ncm91bmQnIHN0cm9rZS1saW5lam9pbj0ncm91bmQnPjxwYXRoIGQ9J000IDdoMTZ2MTJINHonLz48cGF0aCBkPSdNNCA3bDQtNGg4bDQgNCcvPjxwYXRoIGQ9J005IDEyaDYnLz48L3N2Zz4="
-            mode="aspectFit" />
+          <view class="ocard-gift"></view>
         </view>
         <view class="ocard-mid">
           <view class="ocard-name ellipsis">{{item.productName}}</view>
@@ -110,7 +108,7 @@
       type="gold"
       title="还没有开通记录"
       desc="开通家庭云同步年卡，全家菜单与买菜清单实时共享，换设备也不丢。"
-      cta="立即开通 ¥99/年"
+      cta="{{activateCta}}"
       cta-style="pop"
       bind:action="onActivate"
     ></state-empty>

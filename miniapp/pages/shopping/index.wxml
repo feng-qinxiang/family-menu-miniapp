@@ -90,7 +90,7 @@
 
         <view class="tap-scale mkt-item {{revealOn ? (reveal[group.key + '-' + idx] ? 'g-fade-up' : 'rv-hold') : 'g-fade-up g-d' + (idx % 5 + 1)}}" data-rv="{{group.key + '-' + idx}}" wx:for="{{group.items}}" wx:for-item="food" wx:for-index="idx" wx:key="itemId" data-id="{{food.itemId}}" data-purchased="{{food.purchased}}" bindtap="toggleItem">
           <view class="mkt-check"></view>
-          <image wx:if="{{food.cover}}" class="mkt-thumb" src="{{food.cover}}" mode="aspectFill" />
+          <image wx:if="{{food.cover}}" class="mkt-thumb" src="{{food.cover}}" mode="aspectFill" lazy-load />
           <view wx:else class="mkt-thumb mkt-thumb--letter {{food.categoryKey}}">{{food.initial}}</view>
           <view class="mkt-imid">
             <text class="nm">{{food.ingredientName}}</text>
@@ -119,7 +119,7 @@
             <view class="mkt-check done">
               <view class="mkt-tick"></view>
             </view>
-            <image wx:if="{{food.cover}}" class="mkt-thumb" src="{{food.cover}}" mode="aspectFill" />
+            <image wx:if="{{food.cover}}" class="mkt-thumb" src="{{food.cover}}" mode="aspectFill" lazy-load />
             <view wx:else class="mkt-thumb mkt-thumb--letter {{food.categoryKey}}">{{food.initial}}</view>
             <view class="mkt-imid">
               <text class="nm">{{food.ingredientName}}</text>
@@ -178,7 +178,7 @@
               <text class="sp-pcat-count">{{item.items.length}} 项</text>
             </view>
             <view class="sp-pitem" wx:for="{{item.items}}" wx:for-item="it" wx:key="id">
-              <image wx:if="{{it.cover}}" class="mkt-thumb" src="{{it.cover}}" mode="aspectFill" />
+              <image wx:if="{{it.cover}}" class="mkt-thumb" src="{{it.cover}}" mode="aspectFill" lazy-load />
               <view wx:else class="mkt-thumb mkt-thumb--letter {{it.categoryKey}}">{{it.initial}}</view>
               <text class="sp-pitem-name ellipsis">{{it.ingredientName || it.name}}</text>
               <text class="sp-pitem-qty">{{it.amount || ''}}{{it.unit || ''}}</text>

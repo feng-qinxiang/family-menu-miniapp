@@ -57,7 +57,7 @@
         wx:key="id"
         class="k-card {{item.main ? 'main' : ''}} {{item.status === 'done' ? 'is-done' : ''}}"
       >
-        <image class="k-img" src="{{item.img}}" mode="aspectFill" />
+        <image class="k-img" src="{{item.img}}" mode="aspectFill" lazy-load />
         <view class="k-main-flag" wx:if="{{item.main}}">主灶</view>
 
         <view class="k-col">

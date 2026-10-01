@@ -302,6 +302,7 @@ CREATE TABLE IF NOT EXISTS pantry_item (
     amount VARCHAR(32) NOT NULL DEFAULT '',
     unit VARCHAR(16) NOT NULL DEFAULT '',
     expires_at DATE NULL,
+    user_id BIGINT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_pantry_family (family_id, created_at DESC)
 );

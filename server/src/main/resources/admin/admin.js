@@ -75,7 +75,7 @@
     shopping: { items: [], total: 0, page: 0, size: 50 },
     shoppingDate: '',
     shoppingFilter: '',
-    /** 家庭库存（只读） */
+    /** 家庭库存 */
     pantry: { items: [], total: 0, page: 0, size: 50 },
     pantryKeyword: ''
   };
@@ -577,7 +577,7 @@
         { key: 'families', label: '家庭与成员', icon: 'home', perm: 'USER_VIEW', desc: '家庭、成员、菜单与库存总览（只读）' },
         { key: 'menus', label: '今日菜单', icon: 'book', perm: 'USER_VIEW', desc: '各家庭每天点了什么菜（只读）' },
         { key: 'shopping', label: '购物清单', icon: 'cart', perm: 'USER_VIEW', desc: '各家庭买菜进度（只读）' },
-        { key: 'pantry', label: '家庭库存', icon: 'box', perm: 'USER_VIEW', desc: '各家庭现有食材（只读）' }
+        { key: 'pantry', label: '家庭库存', icon: 'box', perm: 'USER_VIEW', desc: '各家庭现有食材' }
       ]
     },
     {
@@ -1581,8 +1581,11 @@
 
   // ==================== 家庭数据：家庭与成员 / 今日菜单 / 购物清单 / 库存 ====================
   // 这四页对应小程序里的家庭侧数据，此前后台完全看不到：用户来问"我家菜单怎么没了"
-  // 只能靠猜。全部**只读** —— 运营要干预就引导用户在小程序里操作，
-  // 后台不提供改写用户菜单/清单/库存的入口（那属于替用户改数据，风险远大于便利）。
+  // 只能靠猜。家庭与成员 / 今日菜单 / 购物清单三页**只读** —— 运营要干预就引导用户在小程序里操作，
+  // 后台不提供改写用户菜单/清单的入口（那属于替用户改数据，风险远大于便利）。
+  // 库存是唯一例外，可编辑（PUT /api/admin/pantry/{id}，USER_MANAGE）：库存录错会直接影响
+  // 做菜扣减和「现在就能做」推荐，用户自己往往看不出错在哪，运营需要能纠错。
+  // 只开「改」不开增删；改名/改单位会让这条对不上菜谱用料，弹窗里有提示。
 
   /** 本地时区的今天（yyyy-MM-dd），用 toISOString 会因 UTC 偏移差一天 */
   function todayIso() {
@@ -1866,8 +1869,11 @@
         '<td class="num">' + escapeHtml(((i.amount || '') + (i.unit || '')) || '适量') + '</td>' +
         '<td class="num">' + (i.expiresAt ? escapeHtml(String(i.expiresAt)) : '—') + '</td>' +
         '<td><span class="pill' + exp.cls + '">' + escapeHtml(exp.text) + '</span></td>' +
-        '<td class="nowrap" title="' + escapeHtml(i.addedAt || '') + '">' + fmtTime(i.addedAt) + '</td></tr>';
-    }).join('') : tableEmpty(7, {
+        '<td class="nowrap" title="' + escapeHtml(i.addedAt || '') + '">' + fmtTime(i.addedAt) + '</td>' +
+        '<td class="actions">' + (can('USER_MANAGE')
+          ? '<button class="btn small" data-pantryedit="' + escapeHtml(String(i.id)) + '">编辑</button>'
+          : '<span class="muted">只读</span>') + '</td></tr>';
+    }).join('') : tableEmpty(8, {
       icon: 'box',
       title: '没有库存记录',
       desc: '家庭在小程序「冰箱」页里登记食材后会出现在这里；也可以换个关键词再搜。'
@@ -1875,8 +1881,30 @@
     setPageHeader('共 ' + fmtNum(p.total) + ' 项食材');
     $('panelRoot').innerHTML = '<div class="card">' + head +
       '<table><thead><tr><th class="num">库存 ID</th><th>家庭</th><th>食材</th><th class="num">数量</th>' +
-      '<th class="num">保质期至</th><th>状态</th><th>登记时间</th></tr></thead><tbody>' + body + '</tbody></table>' +
+      '<th class="num">保质期至</th><th>状态</th><th>登记时间</th><th>操作</th></tr></thead><tbody>' + body + '</tbody></table>' +
       pagerHtml('pantry', p.page, p.size, p.total) + '</div>';
+  }
+
+  /** 编辑一条库存（后台唯一能改家庭数据的入口，理由见「家庭数据」区块注释） */
+  function editPantryItem(itemId) {
+    var i = (state.pantry.items || []).filter(function (x) { return String(x.id) === String(itemId); })[0] || {};
+    formDialog({
+      title: '编辑库存',
+      desc: '「' + (i.familyName || ('家庭 #' + i.familyId)) + '」的库存 #' + itemId + '。保存后会写入审计日志。',
+      confirmText: '保存',
+      fields: [
+        { name: 'ingredientName', label: '食材名', value: i.ingredientName, required: true, requiredMessage: '食材名不能为空', maxlength: 128 },
+        { name: 'amount', label: '数量', value: i.amount == null ? '' : String(i.amount), placeholder: '如 2、0.5，可留空', maxlength: 32, half: true },
+        { name: 'unit', label: '单位', value: i.unit, placeholder: '如 个、克', maxlength: 16, half: true },
+        { hint: '改名或改单位后，这条库存会匹配不上菜谱用料、做菜时也不会自动扣减。', describes: ['ingredientName', 'unit'] },
+        { name: 'expiresAt', label: '到期日', type: 'date', value: i.expiresAt ? String(i.expiresAt).slice(0, 10) : '', clearable: true }
+      ],
+      // 失败时弹窗保持打开、显示服务端的错误文案（openModal 对 reject 的统一处理），已填的值不丢
+      onConfirm: function (v) {
+        return request('/api/admin/pantry/' + encodeURIComponent(itemId), { method: 'PUT', body: v })
+          .then(function () { toast('库存已更新'); loadPantry(); });
+      }
+    });
   }
 
   // ==================== 用户管理 ====================
@@ -2348,6 +2376,67 @@
     }).then(function (v) { return v === null ? null : v.value; });
   }
 
+  /**
+   * 多字段表单：promptDialog 的多输入版，同样只是 openModal 的包装。
+   * opts.fields 每项二选一：
+   *   输入 { name, label, value, type('text'|'date'), placeholder, maxlength, required, requiredMessage,
+   *          half(与相邻 half 并排), clearable(date 旁给「清空」按钮：原生日期框各浏览器清空方式不一) }
+   *   提示 { hint, describes: [name…] } —— 整行小字，并通过 aria-describedby 挂到对应输入上
+   * resolve({ name: 值 }) / resolve(null)；文本值去首尾空白。opts.onConfirm 透传给 openModal
+   * （返回 Promise：成功关窗、失败留窗显示错误）。
+   */
+  function formDialog(opts) {
+    var fieldId = function (name) { return 'modalField-' + name; };
+    var hintIds = {};
+    opts.fields.forEach(function (f, n) {
+      (f.describes || []).forEach(function (name) { hintIds[name] = (hintIds[name] ? hintIds[name] + ' ' : '') + 'modalHint-' + n; });
+    });
+    var inputs = opts.fields.filter(function (f) { return f.name; });
+    var body = '<div class="modal-form">' + opts.fields.map(function (f, n) {
+      if (f.hint) return '<p class="modal-hint" id="modalHint-' + n + '">' + escapeHtml(f.hint) + '</p>';
+      var id = fieldId(f.name);
+      var input = '<input id="' + id + '" type="' + (f.type === 'date' ? 'date' : 'text') + '"' +
+        ' placeholder="' + escapeHtml(f.placeholder || '') + '" value="' + escapeHtml(f.value || '') + '"' +
+        (f.maxlength ? ' maxlength="' + f.maxlength + '"' : '') +
+        (f.required ? ' aria-required="true"' : '') +
+        (hintIds[f.name] ? ' aria-describedby="' + hintIds[f.name] + '"' : '') + ' />';
+      return '<div class="modal-field' + (f.half ? ' half' : '') + '">' +
+        '<label for="' + id + '">' + escapeHtml(f.label) + '</label>' +
+        (f.clearable
+          ? '<div class="modal-inline">' + input +
+            '<button type="button" class="btn small" data-modal-clear="' + id + '">清空</button></div>'
+          : input) +
+        '</div>';
+    }).join('') + '</div>';
+    var pending = openModal({
+      title: opts.title,
+      desc: opts.desc,
+      body: body,
+      confirmText: opts.confirmText,
+      read: function (root) {
+        var values = {};
+        inputs.forEach(function (f) {
+          var raw = (root.querySelector('#' + fieldId(f.name)) || {}).value || '';
+          values[f.name] = f.type === 'date' ? raw : raw.trim();
+        });
+        return values;
+      },
+      validate: function (v) {
+        var missing = inputs.filter(function (f) { return f.required && !v[f.name]; })[0];
+        return missing ? (missing.requiredMessage || missing.label + '必填') : null;
+      },
+      onConfirm: opts.onConfirm || function () { return true; }
+    });
+    // openModal 的 Promise 执行器是同步的，到这里弹窗 DOM 已经在了
+    Array.prototype.forEach.call($('modalRoot').querySelectorAll('[data-modal-clear]'), function (btn) {
+      btn.addEventListener('click', function () {
+        var el = $(btn.getAttribute('data-modal-clear'));
+        if (el) { el.value = ''; el.focus(); }
+      });
+    });
+    return pending;
+  }
+
   // 从当前列表里找上下文，让弹窗能显示"正在操作谁"
   function findUser(userId) {
     return (state.users.items || []).filter(function (u) { return String(u.userId) === String(userId); })[0] || {};
@@ -2464,7 +2553,7 @@
     '[data-fb]', '[data-orderfilter]', '[data-orderclose]', '[data-orderrefund]', '[data-userstatus]',
     '[data-importfilter]', '[data-import]', '[data-pager]', '[data-sort]', '[data-bulk]',
     '[data-jump]', '[data-account]', '[data-retry]', '[data-clearfilter]', '[data-famdetail]',
-    '[data-shopfilter]',
+    '[data-shopfilter]', '[data-pantryedit]',
     '#menuBtn', '#refreshBtn', '#accountBtn'
   ].join(',');
 
@@ -2536,6 +2625,9 @@
     if (shf !== null) { state.shoppingFilter = shf; state.shopping.page = 0; loadShopping(); return; }
     var famd = t.getAttribute('data-famdetail');
     if (famd) { showFamilyDetail(famd); return; }
+    // 库存是家庭数据里唯一可写的一页（见「家庭数据」区块注释）
+    var pe = t.getAttribute('data-pantryedit');
+    if (pe) { editPantryItem(pe); return; }
 
     if (id === 'exportUsers' || id === 'exportOrders' || id === 'exportAudit' ||
         id === 'exportPosts' || id === 'exportComments' || id === 'exportFeedback' ||

@@ -1,47 +1,26 @@
 <view class="community-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
-  <!-- tab 页顶部导航（透明覆盖在 hero 上，无返回键）。
-       标题留空：本页导航右侧是「发帖」胶囊，加上微信胶囊后中间已无位置——
-       实测 4 字标题会被发帖按钮压掉最后一个字（导航标题是绝对居中的，不会自动让位）。
-       页面名由下方 hero 的「邻里厨房」大字承担，与餐桌页「点菜」按钮 + hero 的写法一致。 -->
-  <nav-bar title="" show-back="{{false}}" status-bar-height="{{statusBarHeight}}">
-    <view class="nav-post-btn tap-scale" catchtap="togglePostForm">
-      <text class="nav-post-plus">+</text>{{showPostForm ? '收起' : '发帖'}}
-    </view>
-  </nav-bar>
-
   <scroll-view class="community-scroll" scroll-y enhanced show-scrollbar="{{false}}"
     refresher-enabled="{{true}}" refresher-triggered="{{refreshing}}" bindrefresherrefresh="onRefresh"
     scroll-top="{{scrollTopTo}}" scroll-with-animation bindscroll="onScrollBody"
     lower-threshold="120" bindscrolltolower="loadMorePosts">
-    <!-- ===== Hero ===== -->
-    <view class="hero">
-      <image class="hero-bg" src="/assets/dishes/sweet-sour-chicken.jpg" mode="aspectFill" />
-      <view class="hero-mask"></view>
-      <view class="hero-body g-fade-up">
-        <text class="hero-tag">左邻右舍</text>
-        <view class="hero-title title-stroke">邻里<text class="pop">厨房</text></view>
-        <view class="hero-sub">看看别人家今晚上桌什么，也把自己的拿手做法留下来。</view>
-        <view class="cstats">
-          <view class="cstat">
-            <view class="cstat-num">{{communitySummary.postCount}}</view>
-            <view class="cstat-lab">帖子</view>
-          </view>
-          <view class="cstat">
-            <view class="cstat-num">{{communitySummary.commentCount}}</view>
-            <view class="cstat-lab">评论</view>
-          </view>
-          <view class="cstat">
-            <view class="cstat-num">{{communitySummary.favoriteCount}}</view>
-            <view class="cstat-lab">收藏</view>
-          </view>
+    <!-- 紧凑页头（app.wxss .cpt-head）：避让胶囊 + 页名 + 唯一主操作「发帖」。
+         原来顶部胶囊和右下角 FAB 两个发帖入口绑的都是 togglePostForm，只留这一个。 -->
+    <view class="cpt-head" style="padding-top: {{capsuleTop}};">
+      <view class="cpt-row" style="padding-right: {{capsuleRight}};">
+        <view class="cpt-titles">
+          <view class="cpt-eyebrow">左邻右舍</view>
+          <view class="cpt-title">邻里厨房</view>
         </view>
+        <view class="cpt-action cm-post-btn tap-scale" catchtap="togglePostForm">+ 发帖</view>
       </view>
+      <view class="cpt-sub">看看别人家今晚上桌什么，也把自己的拿手做法留下来。</view>
+      <!-- 统计只是辅助信息：一行安静的小字，不再做大数字卡；空态时不显示一排 0 -->
+      <view wx:if="{{posts.length}}" class="cm-stats">{{communitySummary.postCount}} 帖子 · {{communitySummary.commentCount}} 评论 · {{communitySummary.favoriteCount}} 收藏</view>
     </view>
 
-    <!-- ===== Sheet ===== -->
     <view class="sheet">
       <view class="pad">
-        <section-head eyebrow="今日餐桌" title="邻居们" popPart="在做" titleTail="啥" />
+        <section-head eyebrow="今日餐桌" title="邻居们在做啥" />
 
           <!-- 加载态：与菜谱/买菜清单同一套骨架语言，不用一行文字占位 -->
           <view wx:if="{{loading && !posts.length}}" class="cf-skel">
@@ -94,6 +73,7 @@
                 class="pphoto {{item.photoBroken ? 'img-broken' : ''}}"
                 src="{{item.photo}}"
                 mode="aspectFill"
+                lazy-load
                 data-err-key="{{'posts[' + index + '].photoBroken'}}"
                 binderror="onPhotoError"
               />
@@ -110,7 +90,7 @@
               catchtap="openRecipe"
               data-recipe-id="{{item.recipe.id}}"
             >
-              <image wx:if="{{item.recipeThumb}}" class="rthumb" src="{{item.recipeThumb}}" mode="aspectFill" />
+              <image wx:if="{{item.recipeThumb}}" class="rthumb" src="{{item.recipeThumb}}" mode="aspectFill" lazy-load />
               <view class="rmid">
                 <view class="rk">关联菜谱</view>
                 <view class="rn ellipsis">{{item.recipe.title}}</view>
@@ -180,13 +160,8 @@
     </view>
   </scroll-view>
 
-  <!-- 发帖 FAB -->
-  <view class="fab tap-scale" catchtap="togglePostForm">
-    <view class="fab-plus"></view>
-  </view>
-
-  <!-- 信息流滚深后回顶（与 FAB 同轴竖排） -->
-  <back-top show="{{showBackTop}}" right="38rpx" bottom="352rpx" bind:totop="backToTop" />
+  <!-- 信息流滚深后回顶：FAB 已删，落到原 FAB 位置（已避开 custom-tab-bar） -->
+  <back-top show="{{showBackTop}}" right="38rpx" bottom="190rpx" bind:totop="backToTop" />
 
   <!-- ===== 发帖弹层 ===== -->
   <state-sheet lift visible="{{showPostForm}}" title="分享今天的菜" bind:close="togglePostForm">

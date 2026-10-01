@@ -6,7 +6,6 @@
   "usingComponents": {
     "state-empty": "/components/state-empty/index",
     "recipe-card": "/components/recipe-card/index",
-    "section-head": "/components/section-head/index",
     "back-top": "/components/back-top/index"
   }
 }

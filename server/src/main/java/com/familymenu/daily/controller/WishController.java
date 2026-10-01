@@ -3,6 +3,7 @@ package com.familymenu.daily.controller;
 import com.familymenu.daily.auth.CurrentUser;
 import com.familymenu.daily.auth.RequiresAuth;
 import com.familymenu.daily.dto.ApiModels.AddWishRequest;
+import com.familymenu.daily.dto.ApiModels.UpdateWishRequest;
 import com.familymenu.daily.dto.ApiModels.WishItem;
 import com.familymenu.daily.dto.AuthModels.AuthUser;
 import com.familymenu.daily.service.WishService;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -57,6 +59,14 @@ public class WishController {
                             @Valid @RequestBody AddWishRequest request) {
         requireFamily(user);
         return wishService.addWish(user, request);
+    }
+
+    @PutMapping("/{wishId}")
+    @RequiresAuth
+    public WishItem updateWish(@CurrentUser AuthUser user,
+                               @PathVariable String wishId,
+                               @Valid @RequestBody UpdateWishRequest request) {
+        return wishService.updateWish(requireFamily(user), wishId, request);
     }
 
     @DeleteMapping("/{wishId}")

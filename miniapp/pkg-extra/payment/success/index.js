@@ -89,8 +89,8 @@ Page({
 
   onInviteFamily() {
     wx.navigateTo({
-      url: '/pkg-extra/vip/upgrade/index',
-      fail: () => this.setData({ toastVisible: true, toastText: '请在"我的→会员"开启共享' }),
+      url: '/pkg-extra/family/invite/index',
+      fail: () => this.setData({ toastVisible: true, toastText: '邀请页暂时打不开，可在"我的→家庭成员管理"里邀请家人' }),
     });
   },
 

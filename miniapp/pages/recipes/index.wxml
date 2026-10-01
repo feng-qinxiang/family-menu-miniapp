@@ -1,41 +1,35 @@
-<wxs src="/utils/cuisine.wxs" module="cuisine" />
-<view class="recipes-mag {{fontScale === 'lg' ? 'font-lg' : ''}}">
-  <!-- ===== HERO（轻量头部：小图条 + 实心标题） ===== -->
-  <view class="rx-hero g-fade-in">
-    <image wx:if="{{heroRecipe.cover}}" class="rx-hero-img" src="{{heroRecipe.cover}}" mode="aspectFill" />
-    <image wx:else class="rx-hero-img" src="/assets/dishes/kungpao-chicken.jpg" mode="aspectFill" />
-    <view class="rx-hero-shade"></view>
-
-    <view class="rx-hero-top g-fade-down g-d1" style="top: {{capsuleTop}}; right: {{capsuleRight}};">
-      <view class="rx-greet">
-        <view class="rx-hi">家常菜谱库</view>
-        <view class="rx-name">挑一道，今晚就点它</view>
+<!-- 餐盘为 0 不出浮条；底部留白跟着浮条走（rx-has-tray），两处共用同一个条件 -->
+<view class="recipes-mag {{fontScale === 'lg' ? 'font-lg' : ''}} {{!loading && menuTray.count ? 'rx-has-tray' : ''}}">
+  <!-- ===== 紧凑页头（全站统一 .cpt-head，见 app.wxss） ===== -->
+  <view class="cpt-head" style="padding-top: {{capsuleTop}};">
+    <view class="cpt-row" style="padding-right: {{capsuleRight}};">
+      <view class="cpt-titles">
+        <view class="cpt-eyebrow">家常菜谱库</view>
+        <view class="cpt-title">菜谱</view>
       </view>
-      <view class="rx-create tap-scale" bindtap="goCreate">
+      <view class="cpt-action rx-create tap-scale" bindtap="goCreate" aria-role="button" aria-label="新建菜谱">
         <text class="rx-create-plus">+</text>新建
       </view>
     </view>
-
-    <view class="rx-hero-body g-fade-up g-d2">
-      <view class="rx-tag">菜谱精选</view>
-      <view class="rx-hero-title title-stroke">家里能点的<text class="pop">菜</text></view>
-      <view class="rx-hero-meta">
-        <view class="rx-m">{{filteredRecipes.length}} 道可点</view>
-        <view class="rx-m">川 · 粤 · 家常</view>
-      </view>
-    </view>
+    <view class="cpt-sub">{{recipes.length ? recipes.length + ' 道菜谱' : '挑一道，今晚就点它'}}<block wx:if="{{cuisineSummary}}"> · {{cuisineSummary}}</block></view>
   </view>
 
-  <!-- ===== SHEET ===== -->
   <view class="rx-sheet">
-    <!-- 搜索 -->
-    <view class="rx-search g-fade-up g-d1 {{searchFocused ? 'focus' : ''}}">
-      <view class="rx-search-ico"></view>
-      <input class="rx-search-input" placeholder="搜菜名、菜系、口味" placeholder-class="rx-search-ph"
-        value="{{searchText}}" bindinput="onSearchInput" bindfocus="onSearchFocus" bindblur="onSearchBlur" />
+    <!-- 搜索 + 筛选开关并成一行（原来「点菜条件」单独占一整行卡片） -->
+    <view class="rx-searchrow">
+      <view class="rx-search {{searchFocused ? 'focus' : ''}}">
+        <view class="rx-search-ico"></view>
+        <input class="rx-search-input" placeholder="搜菜名、菜系、口味" placeholder-class="rx-search-ph"
+          value="{{searchText}}" bindinput="onSearchInput" bindfocus="onSearchFocus" bindblur="onSearchBlur" />
+      </view>
+      <view class="rx-filter-btn tap-scale {{showAdvFilter || advFilter.cuisine || advFilter.maxTime || advFilter.minServings ? 'on' : ''}}"
+        bindtap="toggleAdvFilter" aria-role="button" aria-label="点菜条件：菜系、耗时、人份">
+        <view class="rx-filter-ico"></view>
+        <text class="rx-filter-t">{{showAdvFilter ? '收起' : (advFilter.cuisine || (advFilter.maxTime ? advFilter.maxTime + '分' : '') || (advFilter.minServings ? advFilter.minServings + '人+' : '') || '筛选')}}</text>
+      </view>
     </view>
 
-    <!-- 来源 chips + 忌口设置 -->
+    <!-- 来源 chips + 忌口开关 -->
     <view class="rx-srcrow">
       <scroll-view scroll-x class="rx-chips" enhanced="{{true}}" show-scrollbar="{{false}}">
         <view class="rx-chips-inner">
@@ -47,24 +41,14 @@
           </view>
         </view>
       </scroll-view>
-      <!-- 忌口小 icon：避开整行占位 -->
-      <view wx:if="{{avoidTags.length}}" class="rx-avd-ic tap-scale" catchtap="toggleAvoidFilter" aria-label="家人忌口">
-        <view class="rx-avd-dot" wx:if="{{avoidActive}}"></view>
+      <view wx:if="{{avoidTags.length}}" class="rx-avd-ic tap-scale {{avoidActive ? 'on' : ''}}" catchtap="toggleAvoidFilter" aria-role="button" aria-label="家人忌口过滤：{{avoidActive ? '已开启' : '已关闭'}}">
         <view class="rx-avd-glyph"></view>
         <text class="rx-avd-t">{{avoidActive ? '忌口' : '关'}}</text>
       </view>
     </view>
 
-    <!-- 点菜条件：菜系 + 耗时 + 人份，合并到一个可展开面板 -->
-    <view class="rx-diet tap-scale" bindtap="toggleAdvFilter">
-      <view class="rx-diet-ico"></view>
-      <text class="rx-diet-label">点菜条件</text>
-      <text class="rx-diet-val">{{advFilter.cuisine || (advFilter.maxTime ? advFilter.maxTime + '分' : '') || (advFilter.minServings ? advFilter.minServings + '人' : '') || '菜系 · 耗时 · 人份'}}</text>
-      <text class="rx-diet-toggle">{{showAdvFilter ? '收起' : '细筛'}}</text>
-    </view>
-
+    <!-- 点菜条件面板：菜系 + 耗时 + 人份 -->
     <view class="rx-quickfilters" wx:if="{{showAdvFilter}}">
-      <!-- 菜系 -->
       <view class="rx-qf-row">
         <text class="rx-qf-label">菜系</text>
         <scroll-view scroll-x class="rx-qf-scroll" enhanced="{{true}}" show-scrollbar="{{false}}">
@@ -76,7 +60,6 @@
           </view>
         </scroll-view>
       </view>
-      <!-- 耗时 -->
       <view class="rx-qf-row">
         <text class="rx-qf-label">耗时</text>
         <view class="rx-qf-chips">
@@ -86,7 +69,6 @@
           <view class="tap-scale rx-qf-chip {{advFilter.maxTime === 60 ? 'on' : ''}}" data-val="60" bindtap="setFilterTime">60分钟</view>
         </view>
       </view>
-      <!-- 人份 -->
       <view class="rx-qf-row">
         <text class="rx-qf-label">人份</text>
         <view class="rx-qf-chips">
@@ -95,7 +77,6 @@
           <view class="tap-scale rx-qf-chip {{advFilter.minServings === 4 ? 'on' : ''}}" data-val="4" bindtap="setFilterServings">4人+</view>
         </view>
       </view>
-      <!-- 一键清空 -->
       <view class="rx-qf-reset tap-scale" bindtap="clearFilter">
         <text>清空全部条件</text>
       </view>
@@ -110,37 +91,33 @@
       </view>
     </view>
 
-    <!-- 结果标题 -->
-    <section-head
-      wx:if="{{!loading && displayedRecipes.length}}"
-      ext-class="rx-shead"
-      eyebrow="点到即做"
-      title=""
-      popPart="{{filteredRecipes.length}}"
-      titleTail=" 道可点"
-      hint="点 + 加入今日"
-    />
-
-    <!-- 点到下拉：自定义面板替代原生 picker（原生白滚轮与整体风格不符，且样式不可定制） -->
-    <view class="rx-meal-picker" wx:if="{{!loading && displayedRecipes.length}}">
-      <view class="rx-meal-pk-btn tap-scale" catchtap="toggleMealDrop">
-        <text class="rx-meal-pk-l">点到</text>
-        <text class="rx-meal-pk-v">{{mealOptionLabels[mealIndex]}} ▾</text>
+    <!-- 结果条：「N 道可点」与「点到 晚餐」并成一行（原来是 section-head 大标题 + 单独一行下拉） -->
+    <view class="rx-listbar" wx:if="{{!loading && displayedRecipes.length}}">
+      <view class="rx-listbar-l">
+        <text class="rx-listbar-n">{{filteredRecipes.length}} 道可点</text>
+        <text class="rx-listbar-hint">点 + 加入</text>
       </view>
-      <view class="rx-drop-mask" wx:if="{{mealDropOpen}}" catchtap="closeMealDrop"></view>
-      <view class="rx-meal-drop" wx:if="{{mealDropOpen}}">
-        <view
-          class="rx-meal-opt {{mealIndex === idx ? 'on' : ''}}"
-          wx:for="{{mealOptionLabels}}"
-          wx:for-item="label"
-          wx:for-index="idx"
-          wx:key="*this"
-          data-idx="{{idx}}"
-          hover-class="rx-meal-opt-hov"
-          catchtap="onMealPick"
-        >
-          <text>{{label}}</text>
-          <text class="rx-meal-opt-x">✓</text>
+      <!-- 点到下拉：自定义面板替代原生 picker（原生白滚轮与整体风格不符） -->
+      <view class="rx-meal-picker">
+        <view class="rx-meal-pk-btn tap-scale" catchtap="toggleMealDrop" aria-role="button" aria-label="加入到哪一餐：{{mealOptionLabels[mealIndex]}}">
+          <text class="rx-meal-pk-l">点到</text>
+          <text class="rx-meal-pk-v">{{mealOptionLabels[mealIndex]}} ▾</text>
+        </view>
+        <view class="rx-drop-mask" wx:if="{{mealDropOpen}}" catchtap="closeMealDrop"></view>
+        <view class="rx-meal-drop" wx:if="{{mealDropOpen}}">
+          <view
+            class="rx-meal-opt {{mealIndex === idx ? 'on' : ''}}"
+            wx:for="{{mealOptionLabels}}"
+            wx:for-item="label"
+            wx:for-index="idx"
+            wx:key="*this"
+            data-idx="{{idx}}"
+            hover-class="rx-meal-opt-hov"
+            catchtap="onMealPick"
+          >
+            <text>{{label}}</text>
+            <text class="rx-meal-opt-x">✓</text>
+          </view>
         </view>
       </view>
     </view>
@@ -187,11 +164,11 @@
     </view>
   </view>
 
-  <!-- 长菜谱列表滚深后回顶（页面级滚动，避开餐盘条） -->
-  <back-top show="{{showBackTop}}" right="32rpx" bottom="320rpx" bind:totop="backToTop" />
+  <!-- 长菜谱列表滚深后回顶：有浮条时抬高避开它，没浮条时只避开 tabBar -->
+  <back-top show="{{showBackTop}}" right="32rpx" bottom="{{!loading && menuTray.count ? '320rpx' : '200rpx'}}" bind:totop="backToTop" />
 
-  <!-- ===== 餐盘 tray ===== -->
-  <view class="rx-tray" wx:if="{{!loading}}">
+  <!-- ===== 餐盘 tray：有菜才出现 ===== -->
+  <view class="rx-tray" wx:if="{{!loading && menuTray.count}}">
     <view class="tap-scale rx-tray-badge" bindtap="goMenu">{{menuTray.count}}</view>
     <view class="tap-scale rx-tray-copy" bindtap="goMenu">
       <view class="rx-tray-t">今日餐盘</view>

@@ -41,27 +41,32 @@ page { background: var(--paper); }
   background: var(--paper-2);
 }
 .rc-cover-img { width: 100%; height: 100%; display: block; }
+/* 热区是真实元素（88rpx），视觉圆点搬到 ::before。
+   原先用 ::after 把 48rpx 按钮扩成 88rpx：伪元素外溢 20rpx，
+   而 .rc-cover 是 overflow:hidden 且按钮距角仅 16rpx，四边全被裁，
+   实际命中区反而缩到 48x48 —— 扩热区那个伪元素一直在做负功。
+   挪到 -(88-48)/2-16 = -4rpx，圆点圆心仍在离角 16rpx 处，视觉不变。 */
 .rc-cover-x {
   position: absolute;
-  top: 16rpx;
-  right: 16rpx;
+  top: -4rpx;
+  right: -4rpx;
+  width: var(--tap-min);
+  height: var(--tap-min);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: #fff;
+  font-size: calc(28rpx * var(--fs-mul, 1));
+}
+.rc-cover-x::before {
+  content: '×';
   width: var(--ctl-x);
   height: var(--ctl-x);
   border-radius: 50%;
   background: rgba(40, 30, 20, 0.45);
-  color: #fff;
-  font-size: calc(28rpx * var(--fs-mul, 1));
-  line-height: 46rpx;
+  line-height: var(--ctl-x);
   text-align: center;
-}
-.rc-cover-x::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: var(--tap-min);
-  height: var(--tap-min);
-  transform: translate(-50%, -50%);
 }
 .rc-addcover {
   display: inline-block;
@@ -289,6 +294,46 @@ page { background: var(--paper); }
 }
 
 .rc-pick { padding: 8rpx 0 24rpx; }
+/* 上传失败重试行：比主按钮低一档（描边、非实心），不能抢「从相册或拍摄」的位置 */
+.rc-retry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20rpx;
+  min-height: var(--tap-min);
+  margin-bottom: 16rpx;
+  padding: 0 var(--pad-card-sm);
+  border: 2rpx solid var(--pop-soft);
+  border-radius: var(--r-card);
+  background: var(--c-surface);
+}
+.rc-retry-txt {
+  font-size: calc(25rpx * var(--fs-mul, 1));
+  color: var(--pop);
+}
+.rc-retry-btn {
+  flex: none;
+  min-width: 120rpx;
+  height: 64rpx;
+  line-height: 64rpx;
+  text-align: center;
+  border-radius: var(--r-pill);
+  background: var(--pop);
+  color: var(--anchor-contrast);
+  font-size: calc(var(--fs-btn) * var(--fs-mul, 1));
+  font-weight: 700;
+}
+/* 展开热区到 88rpx：按钮本体 64rpx 低于触控下限，靠伪元素补，
+   且 .rc-retry 没有 overflow:hidden，伪元素不会被裁（对照 .rc-cover-x 的教训） */
+.rc-retry-btn { position: relative; }
+.rc-retry-btn::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -12rpx;
+  bottom: -12rpx;
+}
 .rc-pick-btn {
   height: 88rpx;
   border-radius: var(--r-card);

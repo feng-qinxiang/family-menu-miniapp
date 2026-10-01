@@ -1,5 +1,6 @@
 {
   "navigationBarTitleText": "VIP 会员",
+  "enablePullDownRefresh": true,
   "navigationStyle": "custom",
   "usingComponents": {
     "section-head": "/components/section-head/index"

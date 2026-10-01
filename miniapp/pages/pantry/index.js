@@ -3,9 +3,12 @@ const {
   deletePantryItem,
   getPantryItems,
   getPantryMatch,
-  getWeeklyMenu
+  getWeeklyMenu,
+  updatePantryItem
 } = require('../../utils/api');
+const { getCapsule } = require('../../utils/capsule');
 const { withTabSelect } = require('../../behaviors/tab-select');
+const { runGuarded } = require('../../utils/interaction');
 const { recipeDishImg } = require('../../utils/image');
 const { parseLocalDate } = require('../../utils/dish-logic');
 const { INGREDIENT_CATEGORIES, categoryOf: sharedCategoryOf } = require('../../utils/ingredients');
@@ -15,7 +18,8 @@ const CATEGORY_RULES = INGREDIENT_CATEGORIES;
 
 Page({
   data: {
-    statusBarHeight: 0,
+    capsuleTop: 'calc(env(safe-area-inset-top) + 90rpx)',
+    capsuleRight: '96px',
     categories: [],
     matchResults: [],
     pantrySummary: { count: 0, expiringCount: 0, categoryCount: 0 },
@@ -25,23 +29,22 @@ Page({
     loaded: false,
     loading: true,
     loadError: false,
-    adding: false
+    adding: false,
+    // 编辑弹层：editingId 为 null 时弹层不显示
+    editingId: null,
+    editDraft: { ingredientName: '', amount: '', unit: '', expiresAt: '' },
+    editing: false
   },
 
   onLoad() {
-    let sbh = 0;
-    try {
-      sbh = (wx.getWindowInfo ? wx.getWindowInfo().statusBarHeight : wx.getSystemInfoSync().statusBarHeight) || 0;
-    } catch (e) {
-      sbh = 0;
-    }
     let fontScale = 'normal';
     try { fontScale = wx.getStorageSync('font_scale') || 'normal'; } catch (e) { fontScale = 'normal'; }
-    this.setData({ statusBarHeight: sbh, fontScale });
+    const capsule = getCapsule();
+    this.setData({ fontScale, capsuleTop: capsule.top, capsuleRight: capsule.right });
   },
 
   onShow() {
-    withTabSelect(this, 2);
+    withTabSelect(this);
     Promise.resolve(this.loadPantry(this._hasLoaded === true)).then(() => { this._hasLoaded = true; });
   },
 
@@ -154,6 +157,66 @@ Page({
   retryMatch() {
     // 静默重算：不滚到页尾（用户就站在失败态那一屏），也失败时不再叠一条 toast
     this.matchRecipes(true);
+  },
+
+  // —— 编辑库存条目 ——
+  // 打开时从列表里取原值拷进 editDraft：直接改 it.* 会让「取消」失去意义
+  openEditSheet(e) {
+    const { id } = e.currentTarget.dataset;
+    if (!id) return;
+    let found = null;
+    (this.data.categories || []).some((cat) => {
+      found = (cat.items || []).find((it) => it.id === id);
+      return !!found;
+    });
+    if (!found) return;
+    this.setData({
+      editingId: id,
+      editDraft: {
+        ingredientName: found.ingredientName || '',
+        amount: found.amount || '',
+        unit: found.unit || '',
+        expiresAt: found.expiresAt || ''
+      }
+    });
+  },
+
+  onEditInput(e) {
+    const { field } = e.currentTarget.dataset;
+    this.setData({ [`editDraft.${field}`]: e.detail.value });
+  },
+
+  closeEditSheet() {
+    // 保存中不许关：请求已经发出去了，关掉弹层会让用户以为没保存
+    if (this.data.editing) return;
+    this.setData({ editingId: null });
+  },
+
+  async saveEdit() {
+    const id = this.data.editingId;
+    if (!id) return;
+    const { ingredientName, amount, unit, expiresAt } = this.data.editDraft;
+    if (!String(ingredientName || '').trim()) {
+      wx.showToast({ title: '请输入食材名', icon: 'none' });
+      return;
+    }
+    // 保质期留空 = 清空到期日（后端写 NULL）；不要传 undefined，
+    // 那会让整条替换把这一格当"没提"，用户就永远删不掉填错的日期
+    const ok = await runGuarded(this, 'pantryEdit', () => updatePantryItem(id, {
+      ingredientName: String(ingredientName).trim(),
+      amount: amount || '',
+      unit: unit || '',
+      expiresAt: (expiresAt || '').trim()
+    }), {
+      loading: '保存中',
+      success: '已保存',
+      fail: (err) => (err && err.message) || '保存失败，请重试',
+      onBusyChange: (busy) => this.setData({ editing: busy })
+    });
+    // undefined = 被防重拦住或失败（runGuarded 已经弹过提示），别把弹层关掉让用户重来
+    if (ok === undefined) return;
+    this.setData({ editingId: null });
+    await this.loadPantry(true);
   },
 
   async matchRecipes(silent) {

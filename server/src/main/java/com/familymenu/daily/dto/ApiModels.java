@@ -468,7 +468,12 @@ public final class ApiModels {
             String amount,
             String unit,
             String expiresAt,
-            String addedAt
+            String addedAt,
+            /**
+             * 是谁加的这条库存，用于展示与审计；**不参与归属校验**（校验按家庭级）。
+             * 建列之前的历史行为 null。
+             */
+            Long userId
     ) {
     }
 
@@ -476,6 +481,19 @@ public final class ApiModels {
             @NotBlank String ingredientName,
             // 只挡「负数量」这一种明显的手滑（用户把 "-5" 打进自由文本输入框）。
             // 空值放行（= 没填），"适量/少许/2 个" 这类自由文本照旧。
+            @jakarta.validation.constraints.Pattern(regexp = "^\\s*[^-]*$", message = "用量不能为负数") String amount,
+            String unit,
+            String expiresAt
+    ) {
+    }
+
+    /**
+     * 库存条目编辑（PUT 语义：整条替换，不是增量补丁）。
+     * 没有 userId / familyId：归属由服务端从登录态取，客户端传什么都不作数。
+     */
+    public record UpdatePantryItemRequest(
+            // 与 AddPantryItemRequest 同一套校验：名称必填、用量不许是负数。
+            @NotBlank String ingredientName,
             @jakarta.validation.constraints.Pattern(regexp = "^\\s*[^-]*$", message = "用量不能为负数") String amount,
             String unit,
             String expiresAt
@@ -655,6 +673,17 @@ public final class ApiModels {
     public record AddWishRequest(
             @NotBlank @Size(max = 20) String date,
             @NotBlank @Size(max = 16) String slot,
+            @NotBlank @Size(max = 128) String text,
+            Long recipeId
+    ) {
+    }
+
+    /**
+     * 心愿编辑：只允许改「想吃什么」和「关联哪道菜」，不动日期/餐次/许愿人。
+     * 没写 date/slot 是刻意的——移动愿望到别的餐次是另一个动作（改的是 slot），
+     * 混进编辑请求里会让"改个错别字"顺带搬走这条愿望。
+     */
+    public record UpdateWishRequest(
             @NotBlank @Size(max = 128) String text,
             Long recipeId
     ) {

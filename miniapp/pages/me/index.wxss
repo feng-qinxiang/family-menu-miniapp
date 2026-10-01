@@ -8,113 +8,33 @@
   background: var(--paper);
 }
 
-/* ---------- HERO ---------- */
-.mag-hero {
-  position: relative;
-  height: var(--photo-hero-h);
-  overflow: hidden;
-}
-.mag-hero-img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-.mag-hero-mask {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg,
-    rgba(20, 14, 8, 0.5) 0%,
-    rgba(20, 14, 8, 0) 28%,
-    rgba(20, 14, 8, 0.18) 52%,
-    rgba(20, 14, 8, 0.9) 100%);
-}
-.mag-hero-bignum {
-  position: absolute;
-  top: 120rpx;
-  right: 20rpx;
-  font-family: var(--serif);
-  font-size: var(--fs-hero-bignum);
-  font-weight: 700;
-  line-height: 1;
-  color: rgba(255, 255, 255, 0.07);
-}
-.mag-hero-top {
-  position: absolute;
-  top: calc(env(safe-area-inset-top) + 90rpx);
-  left: 46rpx;
-  right: 46rpx;
-  z-index: 3;
-}
-.mag-hi-en {
-  font-size: var(--fs-cap);
-  letter-spacing: 4rpx;
-  text-transform: uppercase;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.85);
-}
-.mag-hi-cn {
-  margin-top: 8rpx;
-  font-size: var(--fs-cap);
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.92);
-  text-shadow: 0 2rpx 8rpx rgba(20, 14, 8, 0.55);
-}
-.mag-hero-body {
-  position: absolute;
-  left: 46rpx;
-  right: 46rpx;
-  bottom: var(--hero-body-above-sheet);
-  z-index: 3;
-}
-.mag-hero-tag {
-  display: inline-block;
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: var(--fs-cap);
-  letter-spacing: 2rpx;
-  font-weight: 700;
-  color: var(--anchor-contrast);
-  background: var(--pop);
-  padding: 10rpx 26rpx;
-  border-radius: var(--r-xs);
-}
-.mag-hero-title {
-  margin: 26rpx 0 16rpx;
-  font-size: var(--fs-hero-xl);
-  /* 家庭名是用户自己起的（家庭管理里可改），长到会换行；0.92 是单行展示字的行高，
-     换行后两行字互压。按「最多两行 + 能换行的行高」定，名字不截断、高度也不失控。 */
-  line-height: 1.1;
+/* ---------- 紧凑页头里的家庭身份（.cpt-head 本体在 app.wxss） ---------- */
+/* 家庭名是用户自己起的，可能很长：最多两行，不截成一行省略号 */
+.mag-fam-name {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   overflow: hidden;
-  letter-spacing: -5rpx;
-  -webkit-text-stroke: 3rpx var(--c-surface);
-}
-.mag-hero-sub {
-  font-size: calc(25rpx * var(--fs-mul, 1));
-  color: rgba(255, 255, 255, 0.85);
-  text-shadow: 0 2rpx 8rpx rgba(20, 14, 8, 0.55);
+  word-break: break-all;
 }
 .mag-fam {
   display: flex;
   align-items: center;
-  margin-top: 34rpx;
+  margin-top: 20rpx;
+  min-height: var(--ava-cmt);   /* 首屏加载时行是空的，留高度防数据回来跳一下 */
 }
 .mag-ava {
-  width: var(--ava-row);
-  height: var(--ava-row);
-  margin-left: -22rpx;
-  border-radius: calc(var(--ava-row) * var(--r-ava));
+  width: var(--ava-cmt);
+  height: var(--ava-cmt);
+  margin-left: -18rpx;
+  border-radius: calc(var(--ava-cmt) * var(--r-ava));
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: calc(var(--ava-row) * var(--ava-glyph) * var(--fs-mul, 1));
+  font-size: calc(var(--ava-cmt) * var(--ava-glyph) * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--anchor-contrast);
-  border: 4rpx solid rgba(255, 255, 255, 0.85);
-  box-shadow: 0 8rpx 22rpx rgba(0, 0, 0, 0.35);
+  border: 4rpx solid var(--paper);   /* 堆叠描边取纸色，深色模式随 token 翻转 */
 }
 .mag-ava:first-child { margin-left: 0; }
 .mavt-a { background: linear-gradient(135deg, var(--cat-gold), var(--gold-deep)); color: var(--ink-deep); }
@@ -123,30 +43,36 @@
 .mavt-d { background: var(--cat-purple); }
 .mavt-e { background: var(--c-info); }
 .mag-fam-lbl {
-  margin-left: 26rpx;
-  font-size: calc(25rpx * var(--fs-mul, 1));
-  color: rgba(255, 255, 255, 0.85);
-  text-shadow: 0 2rpx 8rpx rgba(20, 14, 8, 0.55);
+  margin-left: 20rpx;
+  font-size: var(--fs-sub);
+  color: var(--mut);
 }
-.mag-fam-lbl .b { color: var(--anchor-contrast); font-weight: 800; font-size: calc(29rpx * var(--fs-mul, 1)); }
+.mag-fam-lbl .b { color: var(--ink); font-weight: 800; }
+/* 「＋ 管理」：次级操作，墨色描边胶囊（番茄红留给本屏主操作「去登录」）；
+   视觉 64rpx 高，::after 把热区撑到 88rpx */
 .mag-manage {
-  margin-left: auto;
-  font-size: calc(25rpx * var(--fs-mul, 1));
-  font-weight: 800;
-  color: var(--anchor-contrast);
-  background: var(--pop);
-  padding: 26rpx 28rpx;   /* 触点补到 88rpx */
+  position: relative;
+  font-size: var(--fs-sub);
+  font-weight: 700;
+  line-height: 60rpx;
+  padding: 0 26rpx;
+  color: var(--ink);
+  border: 2rpx solid var(--line-deep);
   border-radius: var(--r-pill);
 }
+.mag-manage::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 88rpx;
+  margin-top: -44rpx;
+}
 
-/* ---------- 奶油 sheet ---------- */
+/* ---------- 内容区 ---------- */
 .mag-sheet {
-  position: relative;
-  margin-top: -50rpx;
-  z-index: 5;
-  padding: 46rpx 46rpx 0;
-  background: var(--paper);
-  border-radius: var(--r-sheet) var(--r-sheet) 0 0;
+  padding: 8rpx var(--ctl-x, 48rpx) 0;
 }
 
 /* ---------- VIP banner ---------- */
@@ -246,7 +172,6 @@
   margin-top: 16rpx;
   width: 100%;
 }
-.mag-snum.pop { color: var(--pop); }
 .mag-scap {
   margin-top: 14rpx;
   font-size: var(--fs-mini);
@@ -254,13 +179,11 @@
   color: var(--mut);
   white-space: nowrap;
 }
-.mag-scap-en {
+/* 统计卡补充说明：只留有信息量的（如「自建+导入」），和标题重复的不写 */
+.mag-scap-note {
   margin-top: 4rpx;
-  font-family: var(--serif);
-  font-style: italic;
   font-size: var(--fs-tiny);
-  letter-spacing: 1rpx;
-  color: var(--gold-deep);
+  color: var(--mut);
 }
 
 /* ---------- 最近上桌 ---------- */
@@ -284,7 +207,7 @@
 .mag-hsub { margin-top: 9rpx; font-size: var(--fs-cap); color: var(--mut); }
 .mag-stars { display: flex; gap: 4rpx; flex: none; }
 .mag-star { font-size: var(--fs-cap); color: var(--line-deep); }
-.mag-star.on { color: var(--pop); }
+.mag-star.on { color: var(--gold-deep); }
 .mag-hmore {
   display: flex;
   align-items: center;
@@ -317,24 +240,11 @@
   font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
 }
-.ti-0 { background: var(--pop-soft); color: var(--pop); }
-.ti-1 { background: var(--pop-soft); color: var(--pop); }
+.ti-1 { background: var(--c-gold-soft); color: var(--gold-deep); }
 .ti-2 { background: var(--c-accent-soft); color: var(--pine); }
-.ti-3 { background: var(--c-gold-soft); color: var(--gold-deep); }
 .ti-4 { background: var(--c-accent-soft); color: var(--cat-plum-deep); }
-.ti-5 { background: var(--c-success-soft); color: var(--c-info); }
 .mag-tmid { flex: 1; min-width: 0; }
 .mag-tname { font-size: calc(32rpx * var(--fs-mul, 1)); font-weight: 700; color: var(--ink); }
-.mag-tvip {
-  font-size: calc(19rpx * var(--fs-mul, 1));
-  font-weight: 800;
-  letter-spacing: 1rpx;
-  color: var(--ink-deep);
-  background: var(--gold);
-  padding: 4rpx 14rpx;
-  border-radius: var(--r-xs);
-  margin-left: 10rpx;
-}
 .mag-tdesc { margin-top: 6rpx; font-size: calc(23rpx * var(--fs-mul, 1)); color: var(--mut-strong); }
 .mag-tarrow { flex: none; font-size: calc(36rpx * var(--fs-mul, 1)); color: var(--mut-2); }
 
@@ -349,7 +259,6 @@
   margin-bottom: 16rpx;
 }
 .mag-pl { font-size: var(--fs-cap); font-weight: 700; color: var(--ink); }
-.mag-pl .pop { color: var(--pop); }
 .mag-pr { font-size: var(--fs-cap); font-weight: 700; color: var(--mut); }
 .mag-pbar {
   height: 18rpx;
@@ -391,22 +300,23 @@
   padding: 40rpx 0 60rpx;
 }
 /* 游客绑定手机引导条 */
+/* 普通卡：surface 底 + 细边，深色模式随 token 翻转（原桃色渐变不在色板里）。
+   整卡可点；红色只给文字操作「去登录」——它是这一屏唯一的主操作 */
 .mag-phone {
   display: flex;
   align-items: center;
   gap: 18rpx;
-  margin: 24rpx 28rpx 0;
-  padding: 22rpx var(--pad-card);
+  margin-top: 16rpx;
+  padding: 24rpx var(--pad-card);
   border-radius: var(--r-card);
-  background: linear-gradient(135deg, var(--banner-grad-a), var(--banner-grad-b));
-  border: 1rpx solid var(--banner-bd);
+  background: var(--c-surface);
+  border: 2rpx solid var(--line);
 }
 .mag-phone-ic {
   width: 64rpx;
   height: 64rpx;
   border-radius: 50%;
-  background: var(--pop);
-  color: #fff;
+  background: var(--ink);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -416,7 +326,7 @@
 .mag-phone-glyph {
   width: 22rpx;
   height: 30rpx;
-  border: 3rpx solid var(--anchor-contrast);
+  border: 3rpx solid var(--paper);
   border-radius: 6rpx 6rpx 10rpx 10rpx;
   box-sizing: border-box;
   position: relative;
@@ -430,12 +340,12 @@
   height: 3rpx;
   margin-left: -5rpx;
   border-radius: 2rpx;
-  background: var(--c-surface);
+  background: var(--paper);
 }
 .mag-phone-mid { flex: 1; min-width: 0; }
-.mag-phone-t { font-size: calc(28rpx * var(--fs-mul, 1)); font-weight: 600; color: var(--ink-deep); }
-.mag-phone-s { margin-top: 6rpx; font-size: calc(23rpx * var(--fs-mul, 1)); color: var(--mut-strong); }
-.mag-phone-go { font-size: calc(25rpx * var(--fs-mul, 1)); color: var(--pop); font-weight: 600; flex-shrink: 0; }
+.mag-phone-t { font-size: calc(28rpx * var(--fs-mul, 1)); font-weight: 700; color: var(--ink); }
+.mag-phone-s { margin-top: 6rpx; font-size: calc(23rpx * var(--fs-mul, 1)); color: var(--mut); }
+.mag-phone-go { font-size: var(--fs-sub); color: var(--pop); font-weight: 800; flex-shrink: 0; }
 
 /* ---------- 加载失败态 ---------- */
 .mag-load-error {

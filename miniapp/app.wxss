@@ -357,6 +357,56 @@ page.font-lg, .font-lg {
   -webkit-text-stroke: 1.5rpx rgba(44, 36, 27, 0.3);
   text-shadow: none;
 }
+/* ============ 紧凑页头（菜谱/社区/冰箱/我的 共用；只有「今日」保留整幅照片 hero）============
+   为什么：五个 tab 原来都是「整屏照片 + 红斜体标签 + 超大描边标题」，切 tab 像没切，
+   而且首屏被装饰吃光、看不到内容。紧凑页头只做三件事：避让胶囊、给出页名、放一个主操作。
+   用法：
+   <view class="cpt-head" style="padding-top: {{capsuleTop}};">
+     <view class="cpt-row" style="padding-right: {{capsuleRight}};">
+       <view class="cpt-titles"><view class="cpt-eyebrow">小字</view><view class="cpt-title">页名</view></view>
+       <view class="cpt-action xx-btn tap-scale" bindtap="…">主操作</view>
+     </view>
+     <view class="cpt-sub">可选一行说明</view>
+   </view>
+   ⚠ cpt-action 直接挂在可点元素本身上，不要再包一层 view：
+     interaction-audit 按类名识别可点元素，空包一层会被报成「可点但无事件」。
+   capsuleTop / capsuleRight 来自 utils/capsule.js（全站唯一胶囊实现）。 */
+.cpt-head {
+  background: var(--paper);
+  padding-left: var(--ctl-x, 48rpx);
+  padding-right: var(--ctl-x, 48rpx);
+  padding-bottom: 24rpx;
+}
+.cpt-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 64rpx;
+  gap: 16rpx;
+}
+.cpt-titles { min-width: 0; }
+.cpt-eyebrow {
+  font-size: var(--fs-cap);
+  font-weight: 700;
+  letter-spacing: 2rpx;
+  color: var(--mut);
+  font-style: normal;
+}
+.cpt-title {
+  margin-top: 4rpx;
+  font-size: var(--fs-h1);
+  font-weight: 900;
+  line-height: 1.15;
+  color: var(--ink);
+}
+.cpt-sub {
+  margin-top: 12rpx;
+  font-size: var(--fs-sub);
+  line-height: 1.5;
+  color: var(--mut);
+}
+.cpt-action { flex-shrink: 0; }
+
 /* Android 兜底（旧）：纯实心白字 + 多向白描边，仍保留以兼容历史用法 */
 .title-shadow {
   color: #fff;
@@ -379,7 +429,8 @@ page.font-lg, .font-lg {
   bottom: 6rpx;
   width: 8rpx;
   border-radius: 4rpx;
-  background: var(--pop);
+  /* 竖条改中性墨色：番茄红只留给每屏唯一的主操作，分区标记再用红会和主操作抢注意力 */
+  background: var(--ink);
 }
 .shead .eyebrow {
   font-family: var(--sans);

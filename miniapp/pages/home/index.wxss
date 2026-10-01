@@ -574,6 +574,29 @@
   padding: 6rpx 14rpx;
 }
 .fp-wish-by { font-size: calc(23rpx * var(--fs-mul, 1)); color: var(--mut-strong); font-weight: 600; }
+/* 改：与 .fp-wish-del 同一套几何（视觉 64rpx，热区由 ::after 撑到 --tap-min）。
+   放「×」左边，删是最后一个（误触代价最大的那个离手最远）。 */
+.fp-wish-edit {
+  position: relative;
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  background: var(--c-surface);
+  display: flex; align-items: center; justify-content: center;
+  font-size: calc(25rpx * var(--fs-mul, 1));
+  font-weight: 700;
+  color: var(--mut);
+  border: 2rpx solid var(--c-border);
+}
+.fp-wish-edit::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--tap-min);
+  height: var(--tap-min);
+  transform: translate(-50%, -50%);
+}
 .fp-wish-del {
   position: relative;
   width: 64rpx;   /* 视觉 64rpx，热区由 ::after 撑到 88rpx */

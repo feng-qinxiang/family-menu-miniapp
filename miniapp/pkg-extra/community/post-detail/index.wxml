@@ -53,6 +53,7 @@
           class="pimg"
           src="{{item}}"
           mode="aspectFill"
+          lazy-load
           data-url="{{item}}"
           bindtap="onPreviewImage"
         />

@@ -6,6 +6,7 @@ import com.familymenu.daily.dto.ApiModels.AddPantryItemRequest;
 import com.familymenu.daily.dto.ApiModels.PantryItem;
 import com.familymenu.daily.dto.ApiModels.PantryMatchResult;
 import com.familymenu.daily.dto.ApiModels.PreferenceProfile;
+import com.familymenu.daily.dto.ApiModels.UpdatePantryItemRequest;
 import com.familymenu.daily.dto.ApiModels.WeeklyMenuView;
 import com.familymenu.daily.dto.AuthModels.AuthUser;
 import com.familymenu.daily.service.EnhancedService;
@@ -61,7 +62,15 @@ public class EnhancedController {
     @RequiresAuth
     public PantryItem addPantryItem(@CurrentUser AuthUser user,
                                     @Valid @RequestBody AddPantryItemRequest request) {
-        return enhancedService.addPantryItem(requireFamily(user), request);
+        return enhancedService.addPantryItem(requireFamily(user), user.userId(), request);
+    }
+
+    @PutMapping("/pantry/{itemId}")
+    @RequiresAuth
+    public PantryItem updatePantryItem(@CurrentUser AuthUser user,
+                                       @PathVariable long itemId,
+                                       @Valid @RequestBody UpdatePantryItemRequest request) {
+        return enhancedService.updatePantryItem(requireFamily(user), itemId, request);
     }
 
     @DeleteMapping("/pantry/{itemId}")

@@ -96,10 +96,17 @@ Page({
   onToggleAgree() {
     this.setData({ agreed: !this.data.agreed });
   },
+  // 用户协议与隐私政策是两个独立页面：微信审核要求隐私政策可单独查阅
   onProtocol() {
     wx.navigateTo({
       url: '/pkg-extra/legal/terms/index',
       fail: () => this._toast('协议详情暂不可用'),
+    });
+  },
+  onPrivacy() {
+    wx.navigateTo({
+      url: '/pkg-extra/legal/privacy/index',
+      fail: () => this._toast('隐私政策暂不可用'),
     });
   },
 

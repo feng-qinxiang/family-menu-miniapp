@@ -23,10 +23,6 @@
  *  - 失败默认提示 err.message（utils/api.js 已把错误统一成中文），不吞异常。
  */
 
-function isBusy(ctx, key) {
-  return !!(ctx && ctx.__busy && ctx.__busy[key]);
-}
-
 function acquire(ctx, key) {
   if (!ctx) return false;
   if (!ctx.__busy) ctx.__busy = {};
@@ -52,7 +48,15 @@ function resolveText(value, arg, fallback) {
 
 /**
  * 带防重与反馈执行一次异步操作。
- * @returns {Promise<any>} 实际操作结果；被防重忽略时返回 undefined
+ *
+ * 返回值契约：操作成功返回其结果；**被防重拦住（同一 key 已在途）或操作失败，都返回 undefined**。
+ * 失败信息已由本函数弹给用户，异常不再向上抛——所以调用方不需要 try/catch，
+ * 但也不能把 undefined 当作"成功但无返回值"：判 `ok === undefined` 就是"这次什么都没做"。
+ * 页面菜单页 `pages/menu/index.js` 的 `if (ok === undefined) return;` 依赖这条契约。
+ * （不要改成 throw：四处裸 await 在 wx.showModal 回调里、一处判 undefined 的调用方，
+ * 都会变成未处理拒绝或静默失效，见本文件 T1(a) 的取舍记录。）
+ *
+ * @returns {Promise<any>} 实际操作结果；被防重忽略或失败时返回 undefined
  */
 async function runGuarded(ctx, key, task, opts) {
   const options = opts || {};
@@ -64,9 +68,10 @@ async function runGuarded(ctx, key, task, opts) {
     const result = await task();
     if (loadingTitle) wx.hideLoading();
     const text = resolveText(options.success, result, '');
+    // 全站 toast 都是纯文案提示，统一 icon:'none'。
     // 带 icon 的 toast 文案超过 7 个汉字会被截断（实测「已记录 · 冰箱扣了 1 项」只显示出「已记录 · 冰箱」），
-    // 长文案一律转 icon:'none'：对勾可以不要，要说的话不能被吃掉。ponytail: 按字数判据足够，真机若仍截断就再放宽
-    if (text) wx.showToast({ title: text, icon: options.icon || (text.length > 7 ? 'none' : 'success') });
+    // icon:'none' 既不截断也不吃图标资源，与设计一致。
+    if (text) wx.showToast({ title: text, icon: 'none' });
     return result;
   } catch (err) {
     if (loadingTitle) wx.hideLoading();
@@ -87,6 +92,5 @@ function guard(ctx, key) {
 module.exports = {
   runGuarded,
   guard,
-  release,
-  isBusy
+  release
 };

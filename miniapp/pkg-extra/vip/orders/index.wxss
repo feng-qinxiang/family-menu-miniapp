@@ -149,10 +149,40 @@
 .ocard-ic--gold {
   background: var(--gold);
 }
-.ocard-ic-img {
+/* 礼盒图标：纯 CSS 拼（原 SVG data-uri 里的 {{item.iconColor}} 不参与 WXML 编译，
+   描边永远落在 SVG 默认黑上，故改为走 token 的 CSS 图标） */
+.ocard-gift {
+  box-sizing: border-box;
   width: 50rpx;
-  height: 50rpx;
+  height: 42rpx;
+  position: relative;
+  border: 4rpx solid var(--pop);
+  border-radius: 4rpx;
 }
+.ocard-gift::before {
+  content: "";
+  position: absolute;
+  left: -4rpx;
+  right: -4rpx;
+  top: -12rpx;
+  height: 10rpx;
+  border: 4rpx solid var(--pop);
+  border-radius: 4rpx;
+}
+.ocard-gift::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -12rpx;
+  bottom: -4rpx;
+  width: 4rpx;
+  margin-left: -2rpx;
+  background: var(--pop);
+}
+/* 生效中的订单：深色图标压在浅金底上 */
+.ocard-ic--gold .ocard-gift,
+.ocard-ic--gold .ocard-gift::before { border-color: var(--anchor); }
+.ocard-ic--gold .ocard-gift::after { background: var(--anchor); }
 .ocard-mid {
   flex: 1;
   min-width: 0;

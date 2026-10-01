@@ -1,5 +1,6 @@
 // pages/vip/orders · 我的订单（真实订单流水）
 const { getPaymentOrders } = require('../../../utils/api');
+const { loadPlans } = require('../../../utils/plans');
 
 function fmtDate(value) {
   if (!value) return '';
@@ -37,10 +38,8 @@ function mapOrder(raw) {
     endDate: expiryFrom(raw),
     status: isPaid ? 'live' : 'pending',
     statusText: isPaid ? '生效中' : '待支付',
+    // 图标底色由 WXML 的 ocard-ic--gold 决定，图标本身是走 token 的 CSS 拼图
     iconGold: isPaid,
-    // 内联 SVG data-uri 的描边色（URL 编码）。原先写在 wxml 里的 \" 转义
-    // 会被预览/上传编译器判为非法字符（模拟器编译宽松未暴露），故移到 js 侧算好
-    iconColor: isPaid ? '%23b08949' : '%23e8472a',
   };
 }
 
@@ -52,7 +51,9 @@ Page({
     orders: [],
     totalCount: 0,
     totalSpent: '0',
-    totalCents: '.00'
+    totalCents: '.00',
+    // 空态 CTA 的价格取后端权威目录，不写死「立即开通 ¥99/年」
+    activateCta: '立即开通'
   },
 
   onLoad() {
@@ -74,6 +75,16 @@ Page({
     }
     this.setData({ statusBarHeight: sbh });
     this.loadOrders();
+    this.loadPlanLabel();
+  },
+
+  // 空态 CTA 价格走后端套餐目录（失败时 loadPlans 内部回退本地默认，不抛错）
+  async loadPlanLabel() {
+    const plans = await loadPlans();
+    const yearly = plans.yearly;
+    if (yearly && yearly.priceNumber) {
+      this.setData({ activateCta: `立即开通 ¥${yearly.priceNumber}/年` });
+    }
   },
 
   async loadOrders() {

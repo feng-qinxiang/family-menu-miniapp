@@ -1,12 +1,15 @@
 package com.familymenu.daily.service;
 
 import com.familymenu.daily.dto.ApiModels.AddWishRequest;
+import com.familymenu.daily.dto.ApiModels.UpdateWishRequest;
 import com.familymenu.daily.dto.ApiModels.WishItem;
 import com.familymenu.daily.dto.AuthModels.AuthUser;
+import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
@@ -106,6 +109,49 @@ public class WishService {
                 "DELETE FROM family_wish WHERE id = ? AND family_id = ?",
                 id, familyId
         );
+    }
+
+    /**
+     * 心愿编辑（PUT：整条替换）。
+     *
+     * <p>归属校验是<b>家庭级</b>的（WHERE id = ? AND family_id = ?），与 removeWish 一致。
+     * 客户端临时 id（"w-<时间戳>"）的心愿还在 wish_pending_v1 队列里，flushPendingWishes 会
+     * 无条件用队列里的旧 text 重新 addWish——改成新文案的结果是云端多出一条旧文案、本地一条新文案。
+     * <b>与 removeWish 的静默 return 不同</b>，这里明确返回 400 并告知"尚未同步到云端"，
+     * 避免用户以为编辑成功了，刷新后却发现"怎么还是旧的"。
+     *
+     * <p>响应复用 {@link #mapRow}，保证与 listWishes 的字段名逐字一致（JSON 序列化出来的
+     * 是 {@code by} / {@code at}，不是 {@code authorName} / {@code createdAt}）。
+     */
+    @Transactional
+    public WishItem updateWish(long familyId, String wishId, UpdateWishRequest req) {
+        Long id = parseId(wishId);
+        if (id == null) {
+            // 不照抄 removeWish 的静默 return：用户编辑临时 id 会以为成功了，其实这条还在本地队列里。
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "这条心愿尚未同步到云端，联网后再改");
+        }
+        jdbcTemplate.update("""
+                UPDATE family_wish
+                SET text = ?, recipe_id = ?
+                WHERE id = ? AND family_id = ?
+                """,
+                req.text() == null ? "" : req.text().trim(),
+                req.recipeId(),
+                id,
+                familyId);
+        // 回读该行：复用 mapRow 保证字段名不漂（特别是 by/at vs authorName/createdAt）
+        WishItem updated = jdbcTemplate.query("""
+                        SELECT id, text, author_name, recipe_id, wish_date, slot, created_at
+                        FROM family_wish
+                        WHERE id = ? AND family_id = ?
+                        """,
+                (rs, rowNum) -> mapRow(rs),
+                id, familyId
+        ).stream().findFirst().orElse(null);
+        if (updated == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "心愿不存在");
+        }
+        return updated;
     }
 
     private WishItem mapRow(java.sql.ResultSet rs) throws java.sql.SQLException {

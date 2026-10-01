@@ -1,43 +1,29 @@
 <view class="pantry-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <state-loading visible="{{loading}}" text="冰箱开门中…" />
-  <!-- 顶部状态栏占位（tab 页无返回键）-->
-  <view class="nav-float">
-    <nav-bar title="" show-back="{{false}}" status-bar-height="{{statusBarHeight}}" />
-  </view>
 
-  <!-- Hero · 真实菜图 + 撞色镂空标题 + 三宫格统计 -->
-  <view class="phero g-fade-up">
-    <image class="phero-img" src="/assets/dishes/tomato-egg.jpg" mode="aspectFill" />
-    <view class="phero-mask"></view>
-    <view class="phero-copy">
-      <text class="phero-tag">我的冰箱</text>
-      <view class="title-stroke title-shadow phero-title">冰箱<text class="pop">库存</text></view>
-      <view class="phero-sub">家里现在有什么，点菜前先看一眼 · 做完菜按用量自动扣</view>
-      <view class="phero-stats">
-        <view class="phstat">
-          <view class="phstat-n">{{pantrySummary.count}}</view>
-          <view class="phstat-c">在库食材</view>
-        </view>
-        <view class="phstat">
-          <view class="phstat-n warn">{{pantrySummary.expiringCount}}</view>
-          <view class="phstat-c">临期待用</view>
-        </view>
-        <view class="phstat">
-          <view class="phstat-n">{{pantrySummary.categoryCount}}</view>
-          <view class="phstat-c">分类</view>
-        </view>
+  <!-- 紧凑页头（只有「今日」保留整幅照片 hero） -->
+  <view class="cpt-head g-fade-up" style="padding-top: {{capsuleTop}};">
+    <view class="cpt-row" style="padding-right: {{capsuleRight}};">
+      <view class="cpt-titles">
+        <view class="cpt-eyebrow">我的冰箱</view>
+        <view class="cpt-title">冰箱库存</view>
       </view>
+    </view>
+    <view class="cpt-sub">家里现在有什么，点菜前先看一眼 · 做完菜按用量自动扣</view>
+    <!-- 统计一行字：空库不显示（三个 0 像坏了）；临期 >0 才出现且用 --pop-deep 当真实警示 -->
+    <view wx:if="{{pantrySummary.count}}" class="pstat-line">
+      <text>{{pantrySummary.count}} 种在库</text>
+      <text wx:if="{{pantrySummary.expiringCount}}" class="pstat-warn"> · {{pantrySummary.expiringCount}} 种临期</text>
     </view>
   </view>
 
-  <!-- 内容卡片层 -->
+  <!-- 内容层 -->
   <view class="psheet">
-    <!-- 现在有的 -->
+    <!-- 现在有的：空库时空态自己会说「冰箱还空着」，不再叠一个区块标题 -->
     <section-head
+      wx:if="{{!loaded || loadError || categories.length}}"
       eyebrow="在库食材"
-      title="现在"
-      popPart="有的"
-      hint="共 {{pantrySummary.count}} 项"
+      title="现在有的"
     />
 
     <!-- 加载失败态 -->
@@ -57,6 +43,30 @@
       title="冰箱还空着"
       desc="把家里有的食材记进来，点菜时就能先看能做什么"
     />
+
+    <!-- 添加食材：本页唯一主操作。放在空态正下方 / 列表之前，保证首屏可见、不被 tabBar 压住；
+         加载失败时主操作是「重新加载」，这里先不出 -->
+    <block wx:if="{{loaded && !loadError}}">
+      <view class="addcard tap-scale" bindtap="toggleAddForm">
+        <view class="add-pl"><view class="add-plus"></view></view>
+        <view class="add-at">
+          <view class="add-t">添加食材</view>
+          <view class="add-s">记下食材名、数量和到期日</view>
+        </view>
+        <view class="add-arrow {{showAddForm ? 'up' : ''}}"></view>
+      </view>
+
+      <!-- 添加表单（展开）-->
+      <view class="add-form" wx:if="{{showAddForm}}">
+        <view class="af-row">
+          <input class="af-input af-main" placeholder="食材名" placeholder-class="af-ph" value="{{newItem.ingredientName}}" bindinput="onNewInput" data-field="ingredientName" />
+          <input class="af-input af-sm" placeholder="量" placeholder-class="af-ph" value="{{newItem.amount}}" bindinput="onNewInput" data-field="amount" />
+          <input class="af-input af-sm" placeholder="单位" placeholder-class="af-ph" value="{{newItem.unit}}" bindinput="onNewInput" data-field="unit" />
+        </view>
+        <input class="af-input af-date" placeholder="到期日 如 2026-06-20（选填）" placeholder-class="af-ph" value="{{newItem.expiresAt}}" bindinput="onNewInput" data-field="expiresAt" />
+        <view class="tap-scale btn btn-pop btn-block af-submit {{adding ? 'is-busy' : ''}}" bindtap="addItem">{{adding ? '保存中…' : '记入冰箱'}}</view>
+      </view>
+    </block>
 
     <!-- 分类 + 商品列表 -->
     <view class="cat g-fade-up g-d{{cidx + 1}}" wx:for="{{categories}}" wx:for-item="cat" wx:for-index="cidx" wx:key="key">
@@ -78,6 +88,9 @@
             <view class="pi-ex {{it.expiringSoon ? 'red' : ''}}">{{it.expiresText}}</view>
           </view>
           <view class="pi-qt">{{it.amountText}}</view>
+          <view class="pi-edit tap-scale" data-id="{{it.id}}" bindtap="openEditSheet">
+            <view class="pi-edit-pen"></view>
+          </view>
           <view class="pi-del tap-scale" data-id="{{it.id}}" bindtap="removeItem">
             <view class="pi-del-x"></view>
           </view>
@@ -85,33 +98,11 @@
       </view>
     </view>
 
-    <!-- 添加食材卡 -->
-    <view class="addcard tap-scale" bindtap="toggleAddForm">
-      <view class="add-pl"><view class="add-plus"></view></view>
-      <view class="add-at">
-        <view class="add-t">添加食材</view>
-        <view class="add-s">记下食材名、数量和到期日</view>
-      </view>
-      <view class="add-arrow {{showAddForm ? 'up' : ''}}"></view>
-    </view>
-
-    <!-- 添加表单（展开）-->
-    <view class="add-form" wx:if="{{showAddForm}}">
-      <view class="af-row">
-        <input class="af-input af-main" placeholder="食材名" placeholder-class="af-ph" value="{{newItem.ingredientName}}" bindinput="onNewInput" data-field="ingredientName" />
-        <input class="af-input af-sm" placeholder="量" placeholder-class="af-ph" value="{{newItem.amount}}" bindinput="onNewInput" data-field="amount" />
-        <input class="af-input af-sm" placeholder="单位" placeholder-class="af-ph" value="{{newItem.unit}}" bindinput="onNewInput" data-field="unit" />
-      </view>
-      <input class="af-input af-date" placeholder="到期日 如 2026-06-20（选填）" placeholder-class="af-ph" value="{{newItem.expiresAt}}" bindinput="onNewInput" data-field="expiresAt" />
-      <view class="tap-scale btn btn-pop btn-block af-submit {{adding ? 'is-busy' : ''}}" bindtap="addItem">{{adding ? '保存中…' : '记入冰箱'}}</view>
-    </view>
-
     <!-- 现在就能做 -->
     <section-head
       wx:if="{{showMatch && matchResults.length}}"
       eyebrow="现在能做"
-      title="现在就"
-      popPart="能做"
+      title="现在就能做"
       hint="按库存匹配"
     />
 
@@ -142,7 +133,7 @@
       data-id="{{item.id}}"
     >
       <view class="mc-top">
-        <image class="mc-ph" src="{{item.coverImage}}" mode="aspectFill" />
+        <image class="mc-ph" src="{{item.coverImage}}" mode="aspectFill" lazy-load />
         <view class="mc-mi">
           <view class="mc-h4 ellipsis">{{item.title}}</view>
           <view class="mc-meta">{{item.metaText}}</view>
@@ -160,4 +151,18 @@
 
     <view class="safe-bottom"></view>
   </view>
+
+  <!-- 编辑库存条目：字段与「添加食材」逐格对齐（同一页不给新增/编辑两套日期交互） -->
+  <state-sheet lift visible="{{editingId ? true : false}}" title="编辑食材" bind:close="closeEditSheet">
+    <view class="af-row">
+      <input class="af-input af-main" placeholder="食材名" placeholder-class="af-ph" value="{{editDraft.ingredientName}}" bindinput="onEditInput" data-field="ingredientName" />
+      <input class="af-input af-sm" placeholder="量" placeholder-class="af-ph" value="{{editDraft.amount}}" bindinput="onEditInput" data-field="amount" />
+      <input class="af-input af-sm" placeholder="单位" placeholder-class="af-ph" value="{{editDraft.unit}}" bindinput="onEditInput" data-field="unit" />
+    </view>
+    <input class="af-input af-date" placeholder="到期日 如 2026-06-20（选填，清空即删除）" placeholder-class="af-ph" value="{{editDraft.expiresAt}}" bindinput="onEditInput" data-field="expiresAt" />
+    <view class="af-actions">
+      <view class="btn btn-ghost af-cancel tap-scale" catchtap="closeEditSheet">取消</view>
+      <view class="btn btn-pop af-save tap-scale {{editing ? 'is-busy' : ''}}" catchtap="saveEdit">{{editing ? '保存中…' : '保存'}}</view>
+    </view>
+  </state-sheet>
 </view>

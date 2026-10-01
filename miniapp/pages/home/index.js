@@ -10,11 +10,12 @@ const {
   getTodayMenu,
   getWishes,
   addWish,
+  updateWish,
   removeWish: removeWishApi
 } = require('../../utils/api');
 const { runGuarded } = require('../../utils/interaction');
 const { animateNumber, stopNumberAnim } = require('../../utils/count-up');
-const { sourceLabels, mealTypeLabels, SLOTS, cuisinePinyin } = require('../../utils/constants');
+const { sourceLabels, mealTypeLabels, SLOTS, cuisineLabels } = require('../../utils/constants');
 const features = require('../../utils/features');
 const { fallbackDishImg, recipeDishImg, onImgError } = require('../../utils/image');
 const { decorateHero, filterBySlot, todayDateKey } = require('../../utils/dish-logic');
@@ -78,7 +79,7 @@ function removePending(id) {
 }
 
 function getCuisineClass(cuisine) {
-  return cuisinePinyin[cuisine] || '';
+  return cuisineLabels[cuisine] || '';
 }
 
 function greetingText() {
@@ -146,6 +147,8 @@ Page({
     wishExpanded: false,   // 许愿池默认折叠一行，点击展开（DEC-UI1）
     showWishModal: false,  // 许愿弹窗（原先只在 setData 时才出现，未在 data 里声明）
     wishInput: '',
+    wishEditId: '',        // 非空 = 弹窗处于「编辑」态（复用同一个 .wish-modal）
+    wishEditing: false,
     fontScale: 'normal',   // 大字模式档位，onShow 从本地存储读取
     theme: 'light',        // 深浅色档位：root-portal 弹窗不继承 page 变量，用它切 token 副本
     slotDoneCount: 0,      // 当前餐次已上桌的数量，updateSlotMenu 里算
@@ -218,7 +221,7 @@ Page({
   },
 
   onShow() {
-    withTabSelect(this, 0);
+    withTabSelect(this);
     // 字号档位在 onShow 读取：从设置页切回来立即生效（不再只在首次 onLoad 生效）
     let fontScale = 'normal';
     try { fontScale = wx.getStorageSync('font_scale') || 'normal'; } catch (e) { fontScale = 'normal'; }
@@ -305,13 +308,31 @@ Page({
   },
 
   addWish() {
-    this.setData({ showWishModal: true, wishInput: '' });
+    this.setData({ showWishModal: true, wishInput: '', wishEditId: '' });
   },
   onWishInput(e) {
     this.setData({ wishInput: e.detail.value });
   },
   closeWishModal() {
-    this.setData({ showWishModal: false });
+    // 保存中不许关：请求已经发出去了，关掉弹层会让用户以为没保存
+    if (this.data.wishEditing) return;
+    this.setData({ showWishModal: false, wishEditId: '' });
+  },
+
+  // 编辑一条已落库的心愿。临时 id（"w-<时间戳>"）一律不给改：
+  // 这条还在 wish_pending_v1 队列里，flushPendingWishes 会无条件用队列里的旧 text
+  // 重新 addWish——改成新文案的结果是云端多出一条旧文案，本地一条新文案。
+  // persistWish 成功时会用服务端 id 顶掉临时 id，所以 "w-" 前缀恰好等价于「还没落库」。
+  editWish(e) {
+    const { id } = e.currentTarget.dataset;
+    if (!id) return;
+    if (String(id).indexOf('w-') === 0) {
+      wx.showToast({ title: '这条还没同步到云端，联网后再改', icon: 'none' });
+      return;
+    }
+    const wish = (this.data.wishes || []).find((w) => w.id === id);
+    if (!wish) return;
+    this.setData({ showWishModal: true, wishInput: wish.text || '', wishEditId: id });
   },
 
   // 弹窗滚动穿透锁
@@ -319,6 +340,11 @@ Page({
   confirmWish() {
     const text = (this.data.wishInput || '').trim();
     if (!text) return;
+    const editId = this.data.wishEditId;
+    if (editId) {
+      this.saveWishEdit(editId, text);
+      return;
+    }
     const me = this.data.currentUser || {};
     this.setData({ showWishModal: false, wishInput: '' });
     // 顺带要一次「家人许愿」订阅授权：一次性订阅是"同意一次才能发一条"，
@@ -358,6 +384,33 @@ Page({
       pushPending({ id: wish.id, date, slot, text: wish.text });
       wx.showToast({ title: '已记在本机，联网后自动同步', icon: 'none' });
     }
+  },
+
+  // 改文案：id 保持不变（服务端是原地 UPDATE，不产生新记录），recipeId 原样带回——
+  // 漏了它，一条已经挑好菜的心愿会被降级回「待挑菜」。
+  // 这条已经在云端，所以不碰 wish_pending_v1：队列里只有 "w-" 临时 id 的条目，
+  // 编辑态又禁止编辑这类条目，不存在"改完被补发成两条"的路径。
+  async saveWishEdit(wishId, text) {
+    const date = this.data.todayKey;
+    const slot = this.data.currentSlot;
+    const key = `${date}:${slot}`;
+    const prev = (this.data.wishes || []).find((w) => w.id === wishId) || {};
+    const ok = await runGuarded(this, 'wishEdit', () => updateWish(wishId, {
+      text,
+      recipeId: prev.recipeId == null ? null : prev.recipeId
+    }), {
+      loading: '保存中',
+      success: '已修改',
+      fail: (err) => (err && err.message) || '修改失败，请重试',
+      onBusyChange: (busy) => this.setData({ wishEditing: busy })
+    });
+    // undefined = 被防重拦住或失败（runGuarded 已经弹过提示），弹层留着让用户重试
+    if (ok === undefined) return;
+    const all = loadWishes();
+    const list = (all[key] || []).map((w) => (w.id === wishId ? { ...w, text } : w));
+    all[key] = list;
+    saveWishes(all);
+    this.setData({ wishes: list, showWishModal: false, wishEditId: '' });
   },
 
   async removeWish(e) {

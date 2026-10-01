@@ -14,6 +14,8 @@ Page({
     planName: '',
     selectedPlan: 'yearly',
     activating: false,
+    // 价格短标签（首屏占位，loadPlans 回来后覆盖）；避免首页写死「¥99/年」
+    priceMeta: { yearly: '', monthly: '' },
     benefits: [
       { icon: '云', title: '多设备云同步', desc: '手机平板换着用，数据始终一致' },
       { icon: '筛', title: '高级筛选', desc: '按忌口、口味、时长多维度找菜' },
@@ -67,6 +69,10 @@ Page({
       ? Math.round((1 - yearly.priceNumber / Number(yearly.original)) * 100)
       : 0;
     this.setData({
+      priceMeta: {
+        yearly: yearly.priceNumber ? `¥${yearly.priceNumber}/年` : '',
+        monthly: monthly.priceNumber ? `¥${monthly.priceNumber}/月` : ''
+      },
       plans: [
         {
           key: 'monthly',
@@ -110,6 +116,15 @@ Page({
 
   onShow() {
     this.loadVipStatus();
+  },
+
+  // 下拉刷新：加载失败时这句提示才是真出路（此前 index.json 未开下拉，照做只会白弹一次）
+  async onPullDownRefresh() {
+    try {
+      await Promise.all([this.loadVipStatus(), this.loadPlans(), this.loadFamily()]);
+    } finally {
+      wx.stopPullDownRefresh();
+    }
   },
 
   async loadVipStatus() {

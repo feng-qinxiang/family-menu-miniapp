@@ -24,6 +24,7 @@ import com.familymenu.daily.dto.AdminModels.AdminMetrics;
 import com.familymenu.daily.dto.AdminModels.AdminOrderItem;
 import com.familymenu.daily.dto.AdminModels.AdminPage;
 import com.familymenu.daily.dto.AdminModels.AdminPantryRow;
+import com.familymenu.daily.dto.AdminModels.AdminPantryUpdateRequest;
 import com.familymenu.daily.dto.AdminModels.AdminPostDetail;
 import com.familymenu.daily.dto.AdminModels.AdminPostItem;
 import com.familymenu.daily.dto.AdminModels.AdminProfile;
@@ -47,6 +48,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -429,8 +431,8 @@ public class AdminController {
     }
 
     // ---------- 家庭侧只读数据 ----------
-    // 家庭与成员 / 今日菜单 / 购物清单 / 库存。运营只读：需要干预时走家庭侧功能，后台不代用户改数据。
-    // 权限沿用 USER_VIEW（与用户管理同域）：超管与客服可见，内容审核员看不到。
+    // 家庭与成员 / 今日菜单 / 购物清单 / 库存。运营只读，唯一例外是库存修正（PUT /pantry/{id}，USER_MANAGE）。
+    // 读权限沿用 USER_VIEW（与用户管理同域）：超管与客服可见，内容审核员看不到。
 
     @GetMapping("/families")
     @RequiresPermission(AdminPermission.USER_VIEW)
@@ -471,6 +473,28 @@ public class AdminController {
                                                 @RequestParam(defaultValue = "0") int page,
                                                 @RequestParam(defaultValue = "50") int size) {
         return adminService.listPantry(keyword, null, page, size);
+    }
+
+    /**
+     * 运营修正库存条目（唯一的家庭侧写接口）。读用 USER_VIEW，写用 USER_MANAGE（客服只读、超管可写）。
+     * 跨家庭按 id 改是有意的，校验与副作用见 {@link AdminService#updatePantryItem}。
+     */
+    @PutMapping("/pantry/{itemId}")
+    @RequiresPermission(AdminPermission.USER_MANAGE)
+    public AdminPantryRow updatePantry(@PathVariable long itemId,
+                                       @RequestBody(required = false) AdminPantryUpdateRequest request,
+                                       @CurrentUser AuthUser actor) {
+        try {
+            AdminPantryRow row = adminService.updatePantryItem(itemId, request);
+            auditService.record(actor.userId(), actor.nickname(), "UPDATE_PANTRY", "pantry_item", itemId,
+                    "family=" + row.familyId() + " name=" + row.ingredientName()
+                            + " amount=" + row.amount() + " unit=" + row.unit() + " expires=" + row.expiresAt(), true);
+            return row;
+        } catch (RuntimeException ex) {
+            auditService.record(actor.userId(), actor.nickname(), "UPDATE_PANTRY", "pantry_item", itemId,
+                    ex.getMessage(), false);
+            throw ex;
+        }
     }
 
     // ---------- 举报处置 ----------

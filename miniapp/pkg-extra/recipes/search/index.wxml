@@ -83,7 +83,7 @@
           bindtap="onCardTap"
         >
           <view class="gc-ph">
-            <image class="gc-img" src="{{item.cover}}" mode="aspectFill" />
+            <image class="gc-img" src="{{item.cover}}" mode="aspectFill" lazy-load />
             <view wx:if="{{item.label}}" class="gc-lbl">{{item.label}}</view>
           </view>
           <view class="gc-info">

@@ -28,9 +28,6 @@ const cuisineLabels = {
   '日料': 'riliao'
 };
 
-// 菜系 → 拼音 class（历史接口名，见 pages/home getCuisineClass）
-const cuisinePinyin = cuisineLabels;
-
 // 菜谱库 tab 的来源筛选 chips
 // "社区"与"我的收藏"（数据源是社区帖子收藏）随 COMMUNITY 开关隐藏
 const sourceTabs = [
@@ -87,9 +84,7 @@ const SLOTS = [
 module.exports = {
   mealTypeLabels,
   sourceLabels,
-  recipeSourceLabels: sourceLabels,
   cuisineLabels,
-  cuisinePinyin,
   cuisineList,
   sourceTabs,
   mealOptions,

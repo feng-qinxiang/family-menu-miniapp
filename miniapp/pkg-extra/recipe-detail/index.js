@@ -445,8 +445,14 @@ Page({
 
   onShareAppMessage() {
     const r = this.data.recipe || {};
-    // 分享路径携带真实 id（onLoad 已 setData recipeId），打开直达原菜谱
+    // 加载中/加载失败时 recipeId 与 recipe.id 都可能为空：带空 id 的详情页
+    // 送到对方手机就是一屏空白（onLoad 拿不到 id 只能 loading=false 收场）。
+    // 没有真实 id 就退到首页，宁可不直达，也不给对方一个坏链接。
+    // 同款兜底见 pkg-extra/family/invite/index.js（无真实邀请码时退回首页）。
     const id = this.data.recipeId || r.id || '';
+    if (!id) {
+      return { title: '家庭点菜 · 今天吃什么一起定', path: '/pages/home/index' };
+    }
     return {
       title: r.title ? '分享一道菜：' + r.title : '一道好菜，分享给你',
       path: '/pkg-extra/recipe-detail/index?id=' + id

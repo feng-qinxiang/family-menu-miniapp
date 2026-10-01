@@ -15,6 +15,7 @@ import com.familymenu.daily.dto.AdminModels.AdminMetrics;
 import com.familymenu.daily.dto.AdminModels.AdminOrderItem;
 import com.familymenu.daily.dto.AdminModels.AdminPage;
 import com.familymenu.daily.dto.AdminModels.AdminPantryRow;
+import com.familymenu.daily.dto.AdminModels.AdminPantryUpdateRequest;
 import com.familymenu.daily.dto.AdminModels.AdminPostDetail;
 import com.familymenu.daily.dto.AdminModels.AdminPostItem;
 import com.familymenu.daily.dto.AdminModels.AdminRecipeItem;
@@ -1304,27 +1305,92 @@ public class AdminService {
                 WHERE (? = '' OR p.ingredient_name LIKE ? OR f.name LIKE ?)
                   AND (? IS NULL OR p.family_id = ?)
                 """, Long.class, kw, like, like, fid, fid);
-        List<AdminPantryRow> items = jdbcTemplate.query("""
-                        SELECT p.id, p.family_id, f.name AS family_name, p.ingredient_name, p.amount, p.unit,
-                               p.expires_at, p.created_at
-                        FROM pantry_item p
-                        LEFT JOIN family f ON f.id = p.family_id
+        List<AdminPantryRow> items = jdbcTemplate.query(PANTRY_SELECT + """
                         WHERE (? = '' OR p.ingredient_name LIKE ? OR f.name LIKE ?)
                           AND (? IS NULL OR p.family_id = ?)
                         ORDER BY p.id DESC LIMIT ? OFFSET ?
                         """,
-                (rs, rowNum) -> new AdminPantryRow(
-                        rs.getLong("id"),
-                        rs.getLong("family_id"),
-                        rs.getString("family_name"),
-                        rs.getString("ingredient_name"),
-                        rs.getString("amount"),
-                        rs.getString("unit"),
-                        rs.getString("expires_at"),
-                        rs.getString("created_at")
-                ),
+                PANTRY_ROW_MAPPER,
                 kw, like, like, fid, fid, safeSize, (long) safePage * safeSize);
         return new AdminPage<>(items, total == null ? 0 : total, safePage, safeSize);
+    }
+
+    /** 库存行投影：listPantry 与 updatePantryItem 的回读共用，保证编辑后返回的行与列表里逐字同形。 */
+    private static final String PANTRY_SELECT = """
+            SELECT p.id, p.family_id, f.name AS family_name, p.ingredient_name, p.amount, p.unit,
+                   p.expires_at, p.created_at
+            FROM pantry_item p
+            LEFT JOIN family f ON f.id = p.family_id
+            """;
+
+    private static final org.springframework.jdbc.core.RowMapper<AdminPantryRow> PANTRY_ROW_MAPPER =
+            (rs, rowNum) -> new AdminPantryRow(
+                    rs.getLong("id"),
+                    rs.getLong("family_id"),
+                    rs.getString("family_name"),
+                    rs.getString("ingredient_name"),
+                    rs.getString("amount"),
+                    rs.getString("unit"),
+                    rs.getString("expires_at"),
+                    rs.getString("created_at"));
+
+    /**
+     * 运营修正一条库存（PUT：整条替换），返回与 GET /api/admin/pantry 同形的行。
+     *
+     * <p><b>跨家庭是有意的</b>：WHERE 只按 {@code id}，不带 {@code family_id}。
+     * 运营后台本来就跨家庭（列表接口也不按家庭过滤），权限由 USER_MANAGE 把关；
+     * 小程序侧 {@link EnhancedService#updatePantryItem} 的 {@code AND family_id = ?} 是防越权，
+     * 两者不是一回事——这里不是漏了家庭校验。
+     *
+     * <p><b>幂等写</b>：不看 UPDATE 返回的行数（原值写回在 useAffectedRows 语义下会是 0 行），
+     * 改完回读，读不到才 404。理由同 EnhancedService.updatePantryItem。
+     *
+     * <p>校验（400）：
+     * <ul>
+     *   <li>ingredientName 空白；各字段超出列宽（128 / 32 / 16）；</li>
+     *   <li>amount 非空却解析不出正数（用 {@link PantryDeduction#parseAmount}，与做菜扣库存
+     *       和「冰箱能做什么」同一判据）：这种行永远不会被扣、也不参与匹配，运营多半是手误。
+     *       空串放行（= 未填，与小程序侧新增口径一致）；</li>
+     *   <li>expiresAt 非 yyyy-MM-dd；空串 / null 写 NULL。</li>
+     * </ul>
+     *
+     * <p><b>改名 / 改单位的副作用</b>：扣库存与匹配都按「归一后的名称 + 单位」精确相等
+     * （{@link PantryDeduction#normalize}，不做模糊匹配）。把「鸡蛋|个」改成「鸡蛋|枚」或「土鸡蛋|个」，
+     * 这条就再也对不上菜谱里写「鸡蛋|个」的用料——不报错，只是静默不扣、不出现在可做菜里。
+     *
+     * <p>ponytail: 与 EnhancedService.updatePantryItem 一样无乐观条件，末次写入胜；
+     * 升级路径见那边的注释（WHERE 追加 amount <=> 原值，0 行回 409）。
+     */
+    @Transactional
+    public AdminPantryRow updatePantryItem(long itemId, AdminPantryUpdateRequest req) {
+        String name = req == null || req.ingredientName() == null ? "" : req.ingredientName().trim();
+        String amount = req == null || req.amount() == null ? "" : req.amount().trim();
+        String unit = req == null || req.unit() == null ? "" : req.unit().trim();
+        if (name.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "食材名称不能为空");
+        }
+        if (name.length() > 128 || amount.length() > 32 || unit.length() > 16) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "名称最多 128 字、数量最多 32 字、单位最多 16 字");
+        }
+        // 只校验「这次改了的」amount：小程序侧允许「适量」这类自由文本，已有行若带着它，
+        // 运营只想改保质期时不该被迫先改数量。原值不变 = 不是本次引入的问题，放行。
+        String currentAmount = jdbcTemplate.query(
+                "SELECT amount FROM pantry_item WHERE id = ?", (rs, n) -> rs.getString(1), itemId)
+                .stream().findFirst().orElse(null);
+        boolean amountChanged = currentAmount == null || !amount.equals(currentAmount.trim());
+        if (amountChanged && !amount.isEmpty() && PantryDeduction.parseAmount(amount) == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "数量需以大于 0 的数字开头（如 2、0.5、3 个）；「" + amount + "」这样的写法做菜时永远不会被扣减");
+        }
+        java.sql.Date expires = sqlDate(req == null ? null : req.expiresAt());
+        jdbcTemplate.update("""
+                UPDATE pantry_item
+                SET ingredient_name = ?, amount = ?, unit = ?, expires_at = ?
+                WHERE id = ?
+                """, name, amount, unit, expires, itemId);
+        return jdbcTemplate.query(PANTRY_SELECT + " WHERE p.id = ?", PANTRY_ROW_MAPPER, itemId)
+                .stream().findFirst()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "库存条目不存在"));
     }
 
     /** yyyy-MM-dd → java.sql.Date；空返回 null（不筛），格式非法抛 400。

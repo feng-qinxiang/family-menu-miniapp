@@ -1,29 +1,25 @@
 <view class="container me-mag {{fontScale === 'lg' ? 'font-lg' : ''}}">
-  <!-- HERO：真实菜图 + 镂空撞色标题 + 家庭成员头像 stack -->
-  <view class="mag-hero g-fade-up">
-    <image class="mag-hero-img" src="/assets/dishes/hongshao-pork.jpg" mode="aspectFill" />
-    <view class="mag-hero-mask"></view>
-
-    <view class="mag-hero-top" style="top: {{capsuleTop}};">
-      <view>
-        <view class="mag-hi-cn">本月一起做了 {{monthCookCount}} 道菜</view>
+  <!-- 紧凑页头（结构见 app.wxss .cpt-head）：家庭身份从照片挪到纸面，信息不减 -->
+  <view class="cpt-head" style="padding-top: {{capsuleTop}};">
+    <view class="cpt-row" style="padding-right: {{capsuleRight}};">
+      <view class="cpt-titles">
+        <view class="cpt-eyebrow">我的厨房</view>
+        <view class="cpt-title mag-fam-name">{{familyProfile.familyName || '我的家'}}</view>
       </view>
+      <view class="cpt-action mag-manage tap-scale" bindtap="goMemberManage">＋ 管理</view>
     </view>
-
-    <view class="mag-hero-body">
-      <view class="mag-hero-tag">我的厨房</view>
-      <view class="mag-hero-title title-stroke">{{familyProfile.familyName || '我的家'}}<text class="pop">·</text></view>
-      <view class="mag-hero-sub">一家人围着一张桌子吃饭</view>
-
-      <view class="mag-fam">
+    <!-- 成员行：首屏加载中/首屏失败时成员数还不可信，不显示「0 位成员」，行高照留防跳动；
+         静默刷新失败时 memberCount 是上一次的真值，照常显示 -->
+    <view class="mag-fam">
+      <block wx:if="{{memberCount || (!loading && !loadError)}}">
         <view class="mag-ava {{item.tone}}" wx:for="{{familyProfile.members}}" wx:key="userId">{{item.initial}}</view>
         <view class="mag-fam-lbl"><text class="b">{{memberCount}}</text> 位成员</view>
-        <view class="mag-manage tap-scale" bindtap="goMemberManage">＋ 管理</view>
-      </view>
+      </block>
     </view>
+    <view class="cpt-sub" wx:if="{{monthCookCount > 0}}">本月一起做了 {{monthCookCount}} 道菜</view>
   </view>
 
-  <!-- 奶油 sheet -->
+  <!-- 内容区 -->
   <view class="mag-sheet">
     <!-- VIP banner（支付开关关闭时隐藏） -->
     <view class="mag-vip tap-scale" wx:if="{{features.PAYMENT}}" bindtap="goVip">
@@ -55,28 +51,26 @@
     <!-- 数据卡 -->
     <view class="mag-stats g-fade-up g-d1">
       <view class="mag-stat tap-scale" bindtap="goRecipes">
-        <view class="mag-snum pop {{loading ? 'shimmer num-skel' : ''}}">{{savedCount}}</view>
+        <view class="mag-snum {{loading ? 'shimmer num-skel' : ''}}">{{savedCount}}</view>
         <view class="mag-scap">我的菜谱</view>
-        <view class="mag-scap-en">自建+导入</view>
+        <view class="mag-scap-note">自建+导入</view>
       </view>
       <view class="mag-stat tap-scale" bindtap="goCookLog">
         <view class="mag-snum {{loading ? 'shimmer num-skel' : ''}}">{{monthCookCount}}</view>
         <view class="mag-scap">本月做菜</view>
-        <view class="mag-scap-en">道菜</view>
       </view>
       <view class="mag-stat tap-scale" bindtap="goFamilyMembers">
         <view class="mag-snum {{loading ? 'shimmer num-skel' : ''}}">{{memberCount}}</view>
         <view class="mag-scap">家庭成员</view>
-        <view class="mag-scap-en">位家人</view>
       </view>
     </view>
 
     <!-- 最近上桌 -->
     <view class="g-fade-up g-d2" wx:if="{{cookHistory.length}}">
-      <section-head eyebrow="做菜记录" title="最近" popPart="上桌" hint="全部" more="{{true}}" bindtapmore="goCookLog" />
+      <section-head eyebrow="做菜记录" title="最近上桌" hint="全部" more="{{true}}" bindtapmore="goCookLog" />
       <view class="card mag-history">
         <view class="mag-hrow {{revealOn ? (reveal[index] ? 'g-fade-up' : 'rv-hold') : ''}}" data-rv="{{index}}" wx:for="{{cookHistory}}" wx:key="id">
-          <image class="mag-thumb" src="{{item.cover}}" mode="aspectFill" />
+          <image class="mag-thumb" src="{{item.cover}}" mode="aspectFill" lazy-load />
           <view class="mag-hmid">
             <view class="mag-hname">{{item.recipeTitle}}</view>
             <view class="mag-hsub">{{item.whenLabel}}</view>
@@ -90,7 +84,7 @@
     </view>
     <!-- 最近上桌：加载骨架 -->
     <view class="g-fade-up g-d2" wx:elif="{{loading}}">
-      <section-head eyebrow="做菜记录" title="最近" popPart="上桌" />
+      <section-head eyebrow="做菜记录" title="最近上桌" />
       <view class="card mag-history">
         <view class="mag-hrow" wx:for="{{[1,2]}}" wx:key="*this">
           <view class="mag-skel-thumb shimmer"></view>
@@ -104,7 +98,7 @@
 
     <!-- 厨房工具：走 tab 不可达的功能（周菜单、导入） -->
     <view class="g-fade-up g-d3">
-      <section-head eyebrow="今天要用" title="厨房" popPart="工具" />
+      <section-head eyebrow="今天要用" title="厨房工具" />
       <view class="card mag-tools">
         <view class="mag-trow tap-scale" bindtap="goWeekly">
           <view class="mag-ticon ti-1">周</view>
@@ -128,11 +122,11 @@
 
     <!-- 口味偏好 -->
     <view class="g-fade-up g-d4" wx:if="{{prefBars.length}}">
-      <section-head eyebrow="吃过记得" title="本月" popPart="口味" />
+      <section-head eyebrow="吃过记得" title="本月口味" />
       <view class="card mag-pref">
         <view class="mag-prow" wx:for="{{prefBars}}" wx:key="label">
           <view class="mag-ptop">
-            <view class="mag-pl">{{item.isCuisine ? '偏爱' : ''}}<text class="pop" wx:if="{{item.isCuisine}}">{{item.label}}</text><text wx:else>{{item.label}}</text></view>
+            <view class="mag-pl">{{item.isCuisine ? '偏爱' : ''}}{{item.label}}</view>
             <view class="mag-pr">{{item.right}}</view>
           </view>
           <view class="mag-pbar {{item.alt ? 'alt' : ''}}"><view class="mag-pbar-i" style="width:{{item.pct}}%"></view></view>
@@ -141,7 +135,7 @@
     </view>
     <!-- 口味偏好：加载骨架 -->
     <view class="g-fade-up g-d4" wx:elif="{{loading}}">
-      <section-head eyebrow="吃过记得" title="本月" popPart="口味" />
+      <section-head eyebrow="吃过记得" title="本月口味" />
       <view class="card mag-pref">
         <view class="mag-prow" wx:for="{{[1,2,3]}}" wx:key="*this">
           <view class="mag-skel-line strong shimmer" style="width: 40%;"></view>
@@ -152,7 +146,7 @@
 
     <!-- 偏好画像入口：直接 merge 到设置 card -->
     <view class="g-fade-up g-d5">
-      <section-head eyebrow="全家口味" title="偏好" popPart="画像" />
+      <section-head eyebrow="全家口味" title="偏好画像" />
       <view class="card mag-tools">
         <view class="mag-trow tap-scale" bindtap="goPreference">
           <view class="mag-ticon ti-pref">偏</view>

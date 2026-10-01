@@ -1,7 +1,7 @@
 const { getCapsule } = require('../../utils/capsule');
 
 const { addTodayMenuRecipe, getMyFavorites, getRecipes, getShoppingList, getTodayMenu, getFamilyProfile } = require('../../utils/api');
-const { recipeSourceLabels, cuisineList, mealOptions, sourceTabs, AVOID_KEYWORDS } = require('../../utils/constants');
+const { sourceLabels, cuisineList, mealOptions, sourceTabs, AVOID_KEYWORDS } = require('../../utils/constants');
 const { fallbackDishImg, recipeDishImg, onImgError } = require('../../utils/image');
 const { debounce } = require('../../utils/debounce');
 const { withTabSelect } = require('../../behaviors/tab-select');
@@ -9,7 +9,9 @@ const { withScrollReveal, dispose: disposeScrollReveal } = require('../../behavi
 const { recipesFromPosts } = require('../../utils/dish-logic');
 const { runGuarded } = require('../../utils/interaction');
 
-const PAGE_SIZE = 6;
+// 与社区页 FEED_PAGE_SIZE 对齐（pages/community/index.js）；原为 6，每屏只出 6 个，
+// 滚两下就得再点一次「上拉加载更多」，列表页不该这么碎。
+const PAGE_SIZE = 20;
 
 function matchesAvoid(recipe, avoidTags) {
   if (!avoidTags || !avoidTags.length) return false;
@@ -23,6 +25,19 @@ function matchesAvoid(recipe, avoidTags) {
   });
 }
 
+// 「川菜 · 粤菜 · 家常」：按道数降序取前 3 个菜系（同数保持首次出现顺序）
+function summarizeCuisines(list) {
+  const counts = {};
+  const order = [];
+  list.forEach((r) => {
+    const c = String((r && r.cuisine) || '').trim();
+    if (!c) return;
+    if (!counts[c]) order.push(c);
+    counts[c] = (counts[c] || 0) + 1;
+  });
+  return order.sort((a, b) => counts[b] - counts[a]).slice(0, 3).join(' · ');
+}
+
 Page({
   data: {
     sourceTabs,
@@ -34,7 +49,8 @@ Page({
     recipes: [],
     filteredRecipes: [],
     displayedRecipes: [],
-    heroRecipe: null,
+    // 页头副标题里的菜系概览（按道数取前 3），来自真实数据，不写死
+    cuisineSummary: '',
     pageSize: PAGE_SIZE,
     hasMore: false,
     remainCount: 0,
@@ -69,7 +85,7 @@ Page({
   },
 
   onShow() {
-      withTabSelect(this, 1);
+      withTabSelect(this);
       // 首次进页面需要骨架；之后切回来只静默刷新，避免整页闪一下
       Promise.resolve(this.loadRecipes(this._hasLoaded === true)).then(() => { this._hasLoaded = true; });
     },
@@ -106,6 +122,7 @@ Page({
       const avoidTags = Array.from(new Set(memberAvoids));
       this.setData({
         recipes: raw.map((recipe) => this.normalizeRecipe(recipe, tray.ids)),
+        cuisineSummary: summarizeCuisines(raw),
         todayDishIds: tray.ids,
         menuTray: { count: tray.count, names: tray.names, shoppingCount: tray.shoppingCount },
         avoidTags,
@@ -114,7 +131,7 @@ Page({
       });
       this.applyFilter();
     } catch (err) {
-      this.setData({ recipes: [], filteredRecipes: [], displayedRecipes: [], loading: false, loadError: true });
+      this.setData({ recipes: [], cuisineSummary: '', filteredRecipes: [], displayedRecipes: [], loading: false, loadError: true });
     }
   },
 
@@ -137,7 +154,7 @@ Page({
       cover: recipeDishImg(recipe),
       sourceLabel: isSharedLibrary
         ? '公共菜谱'
-        : (recipeSourceLabels[recipe.sourceType] || '自家菜谱')
+        : (sourceLabels[recipe.sourceType] || '自家菜谱')
     };
   },
 
@@ -249,17 +266,9 @@ Page({
       return true;
     });
 
-    // hero: 优先「家里常做」做过次数最多的一道（与推荐口径一致）；
-    // 都没做过则取列表首道（后端已按评分降序）
-    const cooked = filteredRecipes.filter((r) => (r.cookCount || 0) > 0);
-    const hero = (cooked.length
-      ? cooked.sort((a, b) => (b.cookCount || 0) - (a.cookCount || 0))[0]
-      : null) || filteredRecipes[0] || null;
-
     const displayed = filteredRecipes.slice(0, PAGE_SIZE);
     this.setData({
       filteredRecipes,
-      heroRecipe: hero,
       displayedRecipes: displayed,
       hasMore: filteredRecipes.length > displayed.length,
       remainCount: filteredRecipes.length - displayed.length,
@@ -283,6 +292,8 @@ Page({
   },
 
   onUnload() {
+    // 防抖定时器要主动取消：否则 300ms 后仍会跑一次 applyFilter()，对已销毁的页面 setData
+    this._debouncedFilter.cancel();
     disposeScrollReveal(this);
   },
 
