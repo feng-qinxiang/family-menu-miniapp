@@ -1,23 +1,20 @@
-<!-- 首页风格预览 · 方案 E「家庭点菜单」：一屏只有一张主卡（这顿的点菜单 + 开始做菜），下面是可直接点的新手菜 -->
+<!-- 首页风格预览 · 方案 E「家庭点菜单」：一屏一张主卡（这顿的点菜单，底部撕口存根放总时长 + 开始做菜），下面几排横滑推荐（新手 / 常做 / 当季），点「+」直接进单子 -->
 <view class="pe {{fontScale === 'lg' ? 'font-lg' : ''}}">
 
-  <!-- 1. 顶栏：日期一行小字 + 大字问句 + 餐次 chips -->
+  <!-- 1. 顶栏：和胶囊同高的一行小字（日期 · 家），下面餐次分段；大字问句交给主卡当标题 -->
   <view class="pe-top" style="padding-top: {{capsuleTop}};">
     <view class="pe-date" style="padding-right: {{capsuleRight}};">{{dateText}} · {{loaded ? familyName : '家庭点菜'}}</view>
-    <view class="pe-ask">{{ask}}</view>
-    <view wx:if="{{loaded}}" class="pe-chips">
+    <view wx:if="{{loaded || loading}}" class="pe-seg">
       <view
         wx:for="{{slots}}"
         wx:key="key"
-        class="pe-chip {{currentSlot === item.key ? 'is-on' : ''}}"
+        class="pe-seg-tab {{currentSlot === item.key ? 'is-on' : ''}}"
         hover-class="pe-press"
         data-slot="{{item.key}}"
         bindtap="selectSlot"
       >
-        <view class="pe-chip-in">
-          <text>{{item.label}}</text>
-          <text wx:if="{{item.count}}" class="pe-chip-badge">{{item.count}}</text>
-        </view>
+        <text>{{item.label}}</text>
+        <text wx:if="{{item.count}}" class="pe-seg-badge">{{item.count}}</text>
       </view>
     </view>
   </view>
@@ -27,149 +24,150 @@
     <view class="pe-tip-retry" hover-class="pe-press" bindtap="onRetry">重试</view>
   </view>
 
-  <block wx:if="{{loading && !loaded}}">
-    <view class="pe-wrap">
-      <view class="pe-sk pe-sk-ticket"></view>
-      <view class="pe-sk pe-sk-row"></view>
+  <view wx:if="{{loading && !loaded}}" class="pe-wrap">
+    <view class="pe-sk-ticket skeleton shimmer"></view>
+    <view class="pe-sk-head skeleton shimmer"></view>
+    <view class="pe-sk-row">
+      <view class="pe-sk-card skeleton shimmer"></view>
+      <view class="pe-sk-card skeleton shimmer"></view>
+      <view class="pe-sk-card skeleton shimmer"></view>
     </view>
-  </block>
-
-  <view wx:elif="{{loadError && !loaded}}" class="pe-fail">
-    <view class="pe-fail-title">首页没加载出来</view>
-    <view class="pe-fail-desc">{{loadError}}</view>
-    <view class="pe-btn" hover-class="pe-press" bindtap="onRetry">重新加载</view>
   </view>
 
-  <block wx:elif="{{loaded}}">
-    <view class="pe-wrap">
-      <!-- 2. 主卡：这顿的点菜单 -->
-      <view class="pe-ticket">
-        <view class="pe-ticket-head">
-          <text class="pe-ticket-title">{{mealLabel}}点菜单</text>
-          <text wx:if="{{orders.length}}" class="pe-ticket-sum">{{orders.length}} 道 · 约 {{totalMin}} 分钟</text>
+  <view wx:elif="{{loadError && !loaded}}" class="pe-fail">
+    <state-empty type="offline" title="首页没加载出来" desc="{{loadError}}" cta="重新加载" bind:action="onRetry" />
+  </view>
+
+  <view wx:elif="{{loaded}}" class="pe-wrap">
+    <!-- 2. 主卡：这顿的点菜单。标题就是问句，家人进度紧跟其下；底部一道撕口，存根上是这顿要多久和开始做菜 -->
+    <view class="pe-ticket g-fade-up">
+      <view class="pe-ask"><text class="pe-ask-meal">{{mealLabel}}</text>吃什么</view>
+      <!-- 家人进度：亮=点过这顿，灰=还没点，末尾「+」去邀请；后面一句话说还差几个人 -->
+      <view class="pe-fam" hover-class="pe-press" bindtap="onInvite">
+        <view class="pe-avas">
+          <view wx:for="{{members}}" wx:key="key" class="pe-ava {{item.ordered ? item.tone : 'is-off'}}">{{item.initial}}</view>
+          <view class="pe-ava is-add">+</view>
         </view>
-
-        <!-- 家人进度：谁点了（亮）、谁还没点（灰），点一下去邀请 -->
-        <view wx:if="{{members.length}}" class="pe-family" hover-class="pe-press" bindtap="onInvite">
-          <view class="pe-avas">
-            <view wx:for="{{members}}" wx:key="key" class="pe-ava {{item.tone}} {{item.ordered ? '' : 'is-off'}}">{{item.initial}}</view>
-          </view>
-          <text class="pe-family-text">{{members.length < 2 ? '家里就你一个，拉家人进来一起点' : (waiting ? '还有 ' + waiting + ' 人没点' : '全家都点好了')}}</text>
-          <text class="pe-family-go">邀请家人</text>
-        </view>
-
-        <block wx:if="{{orders.length}}">
-          <view
-            wx:for="{{orders}}"
-            wx:key="key"
-            class="pe-order"
-            hover-class="pe-press"
-            data-title="{{item.title}}"
-            bindtap="onOrderTap"
-          >
-            <view class="pe-order-pic">
-              <image
-                class="pe-order-img"
-                src="{{item.dishImg}}"
-                mode="aspectFill"
-                data-path="orders[{{index}}].dishImg"
-                data-seed="{{item.title}}"
-                binderror="onPicError"
-              />
-              <view wx:if="{{item.who}}" class="pe-order-ava {{item.tone}}">{{item.initial}}</view>
-            </view>
-            <view class="pe-order-info">
-              <view class="pe-order-name {{item.done ? 'is-done' : ''}}">{{item.title}}</view>
-              <view class="pe-order-meta">
-                <text wx:if="{{item.whoText}}" class="pe-who">{{item.whoText}}</text>
-                <text wx:if="{{item.timeCost}}">{{item.timeCost}}分钟</text>
-                <text wx:if="{{item.level}}">{{item.level}}</text>
-              </view>
-            </view>
-            <view class="pe-status {{item.statusCls}}">{{item.statusText}}</view>
-          </view>
-
-          <!-- 做菜顺序：新手最怕「先做哪个」 -->
-          <view wx:if="{{steps.length}}" class="pe-steps">
-            <view class="pe-steps-title">建议顺序：先开工慢的，快手菜最后出锅</view>
-            <view class="pe-steps-row">
-              <view wx:for="{{steps}}" wx:key="key" class="pe-step">
-                <text class="pe-step-no">{{index + 1}}</text>
-                <text class="pe-step-name">{{item.title}}</text>
-              </view>
-            </view>
-          </view>
-
-          <view class="pe-cta tap-scale" bindtap="onStartCook">
-            <text>开始做菜</text>
-            <text class="pe-start-note">跟着步骤做，每步有计时</text>
-          </view>
-        </block>
-
-        <view wx:else class="pe-ticket-empty">
-          <view class="pe-empty-text">{{mealLabel}}还没人点菜</view>
-          <view class="pe-empty-sub">从下面挑一道，或者让家里人各点一道</view>
-          <view class="pe-empty-acts">
-            <view class="pe-act pe-act-ghost" hover-class="pe-press" bindtap="onOrderMore">去菜谱库挑</view>
-            <button class="pe-act pe-act-share" hover-class="pe-press" open-type="share">叫家人点</button>
-          </view>
-        </view>
+        <text class="pe-fam-note">{{headNote}}</text>
       </view>
 
-      <!-- 3. 新手也能做：两列网格，图上的「+」直接进单子，再点取消 -->
-      <view wx:if="{{easy.length}}" class="pe-sec">
-        <view class="pe-sec-head">
-          <text class="pe-sec-title">新手也能做</text>
-          <text class="pe-sec-sub">20 分钟内上桌</text>
+      <block wx:if="{{orders.length}}">
+        <!-- 做菜顺序直接排进清单：序号标在菜图上，这里一句话说清为什么这么排 -->
+        <view wx:if="{{seqOn}}" class="pe-seq-tip">按序号下锅：慢的先开火，快手菜最后出锅</view>
+        <view
+          wx:for="{{orders}}"
+          wx:key="key"
+          class="pe-order"
+          hover-class="pe-press"
+          data-title="{{item.title}}"
+          bindtap="onOrderTap"
+        >
+          <view class="pe-order-pic">
+            <image
+              class="pe-order-thumb"
+              src="{{item.dishImg}}"
+              mode="aspectFill"
+              data-path="orders[{{index}}].dishImg"
+              data-seed="{{item.title}}"
+              binderror="onPicError"
+            />
+            <view wx:if="{{item.seq}}" class="pe-order-seq">{{item.seq}}</view>
+          </view>
+          <view class="pe-order-info">
+            <view class="pe-order-name {{item.done ? 'is-done' : ''}}">{{item.title}}</view>
+            <view wx:if="{{item.metaText}}" class="pe-order-meta">{{item.metaText}}</view>
+          </view>
+          <!-- 右栏：用时（下锅先后就看这个数）+ 状态，箭头提示可点 -->
+          <view class="pe-order-side">
+            <view class="pe-order-sidecol">
+              <view wx:if="{{item.timeText}}" class="pe-order-time {{item.done ? 'is-done' : ''}}">{{item.timeText}}<text class="pe-order-unit">分钟</text></view>
+              <view wx:if="{{item.showStatus}}" class="pe-status {{item.statusCls}}">{{item.statusText}}</view>
+            </view>
+            <view class="pe-order-arrow">›</view>
+          </view>
         </view>
-        <view class="pe-grid">
+
+        <view class="pe-again" hover-class="pe-press" bindtap="onOrderMore">
+          <text class="pe-again-plus">+</text>
+          <text class="pe-again-text">再点一道</text>
+          <text class="pe-again-hint">去菜谱库挑 ›</text>
+        </view>
+
+        <!-- 撕口存根：左边这顿要多久，右边开始做菜（取代原来的悬浮底栏） -->
+        <view class="pe-stub">
+          <view class="pe-stub-sum">
+            <view wx:if="{{totalMin}}" class="pe-stub-big">约<text class="pe-stub-num">{{totalMin}}</text>分钟</view>
+            <view wx:else class="pe-stub-big">共<text class="pe-stub-num">{{orders.length}}</text>道</view>
+            <view class="pe-stub-sub">{{totalMin ? orders.length + ' 道菜 · 每步有计时' : '跟着步骤做，每步有计时'}}</view>
+          </view>
+          <view class="pe-cta tap-scale" bindtap="onStartCook">开始做菜</view>
+        </view>
+      </block>
+
+      <!-- 空单：一个「等着放菜」的虚线空位，存根上换成分享 -->
+      <block wx:else>
+        <view class="pe-slot" hover-class="pe-press" bindtap="onOrderMore">
+          <view class="pe-slot-plus">+</view>
+          <view class="pe-slot-info">
+            <view class="pe-slot-title">点第一道菜</view>
+            <view class="pe-slot-sub">从下面挑一道新手菜，或去菜谱库翻翻</view>
+          </view>
+        </view>
+        <view class="pe-stub">
+          <button class="pe-share" hover-class="pe-press" open-type="share">发到家庭群，叫家人一起点</button>
+        </view>
+      </block>
+    </view>
+
+    <!-- 3. 推荐几排（新手 / 常做 / 当季）：共用一个横滑模板，没菜的那排不出现；当季那排换成大图宽卡 -->
+    <view
+      wx:for="{{shelves}}"
+      wx:for-item="shelf"
+      wx:for-index="si"
+      wx:key="key"
+      class="pe-sec pe-sec--{{shelf.key}} g-fade-up g-d{{si + 2}}"
+    >
+      <view class="pe-sec-head">
+        <text class="pe-sec-title">{{shelf.title}}</text>
+        <text class="pe-sec-sub">{{shelf.sub}}</text>
+        <view class="pe-sec-more" hover-class="pe-press" data-key="{{shelf.key}}" bindtap="onShelfAll">全部 ›</view>
+      </view>
+      <scroll-view class="pe-hscroll" scroll-x enhanced show-scrollbar="{{false}}">
+        <view class="pe-hrow">
           <view
-            wx:for="{{easy}}"
+            wx:for="{{shelf.items}}"
             wx:key="id"
-            class="pe-easy {{item.picked ? 'is-picked' : ''}}"
+            class="pe-card {{item.picked ? 'is-picked' : ''}}"
             hover-class="pe-press"
             data-title="{{item.title}}"
             bindtap="onRecipeTap"
           >
             <image
-              class="pe-easy-img"
+              class="pe-card-img"
               src="{{item.dishImg}}"
               mode="aspectFill"
-              data-path="easy[{{index}}].dishImg"
+              data-path="shelves[{{si}}].items[{{index}}].dishImg"
               data-seed="{{item.title}}"
               binderror="onPicError"
             />
-            <view class="pe-easy-body">
-              <view class="pe-easy-name">{{item.title}}</view>
-              <view class="pe-easy-meta">{{item.timeCost}}分钟 · {{item.level}}</view>
+            <view class="pe-card-body">
+              <view class="pe-card-name">{{item.title}}</view>
+              <view class="pe-card-meta">{{item.meta}}</view>
             </view>
             <view class="pe-plus tap-scale" data-id="{{item.id}}" catchtap="onPick">
               <view class="pe-plus-dot {{item.picked ? 'is-on' : ''}}">{{item.picked ? '✓' : '+'}}</view>
             </view>
           </view>
-        </view>
-      </view>
-
-      <!-- 4. 家里常做（有做菜记录才出现） -->
-      <view wx:if="{{often.length}}" class="pe-sec">
-        <view class="pe-sec-head">
-          <text class="pe-sec-title">家里常做</text>
-        </view>
-        <view class="pe-list">
-          <view wx:for="{{often}}" wx:key="id" class="pe-row" hover-class="pe-press" data-title="{{item.title}}" bindtap="onRecipeTap">
-            <image class="pe-row-img" src="{{item.dishImg}}" mode="aspectFill" data-path="often[{{index}}].dishImg" data-seed="{{item.title}}" binderror="onPicError" />
-            <view class="pe-row-info">
-              <view class="pe-row-name">{{item.title}}</view>
-              <view class="pe-row-meta">做过 {{item.cookCount}} 次{{item.timeCost ? ' · ' + item.timeCost + '分钟' : ''}}</view>
-            </view>
-            <view class="pe-plus tap-scale" data-id="{{item.id}}" catchtap="onPick">
-              <view class="pe-plus-dot">+</view>
-            </view>
+          <!-- 末尾一张「查看全部」，滑到头有去处 -->
+          <view class="pe-card pe-card-all" hover-class="pe-press" data-key="{{shelf.key}}" bindtap="onShelfAll">
+            <view class="pe-card-all-icon">›</view>
+            <view class="pe-card-all-text">查看全部</view>
           </view>
+          <view class="pe-hrow-end"></view>
         </view>
-      </view>
+      </scroll-view>
     </view>
-  </block>
+  </view>
 
   <view class="pe-bottom-space"></view>
 </view>

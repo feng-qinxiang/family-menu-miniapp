@@ -65,9 +65,12 @@ public class TodayService {
                     org.springframework.http.HttpStatus.NOT_FOUND, "recipe not found");
         }
         String mealType = normalizeMealType(request.mealType());
-        jdbcTemplate.update("DELETE FROM daily_menu_item WHERE daily_menu_id = ? AND recipe_id = ?", menuId, request.recipeId());
         jdbcTemplate.update(
-                "INSERT INTO daily_menu_item(daily_menu_id, recipe_id, meal_type, status, added_by_name) VALUES (?, ?, ?, 'todo', ?)",
+                """
+                INSERT INTO daily_menu_item(daily_menu_id, recipe_id, meal_type, status, added_by_name)
+                VALUES (?, ?, ?, 'todo', ?)
+                ON DUPLICATE KEY UPDATE id = id
+                """,
                 menuId,
                 request.recipeId(),
                 mealType,
@@ -95,9 +98,19 @@ public class TodayService {
 
     @Transactional
     public DailyMenuView removeMenuItem(long familyId, long recipeId) {
+        return removeMenuItem(familyId, recipeId, null);
+    }
+
+    @Transactional
+    public DailyMenuView removeMenuItem(long familyId, long recipeId, String mealType) {
         lockFamilyMenuWrites(familyId);
         long menuId = ensureTodayMenu(familyId);
-        jdbcTemplate.update("DELETE FROM daily_menu_item WHERE daily_menu_id = ? AND recipe_id = ?", menuId, recipeId);
+        if (mealType == null) {
+            jdbcTemplate.update("DELETE FROM daily_menu_item WHERE daily_menu_id = ? AND recipe_id = ?", menuId, recipeId);
+        } else {
+            jdbcTemplate.update("DELETE FROM daily_menu_item WHERE daily_menu_id = ? AND recipe_id = ? AND meal_type = ?",
+                    menuId, recipeId, normalizeMealType(mealType));
+        }
         rebuildShoppingList(familyId);
         return loadMenuView(menuId, familyId);
     }

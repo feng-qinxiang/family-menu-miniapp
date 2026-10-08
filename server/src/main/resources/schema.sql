@@ -141,6 +141,8 @@ CREATE TABLE IF NOT EXISTS cook_history (
     cooked_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     score INT NULL,
     remark VARCHAR(255) NULL,
+    completion_id VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NULL,
+    UNIQUE KEY uk_cook_completion (family_id, user_id, completion_id),
     INDEX idx_cook_history_user (user_id, cooked_at DESC),
     INDEX idx_cook_history_recipe (recipe_id),
     -- 做菜记录页按家庭取最近 50 条（WHERE family_id ORDER BY cooked_at DESC LIMIT 50）；
@@ -170,6 +172,7 @@ CREATE TABLE IF NOT EXISTS daily_menu_item (
     -- 菜单项状态（todo/done）与添加人昵称（列表直接展示）
     status VARCHAR(16) NOT NULL DEFAULT 'todo',
     added_by_name VARCHAR(64) NULL,
+    UNIQUE KEY uk_menu_recipe_meal (daily_menu_id, recipe_id, meal_type),
     INDEX idx_menu_item_menu (daily_menu_id),
     INDEX idx_menu_item_recipe (recipe_id)
 );

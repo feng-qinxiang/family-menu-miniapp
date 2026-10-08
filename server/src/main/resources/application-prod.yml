@@ -6,7 +6,7 @@
 spring:
   datasource:
     # 生产不留任何默认值：漏注入 DB_HOST/DB_PORT/DB_NAME/DB_USERNAME/DB_PASSWORD 时
-    # 占位符解析失败、启动即报错。否则会带着 root/123456 的本地默认值连到别处去，
+    # 占位符解析失败、启动即报错，避免继承本地连接默认值而连到错误的库，
     # 表现是"服务起来了但每个接口 500"，比启动失败难查得多。
     url: "jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true"
     username: ${DB_USERNAME}

@@ -5,6 +5,7 @@
 用法：python3 purge-probe-387f91.py   （输出即证据，见 06-account-purge.log）
 """
 import json
+import os
 import subprocess
 import time
 import urllib.error
@@ -12,13 +13,13 @@ import urllib.request
 
 APP = "http://127.0.0.1:18082"
 DB = "fm_be_launch_db"
-MYSQL = ["mysql", "-uroot", "-p123456", DB, "-e"]
+MYSQL = ["mysql", "-uroot", DB, "-e"]
 rows = []
 fails = []
 
 
 def sql(stmt, quiet=True):
-    r = subprocess.run(MYSQL + [stmt], capture_output=True, text=True)
+    r = subprocess.run(MYSQL + [stmt], capture_output=True, text=True, env={**os.environ, "MYSQL_PWD": os.environ["DB_PASSWORD"]})
     return r.stdout
 
 

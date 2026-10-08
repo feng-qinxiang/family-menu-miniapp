@@ -22,7 +22,8 @@ function setup() {
   api.updateMenuItemStatus = async (...args) => { calls.menus.push(args); };
   const page = {
     ...definition,
-    data: { ...structuredClone(definition.data), recipeId: '2', recipe: { title: '红烧肉' }, current: 1, total: 2 },
+    data: { ...structuredClone(definition.data), recipeId: '2', recipe: { title: '红烧肉', servings: 4 }, current: 1, total: 2 },
+    _servings: 8,
     _menuItemId: '9',
     _slots: { 1: { total: 60, baseAt: Date.now(), baseLeft: 60, running: true } },
     setData(patch) { Object.assign(this.data, patch); }
@@ -51,7 +52,7 @@ function setup() {
     assert.strictEqual(calls.saves.length, 1, '请求在途时不能再提交');
     completeSave({ pantryDeducted: 2 });
     await finish;
-    assert.deepStrictEqual(calls.saves, [{ recipeId: '2', remark: '', score: 4 }]);
+    assert.deepStrictEqual(calls.saves, [{ recipeId: '2', remark: '', score: 4, servings: 8, completionId: 'menu-9' }]);
     assert.deepStrictEqual(calls.menus, [['9', 'done']]);
     assert.strictEqual(storage.size, 0, '保存成功才清状态');
     assert.strictEqual(page.data.finished, true);
@@ -83,10 +84,9 @@ function setup() {
     assert.ok(calls.toasts.includes('保存未确认，请先查看做菜记录'));
     api.addCookHistory = async (payload) => { calls.saves.push(payload); return {}; };
     const retry = page.onFinish();
-    assert.strictEqual(calls.sheets.length, 2, '保存失败后不能永久锁死');
-    calls.sheets[1].success({ tapIndex: 3 });
+    assert.strictEqual(calls.sheets.length, 1, '未确认的同一次完成必须复用原评分与份数');
     await retry;
-    assert.deepStrictEqual(calls.saves, [{ recipeId: '2', remark: '' }], '先不评分不应伪造星级');
+    assert.deepStrictEqual(calls.saves, [{ recipeId: '2', remark: '', servings: 8, completionId: 'menu-9' }], '先不评分不应伪造星级');
   }
 
   // 取消评分仍按原约定记录一次；菜单状态失败不把成功的历史记录当作失败重试。
@@ -104,7 +104,7 @@ function setup() {
       console.warn = originalWarn;
     }
     assert.strictEqual(warnings.length, 1, '菜单同步失败须留日志');
-    assert.deepStrictEqual(calls.saves, [{ recipeId: '2', remark: '' }]);
+    assert.deepStrictEqual(calls.saves, [{ recipeId: '2', remark: '', servings: 8, completionId: 'menu-9' }]);
     assert.ok(calls.toasts.includes('已记录，上桌状态未同步'));
     assert.strictEqual(page.data.finished, true);
     await page.onFinish();

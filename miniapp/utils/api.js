@@ -437,12 +437,30 @@ function updateRecipe(recipeId, payload) {
   });
 }
 
-function addCookHistory(payload, options) {
-  return requestStrict('/api/cook-history', {
+async function addCookHistory(payload, options) {
+  let pendingKey = '';
+  let completion = { ...payload };
+  if (options && options.completionKey) {
+    // 用当前身份分区：切换账号或家庭后不能补发另一家的未确认记录。
+    const user = await requestStrict('/api/auth/me', { silent: true });
+    if (!user || !user.userId || !user.familyId) throw new Error('身份未确认，请重新登录');
+    pendingKey = `cook_completion_${user.userId}_${user.familyId}_${options.completionKey}`;
+    const pending = wx.getStorageSync(pendingKey);
+    if (pending && String(pending.recipeId) === String(payload.recipeId)) completion = pending;
+  }
+  if (!completion.completionId) {
+    completion.completionId = `cook-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 14)}`;
+  }
+  if (pendingKey) wx.setStorageSync(pendingKey, completion);
+  const result = await requestStrict('/api/cook-history', {
     method: 'POST',
-    data: payload,
+    data: completion,
     silent: !!(options && options.silent)
   });
+  if (pendingKey) {
+    try { wx.removeStorageSync(pendingKey); } catch (err) { /* 已确认，存储清理失败也不能重报保存失败 */ }
+  }
+  return result;
 }
 
 function getCookHistory() {
@@ -473,8 +491,9 @@ function addTodayMenuRecipe(recipeId, mealType) {
   });
 }
 
-function removeTodayMenuRecipe(recipeId) {
-  return requestStrict(`/api/daily-menu/today/items/${encodeURIComponent(recipeId)}`, {
+function removeTodayMenuRecipe(recipeId, mealType) {
+  const query = mealType ? `?mealType=${encodeURIComponent(mealType)}` : '';
+  return requestStrict(`/api/daily-menu/today/items/${encodeURIComponent(recipeId)}${query}`, {
     method: 'DELETE'
   });
 }

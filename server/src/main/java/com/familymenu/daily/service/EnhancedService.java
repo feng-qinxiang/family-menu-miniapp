@@ -282,7 +282,7 @@ public class EnhancedService {
      * 一个可以被连接串参数悄悄改写的数字上是脆的，所以这里不依赖它。
      *
      * ponytail: 无乐观条件，末次写入胜。冰箱编辑与「做菜扣库存」
-     * （MysqlKitchenStore.deductPantryForRecipe，以「读到的原值」当 WHERE 条件）会争抢同一行
+     * （MysqlKitchenStore.deductPantryForRecipe，事务内锁定库存行）会争抢同一行
      * amount：那边是绝对量扣减、这边是绝对量覆盖，两者没有可自动合并的语义
      * （「用户改成 5」和「扣掉 2」谁赢没有唯一正确答案），乐观条件只能把冲突显性化成 409，
      * 而加锁会让一次普通编辑在家人同时开火时直接失败。
@@ -343,11 +343,14 @@ public class EnhancedService {
             return List.of();
         }
         // 用量写「适量/少许」的行不入索引：扣减侧不会动它们，这里也就不该说"有"
-        Set<String> pantryKeys = pantry.stream()
-                .filter(p -> PantryDeduction.parseAmount(p.amount()) != null)
-                .map(p -> stockKey(p.ingredientName(), p.unit()))
-                .collect(Collectors.toSet());
-        if (pantryKeys.isEmpty()) {
+        Map<String, Double> pantryAmounts = new HashMap<>();
+        for (PantryItem item : pantry) {
+            Double amount = PantryDeduction.parseAmount(item.amount());
+            if (amount != null) {
+                pantryAmounts.merge(stockKey(item.ingredientName(), item.unit()), amount, Double::sum);
+            }
+        }
+        if (pantryAmounts.isEmpty()) {
             return List.of();
         }
 
@@ -381,11 +384,16 @@ public class EnhancedService {
             }
             int matched = 0;
             List<String> missing = new ArrayList<>();
+            Map<String, Double> required = new HashMap<>();
+            for (PantryDeduction.Needed need : PantryDeduction.mergeNeeded(ingredients)) {
+                required.put(stockKey(need.name(), need.unit()), need.amount());
+            }
             for (String[] ing : ingredients) {
                 String name = ing[0];
-                // 与 PantryDeduction.plan 同一判据：名称|单位都对得上，且菜谱这侧用量可解析
+                String key = stockKey(name, ing[1]);
+                // 同名同单位的需求先合计，库存必须足够支撑这一道菜的全部用量。
                 if (PantryDeduction.parseAmount(ing[2]) != null
-                        && pantryKeys.contains(stockKey(name, ing[1]))) {
+                        && pantryAmounts.getOrDefault(key, 0.0) >= required.getOrDefault(key, Double.POSITIVE_INFINITY)) {
                     matched++;
                 } else if (name != null && !name.isBlank()) {
                     missing.add(name);

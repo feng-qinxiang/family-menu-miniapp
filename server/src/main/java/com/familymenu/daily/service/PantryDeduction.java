@@ -52,7 +52,7 @@ public final class PantryDeduction {
         }
         try {
             double v = Double.parseDouble(s.substring(0, i));
-            return v > 0 ? v : null;
+            return Double.isFinite(v) && v > 0 ? v : null;
         } catch (NumberFormatException e) {
             return null;
         }
@@ -65,6 +65,10 @@ public final class PantryDeduction {
 
     /** 同名的多条菜谱用量先合并，避免同一行库存被重复计算多次。 */
     public static List<Needed> mergeNeeded(List<String[]> rows) {
+        return mergeNeeded(rows, 1);
+    }
+
+    public static List<Needed> mergeNeeded(List<String[]> rows, double servingRatio) {
         Map<String, Needed> byKey = new LinkedHashMap<>();
         for (String[] row : rows) {
             String name = row[0];
@@ -76,7 +80,7 @@ public final class PantryDeduction {
             String key = normalize(name) + "|" + normalize(unit);
             Needed current = byKey.get(key);
             byKey.put(key, new Needed(name.trim(), unit == null ? "" : unit.trim(),
-                    (current == null ? 0 : current.amount()) + amount));
+                    (current == null ? 0 : current.amount()) + amount * servingRatio));
         }
         return new ArrayList<>(byKey.values());
     }

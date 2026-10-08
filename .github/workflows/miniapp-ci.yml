@@ -55,6 +55,9 @@ jobs:
       - name: 做菜收尾回归（防重/失败保留/跳转失败）
         run: node miniapp/test/cook-finish.test.js
 
+      - name: 做菜一致性回归（回包丢失恢复/身份分区/上桌顺序）
+        run: node miniapp/test/cook-consistency.test.js
+
       # 收藏页帖子卡封面口径：帖子自己的图 → 关联菜谱封面 → 不放图。
       # 这条错了只会在卡片上配错图：实测一道无配图的「周末烤的面包」被配成扬州炒饭的本地图。
       - name: 纯逻辑单测（收藏页封面口径）

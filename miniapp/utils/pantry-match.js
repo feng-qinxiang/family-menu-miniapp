@@ -21,7 +21,7 @@ function parseAmount(raw) {
   const matched = /^[0-9.]+/.exec(s);
   if (!matched) return null;
   const value = Number(matched[0]);
-  return value > 0 ? value : null;
+  return Number.isFinite(value) && value > 0 ? value : null;
 }
 
 function stockKey(name, unit) {
@@ -53,14 +53,33 @@ function indexPantry(pantryItems) {
  * @param {string|number} amount 菜谱里的用量
  */
 function pantryHas(pantry, name, unit, amount) {
-  if (!name || parseAmount(amount) == null) return false;
+  const required = parseAmount(amount);
+  if (!name || required == null) return false;
   const index = pantry instanceof Map ? pantry : indexPantry(pantry);
-  return index.has(stockKey(name, unit));
+  const rows = index.get(stockKey(name, unit));
+  if (!rows) return false;
+  const available = rows.reduce((sum, item) => sum + (parseAmount(item && item.amount) || 0), 0);
+  return available >= required;
+}
+
+/** 整道菜先合计同名同单位的需求，再按实际份数判断每行是否够用。 */
+function pantryMatches(pantry, ingredients, ratio = 1) {
+  const index = pantry instanceof Map ? pantry : indexPantry(pantry);
+  const required = new Map();
+  ingredients.forEach((item) => {
+    const amount = parseAmount(item.amount);
+    const key = stockKey(item.name || item.ingredientName, item.unit);
+    if (amount != null) required.set(key, (required.get(key) || 0) + amount * ratio);
+  });
+  return ingredients.map((item) => parseAmount(item.amount) != null
+    && pantryHas(index, item.name || item.ingredientName, item.unit,
+      required.get(stockKey(item.name || item.ingredientName, item.unit))));
 }
 
 module.exports = {
   normalize,
   parseAmount,
   indexPantry,
-  pantryHas
+  pantryHas,
+  pantryMatches
 };

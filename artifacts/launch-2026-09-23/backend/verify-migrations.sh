@@ -4,7 +4,8 @@
 set -u
 cd "$(dirname "$0")/../../../server" || exit 1
 DB=fm_migrate_check
-MY=(mysql -uroot -p123456 "$DB")
+export MYSQL_PWD="${DB_PASSWORD:?Set DB_PASSWORD before running this script}"
+MY=(mysql -uroot "$DB")
 SQL() { "${MY[@]}" -e "$1" 2>/dev/null; }
 # 执行一个 .sql 文件，回显退出码（0=成功；非 0=脚本在报错）
 runsql() {
@@ -16,7 +17,7 @@ runsql() {
 }
 
 echo "=== 准备：schema.sql 建全新库，再手工退回「迁移前」的旧结构 ==="
-mysql -uroot -p123456 -e "DROP DATABASE IF EXISTS $DB; CREATE DATABASE $DB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" 2>/dev/null
+mysql -uroot -e "DROP DATABASE IF EXISTS $DB; CREATE DATABASE $DB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" 2>/dev/null
 "${MY[@]}" < src/main/resources/schema.sql 2>/dev/null
 SQL "ALTER TABLE cook_history DROP INDEX idx_cook_history_family, DROP INDEX idx_cook_history_family_recipe;
      ALTER TABLE import_source DROP INDEX idx_import_source_audit;

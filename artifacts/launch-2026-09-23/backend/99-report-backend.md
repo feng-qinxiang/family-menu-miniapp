@@ -82,7 +82,7 @@ UGC 全部按文本渲染（16 页 XSS 实测 PASS）；跨家庭越权 25/25 �
 | 外键列索引 | 无「外键列没索引」的情况 | 同上 |
 | 软删除一致性 | 社区帖用 `audit_status='REMOVED'`、评论用 `deleted=1`，读路径 8 处都带过滤；库存/菜谱等是硬删——各自自洽，无「删了还能被读到」的组合 | 代码审计 + 越权实测 |
 | 连接池 | Hikari `maximum-pool-size=20`、`minimum-idle=5`、`connection-timeout=10s`，env 可调 | `application.yml` |
-| 生产库保护 | prod profile 的 datasource **不留默认值**：漏注入 `DB_HOST/DB_PORT/DB_NAME/DB_USERNAME/DB_PASSWORD` 时占位符解析失败、启动即报错（避免带着本地 `root/123456` 默认值连到别处） | `application-prod.yml` |
+| 生产库保护 | prod profile 的 datasource **不留默认值**：漏注入 `DB_HOST/DB_PORT/DB_NAME/DB_USERNAME/DB_PASSWORD` 时占位符解析失败、启动即报错（避免带着本地 `本地默认数据库账号` 默认值连到别处） | `application-prod.yml` |
 
 ### 迁移脚本（三条，本地库实测 + 幂等）
 

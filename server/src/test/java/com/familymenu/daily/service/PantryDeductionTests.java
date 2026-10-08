@@ -26,6 +26,7 @@ class PantryDeductionTests {
         assertThat(PantryDeduction.parseAmount("")).isNull();
         assertThat(PantryDeduction.parseAmount(null)).isNull();
         assertThat(PantryDeduction.parseAmount("0")).isNull();
+        assertThat(PantryDeduction.parseAmount("9".repeat(400))).isNull();
     }
 
     @Test
@@ -96,5 +97,12 @@ class PantryDeductionTests {
                 new String[]{"", "g", "3"}));
         assertThat(needed).hasSize(1);
         assertThat(needed.get(0).amount()).isEqualTo(3.0);
+    }
+
+    @Test
+    void scalesAndMergesIngredientsForActualServings() {
+        List<String[]> rows = List.of(new String[]{"鸡蛋", "个", "2"}, new String[]{"鸡蛋", "个", "1"});
+        assertThat(PantryDeduction.mergeNeeded(rows, 2).get(0).amount()).isEqualTo(6.0);
+        assertThat(PantryDeduction.mergeNeeded(rows, 0.5).get(0).amount()).isEqualTo(1.5);
     }
 }

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -49,8 +50,9 @@ public class TodayController {
 
     @DeleteMapping("/daily-menu/today/items/{recipeId}")
     @RequiresAuth
-    public DailyMenuView removeTodayMenuItem(@CurrentUser AuthUser user, @PathVariable long recipeId) {
-        return todayService.removeMenuItem(user.familyId(), recipeId);
+    public DailyMenuView removeTodayMenuItem(@CurrentUser AuthUser user, @PathVariable long recipeId,
+                                              @RequestParam(required = false) String mealType) {
+        return todayService.removeMenuItem(user.familyId(), recipeId, mealType);
     }
 
     /** 菜单项状态流转：todo/cooking/done（菜单页「开做」「上桌」、烹饪模式完成回写共用） */
