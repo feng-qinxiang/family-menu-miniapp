@@ -1,0 +1,168 @@
+[
+  {
+    "design": "a",
+    "view": "order",
+    "variant": "",
+    "image": "screens/a-order.jpg",
+    "width": 591,
+    "height": 1280
+  },
+  {
+    "design": "a",
+    "view": "cook",
+    "variant": "",
+    "image": "screens/a-cook.jpg",
+    "width": 591,
+    "height": 1280
+  },
+  {
+    "design": "a",
+    "view": "record",
+    "variant": "",
+    "image": "screens/a-record.jpg",
+    "width": 591,
+    "height": 1280
+  },
+  {
+    "design": "a",
+    "view": "community",
+    "variant": "",
+    "image": "screens/a-community.jpg",
+    "width": 591,
+    "height": 1280
+  },
+  {
+    "design": "a",
+    "view": "community",
+    "variant": "large",
+    "image": "screens/a-community-large.jpg",
+    "width": 591,
+    "height": 1280
+  },
+  {
+    "design": "a",
+    "view": "cook",
+    "variant": "dark",
+    "image": "screens/a-cook-dark.jpg",
+    "width": 591,
+    "height": 1280
+  },
+  {
+    "design": "b",
+    "view": "order",
+    "variant": "",
+    "image": "screens/b-order.jpg",
+    "width": 591,
+    "height": 1280
+  },
+  {
+    "design": "b",
+    "view": "cook",
+    "variant": "",
+    "image": "screens/b-cook.jpg",
+    "width": 591,
+    "height": 1280
+  },
+  {
+    "design": "b",
+    "view": "record",
+    "variant": "",
+    "image": "screens/b-record.jpg",
+    "width": 591,
+    "height": 1280
+  },
+  {
+    "design": "b",
+    "view": "community",
+    "variant": "",
+    "image": "screens/b-community.jpg",
+    "width": 591,
+    "height": 1280
+  },
+  {
+    "design": "b",
+    "view": "community",
+    "variant": "large",
+    "image": "screens/b-community-large.jpg",
+    "width": 591,
+    "height": 1280
+  },
+  {
+    "design": "b",
+    "view": "cook",
+    "variant": "dark",
+    "image": "screens/b-cook-dark.jpg",
+    "width": 591,
+    "height": 1280
+  },
+  {
+    "design": "c",
+    "view": "order",
+    "variant": "",
+    "image": "screens/c-order.jpg",
+    "width": 591,
+    "height": 1280
+  },
+  {
+    "design": "c",
+    "view": "cook",
+    "variant": "",
+    "image": "screens/c-cook.jpg",
+    "width": 591,
+    "height": 1280
+  },
+  {
+    "design": "c",
+    "view": "record",
+    "variant": "",
+    "image": "screens/c-record.jpg",
+    "width": 591,
+    "height": 1280
+  },
+  {
+    "design": "c",
+    "view": "community",
+    "variant": "",
+    "image": "screens/c-community.jpg",
+    "width": 591,
+    "height": 1280
+  },
+  {
+    "design": "c",
+    "view": "community",
+    "variant": "large",
+    "image": "screens/c-community-large.jpg",
+    "width": 591,
+    "height": 1280
+  },
+  {
+    "design": "c",
+    "view": "cook",
+    "variant": "dark",
+    "image": "screens/c-cook-dark.jpg",
+    "width": 591,
+    "height": 1280
+  },
+  {
+    "design": "a",
+    "view": "record",
+    "variant": "saved",
+    "image": "screens/a-record-saved.jpg",
+    "width": 591,
+    "height": 1280
+  },
+  {
+    "design": "a",
+    "view": "community",
+    "variant": "shared",
+    "image": "screens/a-community-shared.jpg",
+    "width": 591,
+    "height": 1280
+  },
+  {
+    "check": "native complete flow",
+    "result": "PASS",
+    "recordsAdded": 1,
+    "postsAdded": 1
+  }
+]

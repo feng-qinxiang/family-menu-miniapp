@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>一家人的饭桌 · 三套 UI 设计预览</title>
+  <style>
+    :root { color-scheme: light; --bg:#f7f5f0; --ink:#302c25; --muted:#736d62; --line:#e3dfd6; --accent:#c74d32; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--ink); font-family:"PingFang SC","Microsoft YaHei",sans-serif; line-height:1.6; }
+    button,a { -webkit-tap-highlight-color:transparent; }
+    button { cursor:pointer; font:inherit; }
+    button:focus-visible,a:focus-visible { outline:3px solid var(--accent); outline-offset:4px; }
+    main { max-width:1280px; padding:36px 48px 56px; margin:auto; }
+    .eyebrow { font-size:12px; letter-spacing:2px; color:var(--muted); }
+    header { display:flex; justify-content:space-between; gap:32px; align-items:end; border-bottom:1px solid var(--line); padding-bottom:26px; }
+    h1 { margin:8px 0; font-size:clamp(26px,3vw,38px); line-height:1.35; letter-spacing:-1px; }
+    header p { margin:8px 0 0; color:var(--muted); font-size:14px; }
+    .journey { display:flex; gap:8px; flex-wrap:wrap; align-items:center; font-size:13px; white-space:nowrap; padding-bottom:3px; }
+    .journey strong { background:#eae5da; border-radius:6px; padding:6px 10px; font-weight:500; }
+    .toolbar { display:flex; align-items:center; gap:20px; flex-wrap:wrap; margin:24px 0 28px; }
+    .scenes { display:flex; gap:4px; padding:4px; background:#eae6de; border-radius:10px; }
+    .scenes button { color:var(--muted); border:0; background:transparent; border-radius:7px; padding:9px 19px; font-size:14px; min-height:42px; }
+    .scenes button[aria-pressed="true"] { background:#fffdf8; color:var(--accent); font-weight:600; }
+    #scene-caption { color:var(--muted); font-size:13px; margin:0; }
+    .comparison { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:42px; align-items:start; }
+    .design-head { min-height:125px; }
+    .design-index { font-family:Georgia,serif; color:var(--accent); font-size:28px; display:inline-block; margin-right:9px; }
+    h2 { font-size:19px; font-weight:600; margin:0 0 5px; }
+    .recommended { display:inline-block; font-size:10px; font-weight:500; vertical-align:middle; background:#f0e1d9; color:#994431; padding:3px 6px; border-radius:4px; margin-left:6px; }
+    .description { margin:0; font-size:13px; color:var(--muted); line-height:1.8; }
+    .screen-link { display:block; width:100%; max-width:325px; margin:0 auto; border-radius:28px; overflow:hidden; border:6px solid #302c27; background:#302c27; }
+    .screen-link img { display:block; width:100%; aspect-ratio:591/1280; object-fit:cover; background:#f5f0e6; }
+    .screen-link:hover { border-color:var(--accent); }
+    .screen-hint { margin:12px 0 18px; text-align:center; color:var(--muted); font-size:11px; }
+    .design-points { margin:0; padding:0; list-style:none; border-top:1px solid var(--line); }
+    .design-points li { padding:11px 0; border-bottom:1px solid var(--line); font-size:13px; }
+    .design-points b { display:inline-block; min-width:58px; font-weight:600; }
+    .concept { margin-top:36px; padding:24px 0; border-top:1px solid var(--line); display:grid; grid-template-columns:1fr 1fr; gap:32px; }
+    .concept h3 { margin:0 0 10px; font-size:15px; }
+    .concept p { margin:0; font-size:13px; color:var(--muted); line-height:1.9; }
+    .native-entry { padding:18px 22px; background:#eeebe3; border-radius:10px; }
+    .native-entry code { display:block; font-size:12px; overflow-wrap:anywhere; line-height:1.9; margin-top:10px; }
+    footer { margin-top:20px; color:var(--muted); font-size:11px; }
+    @media(max-width:1000px) { main { padding:28px; } .comparison { gap:22px; } header { display:block; } .journey { margin-top:16px; } .design-head { min-height:145px; } }
+    @media(max-width:650px) { main { padding:24px 18px; } .comparison { grid-template-columns:1fr; gap:36px; } .design-head { min-height:0; margin-bottom:16px; } .concept { grid-template-columns:1fr; } .screen-link { max-width:300px; } .scenes { width:100%; } .scenes button { flex:1; padding:9px 10px; } }
+    @media(prefers-reduced-motion:no-preference) { .screen-link { transition:border-color .15s ease; } }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div><div class="eyebrow">一家人的饭桌 / UI 方向预览</div><h1>让这一餐，有开始也有回味。</h1><p>三套布局，同一份示例菜单。下面是微信模拟器的实际页面截图。</p></div>
+    <div class="journey" aria-label="四条主线"><strong>点菜</strong><span>→</span><strong>做菜</strong><span>→</span><strong>记录</strong><span>→</span><strong>社区</strong></div>
+  </header>
+  <div class="toolbar"><div class="scenes" role="group" aria-label="切换场景"><button data-scene="order" aria-pressed="true">点菜</button><button data-scene="cook" aria-pressed="false">做菜</button><button data-scene="record" aria-pressed="false">记录</button><button data-scene="community" aria-pressed="false">社区</button></div><p id="scene-caption" aria-live="polite"></p></div>
+  <div class="comparison">
+    <article data-design="a"><div class="design-head"><h2><span class="design-index">A</span>现版优化<span class="recommended">建议从这版开始</span></h2><p class="description">保留米白、番茄红与菜图，收起过大的装饰，把这一餐和下一步放到眼前。</p></div><a class="screen-link" href="screens/a-order.jpg" target="_blank" rel="noopener"><img src="screens/a-order.jpg" alt="A 现版优化 · 点菜页" width="591" height="1280"></a><p class="screen-hint">点击截图查看原图</p><ul class="design-points"><li><b>点菜</b>短菜图开场，已点菜单直接接去做菜。</li><li><b>做菜</b>一道菜一个当前步骤，计时与上桌操作并列。</li><li><b>记录</b>最近上桌、评分、备注和分享放在一起。</li><li><b>社区</b>从别人家的成品直接点回自己的菜单。</li></ul></article>
+    <article data-design="b"><div class="design-head"><h2><span class="design-index">B</span>家庭点菜单</h2><p class="description">暖纸色、家人参与、点菜单与做菜日记。适合把“为家人做一顿饭”做成产品气质。</p></div><a class="screen-link" href="screens/b-order.jpg" target="_blank" rel="noopener"><img src="screens/b-order.jpg" alt="B 家庭点菜单 · 点菜页" width="591" height="1280"></a><p class="screen-hint">点击截图查看原图</p><ul class="design-points"><li><b>点菜</b>先看到家人的心愿与一张完整点菜单。</li><li><b>做菜</b>大步数、安静的排版，把注意力留给锅里。</li><li><b>记录</b>日期、心得与成品组成一页家庭做菜日记。</li><li><b>社区</b>像邻居分享一餐，菜谱是交流的起点。</li></ul></article>
+    <article data-design="c"><div class="design-head"><h2><span class="design-index">C</span>清爽厨房</h2><p class="description">白绿配色、紧凑菜单、清楚的步骤与进度。适合每天打开、快速选菜和做饭。</p></div><a class="screen-link" href="screens/c-order.jpg" target="_blank" rel="noopener"><img src="screens/c-order.jpg" alt="C 清爽厨房 · 点菜页" width="591" height="1280"></a><p class="screen-hint">点击截图查看原图</p><ul class="design-points"><li><b>点菜</b>可折叠菜单，给推荐菜谱更多空间。</li><li><b>做菜</b>减少头图，把当前步骤和操作做大。</li><li><b>记录</b>周历显示开火日，快速找到最近的好味道。</li><li><b>社区</b>两列成品浏览，找到喜欢的就加入菜单。</li></ul></article>
+  </div>
+  <div class="concept"><section><h3>先调整信息架构，再调整外观。</h3><p>一级导航统一为“点菜 / 做菜 / 记录 / 社区 / 我的”。菜谱库、冰箱和采购进入具体场景：选菜时看冰箱，确定菜单后买菜，做好后记下，分享带上菜谱，再回到点菜。</p></section><section class="native-entry"><h3>在小程序里连续体验</h3><p>打开独立 worktree 的开发者工具，编译页面如下。顶部可切换 A / B / C，底部可切换四条主线；点菜、步骤、评分、分享都使用本地示例数据。</p><code>pkg-preview/journey/index<br>design=a （也可填 b 或 c）</code></section></div>
+  <footer>2026-10-08 · 独立 worktree: codex/meal-journey-ui · 设计预览，正式页面尚待选型后落地。</footer>
+</main>
+<script>
+  const scenes = {
+    order: { label:'点菜', caption:'家人想吃什么 → 这一餐的菜单 → 去做菜。' },
+    cook: { label:'做菜', caption:'接住已点菜单 → 当前步骤与计时 → 做好了记一笔。' },
+    record: { label:'记录', caption:'成品、评分与心得 → 再点一次，或晒到社区。' },
+    community: { label:'社区', caption:'别人家的饭桌 → 关联菜谱 → 我也点这道。' }
+  };
+  function selectScene(scene) {
+    if (!scenes[scene]) return;
+    document.querySelectorAll('[data-scene]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.scene === scene)));
+    document.querySelectorAll('[data-design]').forEach(article => {
+      const path = `screens/${article.dataset.design}-${scene}.jpg`;
+      article.querySelector('a').href = path;
+      const image = article.querySelector('img'); image.src = path;
+      image.alt = `${article.querySelector('h2').textContent} · ${scenes[scene].label}页`;
+    });
+    document.getElementById('scene-caption').textContent = scenes[scene].caption;
+  }
+  document.querySelectorAll('[data-scene]').forEach(button => button.addEventListener('click', () => selectScene(button.dataset.scene)));
+  selectScene('order');
+</script>
+</body>
+</html>
