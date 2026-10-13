@@ -254,12 +254,11 @@
       注意 msgSecCheck 依赖 AppSecret，服务端必须配置 `WECHAT_APP_ID`/`WECHAT_APP_SECRET` 机审才生效
 - [ ] **request 合法域名**：添加你的 API 域名（开发 > 开发管理 > 开发设置 > 服务器域名）
 - [ ] **uploadFile / downloadFile 合法域名**：同上添加（图片上传下载用）
-- [ ] **用户隐私保护指引**（设置 > 服务内容声明）：必须声明以下三项，否则接口会被微信拦截：
+- [ ] **用户隐私保护指引**（设置 > 服务内容声明）：必须声明以下两项，否则接口会被微信拦截：
   - 「选中的照片或视频信息」—— 用于：菜谱封面/步骤图上传、头像上传、反馈截图
   - 「剪切板」—— 用于：复制/粘贴家庭邀请码
-  - 「微信昵称头像」—— 用于：微信登录后展示昵称与头像
-      页面内对应文案已写在 [miniapp/pages/legal/privacy/index.js](../miniapp/pages/legal/privacy/index.js)，
-      后台声明的项必须与它一致（少一项会被拦）。
+      页面内对应文案在 [miniapp/pkg-extra/legal/privacy/index.js](../miniapp/pkg-extra/legal/privacy/index.js)，
+      后台声明的项必须与它一致。本小程序不调用 `getUserProfile`，不要声明「微信昵称头像」。
 - [ ] 完善小程序名称、头像、简介（避免"点菜"字样引起"餐饮服务"类目误判，可用"家庭菜谱"表述）
 
 ## 3. 提审前自测（体验版）

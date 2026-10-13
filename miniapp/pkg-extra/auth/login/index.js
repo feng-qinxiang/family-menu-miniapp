@@ -78,8 +78,9 @@ Page({
     });
   },
 
-  // 游客逛逛 → guestLogin → 进首页 tab（无需勾选协议）
+  // 游客逛逛 → guestLogin → 进首页 tab（与微信登录同一套协议勾选）
   onGuest() {
+    if (!this.ensureAgreed()) return;
     this.doGuestLogin('');
   },
 
