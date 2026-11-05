@@ -1,0 +1,155 @@
+{
+  "checkedAt": "2026-10-08T13:40:31.318Z",
+  "viewports": [
+    {
+      "images": [
+        {
+          "file": "screens/home-updated-empty.jpg",
+          "inBounds": true,
+          "left": 104,
+          "loaded": true,
+          "right": 417
+        },
+        {
+          "file": "screens/home-updated-menu.jpg",
+          "inBounds": true,
+          "left": 508,
+          "loaded": true,
+          "right": 821
+        },
+        {
+          "file": "screens/home-updated-done.jpg",
+          "inBounds": true,
+          "left": 912,
+          "loaded": true,
+          "right": 1225
+        },
+        {
+          "file": "screens/home-updated-hero-lg.jpg",
+          "inBounds": true,
+          "left": 104,
+          "loaded": true,
+          "right": 417
+        },
+        {
+          "file": "screens/home-updated-wish-expanded.jpg",
+          "inBounds": true,
+          "left": 508,
+          "loaded": true,
+          "right": 821
+        },
+        {
+          "file": "screens/home-updated-recipes.jpg",
+          "inBounds": true,
+          "left": 912,
+          "loaded": true,
+          "right": 1225
+        }
+      ],
+      "name": "desktop",
+      "pageWidth": 1329,
+      "width": 1344
+    },
+    {
+      "images": [
+        {
+          "file": "screens/home-updated-empty.jpg",
+          "inBounds": true,
+          "left": 36,
+          "loaded": true,
+          "right": 324
+        },
+        {
+          "file": "screens/home-updated-menu.jpg",
+          "inBounds": true,
+          "left": 36,
+          "loaded": true,
+          "right": 324
+        },
+        {
+          "file": "screens/home-updated-done.jpg",
+          "inBounds": true,
+          "left": 36,
+          "loaded": true,
+          "right": 324
+        },
+        {
+          "file": "screens/home-updated-hero-lg.jpg",
+          "inBounds": true,
+          "left": 36,
+          "loaded": true,
+          "right": 324
+        },
+        {
+          "file": "screens/home-updated-wish-expanded.jpg",
+          "inBounds": true,
+          "left": 36,
+          "loaded": true,
+          "right": 324
+        },
+        {
+          "file": "screens/home-updated-recipes.jpg",
+          "inBounds": true,
+          "left": 36,
+          "loaded": true,
+          "right": 324
+        }
+      ],
+      "name": "mobile-gallery",
+      "pageWidth": 360,
+      "width": 375
+    },
+    {
+      "images": [
+        {
+          "file": "screens/home-updated-empty.jpg",
+          "inBounds": true,
+          "left": 24,
+          "loaded": true,
+          "right": 281
+        },
+        {
+          "file": "screens/home-updated-menu.jpg",
+          "inBounds": true,
+          "left": 24,
+          "loaded": true,
+          "right": 281
+        },
+        {
+          "file": "screens/home-updated-done.jpg",
+          "inBounds": true,
+          "left": 24,
+          "loaded": true,
+          "right": 281
+        },
+        {
+          "file": "screens/home-updated-hero-lg.jpg",
+          "inBounds": true,
+          "left": 24,
+          "loaded": true,
+          "right": 281
+        },
+        {
+          "file": "screens/home-updated-wish-expanded.jpg",
+          "inBounds": true,
+          "left": 24,
+          "loaded": true,
+          "right": 281
+        },
+        {
+          "file": "screens/home-updated-recipes.jpg",
+          "inBounds": true,
+          "left": 24,
+          "loaded": true,
+          "right": 281
+        }
+      ],
+      "name": "mobile-gallery",
+      "pageWidth": 305,
+      "width": 320
+    }
+  ],
+  "viewportRestored": true,
+  "screenshot": "screens/home-detail-preview.png",
+  "result": "PASS"
+}

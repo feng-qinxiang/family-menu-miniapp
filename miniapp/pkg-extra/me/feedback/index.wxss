@@ -12,14 +12,8 @@
 
 /* —— Hero —— */
 .fb-head { padding: 16rpx 0 8rpx; }
-.fb-h1 {
-  font-size: calc(78rpx * var(--fs-mul, 1));
-  line-height: 0.95;
-  letter-spacing: -4rpx;
-  margin-top: 8rpx;
-}
 .fb-desc {
-  margin-top: 18rpx;
+  margin-top: 0;
   font-size: var(--fs-sub);
   line-height: 1.5;
   color: var(--mut-strong);

@@ -1,0 +1,757 @@
+{
+  "passed": true,
+  "prototypeVersion": "2026-10-09",
+  "url": "http://127.0.0.1:8847/figma-prototype/",
+  "interactionChecks": [
+    "冰箱能做打开推荐",
+    "换一道更新菜名、说明与照片",
+    "加入晚餐更新菜单数量与缩略图",
+    "做菜进入步骤",
+    "启动底部计时",
+    "完成后进入记录",
+    "记录关联菜谱晒到社区",
+    "帖子返回关联菜谱",
+    "无图食材进入照片选择并可取消",
+    "临期消息打开冰箱"
+  ],
+  "layoutChecks": {
+    "pages": [
+      "home",
+      "recipes",
+      "picker",
+      "detail",
+      "pantry",
+      "shopping",
+      "cook",
+      "step",
+      "finish",
+      "record",
+      "community",
+      "post",
+      "publish",
+      "me",
+      "notifications",
+      "photo",
+      "styles",
+      "journey"
+    ],
+    "documentHorizontalOverflow": false,
+    "textOverflow": []
+  },
+  "responsiveChecks": [
+    {
+      "width": 375,
+      "documentWidth": 360,
+      "screenWidth": 320,
+      "horizontalOverflow": false
+    },
+    {
+      "width": 320,
+      "documentWidth": 305,
+      "screenWidth": 270,
+      "horizontalOverflow": false
+    }
+  ],
+  "viewportOverrideReset": true,
+  "nativeFigmaImportVerified": false,
+  "realDataWritten": false,
+  "preview": "preview.png",
+  "entryFixChecks": {
+    "templateScriptRunsWithoutSyntaxError": true,
+    "templateOpensIndexAndPreservesPageHash": true,
+    "generatedScriptSyntaxVerified": true,
+    "httpHomeRenders": true,
+    "httpPickerCanAddToMenu": true,
+    "fileUrlBrowserVerified": false
+  },
+  "entryFixPreview": "preview-entry-fix.png",
+  "detailPolish": {
+    "checkedAt": "2026-10-09T11:41:55.837Z",
+    "pagesVisuallyChecked": [
+      "recipes",
+      "shopping",
+      "pantry",
+      "post",
+      "notifications"
+    ],
+    "interactions": [
+      "加购图片入口显示说明",
+      "添加并继续显示说明"
+    ],
+    "mobile375": {
+      "viewport": 375,
+      "documentWidth": 360,
+      "svgWidth": 320
+    },
+    "network": "none",
+    "nativeFigmaImportVerified": false,
+    "realDataWritten": false,
+    "preview": "../screens/figma-detail-polish.png",
+    "viewportOverrideReset": true
+  },
+  "productLayout": {
+    "checkedAt": "2026-10-09T14:38:16.521Z",
+    "passed": true,
+    "cart": "3 道菜 · 展示最近点的 2 道",
+    "relatedRecipeNavigation": true,
+    "mobile": {
+      "width": 375,
+      "documentWidth": 360,
+      "svg": 320
+    },
+    "realBusinessWrites": false,
+    "nativeFigmaImportVerified": false
+  },
+  "skillsTrial20261104": {
+    "passed": true,
+    "kind": "browser prototype only",
+    "url": "http://127.0.0.1:8847/figma-prototype/?v=20261104-skills-final",
+    "checks": [
+      {
+        "name": "empty input disabled",
+        "passed": true
+      },
+      {
+        "name": "empty recognized caption hidden",
+        "passed": true
+      },
+      {
+        "name": "unsupported or conflicting requirement blocked: 不要川菜",
+        "passed": true
+      },
+      {
+        "name": "requirement explanation: 不要川菜",
+        "passed": true
+      },
+      {
+        "name": "unsupported or conflicting requirement blocked: 花生过敏",
+        "passed": true
+      },
+      {
+        "name": "requirement explanation: 花生过敏",
+        "passed": true
+      },
+      {
+        "name": "unsupported or conflicting requirement blocked: 不吃冰箱里的",
+        "passed": true
+      },
+      {
+        "name": "requirement explanation: 不吃冰箱里的",
+        "passed": true
+      },
+      {
+        "name": "unsupported or conflicting requirement blocked: 两人，四人",
+        "passed": true
+      },
+      {
+        "name": "requirement explanation: 两人，四人",
+        "passed": true
+      },
+      {
+        "name": "recognized four conditions",
+        "passed": true
+      },
+      {
+        "name": "draft preserved",
+        "passed": true
+      },
+      {
+        "name": "request chooses recipe",
+        "passed": true
+      },
+      {
+        "name": "custom picker heading",
+        "passed": true
+      },
+      {
+        "name": "shuffle changes matching candidate",
+        "passed": true
+      },
+      {
+        "name": "matching pantry label",
+        "passed": true
+      },
+      {
+        "name": "no match keeps sheet and explains",
+        "passed": true
+      },
+      {
+        "name": "non-pantry recipe result",
+        "passed": true
+      },
+      {
+        "name": "non-pantry missing stock label",
+        "passed": true
+      },
+      {
+        "name": "reminder dialog opens",
+        "passed": true
+      },
+      {
+        "name": "subscription marked as prototype",
+        "passed": true
+      },
+      {
+        "name": "reminder opens messages",
+        "passed": true
+      },
+      {
+        "name": "no script errors",
+        "passed": true
+      },
+      {
+        "name": "1344px recipes has no horizontal overflow",
+        "passed": true
+      },
+      {
+        "name": "1344px pantry has no horizontal overflow",
+        "passed": true
+      },
+      {
+        "name": "1344px request has no horizontal overflow",
+        "passed": true
+      },
+      {
+        "name": "375px recipes has no horizontal overflow",
+        "passed": true
+      },
+      {
+        "name": "375px pantry has no horizontal overflow",
+        "passed": true
+      },
+      {
+        "name": "375px request has no horizontal overflow",
+        "passed": true
+      },
+      {
+        "name": "320px recipes has no horizontal overflow",
+        "passed": true
+      },
+      {
+        "name": "320px pantry has no horizontal overflow",
+        "passed": true
+      },
+      {
+        "name": "320px request has no horizontal overflow",
+        "passed": true
+      }
+    ],
+    "errors": [],
+    "nativeWechatVerified": false,
+    "nativeFigmaVerified": false,
+    "widths": [
+      {
+        "width": 1344,
+        "id": "recipes",
+        "pageWidth": 1344,
+        "scrollWidth": 1344,
+        "panel": null,
+        "screen": {
+          "x": 467.4609375,
+          "y": 113,
+          "width": 374.078125,
+          "height": 809.5390625
+        }
+      },
+      {
+        "width": 1344,
+        "id": "pantry",
+        "pageWidth": 1344,
+        "scrollWidth": 1344,
+        "panel": null,
+        "screen": {
+          "x": 467.4609375,
+          "y": 113,
+          "width": 374.078125,
+          "height": 809.5390625
+        }
+      },
+      {
+        "width": 1344,
+        "id": "request",
+        "pageWidth": 1344,
+        "scrollWidth": 1344,
+        "panel": {
+          "client": 390,
+          "scroll": 390
+        },
+        "screen": {
+          "x": 467.4609375,
+          "y": 113,
+          "width": 374.078125,
+          "height": 809.5390625
+        }
+      },
+      {
+        "width": 375,
+        "id": "recipes",
+        "pageWidth": 375,
+        "scrollWidth": 360,
+        "panel": null
+      },
+      {
+        "width": 375,
+        "id": "pantry",
+        "pageWidth": 375,
+        "scrollWidth": 360,
+        "panel": null
+      },
+      {
+        "width": 375,
+        "id": "request",
+        "pageWidth": 375,
+        "scrollWidth": 360,
+        "panel": {
+          "client": 390,
+          "scroll": 390
+        }
+      },
+      {
+        "width": 320,
+        "id": "recipes",
+        "pageWidth": 320,
+        "scrollWidth": 305,
+        "panel": null
+      },
+      {
+        "width": 320,
+        "id": "pantry",
+        "pageWidth": 320,
+        "scrollWidth": 305,
+        "panel": null
+      },
+      {
+        "width": 320,
+        "id": "request",
+        "pageWidth": 320,
+        "scrollWidth": 305,
+        "panel": {
+          "client": 390,
+          "scroll": 390
+        }
+      }
+    ]
+  },
+  "layoutFocus20261104": {
+    "interactions": {
+      "date": "2026-11-04",
+      "kind": "browser prototype only",
+      "nativeWechatVerified": false,
+      "nativeFigmaVerified": false,
+      "realDataWritten": false,
+      "url": "http://127.0.0.1:8847/figma-prototype/?v=20261104-layout-focus#notifications",
+      "checks": [
+        {
+          "name": "empty request disabled",
+          "passed": true
+        },
+        {
+          "name": "two examples only",
+          "passed": true
+        },
+        {
+          "name": "empty preview hidden",
+          "passed": true
+        },
+        {
+          "name": "example fills request",
+          "passed": true
+        },
+        {
+          "name": "examples collapse after input",
+          "passed": true
+        },
+        {
+          "name": "three confirmed rows",
+          "passed": true
+        },
+        {
+          "name": "reject unsupported or conflicting: 不要川菜",
+          "passed": true
+        },
+        {
+          "name": "reject unsupported or conflicting: 花生过敏",
+          "passed": true
+        },
+        {
+          "name": "reject unsupported or conflicting: 不吃冰箱里的",
+          "passed": true
+        },
+        {
+          "name": "reject unsupported or conflicting: 两人，四人",
+          "passed": true
+        },
+        {
+          "name": "four rows confirmed",
+          "passed": true
+        },
+        {
+          "name": "valid request enabled",
+          "passed": true
+        },
+        {
+          "name": "close preserves draft",
+          "passed": true
+        },
+        {
+          "name": "confirmed request navigates picker",
+          "passed": true
+        },
+        {
+          "name": "urgent sample picked first",
+          "passed": true
+        },
+        {
+          "name": "shuffle respects request and changes dish",
+          "passed": true,
+          "data": {
+            "first": "番茄炒蛋",
+            "second": "虾仁炒豌豆"
+          }
+        },
+        {
+          "name": "notes remain in right column",
+          "passed": true,
+          "data": [
+            {
+              "text": "\n符合已确认的条件。\n按菜谱量备料，\n点开就能看做法。\n",
+              "x": 168,
+              "y": 470.9971923828125,
+              "w": 121.308837890625,
+              "h": 57.67034912109375
+            }
+          ]
+        },
+        {
+          "name": "dynamic notes preserve three lines",
+          "passed": true
+        },
+        {
+          "name": "recommendation opens detail",
+          "passed": true
+        },
+        {
+          "name": "three steps visible",
+          "passed": true
+        },
+        {
+          "name": "ingredient photo entry present",
+          "passed": true,
+          "data": [
+            "返回",
+            "为番茄拍照或选图",
+            "为鸡蛋拍照或选图",
+            "加到晚餐",
+            "开始做菜"
+          ]
+        },
+        {
+          "name": "no image opens photo choices",
+          "passed": true
+        },
+        {
+          "name": "camera and album choices",
+          "passed": true
+        },
+        {
+          "name": "no match keeps request and warning",
+          "passed": true
+        },
+        {
+          "name": "request can include missing pantry items",
+          "passed": true
+        },
+        {
+          "name": "reminder panel style isolated",
+          "passed": true
+        },
+        {
+          "name": "reminder opens messages",
+          "passed": true
+        },
+        {
+          "name": "no page errors",
+          "passed": true,
+          "data": []
+        }
+      ],
+      "pageErrors": [],
+      "passed": true
+    },
+    "responsive": {
+      "date": "2026-11-04",
+      "kind": "browser prototype only",
+      "nativeWechatVerified": false,
+      "passed": true,
+      "states": [
+        {
+          "id": "request",
+          "size": {
+            "width": 1344,
+            "height": 1050
+          },
+          "viewport": 1344,
+          "documentWidth": 1344,
+          "screen": {
+            "x": 466.5,
+            "width": 376,
+            "height": 813.6953125
+          },
+          "panel": {
+            "clientHeight": 479,
+            "scrollHeight": 479,
+            "bottom": 926.7025756835938,
+            "screenBottom": 926.6953125
+          },
+          "textOverflows": [],
+          "passed": true,
+          "screenshot": "/Users/xx/.codex/worktrees/meal-journey-ui/家庭点菜小程序/artifacts/ui-journey-2026-10-08/screens/layout-focus-request.png"
+        },
+        {
+          "id": "picker",
+          "size": {
+            "width": 1344,
+            "height": 1050
+          },
+          "viewport": 1344,
+          "documentWidth": 1344,
+          "screen": {
+            "x": 466.5,
+            "width": 376,
+            "height": 813.6953125
+          },
+          "panel": null,
+          "textOverflows": [],
+          "passed": true,
+          "screenshot": "/Users/xx/.codex/worktrees/meal-journey-ui/家庭点菜小程序/artifacts/ui-journey-2026-10-08/screens/layout-focus-picker.png"
+        },
+        {
+          "id": "detail",
+          "size": {
+            "width": 1344,
+            "height": 1050
+          },
+          "viewport": 1344,
+          "documentWidth": 1344,
+          "screen": {
+            "x": 466.5,
+            "width": 376,
+            "height": 813.6953125
+          },
+          "panel": null,
+          "textOverflows": [],
+          "passed": true,
+          "screenshot": "/Users/xx/.codex/worktrees/meal-journey-ui/家庭点菜小程序/artifacts/ui-journey-2026-10-08/screens/layout-focus-detail.png"
+        },
+        {
+          "id": "cook",
+          "size": {
+            "width": 1344,
+            "height": 1050
+          },
+          "viewport": 1344,
+          "documentWidth": 1344,
+          "screen": {
+            "x": 466.5,
+            "width": 376,
+            "height": 813.6953125
+          },
+          "panel": null,
+          "textOverflows": [],
+          "passed": true,
+          "screenshot": "/Users/xx/.codex/worktrees/meal-journey-ui/家庭点菜小程序/artifacts/ui-journey-2026-10-08/screens/layout-focus-cook.png"
+        },
+        {
+          "id": "record",
+          "size": {
+            "width": 1344,
+            "height": 1050
+          },
+          "viewport": 1344,
+          "documentWidth": 1344,
+          "screen": {
+            "x": 466.5,
+            "width": 376,
+            "height": 813.6953125
+          },
+          "panel": null,
+          "textOverflows": [],
+          "passed": true,
+          "screenshot": "/Users/xx/.codex/worktrees/meal-journey-ui/家庭点菜小程序/artifacts/ui-journey-2026-10-08/screens/layout-focus-record.png"
+        },
+        {
+          "id": "request",
+          "size": {
+            "width": 957,
+            "height": 871
+          },
+          "viewport": 957,
+          "documentWidth": 942,
+          "screen": {
+            "x": 297.7578125,
+            "width": 314.4765625,
+            "height": 680.5546875
+          },
+          "panel": {
+            "clientHeight": 479,
+            "scrollHeight": 479,
+            "bottom": 790.5281982421875,
+            "screenBottom": 791.5546875
+          },
+          "textOverflows": [],
+          "passed": true,
+          "screenshot": "/Users/xx/.codex/worktrees/meal-journey-ui/家庭点菜小程序/artifacts/ui-journey-2026-10-08/screens/layout-focus-request-957.png"
+        },
+        {
+          "id": "picker",
+          "size": {
+            "width": 957,
+            "height": 871
+          },
+          "viewport": 957,
+          "documentWidth": 942,
+          "screen": {
+            "x": 297.7578125,
+            "width": 314.4765625,
+            "height": 680.5546875
+          },
+          "panel": null,
+          "textOverflows": [],
+          "passed": true
+        },
+        {
+          "id": "detail",
+          "size": {
+            "width": 957,
+            "height": 871
+          },
+          "viewport": 957,
+          "documentWidth": 942,
+          "screen": {
+            "x": 297.7578125,
+            "width": 314.4765625,
+            "height": 680.5546875
+          },
+          "panel": null,
+          "textOverflows": [],
+          "passed": true
+        },
+        {
+          "id": "request",
+          "size": {
+            "width": 375,
+            "height": 812
+          },
+          "viewport": 375,
+          "documentWidth": 360,
+          "screen": {
+            "x": 20,
+            "width": 320,
+            "height": 692.5078125
+          },
+          "panel": {
+            "clientHeight": 479,
+            "scrollHeight": 479,
+            "bottom": 898.0128173828125,
+            "screenBottom": 898.0078125
+          },
+          "textOverflows": [],
+          "passed": true
+        },
+        {
+          "id": "picker",
+          "size": {
+            "width": 375,
+            "height": 812
+          },
+          "viewport": 375,
+          "documentWidth": 360,
+          "screen": {
+            "x": 20,
+            "width": 320,
+            "height": 692.5078125
+          },
+          "panel": null,
+          "textOverflows": [],
+          "passed": true
+        },
+        {
+          "id": "detail",
+          "size": {
+            "width": 375,
+            "height": 812
+          },
+          "viewport": 375,
+          "documentWidth": 360,
+          "screen": {
+            "x": 20,
+            "width": 320,
+            "height": 692.5078125
+          },
+          "panel": null,
+          "textOverflows": [],
+          "passed": true
+        },
+        {
+          "id": "request",
+          "size": {
+            "width": 320,
+            "height": 740
+          },
+          "viewport": 320,
+          "documentWidth": 305,
+          "screen": {
+            "x": 20,
+            "width": 270,
+            "height": 584.3046875
+          },
+          "panel": {
+            "clientHeight": 479,
+            "scrollHeight": 479,
+            "bottom": 851.3076782226562,
+            "screenBottom": 851.3046875
+          },
+          "textOverflows": [],
+          "passed": true,
+          "screenshot": "/Users/xx/.codex/worktrees/meal-journey-ui/家庭点菜小程序/artifacts/ui-journey-2026-10-08/screens/layout-focus-request-320.png"
+        },
+        {
+          "id": "picker",
+          "size": {
+            "width": 320,
+            "height": 740
+          },
+          "viewport": 320,
+          "documentWidth": 305,
+          "screen": {
+            "x": 20,
+            "width": 270,
+            "height": 584.3046875
+          },
+          "panel": null,
+          "textOverflows": [],
+          "passed": true
+        },
+        {
+          "id": "detail",
+          "size": {
+            "width": 320,
+            "height": 740
+          },
+          "viewport": 320,
+          "documentWidth": 305,
+          "screen": {
+            "x": 20,
+            "width": 270,
+            "height": 584.3046875
+          },
+          "panel": null,
+          "textOverflows": [],
+          "passed": true
+        }
+      ],
+      "pageErrors": [],
+      "requestEmptyScreenshot": "/Users/xx/.codex/worktrees/meal-journey-ui/家庭点菜小程序/artifacts/ui-journey-2026-10-08/screens/layout-focus-request-empty.png"
+    }
+  }
+}

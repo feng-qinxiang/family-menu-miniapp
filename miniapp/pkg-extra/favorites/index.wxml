@@ -7,10 +7,6 @@
 
     <!-- Hero：eyebrow + 镂空撞色标题 + 计数 -->
     <view class="fav-head g-fade-up">
-      <view class="eyebrow-serif">收藏夹</view>
-      <view class="fav-title">
-        <text>我的</text><text class="pop">收藏</text>
-      </view>
       <view class="fav-count">{{countText}}</view>
     </view>
 

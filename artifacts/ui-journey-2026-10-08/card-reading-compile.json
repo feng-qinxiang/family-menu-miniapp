@@ -1,0 +1,52 @@
+{
+  "checkedAt": "2026-10-09T13:51:49.962Z",
+  "passed": true,
+  "results": [
+    {
+      "file": "components/recipe-card/index.wxml",
+      "sha256": "a15ab666c89ab7fdab4141f99b35351453d36b23d0b4457b88facadada418e70",
+      "passed": true,
+      "result": {
+        "success": true,
+        "codeLength": 33293
+      }
+    },
+    {
+      "file": "components/recipe-card/index.wxss",
+      "sha256": "ca6d15c7940d887f57b6196862630779df3f90ae01ac0b42586bf2ca88bd40a5",
+      "passed": true,
+      "result": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38994
+      }
+    },
+    {
+      "file": "pkg-extra/community/post-detail/index.wxml",
+      "sha256": "8b271fe3b3cf0c4bfbd9020716836262bdd2e2bb835dca60164d4cd9e358f2fe",
+      "passed": true,
+      "result": {
+        "success": true,
+        "codeLength": 33293
+      }
+    },
+    {
+      "file": "pkg-extra/community/post-detail/index.wxss",
+      "sha256": "332acfae2e7675aedd0c414b1194bbbf0ff53f8391f23aa0d1d12d3869fbc9f4",
+      "passed": true,
+      "result": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38994
+      }
+    }
+  ]
+}

@@ -1,18 +1,39 @@
 <!-- components/recipe-card/index.wxml -->
 <!-- 横向行卡 -->
-<view wx:if="{{variant === 'row'}}" class="rc-row tap-scale" bindtap="onTap">
+<view wx:if="{{variant === 'row'}}" class="rc-row rc-d-{{density}} tap-scale {{selected ? 'is-on' : ''}}" bindtap="onTap" aria-role="button" aria-label="查看{{title}}菜谱">
+  <view class="rc-row-main">
+  <view class="rc-row-media">
   <!-- lazy-load：行卡只出现在长列表里（点菜/搜索/收藏等），滚动才发现，值得延后加载 -->
-  <image class="rc-row-thumb" src="{{cover}}" mode="aspectFill" lazy-load />
+  <image class="rc-row-thumb {{coverBroken ? 'img-broken' : ''}}" src="{{cover}}" mode="aspectFill" lazy-load data-err-key="coverBroken" binderror="onPhotoError" />
+  <view wx:if="{{density === 'list' && badgeText}}" class="rc-row-origin">{{badgeText}}</view>
+  </view>
   <view class="rc-row-mid">
     <view class="rc-row-title ellipsis">{{title}}</view>
-    <view class="rc-row-sub" wx:if="{{timeText || metaText}}">
+    <view class="rc-row-list-meta" wx:if="{{density === 'list'}}">{{timeText || '耗时未填'}}<text wx:if="{{recipe.servings}}"> · {{recipe.servings}} 人份</text><text wx:if="{{recipe.rating}}"> · {{recipe.rating}} 分</text></view>
+    <view class="rc-row-sub" wx:if="{{density !== 'list' && (timeText || metaText)}}">
       <text wx:if="{{timeText}}" class="rc-row-sub-i">{{timeText}}</text>
       <text wx:if="{{metaText && metaText !== timeText}}" class="rc-row-sub-i">{{metaText}}</text>
     </view>
+    <view class="rc-row-tags" wx:if="{{density === 'list' && detailTags.length}}"><text wx:for="{{detailTags}}" wx:key="*this">{{index ? ' · ' : ''}}{{item}}</text></view>
+    <view wx:if="{{density === 'list'}}" class="rc-row-details">
+      <view class="rc-row-ingredients" wx:if="{{ingredientText}}">用料 · {{ingredientText}}</view>
+      <view class="rc-row-summary" wx:if="{{recipe.summary}}">{{recipe.summary}}</view>
+    </view>
   </view>
-  <view wx:if="{{showAdd}}" class="rc-row-add tap-scale" catchtap="onAdd">
-    <text class="rc-plus">＋</text>
   </view>
+  <view wx:if="{{density === 'list' && (showPantry || showAdd || metaOverride)}}" class="rc-row-footer">
+    <view class="rc-row-footer-copy">
+      <view class="rc-row-stock {{recipe.pantryReady ? 'is-ready' : ''}}" wx:if="{{showPantry}}">
+        <text class="rc-stock-label">冰箱用料</text><text class="rc-stock-copy">{{recipe.pantryStatus || '用料待确认'}}</text>
+      </view>
+      <view wx:else class="rc-row-detail-link">查看做法 ›</view>
+      <view class="rc-row-list-note" wx:if="{{metaOverride}}">{{metaOverride}}</view>
+    </view>
+    <view wx:if="{{showAdd}}" class="rc-row-add tap-scale {{selected ? 'is-picked' : ''}}" catchtap="onAdd" aria-role="button" aria-label="{{selected ? '已点' : '点菜'}}：{{title}}">
+      <text class="rc-plus">{{selected ? '✓' : '＋'}}</text><text class="rc-row-add-label">{{selected ? '已点' : '点菜'}}</text>
+    </view>
+  </view>
+  <view wx:if="{{density !== 'list' && showAdd}}" class="rc-row-add tap-scale {{selected ? 'is-picked' : ''}}" catchtap="onAdd" aria-role="button" aria-label="{{selected ? '已点' : '点菜'}}：{{title}}"><text class="rc-plus">{{selected ? '✓' : '＋'}}</text></view>
 </view>
 
 <!-- 纵向大卡 -->
@@ -25,16 +46,19 @@
     <image class="rc-ph-img {{coverBroken ? 'img-broken' : ''}}" src="{{cover}}" mode="aspectFill" lazy-load
       data-err-key="coverBroken" binderror="onPhotoError" />
     <view wx:if="{{label}}" class="rc-lbl">{{label}}</view>
-    <view wx:if="{{badgeText}}" class="rc-badge {{selected ? 'is-hot' : ''}}">{{badgeText}}</view>
-    <view wx:if="{{showFav}}" class="rc-fav tap-scale {{favorited ? 'on' : ''}}" catchtap="onFav">
-      <view class="rc-fav-dot"></view>
+    <view wx:if="{{badgeText && !showFav}}" class="rc-badge {{selected ? 'is-hot' : ''}}">{{badgeText}}</view>
+    <view wx:if="{{showFav}}" class="rc-fav tap-scale {{favorited ? 'on' : ''}}" catchtap="onFav" aria-role="button" aria-label="{{favorited ? '取消收藏' : '收藏'}}">
+      <image class="rc-fav-icon" src="/assets/icons/lucide/{{favorited ? 'heart-filled' : 'heart'}}.svg" mode="aspectFit" aria-hidden="true" />
     </view>
     <view
       wx:if="{{showAdd && addPlacement === 'corner' && !showFav}}"
-      class="rc-add-corner tap-scale"
+      class="rc-add-corner tap-scale {{selected ? 'is-picked' : ''}}"
       catchtap="onAdd"
+      aria-role="button"
+      aria-label="{{selected ? '已点' : '点菜'}}：{{title}}"
     >
-      <view class="rc-add-plus"></view>
+      <text wx:if="{{selected}}" class="rc-picked-mark">✓</text>
+      <view wx:else class="rc-add-plus"></view>
     </view>
   </view>
   <view class="rc-info">

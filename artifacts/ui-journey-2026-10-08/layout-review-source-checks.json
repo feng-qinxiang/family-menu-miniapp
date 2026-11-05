@@ -1,0 +1,35 @@
+{
+  "checkedAt": "2026-10-09T06:09:10.150Z",
+  "changedThisRound": [
+    "artifacts/ui-journey-2026-10-08/README.md",
+    "artifacts/ui-journey-2026-10-08/index.html",
+    "artifacts/ui-journey-2026-10-08/page-catalog.json",
+    "artifacts/ui-journey-2026-10-08/verify-all-pages.cjs",
+    "artifacts/ui-journey-2026-10-08/verify-picker.cjs",
+    "miniapp/components/recipe-card/index.wxml",
+    "miniapp/components/recipe-card/index.wxss",
+    "miniapp/pages/pantry/index.wxml",
+    "miniapp/pages/pantry/index.wxss",
+    "miniapp/pages/recipes/index.wxml",
+    "miniapp/pages/recipes/index.wxss",
+    "miniapp/pages/shopping/index.wxml",
+    "miniapp/pages/shopping/index.wxss",
+    "miniapp/pkg-extra/community/post-detail/index.wxml",
+    "miniapp/pkg-extra/community/post-detail/index.wxss",
+    "miniapp/pkg-extra/me/notifications/index.wxml",
+    "miniapp/pkg-extra/me/notifications/index.wxss",
+    "miniapp/assets/icons/lucide/heart.svg",
+    "miniapp/assets/icons/lucide/bookmark.svg"
+  ],
+  "backup": "/var/folders/3y/jk4gpwpj34s6c6s76db7by600000gn/T/meal-ui-layout-review-20261009-lqyoa37m",
+  "originalCheckoutUnchanged": true,
+  "credentialScan": {
+    "files": 19,
+    "hitFiles": []
+  },
+  "diffCheckPassed": true,
+  "galleryResources": {
+    "screens": 76,
+    "missing": []
+  }
+}

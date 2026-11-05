@@ -12,31 +12,9 @@
   padding: 0 46rpx calc(220rpx + env(safe-area-inset-bottom));
 }
 
-/* —— Hero 标题 —— */
-.mem-head {
-  padding: 12rpx 0 34rpx;
-}
-.mem-eyebrow {
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: var(--fs-sub);
-  letter-spacing: 2rpx;
-  color: var(--gold-deep);
-  font-weight: 700;
-}
-.mem-h1 {
-  margin-top: 10rpx;
-  font-size: var(--fs-hero-lg);
-  font-weight: 900;
-  color: var(--ink);
-  letter-spacing: -4rpx;
-  line-height: 0.95;
-  font-family: var(--sans);
-}
-
 /* —— 家庭信息暗卡 —— */
 .famcard {
-  margin: 6rpx 0 8rpx;
+  margin: 24rpx 0 8rpx;
   padding: 42rpx 42rpx 38rpx;
 }
 .fam-top {
@@ -71,7 +49,6 @@
 }
 .fam-feyebrow {
   font-family: var(--serif);
-  font-style: italic;
   font-size: var(--fs-cap);
   letter-spacing: 2rpx;
   color: var(--gold);
@@ -97,7 +74,6 @@
 }
 .fam-cap {
   font-family: var(--serif);
-  font-style: italic;
   font-size: var(--fs-mini);
   letter-spacing: 1.5rpx;
   text-transform: uppercase;
@@ -328,28 +304,7 @@
   font-size: calc(32rpx * var(--fs-mul, 1));
 }
 .mem-invbtn-icon {
-  position: relative;
-  width: 34rpx;
-  height: 34rpx;
-}
-.mem-invbtn-icon::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 2rpx;
-  width: 24rpx;
-  height: 24rpx;
-  border: 4rpx solid var(--anchor-contrast);
-  border-radius: 50%;
-}
-.mem-invbtn-icon::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 18rpx;
-  height: 4rpx;
-  background: var(--anchor-contrast);
-  border-radius: 2rpx;
-  box-shadow: -7rpx -7rpx 0 -2rpx var(--anchor-contrast);
+  flex: none;
+  width: 36rpx;
+  height: 36rpx;
 }

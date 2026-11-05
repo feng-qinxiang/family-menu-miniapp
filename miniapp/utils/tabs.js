@@ -15,13 +15,19 @@ const features = require('./features');
 const ALL_TABS = [
   {
     pagePath: '/pages/home/index',
-    text: '今日',
+    text: '点菜',
     icon: '/assets/icons/tab-home.svg',
     activeIcon: '/assets/icons/tab-home-active.svg'
   },
   {
-    pagePath: '/pages/recipes/index',
-    text: '菜谱',
+    pagePath: '/pages/menu/index',
+    text: '做菜',
+    icon: '/assets/icons/tab-cook.svg',
+    activeIcon: '/assets/icons/tab-cook-active.svg'
+  },
+  {
+    pagePath: '/pages/cook-log/index',
+    text: '记录',
     icon: '/assets/icons/tab-recipe.svg',
     activeIcon: '/assets/icons/tab-recipe-active.svg'
   },
@@ -32,12 +38,6 @@ const ALL_TABS = [
     activeIcon: '/assets/icons/tab-community-active.svg',
     // 社区受资质/运营开关控制：关闭时只是不渲染，app.json 里仍然要声明
     feature: 'COMMUNITY'
-  },
-  {
-    pagePath: '/pages/pantry/index',
-    text: '冰箱',
-    icon: '/assets/icons/tab-fridge.svg',
-    activeIcon: '/assets/icons/tab-fridge-active.svg'
   },
   {
     pagePath: '/pages/me/index',

@@ -18,7 +18,7 @@ Component({
       type: String,
       value: 'card'
     },
-    // home 横滑宽卡 | grid 双列 | default(favorites)
+    // home 横滑宽卡 | grid 双列 | list 紧凑行 | default(favorites)
     density: {
       type: String,
       value: 'default'
@@ -32,7 +32,7 @@ Component({
       type: Boolean,
       value: true
     },
-    // card 加菜位置：corner 右上(home) | float 右下(recipes)
+    // card 加菜位置：corner 图片右下 | float 卡片右下
     addPlacement: {
       type: String,
       value: 'corner'
@@ -51,6 +51,10 @@ Component({
     metaOverride: {
       type: String,
       value: ''
+    },
+    showPantry: {
+      type: Boolean,
+      value: false
     }
   },
 
@@ -128,8 +132,11 @@ Component({
         badgeText: badgeText,
         timeText: timeText,
         metaText: metaText,
+        detailTags: Array.from(new Set([r.cuisine].concat(tags).filter(Boolean))).slice(0, 3),
+        ingredientText: (Array.isArray(r.ingredients) ? r.ingredients : []).map(item => item.name || item.ingredientName).filter(Boolean).slice(0, 4).join('、'),
         favorited: !!r.favorited,
-        addMark: this.data.selected ? '✓' : '+'
+        addMark: this.data.selected ? '✓' : '+',
+        coverBroken: cover === this.data.cover && this.data.coverBroken === true
       });
     },
 

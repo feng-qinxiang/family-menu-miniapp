@@ -1,0 +1,439 @@
+{
+  "screens": [
+    {
+      "route": "pkg-extra/vip/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-vip-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": true
+    },
+    {
+      "route": "pkg-extra/vip/upgrade/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-vip-upgrade-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": true
+    },
+    {
+      "route": "pkg-extra/vip/orders/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-vip-orders-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": true
+    },
+    {
+      "route": "pkg-extra/payment/checkout/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-payment-checkout-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": true
+    },
+    {
+      "route": "pkg-extra/payment/success/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-payment-success-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": true
+    },
+    {
+      "route": "pkg-extra/recipe-detail/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-recipe-detail-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/recipe-detail/index",
+      "state": "做法与评价",
+      "image": "screens/all-pkg-extra-recipe-detail-index-做法与评价.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/favorites/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-favorites-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/favorites/index",
+      "state": "帖子",
+      "image": "screens/all-pkg-extra-favorites-index-帖子.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/recipes/search/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-recipes-search-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/auth/login/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-auth-login-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/auth/login-phone/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-auth-login-phone-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": true
+    },
+    {
+      "route": "pkg-extra/family/join/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-family-join-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/family/invite/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-family-invite-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/me/settings/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-me-settings-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/me/preference-profile/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-me-preference-profile-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/me/feedback/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-me-feedback-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/me/help-faq/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-me-help-faq-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/me/about/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-me-about-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/legal/terms/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-legal-terms-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/legal/privacy/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-legal-privacy-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/legal/deletion/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-legal-deletion-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/me/profile-edit/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-me-profile-edit-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-community-post-detail-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "多图",
+      "image": "screens/all-pkg-extra-community-post-detail-index-多图.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "评论",
+      "image": "screens/all-pkg-extra-community-post-detail-index-评论.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/recipe-edit/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-recipe-edit-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/recipe-edit/index",
+      "state": "用料",
+      "image": "screens/all-pkg-extra-recipe-edit-index-用料.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/recipe-edit/index",
+      "state": "步骤",
+      "image": "screens/all-pkg-extra-recipe-edit-index-步骤.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/family/members/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-family-members-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/me/notifications/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-me-notifications-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    }
+  ],
+  "routes": [
+    {
+      "route": "pkg-extra/vip/index",
+      "actualRoute": "pkg-extra/vip/index",
+      "gated": true,
+      "temporarySample": false,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/vip/upgrade/index",
+      "actualRoute": "pkg-extra/vip/upgrade/index",
+      "gated": true,
+      "temporarySample": false,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/vip/orders/index",
+      "actualRoute": "pkg-extra/vip/orders/index",
+      "gated": true,
+      "temporarySample": true,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/payment/checkout/index",
+      "actualRoute": "pkg-extra/payment/checkout/index",
+      "gated": true,
+      "temporarySample": false,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/payment/success/index",
+      "actualRoute": "pkg-extra/payment/success/index",
+      "gated": true,
+      "temporarySample": true,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/recipe-detail/index",
+      "actualRoute": "pkg-extra/recipe-detail/index",
+      "gated": false,
+      "temporarySample": true,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/favorites/index",
+      "actualRoute": "pkg-extra/favorites/index",
+      "gated": false,
+      "temporarySample": true,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/recipes/search/index",
+      "actualRoute": "pkg-extra/recipes/search/index",
+      "gated": false,
+      "temporarySample": true,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/cook-log/index",
+      "actualRoute": "pages/cook-log/index",
+      "navigationNote": "automation_navigate: timeout waiting for automator response\n\n1 !== 0\n",
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/auth/login/index",
+      "actualRoute": "pkg-extra/auth/login/index",
+      "gated": false,
+      "temporarySample": false,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/auth/login-phone/index",
+      "actualRoute": "pkg-extra/auth/login-phone/index",
+      "gated": true,
+      "temporarySample": false,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/family/join/index",
+      "actualRoute": "pkg-extra/family/join/index",
+      "gated": false,
+      "temporarySample": false,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/family/invite/index",
+      "actualRoute": "pkg-extra/family/invite/index",
+      "gated": false,
+      "temporarySample": true,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/me/settings/index",
+      "actualRoute": "pkg-extra/me/settings/index",
+      "gated": false,
+      "temporarySample": false,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/me/preference-profile/index",
+      "actualRoute": "pkg-extra/me/preference-profile/index",
+      "gated": false,
+      "temporarySample": true,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/me/feedback/index",
+      "actualRoute": "pkg-extra/me/feedback/index",
+      "gated": false,
+      "temporarySample": true,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/me/help-faq/index",
+      "actualRoute": "pkg-extra/me/help-faq/index",
+      "gated": false,
+      "temporarySample": false,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/me/about/index",
+      "actualRoute": "pkg-extra/me/about/index",
+      "gated": false,
+      "temporarySample": false,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/legal/terms/index",
+      "actualRoute": "pkg-extra/legal/terms/index",
+      "gated": false,
+      "temporarySample": false,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/legal/privacy/index",
+      "actualRoute": "pkg-extra/legal/privacy/index",
+      "gated": false,
+      "temporarySample": false,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/legal/deletion/index",
+      "actualRoute": "pkg-extra/legal/deletion/index",
+      "gated": false,
+      "temporarySample": false,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/me/profile-edit/index",
+      "actualRoute": "pkg-extra/me/profile-edit/index",
+      "gated": false,
+      "temporarySample": true,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "actualRoute": "pkg-extra/community/post-detail/index",
+      "gated": false,
+      "temporarySample": true,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/recipe-edit/index",
+      "actualRoute": "pkg-extra/recipe-edit/index",
+      "gated": false,
+      "temporarySample": true,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/family/members/index",
+      "actualRoute": "pkg-extra/family/members/index",
+      "gated": false,
+      "temporarySample": true,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/me/notifications/index",
+      "actualRoute": "pkg-extra/me/notifications/index",
+      "gated": false,
+      "temporarySample": true,
+      "passed": true
+    }
+  ],
+  "checkedAt": "2026-10-09T00:35:47.220Z",
+  "passed": true,
+  "source": "Native formal pages; temporary sample data restored; closed features kept closed; no business write APIs.",
+  "formalRoutes": 39
+}

@@ -4,9 +4,8 @@
 <view class="page {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <view class="body">
     <!-- Hero -->
-    <view class="eyebrow eyebrow-serif g-fade-up">隐私政策</view>
     <view class="doctitle g-fade-up g-d1">
-      你的<text class="pop">隐私</text>{{'\n'}}我们认真守护
+      你的隐私{{'\n'}}我们认真守护
     </view>
     <view class="effective g-fade-up g-d2">
       <text class="effective-dot"></text>生效日期：{{effectiveDate}}

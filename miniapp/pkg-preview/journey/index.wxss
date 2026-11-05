@@ -258,12 +258,44 @@ button { margin: 0; padding: 0; background: transparent; border-radius: 0; color
 .design-c .journey-tab.on { background: var(--j-accent-soft); }
 .design-c .journey-tab.on .journey-tab-icon { filter: grayscale(1); }
 
+/* D: keep the original dish-led opening, then add the family decision and the
+   modern order-to-cook handoff. The family strip stays outside the photo so
+   the action remains readable over every dish image. */
+.design-d {
+  --j-bg: #f8f4ed; --j-surface: #fffdf8; --j-soft: #efe6d8; --j-ink: #302921;
+  --j-muted: #756a5e; --j-accent: #bd5037; --j-accent-soft: #f7e1d6;
+  --j-line: #e7dbcc; --j-radius: 22rpx; --j-button-bg: var(--j-accent);
+}
+.design-d .j-title { font-size: var(--fs-hero-sm); letter-spacing: -1rpx; }
+.design-d .meal-switch { background: var(--j-surface); border: 1rpx solid var(--j-line); box-shadow: 0 8rpx 24rpx rgba(76, 51, 34, .06); }
+.design-d .meal-option.on { background: var(--j-ink); color: var(--j-bg); }
+.design-d .fusion-hero { height: 278rpx; border-radius: 24rpx; margin-bottom: 10rpx; box-shadow: 0 14rpx 32rpx rgba(76, 51, 34, .12); }
+.design-d .fusion-hero .feature-shade { background: linear-gradient(90deg, rgba(30, 20, 14, .86), rgba(30, 20, 14, .16)); }
+.design-d .fusion-hero .feature-title { font-size: var(--fs-hero-sm); }
+.design-d .fusion-hero .feature-action { border-radius: 999rpx; box-shadow: 0 8rpx 18rpx rgba(189, 80, 55, .28); }
+.fusion-family { display: flex; align-items: center; gap: 18rpx; margin: 0 4rpx 24rpx; padding: 16rpx 0 20rpx; border-bottom: 1rpx solid var(--j-line); }
+.fusion-family .family-faces { padding-left: 2rpx; }
+.fusion-family .family-avatar { border-color: var(--j-bg); }
+.design-d .menu-ticket { border: 0; box-shadow: 0 12rpx 30rpx rgba(76, 51, 34, .08); }
+.design-d .ticket-head { padding-bottom: 16rpx; border-bottom: 1rpx dashed var(--j-line); }
+.design-d .ticket-kicker { color: var(--j-accent); }
+.design-d .ticket-family { padding: 8rpx 14rpx; border-radius: 999rpx; background: var(--j-accent-soft); color: var(--j-accent); }
+.design-d .ticket-footer { background: var(--j-soft); }
+.design-d .recipe-tile { box-shadow: 0 8rpx 22rpx rgba(76, 51, 34, .05); }
+.design-d .cook-focus { box-shadow: 0 10rpx 26rpx rgba(76, 51, 34, .06); }
+.design-d .record-latest { box-shadow: 0 10rpx 26rpx rgba(76, 51, 34, .06); }
+.design-d .post-card { box-shadow: 0 10rpx 26rpx rgba(76, 51, 34, .06); }
+.design-d .journey-nav { background: var(--j-surface); }
+.design-d .journey-tab.on { background: var(--j-accent-soft); }
+
 .journey.is-dark { --j-bg: #171b19; --j-surface: #222824; --j-soft: #2d352f; --j-ink: #f0eee6; --j-muted: #b4bdb5; --j-line: #3b443e; --j-accent: #f08968; --j-accent-soft: #49362e; --j-button-bg: var(--j-accent); --j-button-ink: var(--j-bg); }
 .journey.design-c.is-dark { --j-accent: #94d1ac; --j-accent-soft: #284638; }
+.journey.design-d.is-dark { --j-bg: #1e1a17; --j-surface: #29231e; --j-soft: #382d25; --j-ink: #f4eee4; --j-muted: #c2b6a6; --j-line: #4a3d32; --j-accent: #f08a6d; --j-accent-soft: #4b3029; }
 @media (prefers-color-scheme: dark) {
   .journey { --j-button-bg: var(--j-accent); --j-button-ink: var(--j-bg); }
   .design-b { --j-bg: #1f1c18; --j-surface: #2b2620; --j-soft: #363026; --j-ink: #f2ecdf; --j-muted: #beb4a4; --j-accent: #f08968; --j-accent-soft: #49362e; --j-line: #494033; }
   .design-c { --j-bg: #171b19; --j-surface: #222824; --j-soft: #2d352f; --j-ink: #f0eee6; --j-muted: #b4bdb5; --j-accent: #94d1ac; --j-accent-soft: #284638; --j-line: #3b443e; }
+  .design-d { --j-bg: #1e1a17; --j-surface: #29231e; --j-soft: #382d25; --j-ink: #f4eee4; --j-muted: #c2b6a6; --j-line: #4a3d32; --j-accent: #f08a6d; --j-accent-soft: #4b3029; }
 }
 .font-lg .cook-switch { flex-direction: column; }
 .font-lg .cook-chip { flex: none; }

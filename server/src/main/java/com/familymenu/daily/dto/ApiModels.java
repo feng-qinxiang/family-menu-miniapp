@@ -482,6 +482,12 @@ public final class ApiModels {
     ) {
     }
 
+    public record IngredientPhotoRequest(
+            @NotBlank @Size(max = 128) String ingredientName,
+            @NotNull @Size(max = 512) String coverImage
+    ) {
+    }
+
     public record AddPantryItemRequest(
             @NotBlank String ingredientName,
             // 只挡「负数量」这一种明显的手滑（用户把 "-5" 打进自由文本输入框）。
@@ -510,7 +516,8 @@ public final class ApiModels {
             int matchedCount,
             int totalCount,
             double matchRate,
-            List<String> missingIngredients
+            List<String> missingIngredients,
+            List<String> expiringIngredients
     ) {
     }
 

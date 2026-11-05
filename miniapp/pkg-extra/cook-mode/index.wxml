@@ -1,7 +1,7 @@
 <!-- pages/cook-mode/index.wxml · 烹饪模式（沉浸暗底分步引导） -->
 <view class="cook {{fontScale === 'lg' ? 'font-lg' : ''}}" style="--sbh: {{statusBarHeight}}px;">
 
-  <!-- 顶部：返回 X + 菜名步数 + 计时入口 -->
+  <!-- 顶部只放菜名和步骤，计时集中到底部。 -->
   <view class="topbar" style="padding-top: {{statusBarHeight}}px; padding-right: {{capsulePad || 96}}px;">
     <view class="nbtn tap-scale" catchtap="onClose">
       <view class="ic-x"></view>
@@ -9,12 +9,6 @@
     <view class="dishbar">
       <view class="dn ellipsis">{{dishName || '烹饪模式'}}</view>
       <view class="prog" wx:if="{{total}}">{{steps[current].cn}} · {{current + 1}}/{{total}}</view>
-    </view>
-    <view class="tap-scale nbtn keep {{running ? 'on' : ''}}" catchtap="toggleTimer">
-      <view class="ic-clock-sm keep-ic"></view>
-      <!-- 计时跑着的时候这里显示本步剩余时间：步骤正文 + 计时卡在下方滚动区里，
-           而做菜时手机常放在一臂外，倒计时得有个不随滚动跑掉的地方 -->
-      <text class="keep-tx">{{running ? timerText : '计时'}}</text>
     </view>
   </view>
 
@@ -37,13 +31,6 @@
   <!-- 正文 -->
   <view wx:else class="body">
 
-    <!-- 离开的那一步还在倒数：这枚小条接管提醒，点它回到那一步 -->
-    <view wx:if="{{bgIdx >= 0}}" class="bgchip tap-scale" catchtap="jumpToBgStep">
-      <view class="ic-clock-sm bgchip-ic"></view>
-      <text class="bgchip-tx">{{bgName}}还剩 {{bgText}}</text>
-      <text wx:if="{{bgExtra}}" class="bgchip-more">另有 {{bgExtra}} 步</text>
-      <text class="bgchip-go">回去 ›</text>
-    </view>
 
     <!-- 进度条每段可点，直接跳到那一步（段本身只有 8rpx 高，热区靠 .dot::after 撑到 88rpx） -->
     <view class="dots">
@@ -58,23 +45,18 @@
     </view>
     <text wx:if="{{dotsHint}}" class="dots-hint">轻点进度条，可直接跳到那一步</text>
 
-    <!-- 步骤大图 -->
+    <!-- 图文一起滚动，长步骤也给底部操作留足空间。 -->
+    <scroll-view class="stepwrap" scroll-y scroll-with-animation scroll-top="{{stepTop}}">
     <view class="stepimg g-fade-in">
       <image class="stepimg-pic {{steps[current].imgBroken ? 'img-broken' : ''}}" src="{{steps[current].image}}" mode="aspectFill"
         data-err-key="{{'steps[' + current + '].imgBroken'}}" binderror="onPhotoError" />
       <view class="stepimg-mask"></view>
-      <view wx:if="{{hasTimer}}" class="timetag">
-        <view class="ic-clock-sm"></view>
-        <text>约 {{timerTotal >= 60 ? (timerTotal / 60) : timerTotal}} {{timerTotal >= 60 ? '分钟' : '秒'}}</text>
-      </view>
       <view class="bignum title-stroke"><text>{{steps[current].num}}</text></view>
       <view class="small">
         <view class="t ellipsis">{{steps[current].cn}}</view>
       </view>
     </view>
 
-    <!-- 步骤文本滚动区 -->
-    <scroll-view class="stepwrap" scroll-y scroll-with-animation scroll-top="{{stepTop}}">
       <view class="stepeyebrow">正在烹饪</view>
       <view class="steptext">{{steps[current].text}}</view>
 
@@ -94,24 +76,35 @@
         </view>
       </view>
 
-      <!-- 计时卡 -->
-      <view wx:if="{{hasTimer}}" class="timer">
-        <view class="tap-scale tl" catchtap="pickDuration">
-          <view class="cap">这一步计时 <text class="cap-pick">换时长 ›</text></view>
-          <view class="num">{{timerText[0]}}{{timerText[1]}}<text class="pop">:</text>{{timerText[3]}}{{timerText[4]}}</view>
+      <view class="scroll-pad"></view>
+    </scroll-view>
+
+    <view class="cook-dock">
+      <view wx:if="{{bgIdx >= 0}}" class="bgchip tap-scale" catchtap="jumpToBgStep" role="button" aria-label="返回{{bgName}}，剩余{{bgText}}">
+        <view class="ic-clock-sm bgchip-ic"></view>
+        <text class="bgchip-tx">{{bgName}} · {{bgText}}</text>
+        <text wx:if="{{bgExtra}}" class="bgchip-more">另有 {{bgExtra}} 步</text>
+        <text class="bgchip-go">查看 ›</text>
+      </view>
+      <!-- 常驻计时在步骤内容下方、翻步操作上方。 -->
+      <view wx:if="{{hasTimer}}" class="timer {{running ? 'is-running' : ''}}">
+        <view class="tap-scale tl" catchtap="pickDuration" role="button" aria-label="更换本步计时时长">
+          <view class="cap">{{running ? '计时中' : (timerLeft === 0 ? '计时结束' : (timerLeft < timerTotal ? '已暂停' : '这一步计时'))}}<text class="cap-pick">换时长 ›</text></view>
+          <view class="num">{{timerText}}</view>
         </view>
         <view class="timer-acts">
-          <view class="tbtn ghost tap-scale" catchtap="resetTimer">
-            <view class="ic-reset"></view>
+          <view class="tbtn ghost tap-scale" catchtap="resetTimer" role="button" aria-label="重置本步计时">
+            <text>重置</text>
           </view>
-          <view class="tbtn tap-scale" catchtap="toggleTimer">
-            <view class="{{running ? 'ic-pause' : 'ic-play'}}"></view>
+          <view class="tbtn tap-scale" catchtap="toggleTimer" role="button" aria-label="{{running ? '暂停计时' : '开始或继续计时'}}">
+            <text>{{running ? '暂停' : (timerLeft < timerTotal && timerLeft > 0 ? '继续' : '开始')}}</text>
           </view>
         </view>
       </view>
 
-      <view class="scroll-pad"></view>
-    </scroll-view>
+      <view wx:else class="timer-add tap-scale" catchtap="pickDuration" role="button" aria-label="为这一步添加计时">
+        <view class="ic-clock-sm"></view><text>这一步需要计时？</text><text class="timer-add-action">＋ 添加计时</text>
+      </view>
 
     <!-- 底部上/下一步 -->
     <view class="footer">
@@ -120,7 +113,7 @@
         catchtap="onPrev"
       >
         <view class="ic-arrow-l"></view>
-        <text>上一步</text>
+        <text class="btn-prev-label">上一步</text>
       </view>
       <view class="btn next tap-scale" catchtap="onNext" aria-disabled="{{finishing}}">
         <text wx:if="{{finishing}}">正在记录…</text>
@@ -129,6 +122,7 @@
         <text wx:else>完成 · 记一笔</text>
         <view class="ic-arrow-r"></view>
       </view>
+    </view>
     </view>
   </view>
 </view>

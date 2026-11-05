@@ -10,7 +10,6 @@
 }
 .fi-eyebrow {
   font-family: var(--serif);
-  font-style: italic;
   font-size: var(--fs-cap);
   letter-spacing: 2rpx;
   color: var(--gold-deep);
@@ -37,7 +36,6 @@
   position: relative;
   z-index: 2;
   font-family: var(--serif);
-  font-style: italic;
   font-size: var(--fs-cap);
   letter-spacing: 2rpx;
   color: var(--gold);
@@ -92,26 +90,6 @@
   border-color: var(--gold-deep);
   color: var(--ink-deep);
 }
-.fi-ic-copy {
-  width: 30rpx;
-  height: 30rpx;
-  border: 4rpx solid var(--paper);
-  border-radius: 6rpx;
-  position: relative;
-}
-.fi-ic-copy::after {
-  content: "";
-  position: absolute;
-  left: -12rpx;
-  top: -12rpx;
-  width: 20rpx;
-  height: 20rpx;
-  border: 4rpx solid var(--paper);
-  border-right: none;
-  border-bottom: none;
-  border-radius: 4rpx;
-}
-
 /* 邀请码说明（替代伪二维码：真实邀请走输码/分享路径） */
 .fi-qr-hint {
   position: relative;
@@ -178,64 +156,32 @@
   border: var(--bd-card);
   box-shadow: var(--sh-soft);
 }
-.fi-ic-save {
-  width: 30rpx;
-  height: 30rpx;
-  position: relative;
-}
-.fi-ic-save::before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 0;
-  transform: translateX(-50%);
-  width: 4rpx;
-  height: 20rpx;
-  background: var(--ink);
-  border-radius: 2rpx;
-}
-.fi-ic-save::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 9rpx;
-  transform: translateX(-50%) rotate(45deg);
-  width: 14rpx;
-  height: 14rpx;
-  border-right: 4rpx solid var(--ink);
-  border-bottom: 4rpx solid var(--ink);
-}
-
-/* Tip 24h */
+/* 邀请码说明：中性提示，不用警示红 */
 .fi-note {
   display: flex;
   align-items: flex-start;
   gap: 17rpx;
   margin-top: 46rpx;
   padding: 27rpx 31rpx;
-  background: var(--pop-soft);
+  background: var(--paper-2);
   border-radius: 31rpx;
 }
-.fi-note-ic {
+.fi-ic {
   flex: none;
-  margin-top: 2rpx;
   width: 32rpx;
   height: 32rpx;
-  border: 4rpx solid var(--pop);
-  border-radius: 50%;
-  position: relative;
 }
-.fi-note-ic::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 12rpx;
-  transform: translateX(-50%);
-  width: 4rpx;
-  height: 12rpx;
-  background: var(--pop);
-  border-radius: 2rpx;
-  box-shadow: 0 -10rpx 0 var(--pop);
+/* 浅色线框 SVG：浅底上压成墨色，深色模式还原（同 post-detail 的 reaction-icon） */
+.fi-ic--ink {
+  filter: brightness(0);
+  opacity: .7;
+}
+@media (prefers-color-scheme: dark) {
+  .fi-ic--ink { filter: none; }
+  .fi-copybtn--retry .fi-ic--ink { filter: brightness(0); }   /* 金色按钮两种模式都是浅底 */
+}
+.fi-note-ic {
+  margin-top: 4rpx;
 }
 .fi-note-text {
   font-size: calc(25rpx * var(--fs-mul, 1));
@@ -243,6 +189,6 @@
   color: var(--mut-strong);
 }
 .fi-note-text .b {
-  color: var(--pop);
+  color: var(--ink);
   font-weight: 800;
 }

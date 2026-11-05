@@ -1,0 +1,563 @@
+{
+  "formalRoutes": 39,
+  "pages": [
+    {
+      "route": "pages/home/index",
+      "title": "点菜首页",
+      "group": "点菜与备菜",
+      "image": "screens/app-home.jpg",
+      "existing": true,
+      "gated": false,
+      "status": "已优化 · 临时样例"
+    },
+    {
+      "route": "pages/recipes/index",
+      "title": "菜谱库",
+      "group": "点菜与备菜",
+      "image": "screens/app-recipes.jpg?v=20261011-filter-actions",
+      "existing": true,
+      "gated": false,
+      "status": "已优化 · 临时样例",
+      "variants": [
+        {
+          "label": "大字",
+          "image": "screens/picker-recipes-large.jpg?v=20261011-filter-actions"
+        },
+        {
+          "label": "展开筛选",
+          "image": "screens/picker-recipes-filters.jpg?v=20261011-filter-actions"
+        },
+        {
+          "label": "已选条件",
+          "image": "screens/picker-recipes-filter-selected.jpg?v=20261011-filter-actions"
+        },
+        {
+          "label": "筛选大字",
+          "image": "screens/picker-recipes-filters-large.jpg?v=20261011-filter-actions"
+        }
+      ]
+    },
+    {
+      "route": "pages/cook-log/index",
+      "title": "做菜记录",
+      "group": "做菜与记录",
+      "image": "screens/app-record.jpg",
+      "existing": true,
+      "gated": false,
+      "status": "已优化 · 临时样例",
+      "variants": [
+        {
+          "label": "大字",
+          "image": "screens/app-record-large.jpg"
+        }
+      ]
+    },
+    {
+      "route": "pages/community/index",
+      "title": "社区动态",
+      "group": "社区",
+      "image": "screens/app-community.jpg",
+      "existing": true,
+      "gated": false,
+      "status": "已优化 · 临时样例",
+      "variants": [
+        {
+          "label": "大字",
+          "image": "screens/app-community-large.jpg"
+        },
+        {
+          "label": "无图",
+          "image": "screens/app-community-text.jpg"
+        }
+      ]
+    },
+    {
+      "route": "pages/menu/index",
+      "title": "今日做菜",
+      "group": "做菜与记录",
+      "image": "screens/app-cook.jpg",
+      "existing": true,
+      "gated": false,
+      "status": "已优化 · 临时样例",
+      "variants": [
+        {
+          "label": "大字",
+          "image": "screens/app-cook-large.jpg"
+        }
+      ]
+    },
+    {
+      "route": "pages/me/index",
+      "title": "我的",
+      "group": "我的与帮助",
+      "image": "screens/app-me.jpg",
+      "existing": true,
+      "gated": false,
+      "status": "已优化 · 临时样例",
+      "variants": [
+        {
+          "label": "大字",
+          "image": "screens/app-me-large.jpg"
+        }
+      ]
+    },
+    {
+      "route": "pages/shopping/index",
+      "title": "买菜清单",
+      "group": "点菜与备菜",
+      "image": "screens/app-shopping.jpg",
+      "existing": true,
+      "gated": false,
+      "status": "已优化 · 临时样例",
+      "variants": [
+        {
+          "label": "大字",
+          "image": "screens/app-shopping-large.jpg"
+        },
+        {
+          "label": "加购空表单",
+          "image": "screens/picker-shopping-add-empty.jpg"
+        },
+        {
+          "label": "加购有图",
+          "image": "screens/picker-shopping-add-photo.jpg"
+        },
+        {
+          "label": "加购大字",
+          "image": "screens/picker-shopping-add-large.jpg"
+        }
+      ]
+    },
+    {
+      "route": "pages/pantry/index",
+      "title": "冰箱库存",
+      "group": "点菜与备菜",
+      "image": "screens/app-pantry.jpg",
+      "existing": true,
+      "gated": false,
+      "status": "已优化 · 临时样例",
+      "variants": [
+        {
+          "label": "大字",
+          "image": "screens/picker-pantry-large.jpg"
+        },
+        {
+          "label": "图片失效",
+          "image": "screens/picker-pantry-image-fallback.jpg"
+        }
+      ]
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "title": "帖子详情与评论",
+      "group": "社区",
+      "image": "screens/all-pkg-extra-community-post-detail-index.jpg",
+      "existing": false,
+      "gated": false,
+      "status": "已优化 · 临时样例",
+      "variants": [
+        {
+          "label": "多图",
+          "image": "screens/all-pkg-extra-community-post-detail-index-多图.jpg"
+        },
+        {
+          "label": "多图第三张",
+          "image": "screens/all-pkg-extra-community-post-detail-index-多图第三张.jpg"
+        },
+        {
+          "label": "评论",
+          "image": "screens/all-pkg-extra-community-post-detail-index-评论.jpg"
+        },
+        {
+          "label": "评论大字",
+          "image": "screens/all-pkg-extra-community-post-detail-index-评论大字.jpg"
+        },
+        {
+          "label": "大字",
+          "image": "screens/all-pkg-extra-community-post-detail-index-大字.jpg"
+        },
+        {
+          "label": "写评论",
+          "image": "screens/all-pkg-extra-community-post-detail-index-写评论.jpg"
+        },
+        {
+          "label": "发送中",
+          "image": "screens/all-pkg-extra-community-post-detail-index-发送中.jpg"
+        },
+        {
+          "label": "无图",
+          "image": "screens/all-pkg-extra-community-post-detail-index-无图.jpg"
+        },
+        {
+          "label": "图片失效",
+          "image": "screens/all-pkg-extra-community-post-detail-index-图片失效.jpg"
+        },
+        {
+          "label": "无评论",
+          "image": "screens/all-pkg-extra-community-post-detail-index-无评论.jpg"
+        },
+        {
+          "label": "评论加载失败",
+          "image": "screens/all-pkg-extra-community-post-detail-index-评论加载失败.jpg"
+        }
+      ],
+      "captured": true
+    },
+    {
+      "route": "pkg-extra/kitchen/index",
+      "title": "厨房总控",
+      "group": "做菜与记录",
+      "image": "screens/app-kitchen.jpg",
+      "existing": true,
+      "gated": false,
+      "status": "已优化 · 临时样例",
+      "variants": [
+        {
+          "label": "大字",
+          "image": "screens/app-kitchen-large.jpg"
+        },
+        {
+          "label": "计时中",
+          "image": "screens/app-kitchen-running.jpg"
+        },
+        {
+          "label": "暂停大字",
+          "image": "screens/app-kitchen-paused-large.jpg"
+        }
+      ]
+    },
+    {
+      "route": "pkg-extra/vip/index",
+      "title": "家庭会员",
+      "group": "账户与会员",
+      "image": "screens/all-pkg-extra-vip-index.jpg",
+      "existing": false,
+      "gated": true,
+      "status": "功能关闭 · 布局预览",
+      "captured": true
+    },
+    {
+      "route": "pkg-extra/vip/upgrade/index",
+      "title": "会员升级",
+      "group": "账户与会员",
+      "image": "screens/all-pkg-extra-vip-upgrade-index.jpg",
+      "existing": false,
+      "gated": true,
+      "status": "功能关闭 · 布局预览",
+      "captured": true
+    },
+    {
+      "route": "pkg-extra/vip/orders/index",
+      "title": "会员订单",
+      "group": "账户与会员",
+      "image": "screens/all-pkg-extra-vip-orders-index.jpg",
+      "existing": false,
+      "gated": true,
+      "status": "功能关闭 · 布局预览",
+      "captured": true
+    },
+    {
+      "route": "pkg-extra/payment/checkout/index",
+      "title": "开通确认",
+      "group": "账户与会员",
+      "image": "screens/all-pkg-extra-payment-checkout-index.jpg",
+      "existing": false,
+      "gated": true,
+      "status": "功能关闭 · 已优化布局",
+      "captured": true,
+      "variants": [
+        {
+          "label": "大字",
+          "image": "screens/all-pkg-extra-payment-checkout-index-大字.jpg"
+        }
+      ]
+    },
+    {
+      "route": "pkg-extra/payment/success/index",
+      "title": "支付结果",
+      "group": "账户与会员",
+      "image": "screens/all-pkg-extra-payment-success-index.jpg",
+      "existing": false,
+      "gated": true,
+      "status": "功能关闭 · 布局预览",
+      "captured": true
+    },
+    {
+      "route": "pkg-extra/favorites/index",
+      "title": "我的收藏",
+      "group": "点菜与备菜",
+      "image": "screens/all-pkg-extra-favorites-index.jpg",
+      "existing": false,
+      "gated": false,
+      "status": "原有布局 · 临时样例",
+      "variants": [
+        {
+          "label": "帖子",
+          "image": "screens/all-pkg-extra-favorites-index-帖子.jpg"
+        }
+      ],
+      "captured": true
+    },
+    {
+      "route": "pkg-extra/import/index",
+      "title": "导入菜谱",
+      "group": "点菜与备菜",
+      "image": "screens/app-import.jpg",
+      "existing": true,
+      "gated": false,
+      "status": "已优化 · 临时样例"
+    },
+    {
+      "route": "pkg-extra/recipe-detail/index",
+      "title": "菜谱详情",
+      "group": "点菜与备菜",
+      "image": "screens/all-pkg-extra-recipe-detail-index.jpg",
+      "existing": false,
+      "gated": false,
+      "status": "已优化 · 临时样例",
+      "variants": [
+        {
+          "label": "食材",
+          "image": "screens/all-pkg-extra-recipe-detail-index-食材.jpg"
+        },
+        {
+          "label": "食材大字",
+          "image": "screens/all-pkg-extra-recipe-detail-index-食材大字.jpg"
+        },
+        {
+          "label": "做法与评价",
+          "image": "screens/all-pkg-extra-recipe-detail-index-做法与评价.jpg"
+        }
+      ],
+      "captured": true
+    },
+    {
+      "route": "pkg-extra/recipe-edit/index",
+      "title": "编辑菜谱",
+      "group": "点菜与备菜",
+      "image": "screens/all-pkg-extra-recipe-edit-index.jpg",
+      "existing": false,
+      "gated": false,
+      "status": "原有布局 · 临时样例",
+      "variants": [
+        {
+          "label": "用料",
+          "image": "screens/all-pkg-extra-recipe-edit-index-用料.jpg"
+        },
+        {
+          "label": "步骤",
+          "image": "screens/all-pkg-extra-recipe-edit-index-步骤.jpg"
+        }
+      ],
+      "captured": true
+    },
+    {
+      "route": "pkg-extra/weekly-menu/index",
+      "title": "一周菜单",
+      "group": "点菜与备菜",
+      "image": "screens/app-weekly.jpg",
+      "existing": true,
+      "gated": false,
+      "status": "已优化 · 临时样例"
+    },
+    {
+      "route": "pkg-extra/recipes/search/index",
+      "title": "搜索结果",
+      "group": "点菜与备菜",
+      "image": "screens/all-pkg-extra-recipes-search-index.jpg",
+      "existing": false,
+      "gated": false,
+      "status": "原有布局 · 临时样例",
+      "captured": true
+    },
+    {
+      "route": "pkg-extra/cook-mode/index",
+      "title": "分步做菜",
+      "group": "做菜与记录",
+      "image": "screens/app-cook-mode-running.jpg",
+      "existing": true,
+      "gated": false,
+      "status": "已优化 · 临时样例"
+    },
+    {
+      "route": "pkg-extra/cook-log/index",
+      "title": "旧记录入口",
+      "group": "做菜与记录",
+      "image": "screens/app-record.jpg",
+      "existing": false,
+      "gated": false,
+      "status": "兼容入口 · 跳转记录页",
+      "captured": true
+    },
+    {
+      "route": "pkg-extra/auth/login/index",
+      "title": "微信登录",
+      "group": "账户与会员",
+      "image": "screens/all-pkg-extra-auth-login-index.jpg",
+      "existing": false,
+      "gated": false,
+      "status": "原有布局 · 待逐页标注",
+      "captured": true
+    },
+    {
+      "route": "pkg-extra/auth/login-phone/index",
+      "title": "手机登录",
+      "group": "账户与会员",
+      "image": "screens/all-pkg-extra-auth-login-phone-index.jpg",
+      "existing": false,
+      "gated": true,
+      "status": "功能关闭 · 布局预览",
+      "captured": true
+    },
+    {
+      "route": "pkg-extra/family/create/index",
+      "title": "创建家庭",
+      "group": "家庭",
+      "image": "screens/app-family.jpg",
+      "existing": true,
+      "gated": false,
+      "status": "已优化 · 临时样例"
+    },
+    {
+      "route": "pkg-extra/family/join/index",
+      "title": "加入家庭",
+      "group": "家庭",
+      "image": "screens/all-pkg-extra-family-join-index.jpg",
+      "existing": false,
+      "gated": false,
+      "status": "原有布局 · 待逐页标注",
+      "captured": true
+    },
+    {
+      "route": "pkg-extra/family/members/index",
+      "title": "家庭成员",
+      "group": "家庭",
+      "image": "screens/all-pkg-extra-family-members-index.jpg",
+      "existing": false,
+      "gated": false,
+      "status": "原有布局 · 临时样例",
+      "captured": true
+    },
+    {
+      "route": "pkg-extra/family/invite/index",
+      "title": "邀请家人",
+      "group": "家庭",
+      "image": "screens/all-pkg-extra-family-invite-index.jpg",
+      "existing": false,
+      "gated": false,
+      "status": "原有布局 · 获取失败态",
+      "captured": true
+    },
+    {
+      "route": "pkg-extra/me/settings/index",
+      "title": "设置",
+      "group": "我的与帮助",
+      "image": "screens/all-pkg-extra-me-settings-index.jpg",
+      "existing": false,
+      "gated": false,
+      "status": "已优化 · 临时样例",
+      "captured": true
+    },
+    {
+      "route": "pkg-extra/me/notifications/index",
+      "title": "消息中心",
+      "group": "我的与帮助",
+      "image": "screens/all-pkg-extra-me-notifications-index.jpg?v=20261011-filter-actions",
+      "existing": false,
+      "gated": false,
+      "status": "已优化 · 临时样例",
+      "captured": true,
+      "variants": [
+        {
+          "label": "大字",
+          "image": "screens/all-pkg-extra-me-notifications-index-大字.jpg?v=20261011-filter-actions"
+        },
+        {
+          "label": "已读",
+          "image": "screens/all-pkg-extra-me-notifications-index-已读.jpg?v=20261011-filter-actions"
+        }
+      ]
+    },
+    {
+      "route": "pkg-extra/me/preference-profile/index",
+      "title": "口味偏好",
+      "group": "我的与帮助",
+      "image": "screens/all-pkg-extra-me-preference-profile-index.jpg",
+      "existing": false,
+      "gated": false,
+      "status": "原有布局 · 临时样例",
+      "captured": true
+    },
+    {
+      "route": "pkg-extra/me/feedback/index",
+      "title": "意见反馈",
+      "group": "我的与帮助",
+      "image": "screens/all-pkg-extra-me-feedback-index.jpg",
+      "existing": false,
+      "gated": false,
+      "status": "原有布局 · 临时样例",
+      "captured": true
+    },
+    {
+      "route": "pkg-extra/me/help-faq/index",
+      "title": "常见问题",
+      "group": "我的与帮助",
+      "image": "screens/all-pkg-extra-me-help-faq-index.jpg",
+      "existing": false,
+      "gated": false,
+      "status": "原有布局 · 待逐页标注",
+      "captured": true
+    },
+    {
+      "route": "pkg-extra/me/about/index",
+      "title": "关于我们",
+      "group": "我的与帮助",
+      "image": "screens/all-pkg-extra-me-about-index.jpg",
+      "existing": false,
+      "gated": false,
+      "status": "原有布局 · 待逐页标注",
+      "captured": true
+    },
+    {
+      "route": "pkg-extra/legal/terms/index",
+      "title": "用户协议",
+      "group": "我的与帮助",
+      "image": "screens/all-pkg-extra-legal-terms-index.jpg",
+      "existing": false,
+      "gated": false,
+      "status": "原有布局 · 待逐页标注",
+      "captured": true
+    },
+    {
+      "route": "pkg-extra/legal/privacy/index",
+      "title": "隐私政策",
+      "group": "我的与帮助",
+      "image": "screens/all-pkg-extra-legal-privacy-index.jpg",
+      "existing": false,
+      "gated": false,
+      "status": "原有布局 · 待逐页标注",
+      "captured": true
+    },
+    {
+      "route": "pkg-extra/legal/deletion/index",
+      "title": "注销说明",
+      "group": "我的与帮助",
+      "image": "screens/all-pkg-extra-legal-deletion-index.jpg",
+      "existing": false,
+      "gated": false,
+      "status": "原有布局 · 待逐页标注",
+      "captured": true
+    },
+    {
+      "route": "pkg-extra/me/profile-edit/index",
+      "title": "个人资料",
+      "group": "我的与帮助",
+      "image": "screens/all-pkg-extra-me-profile-edit-index.jpg",
+      "existing": false,
+      "gated": false,
+      "status": "原有布局 · 临时样例",
+      "captured": true
+    }
+  ],
+  "updatedAt": "2026-10-09T01:37:13.773Z"
+}

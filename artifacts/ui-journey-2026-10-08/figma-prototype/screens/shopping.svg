@@ -1,0 +1,246 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="390" height="844" viewBox="0 0 390 844">
+<title>买菜清单与连续加购</title>
+<rect width="100%" height="100%" fill="#fbf8f3"/>
+<g id="layer-0" data-name="9:41" data-x="20" data-y="7" data-w="62" data-h="23">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="13" font-weight="600" text-anchor="start">
+<tspan x="20" y="21.75">9:41</tspan>
+</text>
+</g>
+<g id="layer-1" data-name="•••" data-x="312" data-y="7" data-w="29" data-h="23">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="13" font-weight="600" text-anchor="start">
+<tspan x="312" y="21.75">•••</tspan>
+</text>
+</g>
+<g id="layer-2" data-name="电池" data-x="347" data-y="15" data-w="24" data-h="11">
+<rect x="347" y="15" width="24" height="11" rx="3" fill="#2c241b" opacity="0.8"/>
+</g>
+<g id="layer-3" data-name="图标 / arrow-left" data-x="19" data-y="48" data-w="23" data-h="23">
+<g transform="translate(19 48) scale(0.9583333333333334 0.9583333333333334)" fill="none" stroke="#2c241b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="m12 19-7-7 7-7" />
+  <path d="M19 12H5" />
+</g>
+</g>
+<g id="layer-4" data-name="买菜清单" data-x="74" data-y="39" data-w="210" data-h="44">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="16" font-weight="600" text-anchor="middle">
+<tspan x="179.0" y="65.0">买菜清单</tspan>
+</text>
+</g>
+<g id="layer-5" data-name="微信胶囊" data-x="311" data-y="45" data-w="62" data-h="31">
+<rect x="311" y="45" width="62" height="31" rx="16" fill="#f0ebe2" opacity="0.94"/>
+</g>
+<g id="layer-6" data-name="•••  ⊙" data-x="315" data-y="45" data-w="54" data-h="31">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="14" font-weight="600" text-anchor="middle">
+<tspan x="342.0" y="64.0">•••  ⊙</tspan>
+</text>
+</g>
+<g id="layer-7" data-name="买菜清单" data-x="16" data-y="103" data-w="280" data-h="40.5">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="27" font-weight="700" text-anchor="start">
+<tspan x="16" y="130.0">买菜清单</tspan>
+</text>
+</g>
+<g id="layer-8" data-name="按今天的菜单备菜，家里已有的先用。" data-x="16" data-y="145" data-w="358" data-h="18.75">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="12.5" font-weight="400" text-anchor="start">
+<tspan x="16" y="157.5">按今天的菜单备菜，家里已有的先用。</tspan>
+</text>
+</g>
+<g id="layer-9" data-name="采购进度" data-x="16" data-y="180" data-w="358" data-h="87">
+<rect x="16" y="180" width="358" height="87" rx="9" fill="#ffffff"/>
+</g>
+<g id="layer-10" data-name="还差 2 样" data-x="30" data-y="192" data-w="232" data-h="33.0">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="22" font-weight="600" text-anchor="start">
+<tspan x="30" y="214.0">还差 2 样</tspan>
+</text>
+</g>
+<g id="layer-11" data-name="已买好 1 / 3" data-x="249" data-y="196" data-w="109" data-h="18.0">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="12" font-weight="400" text-anchor="end">
+<tspan x="358" y="208.0">已买好 1 / 3</tspan>
+</text>
+</g>
+<g id="layer-12" data-name="采购进度底轨" data-x="30" data-y="235" data-w="330" data-h="5">
+<rect x="30" y="235" width="330" height="5" rx="3" fill="#f0ebe2"/>
+</g>
+<g id="layer-13" data-name="采购进度" data-x="30" data-y="235" data-w="110" data-h="5">
+<rect x="30" y="235" width="110" height="5" rx="3" fill="#2f4a3a"/>
+</g>
+<g id="layer-14" data-name="待买" data-x="16" data-y="292" data-w="270" data-h="27.0">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="18" font-weight="600" text-anchor="start">
+<tspan x="16" y="310.0">待买</tspan>
+</text>
+</g>
+<g id="layer-15" data-name="+ 临时加购" data-x="265" data-y="292" data-w="109" data-h="18.0">
+<text fill="#c8381f" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="12" font-weight="400" text-anchor="end">
+<tspan x="374" y="304.0">+ 临时加购</tspan>
+</text>
+</g>
+<g id="layer-16" data-name="采购食材 / 五花肉" data-x="16" data-y="336" data-w="358" data-h="128">
+<rect x="16" y="336" width="358" height="128" rx="8" fill="#ffffff"/>
+</g>
+<g id="layer-17" data-name="无图 / 名称占位" data-x="29" data-y="351" data-w="86" data-h="86">
+<rect x="29" y="351" width="86" height="86" rx="8" fill="#f0ebe2"/>
+</g>
+<g id="layer-18" data-name="五花肉" data-x="34" data-y="365" data-w="76" data-h="48">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="16" font-weight="600" text-anchor="middle">
+<tspan x="72.0" y="393.0">五花肉</tspan>
+</text>
+</g>
+<g id="layer-19" data-name="图片编辑入口" data-x="29" data-y="417" data-w="86" data-h="20">
+<rect x="29" y="417" width="86" height="20" rx="0" fill="#2c241b" opacity="0.82"/>
+</g>
+<g id="layer-20" data-name="拍照" data-x="29" data-y="417" data-w="86" data-h="20">
+<text fill="#ffffff" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="10" font-weight="400" text-anchor="middle">
+<tspan x="72.0" y="429.5">拍照</tspan>
+</text>
+</g>
+<g id="layer-21" data-name="五花肉" data-x="130" data-y="348" data-w="147" data-h="27.0">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="18" font-weight="600" text-anchor="start">
+<tspan x="130" y="366.0">五花肉</tspan>
+</text>
+</g>
+<g id="layer-22" data-name="500 g" data-x="278" data-y="348" data-w="82" data-h="24.0">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="16" font-weight="600" text-anchor="end">
+<tspan x="360" y="364.0">500 g</tspan>
+</text>
+</g>
+<g id="layer-23" data-name="用于红烧肉 · 晚餐" data-x="130" data-y="375" data-w="229" data-h="18.0">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="12" font-weight="400" text-anchor="start">
+<tspan x="130" y="387.0">用于红烧肉 · 晚餐</tspan>
+</text>
+</g>
+<g id="layer-24" data-name="家里还没有" data-x="130" data-y="394" data-w="229" data-h="17.25">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="11.5" font-weight="400" text-anchor="start">
+<tspan x="130" y="405.5">家里还没有</tspan>
+</text>
+</g>
+<g id="layer-25" data-name="按钮 / 买好了" data-x="130" data-y="412" data-w="152" data-h="44">
+<rect x="130" y="412" width="152" height="44" rx="8" fill="#2f4a3a"/>
+</g>
+<g id="layer-26" data-name="买好了" data-x="135" data-y="412" data-w="142" data-h="44">
+<text fill="#ffffff" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="14" font-weight="600" text-anchor="middle">
+<tspan x="206.0" y="437.5">买好了</tspan>
+</text>
+</g>
+<g id="layer-27" data-name="按钮 / 移除" data-x="294" data-y="412" data-w="66" data-h="44">
+<rect x="294" y="412" width="66" height="44" rx="8" fill="#ffffff" stroke="#e8e2d8"/>
+</g>
+<g id="layer-28" data-name="移除" data-x="294" data-y="412" data-w="66" data-h="44">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="12" font-weight="400" text-anchor="middle">
+<tspan x="327.0" y="437.0">移除</tspan>
+</text>
+</g>
+<g id="layer-29" data-name="采购食材 / 冰糖" data-x="16" data-y="472" data-w="358" data-h="128">
+<rect x="16" y="472" width="358" height="128" rx="8" fill="#ffffff"/>
+</g>
+<g id="layer-30" data-name="无图 / 名称占位" data-x="29" data-y="487" data-w="86" data-h="86">
+<rect x="29" y="487" width="86" height="86" rx="8" fill="#f0ebe2"/>
+</g>
+<g id="layer-31" data-name="冰糖" data-x="34" data-y="501" data-w="76" data-h="48">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="16" font-weight="600" text-anchor="middle">
+<tspan x="72.0" y="529.0">冰糖</tspan>
+</text>
+</g>
+<g id="layer-32" data-name="图片编辑入口" data-x="29" data-y="553" data-w="86" data-h="20">
+<rect x="29" y="553" width="86" height="20" rx="0" fill="#2c241b" opacity="0.82"/>
+</g>
+<g id="layer-33" data-name="拍照" data-x="29" data-y="553" data-w="86" data-h="20">
+<text fill="#ffffff" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="10" font-weight="400" text-anchor="middle">
+<tspan x="72.0" y="565.5">拍照</tspan>
+</text>
+</g>
+<g id="layer-34" data-name="冰糖" data-x="130" data-y="484" data-w="147" data-h="27.0">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="18" font-weight="600" text-anchor="start">
+<tspan x="130" y="502.0">冰糖</tspan>
+</text>
+</g>
+<g id="layer-35" data-name="25 g" data-x="278" data-y="484" data-w="82" data-h="24.0">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="16" font-weight="600" text-anchor="end">
+<tspan x="360" y="500.0">25 g</tspan>
+</text>
+</g>
+<g id="layer-36" data-name="用于红烧肉 · 晚餐" data-x="130" data-y="511" data-w="229" data-h="18.0">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="12" font-weight="400" text-anchor="start">
+<tspan x="130" y="523.0">用于红烧肉 · 晚餐</tspan>
+</text>
+</g>
+<g id="layer-37" data-name="家里还没有" data-x="130" data-y="530" data-w="229" data-h="17.25">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="11.5" font-weight="400" text-anchor="start">
+<tspan x="130" y="541.5">家里还没有</tspan>
+</text>
+</g>
+<g id="layer-38" data-name="按钮 / 买好了" data-x="130" data-y="548" data-w="152" data-h="44">
+<rect x="130" y="548" width="152" height="44" rx="8" fill="#2f4a3a"/>
+</g>
+<g id="layer-39" data-name="买好了" data-x="135" data-y="548" data-w="142" data-h="44">
+<text fill="#ffffff" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="14" font-weight="600" text-anchor="middle">
+<tspan x="206.0" y="573.5">买好了</tspan>
+</text>
+</g>
+<g id="layer-40" data-name="按钮 / 移除" data-x="294" data-y="548" data-w="66" data-h="44">
+<rect x="294" y="548" width="66" height="44" rx="8" fill="#ffffff" stroke="#e8e2d8"/>
+</g>
+<g id="layer-41" data-name="移除" data-x="294" data-y="548" data-w="66" data-h="44">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="12" font-weight="400" text-anchor="middle">
+<tspan x="327.0" y="573.0">移除</tspan>
+</text>
+</g>
+<g id="layer-42" data-name="临时加购" data-x="16" data-y="604" data-w="269" data-h="27.0">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="18" font-weight="600" text-anchor="start">
+<tspan x="16" y="622.0">临时加购</tspan>
+</text>
+</g>
+<g id="layer-43" data-name="连续加购表单" data-x="16" data-y="637" data-w="358" data-h="179">
+<rect x="16" y="637" width="358" height="179" rx="8" fill="#ffffff"/>
+</g>
+<g id="layer-44" data-name="无图 / 名称占位" data-x="30" data-y="652" data-w="76" data-h="76">
+<rect x="30" y="652" width="76" height="76" rx="8" fill="#f0ebe2"/>
+</g>
+<g id="layer-45" data-name="番茄" data-x="35" data-y="666" data-w="66" data-h="38">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="16" font-weight="600" text-anchor="middle">
+<tspan x="68.0" y="689.0">番茄</tspan>
+</text>
+</g>
+<g id="layer-46" data-name="拍照 / 选图" data-x="28" data-y="733" data-w="80" data-h="17.25">
+<text fill="#c8381f" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="11.5" font-weight="400" text-anchor="middle">
+<tspan x="68.0" y="744.5">拍照 / 选图</tspan>
+</text>
+</g>
+<g id="layer-47" data-name="食材名称输入" data-x="120" data-y="651" data-w="240" data-h="38">
+<rect x="120" y="651" width="240" height="38" rx="6" fill="#f0ebe2"/>
+</g>
+<g id="layer-48" data-name="番茄" data-x="132" data-y="651" data-w="215" data-h="38">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="14" font-weight="400" text-anchor="start">
+<tspan x="132" y="673.5">番茄</tspan>
+</text>
+</g>
+<g id="layer-49" data-name="数量输入" data-x="120" data-y="699" data-w="132" data-h="38">
+<rect x="120" y="699" width="132" height="38" rx="6" fill="#f0ebe2"/>
+</g>
+<g id="layer-50" data-name="2" data-x="132" data-y="699" data-w="105" data-h="38">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="14" font-weight="400" text-anchor="start">
+<tspan x="132" y="721.5">2</tspan>
+</text>
+</g>
+<g id="layer-51" data-name="单位输入" data-x="262" data-y="699" data-w="98" data-h="38">
+<rect x="262" y="699" width="98" height="38" rx="6" fill="#f0ebe2"/>
+</g>
+<g id="layer-52" data-name="个" data-x="274" data-y="699" data-w="74" data-h="38">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="14" font-weight="400" text-anchor="start">
+<tspan x="274" y="721.5">个</tspan>
+</text>
+</g>
+<g id="layer-53" data-name="清单 3 样 · 可连续添加" data-x="30" data-y="776" data-w="190" data-h="17.25">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="11.5" font-weight="400" text-anchor="start">
+<tspan x="30" y="787.5">清单 3 样 · 可连续添加</tspan>
+</text>
+</g>
+<g id="layer-54" data-name="按钮 / 添加并继续" data-x="226" data-y="762" data-w="134" data-h="44">
+<rect x="226" y="762" width="134" height="44" rx="8" fill="#c8381f"/>
+</g>
+<g id="layer-55" data-name="添加并继续" data-x="231" data-y="762" data-w="124" data-h="44">
+<text fill="#ffffff" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="14" font-weight="600" text-anchor="middle">
+<tspan x="293.0" y="787.5">添加并继续</tspan>
+</text>
+</g>
+<g id="layer-56" data-name="安全区指示条" data-x="133" data-y="833" data-w="124" data-h="4">
+<rect x="133" y="833" width="124" height="4" rx="2" fill="#2c241b"/>
+</g>
+</svg>

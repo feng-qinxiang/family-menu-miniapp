@@ -61,6 +61,23 @@ jobs:
       - name: 四主线设计预览（点菜/做菜/记录/社区）
         run: node miniapp/test/journey-preview.test.js
 
+      - name: 首页菜单与四阶段入口回归
+        run: node miniapp/test/home-journey.test.js
+
+      - name: 主导航与记录页迁移回归
+        run: node miniapp/test/journey-navigation.test.js
+
+      - name: 随机挑菜与临期库存回归
+        run: node miniapp/test/recipe-pick.test.js
+
+      - name: 食材照片上传与文字兜底回归
+        run: node miniapp/test/ingredient-photo.test.js
+
+      - name: 食材详情与家庭信息回归
+        run: node miniapp/test/ui-refinement.test.js
+      - name: Followup UI behavior
+        run: node miniapp/test/ui-followup.test.js
+
       # 收藏页帖子卡封面口径：帖子自己的图 → 关联菜谱封面 → 不放图。
       # 这条错了只会在卡片上配错图：实测一道无配图的「周末烤的面包」被配成扬州炒饭的本地图。
       - name: 纯逻辑单测（收藏页封面口径）

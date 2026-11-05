@@ -3,66 +3,267 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>一家人的饭桌 · 三套 UI 设计预览</title>
+  <link rel="icon" href="data:,">
+<title>一家人的饭桌 · 全流程页面优化</title>
   <style>
     :root { color-scheme: light; --bg:#f7f5f0; --ink:#302c25; --muted:#736d62; --line:#e3dfd6; --accent:#c74d32; }
-    * { box-sizing:border-box; }
+    * { box-sizing:border-box; letter-spacing:0; }
     body { margin:0; background:var(--bg); color:var(--ink); font-family:"PingFang SC","Microsoft YaHei",sans-serif; line-height:1.6; }
     button,a { -webkit-tap-highlight-color:transparent; }
     button { cursor:pointer; font:inherit; }
     button:focus-visible,a:focus-visible { outline:3px solid var(--accent); outline-offset:4px; }
     main { max-width:1280px; padding:36px 48px 56px; margin:auto; }
-    .eyebrow { font-size:12px; letter-spacing:2px; color:var(--muted); }
+    .eyebrow { font-size:12px; color:var(--muted); }
     header { display:flex; justify-content:space-between; gap:32px; align-items:end; border-bottom:1px solid var(--line); padding-bottom:26px; }
-    h1 { margin:8px 0; font-size:clamp(26px,3vw,38px); line-height:1.35; letter-spacing:-1px; }
+    h1 { margin:8px 0; font-size:30px; line-height:1.35; }
     header p { margin:8px 0 0; color:var(--muted); font-size:14px; }
     .journey { display:flex; gap:8px; flex-wrap:wrap; align-items:center; font-size:13px; white-space:nowrap; padding-bottom:3px; }
     .journey strong { background:#eae5da; border-radius:6px; padding:6px 10px; font-weight:500; }
     .toolbar { display:flex; align-items:center; gap:20px; flex-wrap:wrap; margin:24px 0 28px; }
-    .scenes { display:flex; gap:4px; padding:4px; background:#eae6de; border-radius:10px; }
+    .design-links { display:flex; flex-wrap:wrap; gap:10px 20px; margin-top:16px; font-size:14px; }
+    .design-links a { color:var(--accent); text-underline-offset:4px; }
+    .home-update { margin-top:28px; padding:24px 0 28px; border-bottom:1px solid var(--line); }
+    .home-update h2 { font-size:23px; }
+    .home-update > p { margin:8px 0 20px; color:var(--muted); font-size:14px; }
+    .home-states { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:28px; }
+    .home-states figure { margin:0; }
+    .home-states h3 { font-size:15px; font-weight:600; margin:0 0 12px; text-align:center; }
+    .home-more { margin-top:18px; color:var(--muted); font-size:13px; }
+    .home-more a { color:var(--accent); text-underline-offset:4px; }
+    .scenes { display:flex; gap:4px; padding:4px; background:#eae6de; border-radius:8px; }
     .scenes button { color:var(--muted); border:0; background:transparent; border-radius:7px; padding:9px 19px; font-size:14px; min-height:42px; }
     .scenes button[aria-pressed="true"] { background:#fffdf8; color:var(--accent); font-weight:600; }
     #scene-caption { color:var(--muted); font-size:13px; margin:0; }
-    .comparison { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:42px; align-items:start; }
+    .comparison { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:32px; align-items:start; }
     .design-head { min-height:125px; }
     .design-index { font-family:Georgia,serif; color:var(--accent); font-size:28px; display:inline-block; margin-right:9px; }
     h2 { font-size:19px; font-weight:600; margin:0 0 5px; }
     .recommended { display:inline-block; font-size:10px; font-weight:500; vertical-align:middle; background:#f0e1d9; color:#994431; padding:3px 6px; border-radius:4px; margin-left:6px; }
     .description { margin:0; font-size:13px; color:var(--muted); line-height:1.8; }
     .screen-link { display:block; width:100%; max-width:325px; margin:0 auto; border-radius:28px; overflow:hidden; border:6px solid #302c27; background:#302c27; }
-    .screen-link img { display:block; width:100%; aspect-ratio:591/1280; object-fit:cover; background:#f5f0e6; }
+    .screen-link img { display:block; width:100%; height:auto; aspect-ratio:591/1280; object-fit:contain; background:#f5f0e6; }
     .screen-link:hover { border-color:var(--accent); }
     .screen-hint { margin:12px 0 18px; text-align:center; color:var(--muted); font-size:11px; }
     .design-points { margin:0; padding:0; list-style:none; border-top:1px solid var(--line); }
     .design-points li { padding:11px 0; border-bottom:1px solid var(--line); font-size:13px; }
     .design-points b { display:inline-block; min-width:58px; font-weight:600; }
+    .original { margin-top:42px; padding:28px 0 0; border-top:1px solid var(--line); display:grid; grid-template-columns:minmax(0,360px) 1fr; gap:34px; align-items:start; }
+    .original h2 { margin:0 0 8px; }
+    .original p { margin:0; font-size:13px; color:var(--muted); line-height:1.9; }
+    .original .screen-link { max-width:300px; }
+    .original-copy { padding-top:12px; }
+    .original-copy code { display:block; margin-top:14px; padding:12px 14px; background:#eeebe3; border-radius:8px; color:#5c554b; font-size:12px; line-height:1.8; overflow-wrap:anywhere; }
     .concept { margin-top:36px; padding:24px 0; border-top:1px solid var(--line); display:grid; grid-template-columns:1fr 1fr; gap:32px; }
     .concept h3 { margin:0 0 10px; font-size:15px; }
     .concept p { margin:0; font-size:13px; color:var(--muted); line-height:1.9; }
-    .native-entry { padding:18px 22px; background:#eeebe3; border-radius:10px; }
+    .native-entry { padding:18px 22px; background:#eeebe3; border-radius:8px; }
     .native-entry code { display:block; font-size:12px; overflow-wrap:anywhere; line-height:1.9; margin-top:10px; }
     footer { margin-top:20px; color:var(--muted); font-size:11px; }
-    @media(max-width:1000px) { main { padding:28px; } .comparison { gap:22px; } header { display:block; } .journey { margin-top:16px; } .design-head { min-height:145px; } }
-    @media(max-width:650px) { main { padding:24px 18px; } .comparison { grid-template-columns:1fr; gap:36px; } .design-head { min-height:0; margin-bottom:16px; } .concept { grid-template-columns:1fr; } .screen-link { max-width:300px; } .scenes { width:100%; } .scenes button { flex:1; padding:9px 10px; } }
+    @media(max-width:1100px) { main { padding:28px; } .comparison { grid-template-columns:repeat(2,minmax(0,1fr)); gap:32px 24px; } header { display:block; } .journey { margin-top:16px; } .design-head { min-height:145px; } }
+    @media(max-width:650px) { main { padding:24px 18px; } .home-states { grid-template-columns:1fr; gap:28px; } .comparison { grid-template-columns:1fr; gap:36px; } .design-head { min-height:0; margin-bottom:16px; } .original { grid-template-columns:1fr; gap:12px; } .concept { grid-template-columns:1fr; } .screen-link { max-width:300px; } .scenes { width:100%; } .scenes button { flex:1; padding:9px 10px; } }
     @media(prefers-reduced-motion:no-preference) { .screen-link { transition:border-color .15s ease; } }
+
+    .rollout { margin-top:28px; padding:24px 0 32px; border-bottom:1px solid var(--line); }
+    .rollout > p { color:var(--muted); font-size:14px; margin:10px 0 20px; }
+    .app-tabs { display:flex; flex-wrap:wrap; gap:8px; margin:18px 0 24px; }
+    .app-tabs button { border:1px solid var(--line); color:var(--muted); background:transparent; border-radius:8px; padding:10px 20px; min-height:44px; }
+    .app-tabs button[aria-pressed="true"] { background:var(--ink); color:var(--bg); border-color:var(--ink); }
+    .app-focus { display:grid; grid-template-columns:minmax(0,340px) minmax(0,1fr); gap:40px; align-items:start; max-width:850px; margin:0 auto 36px; }
+    .app-copy { padding-top:24px; }
+    .app-copy p { color:var(--muted); font-size:14px; line-height:1.9; }
+    .app-copy a { color:var(--accent); }
+    .app-tools { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:28px; }
+    .app-tools figure { margin:0; }
+    .app-tools h3 { text-align:center; font-size:15px; font-weight:600; }
+    .app-tools .screen-link { max-width:280px; }
+    #followup-update { scroll-margin-top:24px; }
+    #refinement-update { scroll-margin-top:24px; }
+    #picker-update { margin:32px 0; scroll-margin-top:24px; }
+    #picker-update > p { color:var(--muted); font-size:14px; margin:10px 0 20px; }
+    .screen-hint a { color:var(--accent); text-underline-offset:4px; }
+    .page-catalog { padding:28px 0 36px; border-bottom:1px solid var(--line); scroll-margin-top:24px; }
+    .page-catalog > p { color:var(--muted); font-size:14px; margin:10px 0 18px; }
+    .catalog-controls { position:sticky; top:0; z-index:2; background:var(--bg); padding:12px 0; border-bottom:1px solid var(--line); margin-bottom:22px; }
+    .catalog-search { display:flex; align-items:center; flex-wrap:wrap; gap:12px; font-size:13px; }
+    .catalog-search input { width:min(100%,340px); min-height:44px; padding:10px 13px; border:1px solid var(--line); border-radius:8px; background:#fffdf8; color:var(--ink); font:inherit; }
+    .catalog-search input:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+    .catalog-groups { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+    .catalog-groups button,.catalog-reset { border:1px solid var(--line); border-radius:7px; padding:8px 12px; min-height:42px; color:var(--muted); background:transparent; font-size:13px; }
+    .catalog-groups button[aria-pressed="true"] { background:var(--ink); border-color:var(--ink); color:var(--bg); }
+    .catalog-count { color:var(--muted); font-size:12px; }
+    .catalog-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:28px; }
+    .catalog-card { margin:0; min-width:0; }
+    .catalog-card h3 { margin:0 0 12px; text-align:center; font-size:15px; }
+    .catalog-card .screen-link { max-width:280px; }
+    .catalog-status { display:block; margin:12px 0 4px; color:var(--muted); font-size:12px; text-align:center; }
+    .catalog-status.closed { color:#994431; }
+    .catalog-route { display:block; color:var(--muted); font-size:10px; text-align:center; overflow-wrap:anywhere; }
+    .catalog-variants { margin:8px 0 0; text-align:center; font-size:12px; }
+    .catalog-variants a { color:var(--accent); margin:0 5px; text-underline-offset:3px; }
+    .catalog-empty { color:var(--muted); padding:24px 0; }
+    @media(max-width:900px) { .catalog-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    @media(max-width:650px) { .catalog-grid { grid-template-columns:1fr; } .catalog-search input { flex:1; min-width:160px; } .catalog-controls { position:static; } }
+    @media(max-width:700px) { .app-focus { grid-template-columns:1fr; gap:8px; } .app-copy { padding:8px 0; } .app-tools { grid-template-columns:1fr; } .app-tabs button { flex:1; padding:10px 12px; } }
   </style>
 </head>
 <body>
 <main>
   <header>
-    <div><div class="eyebrow">一家人的饭桌 / UI 方向预览</div><h1>让这一餐，有开始也有回味。</h1><p>三套布局，同一份示例菜单。下面是微信模拟器的实际页面截图。</p></div>
+    <div><div class="eyebrow">现代优化 × 家庭点菜单</div><h1>一家人的饭桌</h1><p>沿用你确认的版本，把点菜、做菜、记录、社区和家庭管理串成一餐的日常。</p><nav class="design-links" aria-label="设计对照"><a href="#followup-update">查看本轮试改</a><a href="#skills-update">查看上版对照</a><a href="#all-pages">查看全部 39 个页面</a><a href="#home-update">查看五个主导航</a><a href="#original">查看修改前的原版</a><a href="#fusion">D 现代家庭融合参考</a></nav></div>
     <div class="journey" aria-label="四条主线"><strong>点菜</strong><span>→</span><strong>做菜</strong><span>→</span><strong>记录</strong><span>→</span><strong>社区</strong></div>
   </header>
+  <p style="margin:20px 0 8px;font-size:14px"><a href="figma-prototype/?v=20261104-layout-focus#request" style="color:#c74d32;text-underline-offset:4px">打开 17 页点击原型 · 下载可导入 Figma 的原型包 ›</a></p>
+  <section class="rollout" id="followup-update" aria-label="本轮四处反馈：条件弹层、库存摘要、推荐卡与详情">
+    <h2>本轮优化 · 图文分栏，条件逐行看清</h2>
+    <p>按四处标注继续调整：挑菜弹层减少同时出现的内容，冰箱食材对齐名称与数量，推荐菜固定左图右文，详情把菜名、用料和做法串起来。</p>
+    <p id="layout-verification-status" class="screen-hint">下面是网页交互原型截图，使用设计样例；小程序页面已同步修改。当前微信账号缺少该 AppID 的开发者权限，本轮原生编译与模拟器验收待补。<a href="#skills-update">上版原型</a>、<a href="#filter-actions-update">原生模拟器截图</a>及 <a href="#all-pages">39 页目录</a>继续保留。</p>
+    <div class="app-tools">
+      <figure><h3>按需挑菜 · 输入后核对条件</h3><a class="screen-link" href="figma-prototype/?v=20261104-layout-focus#request"><img src="screens/layout-focus-request.png?v=20261104-layout-focus" alt="按需挑菜：输入后收起示例，人数、耗时、口味和食材逐行确认" width="376" height="814"></a><figcaption class="screen-hint">示例只在空输入时显示；输入后收起，核对条件后再挑菜。关闭保留草稿，未支持的要求和无匹配都有提示。<br><a href="figma-prototype/?v=20261104-layout-focus#request">输入条件试试</a> · <a href="screens/layout-focus-request-empty.png" target="_blank" rel="noopener">空输入状态</a></figcaption></figure>
+      <figure><h3>冰箱挑菜 · 左侧整图，右侧信息</h3><a class="screen-link" href="figma-prototype/?v=20261104-layout-focus#picker"><img src="screens/layout-focus-picker.png?v=20261104-layout-focus" alt="冰箱挑菜：食材名称与数量两列对齐，推荐菜左侧整图，所有说明集中右栏" width="376" height="814"></a><figcaption class="screen-hint">上方看冰箱有什么；推荐图保持完整左栏，菜名、耗时、人份、库存与说明统一在右栏，下面再换菜或点菜。<br><a href="figma-prototype/?v=20261104-layout-focus#picker">换一道试试</a> · <a href="screens/layout-focus-picker.png" target="_blank" rel="noopener">查看原图</a></figcaption></figure>
+      <figure><h3>菜谱详情 · 用料与做法连续阅读</h3><a class="screen-link" href="figma-prototype/?v=20261104-layout-focus#detail"><img src="screens/layout-focus-detail.png?v=20261104-layout-focus" alt="菜谱详情：缩短头图，菜名与简介接续，用料左图右文、数量靠右，三步做法连续展示" width="376" height="814"></a><figcaption class="screen-hint">菜名移到纸底正文，用料图片在左、名称和数量对齐；无图保留文字与拍照入口。减少重复装饰，让做法更早出现。<br><a href="figma-prototype/?v=20261104-layout-focus#detail">查看详情</a> · <a href="figma-prototype/family-menu-figma-kit.zip" download>下载 Figma 包</a></figcaption></figure>
+    </div>
+    <p class="screen-hint">已检查输入确认、换菜、图片入口，以及 1344 / 957 / 375 / 320px 显示。网页、SVG 与 Figma 开发插件同步更新；尚未在真实 Figma 文件运行插件。原型中的菜单、拍照和消息用于演示。</p>
+  </section>
+  <section class="rollout" id="skills-update" aria-label="上版技能试改：菜谱、冰箱与按需挑菜">
+    <h2>上版对照 · 菜更早出现，挑菜先看条件</h2>
+    <p>保留暖纸底、番茄红和左侧分类。菜谱减少顶部层级，冰箱先展示临期食材；新增“按需挑菜”，输入人数、耗时和口味后确认条件。</p>
+    <p id="skills-verification-status" class="screen-hint">下面保留上一版网页原型截图，使用设计样例。<a href="#filter-actions-update">前轮模拟器截图</a>及 <a href="#all-pages">39 页目录</a>仍可查看。</p>
+    <div class="app-tools">
+      <figure><h3>菜谱库 · 左侧分类，右侧看菜</h3><a class="screen-link" href="figma-prototype/?v=20261104-skills#recipes"><img src="screens/skills-recipes.png?v=20261104-skills" alt="交互原型：紧凑菜谱库，左侧菜系、左图右文与底栏点菜" width="376" height="814"></a><figcaption class="screen-hint">菜系与来源在左栏切换；用料开关移进筛选，菜图、耗时、人份和点菜按钮保持清楚。<br><a href="figma-prototype/?v=20261104-skills#recipes">点开体验</a> · <a href="screens/app-recipes.jpg" target="_blank" rel="noopener">上版对照</a></figcaption></figure>
+      <figure><h3>冰箱 · 先用临期，再挑一道</h3><a class="screen-link" href="figma-prototype/?v=20261104-skills#pantry"><img src="screens/skills-pantry.png?v=20261104-skills" alt="交互原型：紧凑冰箱概览、折叠提醒、有图与文字占位" width="376" height="814"></a><figcaption class="screen-hint">优先食材与能做几道放在一起，提醒按需展开。有照片显示照片，没有照片显示名称；点图查看拍照入口。<br><a href="figma-prototype/?v=20261104-skills#pantry">点开体验</a> · <a href="screens/app-pantry.jpg" target="_blank" rel="noopener">上版对照</a></figcaption></figure>
+      <figure><h3>按需挑菜 · 先确认，再选一道</h3><a class="screen-link" href="figma-prototype/?v=20261104-skills#request"><img src="screens/skills-request.png?v=20261104-skills" alt="交互原型：输入这顿饭的条件，确认人数、耗时、口味和冰箱要求" width="376" height="814"></a><figcaption class="screen-hint">试试“两人吃，30分钟，不辣，冰箱有的”。先展示可识别条件，再筛选样例菜；不支持的要求会提示修改。<br><a href="figma-prototype/?v=20261104-skills#request">输入条件试试</a> · <a href="figma-prototype/family-menu-figma-kit.zip" download>下载 Figma 包</a></figcaption></figure>
+    </div>
+    <p class="screen-hint">本轮参考 UI UX Pro Max、腾讯 CloudBase 小程序与 UI 设计 skills、微信开发者工具流程、frontend-design 和 order-skill。按需挑菜复用小程序的本地条件识别，不调用大模型；原型内的点菜、订阅和拍照均为演示。</p>
+  </section>
+  <section class="rollout" id="filter-actions-update" aria-label="上版筛选与消息操作对照">
+    <h2>上版对照 · 紧凑筛选，清楚的消息操作</h2>
+    <p>以下保留上版正式页面的微信模拟器截图，使用临时样例展示，不代表真实家庭数据。</p>
+    <p class="screen-hint">筛选收进搜索下方，用两行文字选项和小块选中标记，“重置”收在右侧。消息页的“全部标为已读”移到标题旁，做成边框按钮；没有未读时隐藏。下面仍可逐页查看 39 个正式页面。</p>
+    <div class="app-tools">
+      <figure><h3>菜谱筛选 · 两行展开</h3><a class="screen-link" href="screens/picker-recipes-filters.jpg?v=20261011-filter-actions" target="_blank" rel="noopener"><img src="screens/picker-recipes-filters.jpg?v=20261011-filter-actions" alt="菜谱库 · 搜索下方两行筛选，小色块标记当前条件" width="591" height="1280" loading="lazy"></a><figcaption class="screen-hint">耗时、人份各占一行；选项对齐，选中用小块暖色表示。重置在第二行最右侧，保持完整点击范围。<br><a href="screens/filter-panel-before.jpg" target="_blank" rel="noopener">上版对照</a> · <a href="screens/picker-recipes-filters-large.jpg?v=20261011-filter-actions" target="_blank" rel="noopener">筛选大字</a> · <a href="screens/picker-recipes-filter-selected.jpg?v=20261011-filter-actions" target="_blank" rel="noopener">收起后的已选条件</a></figcaption></figure>
+      <figure><h3>消息中心 · 标为已读按钮</h3><a class="screen-link" href="screens/all-pkg-extra-me-notifications-index.jpg?v=20261011-filter-actions" target="_blank" rel="noopener"><img src="screens/all-pkg-extra-me-notifications-index.jpg?v=20261011-filter-actions" alt="消息中心 · 批量标为已读按钮在内容标题右侧" width="591" height="1280" loading="lazy"></a><figcaption class="screen-hint">批量操作放在“消息通知”标题右边，带清楚的边框和勾选图标；没有未读消息时隐藏。消息时间继续在卡头右上。<br><a href="screens/notification-readall-before.jpg" target="_blank" rel="noopener">上版对照</a> · <a href="screens/all-pkg-extra-me-notifications-index-大字.jpg?v=20261011-filter-actions" target="_blank" rel="noopener">大字长消息</a> · <a href="screens/all-pkg-extra-me-notifications-index-已读.jpg?v=20261011-filter-actions" target="_blank" rel="noopener">全部已读状态</a></figcaption></figure>
+      <figure><h3>菜谱库 · 默认布局</h3><a class="screen-link" href="screens/app-recipes.jpg?v=20261011-filter-actions" target="_blank" rel="noopener"><img src="screens/app-recipes.jpg?v=20261011-filter-actions" alt="菜谱库 · 搜索一栏，轻量挑菜入口，下划线分类" width="591" height="1280" loading="lazy"></a><figcaption class="screen-hint">顶部减少卡片和粗体按钮，让菜品成为重点。左侧选菜系或来源，右侧看菜图、用料与点菜操作。<br><a href="screens/recipe-toolbar-before.jpg" target="_blank" rel="noopener">修改前对照</a> · <a href="screens/picker-recipes-cuisine.jpg?v=20261011-filter-actions" target="_blank" rel="noopener">选中家常</a> · <a href="screens/picker-recipes-source.jpg?v=20261011-filter-actions" target="_blank" rel="noopener">按来源查看</a> · <a href="screens/picker-recipes-large.jpg?v=20261011-filter-actions" target="_blank" rel="noopener">大字</a></figcaption></figure>
+      <figure><h3>买菜清单 · 两个明确按钮</h3><a class="screen-link" href="screens/app-shopping.jpg" target="_blank" rel="noopener"><img src="screens/app-shopping.jpg" alt="买菜清单 · 买好了和移除按钮" width="591" height="1280" loading="lazy"></a><figcaption class="screen-hint">绿色“买好了”是主操作，“移除”独立成边框按钮；来源和家里余量放在上方。加购仍可拍照、选图并连续添加。<br><a href="screens/picker-shopping-add-photo.jpg" target="_blank" rel="noopener">加购有图</a> · <a href="screens/picker-shopping-add-empty.jpg" target="_blank" rel="noopener">空表单</a> · <a href="screens/picker-shopping-add-large.jpg" target="_blank" rel="noopener">加购大字</a> · <a href="screens/app-shopping-large.jpg" target="_blank" rel="noopener">清单大字</a></figcaption></figure>
+      <figure><h3>冰箱通知 · 消息与订阅分开</h3><a class="screen-link" href="screens/app-pantry.jpg" target="_blank" rel="noopener"><img src="screens/app-pantry.jpg" alt="冰箱通知 · 固定宽度一次订阅按钮" width="591" height="1280" loading="lazy"></a><figcaption class="screen-hint">消息入口在右上，说明在左，绿色一次订阅按钮在右；未开放微信提醒时显示“提醒说明”。日期与食材管理保持清楚。<br><a href="screens/picker-pantry-reminder-once.jpg" target="_blank" rel="noopener">订阅一次后</a> · <a href="screens/picker-pantry-reminder-unavailable.jpg" target="_blank" rel="noopener">微信未开放</a> · <a href="screens/picker-pantry-large.jpg" target="_blank" rel="noopener">大字</a></figcaption></figure>
+      <figure><h3>帖子详情 · 先看作品，再读心得</h3><a class="screen-link" href="screens/all-pkg-extra-community-post-detail-index.jpg?v=20261009-product-layout" target="_blank" rel="noopener"><img src="screens/all-pkg-extra-community-post-detail-index.jpg?v=20261009-product-layout" alt="帖子详情 · 作者、作品图、标题与正文连续阅读" width="591" height="1280" loading="lazy"></a><figcaption class="screen-hint">白色阅读底，作者信息更轻。标题紧接图片，正文左对齐，收紧行距与段间距；话题、暖色关联菜谱、评论依次接续。<br><a href="screens/all-pkg-extra-community-post-detail-index-多图.jpg" target="_blank" rel="noopener">多图</a> · <a href="screens/all-pkg-extra-community-post-detail-index-无图.jpg" target="_blank" rel="noopener">无图</a> · <a href="screens/all-pkg-extra-community-post-detail-index-评论.jpg" target="_blank" rel="noopener">评论</a> · <a href="screens/all-pkg-extra-community-post-detail-index-大字.jpg" target="_blank" rel="noopener">大字长正文</a> · <a href="screens/all-pkg-extra-community-post-detail-index-写评论.jpg" target="_blank" rel="noopener">写评论</a> · <a href="screens/all-pkg-extra-community-post-detail-index-评论加载失败.jpg" target="_blank" rel="noopener">评论失败</a></figcaption></figure>
+      <figure id="layout-list-preview"><h3>菜谱列表 · 看清菜品，再核对冰箱</h3><a class="screen-link" href="screens/picker-recipes-list.jpg?v=20261011-filter-actions" target="_blank" rel="noopener"><img src="screens/picker-recipes-list.jpg?v=20261011-filter-actions" alt="菜谱列表 · 左侧大图，右侧信息，底栏库存和点菜" width="591" height="1280" loading="lazy"></a><figcaption class="screen-hint">滚动查看三张完整菜卡：图片、信息、用料状态和点菜操作各有固定位置，长菜名允许两行。</figcaption></figure>
+    </div>
+    <p class="screen-hint">前轮布局参考：<a href="https://www.xiachufang.com/category/40076/" target="_blank" rel="noopener">下厨房菜谱列表</a> 的左图右文与信息取舍、<a href="https://www.xiachufang.com/dish/195394383/" target="_blank" rel="noopener">下厨房作品详情</a> 的照片与心得阅读区，以及 <a href="https://cookpad.com/eng/recipes/25851126" target="_blank" rel="noopener">Cookpad 手机详情</a> 的图片优先和功能分区。点菜与冰箱底栏按家庭场景设计。临期提醒仍需部署后端及迁移；微信提醒还需模板与订阅。</p>
+  </section>
+  <section class="rollout" id="refinement-update" aria-label="上一轮 11 处优化">
+    <h2>上一轮 11 处优化 · 图在左，信息更完整</h2>
+    <p>继续沿用确认的版本。下面是正式页面的微信模拟器截图，使用临时样例展示有图、无图和有菜时的布局；点开可查看原图。</p>
+    <div class="app-tools">
+      <figure><h3>菜谱库 · 大图在左，用料在右</h3><a class="screen-link" href="screens/app-recipes.jpg?v=20261011-filter-actions" target="_blank" rel="noopener"><img src="screens/app-recipes.jpg?v=20261011-filter-actions" alt="菜谱库 · 大图在左，用料在右" width="591" height="1280" loading="lazy"></a><figcaption class="screen-hint">左侧分类保留，菜图在左，关键信息在右；底栏核对冰箱用料并点菜。<br><a href="screens/picker-recipes-large.jpg" target="_blank" rel="noopener">查看补充状态</a></figcaption></figure>
+      <figure><h3>做菜记录 · 图、评分与心得</h3><a class="screen-link" href="screens/app-record.jpg" target="_blank" rel="noopener"><img src="screens/app-record.jpg" alt="做菜记录 · 图、评分与心得" width="591" height="1280" loading="lazy"></a><figcaption class="screen-hint">放大成品图，掌勺人、评分和心得组成清楚的一条记录。<br><a href="screens/app-record-large.jpg" target="_blank" rel="noopener">查看补充状态</a></figcaption></figure>
+      <figure><h3>社区动态 · 先看作品，再聊做法</h3><a class="screen-link" href="screens/app-community.jpg" target="_blank" rel="noopener"><img src="screens/app-community.jpg" alt="社区动态 · 先看作品，再聊做法" width="591" height="1280" loading="lazy"></a><figcaption class="screen-hint">话题筛选前置；作者、实拍、心得、关联菜谱和互动分区。<br><a href="screens/app-community-text.jpg" target="_blank" rel="noopener">查看补充状态</a></figcaption></figure>
+      <figure><h3>今日做菜 · 左图右进度</h3><a class="screen-link" href="screens/app-cook.jpg" target="_blank" rel="noopener"><img src="screens/app-cook.jpg" alt="今日做菜 · 左图右进度" width="591" height="1280" loading="lazy"></a><figcaption class="screen-hint">点好的菜图陪着上桌进度，厨房入口紧接下一步。<br><a href="screens/app-cook-large.jpg" target="_blank" rel="noopener">查看补充状态</a></figcaption></figure>
+      <figure><h3>我的 · 今天的厨房更充实</h3><a class="screen-link" href="screens/app-me.jpg" target="_blank" rel="noopener"><img src="screens/app-me.jpg" alt="我的 · 今天的厨房更充实" width="591" height="1280" loading="lazy"></a><figcaption class="screen-hint">个人资料、常用工具、今日菜单与最近上桌都有入口。<br><a href="screens/app-me-large.jpg" target="_blank" rel="noopener">查看补充状态</a></figcaption></figure>
+      <figure><h3>买菜清单 · 大食材图与完整说明</h3><a class="screen-link" href="screens/app-shopping.jpg" target="_blank" rel="noopener"><img src="screens/app-shopping.jpg" alt="买菜清单 · 大食材图与完整说明" width="591" height="1280" loading="lazy"></a><figcaption class="screen-hint">左图放大，名称、数量、来源和买好操作全部放在右侧。<br><a href="screens/app-shopping-large.jpg" target="_blank" rel="noopener">查看补充状态</a></figcaption></figure>
+      <figure><h3>冰箱库存 · 数量与到期日一起看</h3><a class="screen-link" href="screens/app-pantry.jpg" target="_blank" rel="noopener"><img src="screens/app-pantry.jpg" alt="冰箱库存 · 数量与到期日一起看" width="591" height="1280" loading="lazy"></a><figcaption class="screen-hint">名称和数量同组，到期日期另起一行；图片由你上传，缺图用名称。<br><a href="screens/picker-pantry-large.jpg" target="_blank" rel="noopener">查看补充状态</a></figcaption></figure>
+      <figure><h3>帖子详情 · 图片、正文与评论</h3><a class="screen-link" href="screens/all-pkg-extra-community-post-detail-index.jpg" target="_blank" rel="noopener"><img src="screens/all-pkg-extra-community-post-detail-index.jpg" alt="帖子详情 · 图片、正文与评论" width="591" height="1280" loading="lazy"></a><figcaption class="screen-hint">作者实拍与正文层次清楚，关联菜谱独立，底部随时评论。<br><a href="screens/all-pkg-extra-community-post-detail-index-评论.jpg" target="_blank" rel="noopener">查看补充状态</a></figcaption></figure>
+      <figure><h3>厨房总控 · 计时跟着每道菜</h3><a class="screen-link" href="screens/app-kitchen.jpg" target="_blank" rel="noopener"><img src="screens/app-kitchen.jpg" alt="厨房总控 · 大图在左，计时在菜名和状态下方" width="591" height="1280" loading="lazy"></a><figcaption class="screen-hint">计时收进图片右侧，上桌与开做独立成行。<br><a href="screens/app-kitchen-running.jpg" target="_blank" rel="noopener">运行计时</a> · <a href="screens/app-kitchen-paused-large.jpg" target="_blank" rel="noopener">暂停与大字</a></figcaption></figure>
+      <figure><h3>开通确认 · 一眼核对套餐</h3><a class="screen-link" href="screens/all-pkg-extra-payment-checkout-index.jpg" target="_blank" rel="noopener"><img src="screens/all-pkg-extra-payment-checkout-index.jpg" alt="开通确认 · 一眼核对套餐" width="591" height="1280" loading="lazy"></a><figcaption class="screen-hint">套餐、服务期、明细和底部按钮收成一页；开通功能仍关闭。<br><a href="screens/all-pkg-extra-payment-checkout-index-大字.jpg" target="_blank" rel="noopener">查看补充状态</a></figcaption></figure>
+      <figure><h3>菜谱详情 · 食材也能有图片</h3><a class="screen-link" href="screens/all-pkg-extra-recipe-detail-index-食材.jpg" target="_blank" rel="noopener"><img src="screens/all-pkg-extra-recipe-detail-index-食材.jpg" alt="菜谱详情 · 食材也能有图片" width="591" height="1280" loading="lazy"></a><figcaption class="screen-hint">食材图在左，名称、用量与冰箱状态在右；点图可上传，未上传显示名称。<br><a href="screens/all-pkg-extra-recipe-detail-index-食材大字.jpg" target="_blank" rel="noopener">查看补充状态</a></figcaption></figure>
+    </div>
+    <p class="screen-hint">社区布局参考 <a href="https://www.xiachufang.com/activity/site/?order=pop" target="_blank" rel="noopener">下厨房公开作品流</a> 与 <a href="https://cookpad.com/eng/recipes/25851126" target="_blank" rel="noopener">Cookpad 公开详情</a> 的信息层级。全部 39 个正式路由继续在 <a href="#all-pages">页面目录</a> 查看。</p>
+  </section>
+  <section class="rollout" id="home-update" aria-label="当前完整版本">
+    <h2>当前版本 · 一家人的点菜日常</h2>
+    <p>五个主导航已经落到正式页面。以下是微信模拟器中的实际界面，使用临时样例展示有菜时的布局。</p>
+    <div class="app-tabs" role="group" aria-label="查看正式页面">
+      <button data-app-page="home" aria-pressed="true">点菜</button><button data-app-page="cook" aria-pressed="false">做菜</button><button data-app-page="record" aria-pressed="false">记录</button><button data-app-page="community" aria-pressed="false">社区</button><button data-app-page="me" aria-pressed="false">我的</button>
+    </div>
+    <div class="app-focus">
+      <a class="screen-link" id="app-screen-link" href="screens/app-home.jpg" target="_blank" rel="noopener"><img id="app-screen" src="screens/app-home.jpg" alt="当前正式点菜页" width="591" height="1280"></a>
+      <div class="app-copy"><div class="eyebrow">当前正式页面</div><h3 id="app-page-title">点菜 · 先让家人想吃</h3><p id="app-page-copy">保留原版大图与家庭点菜单，新增随机点菜、冰箱能做和库存入口。下方常做菜支持搜索，家人心愿的操作也更紧凑。</p><p><a id="app-large-link" href="screens/app-cook-large.jpg" target="_blank" rel="noopener" hidden>查看大字与长菜名</a></p><p>菜谱库和冰箱作为点菜、备菜的工具；做菜后回到记录，分享时关联菜谱，再把喜欢的菜点回家。</p><p class="screen-hint">布局截图不代表真实业务接口已验收；原工作区保留，修改位于独立 worktree。</p><p><a href="#picker-update">查看随机挑菜与到期日</a> · <a href="#home-details">查看首页细节</a> · <a href="#original">查看修改前的原版</a></p></div>
+    </div>
+    <div id="picker-update">
+      <h2>前轮细节 · 随机挑菜与临期食材</h2>
+      <p>首页收紧菜名与信息标签；菜谱在左侧来源栏旁补回简介、口味和评分。随机区增加冰箱现有食材，空库存明确说明，冰箱能做的菜继续列在下方。食材照片由你上传，未上传时显示名称。</p>
+      <div class="app-tools">
+        <figure><h3>点菜单与家人心愿 · 菜名先看清</h3><a class="screen-link" href="screens/picker-home-wish-preview.jpg" target="_blank" rel="noopener"><img src="screens/picker-home-wish-preview.jpg" alt="家人心愿：菜名独立两行，点菜人在下一行，更多心愿数量靠右" width="591" height="1280" loading="lazy"></a><figcaption class="screen-hint"><a href="screens/picker-home-wish-preview-large.jpg" target="_blank" rel="noopener">大字与长菜名</a> · <a href="screens/picker-home-menu.jpg" target="_blank" rel="noopener">家庭菜单</a> · <a href="screens/picker-home-wishes.jpg" target="_blank" rel="noopener">展开全部心愿</a></figcaption></figure>
+        <figure><h3>菜谱库 · 左侧来源，完整菜卡</h3><a class="screen-link" href="screens/app-recipes.jpg" target="_blank" rel="noopener"><img src="screens/app-recipes.jpg" alt="菜谱来源在左侧，右侧保留封面、菜名、耗时、人份、简介、口味和点菜按钮" width="591" height="1280" loading="lazy"></a><figcaption class="screen-hint"><a href="screens/picker-recipes-large.jpg" target="_blank" rel="noopener">查看大字模式</a></figcaption></figure>
+        <figure><h3>一周菜单 · 餐次与空位更清楚</h3><a class="screen-link" href="screens/app-weekly.jpg" target="_blank" rel="noopener"><img src="screens/app-weekly.jpg" alt="一周菜单紧凑日卡：菜图、午晚餐标签、长菜名与缺餐提示" width="591" height="1280" loading="lazy"></a><figcaption class="screen-hint"><a href="screens/app-weekly-large.jpg" target="_blank" rel="noopener">查看大字模式</a></figcaption></figure>
+      </div>
+      <h3>今天吃什么 · 随机挑，先用冰箱里的</h3>
+      <p>先预览，再加入所选餐次。冰箱模式只挑食材齐全的菜，优先用临期食材；过期库存不计入推荐。以下为临时样例数据的实际页面。</p>
+      <div class="app-tools">
+        <figure><h3>随机一道 · 看看冰箱有啥</h3><a class="screen-link" href="screens/picker-random.jpg" target="_blank" rel="noopener"><img src="screens/picker-random.jpg" alt="随机挑菜：库存摘要、菜品介绍、换一道、加入当前餐次" width="591" height="1280" loading="lazy"></a><figcaption class="screen-hint"><a href="screens/picker-random-empty-fridge.jpg" target="_blank" rel="noopener">冰箱为空</a> · <a href="screens/picker-random-stock-failed.jpg" target="_blank" rel="noopener">库存读取失败</a></figcaption></figure>
+        <figure><h3>冰箱能做 · 临期优先</h3><a class="screen-link" href="screens/picker-pantry-pick.jpg" target="_blank" rel="noopener"><img src="screens/picker-pantry-pick.jpg" alt="随机挑选冰箱能做的菜，并显示优先消耗的临期食材" width="591" height="1280" loading="lazy"></a><figcaption class="screen-hint"><a href="screens/picker-pantry-pick-large.jpg" target="_blank" rel="noopener">大字模式</a> · <a href="screens/picker-pantry-candidates.jpg" target="_blank" rel="noopener">下方可做菜列表</a><br><a href="screens/picker-pantry-pick-empty.jpg" target="_blank" rel="noopener">食材不齐时</a></figcaption></figure>
+        <figure><h3>食材图片与到期日</h3><a class="screen-link" href="screens/app-pantry.jpg" target="_blank" rel="noopener"><img src="screens/app-pantry.jpg" alt="冰箱库存显示对应食材图，缺图显示名称，按临期与过期筛选" width="591" height="1280" loading="lazy"></a><figcaption class="screen-hint"><a href="screens/picker-pantry-large.jpg" target="_blank" rel="noopener">大字模式</a> · <a href="screens/picker-pantry-image-fallback.jpg" target="_blank" rel="noopener">图片失败时</a><br><a href="screens/picker-pantry-expired.jpg" target="_blank" rel="noopener">只看过期</a> · <a href="screens/picker-pantry-add.jpg" target="_blank" rel="noopener">添加食材</a> · <a href="screens/picker-pantry-edit-date.jpg" target="_blank" rel="noopener">修改到期日</a></figcaption></figure>
+      </div>
+    </div>
+    <h2>常用工具与社区 · 接好一餐的后半程</h2><p>买菜清单和冰箱共用你上传的食材图；导入、周菜单、家庭表单继续使用上轮布局。厨房菜图与状态更清楚，计时与操作分行，分步做菜计时留在底部。社区动态与帖子详情单独展示，全部正式页面在下方目录继续查看。</p>
+    <div class="app-tools">
+      <figure><h3>菜谱库</h3><a class="screen-link" href="screens/app-recipes.jpg" target="_blank" rel="noopener"><img src="screens/app-recipes.jpg" alt="当前正式菜谱库页面" width="591" height="1280" loading="lazy"></a><figcaption class="screen-hint">筛选、挑菜，加入这一餐</figcaption></figure>
+      <figure><h3>冰箱库存</h3><a class="screen-link" href="screens/app-pantry.jpg" target="_blank" rel="noopener"><img src="screens/app-pantry.jpg" alt="当前正式冰箱库存页面" width="591" height="1280" loading="lazy"></a><figcaption class="screen-hint">先用现有食材，再补缺的</figcaption></figure>
+      <figure><h3>买菜清单</h3><a class="screen-link" href="screens/app-shopping.jpg" target="_blank" rel="noopener"><img src="screens/app-shopping.jpg" alt="当前正式买菜清单页面" width="591" height="1280" loading="lazy"></a><figcaption class="screen-hint">清单、采购进度和临时加购</figcaption></figure>
+      <figure><h3>导入菜谱</h3><a class="screen-link" href="screens/app-import.jpg" target="_blank" rel="noopener"><img src="screens/app-import.jpg" alt="当前正式导入菜谱页面" width="591" height="1280" loading="lazy"></a><figcaption class="screen-hint">粘贴内容、预览、保存 · <a href="screens/app-import-large.jpg" target="_blank" rel="noopener">大字模式</a></figcaption></figure>
+      <figure><h3>一周菜单</h3><a class="screen-link" href="screens/app-weekly.jpg" target="_blank" rel="noopener"><img src="screens/app-weekly.jpg" alt="当前正式一周菜单页面" width="591" height="1280" loading="lazy"></a><figcaption class="screen-hint">七日选择，逐日安排</figcaption></figure>
+      <figure><h3>创建家庭</h3><a class="screen-link" href="screens/app-family.jpg" target="_blank" rel="noopener"><img src="screens/app-family.jpg" alt="当前正式创建家庭页面" width="591" height="1280" loading="lazy"></a><figcaption class="screen-hint">头像选填，输入集中 · <a href="screens/app-family-large.jpg" target="_blank" rel="noopener">大字模式</a></figcaption></figure>
+      <figure><h3>厨房总控 · 计时和操作不挤</h3><a class="screen-link" href="screens/app-kitchen.jpg" target="_blank" rel="noopener"><img src="screens/app-kitchen.jpg" alt="厨房总控：菜名、状态和计时在图片右侧，上桌与开做独立成行" width="591" height="1280" loading="lazy"></a><figcaption class="screen-hint">多道菜并行 · <a href="screens/app-kitchen-large.jpg" target="_blank" rel="noopener">大字与长菜名</a></figcaption></figure>
+      <figure><h3>分步做菜 · 计时放到底部</h3><a class="screen-link" href="screens/app-cook-mode-running.jpg" target="_blank" rel="noopener"><img src="screens/app-cook-mode-running.jpg" alt="分步做菜：计时常驻底部，翻步按钮紧接下方，图片与步骤可滚动" width="591" height="1280" loading="lazy"></a><figcaption class="screen-hint"><a href="screens/app-cook-mode.jpg" target="_blank" rel="noopener">未设置计时</a> · <a href="screens/app-cook-mode-paused-large.jpg" target="_blank" rel="noopener">暂停与大字</a><br><a href="screens/app-cook-mode-background-large.jpg" target="_blank" rel="noopener">其他步骤在计时</a> · <a href="screens/app-cook-mode-long-large.jpg" target="_blank" rel="noopener">长步骤滚动</a></figcaption></figure>
+      <figure><h3>社区 · 看看别人家的饭桌</h3><a class="screen-link" href="screens/app-community.jpg" target="_blank" rel="noopener"><img src="screens/app-community.jpg" alt="社区动态：作者、晒菜、关联菜谱与点赞收藏评论" width="591" height="1280" loading="lazy"></a><figcaption class="screen-hint"><a href="screens/app-community-large.jpg" target="_blank" rel="noopener">大字模式</a> · <a href="screens/app-community-text.jpg" target="_blank" rel="noopener">无图分享</a><br><a href="screens/all-pkg-extra-community-post-detail-index.jpg" target="_blank" rel="noopener">帖子详情</a> · <a href="#all-pages">查看全部社区页面</a></figcaption></figure>
+    </div>
+  </section>
+  <section id="all-pages" class="page-catalog" aria-label="全部正式页面目录">
+    <div class="eyebrow">逐页查看与标注</div><h2>全部正式页面 · 39 个路由</h2>
+    <p>点开截图查看原图。已优化页面与原有布局分别标注；新补的详情、表单、家庭、消息和设置页供下一轮逐页打磨。会员、支付、手机登录目前关闭，这里仅展示布局；旧记录入口自动跳转到记录页。</p>
+    <div class="catalog-controls">
+      <div class="catalog-search"><label for="catalog-search">找到页面</label><input id="catalog-search" type="search" placeholder="搜索页面，如社区、设置、菜谱"><span id="catalog-count" class="catalog-count" role="status" aria-live="polite">正在读取页面目录…</span><button class="catalog-reset" id="catalog-reset" type="button">重置</button></div>
+      <div class="catalog-groups" role="group" aria-label="页面分组"><button data-page-group="all" aria-pressed="true">全部</button><button data-page-group="点菜与备菜" aria-pressed="false">点菜与备菜</button><button data-page-group="做菜与记录" aria-pressed="false">做菜与记录</button><button data-page-group="社区" aria-pressed="false">社区</button><button data-page-group="家庭" aria-pressed="false">家庭</button><button data-page-group="账户与会员" aria-pressed="false">账户与会员</button><button data-page-group="我的与帮助" aria-pressed="false">我的与帮助</button></div>
+    </div>
+    <div id="catalog-grid" class="catalog-grid"></div><p id="catalog-empty" class="catalog-empty" hidden>没有找到页面，换个关键词或点击重置。</p>
+  </section>
+  <section id="home-details" class="home-update" aria-label="首页细节与状态">
+    <div class="eyebrow">原版首页 · worktree 中已实现</div><h2>沿着原来的这版，接好一餐的四个阶段。</h2>
+    <p>缩短照片头图，让当前餐次更早出现；菜单先看上桌进度和买食材 / 做菜按钮，再看每道菜的点菜人与状态。</p>
+    <div class="home-states">
+      <figure><h3>还没点菜 · 从这里开始</h3><a class="screen-link" href="screens/home-updated-empty.jpg" target="_blank" rel="noopener"><img src="screens/home-updated-empty.jpg" alt="优化后的正式首页：大图选菜、餐次、空菜单与四阶段入口" width="591" height="1280"></a><figcaption class="screen-hint">保留原版的大图与点菜动作</figcaption></figure>
+      <figure><h3>已经点好 · 接着做菜</h3><a class="screen-link" href="screens/picker-home-menu.jpg" target="_blank" rel="noopener"><img src="screens/picker-home-menu.jpg" alt="紧凑家庭菜单：菜数和进度同一行，买食材与继续做菜在清单之前" width="591" height="1280"></a><figcaption class="screen-hint">主操作提前，滚动时保留页头</figcaption></figure>
+      <figure><h3>这一餐做好了 · 记下好味道</h3><a class="screen-link" href="screens/home-updated-done.jpg" target="_blank" rel="noopener"><img src="screens/home-updated-done.jpg" alt="所有菜上桌后，首页流程突出记录入口" width="591" height="1280"></a><figcaption class="screen-hint">进度随菜单状态变化</figcaption></figure>
+    </div>
+    <div class="home-more">微信模拟器 · 临时示例菜单。<a href="screens/picker-home-menu-large.jpg" target="_blank" rel="noopener">查看菜单的大字与长菜名</a> · <a href="screens/app-home.jpg" target="_blank" rel="noopener">查看有菜时的第一屏</a>。</div>
+    <p>长菜名、大字与家人心愿分别留足空间；四阶段入口统一为卡片，推荐区按标题、筛选、菜谱排列。</p>
+    <div class="home-states">
+      <figure><h3>长菜名 · 大字也能看清</h3><a class="screen-link" href="screens/home-updated-hero-lg.jpg" target="_blank" rel="noopener"><img src="screens/home-updated-hero-lg.jpg" alt="大字模式下，超长菜名和简介控制在两行，顶部昵称与快捷按钮互不重叠" width="591" height="1280" loading="lazy"></a><figcaption class="screen-hint"><a href="screens/home-updated-hero-normal.jpg" target="_blank" rel="noopener">查看普通字号</a></figcaption></figure>
+      <figure><h3>家人心愿 · 挑菜与更多操作</h3><a class="screen-link" href="screens/picker-home-wishes.jpg" target="_blank" rel="noopener"><img src="screens/picker-home-wishes.jpg" alt="家人心愿显示点菜人、长菜名和挑菜入口，修改与移除收进更多操作" width="591" height="1280" loading="lazy"></a><figcaption class="screen-hint"><a href="screens/picker-home-wishes-large.jpg" target="_blank" rel="noopener">查看大字模式</a></figcaption></figure>
+      <figure><h3>家里常做的菜 · 搜索、筛选、挑菜</h3><a class="screen-link" href="screens/picker-home-search.jpg" target="_blank" rel="noopener"><img src="screens/picker-home-search.jpg" alt="首页常做菜新增搜索入口，再按菜系筛选与浏览菜谱" width="591" height="1280" loading="lazy"></a><figcaption class="screen-hint">搜索带到菜谱页，继续挑选这一餐</figcaption></figure>
+    </div>
+    <div class="home-more">下面保留四套方向和修改前的原版作对照。</div>
+  </section>
   <div class="toolbar"><div class="scenes" role="group" aria-label="切换场景"><button data-scene="order" aria-pressed="true">点菜</button><button data-scene="cook" aria-pressed="false">做菜</button><button data-scene="record" aria-pressed="false">记录</button><button data-scene="community" aria-pressed="false">社区</button></div><p id="scene-caption" aria-live="polite"></p></div>
   <div class="comparison">
-    <article data-design="a"><div class="design-head"><h2><span class="design-index">A</span>现版优化<span class="recommended">建议从这版开始</span></h2><p class="description">保留米白、番茄红与菜图，收起过大的装饰，把这一餐和下一步放到眼前。</p></div><a class="screen-link" href="screens/a-order.jpg" target="_blank" rel="noopener"><img src="screens/a-order.jpg" alt="A 现版优化 · 点菜页" width="591" height="1280"></a><p class="screen-hint">点击截图查看原图</p><ul class="design-points"><li><b>点菜</b>短菜图开场，已点菜单直接接去做菜。</li><li><b>做菜</b>一道菜一个当前步骤，计时与上桌操作并列。</li><li><b>记录</b>最近上桌、评分、备注和分享放在一起。</li><li><b>社区</b>从别人家的成品直接点回自己的菜单。</li></ul></article>
+    <article id="fusion" data-design="d"><div class="design-head"><h2><span class="design-index">D</span>现代家庭融合<span class="recommended">方向参考</span></h2><p class="description">用原版的大图菜品留住食欲，用现代流程接住做菜，再把家人的决定放回点菜单。</p></div><a class="screen-link" href="screens/d-order.jpg" target="_blank" rel="noopener"><img src="screens/d-order.jpg" alt="D 现代家庭融合 · 点菜页" width="591" height="1280"></a><p class="screen-hint">点击截图查看原图</p><ul class="design-points"><li><b>点菜</b>大图先让人想吃，头像再说明是谁点的。</li><li><b>做菜</b>当前步骤、计时和菜单入口保持 A 的清楚。</li><li><b>记录</b>日期和家庭语气借用 B，保留再点与分享。</li><li><b>社区</b>成品仍能直接回到这一家的菜单。</li></ul></article>
+    <article data-design="a"><div class="design-head"><h2><span class="design-index">A</span>现版优化</h2><p class="description">保留米白、番茄红与菜图，收起过大的装饰，把这一餐和下一步放到眼前。</p></div><a class="screen-link" href="screens/a-order.jpg" target="_blank" rel="noopener"><img src="screens/a-order.jpg" alt="A 现版优化 · 点菜页" width="591" height="1280"></a><p class="screen-hint">点击截图查看原图</p><ul class="design-points"><li><b>点菜</b>短菜图开场，已点菜单直接接去做菜。</li><li><b>做菜</b>一道菜一个当前步骤，计时与上桌操作并列。</li><li><b>记录</b>最近上桌、评分、备注和分享放在一起。</li><li><b>社区</b>从别人家的成品直接点回自己的菜单。</li></ul></article>
     <article data-design="b"><div class="design-head"><h2><span class="design-index">B</span>家庭点菜单</h2><p class="description">暖纸色、家人参与、点菜单与做菜日记。适合把“为家人做一顿饭”做成产品气质。</p></div><a class="screen-link" href="screens/b-order.jpg" target="_blank" rel="noopener"><img src="screens/b-order.jpg" alt="B 家庭点菜单 · 点菜页" width="591" height="1280"></a><p class="screen-hint">点击截图查看原图</p><ul class="design-points"><li><b>点菜</b>先看到家人的心愿与一张完整点菜单。</li><li><b>做菜</b>大步数、安静的排版，把注意力留给锅里。</li><li><b>记录</b>日期、心得与成品组成一页家庭做菜日记。</li><li><b>社区</b>像邻居分享一餐，菜谱是交流的起点。</li></ul></article>
     <article data-design="c"><div class="design-head"><h2><span class="design-index">C</span>清爽厨房</h2><p class="description">白绿配色、紧凑菜单、清楚的步骤与进度。适合每天打开、快速选菜和做饭。</p></div><a class="screen-link" href="screens/c-order.jpg" target="_blank" rel="noopener"><img src="screens/c-order.jpg" alt="C 清爽厨房 · 点菜页" width="591" height="1280"></a><p class="screen-hint">点击截图查看原图</p><ul class="design-points"><li><b>点菜</b>可折叠菜单，给推荐菜谱更多空间。</li><li><b>做菜</b>减少头图，把当前步骤和操作做大。</li><li><b>记录</b>周历显示开火日，快速找到最近的好味道。</li><li><b>社区</b>两列成品浏览，找到喜欢的就加入菜单。</li></ul></article>
   </div>
-  <div class="concept"><section><h3>先调整信息架构，再调整外观。</h3><p>一级导航统一为“点菜 / 做菜 / 记录 / 社区 / 我的”。菜谱库、冰箱和采购进入具体场景：选菜时看冰箱，确定菜单后买菜，做好后记下，分享带上菜谱，再回到点菜。</p></section><section class="native-entry"><h3>在小程序里连续体验</h3><p>打开独立 worktree 的开发者工具，编译页面如下。顶部可切换 A / B / C，底部可切换四条主线；点菜、步骤、评分、分享都使用本地示例数据。</p><code>pkg-preview/journey/index<br>design=a （也可填 b 或 c）</code></section></div>
-  <footer>2026-10-08 · 独立 worktree: codex/meal-journey-ui · 设计预览，正式页面尚待选型后落地。</footer>
+  <section id="original" class="original"><a class="screen-link" href="screens/original-home.jpg" target="_blank" rel="noopener"><img src="screens/original-home.jpg" alt="修改前的原版正式首页" width="591" height="1280"></a><div class="original-copy"><div class="eyebrow">O / 修改前的原版首页</div><h2>以这版为基础，整理下半屏的信息与动作。</h2><p>原版的大图 Hero、加到菜单和换一道构成食欲入口。当前优化继续使用这些元素，把这一餐的点菜单移到家人心愿之前，让每道菜的点菜人、状态和厨房动作更清楚，再接上记录与社区入口。</p><code>正式首页：miniapp/pages/home/index<br>家庭点菜单实验：miniapp/pkg-preview/home-e/index</code></div></section>
+  <div class="concept"><section><h3>让这一餐的操作连续起来。</h3><p>点菜后，在家庭菜单里看到每道菜的状态，接着买食材和做菜；上桌后，进度提示去记录。社区入口让家常菜与心得有地方分享，再把喜欢的菜点回自己的饭桌。</p></section><section class="native-entry"><h3>在小程序里体验</h3><p>打开独立 worktree 的开发者工具，正式首页使用现有业务接口。A / B / C / D 四套方向在独立预览页中使用本地示例数据。</p><code>正式首页：pages/home/index<br>方向预览：pkg-preview/journey/index?design=d</code></section></div>
+  <footer>2026-10-09 · 独立 worktree: codex/meal-journey-ui · 菜系、食材拍照、临期提醒与帖子详情，原版与全页面目录保留作对照。</footer>
 </main>
 <script>
+  const appPages = {
+    home: { title:'点菜 · 先让家人想吃', copy:'保留原版大图与家庭点菜单，新增随机点菜、冰箱能做和库存入口。下方常做菜支持搜索，家人心愿的操作也更紧凑。' },
+    cook: { title:'做菜 · 接住家人点好的菜', copy:'按餐次看已点的菜，菜图、点菜人和状态清楚可见。买菜、进厨房和开始做菜各有自己的位置。', large:true },
+    record: { title:'记录 · 留下每一餐的味道', copy:'用日历和时间线回看做过的菜、掌勺人、评分和心得。再点一次，或关联菜谱晒到社区。', large:true },
+    community: { title:'社区 · 看看别人家的饭桌', copy:'作者和时间在上方，晒菜与做法在中间，点赞、收藏和评论收在卡片底部。无图分享直接显示文字，关联菜谱仍可点回家。', large:true },
+    me: { title:'我的 · 管理这个小家', copy:'家庭成员、菜谱库、最近上桌和设置放在一起，常用入口保持清楚。' }
+  };
+  document.querySelectorAll('[data-app-page]').forEach(button => button.addEventListener('click', () => {
+    const key = button.dataset.appPage, page = appPages[key], src = `screens/app-${key}.jpg`;
+    document.querySelectorAll('[data-app-page]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+    document.getElementById('app-screen').src = src;
+    document.getElementById('app-screen').alt = page.title;
+    document.getElementById('app-screen-link').href = src;
+    document.getElementById('app-page-title').textContent = page.title;
+    document.getElementById('app-page-copy').textContent = page.copy;
+    const large = document.getElementById('app-large-link');
+    large.hidden = !page.large; large.href = `screens/app-${key}-large.jpg`;
+  }));
+
   const scenes = {
     order: { label:'点菜', caption:'家人想吃什么 → 这一餐的菜单 → 去做菜。' },
     cook: { label:'做菜', caption:'接住已点菜单 → 当前步骤与计时 → 做好了记一笔。' },
@@ -82,6 +283,41 @@
   }
   document.querySelectorAll('[data-scene]').forEach(button => button.addEventListener('click', () => selectScene(button.dataset.scene)));
   selectScene('order');
+
+  let catalogPages = [], catalogGroup = 'all';
+  const catalogSearch = document.getElementById('catalog-search');
+  function renderCatalog() {
+    const keyword = catalogSearch.value.trim().toLowerCase();
+    const pages = catalogPages.filter(page => (catalogGroup === 'all' || page.group === catalogGroup) && `${page.title} ${page.group} ${page.route}`.toLowerCase().includes(keyword));
+    const grid = document.getElementById('catalog-grid');
+    grid.replaceChildren(...pages.map(page => {
+      const figure = document.createElement('figure');
+      figure.className = 'catalog-card'; figure.dataset.route = page.route;
+      const title = document.createElement('h3'); title.textContent = page.title;
+      const link = document.createElement('a'); link.className = 'screen-link'; link.href = page.image; link.target = '_blank'; link.rel = 'noopener';
+      const img = document.createElement('img'); img.src = page.image; img.alt = `${page.title} · ${page.status}`; img.loading = 'lazy'; img.width = 591; img.height = 1280;
+      link.append(img);
+      const caption = document.createElement('figcaption');
+      const status = document.createElement('span'); status.className = `catalog-status${page.gated ? ' closed' : ''}`; status.textContent = `${page.group} · ${page.status}`;
+      const route = document.createElement('code'); route.className = 'catalog-route'; route.textContent = page.route;
+      caption.append(status, route);
+      if (page.variants && page.variants.length) {
+        const variants = document.createElement('p'); variants.className = 'catalog-variants';
+        page.variants.forEach(variant => { const a = document.createElement('a'); a.href = variant.image; a.textContent = variant.label; a.target = '_blank'; a.rel = 'noopener'; variants.append(a); });
+        caption.append(variants);
+      }
+      figure.append(title, link, caption); return figure;
+    }));
+    document.getElementById('catalog-count').textContent = `${pages.length} / ${catalogPages.length} 个页面`;
+    document.getElementById('catalog-empty').hidden = pages.length > 0;
+    document.querySelectorAll('[data-page-group]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.pageGroup === catalogGroup)));
+  }
+  catalogSearch.addEventListener('input', renderCatalog);
+  document.querySelectorAll('[data-page-group]').forEach(button => button.addEventListener('click', () => { catalogGroup = button.dataset.pageGroup; renderCatalog(); }));
+  document.getElementById('catalog-reset').addEventListener('click', () => { catalogSearch.value = ''; catalogGroup = 'all'; renderCatalog(); });
+  fetch('page-catalog.json', { cache:'no-store' }).then(response => { if (!response.ok) throw new Error('目录未读到'); return response.json(); }).then(catalog => { catalogPages = catalog.pages; renderCatalog(); }).catch(() => {
+    document.getElementById('catalog-count').textContent = '目录读取失败，刷新页面重试';
+  });
 </script>
 </body>
 </html>

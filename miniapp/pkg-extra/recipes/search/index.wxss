@@ -51,32 +51,12 @@
   border-radius: var(--r-chip);
   border: 3rpx solid var(--c-border);
 }
+/* 放大镜与菜谱库 .rx-search-ico 同一张 SVG */
 .sbox-ic {
-  position: relative;
-  width: 35rpx;
-  height: 35rpx;
+  width: 32rpx;
+  height: 32rpx;
   flex: none;
-}
-.ic-ring {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 25rpx;
-  height: 25rpx;
-  border: 4rpx solid var(--mut);
-  border-radius: 50%;
-  box-sizing: border-box;
-}
-.ic-handle {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 13rpx;
-  height: 4rpx;
-  background: var(--mut);
-  border-radius: 4rpx;
-  transform: rotate(45deg);
-  transform-origin: right bottom;
+  background: no-repeat center/contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%239a8e7d' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-3-3'/%3E%3C/svg%3E");
 }
 .sbox-input {
   flex: 1;

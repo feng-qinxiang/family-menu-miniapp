@@ -120,14 +120,15 @@
 /* ---------- 数据卡 ---------- */
 .mag-stats {
   display: flex;
-  gap: 22rpx;
-  margin-top: 34rpx;
+  gap: 12rpx;
+  margin-top: 16rpx;
 }
 .mag-stat {
   flex: 1;
   background: var(--c-surface);
   border-radius: var(--r-card);   /* 统计卡回到全站卡片标准 16rpx */
-  padding: 30rpx var(--pad-card-sm);
+  padding: 22rpx var(--pad-card-sm);
+  min-width: 0;
   border: var(--bd-card);
   box-shadow: var(--sh-raised);
 }
@@ -191,21 +192,21 @@
 .mag-hrow {
   display: flex;
   align-items: center;
-  gap: 26rpx;
+  gap: 20rpx;
   padding: 25rpx 0;
   border-bottom: 2rpx solid var(--paper-2);
 }
 .mag-thumb {
-  width: var(--tile-row-sm);
-  height: var(--tile-row-sm);
+  width: var(--dish-thumb);
+  height: var(--dish-thumb);
   border-radius: var(--r-chip);
   flex: none;
   background: var(--paper-2);
 }
 .mag-hmid { flex: 1; min-width: 0; }
-.mag-hname { font-size: calc(32rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--ink); letter-spacing: -0.5rpx; }
+.mag-hname { font-size: calc(32rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--ink); line-height: 1.45; word-break: break-all; }
 .mag-hsub { margin-top: 9rpx; font-size: var(--fs-cap); color: var(--mut); }
-.mag-stars { display: flex; gap: 4rpx; flex: none; }
+.mag-stars { display: flex; gap: 4rpx; margin-top: 8rpx; }
 .mag-star { font-size: var(--fs-cap); color: var(--line-deep); }
 .mag-star.on { color: var(--gold-deep); }
 .mag-hmore {
@@ -380,3 +381,27 @@
   font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: 700;
 }
+
+.mag-profile { display: flex; align-items: center; gap: 18rpx; margin-top: 20rpx; }
+.mag-profile-avatar { width: 88rpx; height: 88rpx; flex: none; border-radius: var(--r-md); background: var(--paper-2); }
+.mag-profile-letter { display: flex; align-items: center; justify-content: center; background: var(--pine); color: var(--anchor-contrast); font-size: var(--fs-lg); font-weight: 800; }
+.mag-profile-copy { flex: 1; min-width: 0; }
+.mag-profile-name { font-size: var(--fs-lg); font-weight: 700; color: var(--ink); word-break: break-all; line-height: 1.45; }
+.mag-profile-sub { font-size: var(--fs-cap); color: var(--mut-strong); margin-top: 4rpx; line-height: 1.5; }
+.mag-profile-edit { flex: none; color: var(--mut-strong); font-size: var(--fs-cap); }
+.mag-shortcuts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12rpx; margin: 20rpx 0; }
+.mag-shortcut { display: flex; align-items: center; gap: 12rpx; padding: 20rpx 16rpx; background: var(--c-surface); border: var(--bd-card); border-radius: var(--r-md); min-width: 0; }
+.mag-shortcut > view:last-child { min-width: 0; }
+.mag-shortcut .mag-ticon { width: 64rpx; height: 64rpx; font-size: var(--fs-sub); }
+.mag-shortcut .mag-tname { font-size: var(--fs-sub); line-height: 1.45; word-break: break-all; }
+.mag-shortcut .mag-tdesc { font-size: var(--fs-mini); line-height: 1.5; }
+.mag-today { padding: 24rpx; margin-bottom: 20rpx; }
+.mag-today-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12rpx; flex-wrap: wrap; font-size: var(--fs-lg); font-weight: 700; color: var(--ink); }
+.mag-today-status { font-size: var(--fs-cap); font-weight: 500; color: var(--pine); }
+.mag-today-dishes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14rpx; margin-top: 18rpx; }
+.mag-today-dish { min-width: 0; }
+.mag-today-dish image { display: block; width: 100%; height: 126rpx; border-radius: var(--r-sm); background: var(--paper-2); }
+.mag-today-dish view { font-size: var(--fs-cap); color: var(--ink); line-height: 1.5; margin-top: 8rpx; word-break: break-all; }
+.mag-today-footer { display: flex; justify-content: space-between; align-items: center; gap: 12rpx; flex-wrap: wrap; margin-top: 16rpx; color: var(--mut-strong); font-size: var(--fs-cap); line-height: 1.5; }
+.mag-today-footer text:last-child { color: var(--pop-deep); font-weight: 700; }
+.mag-hsub { line-height: 1.5; word-break: break-all; }

@@ -1,0 +1,134 @@
+{
+  "checkedAt": "2026-10-08T15:41:40.547770+00:00",
+  "checks": [
+    {
+      "file": "dish-logic.test.js",
+      "passed": true
+    },
+    {
+      "file": "kitchen-logic.test.js",
+      "passed": true
+    },
+    {
+      "file": "pantry-match.test.js",
+      "passed": true
+    },
+    {
+      "file": "pantry-delete.test.js",
+      "passed": true
+    },
+    {
+      "file": "api-empty-payload.test.js",
+      "passed": true
+    },
+    {
+      "file": "post-share.test.js",
+      "passed": true
+    },
+    {
+      "file": "cook-finish.test.js",
+      "passed": true
+    },
+    {
+      "file": "cook-consistency.test.js",
+      "passed": true
+    },
+    {
+      "file": "journey-preview.test.js",
+      "passed": true
+    },
+    {
+      "file": "home-journey.test.js",
+      "passed": true
+    },
+    {
+      "file": "favorites-cover.test.js",
+      "passed": true
+    },
+    {
+      "file": "home-e-preview.test.js",
+      "passed": true
+    },
+    {
+      "file": "journey-navigation.test.js",
+      "passed": true
+    },
+    {
+      "file": "recipe-pick.test.js",
+      "passed": true
+    },
+    {
+      "file": "interaction-audit.js",
+      "passed": true
+    },
+    {
+      "file": "static-check.js",
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "serverTests": [
+    {
+      "name": "PantryMatchTests",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0
+    },
+    {
+      "name": "PantryDeductionTests",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0
+    }
+  ],
+  "finalReview": {
+    "originalWorkspace": {
+      "before": {
+        "files": 766,
+        "sha256": "27709f019f98132c1f384da619c21ae8a2590edbc607f4f2b83598be7130158b"
+      },
+      "after": {
+        "files": 766,
+        "sha256": "27709f019f98132c1f384da619c21ae8a2590edbc607f4f2b83598be7130158b"
+      },
+      "unchanged": true
+    },
+    "credentialScan": {
+      "scope": "added lines and nonignored new text files",
+      "patternHitCounts": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "passed": true
+    },
+    "diffCheck": true,
+    "gallery": {
+      "passed": true,
+      "url": "http://127.0.0.1:8847/#picker-update",
+      "image": "screens/gallery-picker-final.png",
+      "linkedScreens": 32,
+      "missingScreens": 0
+    },
+    "nativeLayouts": {
+      "passed": true,
+      "screens": 17,
+      "boundsChecks": 14
+    },
+    "compiledFiles": 10,
+    "branch": "codex/meal-journey-ui"
+  },
+  "packageSummary": {
+    "files": 336,
+    "javascriptFiles": 97,
+    "mainMB": 1.44,
+    "extraMB": 0.54,
+    "previewMB": 0.2
+  },
+  "lastRecipePickCheck": {
+    "passed": true,
+    "note": "Rechecked after adding single urgent candidate rotation case."
+  },
+  "finalizedAt": "2026-10-08T15:58:14.798744+00:00"
+}

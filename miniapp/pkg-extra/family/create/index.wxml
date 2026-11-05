@@ -1,20 +1,9 @@
 <view class="fc-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
-  <scroll-view class="fc-scroll" scroll-y enhanced show-scrollbar="{{false}}">
-
-    <!-- ===== Hero 大图 ===== -->
-    <view class="fc-hero">
-      <image class="fc-hero-img" src="/assets/dishes/hongshao-pork.jpg" mode="aspectFill" />
-      <view class="fc-hero-mask"></view>
-      <view class="fc-hero-bignum serif">02</view>
-
-      <!-- 顶部导航：复用 nav-bar，仅返回 -->
-      <nav-bar title="" status-bar-height="{{statusBarHeight}}"></nav-bar>
-
-      <!-- Hero 文案 -->
-      <view class="fc-hero-body">
-        <text class="fc-tag">新建家庭</text>
-        <view class="fc-hero-title title-stroke">创建你的<text class="pop">家</text></view>
-      </view>
+    <nav-bar title="创建家庭" status-bar-height="{{statusBarHeight}}" />
+    <view class="cpt-head">
+      <view class="cpt-eyebrow">把家人聚在一张餐桌</view>
+      <view class="cpt-title">建一个小家</view>
+      <view class="cpt-sub">一起点菜、轮流掌勺，留下每一餐的味道。</view>
     </view>
 
     <!-- ===== Sheet 内容 ===== -->
@@ -28,13 +17,12 @@
             <view class="fc-ava-cam">
               <view class="fc-ic fc-ic-cam"></view>
             </view>
-            <text class="fc-ava-ct">家庭头像</text>
           </block>
           <view class="fc-ava-badge">
             <view class="fc-ic fc-ic-plus"></view>
           </view>
         </view>
-        <view class="fc-ava-hint">给你们的小家选一张照片</view>
+        <view class="fc-ava-copy"><view class="fc-ava-title">给小家一张合影</view><view class="fc-ava-hint">选填，之后也可以更换</view></view>
       </view>
 
       <!-- 表单 -->
@@ -62,21 +50,21 @@
           <picker mode="region" value="{{region}}" bindchange="onRegionChange">
             <view class="fc-inp">
               <view class="fc-ic fc-ic-pin"></view>
-              <text class="fc-inp-txt {{regionText ? '' : 'fc-ph'}}">{{regionText || '选择城市，方便找应季食材'}}</text>
+              <text class="fc-inp-txt {{regionText ? '' : 'fc-ph'}}">{{regionText || '选择所在城市'}}</text>
               <view class="fc-chev"></view>
             </view>
           </picker>
         </view>
 
-        <view class="fc-createbtn tap-scale" bindtap="onCreate">
-          <text>创建家庭</text>
+        <view class="fc-createbtn tap-scale" bindtap="onCreate" role="button" aria-label="创建家庭" aria-disabled="{{submitting}}">
+          <text>{{submitting ? '创建中…' : '创建家庭'}}</text>
           <view class="fc-ic fc-ic-arrow"></view>
         </view>
 
         <!-- Tip 卡片 -->
         <view class="fc-tipcard">
           <view class="fc-ic fc-ic-bulb"></view>
-          <view class="fc-tip-tx">创建后会生成一个<text class="fc-tip-b">专属邀请码</text>，把它发给家人，大家就能一起点菜、共享买菜清单啦。</view>
+          <view class="fc-tip-tx">建好后，用<text class="fc-tip-b">专属邀请码</text>邀请家人，一起点菜、共享清单。</view>
         </view>
       </view>
 
@@ -89,5 +77,4 @@
     </view>
 
     <view class="safe-bottom"></view>
-  </scroll-view>
 </view>

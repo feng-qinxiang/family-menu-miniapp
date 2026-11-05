@@ -8,10 +8,7 @@
       </view>
 
       <view class="sbox">
-        <view class="sbox-ic">
-          <view class="ic-ring"></view>
-          <view class="ic-handle"></view>
-        </view>
+        <view class="sbox-ic"></view>
         <input
           class="sbox-input"
           value="{{keyword}}"

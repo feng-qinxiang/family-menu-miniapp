@@ -21,15 +21,8 @@
 .head {
   padding: 34rpx 0 12rpx;
 }
-.head .hero-ttl {
-  margin-top: 12rpx;
-  font-size: var(--fs-hero-lg);
-  line-height: 0.94;
-  letter-spacing: -4rpx;
-  font-weight: 900;
-}
 .head .lead {
-  margin-top: 22rpx;
+  margin-top: 16rpx;
   font-size: var(--fs-sub);
   line-height: 1.5;
   color: var(--mut-strong);
@@ -45,7 +38,6 @@
 }
 .strip .strip-e {
   font-family: var(--serif);
-  font-style: italic;
   font-size: var(--fs-mini);
   letter-spacing: 2rpx;
   font-weight: 700;

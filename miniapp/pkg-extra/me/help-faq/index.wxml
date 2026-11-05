@@ -2,19 +2,11 @@
 <nav-bar title="帮助中心" show-back="{{true}}" status-bar-height="{{statusBarHeight}}"></nav-bar>
 
 <view class="container help {{fontScale === 'lg' ? 'font-lg' : ''}}">
-  <!-- Hero 标题 -->
-  <view class="hero g-fade-up">
-    <view class="eyebrow-serif">需要帮忙？</view>
-    <view class="hero-h">帮助<text class="pop">中心</text></view>
-  </view>
 
   <!-- 搜索框 -->
   <view class="searchwrap g-fade-up g-d1">
     <view class="search">
-      <view class="search-icon">
-        <view class="si-ring"></view>
-        <view class="si-tail"></view>
-      </view>
+      <view class="search-icon"></view>
       <input
         class="search-input"
         type="text"

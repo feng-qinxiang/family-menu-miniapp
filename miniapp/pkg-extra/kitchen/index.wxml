@@ -57,34 +57,34 @@
         wx:key="id"
         class="k-card {{item.main ? 'main' : ''}} {{item.status === 'done' ? 'is-done' : ''}}"
       >
-        <image class="k-img" src="{{item.img}}" mode="aspectFill" lazy-load />
-        <view class="k-main-flag" wx:if="{{item.main}}">主灶</view>
-
-        <view class="k-col">
+        <view class="k-card-head">
+          <image class="k-img" src="{{item.img}}" mode="aspectFill" lazy-load />
+          <view class="k-col">
           <view class="k-title-row">
-            <text class="k-title ellipsis">{{item.title}}</text>
-            <text class="k-tag {{item.status}}">{{item.status === 'done' ? '已上桌' : item.status === 'cooking' ? '烧着呢' : '待做'}}</text>
+            <text class="k-title">{{item.title}}</text>
           </view>
 
           <view class="k-meta">
             <text wx:if="{{item.timeCost}}">{{item.timeCost}} 分钟</text>
             <text wx:if="{{item.servings}}"> · {{item.servings}} 人份</text>
             <text wx:if="{{item.progressText}}"> · 做到 {{item.progressText}}</text>
-            <text wx:if="{{!item.timeCost && !item.servings && !item.progressText}}">· {{item.mealLabel}}</text>
+            <text wx:if="{{!item.timeCost && !item.servings && !item.progressText}}">{{item.mealLabel}}</text>
           </view>
-
-          <!-- 计时行 -->
+          <view class="k-status-row"><text class="k-main-flag" wx:if="{{item.main}}">主灶</text><text class="k-tag {{item.status}}">{{item.status === 'done' ? '已上桌' : item.status === 'cooking' ? '正在做' : '待开做'}}</text></view>
+          <!-- 本菜计时放在图片右侧，和菜名、状态一起查看 -->
           <view class="k-timer" wx:if="{{item.status !== 'done'}}">
-            <text class="k-clock {{item.timer && item.timer.running ? 'running' : ''}} {{item.timer ? '' : 'idle'}}">{{item.timer ? item.timerText : '未计时'}}</text>
+            <view class="k-timer-copy"><text class="k-timer-label">{{item.timer ? (item.timer.running ? '正在计时' : '计时已暂停') : '未计时'}}</text><text wx:if="{{item.timer}}" class="k-clock {{item.timer.running ? 'running' : ''}}">{{item.timerText}}</text></view>
             <view class="k-tbtns">
               <view
                 class="k-tbtn tap-scale {{item.timer && item.timer.running ? 'on' : ''}}"
                 data-index="{{index}}"
                 catchtap="toggleTimer"
-              >{{item.timer && item.timer.running ? '暂停' : (item.timer ? '继续' : '计时')}}</view>
+              >{{item.timer && item.timer.running ? '暂停' : (item.timer ? '继续' : '开始计时')}}</view>
               <view class="k-tbtn ghost tap-scale" data-index="{{index}}" catchtap="pickDuration">换时长</view>
             </view>
           </view>
+          </view>
+        </view>
 
           <!-- 动作行 -->
           <view class="k-acts" wx:if="{{item.status !== 'done'}}">
@@ -106,7 +106,6 @@
               catchtap="shareCooked"
             >晒到邻里厨房 ›</view>
           </view>
-        </view>
       </view>
     </view>
 

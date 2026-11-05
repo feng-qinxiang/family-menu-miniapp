@@ -3,17 +3,6 @@
   padding-top: 12rpx;
 }
 
-/* ===== Hero ===== */
-.hero {
-  padding: 16rpx 8rpx 12rpx;
-}
-.hero-h {
-  margin-top: 10rpx;
-  font-size: var(--fs-hero-lg);
-  line-height: 0.92;
-  letter-spacing: -4rpx;
-}
-
 /* ===== 搜索框 ===== */
 .searchwrap {
   padding: 12rpx 4rpx 8rpx;
@@ -28,32 +17,12 @@
   border-radius: var(--r-md);
   box-shadow: var(--sh-card);
 }
+/* 放大镜与菜谱库 .rx-search-ico 同一张 SVG */
 .search-icon {
-  position: relative;
-  width: 36rpx;
-  height: 36rpx;
+  width: 32rpx;
+  height: 32rpx;
   flex: none;
-}
-.si-ring {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 26rpx;
-  height: 26rpx;
-  border: 4rpx solid var(--mut);
-  border-radius: 50%;
-  box-sizing: border-box;
-}
-.si-tail {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 14rpx;
-  height: 4rpx;
-  background: var(--mut);
-  border-radius: 4rpx;
-  transform: rotate(45deg);
-  transform-origin: right bottom;
+  background: no-repeat center/contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%239a8e7d' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-3-3'/%3E%3C/svg%3E");
 }
 .search-input {
   flex: 1;
@@ -68,7 +37,6 @@
 .seclbl {
   padding: 40rpx 8rpx 8rpx;
   font-family: var(--serif);
-  font-style: italic;
   font-size: calc(25rpx * var(--fs-mul, 1));
   letter-spacing: 1rpx;
   color: var(--gold-deep);
@@ -211,7 +179,6 @@
 }
 .eyebrow2 {
   font-family: var(--serif);
-  font-style: italic;
   font-size: var(--fs-cap);
   letter-spacing: 1rpx;
   color: var(--gold);

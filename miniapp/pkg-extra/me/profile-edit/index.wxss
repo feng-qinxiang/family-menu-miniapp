@@ -35,7 +35,6 @@
 }
 .pe-eyebrow {
   font-family: var(--serif);
-  font-style: italic;
   font-size: var(--fs-cap);
   letter-spacing: 2rpx;
   color: var(--gold-deep);
@@ -116,7 +115,6 @@
   padding: 0 46rpx;
   margin: 36rpx 0 16rpx;
   font-family: var(--serif);
-  font-style: italic;
   font-size: var(--fs-cap);
   letter-spacing: 1rpx;
   color: var(--gold-deep);
@@ -150,23 +148,6 @@
 }
 .pe-group .pe-frow:last-child {
   border-bottom: none;
-}
-.pe-fic {
-  width: 70rpx;
-  height: 70rpx;
-  border-radius: 22rpx;
-  background: var(--paper-2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: none;
-}
-.pe-ic-dot {
-  width: 26rpx;
-  height: 26rpx;
-  border-radius: var(--r-xs);
-  background: var(--pop);
-  opacity: 0.85;
 }
 .pe-flabel {
   font-size: calc(29rpx * var(--fs-mul, 1));
@@ -205,6 +186,11 @@
   transform: rotate(45deg);
   margin-left: 8rpx;
 }
+/* picker 是 .pe-picker 的外层，自己也要占满剩余宽度，生日值才和昵称一样靠右 */
+.pe-frow > picker {
+  flex: 1;
+  min-width: 0;
+}
 .pe-picker {
   flex: 1;
   display: flex;
@@ -228,7 +214,7 @@
 .pe-pill.on {
   background: var(--pop-soft);
   color: var(--pop);
-  border-color: rgba(232, 71, 42, 0.3);
+  border-color: rgba(200, 56, 31, 0.3);
 }
 
 /* 口味偏好：纵向 tags */
@@ -255,7 +241,7 @@
 .pe-tag.on {
   background: var(--pop-soft);
   color: var(--pop);
-  border-color: rgba(232, 71, 42, 0.3);
+  border-color: rgba(200, 56, 31, 0.3);
 }
 
 /* ===== 保存按钮 ===== */

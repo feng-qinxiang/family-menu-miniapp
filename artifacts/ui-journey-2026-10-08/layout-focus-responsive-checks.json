@@ -1,0 +1,275 @@
+{
+  "date": "2026-11-04",
+  "kind": "browser prototype only",
+  "nativeWechatVerified": false,
+  "passed": true,
+  "states": [
+    {
+      "id": "request",
+      "size": {
+        "width": 1344,
+        "height": 1050
+      },
+      "viewport": 1344,
+      "documentWidth": 1344,
+      "screen": {
+        "x": 466.5,
+        "width": 376,
+        "height": 813.6953125
+      },
+      "panel": {
+        "clientHeight": 479,
+        "scrollHeight": 479,
+        "bottom": 926.7025756835938,
+        "screenBottom": 926.6953125
+      },
+      "textOverflows": [],
+      "passed": true,
+      "screenshot": "/Users/xx/.codex/worktrees/meal-journey-ui/家庭点菜小程序/artifacts/ui-journey-2026-10-08/screens/layout-focus-request.png"
+    },
+    {
+      "id": "picker",
+      "size": {
+        "width": 1344,
+        "height": 1050
+      },
+      "viewport": 1344,
+      "documentWidth": 1344,
+      "screen": {
+        "x": 466.5,
+        "width": 376,
+        "height": 813.6953125
+      },
+      "panel": null,
+      "textOverflows": [],
+      "passed": true,
+      "screenshot": "/Users/xx/.codex/worktrees/meal-journey-ui/家庭点菜小程序/artifacts/ui-journey-2026-10-08/screens/layout-focus-picker.png"
+    },
+    {
+      "id": "detail",
+      "size": {
+        "width": 1344,
+        "height": 1050
+      },
+      "viewport": 1344,
+      "documentWidth": 1344,
+      "screen": {
+        "x": 466.5,
+        "width": 376,
+        "height": 813.6953125
+      },
+      "panel": null,
+      "textOverflows": [],
+      "passed": true,
+      "screenshot": "/Users/xx/.codex/worktrees/meal-journey-ui/家庭点菜小程序/artifacts/ui-journey-2026-10-08/screens/layout-focus-detail.png"
+    },
+    {
+      "id": "cook",
+      "size": {
+        "width": 1344,
+        "height": 1050
+      },
+      "viewport": 1344,
+      "documentWidth": 1344,
+      "screen": {
+        "x": 466.5,
+        "width": 376,
+        "height": 813.6953125
+      },
+      "panel": null,
+      "textOverflows": [],
+      "passed": true,
+      "screenshot": "/Users/xx/.codex/worktrees/meal-journey-ui/家庭点菜小程序/artifacts/ui-journey-2026-10-08/screens/layout-focus-cook.png"
+    },
+    {
+      "id": "record",
+      "size": {
+        "width": 1344,
+        "height": 1050
+      },
+      "viewport": 1344,
+      "documentWidth": 1344,
+      "screen": {
+        "x": 466.5,
+        "width": 376,
+        "height": 813.6953125
+      },
+      "panel": null,
+      "textOverflows": [],
+      "passed": true,
+      "screenshot": "/Users/xx/.codex/worktrees/meal-journey-ui/家庭点菜小程序/artifacts/ui-journey-2026-10-08/screens/layout-focus-record.png"
+    },
+    {
+      "id": "request",
+      "size": {
+        "width": 957,
+        "height": 871
+      },
+      "viewport": 957,
+      "documentWidth": 942,
+      "screen": {
+        "x": 297.7578125,
+        "width": 314.4765625,
+        "height": 680.5546875
+      },
+      "panel": {
+        "clientHeight": 479,
+        "scrollHeight": 479,
+        "bottom": 790.5281982421875,
+        "screenBottom": 791.5546875
+      },
+      "textOverflows": [],
+      "passed": true,
+      "screenshot": "/Users/xx/.codex/worktrees/meal-journey-ui/家庭点菜小程序/artifacts/ui-journey-2026-10-08/screens/layout-focus-request-957.png"
+    },
+    {
+      "id": "picker",
+      "size": {
+        "width": 957,
+        "height": 871
+      },
+      "viewport": 957,
+      "documentWidth": 942,
+      "screen": {
+        "x": 297.7578125,
+        "width": 314.4765625,
+        "height": 680.5546875
+      },
+      "panel": null,
+      "textOverflows": [],
+      "passed": true
+    },
+    {
+      "id": "detail",
+      "size": {
+        "width": 957,
+        "height": 871
+      },
+      "viewport": 957,
+      "documentWidth": 942,
+      "screen": {
+        "x": 297.7578125,
+        "width": 314.4765625,
+        "height": 680.5546875
+      },
+      "panel": null,
+      "textOverflows": [],
+      "passed": true
+    },
+    {
+      "id": "request",
+      "size": {
+        "width": 375,
+        "height": 812
+      },
+      "viewport": 375,
+      "documentWidth": 360,
+      "screen": {
+        "x": 20,
+        "width": 320,
+        "height": 692.5078125
+      },
+      "panel": {
+        "clientHeight": 479,
+        "scrollHeight": 479,
+        "bottom": 898.0128173828125,
+        "screenBottom": 898.0078125
+      },
+      "textOverflows": [],
+      "passed": true
+    },
+    {
+      "id": "picker",
+      "size": {
+        "width": 375,
+        "height": 812
+      },
+      "viewport": 375,
+      "documentWidth": 360,
+      "screen": {
+        "x": 20,
+        "width": 320,
+        "height": 692.5078125
+      },
+      "panel": null,
+      "textOverflows": [],
+      "passed": true
+    },
+    {
+      "id": "detail",
+      "size": {
+        "width": 375,
+        "height": 812
+      },
+      "viewport": 375,
+      "documentWidth": 360,
+      "screen": {
+        "x": 20,
+        "width": 320,
+        "height": 692.5078125
+      },
+      "panel": null,
+      "textOverflows": [],
+      "passed": true
+    },
+    {
+      "id": "request",
+      "size": {
+        "width": 320,
+        "height": 740
+      },
+      "viewport": 320,
+      "documentWidth": 305,
+      "screen": {
+        "x": 20,
+        "width": 270,
+        "height": 584.3046875
+      },
+      "panel": {
+        "clientHeight": 479,
+        "scrollHeight": 479,
+        "bottom": 851.3076782226562,
+        "screenBottom": 851.3046875
+      },
+      "textOverflows": [],
+      "passed": true,
+      "screenshot": "/Users/xx/.codex/worktrees/meal-journey-ui/家庭点菜小程序/artifacts/ui-journey-2026-10-08/screens/layout-focus-request-320.png"
+    },
+    {
+      "id": "picker",
+      "size": {
+        "width": 320,
+        "height": 740
+      },
+      "viewport": 320,
+      "documentWidth": 305,
+      "screen": {
+        "x": 20,
+        "width": 270,
+        "height": 584.3046875
+      },
+      "panel": null,
+      "textOverflows": [],
+      "passed": true
+    },
+    {
+      "id": "detail",
+      "size": {
+        "width": 320,
+        "height": 740
+      },
+      "viewport": 320,
+      "documentWidth": 305,
+      "screen": {
+        "x": 20,
+        "width": 270,
+        "height": 584.3046875
+      },
+      "panel": null,
+      "textOverflows": [],
+      "passed": true
+    }
+  ],
+  "pageErrors": [],
+  "requestEmptyScreenshot": "/Users/xx/.codex/worktrees/meal-journey-ui/家庭点菜小程序/artifacts/ui-journey-2026-10-08/screens/layout-focus-request-empty.png"
+}

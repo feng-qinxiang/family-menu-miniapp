@@ -4,12 +4,14 @@ const {
   addShoppingItem,
   getCommunityPosts,
   getPantryItems,
+  getIngredientPhotos,
   getRecipeDetail,
   getTodayMenu,
   removeWish
 } = require('../../utils/api');
 const { runGuarded } = require('../../utils/interaction');
-const { recipeDishImg, stepDishImg, onPhotoError: markPhotoBroken } = require('../../utils/image');
+const { recipeDishImg, stepDishImg, ingredientImage, onPhotoError: markPhotoBroken } = require('../../utils/image');
+const { editIngredientPhoto } = require('../../utils/ingredient-photo');
 const { sourceLabels: baseSourceLabels } = require('../../utils/constants');
 const features = require('../../utils/features');
 const { composePostWithRecipe } = require('../../utils/post-share');
@@ -54,6 +56,8 @@ Page({
     servings: 2,
     baseServings: 2,
     missCount: 0,
+    ingredientPhotos: {},
+    ingredientPhotosFailed: false,
     skeletonRows: [1, 2, 3],
     loading: true,
     playingVideo: false,
@@ -115,10 +119,12 @@ Page({
         getTodayMenu().catch(() => null),
         // 「大家晒的」是锦上添花：社区挂了也只是这块空着，不能把整页拖进错误态
         // COMMUNITY 关闭时不发这个请求，用空数组占位（下游按「空」渲染）
-        features.COMMUNITY ? getCommunityPosts(null, 1, 3, id).catch(() => []) : Promise.resolve([])
+        features.COMMUNITY ? getCommunityPosts(null, 1, 3, id).catch(() => []) : Promise.resolve([]),
+        getIngredientPhotos().catch(() => null)
       ]);
       const recipe = loaded[0], pantryItems = loaded[1], todayMenu = loaded[2];
       const rawWorks = Array.isArray(loaded[3]) ? loaded[3] : [];
+      const ingredientPhotos = loaded[4] || this.data.ingredientPhotos;
       const menuItems = (todayMenu && Array.isArray(todayMenu.items)) ? todayMenu.items : [];
       const inTodayMenu = menuItems.some((it) => String(it.recipeId) === String(id));
       if (!recipe) {
@@ -136,6 +142,8 @@ Page({
           name,
           baseAmount: ing.amount,
           amountText: scaleAmount(ing.amount, 1),
+          cover: ingredientImage(ing, ingredientPhotos),
+          coverBroken: false,
           // 与服务端扣库存同一口径（utils/pantry-match）：名称+单位都对得上、用量能解析出数字才算"有"。
           // 只比名字会出现"页面说齐了、做完菜一项没扣"
           inStock: stockMatches[i]
@@ -202,6 +210,8 @@ Page({
         missCount,
         works,
         inTodayMenu,
+        ingredientPhotos,
+        ingredientPhotosFailed: loaded[4] === null,
         playingVideo: false,
         loadError: false,
         loading: false
@@ -211,6 +221,16 @@ Page({
       this.setData({ recipe: null, loadError: true, loading: false });
       wx.showToast({ title: '加载详情失败', icon: 'none' });
     }
+  },
+
+  async onIngredientPhoto(e) {
+    const name = e.currentTarget.dataset.name;
+    const photos = await runGuarded(this, 'ingredientPhoto',
+      () => editIngredientPhoto(name, this.data.ingredientPhotos[name]),
+      { success: result => result ? '食材图片已保存' : '', fail: err => err.message || '保存失败，原图片已保留' });
+    if (photos === undefined) return;
+    this.setData({ ingredientPhotos: photos, ingredientPhotosFailed: false,
+      'recipe.ingredients': this.data.recipe.ingredients.map(ing => ({ ...ing, cover: ingredientImage(ing, photos), coverBroken: false })) });
   },
 
   // —— 份量 stepper：±1 重算用量 ——
@@ -397,7 +417,7 @@ Page({
   goBack() {
     wx.navigateBack({
       fail() {
-        wx.switchTab({ url: '/pages/recipes/index' });
+        wx.navigateTo({ url: '/pages/recipes/index' });
       }
     });
   },

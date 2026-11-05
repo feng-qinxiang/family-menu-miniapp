@@ -1,0 +1,71 @@
+{
+  "checkedAt": "2026-10-09T02:02:01.738Z",
+  "passed": true,
+  "checks": [
+    {
+      "file": "pantry-match.test",
+      "passed": true,
+      "output": "pantry-match.test: 全部断言通过 ✔"
+    },
+    {
+      "file": "ingredient-photo.test",
+      "passed": true,
+      "output": "ingredient-photo.test ok: cancel, upload failure, save failure, upload and text fallback"
+    },
+    {
+      "file": "ui-refinement.test",
+      "passed": true,
+      "output": "ui-refinement.test ok: ingredient photos, servings, cancel/failure retention, true month count, menu overview and community image provenance"
+    },
+    {
+      "file": "journey-navigation.test",
+      "passed": true,
+      "output": "journey-navigation.test ok: tabs, secondary tools, legacy completion links, record covers and filters"
+    },
+    {
+      "file": "cook-finish.test",
+      "passed": true,
+      "output": "cook-finish.test: 全部断言通过 ✔"
+    },
+    {
+      "file": "cook-consistency.test",
+      "passed": true,
+      "output": "cook-consistency.test: 恢复、身份分区、保存顺序与撤菜断言通过 ✔"
+    },
+    {
+      "file": "favorites-cover.test",
+      "passed": true,
+      "output": "✔ 收藏页封面口径：4 条通过"
+    },
+    {
+      "file": "home-journey.test",
+      "passed": true,
+      "output": "home-journey.test ok: meal menu, status, progress, empty-meal routing, and community guard"
+    },
+    {
+      "file": "post-share.test",
+      "passed": true,
+      "output": "post-share.test: 全部断言通过 ✔"
+    },
+    {
+      "file": "static-check",
+      "passed": true,
+      "output": "包体积：主包 1.5MB / 2MB · 分包 pkg-extra 0.55MB / 2MB · 分包 pkg-preview 0.2MB / 2MB\n检查了 344 个文件（其中 101 个 .js 过了语法解析）\n\n⚠ 提审前需部署方填写（不阻断 CI，但缺了就等着被驳回）：\n  · utils/legal-config.js -> operatorName: 【请填写运营者名称】（带占位符提交会被审核驳回）\n  · utils/legal-config.js -> operatorContact: 【请填写联系方式】（带占位符提交会被审核驳回）\n  · utils/env.js -> trial: https://test-api.example.com（换成已备案 HTTPS 域名，并同步小程序后台的服务器域名白名单）\n  · utils/env.js -> release: https://api.example.com（换成已备案 HTTPS 域名，并同步小程序后台的服务器域名白名单）\n✔ 小程序静态检查通过"
+    },
+    {
+      "file": "interaction-audit",
+      "passed": true,
+      "output": "交互体检：56 个页面模板 / 344 个文件\n\nA. 有事件但缺按下反馈：0 处\n\nB. 疑似「可点但无事件」（已剔除 0 处已确认误报）：7 处\n   · pkg-extra/cook-mode/index.wxml:106  <text class=\"timer-add-action\">\n   · pkg-extra/cook-mode/index.wxml:116  <text class=\"btn-prev-label\">\n   · pkg-extra/import/index.wxml:121  <view class=\"ic-link ic-link-pop\">\n   · pkg-extra/import/index.wxml:133  <view class=\"res-cta\">\n   · pkg-extra/vip/index.wxml:80  <view class=\"vip-cta safe-bottom\">\n   · pkg-preview/journey/index.wxml:25  <view class=\"meal-switch\">\n   · pkg-preview/journey/index.wxml:64  <view class=\"cook-switch\">\n\nC. 声明尺寸小于 88rpx 的可点类（已剔除 2 处刻意尺寸）：1 处\n   · pkg-extra/recipe-edit/index.wxss  .rc-retry-btn  height: 64rpx\n\n（B / C 只报告不判定：靠类名与尺寸启发式识别，文本链接类小热区属正常，需按元素性质人工判断）"
+    },
+    {
+      "file": "recipe-pick.test",
+      "passed": true,
+      "output": "recipe-pick.test ok: expiry, full matches, urgent priority, random filters, failure retention, duplicate guard, stock filters and routes"
+    },
+    {
+      "file": "ui-followup.test",
+      "passed": true,
+      "output": "ui-followup.test ok: crossed cuisine/source filters, camera source, exact pantry authorization, failure retention, notification route and comment retry"
+    }
+  ]
+}

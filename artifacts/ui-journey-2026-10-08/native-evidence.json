@@ -144,6 +144,54 @@
     "height": 1280
   },
   {
+    "design": "d",
+    "view": "order",
+    "variant": "",
+    "image": "screens/d-order.jpg",
+    "width": 591,
+    "height": 1280
+  },
+  {
+    "design": "d",
+    "view": "cook",
+    "variant": "",
+    "image": "screens/d-cook.jpg",
+    "width": 591,
+    "height": 1280
+  },
+  {
+    "design": "d",
+    "view": "record",
+    "variant": "",
+    "image": "screens/d-record.jpg",
+    "width": 591,
+    "height": 1280
+  },
+  {
+    "design": "d",
+    "view": "community",
+    "variant": "",
+    "image": "screens/d-community.jpg",
+    "width": 591,
+    "height": 1280
+  },
+  {
+    "design": "d",
+    "view": "community",
+    "variant": "large",
+    "image": "screens/d-community-large.jpg",
+    "width": 591,
+    "height": 1280
+  },
+  {
+    "design": "d",
+    "view": "cook",
+    "variant": "dark",
+    "image": "screens/d-cook-dark.jpg",
+    "width": 591,
+    "height": 1280
+  },
+  {
     "design": "a",
     "view": "record",
     "variant": "saved",

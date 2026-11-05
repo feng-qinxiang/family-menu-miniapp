@@ -1,0 +1,85 @@
+{
+  "checkedAt": "2026-10-08T15:11:56.592Z",
+  "worktree": "/Users/xx/.codex/worktrees/meal-journey-ui/家庭点菜小程序",
+  "branch": "codex/meal-journey-ui",
+  "logicRegressions": {
+    "source": "Local regression scripts passed earlier in this session.",
+    "passed": true,
+    "files": [
+      "dish-logic.test.js",
+      "kitchen-logic.test.js",
+      "pantry-match.test.js",
+      "pantry-delete.test.js",
+      "api-empty-payload.test.js",
+      "post-share.test.js",
+      "cook-finish.test.js",
+      "cook-consistency.test.js",
+      "journey-preview.test.js",
+      "home-journey.test.js",
+      "favorites-cover.test.js",
+      "home-e-preview.test.js",
+      "journey-navigation.test.js"
+    ]
+  },
+  "interactionAudit": {
+    "source": "Local check passed earlier in this session.",
+    "blockingIssues": 0
+  },
+  "staticCheck": {
+    "source": "Final local recheck",
+    "passed": true,
+    "files": 335,
+    "parsedJavaScriptFiles": 96,
+    "mainPackageMB": 1.42,
+    "extraPackageMB": 0.54,
+    "previewPackageMB": 0.2
+  },
+  "nativeRendering": {
+    "passed": true,
+    "screenCount": 19,
+    "source": "layout-evidence.json",
+    "dataMode": "Temporary Page data restored after each sample; read API failures prevent end-to-end validation."
+  },
+  "localTemplateCompilation": {
+    "passed": true,
+    "files": 27,
+    "source": "compile-checks.json"
+  },
+  "gallery": {
+    "tabs": [
+      "home",
+      "cook",
+      "record",
+      "community",
+      "me"
+    ],
+    "allSwitchesVerified": true,
+    "imageReferences": 26,
+    "missingImages": [],
+    "screenshot": "screens/gallery-final.png"
+  },
+  "originalWorkspace": {
+    "path": "/Users/xx/cx/家庭点菜小程序",
+    "files": 766,
+    "sha256": "27709f019f98132c1f384da619c21ae8a2590edbc607f4f2b83598be7130158b",
+    "matchesStartOfTurn": true
+  },
+  "diffCheck": {
+    "passed": true
+  },
+  "credentialScan": {
+    "credentialLiteralCandidateCounts": [
+      0,
+      0,
+      0
+    ]
+  },
+  "validationLimits": [
+    "Live server integration failed on multiple read requests",
+    "Native rating sheet not verified",
+    "Phone device not verified",
+    "Payment not enabled or verified",
+    "Remote CI not run",
+    "Not committed, merged, pushed, uploaded or deployed"
+  ]
+}

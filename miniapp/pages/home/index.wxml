@@ -1,6 +1,10 @@
 <wxs src="/utils/cuisine.wxs" module="cuisine" />
 <view class="mag-home {{fontScale === 'lg' ? 'font-lg' : ''}}">
 
+  <view class="hm-scroll-nav" wx:if="{{navSolid}}">
+    <nav-bar title="今日点菜" show-back="{{false}}"></nav-bar>
+  </view>
+
   <!-- ============ SKELETON (loading) ============ -->
   <view class="mh-skel" wx:if="{{loading}}">
     <view class="mh-skel-hero shimmer"></view>
@@ -46,12 +50,12 @@
         <view class="mh-name">{{currentUser.nickname || '朋友'}}，{{mealWord}}想吃点啥</view>
       </view>
       <view class="tap-scale mh-iconbtns">
-        <view class="tap-scale mh-iconbtn" catchtap="goShopping" aria-label="买菜">
-          <view class="mh-ico-glyph">买</view>
+        <view class="tap-scale mh-iconbtn" catchtap="goShopping" role="button" aria-label="买菜，待买 {{shoppingPending || 0}} 样">
+          <image class="mh-ico-image" src="/assets/icons/lucide/shopping-basket.svg" mode="aspectFit" aria-hidden="true" />
           <view class="mh-cart-dot" wx:if="{{shoppingPending}}"></view>
         </view>
-        <view class="tap-scale mh-iconbtn" catchtap="goRecipes" aria-label="菜谱库">
-          <view class="mh-ico-glyph">谱</view>
+        <view class="tap-scale mh-iconbtn" catchtap="goRecipes" role="button" aria-label="菜谱库">
+          <image class="mh-ico-image" src="/assets/icons/lucide/book-open.svg" mode="aspectFit" aria-hidden="true" />
         </view>
       </view>
     </view>
@@ -68,8 +72,8 @@
         <view class="mh-m">{{heroRecipe.cuisine || '家常'}}<block wx:if="{{heroRecipe.tasteTags[0]}}"> · {{heroRecipe.tasteTags[0]}}</block></view>
       </view>
       <view class="mh-hero-acts">
-        <view class="mh-hero-add tap-scale" catchtap="addToToday" data-id="{{heroRecipe.id}}">加到菜单</view>
-        <view class="mh-hero-shuffle tap-scale" catchtap="shuffleHero" aria-label="换一道">
+        <view class="mh-hero-add tap-scale" catchtap="addToToday" data-id="{{heroRecipe.id}}" role="button" aria-label="把{{heroRecipe.title}}加到当前餐次菜单">加到菜单</view>
+        <view class="mh-hero-shuffle tap-scale" catchtap="shuffleHero" role="button" aria-label="换一道">
           <view class="mh-ico-shuffle"></view>
           <text class="mh-shuffle-tx">换一道</text>
         </view>
@@ -88,7 +92,7 @@
         <view class="mh-name">{{currentUser.nickname || '朋友'}}，{{mealWord}}想吃点啥</view>
       </view>
       <text class="mh-empty-eyebrow">第一道菜</text>
-      <view class="mh-empty-headline">从第一道菜<text class="pop">开始</text></view>
+      <view class="mh-empty-headline">从第一道菜开始</view>
       <view class="mh-empty-sub">录入拿手菜，或导入收藏链接找灵感</view>
       <view class="mh-empty-acts">
         <view class="mh-empty-go tap-scale" bindtap="goRecipes">添加菜谱 ›</view>
@@ -104,105 +108,176 @@
       class="tap-scale fp-slot {{currentSlot === item.key ? 'on' : ''}}"
       data-slot="{{item.key}}"
       bindtap="selectSlot"
+      role="button"
+      aria-label="今日{{item.label}}"
+      aria-pressed="{{currentSlot === item.key}}"
     >今日·{{item.label}}</view>
-    <view class="tap-scale fp-slot fp-slot-week" bindtap="goWeek">本周 ›</view>
-  </view>
-
-  <!-- 许愿池：默认折叠一行，点击展开；避免低频功能占位（DEC-UI1） -->
-  <view class="fp-wish {{wishExpanded ? 'expanded' : ''}}" wx:if="{{!loading && !(loadError && !hasHomeData)}}">
-    <view class="tap-scale fp-wish-head fp-wish-head--toggle" bindtap="toggleWishExpand">
-      <view class="fp-wish-title">
-        <text class="fp-wish-eyebrow">许愿池</text>
-        <text class="fp-wish-slot">{{currentSlot === 'breakfast' ? '今日早餐' : currentSlot === 'lunch' ? '今日午餐' : '今日晚餐'}}</text>
-        <text class="fp-wish-count" wx:if="{{wishes.length}}">{{wishes.length}} 个心愿</text>
-      </view>
-      <view class="fp-wish-add tap-scale" wx:if="{{wishExpanded}}" catchtap="addWish">+ 我想吃</view>
-      <view class="fp-wish-caret {{wishExpanded ? 'up' : ''}}" wx:else></view>
-    </view>
-
-    <block wx:if="{{wishExpanded}}">
-      <view class="fp-wish-list" wx:if="{{wishes.length}}">
-        <view class="fp-wish-item" wx:for="{{wishes}}" wx:key="id">
-          <view class="fp-wish-text ellipsis">{{item.text}}</view>
-          <view class="tap-scale fp-wish-pending" wx:if="{{!item.recipeId}}" catchtap="pickForWish" data-text="{{item.text}}" data-id="{{item.id}}" data-slot="{{item.slot}}">待挑菜 ›</view>
-          <view class="fp-wish-by">{{item.by}}</view>
-          <view class="fp-wish-edit tap-scale" catchtap="editWish" data-id="{{item.id}}">改</view>
-          <view class="fp-wish-del tap-scale" catchtap="removeWish" data-id="{{item.id}}">×</view>
-        </view>
-      </view>
-
-      <view
-        class="fp-wish-confirm tap-scale {{!canConfirm ? 'disabled' : (wishes.length ? '' : 'hint')}}"
-        bindtap="{{wishes.length ? 'confirmMenu' : 'addWish'}}"
-      >
-        {{!canConfirm ? '等管理员确认' : (wishes.length ? '去挑菜' : '＋ 先许个愿，家人一起点今晚的菜')}}
-      </view>
-    </block>
+    <view class="tap-scale fp-slot fp-slot-week" bindtap="goWeek" role="button" aria-label="查看本周菜单">本周 ›</view>
   </view>
 
   <!-- ============ SHEET ============ -->
   <view class="mh-sheet" wx:if="{{!loading && !(loadError && !hasHomeData)}}">
 
-    <!-- 今日菜单 暗卡：提到首屏区域，进页第一眼看到（DEC-UI1） -->
-    <view class="mh-pad">
-      <view class="tap-scale mh-menucard card-dark g-fade-up g-d3" wx:if="{{slotMenu.length}}" bindtap="goMenu">
-        <view class="deco-circle"></view>
-        <view class="mh-mc-eyebrow">今天这一桌 <text class="mh-mc-slot">{{currentSlot === 'breakfast' ? '早餐' : currentSlot === 'lunch' ? '午餐' : '晚餐'}}</text></view>
-        <view class="mh-mc-title">今日菜单</view>
-        <view class="mh-mc-names ellipsis">
-          <text wx:for="{{slotMenu}}" wx:key="recipeId" class="{{item.status === 'done' ? 'mh-mc-name-done' : ''}}">{{item.recipe.title || '一道菜'}}{{index < slotMenu.length - 1 ? ' · ' : ''}}</text>
-        </view>
-        <view class="mh-mc-pile">
-          <image
-            wx:for="{{slotMenu}}"
-            wx:key="recipeId"
-            wx:if="{{index < 4}}"
-            class="mh-mc-d"
-            src="{{item.dishImg}}"
-            mode="aspectFill"
-          />
-        </view>
-        <view class="mh-mc-bot">
-          <view class="mh-mc-stats">
-            <view class="mh-mc-stat">
-              <view class="mh-mc-num">{{slotDoneCount ? slotDoneCount + '/' + slotMenu.length : slotMenu.length}}<text class="mh-mc-u">道</text></view>
-              <view class="mh-mc-cap">{{slotDoneCount ? '已上桌' : '已点'}}</view>
-            </view>
-            <view class="mh-mc-stat">
-              <view class="mh-mc-num">{{shoppingPending || 0}}<text class="mh-mc-u">样</text></view>
-              <view class="mh-mc-cap">待买</view>
-            </view>
+    <view class="hm-pick-tools">
+      <view class="hm-pick-tool tap-scale" bindtap="goRandomPick" role="button" aria-label="随机点菜，先预览再加入当前餐次">
+        <image src="/assets/icons/lucide/sparkles.svg" mode="aspectFit" aria-hidden="true" /><text>随机点菜</text>
+      </view>
+      <view class="hm-pick-tool tap-scale" bindtap="goPantryPick" role="button" aria-label="随机挑选冰箱能做的菜">
+        <image src="/assets/icons/tab-fridge.svg" mode="aspectFit" aria-hidden="true" /><text>冰箱能做</text>
+      </view>
+      <view class="hm-pick-stock tap-scale" bindtap="goPantry" role="button" aria-label="查看冰箱库存与到期日">看库存 ›</view>
+    </view>
+
+    <!-- 当前餐次：家庭菜单与厨房动作 -->
+    <view class="mh-pad hm-menu-wrap">
+      <view class="hm-menu-card {{menuReady ? 'is-ready' : ''}}" wx:if="{{slotMenu.length}}">
+        <view class="hm-menu-head">
+          <view class="hm-menu-heading">
+            <view class="hm-menu-eyebrow">今天这一桌 · {{currentSlot === 'breakfast' ? '早餐' : currentSlot === 'lunch' ? '午餐' : '晚餐'}}</view>
+            <view class="hm-menu-title">{{slotMenu.length}} 道菜<text class="hm-menu-title-progress"> · {{slotDoneCount}} 道已上桌</text></view>
           </view>
-          <view class="mh-mc-acts">
-            <view class="mh-mc-go2 tap-scale" catchtap="goShopping">买菜</view>
-            <view class="mh-mc-go mh-mc-go-cook tap-scale" catchtap="goCook">{{cookLabel}}</view>
+          <view class="hm-menu-open tap-scale" bindtap="goMenu" role="button" aria-label="查看完整菜单">完整菜单 ›</view>
+        </view>
+
+        <view class="hm-menu-summary">
+          <view class="hm-menu-progress" role="progressbar" aria-label="上桌进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{menuProgress}}">
+            <view class="hm-menu-progress-fill" style="width: {{menuProgress}}%;"></view>
           </view>
         </view>
+        <view class="hm-menu-actions">
+          <view class="hm-menu-action-secondary tap-scale" bindtap="goShopping" role="button" aria-label="买食材，购物清单待买 {{shoppingPending || 0}} 样">
+            <image class="hm-menu-action-icon" src="/assets/icons/lucide/shopping-basket.svg" mode="aspectFit" aria-hidden="true" />
+            <text>买食材</text>
+            <text class="hm-menu-shopping-count" wx:if="{{shoppingPending > 0}}">{{shoppingPending}}</text>
+          </view>
+          <view class="hm-menu-action-primary tap-scale" bindtap="{{menuReady ? 'goCookLog' : 'goCook'}}" role="button" aria-label="{{cookLabel}}">
+            <image class="hm-menu-action-icon" src="{{menuReady ? '/assets/icons/lucide/book-open.svg' : '/assets/icons/lucide/cooking-pot.svg'}}" mode="aspectFit" aria-hidden="true" />
+            <text>{{cookLabel}}</text>
+          </view>
+        </view>
+
+        <view class="hm-menu-list">
+          <view class="hm-menu-row tap-scale" wx:for="{{homeMenuItems}}" wx:key="recipeId" data-id="{{item.recipeId}}" bindtap="goDetail" role="button" aria-label="{{item.title}}，{{item.statusLabel}}，查看菜谱">
+            <image class="hm-menu-thumb" src="{{item.dishImg}}" mode="aspectFill" data-index="{{index}}" binderror="onMenuImgError" aria-hidden="true" />
+            <view class="hm-menu-copy">
+              <view class="hm-menu-mainline">
+                <text class="hm-menu-dish-title">{{item.title}}</text>
+                <text class="hm-status hm-status--{{item.statusClass}}">{{item.statusLabel}}</text>
+              </view>
+              <view class="hm-menu-byline" wx:if="{{item.addedByName}}">{{item.addedByName}} 点的</view>
+            </view>
+          </view>
+        </view>
+
+        <view class="hm-menu-more tap-scale" wx:if="{{menuMoreCount}}" bindtap="goMenu" role="button" aria-label="另有{{menuMoreCount}}道菜，查看完整菜单">另有 {{menuMoreCount}} 道菜 · 查看完整菜单 ›</view>
       </view>
 
-      <!-- 空态 1：当前餐次还没点菜（但全天有其他餐次） -->
-      <view class="mh-empty-menu card-dark g-fade-up g-d3 tap-dim" wx:elif="{{todayMenu.length}}" catchtap="goRecipes">
-        <view class="deco-circle"></view>
-        <view class="mh-mc-eyebrow">今天这一桌</view>
-        <view class="mh-mc-title">{{currentSlot === 'breakfast' ? '早餐' : currentSlot === 'lunch' ? '午餐' : '晚餐'}}还没点菜</view>
-        <view class="mh-mc-names">其他餐次已经点好菜了，去厨房看看</view>
-        <view class="mh-mc-bot">
-          <view class="mh-mc-empty-hint">开做 / 计时 / 上桌都在厨房总控</view>
-          <view class="mh-mc-go mh-mc-go-cook tap-scale" catchtap="goCook">{{emptyCookLabel}}</view>
+      <view class="hm-menu-card hm-menu-empty" wx:else>
+        <view class="hm-menu-empty-top">
+          <view class="hm-menu-empty-copy">
+            <view class="hm-menu-eyebrow">今天这一桌 · {{currentSlot === 'breakfast' ? '早餐' : currentSlot === 'lunch' ? '午餐' : '晚餐'}}</view>
+            <view class="hm-menu-title">这一餐还没点菜</view>
+            <view class="hm-menu-empty-note">{{todayMenu.length ? '其他餐次已安排 ' + todayMenu.length + ' 道菜' : '从家里常做的菜里挑几道'}}</view>
+          </view>
+          <image class="hm-menu-empty-plate" src="/assets/icons/empty-table.svg" mode="aspectFit" aria-hidden="true" />
         </view>
+        <view class="hm-menu-action-primary hm-menu-pick tap-scale" bindtap="goRecipes" role="button" aria-label="去选几道菜">
+          <image class="hm-menu-action-icon" src="/assets/icons/lucide/utensils.svg" mode="aspectFit" aria-hidden="true" />
+          <text>去选几道菜</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 点菜 → 做菜 → 记录 → 社区 -->
+    <view class="hm-journey" wx:if="{{journeySteps.length}}">
+      <view class="hm-journey-title">这一餐的进度</view>
+      <view class="hm-journey-track {{journeySteps.length === 4 ? 'has-community' : ''}}">
+        <view class="hm-journey-progress" style="width: {{journeyProgress}}%;" aria-hidden="true"></view>
+        <view
+          wx:for="{{journeySteps}}"
+          wx:key="key"
+          class="tap-scale hm-journey-step {{item.active ? 'is-current' : ''}} {{item.complete ? 'is-complete' : ''}}"
+          data-step="{{item.key}}"
+          bindtap="onJourneyStep"
+          role="button"
+          aria-label="{{item.label}}，{{item.caption}}"
+          aria-current="{{item.active ? 'step' : 'false'}}"
+        >
+          <view class="hm-journey-icon"><image src="{{item.icon}}" mode="aspectFit" aria-hidden="true" /></view>
+          <text class="hm-journey-label">{{item.label}}</text>
+          <text class="hm-journey-caption">{{item.caption}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 家人许愿：放在菜单与流程之后，默认保持紧凑 -->
+    <view class="fp-wish {{wishExpanded ? 'expanded' : ''}}" wx:if="{{!loading && !(loadError && !hasHomeData)}}">
+      <view class="fp-wish-head">
+        <view class="tap-scale fp-wish-head--toggle" bindtap="toggleWishExpand" role="button" aria-expanded="{{wishExpanded}}" aria-label="家人心愿，{{wishExpanded ? '收起' : '展开'}}">
+          <view class="fp-wish-title">
+            <view class="fp-wish-eyebrow">家人心愿</view>
+            <view class="fp-wish-meta">
+              <text class="fp-wish-slot">{{currentSlot === 'breakfast' ? '早餐' : currentSlot === 'lunch' ? '午餐' : '晚餐'}}</text>
+              <text class="fp-wish-count" wx:if="{{wishes.length}}"> · {{wishes.length}} 个心愿</text>
+              <text class="fp-wish-count" wx:else> · 一起决定吃什么</text>
+            </view>
+          </view>
+          <view class="fp-wish-caret {{wishExpanded ? 'up' : ''}}" aria-hidden="true"></view>
+        </view>
+        <view class="fp-wish-add tap-scale" catchtap="addWish" role="button" aria-label="添加想吃的菜">+ 我想吃</view>
       </view>
 
-      <!-- 空态 2：全天都没成单 -->
-      <view class="mh-empty-menu card-dark g-fade-up g-d3 tap-dim" wx:else catchtap="goRecipes">
-        <view class="deco-circle"></view>
-        <view class="mh-mc-eyebrow">今天这一桌</view>
-        <view class="mh-mc-title">还没点菜</view>
-        <view class="mh-mc-names">从下面挑几道，凑齐这一桌</view>
-        <view class="mh-mc-bot">
-          <view class="mh-mc-empty-hint">看中哪道，点 ＋ 上桌</view>
-          <view class="mh-mc-go tap-scale" catchtap="goRecipes">逛菜谱 ›</view>
+      <view class="fp-wish-preview tap-scale" wx:if="{{!wishExpanded && wishes.length}}" bindtap="toggleWishExpand" role="button" aria-label="{{wishes[0].by || '家人'}}想吃{{wishes[0].text}}，展开家人心愿">
+        <view class="fp-wish-avatar" aria-hidden="true">{{wishes[0].by ? wishes[0].by[0] : '家'}}</view>
+        <view class="fp-wish-preview-copy">
+          <view class="fp-wish-preview-dish">{{wishes[0].text}}</view>
+          <view class="fp-wish-preview-by ellipsis">{{wishes[0].by || '家人'}} 想吃</view>
         </view>
+        <text class="fp-wish-preview-rest" wx:if="{{wishes.length > 1}}">+{{wishes.length - 1}}</text>
       </view>
+
+      <block wx:if="{{wishExpanded}}">
+        <view class="fp-wish-list" wx:if="{{wishes.length}}">
+          <view class="fp-wish-item" wx:for="{{wishes}}" wx:key="id">
+            <view class="fp-wish-item-copy">
+              <view class="fp-wish-avatar" aria-hidden="true">{{item.by ? item.by[0] : '家'}}</view>
+              <view class="fp-wish-text">{{item.text}}</view>
+            </view>
+            <view class="fp-wish-item-meta">
+              <view class="fp-wish-by ellipsis">{{item.by || '家人'}}</view>
+              <view class="tap-scale fp-wish-pending" wx:if="{{!item.recipeId}}" catchtap="pickForWish" data-text="{{item.text}}" data-id="{{item.id}}" data-slot="{{item.slot}}" role="button" aria-label="为{{item.text}}挑选菜谱">挑菜谱 ›</view>
+              <text class="fp-wish-linked" wx:else>已选菜谱</text>
+              <view class="fp-wish-more tap-scale" catchtap="openWishActions" data-id="{{item.id}}" role="button" aria-label="{{item.text}}的更多操作">···</view>
+            </view>
+          </view>
+        </view>
+
+        <view
+          class="fp-wish-confirm tap-scale {{!canConfirm ? 'disabled' : (wishes.length ? '' : 'hint')}}"
+          bindtap="{{wishes.length ? 'confirmMenu' : 'addWish'}}"
+        >
+          {{!canConfirm ? '等管理员确认' : (wishes.length ? '去挑菜' : '＋ 先许个愿，家人一起点今晚的菜')}}
+        </view>
+      </block>
+    </view>
+
+    <!-- 推荐区：先标题，再筛选与菜谱 -->
+    <view class="mh-pad hm-recipes-head">
+      <section-head
+        eyebrow="家的味道"
+        title="家里"
+        popPart="常做"
+        titleTail="的菜"
+        hint="全部"
+        more="{{true}}"
+        bind:tapmore="goRecipes"
+      />
+    </view>
+
+    <view class="hm-recipe-search">
+      <image class="hm-search-icon" src="/assets/icons/lucide/search.svg" mode="aspectFit" aria-hidden="true" />
+      <input class="hm-search-input" value="{{homeSearchText}}" bindinput="onHomeSearchInput" bindconfirm="searchRecipes" confirm-type="search" placeholder="搜菜名、菜系、口味" placeholder-class="hm-search-placeholder" aria-label="搜索家常菜谱" />
+      <view class="hm-search-submit tap-scale" bindtap="searchRecipes" role="button" aria-label="搜索菜谱">搜索</view>
     </view>
 
     <!-- 菜系 chips -->
@@ -214,22 +289,12 @@
           class="chip tap-scale {{activeCuisine === item.key ? 'on' : ''}}"
           data-cuisine="{{item.key}}"
           bindtap="selectCuisine"
+          role="button"
+          aria-label="筛选{{item.label}}菜谱"
+          aria-pressed="{{activeCuisine === item.key}}"
         >{{item.label}}</view>
       </view>
     </scroll-view>
-
-    <!-- 家里常做的菜 -->
-    <view class="mh-pad">
-      <section-head
-        eyebrow="家的味道"
-        title="家里"
-        popPart="常做"
-        titleTail="的菜"
-        hint="全部"
-        more="{{true}}"
-        bind:tapmore="goRecipes"
-      />
-    </view>
 
     <scroll-view scroll-x class="mh-hcards" enhanced="{{true}}" show-scrollbar="{{false}}" wx:if="{{visibleRecipes.length}}">
       <view class="mh-hcards-inner">

@@ -17,7 +17,7 @@ page {
   /* 阴影：两层极淡冷灰，深色档换成 1px 描边环 */
   --a-sh-card: 0 2rpx 6rpx rgba(20, 24, 31, 0.04), 0 12rpx 32rpx rgba(20, 24, 31, 0.06);
   --a-sh-seg: 0 2rpx 8rpx rgba(20, 24, 31, 0.10);
-  --a-sh-pop: 0 8rpx 20rpx rgba(232, 71, 42, 0.24);
+  --a-sh-pop: 0 8rpx 20rpx rgba(200, 56, 31, 0.24);
   /* 圆角：主卡 32 / 内容卡 24 / 分段块 16 / 按钮全胶囊 */
   --a-r-xl: 32rpx;
   --a-r-lg: 24rpx;

@@ -4,15 +4,16 @@ const { getNotifications, markNotificationsRead } = require('../../../utils/api'
 const features = require('../../../utils/features');
 
 // 通知 kind → tab 归属（wish=家人许愿 / meal=开饭提醒，都算家庭事件）
-const KIND_TAB = { fam: 'family', com: 'community', sys: 'system', wish: 'family', meal: 'family' };
+const KIND_TAB = { fam: 'family', com: 'community', sys: 'system', wish: 'family', meal: 'family', pantry: 'family' };
 
 // kind → 默认图标
-const KIND_ICON = { fam: 'home', com: 'heart', sys: 'bell', wish: 'heart', meal: 'bell' };
+const KIND_ICON = { fam: 'home', com: 'heart', sys: 'bell', wish: 'heart', meal: 'bell', pantry: 'bell' };
 
 // actionType → 按钮文案 + 跳转
 const ACTION_MAP = {
   menu: { label: '去看看', ghost: false, route: '/pages/menu/index' },
   shopping: { label: '查看清单', ghost: true, route: '/pages/shopping/index' },
+  pantry: { label: '查看冰箱', ghost: false, route: '/pages/pantry/index' },
   community: { label: '去社区', ghost: true, route: '/pages/community/index' },
   home: { label: '去看看', ghost: false, route: '/pages/home/index' },
   feedback: { label: '查看', ghost: true, route: '/pkg-extra/me/feedback/index' },
@@ -193,12 +194,12 @@ Page({
   // tabBar 页用 switchTab，其余普通页用 navigateTo
   navigateByType(type, n) {
     const tabRoutes = {
-      pantry: '/pages/pantry/index',
+      menu: '/pages/menu/index',
       community: '/pages/community/index',
       home: '/pages/home/index'
     };
     const navRoutes = {
-      menu: '/pages/menu/index',
+      pantry: '/pages/pantry/index',
       shopping: '/pages/shopping/index',
       feedback: '/pkg-extra/me/feedback/index'
     };

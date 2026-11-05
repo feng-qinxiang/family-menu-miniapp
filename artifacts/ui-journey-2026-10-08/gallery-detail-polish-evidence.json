@@ -1,0 +1,52 @@
+{
+  "checkedAt": "2026-10-09T11:33:51.824Z",
+  "source": "Current native screenshots in the localhost gallery",
+  "screenshots": [
+    "screens/gallery-detail-polish-final.png",
+    "screens/gallery-detail-polish-mobile.png"
+  ],
+  "desktop": {
+    "catalogPages": 39,
+    "documentWidth": 1329,
+    "heading": "本轮 8 处打磨 · 图文更紧凑，加购可选图",
+    "mainImages": [
+      {
+        "loaded": true,
+        "src": "screens/app-recipes.jpg"
+      },
+      {
+        "loaded": true,
+        "src": "screens/picker-shopping-add-photo.jpg"
+      },
+      {
+        "loaded": true,
+        "src": "screens/app-pantry.jpg"
+      },
+      {
+        "loaded": true,
+        "src": "screens/all-pkg-extra-community-post-detail-index.jpg"
+      },
+      {
+        "loaded": true,
+        "src": "screens/all-pkg-extra-me-notifications-index.jpg"
+      },
+      {
+        "loaded": true,
+        "src": "screens/picker-recipes-list.jpg"
+      }
+    ],
+    "viewport": 1344
+  },
+  "mobile375": {
+    "catalogPages": 39,
+    "documentWidth": 360,
+    "heading": "本轮 8 处打磨 · 图文更紧凑，加购可选图",
+    "viewport": 375
+  },
+  "mobile320": {
+    "catalogPages": 39,
+    "documentWidth": 305,
+    "viewport": 320
+  },
+  "passed": true
+}

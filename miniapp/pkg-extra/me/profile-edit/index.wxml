@@ -22,14 +22,12 @@
     <view class="pe-grlabel g-fade-up g-d2">基本信息</view>
     <view class="card pe-group g-fade-up g-d2">
       <view class="pe-frow">
-        <view class="pe-fic"><view class="pe-ic-dot"></view></view>
         <text class="pe-flabel">昵称</text>
         <input class="pe-finput" type="text" maxlength="16" placeholder="填写昵称"
           placeholder-class="pe-ph" value="{{form.nickname}}" bindinput="onNickname" />
       </view>
 
       <view class="pe-frow">
-        <view class="pe-fic"><view class="pe-ic-dot"></view></view>
         <text class="pe-flabel">性别</text>
         <view class="pe-pillrow">
           <view class="tap-scale chip pe-pill {{form.gender === 'male' ? 'on' : ''}}"
@@ -40,14 +38,12 @@
       </view>
 
       <view class="pe-frow tap-scale" wx:if="{{features.PHONE_LOGIN}}" catchtap="onEditPhone">
-        <view class="pe-fic"><view class="pe-ic-dot"></view></view>
         <text class="pe-flabel pe-flabel-wide">手机号</text>
         <text class="pe-fval {{form.phone ? '' : 'pe-ph'}}">{{form.phone || '未绑定'}}</text>
         <view class="pe-chev"></view>
       </view>
 
       <view class="pe-frow">
-        <view class="pe-fic"><view class="pe-ic-dot"></view></view>
         <text class="pe-flabel">生日</text>
         <picker mode="date" value="{{form.birthday}}" start="1940-01-01" end="{{today}}" bindchange="onBirthday">
           <view class="pe-picker">
@@ -63,7 +59,6 @@
     <view class="card pe-group g-fade-up g-d3">
       <view class="pe-frow pe-frow-col">
         <view class="pe-frow-head">
-          <view class="pe-fic"><view class="pe-ic-dot"></view></view>
           <text class="pe-flabel pe-flabel-wide">口味偏好</text>
         </view>
         <view class="pe-tagwrap">
@@ -75,7 +70,6 @@
 
       <view class="pe-frow pe-frow-col">
         <view class="pe-frow-head">
-          <view class="pe-fic"><view class="pe-ic-dot"></view></view>
           <text class="pe-flabel pe-flabel-wide">忌口</text>
         </view>
         <view class="pe-tagwrap">

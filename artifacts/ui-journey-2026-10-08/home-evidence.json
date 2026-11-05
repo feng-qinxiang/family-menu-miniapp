@@ -1,0 +1,400 @@
+{
+  "checkedAt": "2026-10-08T13:36:06.708Z",
+  "dataSource": "temporary Page data",
+  "screens": [
+    {
+      "state": "empty",
+      "image": "screens/home-updated-empty.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "menu-top",
+      "image": "screens/home-updated-menu-top.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "menu",
+      "image": "screens/home-updated-menu.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "large",
+      "image": "screens/home-updated-large.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "done",
+      "image": "screens/home-updated-done.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "hero-normal",
+      "image": "screens/home-updated-hero-normal.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "hero-lg",
+      "image": "screens/home-updated-hero-lg.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "wish-folded",
+      "image": "screens/home-updated-wish-folded.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "wish-expanded",
+      "image": "screens/home-updated-wish-expanded.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "wish-large",
+      "image": "screens/home-updated-wish-large.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "recipes",
+      "image": "screens/home-updated-recipes.jpg",
+      "width": 591,
+      "height": 1280
+    }
+  ],
+  "routes": [
+    {
+      "selector": ".hm-journey-step[data-step=\"cook\"]",
+      "page": "pages/recipes/index",
+      "result": "PASS"
+    },
+    {
+      "selector": ".hm-menu-action-primary",
+      "page": "pkg-extra/cook-log/index",
+      "result": "PASS"
+    },
+    {
+      "selector": ".hm-menu-row[data-id=\"101\"]",
+      "page": "pkg-extra/recipe-detail/index",
+      "result": "PASS"
+    },
+    {
+      "selector": ".hm-menu-action-secondary",
+      "page": "pages/shopping/index",
+      "result": "PASS"
+    },
+    {
+      "selector": ".hm-menu-action-primary",
+      "page": "pkg-extra/kitchen/index",
+      "result": "PASS"
+    },
+    {
+      "selector": ".hm-journey-step[data-step=\"record\"]",
+      "page": "pkg-extra/cook-log/index",
+      "result": "PASS"
+    },
+    {
+      "selector": ".hm-journey-step[data-step=\"community\"]",
+      "page": "pages/community/index",
+      "result": "PASS"
+    }
+  ],
+  "interactions": [
+    {
+      "action": "Expand long family wishes from the folded preview",
+      "result": "PASS"
+    },
+    {
+      "action": "Add a wish while folded; close without saving; expand and collapse",
+      "result": "PASS"
+    }
+  ],
+  "layouts": [
+    {
+      "state": "menu-top",
+      "actions": {
+        "width": 314,
+        "height": 44,
+        "left": 38,
+        "top": 505.3984375
+      },
+      "list": {
+        "width": 314,
+        "height": 205,
+        "left": 38,
+        "top": 559.3984375
+      },
+      "firstRow": {
+        "width": 314,
+        "height": 67,
+        "left": 38,
+        "top": 564.3984375
+      },
+      "primary": {
+        "width": 213.3984375,
+        "height": 44,
+        "left": 138.6015625,
+        "top": 505.3984375
+      },
+      "secondary": {
+        "width": 94.6015625,
+        "height": 44,
+        "left": 38,
+        "top": 505.3984375
+      },
+      "result": "PASS"
+    },
+    {
+      "state": "scroll-navigation",
+      "nav": {
+        "width": 390,
+        "height": 88,
+        "left": 0,
+        "top": 0
+      },
+      "focusedMenu": {
+        "width": 344,
+        "height": 409.3984375,
+        "left": 23,
+        "top": 104
+      },
+      "result": "PASS"
+    },
+    {
+      "state": "menu-large",
+      "actions": {
+        "width": 314,
+        "height": 44,
+        "left": 38,
+        "top": 204.1015625
+      },
+      "list": {
+        "width": 314,
+        "height": 255.203125,
+        "left": 38,
+        "top": 258.1015625
+      },
+      "firstRow": {
+        "width": 314,
+        "height": 83.734375,
+        "left": 38,
+        "top": 263.1015625
+      },
+      "primary": {
+        "width": 205.7421875,
+        "height": 44,
+        "left": 146.2578125,
+        "top": 204.1015625
+      },
+      "secondary": {
+        "width": 102.2578125,
+        "height": 44,
+        "left": 38,
+        "top": 204.1015625
+      },
+      "result": "PASS"
+    },
+    {
+      "state": "hero-normal",
+      "header": {
+        "width": 265,
+        "height": 47.9453125,
+        "left": 23,
+        "top": 51
+      },
+      "body": {
+        "width": 344,
+        "height": 201.21875,
+        "left": 23,
+        "top": 119.78125
+      },
+      "greeting": {
+        "width": 157,
+        "height": 47.9453125,
+        "left": 23,
+        "top": 51
+      },
+      "icons": {
+        "width": 99,
+        "height": 45,
+        "left": 189,
+        "top": 52.46875
+      },
+      "add": {
+        "width": 242,
+        "height": 45,
+        "left": 23,
+        "top": 276
+      },
+      "shuffle": {
+        "width": 93,
+        "height": 45,
+        "left": 274,
+        "top": 276
+      },
+      "result": "PASS"
+    },
+    {
+      "state": "hero-lg",
+      "header": {
+        "width": 265,
+        "height": 53.2109375,
+        "left": 23,
+        "top": 51
+      },
+      "body": {
+        "width": 344,
+        "height": 227.953125,
+        "left": 23,
+        "top": 147.046875
+      },
+      "greeting": {
+        "width": 157,
+        "height": 53.2109375,
+        "left": 23,
+        "top": 51
+      },
+      "icons": {
+        "width": 99,
+        "height": 45,
+        "left": 189,
+        "top": 55.1015625
+      },
+      "add": {
+        "width": 236.1484375,
+        "height": 45,
+        "left": 23,
+        "top": 330
+      },
+      "shuffle": {
+        "width": 98.8515625,
+        "height": 45,
+        "left": 268.1484375,
+        "top": 330
+      },
+      "result": "PASS"
+    },
+    {
+      "state": "wish-expanded",
+      "row": {
+        "width": 314,
+        "height": 88.296875,
+        "left": 38,
+        "top": 262.1953125
+      },
+      "copy": {
+        "width": 294,
+        "height": 20.296875,
+        "left": 48,
+        "top": 272.1953125
+      },
+      "meta": {
+        "width": 294,
+        "height": 44,
+        "left": 48,
+        "top": 296.4921875
+      },
+      "by": {
+        "width": 148.8125,
+        "height": 17.046875,
+        "left": 48,
+        "top": 309.96875
+      },
+      "pending": {
+        "width": 45.1875,
+        "height": 44,
+        "left": 200.8125,
+        "top": 296.4921875
+      },
+      "edit": {
+        "width": 44,
+        "height": 44,
+        "left": 250,
+        "top": 296.4921875
+      },
+      "remove": {
+        "width": 44,
+        "height": 44,
+        "left": 298,
+        "top": 296.4921875
+      },
+      "result": "PASS"
+    },
+    {
+      "state": "wish-large",
+      "row": {
+        "width": 314,
+        "height": 91.34375,
+        "left": 38,
+        "top": 252.09375
+      },
+      "copy": {
+        "width": 294,
+        "height": 23.34375,
+        "left": 48,
+        "top": 262.09375
+      },
+      "meta": {
+        "width": 294,
+        "height": 44,
+        "left": 48,
+        "top": 289.4375
+      },
+      "by": {
+        "width": 143.2421875,
+        "height": 19.6015625,
+        "left": 48,
+        "top": 301.6328125
+      },
+      "pending": {
+        "width": 50.7578125,
+        "height": 44,
+        "left": 195.2421875,
+        "top": 289.4375
+      },
+      "edit": {
+        "width": 44,
+        "height": 44,
+        "left": 250,
+        "top": 289.4375
+      },
+      "remove": {
+        "width": 44,
+        "height": 44,
+        "left": 298,
+        "top": 289.4375
+      },
+      "result": "PASS"
+    },
+    {
+      "state": "recommendations",
+      "heading": {
+        "width": 390,
+        "height": 55.2890625,
+        "left": 0,
+        "top": 324.6953125
+      },
+      "chips": {
+        "width": 390,
+        "height": 49,
+        "left": 0,
+        "top": 394.984375
+      },
+      "cards": {
+        "width": 390,
+        "height": 229,
+        "left": 0,
+        "top": 452.984375
+      },
+      "result": "PASS"
+    }
+  ],
+  "result": "PASS"
+}

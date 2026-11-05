@@ -1,0 +1,7 @@
+{
+  "passed": true,
+  "scope": "task additions compared with saved backup; files without saved baseline scanned in full",
+  "files": 17,
+  "addedLinesScanned": 763,
+  "findings": []
+}

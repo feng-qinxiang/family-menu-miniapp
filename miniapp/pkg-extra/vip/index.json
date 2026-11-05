@@ -3,6 +3,7 @@
   "enablePullDownRefresh": true,
   "navigationStyle": "custom",
   "usingComponents": {
+    "nav-bar": "/components/nav-bar/index",
     "section-head": "/components/section-head/index"
   }
 }

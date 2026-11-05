@@ -24,20 +24,8 @@
 .fav-head {
   padding: 24rpx 0 0;
 }
-.fav-title {
-  margin-top: 8rpx;
-  font-family: var(--sans);
-  font-size: var(--fs-hero-lg);
-  font-weight: 900;
-  line-height: 0.95;
-  letter-spacing: -4rpx;
-  color: var(--ink);
-}
-.fav-title .pop {
-  color: var(--pop);
-}
 .fav-count {
-  margin-top: 22rpx;
+  margin-top: 0;
   font-size: var(--fs-sub);
   font-weight: 600;
   color: var(--mut-strong);
@@ -125,7 +113,6 @@
 .fav-ptag {
   align-self: flex-start;
   font-family: var(--serif);
-  font-style: italic;
   font-size: var(--fs-mini);
   letter-spacing: 1rpx;
   font-weight: 700;

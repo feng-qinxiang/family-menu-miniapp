@@ -32,12 +32,13 @@ function normalizePost(post) {
     id: post.id,
     title: post.title || '未命名分享',
     author: post.author || '匿名厨友',
-    authorMeta: ((post.tags && post.tags[0]) ? post.tags[0] + ' · ' : '') + '美食分享',
+    authorMeta: post.timeText || post.createdAt || '家常分享',
     avaTheme: avaTheme(post.author),
     avaText: avaText(post.author),
     paragraphs: paragraphs.length ? paragraphs : [post.content || '暂无正文'],
     cover,
     images,
+    imageErrors: [],
     likeCount: post.likeCount || 0,
     liked: !!post.liked,
     favoriteCount: post.favoriteCount || 0,
@@ -74,11 +75,15 @@ Page({
     // 评论区回顶键（滚深出现）
     showBackTop: false,
     scrollTopTo: -1,
+    scrollIntoView: '',
+    photoIndex: 0,
     loading: true,
     loadError: false,
     loadErrorDesc: '',
     post: null,
     comments: [],
+    commentsError: false,
+    commentsLoading: false,
     commentText: '',
     submitting: false,
     favoriting: false,
@@ -136,8 +141,8 @@ Page({
         const patch = {};
         // 帖子恰好被下架/删除时不清空整屏——用户可能正看着它，
         // 交给下一次显式操作（回复/点赞）的失败回执处理。
-        if (raw) patch.post = normalizePost(raw);
-        if (Array.isArray(comments)) patch.comments = comments.map(normalizeComment);
+        if (raw) { patch.post = normalizePost(raw); patch.photoIndex = 0; }
+        if (Array.isArray(comments)) { patch.comments = comments.map(normalizeComment); patch.commentsError = false; }
         if (Object.keys(patch).length) this.setData(patch);
       })
       .catch(() => {});
@@ -150,7 +155,7 @@ Page({
       // 详情端点直取单帖；拉不到（已删/未过审/失效）与列表兜底失败同语义 → loadError。
       // 服务端对"作者看自己被下架的帖"会给出明确原因（该分享因违规已被下架），透传展示
       postId ? api.getCommunityPost(postId).catch((err) => ({ _err: err })) : Promise.resolve(null),
-      postId ? api.getCommunityComments(postId).catch(() => []) : Promise.resolve([])
+      postId ? api.getCommunityComments(postId).catch(() => null) : Promise.resolve([])
     ])
       // 禁用回调参数数组解构：编译依赖 @babel/runtime 辅助模块，未打包会整页白屏
       .then((loaded) => {
@@ -167,6 +172,8 @@ Page({
           loadErrorDesc: (err && err.message) || '',
           post,
           comments: cmts,
+          commentsError: comments === null,
+          photoIndex: 0,
           postId: post ? post.id : postId
         });
       })
@@ -187,7 +194,7 @@ Page({
 
   backToTop() {
     // scroll-top 同值不触发滚动：0 与 0.1 交替，视觉无差
-    this.setData({ scrollTopTo: this.data.scrollTopTo === 0 ? 0.1 : 0 });
+    this.setData({ scrollIntoView: '', scrollTopTo: this.data.scrollTopTo === 0 ? 0.1 : 0 });
   },
 
   // 详情页可被分享出去，必须自带举报入口（微信对 UGC 页面的硬性要求）；
@@ -221,6 +228,27 @@ Page({
 
   onCommentInput(e) {
     this.setData({ commentText: e.detail.value });
+  },
+
+  onPhotoChange(e) {
+    this.setData({ photoIndex: e.detail.current || 0 });
+  },
+
+  goComments() {
+    this.setData({ scrollIntoView: '' }, () => this.setData({ scrollIntoView: 'post-comments' }));
+  },
+
+  async retryComments() {
+    if (this.data.commentsLoading || !this.data.postId) return;
+    this.setData({ commentsLoading: true });
+    try {
+      const comments = await api.getCommunityComments(this.data.postId);
+      this.setData({ comments: (Array.isArray(comments) ? comments : []).map(normalizeComment), commentsError: false });
+    } catch (err) {
+      this.setData({ commentsError: true });
+    } finally {
+      this.setData({ commentsLoading: false });
+    }
   },
 
   // 提交评论
@@ -318,7 +346,7 @@ Page({
     return {
       title: `${post.author || '厨友'}：${post.title || '家常分享'}`,
       path: `/pkg-extra/community/post-detail/index?postId=${this.data.postId || post.id || ''}`,
-      imageUrl: post.cover || ''
+      imageUrl: (post.images && post.images[0]) || post.cover || ''
     };
   },
 
@@ -342,7 +370,7 @@ Page({
       title: '删除这篇分享？',
       content: '删除后其他人将无法看到，自己也不能恢复',
       confirmText: '删除',
-      confirmColor: '#e8472a',
+      confirmColor: '#c8381f',
       success: (res) => {
         if (!res.confirm) return;
         api
@@ -371,7 +399,7 @@ Page({
       title: '删除这条评论？',
       content: '删除后不可恢复',
       confirmText: '删除',
-      confirmColor: '#e8472a',
+      confirmColor: '#c8381f',
       success: (res) => {
         if (!res.confirm) return;
         api

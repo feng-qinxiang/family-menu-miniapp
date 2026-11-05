@@ -1,0 +1,818 @@
+{
+  "screens": [
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-community-post-detail-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "多图",
+      "image": "screens/all-pkg-extra-community-post-detail-index-多图.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "评论",
+      "image": "screens/all-pkg-extra-community-post-detail-index-评论.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "评论大字",
+      "image": "screens/all-pkg-extra-community-post-detail-index-评论大字.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "大字",
+      "image": "screens/all-pkg-extra-community-post-detail-index-大字.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "无图",
+      "image": "screens/all-pkg-extra-community-post-detail-index-无图.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "图片失效",
+      "image": "screens/all-pkg-extra-community-post-detail-index-图片失效.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/payment/checkout/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-payment-checkout-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": true
+    },
+    {
+      "route": "pkg-extra/payment/checkout/index",
+      "state": "大字",
+      "image": "screens/all-pkg-extra-payment-checkout-index-大字.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": true
+    },
+    {
+      "route": "pkg-extra/recipe-detail/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-recipe-detail-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/recipe-detail/index",
+      "state": "食材",
+      "image": "screens/all-pkg-extra-recipe-detail-index-食材.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/recipe-detail/index",
+      "state": "食材大字",
+      "image": "screens/all-pkg-extra-recipe-detail-index-食材大字.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/recipe-detail/index",
+      "state": "做法与评价",
+      "image": "screens/all-pkg-extra-recipe-detail-index-做法与评价.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    }
+  ],
+  "routes": [
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "actualRoute": "pkg-extra/community/post-detail/index",
+      "gated": false,
+      "temporarySample": true,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/payment/checkout/index",
+      "actualRoute": "pkg-extra/payment/checkout/index",
+      "gated": true,
+      "temporarySample": false,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/recipe-detail/index",
+      "actualRoute": "pkg-extra/recipe-detail/index",
+      "gated": false,
+      "temporarySample": true,
+      "passed": true
+    }
+  ],
+  "layouts": [
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "normal",
+      "rects": {
+        ".page": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 0,
+          "bottom": 844,
+          "width": 390,
+          "height": 844
+        },
+        ".body": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 87,
+          "bottom": 1030.3828125,
+          "width": 390,
+          "height": 943.3828125
+        },
+        ".recipe-card": {
+          "id": "",
+          "dataset": {},
+          "left": 23,
+          "right": 367,
+          "top": 565.890625,
+          "bottom": 662.890625,
+          "width": 344,
+          "height": 97
+        },
+        ".rc-img": {
+          "id": "",
+          "dataset": {
+            "errKey": "post.recipeCoverBroken"
+          },
+          "left": 36,
+          "right": 107,
+          "top": 578.890625,
+          "bottom": 649.890625,
+          "width": 71,
+          "height": 71
+        },
+        ".rc-mid": {
+          "id": "",
+          "dataset": {},
+          "left": 116,
+          "right": 329,
+          "top": 582.390625,
+          "bottom": 646.390625,
+          "width": 213,
+          "height": 64
+        },
+        ".react-bar": {
+          "id": "",
+          "dataset": {},
+          "left": 23,
+          "right": 367,
+          "top": 674.890625,
+          "bottom": 773.890625,
+          "width": 344,
+          "height": 99
+        },
+        ".inputbar": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 742,
+          "bottom": 844,
+          "width": 390,
+          "height": 102
+        },
+        ".field": {
+          "id": "",
+          "dataset": {},
+          "left": 17,
+          "right": 308,
+          "top": 754,
+          "bottom": 799,
+          "width": 291,
+          "height": 45
+        },
+        ".send": {
+          "id": "",
+          "dataset": {},
+          "left": 319,
+          "right": 373,
+          "top": 754,
+          "bottom": 799,
+          "width": 54,
+          "height": 45
+        },
+        ".scroll": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 87,
+          "bottom": 742,
+          "width": 390,
+          "height": 655
+        },
+        ".cmt": {
+          "id": "",
+          "dataset": {},
+          "left": 23,
+          "right": 367,
+          "top": 817.7890625,
+          "bottom": 912.5859375,
+          "width": 344,
+          "height": 94.796875
+        },
+        ".cmeta": {
+          "id": "",
+          "dataset": {},
+          "left": 71,
+          "right": 367,
+          "top": 832.7890625,
+          "bottom": 870.7890625,
+          "width": 296,
+          "height": 38
+        }
+      },
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "large-long-text",
+      "rects": {
+        ".page": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 0,
+          "bottom": 844,
+          "width": 390,
+          "height": 844
+        },
+        ".body": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": -210.5,
+          "bottom": 837.640625,
+          "width": 390,
+          "height": 1048.140625
+        },
+        ".recipe-card": {
+          "id": "",
+          "dataset": {},
+          "left": 23,
+          "right": 367,
+          "top": 293.96875,
+          "bottom": 396.7109375,
+          "width": 344,
+          "height": 102.7421875
+        },
+        ".rc-img": {
+          "id": "",
+          "dataset": {
+            "errKey": "post.recipeCoverBroken"
+          },
+          "left": 36,
+          "right": 107,
+          "top": 309.8359375,
+          "bottom": 380.8359375,
+          "width": 71,
+          "height": 71
+        },
+        ".rc-mid": {
+          "id": "",
+          "dataset": {},
+          "left": 116,
+          "right": 329,
+          "top": 306.96875,
+          "bottom": 383.7109375,
+          "width": 213,
+          "height": 76.7421875
+        },
+        ".react-bar": {
+          "id": "",
+          "dataset": {},
+          "left": 23,
+          "right": 367,
+          "top": 408.7109375,
+          "bottom": 507.7109375,
+          "width": 344,
+          "height": 99
+        },
+        ".inputbar": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 742,
+          "bottom": 844,
+          "width": 390,
+          "height": 102
+        },
+        ".field": {
+          "id": "",
+          "dataset": {},
+          "left": 17,
+          "right": 308,
+          "top": 754,
+          "bottom": 799,
+          "width": 291,
+          "height": 45
+        },
+        ".send": {
+          "id": "",
+          "dataset": {},
+          "left": 319,
+          "right": 373,
+          "top": 754,
+          "bottom": 799,
+          "width": 54,
+          "height": 45
+        },
+        ".scroll": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 87,
+          "bottom": 742,
+          "width": 390,
+          "height": 655
+        },
+        ".cmt": {
+          "id": "",
+          "dataset": {},
+          "left": 23,
+          "right": 367,
+          "top": 555.796875,
+          "bottom": 709.140625,
+          "width": 344,
+          "height": 153.34375
+        },
+        ".cmeta": {
+          "id": "",
+          "dataset": {},
+          "left": 71,
+          "right": 367,
+          "top": 570.796875,
+          "bottom": 616.375,
+          "width": 296,
+          "height": 45.578125
+        }
+      },
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "text-only",
+      "rects": {
+        ".page": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 0,
+          "bottom": 844,
+          "width": 390,
+          "height": 844
+        },
+        ".body": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 87,
+          "bottom": 802.1796875,
+          "width": 390,
+          "height": 715.1796875
+        },
+        ".recipe-card": {
+          "id": "",
+          "dataset": {},
+          "left": 23,
+          "right": 367,
+          "top": 316.890625,
+          "bottom": 413.890625,
+          "width": 344,
+          "height": 97
+        },
+        ".rc-img": {
+          "id": "",
+          "dataset": {
+            "errKey": "post.recipeCoverBroken"
+          },
+          "left": 36,
+          "right": 107,
+          "top": 329.890625,
+          "bottom": 400.890625,
+          "width": 71,
+          "height": 71
+        },
+        ".rc-mid": {
+          "id": "",
+          "dataset": {},
+          "left": 116,
+          "right": 329,
+          "top": 333.390625,
+          "bottom": 397.390625,
+          "width": 213,
+          "height": 64
+        },
+        ".react-bar": {
+          "id": "",
+          "dataset": {},
+          "left": 23,
+          "right": 367,
+          "top": 425.890625,
+          "bottom": 524.890625,
+          "width": 344,
+          "height": 99
+        },
+        ".inputbar": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 742,
+          "bottom": 844,
+          "width": 390,
+          "height": 102
+        },
+        ".field": {
+          "id": "",
+          "dataset": {},
+          "left": 17,
+          "right": 308,
+          "top": 754,
+          "bottom": 799,
+          "width": 291,
+          "height": 45
+        },
+        ".send": {
+          "id": "",
+          "dataset": {},
+          "left": 319,
+          "right": 373,
+          "top": 754,
+          "bottom": 799,
+          "width": 54,
+          "height": 45
+        },
+        ".scroll": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 87,
+          "bottom": 742,
+          "width": 390,
+          "height": 655
+        },
+        ".cmt": {
+          "id": "",
+          "dataset": {},
+          "left": 23,
+          "right": 367,
+          "top": 568.7890625,
+          "bottom": 684.3828125,
+          "width": 344,
+          "height": 115.59375
+        },
+        ".cmeta": {
+          "id": "",
+          "dataset": {},
+          "left": 71,
+          "right": 367,
+          "top": 583.7890625,
+          "bottom": 621.7890625,
+          "width": 296,
+          "height": 38
+        }
+      },
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/payment/checkout/index",
+      "state": "normal",
+      "rects": {
+        ".pay-page": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 0,
+          "bottom": 844,
+          "width": 390,
+          "height": 844
+        },
+        ".merchant": {
+          "id": "",
+          "dataset": {},
+          "left": 23,
+          "right": 367,
+          "top": 131.5,
+          "bottom": 277.4453125,
+          "width": 344,
+          "height": 145.9453125
+        },
+        ".pay-plan-copy": {
+          "id": "",
+          "dataset": {},
+          "left": 94,
+          "right": 291,
+          "top": 147.9765625,
+          "bottom": 192.0234375,
+          "width": 197,
+          "height": 44.046875
+        },
+        ".pay-selected": {
+          "id": "",
+          "dataset": {},
+          "left": 300,
+          "right": 352,
+          "top": 159.25,
+          "bottom": 180.75,
+          "width": 52,
+          "height": 21.5
+        },
+        ".payarea": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 740,
+          "bottom": 844,
+          "width": 390,
+          "height": 104
+        },
+        ".pay-due": {
+          "id": "",
+          "dataset": {},
+          "left": 23,
+          "right": 182,
+          "top": 752.0234375,
+          "bottom": 798.96875,
+          "width": 159,
+          "height": 46.9453125
+        },
+        ".btn-pay": {
+          "id": "",
+          "dataset": {},
+          "left": 192,
+          "right": 367,
+          "top": 751,
+          "bottom": 800,
+          "width": 175,
+          "height": 49
+        },
+        ".pay-scroll": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 87,
+          "bottom": 740,
+          "width": 390,
+          "height": 653
+        }
+      },
+      "paymentEnabled": false,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/payment/checkout/index",
+      "state": "large",
+      "rects": {
+        ".pay-page": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 0,
+          "bottom": 844,
+          "width": 390,
+          "height": 844
+        },
+        ".merchant": {
+          "id": "",
+          "dataset": {},
+          "left": 23,
+          "right": 367,
+          "top": 136,
+          "bottom": 286.640625,
+          "width": 344,
+          "height": 150.640625
+        },
+        ".pay-plan-copy": {
+          "id": "",
+          "dataset": {},
+          "left": 94,
+          "right": 279,
+          "top": 151,
+          "bottom": 202.6953125,
+          "width": 185,
+          "height": 51.6953125
+        },
+        ".pay-selected": {
+          "id": "",
+          "dataset": {},
+          "left": 288,
+          "right": 352,
+          "top": 163.7734375,
+          "bottom": 189.921875,
+          "width": 64,
+          "height": 26.1484375
+        },
+        ".payarea": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 734.3046875,
+          "bottom": 844,
+          "width": 390,
+          "height": 109.6953125
+        },
+        ".pay-due": {
+          "id": "",
+          "dataset": {},
+          "left": 23,
+          "right": 182,
+          "top": 745.3046875,
+          "bottom": 800,
+          "width": 159,
+          "height": 54.6953125
+        },
+        ".btn-pay": {
+          "id": "",
+          "dataset": {},
+          "left": 192,
+          "right": 367,
+          "top": 748.1484375,
+          "bottom": 797.1484375,
+          "width": 175,
+          "height": 49
+        },
+        ".pay-scroll": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 87,
+          "bottom": 734.3046875,
+          "width": 390,
+          "height": 647.3046875
+        }
+      },
+      "paymentEnabled": false,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/recipe-detail/index",
+      "state": "ingredients",
+      "ingredientRows": [
+        {
+          "id": "",
+          "dataset": {},
+          "left": 38,
+          "right": 352,
+          "top": 253.2890625,
+          "bottom": 341.2890625,
+          "width": 314,
+          "height": 88
+        },
+        {
+          "id": "",
+          "dataset": {},
+          "left": 38,
+          "right": 352,
+          "top": 341.2890625,
+          "bottom": 429.2890625,
+          "width": 314,
+          "height": 88
+        },
+        {
+          "id": "",
+          "dataset": {},
+          "left": 38,
+          "right": 352,
+          "top": 429.2890625,
+          "bottom": 516.2890625,
+          "width": 314,
+          "height": 87
+        }
+      ],
+      "rects": {
+        ".rd-page": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 0,
+          "bottom": 844,
+          "width": 390,
+          "height": 844
+        },
+        ".rd-footbar": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 722,
+          "bottom": 844,
+          "width": 390,
+          "height": 122
+        }
+      },
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/recipe-detail/index",
+      "state": "ingredients-large-long-name",
+      "ingredientRows": [
+        {
+          "id": "",
+          "dataset": {},
+          "left": 38,
+          "right": 352,
+          "top": 304.078125,
+          "bottom": 392.078125,
+          "width": 314,
+          "height": 88
+        },
+        {
+          "id": "",
+          "dataset": {},
+          "left": 38,
+          "right": 352,
+          "top": 392.078125,
+          "bottom": 480.078125,
+          "width": 314,
+          "height": 88
+        },
+        {
+          "id": "",
+          "dataset": {},
+          "left": 38,
+          "right": 352,
+          "top": 480.078125,
+          "bottom": 567.078125,
+          "width": 314,
+          "height": 87
+        }
+      ],
+      "rects": {
+        ".rd-page": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 0,
+          "bottom": 844,
+          "width": 390,
+          "height": 844
+        },
+        ".rd-footbar": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 722,
+          "bottom": 844,
+          "width": 390,
+          "height": 122
+        }
+      },
+      "passed": true
+    }
+  ],
+  "checkedAt": "2026-10-09T01:34:39.295Z",
+  "passed": true,
+  "source": "Native formal pages; temporary sample data restored; closed features kept closed; no business write APIs.",
+  "formalRoutes": 39
+}

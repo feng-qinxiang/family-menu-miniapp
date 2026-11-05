@@ -1,0 +1,145 @@
+{
+  "date": "2026-11-04",
+  "kind": "browser prototype only",
+  "nativeWechatVerified": false,
+  "nativeFigmaVerified": false,
+  "realDataWritten": false,
+  "url": "http://127.0.0.1:8847/figma-prototype/?v=20261104-layout-focus#notifications",
+  "checks": [
+    {
+      "name": "empty request disabled",
+      "passed": true
+    },
+    {
+      "name": "two examples only",
+      "passed": true
+    },
+    {
+      "name": "empty preview hidden",
+      "passed": true
+    },
+    {
+      "name": "example fills request",
+      "passed": true
+    },
+    {
+      "name": "examples collapse after input",
+      "passed": true
+    },
+    {
+      "name": "three confirmed rows",
+      "passed": true
+    },
+    {
+      "name": "reject unsupported or conflicting: 不要川菜",
+      "passed": true
+    },
+    {
+      "name": "reject unsupported or conflicting: 花生过敏",
+      "passed": true
+    },
+    {
+      "name": "reject unsupported or conflicting: 不吃冰箱里的",
+      "passed": true
+    },
+    {
+      "name": "reject unsupported or conflicting: 两人，四人",
+      "passed": true
+    },
+    {
+      "name": "four rows confirmed",
+      "passed": true
+    },
+    {
+      "name": "valid request enabled",
+      "passed": true
+    },
+    {
+      "name": "close preserves draft",
+      "passed": true
+    },
+    {
+      "name": "confirmed request navigates picker",
+      "passed": true
+    },
+    {
+      "name": "urgent sample picked first",
+      "passed": true
+    },
+    {
+      "name": "shuffle respects request and changes dish",
+      "passed": true,
+      "data": {
+        "first": "番茄炒蛋",
+        "second": "虾仁炒豌豆"
+      }
+    },
+    {
+      "name": "notes remain in right column",
+      "passed": true,
+      "data": [
+        {
+          "text": "\n符合已确认的条件。\n按菜谱量备料，\n点开就能看做法。\n",
+          "x": 168,
+          "y": 470.9971923828125,
+          "w": 121.308837890625,
+          "h": 57.67034912109375
+        }
+      ]
+    },
+    {
+      "name": "dynamic notes preserve three lines",
+      "passed": true
+    },
+    {
+      "name": "recommendation opens detail",
+      "passed": true
+    },
+    {
+      "name": "three steps visible",
+      "passed": true
+    },
+    {
+      "name": "ingredient photo entry present",
+      "passed": true,
+      "data": [
+        "返回",
+        "为番茄拍照或选图",
+        "为鸡蛋拍照或选图",
+        "加到晚餐",
+        "开始做菜"
+      ]
+    },
+    {
+      "name": "no image opens photo choices",
+      "passed": true
+    },
+    {
+      "name": "camera and album choices",
+      "passed": true
+    },
+    {
+      "name": "no match keeps request and warning",
+      "passed": true
+    },
+    {
+      "name": "request can include missing pantry items",
+      "passed": true
+    },
+    {
+      "name": "reminder panel style isolated",
+      "passed": true
+    },
+    {
+      "name": "reminder opens messages",
+      "passed": true
+    },
+    {
+      "name": "no page errors",
+      "passed": true,
+      "data": []
+    }
+  ],
+  "pageErrors": [],
+  "passed": true
+}

@@ -1,0 +1,230 @@
+{
+  "passed": true,
+  "kind": "browser prototype only",
+  "url": "http://127.0.0.1:8847/figma-prototype/?v=20261104-skills-final",
+  "checks": [
+    {
+      "name": "empty input disabled",
+      "passed": true
+    },
+    {
+      "name": "empty recognized caption hidden",
+      "passed": true
+    },
+    {
+      "name": "unsupported or conflicting requirement blocked: 不要川菜",
+      "passed": true
+    },
+    {
+      "name": "requirement explanation: 不要川菜",
+      "passed": true
+    },
+    {
+      "name": "unsupported or conflicting requirement blocked: 花生过敏",
+      "passed": true
+    },
+    {
+      "name": "requirement explanation: 花生过敏",
+      "passed": true
+    },
+    {
+      "name": "unsupported or conflicting requirement blocked: 不吃冰箱里的",
+      "passed": true
+    },
+    {
+      "name": "requirement explanation: 不吃冰箱里的",
+      "passed": true
+    },
+    {
+      "name": "unsupported or conflicting requirement blocked: 两人，四人",
+      "passed": true
+    },
+    {
+      "name": "requirement explanation: 两人，四人",
+      "passed": true
+    },
+    {
+      "name": "recognized four conditions",
+      "passed": true
+    },
+    {
+      "name": "draft preserved",
+      "passed": true
+    },
+    {
+      "name": "request chooses recipe",
+      "passed": true
+    },
+    {
+      "name": "custom picker heading",
+      "passed": true
+    },
+    {
+      "name": "shuffle changes matching candidate",
+      "passed": true
+    },
+    {
+      "name": "matching pantry label",
+      "passed": true
+    },
+    {
+      "name": "no match keeps sheet and explains",
+      "passed": true
+    },
+    {
+      "name": "non-pantry recipe result",
+      "passed": true
+    },
+    {
+      "name": "non-pantry missing stock label",
+      "passed": true
+    },
+    {
+      "name": "reminder dialog opens",
+      "passed": true
+    },
+    {
+      "name": "subscription marked as prototype",
+      "passed": true
+    },
+    {
+      "name": "reminder opens messages",
+      "passed": true
+    },
+    {
+      "name": "no script errors",
+      "passed": true
+    },
+    {
+      "name": "1344px recipes has no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "1344px pantry has no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "1344px request has no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "375px recipes has no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "375px pantry has no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "375px request has no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "320px recipes has no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "320px pantry has no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "320px request has no horizontal overflow",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "nativeWechatVerified": false,
+  "nativeFigmaVerified": false,
+  "widths": [
+    {
+      "width": 1344,
+      "id": "recipes",
+      "pageWidth": 1344,
+      "scrollWidth": 1344,
+      "panel": null,
+      "screen": {
+        "x": 467.4609375,
+        "y": 113,
+        "width": 374.078125,
+        "height": 809.5390625
+      }
+    },
+    {
+      "width": 1344,
+      "id": "pantry",
+      "pageWidth": 1344,
+      "scrollWidth": 1344,
+      "panel": null,
+      "screen": {
+        "x": 467.4609375,
+        "y": 113,
+        "width": 374.078125,
+        "height": 809.5390625
+      }
+    },
+    {
+      "width": 1344,
+      "id": "request",
+      "pageWidth": 1344,
+      "scrollWidth": 1344,
+      "panel": {
+        "client": 390,
+        "scroll": 390
+      },
+      "screen": {
+        "x": 467.4609375,
+        "y": 113,
+        "width": 374.078125,
+        "height": 809.5390625
+      }
+    },
+    {
+      "width": 375,
+      "id": "recipes",
+      "pageWidth": 375,
+      "scrollWidth": 360,
+      "panel": null
+    },
+    {
+      "width": 375,
+      "id": "pantry",
+      "pageWidth": 375,
+      "scrollWidth": 360,
+      "panel": null
+    },
+    {
+      "width": 375,
+      "id": "request",
+      "pageWidth": 375,
+      "scrollWidth": 360,
+      "panel": {
+        "client": 390,
+        "scroll": 390
+      }
+    },
+    {
+      "width": 320,
+      "id": "recipes",
+      "pageWidth": 320,
+      "scrollWidth": 305,
+      "panel": null
+    },
+    {
+      "width": 320,
+      "id": "pantry",
+      "pageWidth": 320,
+      "scrollWidth": 305,
+      "panel": null
+    },
+    {
+      "width": 320,
+      "id": "request",
+      "pageWidth": 320,
+      "scrollWidth": 305,
+      "panel": {
+        "client": 390,
+        "scroll": 390
+      }
+    }
+  ]
+}

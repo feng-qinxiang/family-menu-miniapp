@@ -27,7 +27,7 @@
   position: absolute;
   inset: -18rpx;
   border-radius: 50%;
-  border: 4rpx solid rgba(232, 71, 42, 0.25);
+  border: 4rpx solid rgba(200, 56, 31, 0.25);
 }
 .ps-badge-check {
   color: var(--anchor-contrast);
@@ -66,7 +66,6 @@
   background: var(--anchor);
   color: var(--anchor-contrast);
   font-family: var(--serif);
-  font-style: italic;
   font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: 700;
   letter-spacing: 1rpx;

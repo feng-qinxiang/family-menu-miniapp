@@ -1,0 +1,173 @@
+{
+  "checkedAt": "2026-10-09T00:44:26.971Z",
+  "worktree": "/Users/xx/.codex/worktrees/meal-journey-ui/家庭点菜小程序",
+  "branch": "codex/meal-journey-ui",
+  "passed": true,
+  "checks": [
+    {
+      "file": "static-check.js",
+      "type": "static",
+      "passed": true,
+      "exitCode": 0,
+      "output": "检查了 342 个文件（其中 99 个 .js 过了语法解析）\n\n⚠ 提审前需部署方填写（不阻断 CI，但缺了就等着被驳回）：\n  · utils/legal-config.js -> operatorName: 【请填写运营者名称】（带占位符提交会被审核驳回）\n  · utils/legal-config.js -> operatorContact: 【请填写联系方式】（带占位符提交会被审核驳回）\n  · utils/env.js -> trial: https://test-api.example.com（换成已备案 HTTPS 域名，并同步小程序后台的服务器域名白名单）\n  · utils/env.js -> release: https://api.example.com（换成已备案 HTTPS 域名，并同步小程序后台的服务器域名白名单）\n✔ 小程序静态检查通过\n"
+    },
+    {
+      "file": "interaction-audit.js",
+      "type": "interaction",
+      "passed": true,
+      "exitCode": 0,
+      "output": "交互体检：56 个页面模板 / 342 个文件\n\nA. 有事件但缺按下反馈：0 处\n\nB. 疑似「可点但无事件」（已剔除 0 处已确认误报）：7 处\n   · pkg-extra/cook-mode/index.wxml:106  <text class=\"timer-add-action\">\n   · pkg-extra/cook-mode/index.wxml:116  <text class=\"btn-prev-label\">\n   · pkg-extra/import/index.wxml:121  <view class=\"ic-link ic-link-pop\">\n   · pkg-extra/import/index.wxml:133  <view class=\"res-cta\">\n   · pkg-extra/vip/index.wxml:80  <view class=\"vip-cta safe-bottom\">\n   · pkg-preview/journey/index.wxml:25  <view class=\"meal-switch\">\n   · pkg-preview/journey/index.wxml:64  <view class=\"cook-switch\">\n\nC. 声明尺寸小于 88rpx 的可点类（已剔除 2 处刻意尺寸）：1 处\n   · pkg-extra/recipe-edit/index.wxss  .rc-retry-btn  height: 64rpx\n\n（B / C 只报告不判定：靠类名与尺寸启发式识别，文本链接类小热区属正常，需按元素性质人工判断）\n"
+    },
+    {
+      "file": "home-journey.test.js",
+      "type": "regression",
+      "passed": true,
+      "exitCode": 0,
+      "output": "home-journey.test ok: meal menu, status, progress, empty-meal routing, and community guard\n"
+    },
+    {
+      "file": "journey-navigation.test.js",
+      "type": "regression",
+      "passed": true,
+      "exitCode": 0,
+      "output": "journey-navigation.test ok: tabs, secondary tools, legacy completion links, record covers and filters\n"
+    },
+    {
+      "file": "ingredient-photo.test.js",
+      "type": "regression",
+      "passed": true,
+      "exitCode": 0,
+      "output": "ingredient-photo.test ok: cancel, upload failure, save failure, upload and text fallback\n"
+    },
+    {
+      "file": "api-empty-payload.test.js",
+      "type": "regression",
+      "passed": true,
+      "exitCode": 0,
+      "output": "api-empty-payload.test: 全部断言通过 ✔\n"
+    },
+    {
+      "file": "pantry-delete.test.js",
+      "type": "regression",
+      "passed": true,
+      "exitCode": 0,
+      "output": "pantry-delete.test: 全部断言通过 ✔\n"
+    },
+    {
+      "file": "pantry-match.test.js",
+      "type": "regression",
+      "passed": true,
+      "exitCode": 0,
+      "output": "pantry-match.test: 全部断言通过 ✔\n"
+    },
+    {
+      "file": "favorites-cover.test.js",
+      "type": "regression",
+      "passed": true,
+      "exitCode": 0,
+      "output": "✔ 收藏页封面口径：4 条通过\n"
+    },
+    {
+      "file": "kitchen-logic.test.js",
+      "type": "regression",
+      "passed": true,
+      "exitCode": 0,
+      "output": "kitchen-logic.test: 全部断言通过 ✔\n"
+    },
+    {
+      "file": "recipe-pick.test.js",
+      "type": "regression",
+      "passed": true,
+      "exitCode": 0,
+      "output": "recipe-pick.test ok: expiry, full matches, urgent priority, random filters, failure retention, duplicate guard, stock filters and routes\n"
+    }
+  ],
+  "static": {
+    "files": 342,
+    "javascriptFiles": 99,
+    "mainPackageMB": 1.49
+  },
+  "interaction": {
+    "blockingFindings": 0,
+    "heuristicOnly": true
+  },
+  "compile": {
+    "file": "expansion-compile.json",
+    "passed": true,
+    "files": 11
+  },
+  "nativeLayouts": {
+    "file": "expansion-picker-layouts.json",
+    "passed": true,
+    "screens": 28,
+    "checks": 27
+  },
+  "allPages": {
+    "catalog": "page-catalog.json",
+    "evidence": "all-pages-evidence.json",
+    "passed": true,
+    "formalRoutes": 39,
+    "catalogRoutes": 39,
+    "newScreens": 31,
+    "routeChecks": 26,
+    "reusedRoutes": 13,
+    "missingRoutes": [],
+    "extraRoutes": [],
+    "coverageOutput": "{'formalRoutes': 39, 'catalogRoutes': 39, 'missing': [], 'extra': []}"
+  },
+  "server": {
+    "command": "mvn -q -Dtest=IngredientPhotoTests,PantryMatchTests test",
+    "passed": true,
+    "isolated": true,
+    "realDatabase": false,
+    "reports": [
+      {
+        "file": "server/target/surefire-reports/TEST-com.familymenu.daily.service.IngredientPhotoTests.xml",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "file": "server/target/surefire-reports/TEST-com.familymenu.daily.service.PantryMatchTests.xml",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ]
+  },
+  "resources": {
+    "file": "expansion-resource-checks.json",
+    "passed": true,
+    "imageReferences": 84,
+    "missingImages": 0
+  },
+  "credentialScan": {
+    "file": "expansion-resource-checks.json",
+    "sourcesChecked": 107,
+    "patternMatches": 0
+  },
+  "gallery": {
+    "file": "gallery-expansion-evidence.json",
+    "passed": true,
+    "formalRoutes": 39,
+    "groups": 6,
+    "searchChecks": 3,
+    "horizontalOverflow": false
+  },
+  "gitDiffCheck": {
+    "command": "git diff --check",
+    "passed": true
+  },
+  "limits": {
+    "nativeScreensUseTemporarySampleData": true,
+    "sampleDataRestored": true,
+    "businessWriteApisCalled": false,
+    "databaseMigrationApplied": false,
+    "backendDeployed": false,
+    "realPhotoUploadAndCrossDeviceTested": false,
+    "allPageLayoutsRedesigned": false,
+    "gatedFeaturesRemainClosed": true
+  }
+}

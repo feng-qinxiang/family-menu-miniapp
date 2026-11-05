@@ -12,10 +12,10 @@
     <view class="j-top" style="padding-top: {{previewChrome ? '24rpx' : capsuleTop}};">
       <view class="j-eyebrow" style="padding-right: {{capsuleRight}};">{{dateText}}</view>
       <view class="j-heading">
-        <block wx:if="{{view === 'order'}}"><view class="j-title">{{design === 'b' ? '今晚，吃点好的。' : design === 'c' ? '今天吃什么' : '家的味道，今天继续。'}}</view><view class="j-subtitle">{{design === 'b' ? '你点一道，我点一道，一起凑成这一餐。' : '家人一起点，厨房接着做。'}}</view></block>
-        <block wx:elif="{{view === 'cook'}}"><view class="j-title">{{design === 'c' ? '做菜' : '把这一餐，慢慢做好。'}}</view><view class="j-subtitle">{{mealLabel}} · {{doneCount}} / {{orders.length}} 道已上桌</view></block>
-        <block wx:elif="{{view === 'record'}}"><view class="j-title">{{design === 'c' ? '做菜记录' : '认真吃过，都记得。'}}</view><view class="j-subtitle">记下味道，也记下家人的喜欢。</view></block>
-        <block wx:elif="{{view === 'community'}}"><view class="j-title">{{design === 'c' ? '邻里厨房' : '看看别人家的饭桌。'}}</view><view class="j-subtitle">今天上桌的好味道，明天也来你家。</view></block>
+        <block wx:if="{{view === 'order'}}"><view class="j-title">{{design === 'b' ? '今晚，吃点好的。' : design === 'c' ? '今天吃什么' : design === 'd' ? '今晚，一起吃好饭。' : '家的味道，今天继续。'}}</view><view class="j-subtitle">{{design === 'b' ? '你点一道，我点一道，一起凑成这一餐。' : design === 'd' ? '家人一起点，厨房接着做，做好还会留下来。' : '家人一起点，厨房接着做。'}}</view></block>
+        <block wx:elif="{{view === 'cook'}}"><view class="j-title">{{design === 'c' ? '做菜' : design === 'd' ? '把这一餐做好。' : '把这一餐，慢慢做好。'}}</view><view class="j-subtitle">{{mealLabel}} · {{doneCount}} / {{orders.length}} 道已上桌</view></block>
+        <block wx:elif="{{view === 'record'}}"><view class="j-title">{{design === 'c' ? '做菜记录' : design === 'd' ? '一家人的做菜记录。' : '认真吃过，都记得。'}}</view><view class="j-subtitle">记下味道，也记下家人的喜欢。</view></block>
+        <block wx:elif="{{view === 'community'}}"><view class="j-title">{{design === 'c' ? '邻里厨房' : design === 'd' ? '看看大家的饭桌。' : '看看别人家的饭桌。'}}</view><view class="j-subtitle">今天上桌的好味道，明天也来你家。</view></block>
         <block wx:else><view class="j-title">我家的厨房</view><view class="j-subtitle">一家人的口味，一起慢慢攒。</view></block>
       </view>
     </view>
@@ -26,7 +26,7 @@
         <button wx:for="{{meals}}" wx:key="key" class="meal-option tap-scale {{meal === item.key ? 'on' : ''}}" data-meal="{{item.key}}" bindtap="selectMeal">{{item.label}}</button>
       </view>
 
-      <view wx:if="{{design === 'a'}}" class="order-feature">
+      <view wx:if="{{design === 'a' || design === 'd'}}" class="order-feature {{design === 'd' ? 'fusion-hero' : ''}}">
         <image class="feature-photo" src="/assets/dishes/hongshao-pork.jpg" mode="aspectFill" />
         <view class="feature-shade"></view>
         <view class="feature-copy"><view class="feature-label">这一餐的主角</view><view class="feature-title">红烧肉</view><view class="feature-meta">慢火炖软，留点汤汁拌饭。</view></view>
@@ -34,9 +34,10 @@
       </view>
 
       <view wx:if="{{design === 'b'}}" class="family-note"><view class="family-faces"><text class="family-avatar one">爸</text><text class="family-avatar two">妈</text><text class="family-avatar three">我</text></view><view><view class="family-note-title">今天也一起好好吃饭</view><view class="j-muted">爸爸想吃红烧肉，我想吃点青菜。</view></view></view>
+      <view wx:if="{{design === 'd'}}" class="fusion-family"><view class="family-faces"><text class="family-avatar one">爸</text><text class="family-avatar two">妈</text><text class="family-avatar three">我</text></view><view><view class="family-note-title">爸爸点红烧肉 · 妈妈点番茄炒蛋</view><view class="j-muted">把大家想吃的，凑成一桌。</view></view></view>
 
       <view class="menu-ticket">
-        <view class="ticket-head"><view><view class="ticket-kicker">{{design === 'b' ? '一家人的点菜单' : '这一餐已点'}}</view><view class="ticket-title">{{mealLabel}} <text class="ticket-count">{{orders.length}} 道菜</text></view></view><button wx:if="{{design === 'c'}}" class="j-text-button tap-scale" bindtap="toggleMenu">{{menuExpanded ? '收起' : '展开菜单'}} ›</button><view wx:else class="ticket-family">一家人一起点</view></view>
+        <view class="ticket-head"><view><view class="ticket-kicker">{{design === 'b' || design === 'd' ? '一家人的点菜单' : '这一餐已点'}}</view><view class="ticket-title">{{mealLabel}} <text class="ticket-count">{{orders.length}} 道菜</text></view></view><button wx:if="{{design === 'c'}}" class="j-text-button tap-scale" bindtap="toggleMenu">{{menuExpanded ? '收起' : '展开菜单'}} ›</button><view wx:else class="ticket-family">{{design === 'd' ? '爸爸 · 妈妈 · 我' : '一家人一起点'}}</view></view>
         <view class="menu-list" wx:if="{{design !== 'c' || menuExpanded}}">
           <view class="menu-row" wx:for="{{orders}}" wx:key="id">
             <image class="menu-photo" src="{{item.image}}" mode="aspectFill" />
@@ -51,7 +52,7 @@
       </view>
 
       <view class="context-tools"><button class="tool-link tap-scale" data-tool="recipes" bindtap="openTool">菜谱库 <text>›</text></button><button class="tool-link tap-scale" data-tool="pantry" bindtap="openTool">冰箱里有什么 <text>›</text></button><button class="tool-link tap-scale" data-tool="shopping" bindtap="openTool">要买什么 <text>›</text></button></view>
-      <view class="section-heading"><view class="section-title">{{design === 'b' ? '再添一道，刚刚好' : design === 'c' ? '今天推荐' : '简单好做，不用想太久'}}</view><text class="section-caption">家常 · 快手</text></view>
+      <view class="section-heading"><view class="section-title">{{design === 'b' || design === 'd' ? '再添一道，刚刚好' : design === 'c' ? '今天推荐' : '简单好做，不用想太久'}}</view><text class="section-caption">家常 · 快手</text></view>
       <view class="recipe-grid">
         <view class="recipe-tile" wx:for="{{recommendations}}" wx:key="id"><image class="recipe-photo" src="{{item.image}}" mode="aspectFill" /><view class="recipe-info"><view class="recipe-title">{{item.title}}</view><view class="j-muted">{{item.minutes}} 分钟 · {{item.id === 'soup' ? '热汤' : '家常'}}</view></view><button class="pick-button pick-{{item.id}} tap-scale {{item.picked ? 'picked' : ''}}" aria-label="{{item.picked ? '已点' : '点'}}{{item.title}}" data-id="{{item.id}}" bindtap="pickRecipe">{{item.picked ? '✓' : '+'}}</button></view>
       </view>
@@ -79,7 +80,7 @@
     <!-- RECORD: the latest meal comes before aggregate statistics. -->
     <block wx:elif="{{view === 'record'}}">
       <view wx:if="{{design === 'c'}}" class="week-row"><view wx:for="{{week}}" wx:key="key" class="week-day {{item.today ? 'today' : ''}}"><text>周{{item.label}}</text><view>{{item.day}}</view><text class="week-dot {{item.done ? 'done' : ''}}"></text></view></view>
-      <view wx:elif="{{design === 'b'}}" class="journal-date"><text class="journal-day">{{dateDay}}</text><view><view class="journal-month">{{recordMonth}}</view><view class="j-muted">一餐一记，慢慢攒成家的味道。</view></view></view>
+      <view wx:elif="{{design === 'b' || design === 'd'}}" class="journal-date"><text class="journal-day">{{dateDay}}</text><view><view class="journal-month">{{recordMonth}}</view><view class="j-muted">一餐一记，慢慢攒成家的味道。</view></view></view>
       <view class="record-latest" wx:if="{{latest}}"><image class="record-photo" src="{{latest.image}}" mode="aspectFill" /><view class="record-main"><view class="focus-kicker">最近上桌 · {{latest.when}}</view><view class="record-title">{{latest.title}}</view><view class="record-stars">{{latest.score}} 分 <text>· {{latest.by}}做的</text></view><view class="record-remark">“{{latest.remark}}”</view><view class="record-actions"><button wx:if="{{showCommunity}}" class="j-primary tap-scale share-record" data-id="{{latest.id}}" bindtap="shareRecord">晒到社区 →</button><button class="j-text-button tap-scale" data-id="{{latest.recipeId}}" bindtap="orderPost">再点一次 →</button></view></view></view>
       <view class="record-stats"><view><view class="stat-number">{{history.length}}<text> 道</text></view><view class="j-muted">示例记录</view></view><view><view class="stat-number">{{fireDays}}<text> 天</text></view><view class="j-muted">开火日</view></view><view><view class="stat-number">{{praiseCount}}<text> 次</text></view><view class="j-muted">五星好评</view></view></view>
       <view class="section-heading"><view class="section-title">前几次的好味道</view><text class="section-caption">按时间</text></view>

@@ -2,11 +2,6 @@
 <nav-bar title="设置" show-back="{{true}}" status-bar-height="{{statusBarHeight}}"></nav-bar>
 
 <view class="container settings {{fontScale === 'lg' ? 'font-lg' : ''}}">
-  <!-- Hero eyebrow + 镂空标题 -->
-  <view class="set-hero g-fade-up">
-    <view class="eyebrow-serif">偏好设置</view>
-    <view class="set-hero-title">设<text class="pop">置</text></view>
-  </view>
 
   <!-- 账号安全 -->
   <view class="set-group g-fade-up g-d1">
@@ -35,7 +30,7 @@
         <view class="set-ic"><text class="set-glyph">铃</text></view>
         <view class="set-mid">
           <view class="set-name">消息通知</view>
-          <view class="set-desc">家人在许愿池点菜、喊开饭时，用微信服务通知提醒你</view>
+          <view class="set-desc">家人点菜、开饭与食材临期提醒。微信每次订阅可接收一条对应提醒，临期也可在冰箱页单独订阅。</view>
         </view>
         <view class="set-sw {{subscribeEnabled ? 'on' : ''}}">
           <view class="set-sw-knob"></view>

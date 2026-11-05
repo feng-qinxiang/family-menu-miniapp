@@ -977,7 +977,7 @@ const PHOTO_SITES = [
   ['pages/community/index.wxss', '.pphoto'],
   ['pkg-extra/recipe-detail/index.wxss', '.rd-step-img'],
   ['pkg-extra/cook-mode/index.wxss', '.stepimg'],
-  ['pkg-extra/community/post-detail/index.wxss', '.dish-img'],
+  ['pkg-extra/community/post-detail/index.wxss', '.pimg'],
   ['pkg-extra/community/post-detail/index.wxss', '.sk-img'],
 ];
 const appCssSrc = stripComments(fs.readFileSync(path.join(ROOT, 'app.wxss'), 'utf8'));
@@ -1022,7 +1022,7 @@ const IMG_FALLBACK_SITES = [
   ['pages/community/index.wxml', 'pphoto'],
   ['pkg-extra/recipe-detail/index.wxml', 'rd-step-img'],
   ['pkg-extra/cook-mode/index.wxml', 'stepimg-pic'],
-  ['pkg-extra/community/post-detail/index.wxml', 'dish-img'],
+  ['pkg-extra/community/post-detail/index.wxml', 'pimg'],
   ['components/recipe-card/index.wxml', 'rc-ph-img'],
 ];
 const appCssForBroken = fs.readFileSync(path.join(ROOT, 'app.wxss'), 'utf8');

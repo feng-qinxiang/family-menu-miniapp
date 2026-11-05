@@ -30,11 +30,11 @@ const APPLY_INTERVAL = 24 * 60 * 60 * 1000;
 /** 最近一次拉到的设置；页面 onLoad 时 preload() 预热，申请授权时同步读取 */
 let cached = null;
 
-/** 事件类型 → 设置里 templates 的键；'all' 表示两个都要 */
+/** 微信一次最多申请三个模板：许愿、开饭、临期。 */
 function templateIds(setting, kind) {
   const templates = (setting && setting.templates) || {};
-  const keys = kind === 'all' ? ['wish', 'meal'] : [kind];
-  return keys.map((k) => templates[k]).filter((id) => !!id);
+  const keys = kind === 'all' ? ['wish', 'meal', 'pantry'] : [kind];
+  return Array.from(new Set(keys.map((k) => templates[k]).filter(Boolean)));
 }
 
 function readApplied() {
@@ -86,7 +86,7 @@ function preload(force) {
 /**
  * 申请订阅授权。必须在用户点击的回调里调用。
  *
- * @param {string}  kind        'wish' | 'meal' | 'all'
+ * @param {string}  kind        'wish' | 'meal' | 'pantry' | 'all'
  * @param {boolean} [force]     true = 跳过 24 小时节流（用户明确点了开关时用）
  * @returns {Promise<boolean>}  是否至少拿到一个模板的授权（全被拒 = false）
  */
@@ -103,7 +103,7 @@ function apply(kind, force) {
     return Promise.resolve(false); // 基础库过低：不支持就当作没拿到授权，不报错
   }
 
-  const kindList = kind === 'all' ? ['wish', 'meal'] : [kind];
+  const kindList = kind === 'all' ? ['wish', 'meal', 'pantry'].filter(k => setting.templates && setting.templates[k]) : [kind];
   if (!force && throttled(kindList)) {
     return Promise.resolve(false);
   }

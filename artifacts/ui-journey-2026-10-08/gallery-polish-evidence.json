@@ -1,0 +1,74 @@
+{
+  "checkedAt": "2026-10-08T23:54:00.696Z",
+  "url": "http://127.0.0.1:8847/#picker-update",
+  "navigation": [
+    {
+      "alt": "做菜 · 接住家人点好的菜",
+      "complete": true,
+      "naturalWidth": 591,
+      "selected": [
+        "做菜"
+      ],
+      "src": "screens/app-cook.jpg"
+    },
+    {
+      "alt": "记录 · 留下每一餐的味道",
+      "complete": true,
+      "naturalWidth": 591,
+      "selected": [
+        "记录"
+      ],
+      "src": "screens/app-record.jpg"
+    },
+    {
+      "alt": "社区 · 看看别人家的饭桌",
+      "complete": true,
+      "naturalWidth": 591,
+      "selected": [
+        "社区"
+      ],
+      "src": "screens/app-community.jpg"
+    },
+    {
+      "alt": "我的 · 管理这个小家",
+      "complete": true,
+      "naturalWidth": 591,
+      "selected": [
+        "我的"
+      ],
+      "src": "screens/app-me.jpg"
+    },
+    {
+      "alt": "点菜 · 先让家人想吃",
+      "complete": true,
+      "naturalWidth": 591,
+      "selected": [
+        "点菜"
+      ],
+      "src": "screens/app-home.jpg"
+    }
+  ],
+  "images": [
+    {
+      "complete": true,
+      "naturalWidth": 591,
+      "src": "screens/picker-home-wish-preview.jpg"
+    },
+    {
+      "complete": true,
+      "naturalWidth": 591,
+      "src": "screens/app-recipes.jpg"
+    },
+    {
+      "complete": true,
+      "naturalWidth": 591,
+      "src": "screens/app-weekly.jpg"
+    }
+  ],
+  "localImageReferences": 44,
+  "missingLocalImages": [],
+  "screens": [
+    "screens/gallery-polish-final.jpg"
+  ],
+  "passed": true
+}

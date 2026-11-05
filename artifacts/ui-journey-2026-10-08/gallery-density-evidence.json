@@ -1,0 +1,49 @@
+{
+  "checkedAt": "2026-10-08T16:54:46.386Z",
+  "url": "http://127.0.0.1:8847/#picker-update",
+  "images": [
+    {
+      "complete": true,
+      "height": 760,
+      "src": "screens/picker-home-menu.jpg",
+      "width": 351
+    },
+    {
+      "complete": true,
+      "height": 760,
+      "src": "screens/app-recipes.jpg",
+      "width": 351
+    },
+    {
+      "complete": true,
+      "height": 760,
+      "src": "screens/app-weekly.jpg",
+      "width": 351
+    },
+    {
+      "complete": true,
+      "height": 760,
+      "src": "screens/picker-random.jpg",
+      "width": 351
+    },
+    {
+      "complete": true,
+      "height": 760,
+      "src": "screens/picker-pantry-pick.jpg",
+      "width": 351
+    },
+    {
+      "complete": true,
+      "height": 760,
+      "src": "screens/app-pantry.jpg",
+      "width": 351
+    }
+  ],
+  "localImageReferences": 35,
+  "missingLocalImages": [],
+  "screens": [
+    "screens/gallery-density-final.png",
+    "screens/gallery-density-stock.png"
+  ],
+  "passed": true
+}

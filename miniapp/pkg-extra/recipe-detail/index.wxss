@@ -1,5 +1,5 @@
 /* ============================================================
-   pages/recipe-detail · 菜谱详情「美食杂志」重做
+   pages/recipe-detail · 头图后连续阅读，用料左图右文
    配色/工具类复用 app.wxss，本文件仅页面特有结构
    ============================================================ */
 .rd-page {
@@ -14,7 +14,8 @@
 /* ===== Hero 大图 ===== */
 .rd-hero {
   position: relative;
-  min-height: var(--photo-hero-h);
+  height: 430rpx;
+  min-height: 320rpx;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -28,42 +29,7 @@
 .rd-hero-mask {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg,
-    rgba(20, 14, 8, 0.55) 0%,
-    rgba(20, 14, 8, 0) 30%,
-    rgba(20, 14, 8, 0.2) 54%,
-    rgba(20, 14, 8, 0.92) 100%);
-}
-.rd-hero-bignum {
-  position: absolute;
-  top: 230rpx;
-  right: 18rpx;
-  font-size: var(--fs-hero-bignum);
-  font-weight: 700;
-  line-height: 1;
-  color: rgba(255, 255, 255, 0.08);
-  pointer-events: none;
-}
-
-/* Hero 文案 */
-.rd-hero-body {
-  position: relative;
-  margin-top: auto;
-  padding: 0 46rpx var(--hero-body-above-sheet);
-  z-index: 2;
-  color: var(--anchor-contrast);
-}
-.rd-tag {
-  display: inline-block;
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: var(--fs-cap);
-  letter-spacing: 2rpx;
-  font-weight: 700;
-  color: var(--anchor-contrast);
-  background: var(--pop);
-  padding: 10rpx 26rpx;
-  border-radius: var(--r-xs);
+  background: linear-gradient(180deg, rgba(20, 14, 8, 0.5), transparent 60%);
 }
 
 /* nav-bar 右侧编辑入口（仅自建菜谱）：压在 hero 暗底上，用半透明描边胶囊 */
@@ -79,52 +45,28 @@
   border: 2rpx solid rgba(255, 255, 255, 0.45);
   border-radius: var(--r-pill);
 }
-.rd-hero-title {
-  font-size: var(--fs-hero-xl);
-  /* 菜名是家里人自己起的，长到一定换行（实测「外婆传下来的红烧肉炖土豆胡萝卜玉米一锅出」
-     19 字换了三行）。0.92 这个行高是按单行展示字定的，一旦换行，上下两行的字直接互压到认不出来。
-     这里按「会换行」定行高，并最多三行——再多就把整张 hero 图吞掉。 */
-  line-height: 1.14;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-  overflow: hidden;
-  letter-spacing: -6rpx;
-  margin: 28rpx 0 26rpx;
-  -webkit-text-stroke: 3rpx var(--c-surface);
-}
-.rd-hero-meta {
-  display: flex;
-  gap: 16rpx;
-  align-items: center;
-  flex-wrap: wrap;
-}
-.rd-m {
-  display: inline-flex;
-  align-items: center;
-  font-size: var(--fs-cap);
-  font-weight: 600;
-  color: var(--anchor-contrast);
-  background: rgba(255, 255, 255, 0.16);
-  padding: 13rpx 24rpx;
-  border-radius: var(--r-chip);
-}
-.rd-m-solid { background: var(--pop); }
+.rd-intro { padding-bottom: 28rpx; margin-bottom: 16rpx; border-bottom: var(--bd-card); }
+.rd-title { font-size: var(--fs-h1); font-weight: 700; line-height: 1.35; word-break: break-all; }
+.rd-meta { display: flex; flex-wrap: wrap; gap: 8rpx 24rpx; font-size: var(--fs-sub); color: var(--mut-strong); line-height: 1.5; margin-top: 16rpx; }
+.rd-summary { font-size: var(--fs-body); color: var(--ink); line-height: 1.7; margin-top: 20rpx; }
+.rd-section-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12rpx 20rpx; margin-bottom: 16rpx; }
+.rd-section-head > view:first-child { display: flex; flex-wrap: wrap; align-items: baseline; gap: 16rpx; }
+.rd-section-title { font-size: var(--fs-h2); font-weight: 600; line-height: 1.5; }
+.rd-stock-count, .rd-method-count { font-size: var(--fs-cap); color: var(--mut-strong); }
+.rd-method-head { margin-top: 36rpx; }
 
 /* 圆形份量 stepper */
 .rd-srv {
   display: inline-flex;
   align-items: center;
-  background: rgba(255, 255, 255, 0.16);
-  border-radius: var(--r-chip);
-  padding: 6rpx;
+  flex: none;
+  background: var(--paper-2);
+  border-radius: var(--r-md);
 }
 .rd-sbtn {
-  /* 步进器 ± 按钮放大到 72rpx，便于连续点按 */
-  width: 72rpx;
-  height: 72rpx;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.18);
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: var(--r-md);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -134,7 +76,7 @@
   position: relative;
   width: 24rpx;
   height: 5rpx;
-  background: var(--c-surface);
+  background: var(--ink);
   border-radius: 3rpx;
 }
 .rd-sbtn-plus::after {
@@ -145,27 +87,26 @@
   transform: translate(-50%, -50%);
   width: 5rpx;
   height: 24rpx;
-  background: var(--c-surface);
+  background: var(--ink);
   border-radius: 3rpx;
 }
 .rd-sval {
   font-size: var(--fs-cap);
   font-weight: 700;
-  color: var(--anchor-contrast);
-  min-width: 96rpx;
+  color: var(--ink);
+  min-width: 80rpx;
   text-align: center;
 }
 /* ===== Sheet ===== */
 .rd-sheet {
   position: relative;
-  margin-top: -50rpx;
+  margin-top: 0;
   background: var(--paper);
-  border-radius: var(--r-sheet) var(--r-sheet) 0 0;
-  padding: 44rpx 46rpx calc(400rpx + env(safe-area-inset-bottom));
+  padding: 32rpx 32rpx calc(240rpx + env(safe-area-inset-bottom));
   z-index: 5;
 }
 .rd-sheet .shead { margin: 0 0 30rpx; }
-.rd-sheet .shead:not(:first-child) { margin-top: 56rpx; }
+.rd-sheet .shead:not(:first-child) { margin-top: 36rpx; }
 .rd-card { margin: 0; }
 
 .rd-empty-mini {
@@ -185,8 +126,9 @@
 }
 .rd-ing:last-child { border-bottom: none; }
 .rd-dot {
-  width: 18rpx;
-  height: 18rpx;
+  display: inline-block;
+  width: 12rpx;
+  height: 12rpx;
   border-radius: 50%;
   flex: none;
 }
@@ -200,22 +142,38 @@
   color: var(--ink);
   /* 原来有 letter-spacing: -0.4rpx——28rpx 的中文上收 0.4rpx 看不出紧凑，
      只让最后一个字的右侧空隙变得不均匀。全站同类微负值一并去掉。 */
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  line-height: 1.5;
+  word-break: break-all;
 }
 .rd-note {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
   font-size: calc(23rpx * var(--fs-mul, 1));
   color: var(--mut-strong);
   margin-top: 4rpx;
 }
 .rd-note.miss { color: var(--pop); font-weight: 600; }
+.rd-ingredient-top { display: flex; align-items: baseline; justify-content: space-between; gap: 20rpx; }
+.rd-ingredient-top .rd-iname-h { flex: 1; min-width: 0; font-weight: 600; }
 .rd-amt {
-  font-size: var(--fs-cap);
-  font-weight: 800;
-  color: var(--ink-deep);
   flex: none;
+  max-width: 45%;
+  font-size: var(--fs-cap);
+  font-weight: 600;
+  color: var(--ink-deep);
+  margin: 0;
+  text-align: right;
+  line-height: 1.5;
+  word-break: break-all;
 }
+.rd-photo-hint { font-size: var(--fs-cap); color: var(--mut-strong); line-height: 1.5; padding-bottom: 8rpx; }
+.rd-ingredient-photo { position: relative; flex: none; width: var(--tile-rc); height: var(--tile-rc); background: var(--paper-2); border-radius: var(--r-md); overflow: hidden; }
+.rd-ingredient-image { display: block; width: 100%; height: 100%; }
+/* 缩略图名称最多两行，底部预留编辑标签；完整名称在右侧。 */
+.rd-ingredient-text { box-sizing: border-box; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 12rpx 8rpx 44rpx; font-size: var(--fs-cap); font-weight: 800; color: var(--pine); line-height: 1.2; text-align: center; word-break: break-all; }
+.rd-ingredient-label { display: -webkit-box; width: 100%; max-height: calc(var(--fs-cap) * 2.4); -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.rd-photo-edit { position: absolute; bottom: 0; left: 0; right: 0; padding: 4rpx 0; line-height: 1.3; text-align: center; background: rgba(255,255,255,.88); color: var(--mut-strong); font-size: var(--fs-mini); }
 
 /* 加入买菜清单按钮 */
 .rd-ing-cart { padding: 0 0 22rpx; }
@@ -308,30 +266,25 @@
 /* —— 做法步骤 —— */
 .rd-step {
   display: flex;
-  gap: 28rpx;
-  padding: 30rpx 0;
+  gap: 24rpx;
+  padding: 24rpx 0;
   border-bottom: 2rpx solid var(--paper-2);
 }
 .rd-step:last-child { border-bottom: none; }
 .rd-sno {
-  width: 66rpx;
-  height: 66rpx;
-  border-radius: 21rpx;
-  background: var(--anchor);
-  color: var(--gold);
-  font-size: calc(32rpx * var(--fs-mul, 1));
-  font-weight: 700;
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: var(--r-sm);
+  background: var(--paper-2);
+  color: var(--pine);
+  font-size: var(--fs-sub);
+  font-weight: 600;
   flex: none;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.rd-sno.hot {
-  background: var(--pop);
-  color: var(--anchor-contrast);
-  box-shadow: 0 12rpx 28rpx rgba(232, 71, 42, 0.35);
-}
-.rd-stx { flex: 1; padding-top: 6rpx; }
+.rd-stx { flex: 1; min-width: 0; padding-top: 2rpx; }
 .rd-stx-p {
   font-size: calc(28rpx * var(--fs-mul, 1));
   line-height: 1.55;
@@ -647,9 +600,8 @@
 }
 
 /* ===== 加载骨架 ===== */
-/* 高度必须与真实 hero（--photo-hero-h）一致，否则加载完成时页面跳变 */
+/* 高度沿用 rd-hero，加载前后保持一致。 */
 .rd-hero-skel {
-  height: var(--photo-hero-h);
   background: linear-gradient(135deg, var(--paper-2), var(--c-border-light));
 }
 .rd-skel-row { display: flex; align-items: center; gap: 24rpx; padding: 24rpx 0; }

@@ -7,6 +7,7 @@
   min-height: 100vh;
   background: var(--paper);
 }
+.community-page .cpt-head { padding-bottom: 20rpx; }
 
 /* 页头唯一主操作：番茄红只给它。视觉 64rpx，::after 把热区撑到 88rpx */
 .cm-post-btn {
@@ -31,17 +32,10 @@
   transform: translateY(-50%);
 }
 
-/* 统计：页头下一行安静小字 */
-.cm-stats {
-  margin-top: 8rpx;
-  font-size: var(--fs-cap);
-  color: var(--mut);
-}
-
 .community-scroll {
   height: 100vh;
   box-sizing: border-box;
-  padding-bottom: calc(var(--tabbar-h) + 40rpx);
+  padding-bottom: var(--tabbar-h);
 }
 
 /* ===================== 内容区 ===================== */
@@ -49,69 +43,61 @@
 .sheet { padding-bottom: 40rpx; }
 .pad { padding: 0 46rpx; }
 /* 页头已给出页名，区块标题贴近页头，首屏多露帖子（全局 .shead 上边距 56rpx） */
-.sheet .shead { margin: 12rpx 0 24rpx; }
+.cm-feed-head { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; margin: 4rpx 0 12rpx; font-size: var(--fs-lg); font-weight: 800; color: var(--ink); }
+.cm-feed-count { font-size: var(--fs-cap); color: var(--mut-strong); font-weight: 500; }
 
 /* ===================== 帖子卡 ===================== */
 .post-list { display: block; }
 .pcard {
   background: var(--c-surface);
   border-radius: var(--r-card);
-  padding: var(--pad-card) var(--pad-card) 30rpx;
-  margin-bottom: 34rpx;
-  box-shadow: var(--sh-card);
+  padding: 20rpx var(--pad-card-sm) 4rpx;
+  margin-bottom: 20rpx;
+  box-shadow: none;
   border: var(--bd-card);
 }
-.ptop { display: flex; align-items: center; gap: 22rpx; }
+.ptop { display: flex; align-items: center; gap: 16rpx; }
 .pavatar {
-  width: var(--ava-row);
-  height: var(--ava-row);
-  border-radius: calc(var(--ava-row) * var(--r-ava));
+  width: var(--ava-cmt);
+  height: var(--ava-cmt);
+  border-radius: calc(var(--ava-cmt) * var(--r-ava));
   flex: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: calc(var(--ava-row) * var(--ava-glyph) * var(--fs-mul, 1));
+  font-size: calc(var(--ava-cmt) * var(--ava-glyph) * var(--fs-mul, 1));
   font-weight: 900;
   color: var(--anchor-contrast);
   font-family: var(--serif);
 }
 .pmeta { flex: 1; min-width: 0; }
-.pname { font-size: calc(29rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--ink); letter-spacing: -0.4rpx; }
-.pstats {
-  font-size: calc(23rpx * var(--fs-mul, 1));
-  color: var(--mut);
-  margin-top: 6rpx;
-  display: flex;
-  align-items: center;
-  gap: 10rpx;
-}
-.pstats-heart::before { content: "\2665\FE0E"; color: var(--pop); font-size: calc(25rpx * var(--fs-mul, 1)); line-height: 1; }
-.ptime { font-size: calc(23rpx * var(--fs-mul, 1)); color: var(--mut-2); flex: none; }
-.ptitle { font-size: calc(36rpx * var(--fs-mul, 1)); font-weight: 900; color: var(--ink); letter-spacing: -1rpx; margin: 26rpx 0 13rpx; line-height: 1.25; }
-.pcontent { font-size: calc(25rpx * var(--fs-mul, 1)); color: var(--mut-strong); line-height: 1.6; }
-.pphoto { display: block; width: 100%; height: var(--photo-feed-h); border-radius: var(--r-chip); margin-top: var(--r-md); }
+.pname { font-size: calc(28rpx * var(--fs-mul, 1)); font-weight: 700; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ptime { font-size: var(--fs-cap); color: var(--mut-strong); margin-top: 4rpx; }
+.ptitle { font-size: calc(32rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--ink); letter-spacing: 0; margin: 14rpx 0 8rpx; line-height: 1.45; }
+.pcontent { font-size: calc(28rpx * var(--fs-mul, 1)); color: var(--mut-strong); line-height: 1.6; }
+.pphoto { display: block; width: 100%; height: var(--photo-feed-h); border-radius: var(--r-md); margin-top: 14rpx; }
 
 /* 关联菜谱 */
 .precipe {
   display: flex;
   align-items: center;
-  gap: 24rpx;
-  margin-top: 26rpx;
-  padding: 20rpx;
+  gap: 16rpx;
+  margin-top: 18rpx;
+  padding: 16rpx;
   background: var(--paper);
-  border-radius: 28rpx;
+  border-radius: var(--r-md);
   border: 2rpx solid var(--paper-2);
 }
-.precipe .rthumb { width: var(--tile-row-sm); height: var(--tile-row-sm); border-radius: 22rpx; flex: none; }
+.precipe .rthumb { width: var(--tile-row-sm); height: var(--tile-row-sm); border-radius: var(--r-sm); flex: none; }
 .precipe .rmid { flex: 1; min-width: 0; }
 .precipe .rk { font-size: calc(21rpx * var(--fs-mul, 1)); color: var(--gold-deep); font-weight: 700; }
-.precipe .rn { font-size: calc(28rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--ink); margin-top: 2rpx; }
-.precipe .rm { font-size: calc(23rpx * var(--fs-mul, 1)); color: var(--mut); margin-top: 6rpx; }
+.precipe .rn { font-size: calc(28rpx * var(--fs-mul, 1)); font-weight: 700; color: var(--ink); margin-top: 4rpx; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4; }
+.precipe .rm { font-size: var(--fs-cap); color: var(--mut-strong); margin-top: 6rpx; line-height: 1.5; }
 .precipe .rgo {
-  width: 58rpx;
-  height: 58rpx;
+  width: 32rpx;
+  height: 88rpx;
   border-radius: 50%;
-  background: var(--anchor);
+  background: transparent;
   flex: none;
   display: flex;
   align-items: center;
@@ -120,19 +106,19 @@
 .rgo-arrow {
   width: 16rpx;
   height: 16rpx;
-  border-top: 4rpx solid var(--anchor-contrast);
-  border-right: 4rpx solid var(--anchor-contrast);
+  border-top: 3rpx solid var(--mut);
+  border-right: 3rpx solid var(--mut);
   transform: rotate(45deg) translate(-2rpx, 2rpx);
 }
 
 /* 标签 */
-.ptags { display: flex; flex-wrap: wrap; gap: 14rpx; margin-top: 24rpx; }
+.ptags { display: flex; flex-wrap: wrap; gap: 14rpx; margin-top: 16rpx; }
 .p-tag {
   font-size: calc(23rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: var(--gold-deep);
-  background: var(--paper-2);
-  padding: 10rpx 22rpx;
+  background: transparent;
+  padding: 4rpx 0;
   border-radius: var(--r-pill);
 }
 
@@ -140,14 +126,17 @@
 .pactions {
   display: flex;
   align-items: center;
-  gap: 16rpx;
-  margin-top: 28rpx;
-  padding-top: 26rpx;
+  gap: 8rpx;
+  margin-top: 12rpx;
+  padding-top: 4rpx;
   border-top: 2rpx solid var(--paper-2);
 }
 .pa-btn {
+  flex: 1;
+  min-width: 0;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 10rpx;
   font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: 700;
@@ -181,8 +170,7 @@
   border-top: 0.16em solid currentColor;
 }
 .ico-warn::before { content: "\26A0\FE0E"; }
-.pa-spacer { flex: 1; }
-.pa-report { font-size: calc(23rpx * var(--fs-mul, 1)); color: var(--mut-2); font-weight: 600; display: flex; align-items: center; gap: 8rpx; }
+.pa-report { flex: none; min-width: 88rpx; min-height: 88rpx; font-size: var(--fs-lg); color: var(--mut-strong); font-weight: 700; display: flex; align-items: center; justify-content: center; }
 
 /* ===================== 加载骨架（与 .pcard 同形状，加载完不跳版） ===================== */
 .cf-skel-card {
@@ -197,18 +185,27 @@
 .cf-skel-line--short { width: 55%; }
 
 /* ===================== 热门话题 ===================== */
-.topics { margin: 46rpx 46rpx 0; }
+.topics { margin: 0 0 14rpx; }
 .thead { display: flex; align-items: center; gap: 14rpx; margin-bottom: 26rpx; }
 .thead .th-title { font-size: calc(32rpx * var(--fs-mul, 1)); font-weight: 900; color: var(--ink); letter-spacing: -1rpx; }
-.tchips { display: flex; flex-wrap: wrap; gap: 18rpx; }
+.topic-scroll { white-space: nowrap; }
+.tchips { display: inline-flex; gap: 12rpx; padding: 4rpx 0; }
 .tchip {
   display: flex;
   align-items: center;
   gap: 12rpx;
   background: var(--paper-2);
   border-radius: var(--r-pill);
+  min-height: 88rpx;
+  box-sizing: border-box;
   padding: 8rpx 20rpx;
+  flex: none;
+  font-size: var(--fs-sub);
+  font-weight: 700;
+  color: var(--ink);
 }
+.tchip.on { background: var(--pop-soft); color: var(--pop-deep); }   /* 与菜谱快筛选中态一致：浅红底 + 深红字 */
+.tchip.on .tt { color: inherit; }
 .tchip .tt { font-size: var(--fs-sub); font-weight: 800; color: var(--ink); letter-spacing: -0.4rpx; }
 
 /* ===================== 流末 ===================== */
@@ -319,14 +316,6 @@
 
 /* —— 帖子配图（信息流角标 + 发帖选择器） —— */
 .pphoto-wrap { position: relative; }
-/* 无配图帖子的占位：只说明"还没配图"，不再拿本地菜品图冒充邻居实拍 */
-.pphoto-none {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--paper);
-}
-.pphoto-none-t { color: var(--mut-2); font-size: var(--fs-mini); }
 .pphoto-count {
   position: absolute;
   right: 12rpx;
@@ -403,7 +392,7 @@
   margin-top: 16rpx;
   padding: 14rpx 22rpx;
   border-radius: var(--r-pill);
-  background: rgba(232, 71, 42, 0.08);
+  background: rgba(200, 56, 31, 0.08);
 }
 .tag-filter-t {
   font-size: var(--fs-cap);

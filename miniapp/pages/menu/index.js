@@ -13,11 +13,12 @@ const {
 } = require('../../utils/api');
 const { mealTypeLabels, mealOrder } = require('../../utils/constants');
 const { animateNumber, stopNumberAnim } = require('../../utils/count-up');
-const { fallbackDishImg, recipeDishImg, LOCAL_DISHES } = require('../../utils/image');
+const { fallbackDishImg, recipeDishImg, LOCAL_DISHES, onPhotoError: markPhotoBroken } = require('../../utils/image');
 const { runGuarded } = require('../../utils/interaction');
 const { shoppingEmptyReason } = require('../../utils/kitchen');
 const { indexPantry, pantryHas } = require('../../utils/pantry-match');
 const subscribe = require('../../utils/subscribe');
+const { withTabSelect } = require('../../behaviors/tab-select');
 
 function buildToday() {
   const d = new Date();
@@ -66,6 +67,7 @@ function buildCookOrder(list) {
 }
 
 Page({
+  onPhotoError(e) { markPhotoBroken(e, this); },
   data: {
     view: 'today',          // today | week (§3 segment)
     todayLabel: buildToday(),
@@ -74,6 +76,9 @@ Page({
     todayMenu: [],
     mealGroups: [],
     totalCount: 0,
+    doneCount: 0,
+    cookingCount: 0,
+    cookPercent: 0,
     totalTime: 0,
     totalServings: 0,
     shoppingPending: 0,
@@ -88,18 +93,20 @@ Page({
     loadError: '',
     // 兜底含安全区；量到胶囊时由 utils/capsule 的 bottom 覆盖
     heroMetaTop: 'calc(env(safe-area-inset-top) + 178rpx)',
+    capsuleTop: 'calc(env(safe-area-inset-top) + 178rpx)',
     statusBarHeight: 0
   },
 
   onLoad() {
     try {
-      this.setData({ heroMetaTop: getCapsule().bottom });
+      this.setData({ capsuleTop: getCapsule().bottom });
     } catch (e) {}
     // 预热订阅消息配置：喊开饭时要在点击手势里同步申请授权，不能临时去等网络
     subscribe.preload();
   },
 
   onShow() {
+    withTabSelect(this);
     let fontScale = 'normal';
     try { fontScale = wx.getStorageSync('font_scale') || 'normal'; } catch (e) { fontScale = 'normal'; }
     if (fontScale !== this.data.fontScale) this.setData({ fontScale });
@@ -138,6 +145,8 @@ Page({
       const pantryItems = Array.isArray(pantry) ? pantry : [];
 
       const totalCount = items.length;
+      const doneCount = items.filter(it => it.status === 'done').length;
+      const cookingCount = items.filter(it => it.status === 'cooking').length;
       const totalTime = items.reduce((sum, it) => sum + (it.recipe && it.recipe.timeCost ? Number(it.recipe.timeCost) : 0), 0);
       // 份量口径：单菜最大份数（每道菜按各自份数做），不是总人数。
       // 文案同步为「最多 N 份」，避免多道菜时被误读成"几个人吃"。
@@ -204,6 +213,9 @@ Page({
         heroImage: items.length ? heroImage : '/assets/dishes/hot-sour-soup.jpg',
         mealTimeLabel: mealTimeLabel(),
         totalCount,
+        doneCount,
+        cookingCount,
+        cookPercent: totalCount ? Math.round(doneCount * 100 / totalCount) : 0,
         totalTime,
         totalServings: maxServings,
         shoppingPending: pendingItems.length,
@@ -274,6 +286,10 @@ Page({
     wx.navigateTo({ url: '/pkg-extra/kitchen/index' });
   },
 
+  goCookLog() {
+    wx.switchTab({ url: '/pages/cook-log/index' });
+  },
+
   goShopping() {
     wx.navigateTo({ url: '/pages/shopping/index' });
   },
@@ -283,11 +299,11 @@ Page({
   },
 
   goPantry() {
-    wx.switchTab({ url: '/pages/pantry/index' });
+    wx.navigateTo({ url: '/pages/pantry/index' });
   },
 
   goAddRecipe() {
-    wx.switchTab({ url: '/pages/recipes/index' });
+    wx.navigateTo({ url: '/pages/recipes/index' });
   },
 
   // ====== §3 / §7 新增 ======

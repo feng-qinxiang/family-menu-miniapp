@@ -1,0 +1,113 @@
+{
+  "date": "2026-11-04",
+  "scope": "this round additions compared with nine-file saved baseline",
+  "files": [
+    {
+      "path": "artifacts/ui-journey-2026-10-08/figma-prototype/build.py",
+      "changed": true,
+      "sha256": "0276c75bc610a2f51b885c13a713fe654b1afcfd6d41af36014477b446f535c5"
+    },
+    {
+      "path": "artifacts/ui-journey-2026-10-08/figma-prototype/viewer.html",
+      "changed": true,
+      "sha256": "58c7744ba6978e8e85e0f2af4644577e22d5ae731cb858bf08012019a6eca00a"
+    },
+    {
+      "path": "artifacts/ui-journey-2026-10-08/figma-prototype/README.md",
+      "changed": true,
+      "sha256": "6e27b9fe6a46d338232ed1beee9db477b215b7fb7b557b3c60bc17b9ee1ac6b0"
+    },
+    {
+      "path": "artifacts/ui-journey-2026-10-08/README.md",
+      "changed": true,
+      "sha256": "0d6b62d7bdf295da293da6c0580a0cbff320658174f8a71fc417932364be72c8"
+    },
+    {
+      "path": "artifacts/ui-journey-2026-10-08/index.html",
+      "changed": true,
+      "sha256": "0e7bdf6154de78866e0722dfce1cf0494ec06c9bd1b507aa91dd1c166f701dcd"
+    },
+    {
+      "path": "miniapp/pages/recipes/index.wxml",
+      "changed": true,
+      "sha256": "d54aa543060362ede8e9dd7084eddeb11512c253b1e20b3273f4c7141f5ad11a"
+    },
+    {
+      "path": "miniapp/pages/recipes/index.wxss",
+      "changed": true,
+      "sha256": "b892300cede697537022be7a713b7211bc71cf7bd8c5f871b5ffcf478371bacc"
+    },
+    {
+      "path": "miniapp/pkg-extra/recipe-detail/index.wxml",
+      "changed": true,
+      "sha256": "53baaa2c2fd83650945fc5325a06fcc260742e74bede680bbc1a60f547be7e46"
+    },
+    {
+      "path": "miniapp/pkg-extra/recipe-detail/index.wxss",
+      "changed": true,
+      "sha256": "3c93b097bd7891df4ddad0d702626a41dcd763d586465e94be248bfe9cff512d"
+    }
+  ],
+  "addedLinesScanned": 262,
+  "credentialPatterns": {
+    "passed": true,
+    "matches": []
+  },
+  "checks": {
+    "miniappStatic": {
+      "passed": true,
+      "files": 348,
+      "parsedJs": 103
+    },
+    "logicTests": {
+      "passed": true,
+      "files": [
+        "recipe-pick.test.js",
+        "ui-refinement.test.js",
+        "meal-request.test.js"
+      ],
+      "note": "Passed earlier in this same task; business JavaScript unchanged by layout follow-up"
+    },
+    "interactionFeedbackAudit": {
+      "passed": true,
+      "missingPressFeedback": 0,
+      "existingHeuristicReports": {
+        "B": 9,
+        "C": 1
+      }
+    },
+    "prototypeBuild": {
+      "passed": true,
+      "screens": 17,
+      "boards": 2,
+      "textNodes": 594,
+      "hotspots": 167,
+      "images": 5,
+      "nativeFigmaImportVerified": false,
+      "checks": [
+        "unique screen ids",
+        "all targets exist",
+        "all nodes and hotspots within frame",
+        "valid SVG XML"
+      ]
+    },
+    "figmaLocalContract": {
+      "passed": true,
+      "screens": 17,
+      "boards": 2,
+      "nativeTextNodes": 594,
+      "connectedLinks": 129,
+      "network": "none",
+      "nativeFigmaRun": false,
+      "webEntryRedirectVerified": true,
+      "webScriptSyntaxVerified": true
+    },
+    "gitDiffCheck": {
+      "passed": true
+    }
+  },
+  "nativeWechatVerified": false,
+  "nativeWechatBlocker": "APPID_ERROR: current account is not a developer for this AppID",
+  "nativeFigmaVerified": false,
+  "deployed": false
+}

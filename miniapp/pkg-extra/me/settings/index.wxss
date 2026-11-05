@@ -3,26 +3,15 @@
   padding: 0 46rpx 50rpx;
 }
 
-/* —— Hero —— */
-.set-hero {
-  padding: 24rpx 0 12rpx;
-}
-.set-hero-title {
-  margin-top: 8rpx;
-  font-size: var(--fs-hero-lg);
-  font-weight: 900;
-  letter-spacing: -3rpx;
-  line-height: 1;
-  color: var(--ink);
-}
-
 /* —— 分组 —— */
 .set-group {
   margin-top: 12rpx;
 }
+.set-group:first-of-type .set-gtitle {
+  margin-top: 24rpx;   /* 导航栏已给出页名，首组贴近顶部 */
+}
 .set-gtitle {
   font-family: var(--serif);
-  font-style: italic;
   font-size: var(--fs-cap);
   letter-spacing: 1rpx;
   color: var(--gold-deep);

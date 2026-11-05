@@ -1,0 +1,287 @@
+{
+  "checkedAt": "2026-10-08T14:55:43.505303+00:00",
+  "checks": [
+    {
+      "file": "miniapp/app.wxss",
+      "passed": true,
+      "result": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38854
+      }
+    },
+    {
+      "file": "miniapp/pages/community/index.wxml",
+      "passed": true,
+      "result": {
+        "success": true,
+        "codeLength": 33293
+      }
+    },
+    {
+      "file": "miniapp/pages/cook-log/index.wxml",
+      "passed": true,
+      "result": {
+        "success": true,
+        "codeLength": 33293
+      }
+    },
+    {
+      "file": "miniapp/pages/cook-log/index.wxss",
+      "passed": true,
+      "result": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38854
+      }
+    },
+    {
+      "file": "miniapp/pages/home/index.wxml",
+      "passed": true,
+      "result": {
+        "success": true,
+        "codeLength": 33293
+      }
+    },
+    {
+      "file": "miniapp/pages/home/index.wxss",
+      "passed": true,
+      "result": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38854
+      }
+    },
+    {
+      "file": "miniapp/pages/me/index.wxml",
+      "passed": true,
+      "result": {
+        "success": true,
+        "codeLength": 33293
+      }
+    },
+    {
+      "file": "miniapp/pages/menu/index.wxml",
+      "passed": true,
+      "result": {
+        "success": true,
+        "codeLength": 33293
+      }
+    },
+    {
+      "file": "miniapp/pages/menu/index.wxss",
+      "passed": true,
+      "result": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38854
+      }
+    },
+    {
+      "file": "miniapp/pages/pantry/index.wxml",
+      "passed": true,
+      "result": {
+        "success": true,
+        "codeLength": 33293
+      }
+    },
+    {
+      "file": "miniapp/pages/pantry/index.wxss",
+      "passed": true,
+      "result": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38854
+      }
+    },
+    {
+      "file": "miniapp/pages/recipes/index.wxml",
+      "passed": true,
+      "result": {
+        "success": true,
+        "codeLength": 33293
+      }
+    },
+    {
+      "file": "miniapp/pages/recipes/index.wxss",
+      "passed": true,
+      "result": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38854
+      }
+    },
+    {
+      "file": "miniapp/pages/shopping/index.wxml",
+      "passed": true,
+      "result": {
+        "success": true,
+        "codeLength": 33293
+      }
+    },
+    {
+      "file": "miniapp/pages/shopping/index.wxss",
+      "passed": true,
+      "result": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38854
+      }
+    },
+    {
+      "file": "miniapp/pkg-extra/cook-log/index.wxml",
+      "passed": true,
+      "result": {
+        "success": true,
+        "codeLength": 33293
+      }
+    },
+    {
+      "file": "miniapp/pkg-extra/cook-log/index.wxss",
+      "passed": true,
+      "result": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38854
+      }
+    },
+    {
+      "file": "miniapp/pkg-extra/family/create/index.wxml",
+      "passed": true,
+      "result": {
+        "success": true,
+        "codeLength": 33293
+      }
+    },
+    {
+      "file": "miniapp/pkg-extra/family/create/index.wxss",
+      "passed": true,
+      "result": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38854
+      }
+    },
+    {
+      "file": "miniapp/pkg-extra/import/index.wxml",
+      "passed": true,
+      "result": {
+        "success": true,
+        "codeLength": 33293
+      }
+    },
+    {
+      "file": "miniapp/pkg-extra/import/index.wxss",
+      "passed": true,
+      "result": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38854
+      }
+    },
+    {
+      "file": "miniapp/pkg-extra/vip/index.wxml",
+      "passed": true,
+      "result": {
+        "success": true,
+        "codeLength": 33293
+      }
+    },
+    {
+      "file": "miniapp/pkg-extra/vip/index.wxss",
+      "passed": true,
+      "result": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38854
+      }
+    },
+    {
+      "file": "miniapp/pkg-extra/weekly-menu/index.wxml",
+      "passed": true,
+      "result": {
+        "success": true,
+        "codeLength": 33293
+      }
+    },
+    {
+      "file": "miniapp/pkg-extra/weekly-menu/index.wxss",
+      "passed": true,
+      "result": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38854
+      }
+    },
+    {
+      "file": "miniapp/pkg-preview/journey/index.wxml",
+      "passed": true,
+      "result": {
+        "success": true,
+        "codeLength": 33293
+      }
+    },
+    {
+      "file": "miniapp/pkg-preview/journey/index.wxss",
+      "passed": true,
+      "result": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38854
+      }
+    }
+  ],
+  "passed": true
+}

@@ -15,36 +15,32 @@
         <view wx:if="{{recipe.sourceType === 'owned'}}" class="rd-navedit tap-scale" bindtap="goEdit">编辑</view>
       </nav-bar>
 
-      <!-- Hero 文案 -->
-      <view class="rd-hero-body">
-        <text wx:if="{{recipe.sourceLabel}}" class="rd-tag">{{recipe.sourceLabel}}</text>
-        <view class="rd-hero-title title-stroke">{{recipe.title}}</view>
-        <view class="rd-hero-meta">
-          <text class="rd-m rd-m-solid" wx:if="{{recipe.cuisine}}">{{recipe.cuisine}}</text>
-          <text class="rd-m" wx:if="{{recipe.timeCost}}">{{recipe.timeCost}} 分钟</text>
-          <!-- 圆形份量 stepper -->
-          <view class="rd-srv">
-            <view class="rd-sbtn tap-scale" data-delta="{{-1}}" bindtap="changeServings">
-              <view class="rd-sbtn-minus"></view>
-            </view>
-            <text class="rd-sval">{{servings}} 人份</text>
-            <view class="rd-sbtn tap-scale" data-delta="{{1}}" bindtap="changeServings">
-              <view class="rd-sbtn-plus"></view>
-            </view>
-          </view>
-          <text class="rd-m" wx:if="{{recipe.tasteTags.length}}">{{recipe.tasteTags[0]}}</text>
-        </view>
-      </view>
     </view>
 
     <!-- ===== Sheet ===== -->
     <view class="rd-sheet">
+      <view class="rd-intro">
+        <view class="rd-title">{{recipe.title}}</view>
+        <view class="rd-meta">
+          <text wx:if="{{recipe.timeCost}}">{{recipe.timeCost}} 分钟</text>
+          <text wx:if="{{recipe.cuisine}}">{{recipe.cuisine}}</text>
+          <text wx:if="{{recipe.tasteTags.length}}">{{recipe.tasteTags[0]}}</text>
+          <text wx:if="{{recipe.sourceLabel}}">{{recipe.sourceLabel}}</text>
+        </view>
+        <view class="rd-summary" wx:if="{{recipe.summary}}">{{recipe.summary}}</view>
+      </view>
 
       <!-- 食材清单 -->
-      <section-head wx:if="{{recipe.totalCount}}" eyebrow="备料" title="食材" popPart="清单" hint="家里有 {{recipe.haveCount}}/{{recipe.totalCount}}" />
-      <section-head wx:else eyebrow="备料" title="食材" popPart="清单" />
+      <view class="rd-section-head">
+        <view><text class="rd-section-title">用料</text><text class="rd-stock-count" wx:if="{{recipe.totalCount}}">家里有 {{recipe.haveCount}}/{{recipe.totalCount}}</text></view>
+        <view class="rd-srv">
+          <view class="rd-sbtn tap-scale" data-delta="{{-1}}" bindtap="changeServings" aria-role="button" aria-label="减少人份"><view class="rd-sbtn-minus"></view></view>
+          <text class="rd-sval">{{servings}} 人份</text>
+          <view class="rd-sbtn tap-scale" data-delta="{{1}}" bindtap="changeServings" aria-role="button" aria-label="增加人份"><view class="rd-sbtn-plus"></view></view>
+        </view>
+      </view>
 
-      <view class="card rd-card" wx:if="{{recipe.ingredients.length}}">
+      <view class="rd-ingredients" wx:if="{{recipe.ingredients.length}}">
         <view class="rd-ing-cart" wx:if="{{missCount > 0}}">
           <view class="rd-cart-btn tap-scale" bindtap="addMissingToCart">
             <text>把</text>
@@ -53,22 +49,26 @@
           </view>
         </view>
 
-        <view class="rd-ing" wx:for="{{recipe.ingredients}}" wx:key="name">
-          <view class="rd-dot {{item.inStock ? 'have' : 'miss'}}"></view>
-          <view class="rd-iname">
-            <view class="rd-iname-h">{{item.name}}</view>
-            <view class="rd-note {{item.inStock ? '' : 'miss'}}">{{item.inStock ? '冰箱里有' : '待采购'}}</view>
+        <view class="rd-photo-hint">{{ingredientPhotosFailed ? '图片暂未更新，先用已有图片或名称。' : '点左侧上传食材图，未上传时显示名称。'}}</view>
+        <view class="rd-ing" wx:for="{{recipe.ingredients}}" wx:key="index">
+          <view class="rd-ingredient-photo tap-scale" data-name="{{item.name}}" bindtap="onIngredientPhoto" aria-role="button" aria-label="设置{{item.name}}的食材图片">
+            <image wx:if="{{item.cover && !item.coverBroken}}" src="{{item.cover}}" mode="aspectFill" class="rd-ingredient-image tap-scale" data-err-key="{{'recipe.ingredients[' + index + '].coverBroken'}}" binderror="onPhotoError" />
+            <view wx:else class="rd-ingredient-text"><text class="rd-ingredient-label">{{item.name}}</text></view>
+            <text class="rd-photo-edit">{{item.cover ? '换图' : '加图'}}</text>
           </view>
-          <text class="rd-amt">{{item.amountText}} {{item.unit}}</text>
+          <view class="rd-iname">
+            <view class="rd-ingredient-top"><view class="rd-iname-h">{{item.name}}</view><view class="rd-amt">{{item.amountText}} {{item.unit}}</view></view>
+            <view class="rd-note {{item.inStock ? '' : 'miss'}}"><text class="rd-dot {{item.inStock ? 'have' : 'miss'}}"></text>{{item.inStock ? '冰箱够用' : '用量待备齐'}}</view>
+          </view>
         </view>
       </view>
       <view class="card rd-card rd-empty-mini" wx:else>暂无食材信息</view>
 
       <!-- 做法步骤 -->
-      <section-head eyebrow="跟着做" title="做法" popPart="步骤" hint="按顺序出菜" />
+      <view class="rd-section-head rd-method-head"><text class="rd-section-title">做法</text><text class="rd-method-count" wx:if="{{recipe.steps.length}}">{{recipe.steps.length}} 步，跟着做</text></view>
 
-      <view class="card rd-card" wx:if="{{recipe.steps.length}}">
-        <view class="tap-scale rd-video" bindtap="onTapVideo">
+      <view class="rd-method" wx:if="{{recipe.steps.length}}">
+        <view class="tap-scale rd-video" wx:if="{{recipe.videoUrl}}" bindtap="onTapVideo">
           <video
             wx:if="{{playingVideo && recipe.videoUrl}}"
             class="rd-video-player"
@@ -91,10 +91,10 @@
           </block>
         </view>
         <view class="rd-step" wx:for="{{recipe.steps}}" wx:key="index">
-          <view class="rd-sno {{index === 2 ? 'hot' : ''}} serif">{{index + 1}}</view>
+          <view class="rd-sno">{{index + 1}}</view>
           <view class="rd-stx">
             <view class="rd-stx-p">{{item.text}}</view>
-            <image class="rd-step-img {{item.imgBroken ? 'img-broken' : ''}}" src="{{item.image}}" mode="aspectFill"
+            <image wx:if="{{item.image}}" class="rd-step-img {{item.imgBroken ? 'img-broken' : ''}}" src="{{item.image}}" mode="aspectFill"
               bindtap="previewStepImage" data-url="{{item.image}}"
               data-err-key="{{'recipe.steps[' + index + '].imgBroken'}}" binderror="onPhotoError" />
             <view wx:if="{{item.tip}}" class="rd-tip">

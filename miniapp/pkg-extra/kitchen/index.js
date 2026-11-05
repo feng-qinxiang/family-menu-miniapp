@@ -388,7 +388,7 @@ Page({
   },
 
   goOrdering() {
-    wx.switchTab({ url: '/pages/recipes/index', fail: () => {} });
+    wx.navigateTo({ url: '/pages/recipes/index', fail: () => {} });
   },
 
   noop() {}

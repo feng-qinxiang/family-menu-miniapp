@@ -1,0 +1,1321 @@
+{
+  "screens": [
+    {
+      "state": "kitchen",
+      "image": "screens/app-kitchen.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "kitchen-large",
+      "image": "screens/app-kitchen-large.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "import",
+      "image": "screens/app-import.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "import-large",
+      "image": "screens/app-import-large.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "weekly",
+      "image": "screens/app-weekly.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "weekly-large",
+      "image": "screens/app-weekly-large.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "family",
+      "image": "screens/app-family.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "family-large",
+      "image": "screens/app-family-large.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "cook-mode",
+      "image": "screens/app-cook-mode.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "cook-mode-large",
+      "image": "screens/app-cook-mode-large.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "cook-mode-running",
+      "image": "screens/app-cook-mode-running.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "cook-mode-paused-large",
+      "image": "screens/app-cook-mode-paused-large.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "cook-mode-background-large",
+      "image": "screens/app-cook-mode-background-large.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "cook-mode-long-large",
+      "image": "screens/app-cook-mode-long-large.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "community",
+      "image": "screens/app-community.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "community-large",
+      "image": "screens/app-community-large.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "community-text",
+      "image": "screens/app-community-text.jpg",
+      "width": 591,
+      "height": 1280
+    }
+  ],
+  "layouts": [
+    {
+      "state": "kitchen",
+      "selector": ".k-img",
+      "parent": ".k-card-head",
+      "child": {
+        "success": true,
+        "width": 66,
+        "height": 66,
+        "left": 36,
+        "top": 218.6171875
+      },
+      "box": {
+        "success": true,
+        "width": 318,
+        "height": 68.9453125,
+        "left": 36,
+        "top": 217.1484375
+      },
+      "passed": true
+    },
+    {
+      "state": "kitchen",
+      "selector": ".k-tbtns",
+      "parent": ".k-card",
+      "child": {
+        "success": true,
+        "width": 121,
+        "height": 45,
+        "left": 233,
+        "top": 305.09375
+      },
+      "box": {
+        "success": true,
+        "width": 344,
+        "height": 210.9453125,
+        "left": 23,
+        "top": 204.1484375
+      },
+      "passed": true
+    },
+    {
+      "state": "kitchen",
+      "selector": ".k-acts",
+      "parent": ".k-card",
+      "child": {
+        "success": true,
+        "width": 318,
+        "height": 45,
+        "left": 36,
+        "top": 357.09375
+      },
+      "box": {
+        "success": true,
+        "width": 344,
+        "height": 210.9453125,
+        "left": 23,
+        "top": 204.1484375
+      },
+      "passed": true
+    },
+    {
+      "state": "kitchen-large",
+      "selector": ".k-img",
+      "parent": ".k-card-head",
+      "child": {
+        "success": true,
+        "width": 66,
+        "height": 66,
+        "left": 36,
+        "top": 227.8984375
+      },
+      "box": {
+        "success": true,
+        "width": 318,
+        "height": 81.453125,
+        "left": 36,
+        "top": 220.171875
+      },
+      "passed": true
+    },
+    {
+      "state": "kitchen-large",
+      "selector": ".k-tbtns",
+      "parent": ".k-card",
+      "child": {
+        "success": true,
+        "width": 142,
+        "height": 45,
+        "left": 212,
+        "top": 321.5546875
+      },
+      "box": {
+        "success": true,
+        "width": 344,
+        "height": 225.3203125,
+        "left": 23,
+        "top": 207.171875
+      },
+      "passed": true
+    },
+    {
+      "state": "kitchen-large",
+      "selector": ".k-acts",
+      "parent": ".k-card",
+      "child": {
+        "success": true,
+        "width": 318,
+        "height": 45,
+        "left": 36,
+        "top": 374.4921875
+      },
+      "box": {
+        "success": true,
+        "width": 344,
+        "height": 225.3203125,
+        "left": 23,
+        "top": 207.171875
+      },
+      "passed": true
+    },
+    {
+      "state": "import",
+      "selector": ".parsebtn",
+      "parent": ".ta-wrap",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 255.3359375,
+        "right": 354,
+        "top": 448.9921875,
+        "bottom": 493.9921875,
+        "width": 98.6640625,
+        "height": 45
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 294.9921875,
+        "bottom": 506.9921875,
+        "width": 344,
+        "height": 212
+      },
+      "passed": true
+    },
+    {
+      "state": "import-large",
+      "selector": ".parsebtn",
+      "parent": ".ta-wrap",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 239.3359375,
+        "right": 354,
+        "top": 486.0859375,
+        "bottom": 531.0859375,
+        "width": 114.6640625,
+        "height": 45
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 332.0859375,
+        "bottom": 544.0859375,
+        "width": 344,
+        "height": 212
+      },
+      "passed": true
+    },
+    {
+      "state": "weekly",
+      "selector": ".wm-refresh",
+      "parent": ".cpt-head",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 282,
+        "right": 367,
+        "top": 102.921875,
+        "bottom": 147.921875,
+        "width": 85,
+        "height": 45
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 0,
+        "right": 390,
+        "top": 87,
+        "bottom": 189.34375,
+        "width": 390,
+        "height": 102.34375
+      },
+      "passed": true
+    },
+    {
+      "state": "weekly",
+      "selector": ".wm-thumb",
+      "parent": ".wm-daycard",
+      "child": {
+        "id": "",
+        "dataset": {
+          "errKey": "weeklyMenu.days[0].lunch.imageBroken"
+        },
+        "left": 36,
+        "right": 90,
+        "top": 408.7734375,
+        "bottom": 462.7734375,
+        "width": 54,
+        "height": 54
+      },
+      "box": {
+        "id": "day-0",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 365.625,
+        "bottom": 541.7734375,
+        "width": 344,
+        "height": 176.1484375
+      },
+      "passed": true
+    },
+    {
+      "state": "weekly",
+      "selector": ".wm-wb-date",
+      "parent": ".wm-wb",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 24,
+        "right": 68.5703125,
+        "top": 215.390625,
+        "bottom": 236.1875,
+        "width": 44.5703125,
+        "height": 20.796875
+      },
+      "box": {
+        "id": "",
+        "dataset": {
+          "index": 0
+        },
+        "left": 23,
+        "right": 69.5703125,
+        "top": 189.34375,
+        "bottom": 252.1875,
+        "width": 46.5703125,
+        "height": 62.84375
+      },
+      "passed": true
+    },
+    {
+      "state": "weekly-large",
+      "selector": ".wm-refresh",
+      "parent": ".cpt-head",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 279,
+        "right": 367,
+        "top": 107.1953125,
+        "bottom": 152.1953125,
+        "width": 88,
+        "height": 45
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 0,
+        "right": 390,
+        "top": 87,
+        "bottom": 199.390625,
+        "width": 390,
+        "height": 112.390625
+      },
+      "passed": true
+    },
+    {
+      "state": "weekly-large",
+      "selector": ".wm-thumb",
+      "parent": ".wm-daycard",
+      "child": {
+        "id": "",
+        "dataset": {
+          "errKey": "weeklyMenu.days[0].lunch.imageBroken"
+        },
+        "left": 36,
+        "right": 90,
+        "top": 439.1328125,
+        "bottom": 493.1328125,
+        "width": 54,
+        "height": 54
+      },
+      "box": {
+        "id": "day-0",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 394.4375,
+        "bottom": 572.1328125,
+        "width": 344,
+        "height": 177.6953125
+      },
+      "passed": true
+    },
+    {
+      "state": "weekly-large",
+      "selector": ".wm-wb-date",
+      "parent": ".wm-wb",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 24,
+        "right": 68.5703125,
+        "top": 230.0859375,
+        "bottom": 254,
+        "width": 44.5703125,
+        "height": 23.9140625
+      },
+      "box": {
+        "id": "",
+        "dataset": {
+          "index": 0
+        },
+        "left": 23,
+        "right": 69.5703125,
+        "top": 199.390625,
+        "bottom": 270,
+        "width": 46.5703125,
+        "height": 70.609375
+      },
+      "passed": true
+    },
+    {
+      "state": "family",
+      "selector": ".fc-createbtn",
+      "parent": ".fc-sheet",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 36,
+        "right": 354,
+        "top": 478.640625,
+        "bottom": 527.640625,
+        "width": 318,
+        "height": 49
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 0,
+        "right": 390,
+        "top": 189.34375,
+        "bottom": 713.9375,
+        "width": 390,
+        "height": 524.59375
+      },
+      "passed": true
+    },
+    {
+      "state": "family-large",
+      "selector": ".fc-createbtn",
+      "parent": ".fc-sheet",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 36,
+        "right": 354,
+        "top": 491.78125,
+        "bottom": 540.78125,
+        "width": 318,
+        "height": 49
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 0,
+        "right": 390,
+        "top": 199.390625,
+        "bottom": 733.125,
+        "width": 390,
+        "height": 533.734375
+      },
+      "passed": true
+    },
+    {
+      "state": "cook-mode",
+      "selector": ".cook-dock",
+      "parent": ".cook",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 0,
+        "right": 390,
+        "top": 687,
+        "bottom": 844,
+        "width": 390,
+        "height": 157
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 0,
+        "right": 390,
+        "top": 0,
+        "bottom": 844,
+        "width": 390,
+        "height": 844
+      },
+      "passed": true
+    },
+    {
+      "state": "cook-mode",
+      "selector": ".btn.next",
+      "parent": ".footer",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 124,
+        "right": 367,
+        "top": 748,
+        "bottom": 800,
+        "width": 243,
+        "height": 52
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 741,
+        "bottom": 800,
+        "width": 344,
+        "height": 59
+      },
+      "passed": true
+    },
+    {
+      "state": "cook-mode",
+      "dock": {
+        "id": "",
+        "dataset": {},
+        "left": 0,
+        "right": 390,
+        "top": 687,
+        "bottom": 844,
+        "width": 390,
+        "height": 157
+      },
+      "screen": {
+        "id": "",
+        "dataset": {},
+        "left": 0,
+        "right": 390,
+        "top": 0,
+        "bottom": 844,
+        "width": 390,
+        "height": 844
+      },
+      "step": {
+        "id": "",
+        "dataset": {},
+        "left": 0,
+        "right": 390,
+        "top": 123,
+        "bottom": 687,
+        "width": 390,
+        "height": 564
+      },
+      "passed": true
+    },
+    {
+      "state": "cook-mode-large",
+      "selector": ".cook-dock",
+      "parent": ".cook",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 0,
+        "right": 390,
+        "top": 687,
+        "bottom": 844,
+        "width": 390,
+        "height": 157
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 0,
+        "right": 390,
+        "top": 0,
+        "bottom": 844,
+        "width": 390,
+        "height": 844
+      },
+      "passed": true
+    },
+    {
+      "state": "cook-mode-large",
+      "selector": ".btn.next",
+      "parent": ".footer",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 124,
+        "right": 367,
+        "top": 748,
+        "bottom": 800,
+        "width": 243,
+        "height": 52
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 741,
+        "bottom": 800,
+        "width": 344,
+        "height": 59
+      },
+      "passed": true
+    },
+    {
+      "state": "cook-mode-large",
+      "dock": {
+        "id": "",
+        "dataset": {},
+        "left": 0,
+        "right": 390,
+        "top": 687,
+        "bottom": 844,
+        "width": 390,
+        "height": 157
+      },
+      "screen": {
+        "id": "",
+        "dataset": {},
+        "left": 0,
+        "right": 390,
+        "top": 0,
+        "bottom": 844,
+        "width": 390,
+        "height": 844
+      },
+      "step": {
+        "id": "",
+        "dataset": {},
+        "left": 0,
+        "right": 390,
+        "top": 131.78125,
+        "bottom": 687,
+        "width": 390,
+        "height": 555.21875
+      },
+      "passed": true
+    },
+    {
+      "state": "cook-mode-running",
+      "selector": ".cook-dock",
+      "parent": ".cook",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 0,
+        "right": 390,
+        "top": 675,
+        "bottom": 844,
+        "width": 390,
+        "height": 169
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 0,
+        "right": 390,
+        "top": 0,
+        "bottom": 844,
+        "width": 390,
+        "height": 844
+      },
+      "passed": true
+    },
+    {
+      "state": "cook-mode-running",
+      "selector": ".btn.next",
+      "parent": ".footer",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 124,
+        "right": 367,
+        "top": 748,
+        "bottom": 800,
+        "width": 243,
+        "height": 52
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 741,
+        "bottom": 800,
+        "width": 344,
+        "height": 59
+      },
+      "passed": true
+    },
+    {
+      "state": "cook-mode-running",
+      "dock": {
+        "id": "",
+        "dataset": {},
+        "left": 0,
+        "right": 390,
+        "top": 675,
+        "bottom": 844,
+        "width": 390,
+        "height": 169
+      },
+      "screen": {
+        "id": "",
+        "dataset": {},
+        "left": 0,
+        "right": 390,
+        "top": 0,
+        "bottom": 844,
+        "width": 390,
+        "height": 844
+      },
+      "step": {
+        "id": "",
+        "dataset": {},
+        "left": 0,
+        "right": 390,
+        "top": 123,
+        "bottom": 675,
+        "width": 390,
+        "height": 552
+      },
+      "passed": true
+    },
+    {
+      "state": "cook-mode-running",
+      "selector": ".timer-acts",
+      "parent": ".timer",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 260,
+        "right": 358,
+        "top": 690,
+        "bottom": 735,
+        "width": 98,
+        "height": 45
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 684,
+        "bottom": 741,
+        "width": 344,
+        "height": 57
+      },
+      "passed": true
+    },
+    {
+      "state": "cook-mode-paused-large",
+      "selector": ".cook-dock",
+      "parent": ".cook",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 0,
+        "right": 390,
+        "top": 667.1015625,
+        "bottom": 844,
+        "width": 390,
+        "height": 176.8984375
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 0,
+        "right": 390,
+        "top": 0,
+        "bottom": 844,
+        "width": 390,
+        "height": 844
+      },
+      "passed": true
+    },
+    {
+      "state": "cook-mode-paused-large",
+      "selector": ".btn.next",
+      "parent": ".footer",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 124,
+        "right": 367,
+        "top": 748,
+        "bottom": 800,
+        "width": 243,
+        "height": 52
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 741,
+        "bottom": 800,
+        "width": 344,
+        "height": 59
+      },
+      "passed": true
+    },
+    {
+      "state": "cook-mode-paused-large",
+      "dock": {
+        "id": "",
+        "dataset": {},
+        "left": 0,
+        "right": 390,
+        "top": 667.1015625,
+        "bottom": 844,
+        "width": 390,
+        "height": 176.8984375
+      },
+      "screen": {
+        "id": "",
+        "dataset": {},
+        "left": 0,
+        "right": 390,
+        "top": 0,
+        "bottom": 844,
+        "width": 390,
+        "height": 844
+      },
+      "step": {
+        "id": "",
+        "dataset": {},
+        "left": 0,
+        "right": 390,
+        "top": 131.78125,
+        "bottom": 667.1015625,
+        "width": 390,
+        "height": 535.3203125
+      },
+      "passed": true
+    },
+    {
+      "state": "cook-mode-paused-large",
+      "selector": ".timer-acts",
+      "parent": ".timer",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 260,
+        "right": 358,
+        "top": 686.046875,
+        "bottom": 731.046875,
+        "width": 98,
+        "height": 45
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 676.1015625,
+        "bottom": 741,
+        "width": 344,
+        "height": 64.8984375
+      },
+      "passed": true
+    },
+    {
+      "state": "cook-mode-background-large",
+      "selector": ".cook-dock",
+      "parent": ".cook",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 0,
+        "right": 390,
+        "top": 616.1015625,
+        "bottom": 844,
+        "width": 390,
+        "height": 227.8984375
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 0,
+        "right": 390,
+        "top": 0,
+        "bottom": 844,
+        "width": 390,
+        "height": 844
+      },
+      "passed": true
+    },
+    {
+      "state": "cook-mode-background-large",
+      "selector": ".btn.next",
+      "parent": ".footer",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 124,
+        "right": 367,
+        "top": 748,
+        "bottom": 800,
+        "width": 243,
+        "height": 52
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 741,
+        "bottom": 800,
+        "width": 344,
+        "height": 59
+      },
+      "passed": true
+    },
+    {
+      "state": "cook-mode-background-large",
+      "dock": {
+        "id": "",
+        "dataset": {},
+        "left": 0,
+        "right": 390,
+        "top": 616.1015625,
+        "bottom": 844,
+        "width": 390,
+        "height": 227.8984375
+      },
+      "screen": {
+        "id": "",
+        "dataset": {},
+        "left": 0,
+        "right": 390,
+        "top": 0,
+        "bottom": 844,
+        "width": 390,
+        "height": 844
+      },
+      "step": {
+        "id": "",
+        "dataset": {},
+        "left": 0,
+        "right": 390,
+        "top": 131.78125,
+        "bottom": 616.1015625,
+        "width": 390,
+        "height": 484.3203125
+      },
+      "passed": true
+    },
+    {
+      "state": "cook-mode-background-large",
+      "selector": ".timer-acts",
+      "parent": ".timer",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 260,
+        "right": 358,
+        "top": 686.046875,
+        "bottom": 731.046875,
+        "width": 98,
+        "height": 45
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 676.1015625,
+        "bottom": 741,
+        "width": 344,
+        "height": 64.8984375
+      },
+      "passed": true
+    },
+    {
+      "state": "cook-mode-long-large",
+      "selector": ".cook-dock",
+      "parent": ".cook",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 0,
+        "right": 390,
+        "top": 616.1015625,
+        "bottom": 844,
+        "width": 390,
+        "height": 227.8984375
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 0,
+        "right": 390,
+        "top": 0,
+        "bottom": 844,
+        "width": 390,
+        "height": 844
+      },
+      "passed": true
+    },
+    {
+      "state": "cook-mode-long-large",
+      "selector": ".btn.next",
+      "parent": ".footer",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 124,
+        "right": 367,
+        "top": 748,
+        "bottom": 800,
+        "width": 243,
+        "height": 52
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 741,
+        "bottom": 800,
+        "width": 344,
+        "height": 59
+      },
+      "passed": true
+    },
+    {
+      "state": "cook-mode-long-large",
+      "dock": {
+        "id": "",
+        "dataset": {},
+        "left": 0,
+        "right": 390,
+        "top": 616.1015625,
+        "bottom": 844,
+        "width": 390,
+        "height": 227.8984375
+      },
+      "screen": {
+        "id": "",
+        "dataset": {},
+        "left": 0,
+        "right": 390,
+        "top": 0,
+        "bottom": 844,
+        "width": 390,
+        "height": 844
+      },
+      "step": {
+        "id": "",
+        "dataset": {},
+        "left": 0,
+        "right": 390,
+        "top": 131.78125,
+        "bottom": 616.1015625,
+        "width": 390,
+        "height": 484.3203125
+      },
+      "passed": true
+    },
+    {
+      "state": "cook-mode-long-large",
+      "selector": ".timer-acts",
+      "parent": ".timer",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 260,
+        "right": 358,
+        "top": 686.046875,
+        "bottom": 731.046875,
+        "width": 98,
+        "height": 45
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 676.1015625,
+        "bottom": 741,
+        "width": 344,
+        "height": 64.8984375
+      },
+      "passed": true
+    },
+    {
+      "state": "community",
+      "selector": ".pphoto",
+      "parent": ".pcard",
+      "child": {
+        "id": "",
+        "dataset": {
+          "errKey": "posts[0].photoBroken"
+        },
+        "left": 36,
+        "right": 354,
+        "top": 343.0859375,
+        "bottom": 571.0859375,
+        "width": 318,
+        "height": 228
+      },
+      "box": {
+        "id": "",
+        "dataset": {
+          "id": 1,
+          "rv": 0
+        },
+        "left": 23,
+        "right": 367,
+        "top": 195.09375,
+        "bottom": 743.2734375,
+        "width": 344,
+        "height": 548.1796875
+      },
+      "passed": true
+    },
+    {
+      "state": "community",
+      "selector": ".pactions",
+      "parent": ".pcard",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 36,
+        "right": 354,
+        "top": 690.2734375,
+        "bottom": 738.2734375,
+        "width": 318,
+        "height": 48
+      },
+      "box": {
+        "id": "",
+        "dataset": {
+          "id": 1,
+          "rv": 0
+        },
+        "left": 23,
+        "right": 367,
+        "top": 195.09375,
+        "bottom": 743.2734375,
+        "width": 344,
+        "height": 548.1796875
+      },
+      "passed": true
+    },
+    {
+      "state": "community",
+      "selector": ".pa-report",
+      "parent": ".ptop",
+      "child": {
+        "id": "",
+        "dataset": {
+          "id": 1
+        },
+        "left": 309,
+        "right": 354,
+        "top": 208.09375,
+        "bottom": 253.09375,
+        "width": 45,
+        "height": 45
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 36,
+        "right": 354,
+        "top": 208.09375,
+        "bottom": 253.09375,
+        "width": 318,
+        "height": 45
+      },
+      "passed": true
+    },
+    {
+      "state": "community-large",
+      "selector": ".pphoto",
+      "parent": ".pcard",
+      "child": {
+        "id": "",
+        "dataset": {
+          "errKey": "posts[0].photoBroken"
+        },
+        "left": 36,
+        "right": 354,
+        "top": 365.7421875,
+        "bottom": 593.7421875,
+        "width": 318,
+        "height": 228
+      },
+      "box": {
+        "id": "",
+        "dataset": {
+          "id": 1,
+          "rv": 0
+        },
+        "left": 23,
+        "right": 367,
+        "top": 203.59375,
+        "bottom": 776.3046875,
+        "width": 344,
+        "height": 572.7109375
+      },
+      "passed": true
+    },
+    {
+      "state": "community-large",
+      "selector": ".pactions",
+      "parent": ".pcard",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 36,
+        "right": 354,
+        "top": 723.3046875,
+        "bottom": 771.3046875,
+        "width": 318,
+        "height": 48
+      },
+      "box": {
+        "id": "",
+        "dataset": {
+          "id": 1,
+          "rv": 0
+        },
+        "left": 23,
+        "right": 367,
+        "top": 203.59375,
+        "bottom": 776.3046875,
+        "width": 344,
+        "height": 572.7109375
+      },
+      "passed": true
+    },
+    {
+      "state": "community-large",
+      "selector": ".pa-report",
+      "parent": ".ptop",
+      "child": {
+        "id": "",
+        "dataset": {
+          "id": 1
+        },
+        "left": 309,
+        "right": 354,
+        "top": 218.4140625,
+        "bottom": 263.4140625,
+        "width": 45,
+        "height": 45
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 36,
+        "right": 354,
+        "top": 216.59375,
+        "bottom": 265.2421875,
+        "width": 318,
+        "height": 48.6484375
+      },
+      "passed": true
+    }
+  ],
+  "runtime": [
+    {
+      "page": "pkg-extra/kitchen/index",
+      "loadError": true
+    },
+    {
+      "page": "pkg-extra/import/index",
+      "loadError": false
+    },
+    {
+      "page": "pkg-extra/weekly-menu/index",
+      "loadError": true
+    },
+    {
+      "page": "pkg-extra/family/create/index",
+      "loadError": false
+    },
+    {
+      "page": "pkg-extra/cook-mode/index",
+      "loadError": true
+    },
+    {
+      "page": "pages/community/index",
+      "loadError": true
+    }
+  ],
+  "checkedAt": "2026-10-08T23:44:51.460Z",
+  "source": "temporary Page data; existing runtime state restored",
+  "passed": true
+}

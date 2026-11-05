@@ -30,7 +30,7 @@
   width: 184rpx;
   height: 184rpx;
   border-radius: 50%;
-  background: rgba(232, 71, 42, 0.18);
+  background: rgba(200, 56, 31, 0.18);
 }
 .logo-mark {
   position: relative;
@@ -164,7 +164,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 12rpx 28rpx rgba(232, 71, 42, 0.32);
+  box-shadow: 0 12rpx 28rpx rgba(200, 56, 31, 0.32);
 }
 .team-badge-heart {
   width: 34rpx;

@@ -2,7 +2,6 @@
 
 .nav-eyebrow {
   font-family: var(--serif);
-  font-style: italic;
   font-size: var(--fs-cap);
   letter-spacing: 1rpx;
   color: var(--gold-deep);
@@ -15,16 +14,10 @@
 
 /* ===== Hero ===== */
 .head {
-  padding: 50rpx 0 0;
-}
-.hero-title {
-  font-size: calc(92rpx * var(--fs-mul, 1));
-  line-height: 0.92;
-  letter-spacing: -5rpx;
-  margin-top: 16rpx;
+  padding: 24rpx 0 0;
 }
 .lead {
-  margin-top: 26rpx;
+  margin-top: 0;
   font-size: var(--fs-cap);
   line-height: 1.6;
   color: var(--mut-strong);
@@ -84,7 +77,7 @@
 }
 .cell.on {
   border-color: var(--pop);
-  box-shadow: 0 4rpx 12rpx rgba(232, 71, 42, 0.14), 0 16rpx 38rpx rgba(232, 71, 42, 0.12);
+  box-shadow: 0 4rpx 12rpx rgba(200, 56, 31, 0.14), 0 16rpx 38rpx rgba(200, 56, 31, 0.12);
 }
 .cell.cur {
   position: relative;
@@ -160,7 +153,6 @@
 }
 .ln-tx {
   font-family: var(--serif);
-  font-style: italic;
   font-size: calc(25rpx * var(--fs-mul, 1));
   letter-spacing: 1rpx;
   color: var(--gold-deep);
@@ -173,7 +165,6 @@
 }
 .pvlabel {
   font-family: var(--serif);
-  font-style: italic;
   font-size: var(--fs-cap);
   letter-spacing: 1rpx;
   color: var(--gold-deep);

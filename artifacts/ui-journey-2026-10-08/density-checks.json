@@ -1,0 +1,65 @@
+{
+  "checkedAt": "2026-10-08T16:33:38.703240+00:00",
+  "checks": [
+    {
+      "file": "home-journey.test.js",
+      "passed": true
+    },
+    {
+      "file": "journey-navigation.test.js",
+      "passed": true
+    },
+    {
+      "file": "recipe-pick.test.js",
+      "passed": true
+    },
+    {
+      "file": "pantry-match.test.js",
+      "passed": true
+    },
+    {
+      "file": "pantry-delete.test.js",
+      "passed": true
+    },
+    {
+      "file": "interaction-audit.js",
+      "passed": true
+    },
+    {
+      "file": "static-check.js",
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "auditNote": "After pi-thumb-img class added: interaction-audit A=0, exit 0.",
+  "completedAt": "2026-10-08T16:55:30.751419+00:00",
+  "compile": {
+    "file": "density-compile.json",
+    "passed": true,
+    "files": 10
+  },
+  "layouts": {
+    "pickerFile": "picker-layouts.json",
+    "pickerScreens": 21,
+    "pickerChecks": 19,
+    "weeklyFile": "layout-evidence.json",
+    "weeklyScreens": [
+      "screens/app-weekly.jpg",
+      "screens/app-weekly-large.jpg"
+    ],
+    "passed": true
+  },
+  "gallery": {
+    "file": "gallery-density-evidence.json",
+    "passed": true
+  },
+  "originalWorkspace": {
+    "files": 766,
+    "sha256": "27709f019f98132c1f384da619c21ae8a2590edbc607f4f2b83598be7130158b",
+    "unchanged": true
+  },
+  "credentialScan": {
+    "sourcesChecked": 23,
+    "patternMatches": 0
+  }
+}

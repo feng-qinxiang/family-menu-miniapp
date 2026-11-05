@@ -1,0 +1,218 @@
+{
+  "checkedAt": "2026-10-09T00:40:43.104Z",
+  "url": "http://127.0.0.1:8847/#all-pages",
+  "catalog": {
+    "cards": 39,
+    "count": "39 / 39 个页面",
+    "firstImages": [
+      {
+        "complete": true,
+        "src": "screens/app-home.jpg",
+        "width": 591
+      },
+      {
+        "complete": true,
+        "src": "screens/app-recipes.jpg",
+        "width": 591
+      },
+      {
+        "complete": true,
+        "src": "screens/app-record.jpg",
+        "width": 591
+      }
+    ],
+    "groups": [
+      "全部",
+      "点菜与备菜",
+      "做菜与记录",
+      "社区",
+      "家庭",
+      "账户与会员",
+      "我的与帮助"
+    ],
+    "overflow": false,
+    "routeLinks": [
+      "screens/app-home.jpg",
+      "screens/app-recipes.jpg",
+      "screens/app-record.jpg",
+      "screens/app-community.jpg",
+      "screens/app-cook.jpg",
+      "screens/app-me.jpg",
+      "screens/app-shopping.jpg",
+      "screens/app-pantry.jpg",
+      "screens/all-pkg-extra-community-post-detail-index.jpg",
+      "screens/app-kitchen.jpg",
+      "screens/all-pkg-extra-vip-index.jpg",
+      "screens/all-pkg-extra-vip-upgrade-index.jpg",
+      "screens/all-pkg-extra-vip-orders-index.jpg",
+      "screens/all-pkg-extra-payment-checkout-index.jpg",
+      "screens/all-pkg-extra-payment-success-index.jpg",
+      "screens/all-pkg-extra-favorites-index.jpg",
+      "screens/app-import.jpg",
+      "screens/all-pkg-extra-recipe-detail-index.jpg",
+      "screens/all-pkg-extra-recipe-edit-index.jpg",
+      "screens/app-weekly.jpg",
+      "screens/all-pkg-extra-recipes-search-index.jpg",
+      "screens/app-cook-mode-running.jpg",
+      "screens/app-record.jpg",
+      "screens/all-pkg-extra-auth-login-index.jpg",
+      "screens/all-pkg-extra-auth-login-phone-index.jpg",
+      "screens/app-family.jpg",
+      "screens/all-pkg-extra-family-join-index.jpg",
+      "screens/all-pkg-extra-family-members-index.jpg",
+      "screens/all-pkg-extra-family-invite-index.jpg",
+      "screens/all-pkg-extra-me-settings-index.jpg",
+      "screens/all-pkg-extra-me-notifications-index.jpg",
+      "screens/all-pkg-extra-me-preference-profile-index.jpg",
+      "screens/all-pkg-extra-me-feedback-index.jpg",
+      "screens/all-pkg-extra-me-help-faq-index.jpg",
+      "screens/all-pkg-extra-me-about-index.jpg",
+      "screens/all-pkg-extra-legal-terms-index.jpg",
+      "screens/all-pkg-extra-legal-privacy-index.jpg",
+      "screens/all-pkg-extra-legal-deletion-index.jpg",
+      "screens/all-pkg-extra-me-profile-edit-index.jpg"
+    ]
+  },
+  "groupChecks": [
+    {
+      "group": "点菜与备菜",
+      "expected": 10,
+      "cards": 10,
+      "count": "10 / 39 个页面",
+      "titles": [
+        "点菜首页",
+        "菜谱库",
+        "买菜清单",
+        "冰箱库存",
+        "我的收藏",
+        "导入菜谱",
+        "菜谱详情",
+        "编辑菜谱",
+        "一周菜单",
+        "搜索结果"
+      ],
+      "passed": true
+    },
+    {
+      "group": "做菜与记录",
+      "expected": 5,
+      "cards": 5,
+      "count": "5 / 39 个页面",
+      "titles": [
+        "做菜记录",
+        "今日做菜",
+        "厨房总控",
+        "分步做菜",
+        "旧记录入口"
+      ],
+      "passed": true
+    },
+    {
+      "group": "社区",
+      "expected": 2,
+      "cards": 2,
+      "count": "2 / 39 个页面",
+      "titles": [
+        "社区动态",
+        "帖子详情与评论"
+      ],
+      "passed": true
+    },
+    {
+      "group": "家庭",
+      "expected": 4,
+      "cards": 4,
+      "count": "4 / 39 个页面",
+      "titles": [
+        "创建家庭",
+        "加入家庭",
+        "家庭成员",
+        "邀请家人"
+      ],
+      "passed": true
+    },
+    {
+      "group": "账户与会员",
+      "expected": 7,
+      "cards": 7,
+      "count": "7 / 39 个页面",
+      "titles": [
+        "家庭会员",
+        "会员升级",
+        "会员订单",
+        "确认支付",
+        "支付结果",
+        "微信登录",
+        "手机登录"
+      ],
+      "passed": true
+    },
+    {
+      "group": "我的与帮助",
+      "expected": 11,
+      "cards": 11,
+      "count": "11 / 39 个页面",
+      "titles": [
+        "我的",
+        "设置",
+        "消息中心",
+        "口味偏好",
+        "意见反馈",
+        "常见问题",
+        "关于我们",
+        "用户协议",
+        "隐私政策",
+        "注销说明",
+        "个人资料"
+      ],
+      "passed": true
+    }
+  ],
+  "searchChecks": [
+    {
+      "keyword": "设置",
+      "count": 1,
+      "passed": true
+    },
+    {
+      "keyword": "不存在的页面",
+      "count": 0,
+      "emptyVisible": true,
+      "passed": true
+    },
+    {
+      "reset": true,
+      "count": 39,
+      "passed": true
+    }
+  ],
+  "community": {
+    "cards": [
+      {
+        "complete": true,
+        "route": "pages/community/index",
+        "src": "screens/app-community.jpg",
+        "title": "社区动态",
+        "variants": [],
+        "width": 591
+      },
+      {
+        "complete": true,
+        "route": "pkg-extra/community/post-detail/index",
+        "src": "screens/all-pkg-extra-community-post-detail-index.jpg",
+        "title": "帖子详情与评论",
+        "variants": [
+          "多图",
+          "评论"
+        ],
+        "width": 591
+      }
+    ],
+    "count": "2 / 39 个页面"
+  },
+  "screens": [
+    "screens/gallery-expansion-final.jpg",
+    "screens/gallery-expansion-community.jpg"
+  ],
+  "passed": true
+}

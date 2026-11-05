@@ -1,7 +1,7 @@
 <view class="container me-mag {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <!-- 紧凑页头（结构见 app.wxss .cpt-head）：家庭身份从照片挪到纸面，信息不减 -->
   <view class="cpt-head" style="padding-top: {{capsuleTop}};">
-    <view class="cpt-row" style="padding-right: {{capsuleRight}};">
+    <view class="cpt-row">
       <view class="cpt-titles">
         <view class="cpt-eyebrow">我的厨房</view>
         <view class="cpt-title mag-fam-name">{{familyProfile.familyName || '我的家'}}</view>
@@ -15,6 +15,11 @@
         <view class="mag-ava {{item.tone}}" wx:for="{{familyProfile.members}}" wx:key="userId">{{item.initial}}</view>
         <view class="mag-fam-lbl"><text class="b">{{memberCount}}</text> 位成员</view>
       </block>
+    </view>
+    <view class="mag-profile tap-scale" wx:if="{{!loading && !loadError}}" bindtap="goProfileEdit" aria-role="button" aria-label="编辑我的资料">
+      <image wx:if="{{profile.avatarUrl && !profilePhotoBroken}}" class="mag-profile-avatar" src="{{profile.avatarUrl}}" mode="aspectFill" data-err-key="profilePhotoBroken" binderror="onPhotoError" />
+      <view wx:else class="mag-profile-avatar mag-profile-letter">{{profile.initial}}</view>
+      <view class="mag-profile-copy"><view class="mag-profile-name">{{profile.nickname}}</view><view class="mag-profile-sub">把家常味，留在自己的厨房</view></view><text class="mag-profile-edit">编辑 ›</text>
     </view>
     <view class="cpt-sub" wx:if="{{monthCookCount > 0}}">本月一起做了 {{monthCookCount}} 道菜</view>
   </view>
@@ -65,6 +70,19 @@
       </view>
     </view>
 
+    <view class="mag-shortcuts">
+      <view class="mag-shortcut tap-scale" bindtap="goRecipes"><view class="mag-ticon ti-1">菜</view><view><view class="mag-tname">我的菜谱</view><view class="mag-tdesc">挑菜与新建</view></view></view>
+      <view class="mag-shortcut tap-scale" bindtap="goPantry"><view class="mag-ticon ti-fam">鲜</view><view><view class="mag-tname">冰箱库存</view><view class="mag-tdesc">用料与到期日</view></view></view>
+      <view class="mag-shortcut tap-scale" bindtap="goShopping"><view class="mag-ticon ti-2">买</view><view><view class="mag-tname">买菜清单</view><view class="mag-tdesc">一份清单买齐</view></view></view>
+      <view class="mag-shortcut tap-scale" bindtap="goWeekly"><view class="mag-ticon ti-1">周</view><view><view class="mag-tname">一周计划</view><view class="mag-tdesc">提前安排三餐</view></view></view>
+      <view class="mag-shortcut tap-scale" bindtap="goImport"><view class="mag-ticon ti-4">导</view><view><view class="mag-tname">导入菜谱</view><view class="mag-tdesc">收好喜欢的做法</view></view></view>
+      <view wx:if="{{features.COMMUNITY}}" class="mag-shortcut tap-scale" bindtap="goFavorites"><view class="mag-ticon ti-2">藏</view><view><view class="mag-tname">我的收藏</view><view class="mag-tdesc">好菜与好分享</view></view></view>
+    </view>
+    <view class="mag-today card tap-scale" wx:if="{{!loading && !loadError}}" bindtap="goCooking" aria-role="button" aria-label="查看今天的菜单">
+      <view class="mag-today-head"><text>今天这一餐</text><text class="mag-today-status">{{todayTotal ? todayDone + '/' + todayTotal + ' 道已上桌' : '还没点菜'}}</text></view>
+      <view wx:if="{{todayDishes.length}}" class="mag-today-dishes"><view class="mag-today-dish" wx:for="{{todayDishes}}" wx:key="recipeId"><image src="{{item.cover}}" class="{{item.coverBroken ? 'img-broken' : ''}}" mode="aspectFill" data-err-key="{{'todayDishes[' + index + '].coverBroken'}}" binderror="onPhotoError" /><view>{{item.title}}</view></view></view>
+      <view class="mag-today-footer"><text>{{todayTotal ? '点好的菜，按自己的节奏做' : '先选几道，全家一起开火'}}</text><text>去做菜 ›</text></view>
+    </view>
     <!-- 最近上桌 -->
     <view class="g-fade-up g-d2" wx:if="{{cookHistory.length}}">
       <section-head eyebrow="做菜记录" title="最近上桌" hint="全部" more="{{true}}" bindtapmore="goCookLog" />
@@ -74,9 +92,9 @@
           <view class="mag-hmid">
             <view class="mag-hname">{{item.recipeTitle}}</view>
             <view class="mag-hsub">{{item.whenLabel}}</view>
-          </view>
-          <view class="mag-stars">
+            <view class="mag-stars">
             <text class="mag-star {{star <= item.score ? 'on' : ''}}" wx:for="{{[1,2,3,4,5]}}" wx:for-item="star" wx:key="*this">★</text>
+            </view>
           </view>
         </view>
         <view class="mag-hmore tap-scale" bindtap="goCookLog">查看全部记录 ›</view>
@@ -96,33 +114,9 @@
       </view>
     </view>
 
-    <!-- 厨房工具：走 tab 不可达的功能（周菜单、导入） -->
-    <view class="g-fade-up g-d3">
-      <section-head eyebrow="今天要用" title="厨房工具" />
-      <view class="card mag-tools">
-        <view class="mag-trow tap-scale" bindtap="goWeekly">
-          <view class="mag-ticon ti-1">周</view>
-          <view class="mag-tmid"><view class="mag-tname">周菜单计划</view><view class="mag-tdesc">一周吃什么提前排好</view></view>
-          <view class="mag-tarrow">›</view>
-        </view>
-        <view class="mag-trow tap-scale" bindtap="goImport">
-          <view class="mag-ticon ti-4">导</view>
-          <view class="mag-tmid"><view class="mag-tname">导入菜谱</view><view class="mag-tdesc">粘贴文字一键生成菜谱</view></view>
-          <view class="mag-tarrow">›</view>
-        </view>
-        <view wx:if="{{features.COMMUNITY}}" class="mag-trow tap-scale" bindtap="goFavorites">
-          <view class="mag-ticon ti-2">藏</view>
-          <view class="mag-tmid"><view class="mag-tname">我的收藏</view><view class="mag-tdesc">收藏的菜谱和帖子都在这儿</view></view>
-          <view class="mag-tarrow">›</view>
-        </view>
-        <!-- 举报处置已统一收进运营后台（/admin），小程序里不再保留审核入口：
-             同一件事有两个入口时，运营不知道该看哪个，处置记录也会分散在两处。 -->
-      </view>
-    </view>
-
     <!-- 口味偏好 -->
     <view class="g-fade-up g-d4" wx:if="{{prefBars.length}}">
-      <section-head eyebrow="吃过记得" title="本月口味" />
+      <section-head eyebrow="吃过记得" title="家庭口味" />
       <view class="card mag-pref">
         <view class="mag-prow" wx:for="{{prefBars}}" wx:key="label">
           <view class="mag-ptop">
@@ -135,7 +129,7 @@
     </view>
     <!-- 口味偏好：加载骨架 -->
     <view class="g-fade-up g-d4" wx:elif="{{loading}}">
-      <section-head eyebrow="吃过记得" title="本月口味" />
+      <section-head eyebrow="吃过记得" title="家庭口味" />
       <view class="card mag-pref">
         <view class="mag-prow" wx:for="{{[1,2,3]}}" wx:key="*this">
           <view class="mag-skel-line strong shimmer" style="width: 40%;"></view>

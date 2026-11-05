@@ -1,0 +1,619 @@
+{
+  "checkedAt": "2026-10-08T16:50:56.149Z",
+  "source": "temporary Page data; existing runtime state restored",
+  "screens": [
+    {
+      "state": "home",
+      "image": "screens/app-home.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "cook",
+      "image": "screens/app-cook.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "cook-large",
+      "image": "screens/app-cook-large.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "community",
+      "image": "screens/app-community.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "recipes",
+      "image": "screens/app-recipes.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "pantry",
+      "image": "screens/app-pantry.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "shopping",
+      "image": "screens/app-shopping.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "shopping-large",
+      "image": "screens/app-shopping-large.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "import",
+      "image": "screens/app-import.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "import-large",
+      "image": "screens/app-import-large.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "kitchen",
+      "image": "screens/app-kitchen.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "cook-mode",
+      "image": "screens/app-cook-mode.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "record",
+      "image": "screens/app-record.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "record-large",
+      "image": "screens/app-record-large.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "me",
+      "image": "screens/app-me.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "family",
+      "image": "screens/app-family.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "family-large",
+      "image": "screens/app-family-large.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "weekly",
+      "image": "screens/app-weekly.jpg",
+      "width": 351,
+      "height": 760
+    },
+    {
+      "state": "weekly-large",
+      "image": "screens/app-weekly-large.jpg",
+      "width": 351,
+      "height": 760
+    }
+  ],
+  "layouts": [
+    {
+      "state": "home",
+      "selector": ".hm-menu-action-primary",
+      "parent": ".hm-menu-card",
+      "child": {
+        "success": true,
+        "width": 213.3984375,
+        "height": 44,
+        "left": 138.6015625,
+        "top": 505.3984375
+      },
+      "box": {
+        "success": true,
+        "width": 344,
+        "height": 297.3984375,
+        "left": 23,
+        "top": 415
+      },
+      "passed": true
+    },
+    {
+      "state": "cook",
+      "selector": ".m-thumb",
+      "parent": ".m-row",
+      "child": {
+        "success": true,
+        "width": 75,
+        "height": 75,
+        "left": 36,
+        "top": 661.015625
+      },
+      "box": {
+        "success": true,
+        "width": 344,
+        "height": 160,
+        "left": 23,
+        "top": 648.015625
+      },
+      "passed": true
+    },
+    {
+      "state": "cook",
+      "selector": ".m-act-cook",
+      "parent": ".m-row",
+      "child": {
+        "success": true,
+        "width": 74,
+        "height": 45,
+        "left": 280,
+        "top": 755.015625
+      },
+      "box": {
+        "success": true,
+        "width": 344,
+        "height": 160,
+        "left": 23,
+        "top": 648.015625
+      },
+      "passed": true
+    },
+    {
+      "state": "cook-large",
+      "selector": ".m-thumb",
+      "parent": ".m-row",
+      "child": {
+        "success": true,
+        "width": 75,
+        "height": 75,
+        "left": 36,
+        "top": 693.6640625
+      },
+      "box": {
+        "success": true,
+        "width": 344,
+        "height": 162.4921875,
+        "left": 23,
+        "top": 680.6640625
+      },
+      "passed": true
+    },
+    {
+      "state": "cook-large",
+      "selector": ".m-act-cook",
+      "parent": ".m-row",
+      "child": {
+        "success": true,
+        "width": 78,
+        "height": 45,
+        "left": 276,
+        "top": 790.15625
+      },
+      "box": {
+        "success": true,
+        "width": 344,
+        "height": 162.4921875,
+        "left": 23,
+        "top": 680.6640625
+      },
+      "passed": true
+    },
+    {
+      "state": "community",
+      "selector": ".pphoto",
+      "parent": ".pcard",
+      "child": {
+        "success": true,
+        "width": 314,
+        "height": 228,
+        "left": 38,
+        "top": 408.2734375
+      },
+      "box": {
+        "success": true,
+        "width": 344,
+        "height": 581.8828125,
+        "left": 23,
+        "top": 275.6796875
+      },
+      "passed": true
+    },
+    {
+      "state": "shopping",
+      "selector": ".mkt-del",
+      "parent": ".mkt-item",
+      "child": {
+        "success": true,
+        "width": 45,
+        "height": 45,
+        "left": 307,
+        "top": 418.0078125
+      },
+      "box": {
+        "success": true,
+        "width": 344,
+        "height": 106.4453125,
+        "left": 23,
+        "top": 387.2890625
+      },
+      "passed": true
+    },
+    {
+      "state": "shopping",
+      "selector": ".sp-seg-item",
+      "parent": ".sp-seg",
+      "child": {
+        "success": true,
+        "width": 168,
+        "height": 45,
+        "left": 26,
+        "top": 192.34375
+      },
+      "box": {
+        "success": true,
+        "width": 344,
+        "height": 51,
+        "left": 23,
+        "top": 189.34375
+      },
+      "passed": true
+    },
+    {
+      "state": "shopping-large",
+      "selector": ".mkt-del",
+      "parent": ".mkt-item",
+      "child": {
+        "success": true,
+        "width": 45.90625,
+        "height": 45,
+        "left": 306.09375,
+        "top": 457.421875
+      },
+      "box": {
+        "success": true,
+        "width": 344,
+        "height": 147.5078125,
+        "left": 23,
+        "top": 406.171875
+      },
+      "passed": true
+    },
+    {
+      "state": "shopping-large",
+      "selector": ".sp-seg-item",
+      "parent": ".sp-seg",
+      "child": {
+        "success": true,
+        "width": 168,
+        "height": 45,
+        "left": 26,
+        "top": 202.390625
+      },
+      "box": {
+        "success": true,
+        "width": 344,
+        "height": 51,
+        "left": 23,
+        "top": 199.390625
+      },
+      "passed": true
+    },
+    {
+      "state": "import",
+      "selector": ".parsebtn",
+      "parent": ".ta-wrap",
+      "child": {
+        "success": true,
+        "width": 98.6640625,
+        "height": 45,
+        "left": 253.3359375,
+        "top": 495.78125
+      },
+      "box": {
+        "success": true,
+        "width": 344,
+        "height": 204,
+        "left": 23,
+        "top": 351.78125
+      },
+      "passed": true
+    },
+    {
+      "state": "import-large",
+      "selector": ".parsebtn",
+      "parent": ".ta-wrap",
+      "child": {
+        "success": true,
+        "width": 114.6640625,
+        "height": 45,
+        "left": 237.3359375,
+        "top": 537.1640625
+      },
+      "box": {
+        "success": true,
+        "width": 344,
+        "height": 204,
+        "left": 23,
+        "top": 393.1640625
+      },
+      "passed": true
+    },
+    {
+      "state": "record",
+      "selector": ".thumb-img",
+      "parent": ".tcard",
+      "child": {
+        "success": true,
+        "width": 75,
+        "height": 75,
+        "left": 36,
+        "top": 537.8203125
+      },
+      "box": {
+        "success": true,
+        "width": 344,
+        "height": 204.09375,
+        "left": 23,
+        "top": 524.8203125
+      },
+      "passed": true
+    },
+    {
+      "state": "record",
+      "selector": ".cl-share",
+      "parent": ".tcard",
+      "child": {
+        "success": true,
+        "width": 61.3359375,
+        "height": 45,
+        "left": 292.6640625,
+        "top": 678.9140625
+      },
+      "box": {
+        "success": true,
+        "width": 344,
+        "height": 204.09375,
+        "left": 23,
+        "top": 524.8203125
+      },
+      "passed": true
+    },
+    {
+      "state": "record-large",
+      "selector": ".thumb-img",
+      "parent": ".tcard",
+      "child": {
+        "success": true,
+        "width": 75,
+        "height": 75,
+        "left": 36,
+        "top": 554.0703125
+      },
+      "box": {
+        "success": true,
+        "width": 344,
+        "height": 210.984375,
+        "left": 23,
+        "top": 541.0703125
+      },
+      "passed": true
+    },
+    {
+      "state": "record-large",
+      "selector": ".cl-share",
+      "parent": ".tcard",
+      "child": {
+        "success": true,
+        "width": 66.0546875,
+        "height": 45,
+        "left": 287.9453125,
+        "top": 702.0546875
+      },
+      "box": {
+        "success": true,
+        "width": 344,
+        "height": 210.984375,
+        "left": 23,
+        "top": 541.0703125
+      },
+      "passed": true
+    },
+    {
+      "state": "family",
+      "selector": ".fc-createbtn",
+      "parent": ".fc-sheet",
+      "child": {
+        "success": true,
+        "width": 344,
+        "height": 58.796875,
+        "left": 23,
+        "top": 506.140625
+      },
+      "box": {
+        "success": true,
+        "width": 390,
+        "height": 579.890625,
+        "left": 0,
+        "top": 189.34375
+      },
+      "passed": true
+    },
+    {
+      "state": "family-large",
+      "selector": ".fc-createbtn",
+      "parent": ".fc-sheet",
+      "child": {
+        "success": true,
+        "width": 344,
+        "height": 62.515625,
+        "left": 23,
+        "top": 529.203125
+      },
+      "box": {
+        "success": true,
+        "width": 390,
+        "height": 602.671875,
+        "left": 0,
+        "top": 199.390625
+      },
+      "passed": true
+    },
+    {
+      "state": "weekly",
+      "selector": ".wm-refresh",
+      "parent": ".cpt-head",
+      "child": {
+        "success": true,
+        "width": 85,
+        "height": 45,
+        "left": 282,
+        "top": 102.921875
+      },
+      "box": {
+        "success": true,
+        "width": 390,
+        "height": 102.34375,
+        "left": 0,
+        "top": 87
+      },
+      "passed": true
+    },
+    {
+      "state": "weekly",
+      "selector": ".wm-thumb",
+      "parent": ".wm-daycard",
+      "child": {
+        "success": true,
+        "width": 54,
+        "height": 54,
+        "left": 36,
+        "top": 400.328125
+      },
+      "box": {
+        "success": true,
+        "width": 344,
+        "height": 176.140625,
+        "left": 23,
+        "top": 357.1875
+      },
+      "passed": true
+    },
+    {
+      "state": "weekly-large",
+      "selector": ".wm-refresh",
+      "parent": ".cpt-head",
+      "child": {
+        "success": true,
+        "width": 88,
+        "height": 45,
+        "left": 279,
+        "top": 107.1875
+      },
+      "box": {
+        "success": true,
+        "width": 390,
+        "height": 112.375,
+        "left": 0,
+        "top": 87
+      },
+      "passed": true
+    },
+    {
+      "state": "weekly-large",
+      "selector": ".wm-thumb",
+      "parent": ".wm-daycard",
+      "child": {
+        "success": true,
+        "width": 54,
+        "height": 54,
+        "left": 36,
+        "top": 421.25
+      },
+      "box": {
+        "success": true,
+        "width": 344,
+        "height": 177.6875,
+        "left": 23,
+        "top": 376.5625
+      },
+      "passed": true
+    }
+  ],
+  "routes": [],
+  "runtime": [
+    {
+      "page": "pages/home/index",
+      "loadError": "网络请求失败，请稍后重试"
+    },
+    {
+      "page": "pages/menu/index",
+      "loadError": "网络请求失败，请稍后重试"
+    },
+    {
+      "page": "pages/community/index",
+      "loadError": true
+    },
+    {
+      "page": "pages/recipes/index",
+      "loadError": true
+    },
+    {
+      "page": "pages/pantry/index",
+      "loadError": true,
+      "loaded": true
+    },
+    {
+      "page": "pages/shopping/index",
+      "loadError": true
+    },
+    {
+      "page": "pkg-extra/import/index",
+      "loadError": false
+    },
+    {
+      "page": "pkg-extra/kitchen/index",
+      "loadError": true
+    },
+    {
+      "page": "pkg-extra/cook-mode/index",
+      "loadError": true
+    },
+    {
+      "page": "pages/cook-log/index",
+      "loadError": true
+    },
+    {
+      "page": "pages/me/index",
+      "loadError": "网络请求失败，请稍后重试"
+    },
+    {
+      "page": "pkg-extra/family/create/index",
+      "loadError": false
+    },
+    {
+      "page": "pkg-extra/weekly-menu/index",
+      "loadError": true
+    }
+  ],
+  "passed": true
+}

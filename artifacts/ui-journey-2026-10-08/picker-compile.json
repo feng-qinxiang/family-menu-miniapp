@@ -1,0 +1,111 @@
+{
+  "checkedAt": "2026-10-08T15:53:22.044668+00:00",
+  "checks": [
+    {
+      "file": "miniapp/pages/home/index.wxml",
+      "passed": true,
+      "result": {
+        "success": true,
+        "codeLength": 33293
+      }
+    },
+    {
+      "file": "miniapp/pages/home/index.wxss",
+      "passed": true,
+      "result": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38854
+      }
+    },
+    {
+      "file": "miniapp/pages/recipes/index.wxml",
+      "passed": true,
+      "result": {
+        "success": true,
+        "codeLength": 33293
+      }
+    },
+    {
+      "file": "miniapp/pages/recipes/index.wxss",
+      "passed": true,
+      "result": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38854
+      }
+    },
+    {
+      "file": "miniapp/pages/pantry/index.wxml",
+      "passed": true,
+      "result": {
+        "success": true,
+        "codeLength": 33293
+      }
+    },
+    {
+      "file": "miniapp/pages/pantry/index.wxss",
+      "passed": true,
+      "result": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38854
+      }
+    },
+    {
+      "file": "miniapp/pages/shopping/index.wxml",
+      "passed": true,
+      "result": {
+        "success": true,
+        "codeLength": 33293
+      }
+    },
+    {
+      "file": "miniapp/pages/shopping/index.wxss",
+      "passed": true,
+      "result": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38854
+      }
+    },
+    {
+      "file": "miniapp/components/recipe-card/index.wxml",
+      "passed": true,
+      "result": {
+        "success": true,
+        "codeLength": 33293
+      }
+    },
+    {
+      "file": "miniapp/components/recipe-card/index.wxss",
+      "passed": true,
+      "result": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38854
+      }
+    }
+  ],
+  "passed": true
+}

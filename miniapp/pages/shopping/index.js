@@ -7,12 +7,15 @@ const {
   getShoppingList,
   getTodayMenu,
   rebuildShoppingList,
-  toggleShoppingPurchased
+  toggleShoppingPurchased,
+  getIngredientPhotos
 } = require('../../utils/api');
 const { withScrollReveal, dispose: disposeScrollReveal } = require('../../behaviors/scroll-reveal');
 const { indexPantry, pantryHas } = require('../../utils/pantry-match');
 
-const { recipeDishImg, localDishByIngredient } = require('../../utils/image');
+const { ingredientImage, onPhotoError } = require('../../utils/image');
+const { editIngredientPhoto } = require('../../utils/ingredient-photo');
+const { runGuarded } = require('../../utils/interaction');
 const { INGREDIENT_CATEGORIES, categoryOf } = require('../../utils/ingredients');
 const { shoppingEmptyReason } = require('../../utils/kitchen');
 
@@ -20,25 +23,25 @@ function pantryCategory(name) {
   return categoryOf(name);
 }
 
-function decoratePantryItem(it) {
+function decoratePantryItem(it, photos) {
   const name = it.ingredientName || it.name || '';
   const cat = pantryCategory(name);
   return {
     ...it,
-    cover: localDishByIngredient(name),
+    cover: ingredientImage(it, photos),
     initial: String(name || '菜').slice(0, 1),
     categoryKey: cat.key
   };
 }
 
-function groupPantry(items) {
+function groupPantry(items, photos) {
   const map = {};
   (items || []).forEach(it => {
     const cat = pantryCategory(it.ingredientName || it.name);
     if (!map[cat.key]) map[cat.key] = { key: cat.key, label: cat.label, items: [] };
-    map[cat.key].items.push(decoratePantryItem(it));
+    map[cat.key].items.push(decoratePantryItem(it, photos));
   });
-  return ['veg', 'meat', 'season', 'other'].map(k => map[k]).filter(Boolean);
+  return ['veg', 'meat', 'seasoning', 'other'].map(k => map[k]).filter(Boolean);
 }
 
 const ingredientCategories = INGREDIENT_CATEGORIES;
@@ -46,8 +49,9 @@ const ingredientCategories = INGREDIENT_CATEGORIES;
 Page({
   data: {
     tab: 'shopping',          // shopping | pantry
-    navSolid: false,
     pantryCategories: [],
+    ingredientPhotos: {},
+    ingredientPhotosFailed: false,
     pantryCount: 0,
     pantryError: false,
     newPantryItem: { ingredientName: '', amount: '', unit: '' },
@@ -79,6 +83,8 @@ Page({
       { ingredientName: '青菜', amount: '1', unit: '把' }
     ],
     newItem: { ingredientName: '', amount: '', unit: '' },
+    newItemCover: '',
+    newItemCoverBroken: false,
     skeletonRows: [1, 2, 3],
     loading: true,
     loadError: false,
@@ -90,11 +96,6 @@ Page({
     try { fontScale = wx.getStorageSync('font_scale') || 'normal'; } catch (e) { fontScale = 'normal'; }
     if (fontScale !== this.data.fontScale) this.setData({ fontScale });
     Promise.resolve(this.loadShoppingList(this._hasLoaded === true)).then(() => { this._hasLoaded = true; });
-  },
-
-  onPageScroll(e) {
-    const navSolid = (e.scrollTop || 0) > 80;
-    if (navSolid !== this.data.navSolid) this.setData({ navSolid });
   },
 
   async onPullDownRefresh() {
@@ -113,9 +114,11 @@ Page({
       const loaded = await Promise.all([
         getShoppingList(),
         getTodayMenu(),
-        getPantryItems()
+        getPantryItems(),
+        getIngredientPhotos().catch(() => null)
       ]);
       const shoppingList = loaded[0], todayMenu = loaded[1], pantryItems = loaded[2];
+      this.setData({ ingredientPhotos: loaded[3] || {}, ingredientPhotosFailed: loaded[3] === null });
       this._lastContext = { todayMenu, pantryItems };
       this.applyShoppingList(shoppingList, { todayMenu, pantryItems, loading: false });
       this.setPantryView(pantryItems);
@@ -132,17 +135,32 @@ Page({
 
   // 空态出口：没点菜去挑菜，点了菜没录用料去补用料——两条路都落在菜谱页
   goRecipes() {
-    wx.switchTab({ url: '/pages/recipes/index', fail() {} });
+    wx.navigateTo({ url: '/pages/recipes/index', fail() {} });
   },
 
   setPantryView(pantryItems) {
     const items = Array.isArray(pantryItems) ? pantryItems : [];
     this.setData({
-      pantryCategories: groupPantry(items),
+      pantryCategories: groupPantry(items, this.data.ingredientPhotos),
       pantryCount: items.length,
       // 拉到数据就说明这次没失败（重试成功后失败态要自动消失）
       pantryError: false
     });
+    this._pantryItems = items;
+  },
+
+  onIngredientPhotoError(e) { onPhotoError(e, this); },
+
+  async editIngredientPhoto(e) {
+    const name = e.currentTarget.dataset.name;
+    const photos = await runGuarded(this, 'ingredientPhoto', () => editIngredientPhoto(name, this.data.ingredientPhotos[name]), {
+      success: result => result ? '食材图片已保存' : '', fail: err => err.message || '保存失败，原图片已保留'
+    });
+    if (photos === undefined) return;
+    this.setData({ ingredientPhotos: photos, ingredientPhotosFailed: false,
+      newItemCover: ingredientImage(this.data.newItem, photos), newItemCoverBroken: false });
+    this.applyShoppingList(this.data.shoppingList, this._lastContext || {});
+    this.setPantryView(this._pantryItems || []);
   },
 
   switchTab(e) {
@@ -284,7 +302,22 @@ Page({
 
   onNewItemInput(e) {
     const { field } = e.currentTarget.dataset;
-    this.setData({ [`newItem.${field}`]: e.detail.value });
+    const patch = { [`newItem.${field}`]: e.detail.value };
+    if (field === 'ingredientName') {
+      patch.newItemCover = ingredientImage({ ingredientName: e.detail.value }, this.data.ingredientPhotos);
+      patch.newItemCoverBroken = false;
+    }
+    this.setData(patch);
+  },
+
+  async editNewItemPhoto() {
+    if (this.data.addItemSubmitting) return;
+    const name = (this.data.newItem.ingredientName || '').trim();
+    if (!name) {
+      wx.showToast({ title: '先填写食材名，再添加图片', icon: 'none' });
+      return;
+    }
+    await this.editIngredientPhoto({ currentTarget: { dataset: { name } } });
   },
 
   async addItem() {
@@ -333,13 +366,15 @@ Page({
       const nextState = this.buildShoppingState(result, context);
       if (shouldClearInput) {
         nextState.newItem = { ingredientName: '', amount: '', unit: '' };
+        nextState.newItemCover = '';
+        nextState.newItemCoverBroken = false;
       }
       nextState.addItemSubmitting = false;
       this.setData(nextState);
     } else {
       await this.loadShoppingList();
       if (shouldClearInput) {
-        this.setData({ newItem: { ingredientName: '', amount: '', unit: '' }, addItemSubmitting: false });
+        this.setData({ newItem: { ingredientName: '', amount: '', unit: '' }, newItemCover: '', newItemCoverBroken: false, addItemSubmitting: false });
       } else {
         this.setData({ addItemSubmitting: false });
       }
@@ -446,23 +481,10 @@ Page({
         pantryText: inPantry ? '库存里已有' : '',
         categoryKey: category.key,
         categoryLabel: category.label,
-        cover: this.resolveItemCover(item.ingredientName, menuItems, sourceRecipes),
+        cover: ingredientImage(item, this.data.ingredientPhotos),
         initial: String(item.ingredientName || '菜').slice(0, 1)
       };
     });
-  },
-
-  resolveItemCover(ingredientName, menuItems, sourceRecipes) {
-    // 有来源菜谱时直接用该菜谱封面（菜单项的 recipe 含 title/coverImage）
-    if (Array.isArray(sourceRecipes) && sourceRecipes.length) {
-      for (let i = 0; i < menuItems.length; i++) {
-        const recipe = menuItems[i].recipe || {};
-        if (recipe.title && sourceRecipes.indexOf(recipe.title) !== -1) {
-          return recipeDishImg(recipe);
-        }
-      }
-    }
-    return localDishByIngredient(ingredientName);
   },
 
   findSourceRecipes(ingredientName, menuItems) {

@@ -1,35 +1,10 @@
-<!-- 买菜清单 · 精致美食杂志撞色风（设计稿 shopping-final.html）-->
+<!-- 买菜清单 · 当前菜单的备菜工具 -->
 <view class="mkt-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
-  <!-- 二级页导航：透明覆盖在 hero 上 -->
-  <view class="mkt-nav {{navSolid ? 'mkt-nav--solid' : ''}}">
-    <nav-bar title="买菜清单" show-back="{{true}}"></nav-bar>
-  </view>
-
-  <!-- HERO · 本地菜图 long-beans -->
-  <view class="mkt-hero g-fade-in">
-    <image class="mkt-hero-img" src="/assets/dishes/long-beans.jpg" mode="aspectFill" />
-    <view class="mkt-hero-mask"></view>
-
-    <view class="mkt-hero-body">
-      <view class="mkt-hero-left">
-        <text class="mkt-tag">今日菜篮</text>
-        <view class="mkt-hero-title title-stroke">今天<text class="pop">买菜</text></view>
-        <view class="mkt-hero-sub">{{summary.statusText}}<text wx:if="{{summary.totalCount}}">，已买 <text class="b">{{summary.purchasedCount}}/{{summary.totalCount}}</text> 样</text></view>
-      </view>
-
-      <!-- 采购进度环 -->
-      <view class="mkt-ring">
-        <view class="mkt-ring-svg">
-          <view class="mkt-ring-bg"></view>
-          <view class="mkt-ring-fg" style="background: conic-gradient(var(--pop) {{summary.progressPercent}}%, rgba(255,255,255,0.22) 0);"></view>
-          <view class="mkt-ring-hole"></view>
-        </view>
-        <view class="mkt-ring-txt">
-          <text class="big">{{summary.progressPercent}}%</text>
-          <text class="cap">已买</text>
-        </view>
-      </view>
-    </view>
+  <nav-bar title="买菜清单" show-back="{{true}}" />
+  <view class="cpt-head">
+    <view class="cpt-eyebrow">备好食材，再开火</view>
+    <view class="cpt-title">今天的菜篮子</view>
+    <view class="cpt-sub">跟着今日菜单买，家里已有的食材先用起来。</view>
   </view>
 
   <!-- SHEET · 内容区 -->
@@ -40,10 +15,12 @@
       <view class="tap-scale sp-seg-item {{tab === 'pantry' ? 'on' : ''}}" data-tab="pantry" bindtap="switchTab">家里已有 {{pantryCount ? '(' + pantryCount + ')' : ''}}</view>
     </view>
 
+    <view class="mkt-photo-note" wx:if="{{ingredientPhotosFailed}}">食材图片暂未同步</view>
+
     <!-- 待买清单视图 -->
     <block wx:if="{{tab === 'shopping'}}">
     <!-- 进度条卡片 -->
-    <view class="mkt-pbar card g-fade-up g-d1">
+    <view wx:if="{{!loading && !loadError && summary.totalCount}}" class="mkt-pbar card g-fade-up g-d1">
       <view class="mkt-pbar-head">
         <text class="l">采购进度</text>
         <text class="r">{{summary.purchasedCount}} / {{summary.totalCount}} 样</text>
@@ -81,7 +58,7 @@
       </view>
 
       <!-- 待买分组 -->
-      <view class="mkt-pad" wx:for="{{groupedPending}}" wx:key="key" wx:for-item="group">
+      <view class="mkt-pad" wx:for="{{groupedPending}}" wx:key="key" wx:for-item="group" wx:for-index="gidx">
         <view class="mkt-ghead g-fade-up">
           <view class="mkt-gdot {{group.key === 'seasoning' ? 'spice' : group.key}}"></view>
           <text class="mkt-gname">{{group.label}}</text>
@@ -89,41 +66,37 @@
         </view>
 
         <view class="tap-scale mkt-item {{revealOn ? (reveal[group.key + '-' + idx] ? 'g-fade-up' : 'rv-hold') : 'g-fade-up g-d' + (idx % 5 + 1)}}" data-rv="{{group.key + '-' + idx}}" wx:for="{{group.items}}" wx:for-item="food" wx:for-index="idx" wx:key="itemId" data-id="{{food.itemId}}" data-purchased="{{food.purchased}}" bindtap="toggleItem">
-          <view class="mkt-check"></view>
-          <image wx:if="{{food.cover}}" class="mkt-thumb" src="{{food.cover}}" mode="aspectFill" lazy-load />
-          <view wx:else class="mkt-thumb mkt-thumb--letter {{food.categoryKey}}">{{food.initial}}</view>
+          <view class="mkt-photo tap-scale" data-name="{{food.ingredientName}}" catchtap="editIngredientPhoto" aria-role="button" aria-label="为{{food.ingredientName}}拍照、从相册选图或恢复文字显示">
+            <image wx:if="{{food.cover && !food.coverBroken}}" class="mkt-thumb" src="{{food.cover}}" mode="aspectFill" lazy-load data-err-key="groupedPending[{{gidx}}].items[{{idx}}].coverBroken" binderror="onIngredientPhotoError" />
+            <view wx:else class="mkt-thumb mkt-thumb--letter {{food.categoryKey}}"><text>{{food.ingredientName}}</text></view>
+          <text class="mkt-photo-hint">{{food.cover && !food.coverBroken ? '换图' : '拍照'}}</text>
+          </view>
           <view class="mkt-imid">
-            <text class="nm">{{food.ingredientName}}</text>
-            <text class="amt">{{food.amount}} {{food.unit}}</text>
-            <view class="mkt-tags">
-              <text class="src">{{food.sourceText}}</text>
-              <text class="src pantry" wx:if="{{food.pantryText}}">{{food.pantryText}}</text>
+            <view class="mkt-namebar"><text class="nm">{{food.ingredientName}}</text><text class="amt">{{food.amount}} {{food.unit}}</text></view>
+            <view class="mkt-tags" wx:if="{{food.sourceText || food.pantryText}}"><text class="src" wx:if="{{food.sourceText}}">{{food.sourceText}}</text><text class="src pantry" wx:if="{{food.pantryText}}">{{food.pantryText}}</text></view>
+            <view class="mkt-item-actions">
+              <button class="mkt-buy tap-scale" hover-class="none" data-id="{{food.itemId}}" data-purchased="{{food.purchased}}" catchtap="toggleItem" aria-label="{{food.ingredientName}}买好了"><image src="/assets/icons/lucide/check.svg" mode="aspectFit" aria-hidden="true" /><text>买好了</text></button>
+              <button class="mkt-del tap-scale" hover-class="none" data-id="{{food.itemId}}" catchtap="deleteItem" aria-label="移除{{food.ingredientName}}">移除</button>
             </view>
           </view>
-          <view class="mkt-del tap-scale" data-id="{{food.itemId}}" catchtap="deleteItem">移除</view>
         </view>
       </view>
 
       <!-- 已入篮分组 -->
       <view class="mkt-pad" wx:if="{{purchasedItems.length}}">
         <view class="mkt-shead">
-          <section-head
-            eyebrow="采购"
-            title="已入篮 "
-            popPart="{{purchasedItems.length}}"
-          />
+          <text>已入篮</text><text class="mkt-section-count">{{purchasedItems.length}} 样</text>
         </view>
 
-        <block wx:for="{{groupedPurchased}}" wx:key="key" wx:for-item="group">
-          <view class="tap-scale mkt-item done" wx:for="{{group.items}}" wx:for-item="food" wx:key="itemId" data-id="{{food.itemId}}" data-purchased="{{food.purchased}}" bindtap="toggleItem">
-            <view class="mkt-check done">
-              <view class="mkt-tick"></view>
+        <block wx:for="{{groupedPurchased}}" wx:key="key" wx:for-item="group" wx:for-index="gidx">
+          <view class="tap-scale mkt-item done" wx:for="{{group.items}}" wx:for-item="food" wx:for-index="idx" wx:key="itemId" data-id="{{food.itemId}}" data-purchased="{{food.purchased}}" bindtap="toggleItem">
+            <view class="mkt-photo tap-scale" data-name="{{food.ingredientName}}" catchtap="editIngredientPhoto" aria-role="button" aria-label="为{{food.ingredientName}}拍照、从相册选图或恢复文字显示">
+              <image wx:if="{{food.cover && !food.coverBroken}}" class="mkt-thumb" src="{{food.cover}}" mode="aspectFill" lazy-load data-err-key="groupedPurchased[{{gidx}}].items[{{idx}}].coverBroken" binderror="onIngredientPhotoError" />
+              <view wx:else class="mkt-thumb mkt-thumb--letter {{food.categoryKey}}"><text>{{food.ingredientName}}</text></view>
+            <text class="mkt-photo-hint">{{food.cover && !food.coverBroken ? '换图' : '拍照'}}</text>
             </view>
-            <image wx:if="{{food.cover}}" class="mkt-thumb" src="{{food.cover}}" mode="aspectFill" lazy-load />
-            <view wx:else class="mkt-thumb mkt-thumb--letter {{food.categoryKey}}">{{food.initial}}</view>
             <view class="mkt-imid">
-              <text class="nm">{{food.ingredientName}}</text>
-              <text class="amt">{{food.amount}} {{food.unit}}</text>
+              <view class="mkt-namebar"><text class="nm">{{food.ingredientName}}</text><text class="amt">{{food.amount}} {{food.unit}}</text></view><view class="mkt-bought">已入篮 · 点击可恢复待买</view>
             </view>
           </view>
         </block>
@@ -132,20 +105,27 @@
       <!-- 临时加购 -->
       <view class="mkt-pad">
         <view class="mkt-shead">
-          <section-head
-            eyebrow="自己加"
-            title="临时"
-            popPart="加购"
-          />
+          <text>临时加购</text><text class="mkt-section-count">顺手再买点</text>
         </view>
       </view>
 
       <view class="mkt-addbar">
-        <view class="mkt-add-ic">＋</view>
-        <input class="mkt-add-input" placeholder="食材名" placeholder-class="mkt-ph" value="{{newItem.ingredientName}}" data-field="ingredientName" bindinput="onNewItemInput" />
-        <input class="mkt-add-input sm" placeholder="量" placeholder-class="mkt-ph" value="{{newItem.amount}}" data-field="amount" bindinput="onNewItemInput" />
-        <input class="mkt-add-input sm" placeholder="单位" placeholder-class="mkt-ph" value="{{newItem.unit}}" data-field="unit" bindinput="onNewItemInput" />
-        <view class="mkt-addbtn tap-scale {{addItemSubmitting ? 'is-busy' : ''}}" bindtap="addItem">添加</view>
+        <view class="mkt-photo mkt-draft-photo tap-scale" catchtap="editNewItemPhoto" aria-role="button" aria-label="为新食材拍照或从相册添加图片">
+          <image wx:if="{{newItemCover && !newItemCoverBroken}}" class="mkt-thumb" src="{{newItemCover}}" mode="aspectFill" data-err-key="newItemCoverBroken" binderror="onIngredientPhotoError" />
+          <view wx:else class="mkt-thumb mkt-thumb--letter"><text class="mkt-draft-name">{{newItem.ingredientName || '添加图片'}}</text></view>
+          <text class="mkt-photo-hint">{{newItemCover && !newItemCoverBroken ? '换图' : '拍照 / 选图'}}</text>
+        </view>
+        <view class="mkt-add-fields">
+          <input class="mkt-add-input" placeholder="食材名，如番茄" placeholder-class="mkt-ph" value="{{newItem.ingredientName}}" data-field="ingredientName" bindinput="onNewItemInput" maxlength="50" />
+          <view class="mkt-add-quantity">
+            <input class="mkt-add-input sm" placeholder="数量" placeholder-class="mkt-ph" value="{{newItem.amount}}" data-field="amount" bindinput="onNewItemInput" />
+            <input class="mkt-add-input sm" placeholder="单位，如个" placeholder-class="mkt-ph" value="{{newItem.unit}}" data-field="unit" bindinput="onNewItemInput" />
+          </view>
+        </view>
+        <view class="mkt-add-footer">
+          <text>清单 {{summary.totalCount}} 样 · 可连续添加</text>
+          <view class="mkt-addbtn tap-scale {{addItemSubmitting ? 'is-busy' : ''}}" bindtap="addItem" aria-role="button" aria-disabled="{{addItemSubmitting}}">{{addItemSubmitting ? '添加中…' : '添加并继续'}}</view>
+        </view>
       </view>
 
       <scroll-view class="mkt-quicks" scroll-x enhanced show-scrollbar="{{false}}">
@@ -172,16 +152,18 @@
         </view>
         <!-- 分类列表 -->
         <view wx:elif="{{pantryCategories.length}}">
-          <view class="sp-pcat" wx:for="{{pantryCategories}}" wx:key="key">
+          <view class="sp-pcat" wx:for="{{pantryCategories}}" wx:key="key" wx:for-index="cidx">
             <view class="sp-pcat-head">
               <text class="sp-pcat-label">{{item.label}}</text>
               <text class="sp-pcat-count">{{item.items.length}} 项</text>
             </view>
-            <view class="sp-pitem" wx:for="{{item.items}}" wx:for-item="it" wx:key="id">
-              <image wx:if="{{it.cover}}" class="mkt-thumb" src="{{it.cover}}" mode="aspectFill" lazy-load />
-              <view wx:else class="mkt-thumb mkt-thumb--letter {{it.categoryKey}}">{{it.initial}}</view>
-              <text class="sp-pitem-name ellipsis">{{it.ingredientName || it.name}}</text>
-              <text class="sp-pitem-qty">{{it.amount || ''}}{{it.unit || ''}}</text>
+            <view class="sp-pitem" wx:for="{{item.items}}" wx:for-item="it" wx:for-index="pidx" wx:key="id">
+              <view class="mkt-photo tap-scale" data-name="{{it.ingredientName || it.name}}" catchtap="editIngredientPhoto" aria-role="button" aria-label="为{{it.ingredientName || it.name}}拍照、从相册选图或恢复文字显示">
+                <image wx:if="{{it.cover && !it.coverBroken}}" class="mkt-thumb" src="{{it.cover}}" mode="aspectFill" lazy-load data-err-key="pantryCategories[{{cidx}}].items[{{pidx}}].coverBroken" binderror="onIngredientPhotoError" />
+                <view wx:else class="mkt-thumb mkt-thumb--letter {{it.categoryKey}}"><text>{{it.ingredientName || it.name}}</text></view>
+              <text class="mkt-photo-hint">{{it.cover && !it.coverBroken ? '换图' : '拍照'}}</text>
+              </view>
+              <view class="sp-pitem-copy"><view class="sp-pitem-name">{{it.ingredientName || it.name}}</view><view class="sp-pitem-qty">{{it.amount || ''}} {{it.unit || ''}}</view></view>
               <view class="sp-pitem-del tap-scale" data-id="{{it.id || it.pantryItemId}}" catchtap="removePantryEntry">×</view>
             </view>
           </view>

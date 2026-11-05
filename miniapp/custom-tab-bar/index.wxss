@@ -6,7 +6,7 @@
   --tb-line: #e8e0d0;
   --tb-paper: rgba(251, 248, 243, 0.96);
   --tb-text: #6b5f50;
-  --tb-active: #e8472a;
+  --tb-active: #c8381f;
   --tb-radius: 999rpx;
   --tb-fs: 21rpx;
   position: fixed;

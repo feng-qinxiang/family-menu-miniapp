@@ -71,7 +71,6 @@
 .brandbar .bt { color: var(--anchor-contrast); display: flex; flex-direction: column; }
 .brandbar .bt .en {
   font-family: var(--serif);
-  font-style: italic;
   font-size: var(--fs-mini);
   letter-spacing: 3rpx;
   opacity: 0.85;
@@ -95,7 +94,6 @@
 .hero-body .tag {
   display: inline-block;
   font-family: var(--serif);
-  font-style: italic;
   font-size: var(--fs-cap);
   letter-spacing: 3rpx;
   font-weight: 700;
@@ -191,7 +189,6 @@
 .divider-deco .ln { flex: 1; height: 2rpx; background: var(--c-border); }
 .divider-deco .dt {
   font-family: var(--serif);
-  font-style: italic;
   font-size: var(--fs-cap);
   letter-spacing: 2rpx;
   color: var(--gold-deep);

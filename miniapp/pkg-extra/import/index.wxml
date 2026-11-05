@@ -1,61 +1,42 @@
 <view class="imp-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
-  <!-- 固定顶部返回（透明叠加在 hero 上；hero 已有大标题，这里不重复标题避免叠字）-->
-  <view class="imp-nav">
-    <nav-bar title="" status-bar-height="{{statusBarHeight}}"></nav-bar>
-  </view>
-
-  <!-- HERO -->
-  <view class="imp-hero">
-    <image class="imp-hero-img" src="/assets/dishes/orange-chicken.jpg" mode="aspectFill" />
-    <view class="imp-hero-mask"></view>
-    <text class="imp-hero-bignum">+</text>
-    <view class="imp-hero-body g-fade-up">
-      <text class="imp-tag">一键导入</text>
-      <view class="imp-hero-title title-stroke">导入<text class="pop">配方</text></view>
-      <view class="imp-hero-sub">从小红书、下厨房复制文案，自动拆成菜名、食材和步骤。</view>
-    </view>
+  <nav-bar title="导入菜谱" status-bar-height="{{statusBarHeight}}" />
+  <view class="cpt-head">
+    <view class="cpt-eyebrow">收藏的好菜，变成家常味</view>
+    <view class="cpt-title">把好菜带回家</view>
+    <view class="cpt-sub">粘贴菜谱文案，整理成食材和步骤，确认后存入菜谱库。</view>
   </view>
 
   <!-- SHEET -->
   <view class="imp-sheet">
     <!-- 导入方式 -->
     <view class="imp-methods g-fade-up g-d1">
-      <view class="imp-method imp-method-main tap-scale {{activeTab === 'xhs' ? 'on' : ''}}" data-tab="xhs" bindtap="switchTab">
-        <view class="deco-circle"></view>
-        <view class="m-icon m-icon-gold">
-          <view class="ic-link"></view>
-        </view>
-        <view class="m-name">链接解析</view>
-        <view class="m-desc">粘贴小红书 / 下厨房分享文案</view>
-        <text class="m-badge">主打</text>
+      <view class="imp-method tap-scale {{activeTab === 'xhs' ? 'on' : ''}}" data-tab="xhs" bindtap="switchTab" role="button" aria-label="导入分享文案" aria-pressed="{{activeTab === 'xhs'}}">
+        <view class="m-name">分享文案</view>
+        <view class="m-desc">小红书 / 下厨房</view>
       </view>
-      <view class="imp-mcol">
-        <view class="imp-method tap-scale {{activeTab === 'manual' ? 'on' : ''}}" data-tab="manual" bindtap="switchTab">
-          <view class="m-icon"><view class="ic-text"></view></view>
-          <view class="m-name">纯文本</view>
-          <view class="m-desc">手敲或粘贴文字</view>
-        </view>
+      <view class="imp-method tap-scale {{activeTab === 'manual' ? 'on' : ''}}" data-tab="manual" bindtap="switchTab" role="button" aria-label="导入纯文本" aria-pressed="{{activeTab === 'manual'}}">
+        <view class="m-name">纯文本</view>
+        <view class="m-desc">手敲或粘贴文字</view>
       </view>
     </view>
 
     <!-- 粘贴区 -->
     <view class="imp-pad">
       <view class="imp-shead-row g-fade-up g-d2">
-        <section-head eyebrow="导入" title="粘贴" popPart="菜谱" titleTail="文案" />
+        <view class="imp-input-title">粘贴菜谱内容</view>
         <view class="sample tap-scale" bindtap="sampleText">填入示例 +</view>
       </view>
 
       <view class="ta-wrap card g-fade-up g-d3">
         <textarea
           class="ta-input"
-          placeholder="{{activeTab === 'xhs' ? '粘贴小红书 / 下厨房分享文案或链接…' : '菜名、食材、步骤，每行一条…'}}"
+          placeholder="{{activeTab === 'xhs' ? '粘贴分享文案，带上菜名、食材和做法…' : '菜名、食材与用量、做法步骤…'}}"
           placeholder-class="ta-ph"
           value="{{rawText}}"
           bindinput="onInput"
           auto-height
           maxlength="-1"
         ></textarea>
-        <view wx:if="{{!rawText}}" class="ta-cursor"></view>
         <view class="ta-foot">
           <text class="ta-cnt">已粘贴 {{charCount}} 字</text>
           <view class="parsebtn tap-scale {{parsing ? 'disabled' : ''}}" bindtap="parseImport">{{parsing ? '解析中…' : '开始解析 →'}}</view>

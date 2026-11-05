@@ -17,7 +17,7 @@ const createPage = (options) => {
 };
 const event = (dataset) => ({ currentTarget: { dataset } });
 
-for (const design of ['a', 'b', 'c']) {
+for (const design of ['a', 'b', 'c', 'd']) {
   const p = createPage({ design });
   assert.equal(p.data.design, design);
   assert.deepEqual(p.data.tabs.map((t) => t.label), ['点菜', '做菜', '记录', '社区', '我的']);
@@ -76,4 +76,4 @@ for (const design of ['a', 'b', 'c']) {
 }
 
 delete global.Page; delete global.wx;
-console.log('journey-preview.test ok: three designs, four-stage flow, meal isolation, duplicate clicks, timer lifecycle');
+console.log('journey-preview.test ok: four designs, four-stage flow, meal isolation, duplicate clicks, timer lifecycle');

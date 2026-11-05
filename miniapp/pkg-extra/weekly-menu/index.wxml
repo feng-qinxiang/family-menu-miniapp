@@ -2,40 +2,19 @@
   <!-- 本页原来一个加载态都没有：首屏直接显示统计卡的「0 天 / 0 道 / 0 个」，
        等数据回来才跳成真实数字——和 R1 修掉的那批"把没加载完说成没有"同一类。 -->
   <state-loading visible="{{loading}}" text="正在排本周的桌…" />
-  <!-- 二级页顶部导航：浮于照片 hero 之上，右侧放重排按钮 -->
-  <view class="wm-nav-fixed">
-    <nav-bar title="" statusBarHeight="{{statusBarHeight}}">
-      <view class="wm-refresh tap-scale" catchtap="regenerate">
+  <nav-bar title="本周菜单" status-bar-height="{{statusBarHeight}}" />
+  <view class="cpt-head">
+    <view class="cpt-row">
+      <view class="cpt-titles">
+        <view class="cpt-eyebrow">给这一周，留点期待</view>
+        <view class="cpt-title">一周吃什么</view>
+      </view>
+      <view class="cpt-action wm-refresh tap-scale" bindtap="regenerate" role="button" aria-label="重新安排本周菜单">
         <view class="wm-refresh-ic"></view>
         <text>重新排</text>
       </view>
-    </nav-bar>
-  </view>
-
-  <!-- 照片 hero -->
-  <view class="wm-hero">
-    <image class="wm-hero-img" src="{{heroImage}}" mode="aspectFill" />
-    <view class="wm-hero-mask"></view>
-
-    <view class="wm-hero-body">
-      <text class="wm-tag">本周计划</text>
-      <view class="wm-title title-stroke">本周<text class="pop">吃啥</text></view>
-      <view class="wm-sub">{{heroSub}}</view>
-
-      <!-- 七日点选条 -->
-      <view class="wm-weekbar">
-        <view
-          class="wm-wb {{item.isToday ? 'today' : ''}} {{activeIndex === item.index ? 'on' : ''}} tap-scale"
-          wx:for="{{weekbar}}"
-          wx:key="index"
-          data-index="{{item.index}}"
-          bindtap="onWeekTap"
-        >
-          <text class="wm-wb-d">{{item.short}}</text>
-          <view class="wm-wb-dot {{item.filled ? '' : 'empty'}}"></view>
-        </view>
-      </view>
     </view>
+    <view wx:if="{{!loading && !loadError}}" class="cpt-sub">{{heroSub}}</view>
   </view>
 
   <!-- 内容 sheet -->
@@ -53,6 +32,17 @@
     />
 
     <block wx:if="{{!loadError && !loading}}">
+    <view class="wm-weekbar" wx:if="{{weekbar.length}}">
+      <view
+        class="wm-wb {{item.isToday ? 'today' : ''}} {{activeIndex === item.index ? 'on' : ''}} tap-scale"
+        wx:for="{{weekbar}}" wx:key="index" data-index="{{item.index}}" bindtap="onWeekTap"
+        role="button" aria-label="查看周{{item.short}}的菜单{{item.isToday ? '，今天' : ''}}" aria-pressed="{{activeIndex === item.index}}"
+      >
+        <text class="wm-wb-d">{{item.short}}</text>
+        <text class="wm-wb-date">{{item.dateNumber}}</text>
+        <view class="wm-wb-dot {{item.filled ? '' : 'empty'}}"></view>
+      </view>
+    </view>
     <!-- 统计卡 -->
     <view class="wm-summary g-fade-up">
       <view class="wm-scell">
@@ -69,12 +59,11 @@
       </view>
     </view>
 
-    <!-- section 标题 -->
-    <section-head eyebrow="逐日安排" title="七天" popPart="餐桌" />
+    <view class="wm-listhead"><text>逐日菜单</text><text class="wm-listhint">点日期直达</text></view>
 
     <!-- 7 个 daycard -->
     <view
-      class="wm-daycard {{item.isToday ? 'today' : ''}} g-fade-up g-d{{index % 5 + 1}}"
+      class="wm-daycard {{item.isToday ? 'today' : ''}} {{activeIndex === index ? 'chosen' : ''}} g-fade-up g-d{{index % 5 + 1}}"
       wx:for="{{weeklyMenu.days}}"
       wx:key="date"
       id="day-{{index}}"
@@ -95,21 +84,15 @@
         data-id="{{item.lunch.id}}"
         bindtap="onDishTap"
       >
-        <text class="wm-slot">午</text>
-        <image class="wm-thumb" src="{{item.lunch.image}}" mode="aspectFill" lazy-load />
+        <image class="wm-thumb {{item.lunch.imageBroken ? 'img-broken' : ''}}" src="{{item.lunch.image}}" mode="aspectFill" lazy-load data-err-key="weeklyMenu.days[{{index}}].lunch.imageBroken" binderror="onPhotoError" />
         <view class="wm-dmid">
+          <view class="wm-mealmeta"><text class="wm-slot">午餐</text><text>{{item.lunch.timeCost ? item.lunch.timeCost + ' 分钟' : '耗时未填'}}</text></view>
           <view class="wm-dname ellipsis">{{item.lunch.title}}</view>
-          <view class="wm-dmeta">{{item.lunch.cuisine}} · {{item.lunch.timeCost}} 分钟</view>
         </view>
         <view class="wm-arr"></view>
       </view>
-      <view wx:else class="wm-dish empty tap-scale" bindtap="onAddTap">
-        <text class="wm-slot">午</text>
-        <view class="wm-ic"><view class="wm-plus"></view></view>
-        <view class="wm-dmid">
-          <view class="wm-et">排个午餐</view>
-          <view class="wm-es">挑道菜补上空位</view>
-        </view>
+      <view wx:else class="wm-dish empty tap-scale" bindtap="onAddTap" role="button" aria-label="为午餐挑选菜谱">
+        <text class="wm-slot">午餐</text><text class="wm-et">还没安排</text><text class="wm-es">＋ 挑一道</text>
       </view>
 
       <!-- 晚餐 -->
@@ -119,21 +102,15 @@
         data-id="{{item.dinner.id}}"
         bindtap="onDishTap"
       >
-        <text class="wm-slot">晚</text>
-        <image class="wm-thumb" src="{{item.dinner.image}}" mode="aspectFill" lazy-load />
+        <image class="wm-thumb {{item.dinner.imageBroken ? 'img-broken' : ''}}" src="{{item.dinner.image}}" mode="aspectFill" lazy-load data-err-key="weeklyMenu.days[{{index}}].dinner.imageBroken" binderror="onPhotoError" />
         <view class="wm-dmid">
+          <view class="wm-mealmeta"><text class="wm-slot dinner">晚餐</text><text>{{item.dinner.timeCost ? item.dinner.timeCost + ' 分钟' : '耗时未填'}}</text></view>
           <view class="wm-dname ellipsis">{{item.dinner.title}}</view>
-          <view class="wm-dmeta">{{item.dinner.cuisine}} · {{item.dinner.timeCost}} 分钟</view>
         </view>
         <view class="wm-arr"></view>
       </view>
-      <view wx:else class="wm-dish empty tap-scale" bindtap="onAddTap">
-        <text class="wm-slot">晚</text>
-        <view class="wm-ic"><view class="wm-plus"></view></view>
-        <view class="wm-dmid">
-          <view class="wm-et">排个晚餐</view>
-          <view class="wm-es">挑道菜补上空位</view>
-        </view>
+      <view wx:else class="wm-dish empty tap-scale" bindtap="onAddTap" role="button" aria-label="为晚餐挑选菜谱">
+        <text class="wm-slot dinner">晚餐</text><text class="wm-et">还没安排</text><text class="wm-es">＋ 挑一道</text>
       </view>
     </view>
 

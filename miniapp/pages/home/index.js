@@ -150,14 +150,21 @@ Page({
     wishEditId: '',        // 非空 = 弹窗处于「编辑」态（复用同一个 .wish-modal）
     wishEditing: false,
     fontScale: 'normal',   // 大字模式档位，onShow 从本地存储读取
+    navSolid: false,
     theme: 'light',        // 深浅色档位：root-portal 弹窗不继承 page 变量，用它切 token 副本
     slotDoneCount: 0,      // 当前餐次已上桌的数量，updateSlotMenu 里算
-    cookLabel: '',         // 厨房入口按钮文案（开做 N 道/继续做/已齐）
-    emptyCookLabel: '去厨房 ›',  // 空态卡厨房按钮文案
+    cookLabel: '',         // 本餐主动作：选菜、开做或回看记录
+    homeMenuItems: [],
+    menuMoreCount: 0,
+    menuProgress: 0,
+    menuReady: false,
+    journeySteps: [],
+    journeyProgress: 0,
     role: '',              // 本人在家庭中的角色（owner/admin/member），loadAll 时由后端数据填充
     canConfirm: true,      // owner/admin 可确认菜单；无家庭数据时不阻断（§6）
 
     activeCuisine: 'all',
+    homeSearchText: '',
     heroRecipe: null,
     visibleRecipes: [],
     todayMenu: [],
@@ -242,6 +249,11 @@ Page({
     Promise.all([this.loadAll(), this.refreshWishes()]).catch(() => {}).then(done);
   },
 
+  onPageScroll(e) {
+    const navSolid = (e.scrollTop || 0) > 80;
+    if (navSolid !== this.data.navSolid) this.setData({ navSolid });
+  },
+
   // ============ 餐次 / 许愿池 ============
   async refreshWishes() {
     const date = this.data.todayKey || todayDateKey();
@@ -291,16 +303,81 @@ Page({
     const slotMenu = filterBySlot(this.data.todayMenu, this.data.currentSlot);
     // 上桌进度：菜单页标记的 done 状态在首页卡片同步展示
     const slotDoneCount = slotMenu.filter(it => it.status === 'done').length;
-    // 厨房入口文案：有待做→开做 N 道；有烧着的→继续做；全上桌→回看
+    // 空餐次仍在点菜阶段；全上桌后主动作转向记录。
     const pendingCount = slotMenu.length - slotDoneCount;
     const cookingCount = slotMenu.filter(it => it.status === 'cooking').length;
-    const cookLabel = pendingCount === 0
-      ? '已齐 · 回看 ›'
-      : cookingCount > 0 ? '继续做 ›' : `开做 ${pendingCount} 道 ›`;
-    // 空态卡（本餐没菜但全天有菜）：按钮文案随全天状态变化
-    const emptyCookLabel = this.data.todayMenu.some(it => (it.status || 'todo') === 'cooking')
-      ? '继续做 ›' : '去厨房 ›';
-    this.setData({ slotMenu, slotDoneCount, cookLabel, emptyCookLabel });
+    const menuReady = slotMenu.length > 0 && pendingCount === 0;
+    const menuProgress = slotMenu.length ? Math.round(slotDoneCount * 100 / slotMenu.length) : 0;
+    const cookLabel = !slotMenu.length ? '去选几道菜' : menuReady
+      ? '查看做菜记录'
+      : cookingCount > 0 ? '继续做菜' : `开始做 ${pendingCount} 道`;
+    // 首页只展开前三道，完整菜单沿用现有菜单页。
+    const homeMenuItems = slotMenu.slice(0, 3).map((item) => {
+      const recipe = item.recipe || {};
+      const status = item.status || 'todo';
+      return {
+        recipeId: item.recipeId,
+        title: recipe.title || '一道家常菜',
+        dishImg: item.dishImg || recipeDishImg(recipe),
+        addedByName: item.addedByName || '',
+        status,
+        statusClass: status === 'done' ? 'done' : status === 'cooking' ? 'cooking' : 'todo',
+        statusLabel: status === 'done' ? '已上桌' : status === 'cooking' ? '制作中' : '待做'
+      };
+    });
+    const journeyStage = !slotMenu.length ? 'order' : pendingCount === 0 ? 'record' : 'cook';
+    const journeySteps = [
+      {
+        key: 'order', label: '点菜', icon: '/assets/icons/lucide/utensils.svg',
+        caption: slotMenu.length ? `${slotMenu.length} 道已选` : '全家一起选',
+        active: journeyStage === 'order', complete: slotMenu.length > 0
+      },
+      {
+        key: 'cook', label: '做菜', icon: '/assets/icons/lucide/cooking-pot.svg',
+        caption: !slotMenu.length ? '下一步' : cookingCount ? `${cookingCount} 道进行中` : pendingCount ? `${pendingCount} 道待做` : '这一餐做好了',
+        active: journeyStage === 'cook', complete: pendingCount === 0 && slotMenu.length > 0
+      },
+      {
+        key: 'record', label: '记录', icon: '/assets/icons/lucide/book-open.svg',
+        caption: menuReady ? '回看做菜记录' : '留住家常味',
+        active: journeyStage === 'record', complete: false
+      },
+      {
+        key: 'community', label: '社区', icon: '/assets/icons/lucide/users.svg',
+        caption: '分享这一餐', active: false, complete: false
+      }
+    ].filter(step => step.key !== 'community' || features.COMMUNITY);
+    const journeyProgress = journeyStage === 'order' ? 0
+      : journeyStage === 'cook' ? (features.COMMUNITY ? 25 : 33.3333)
+        : (features.COMMUNITY ? 50 : 66.6667);
+    this.setData({
+      slotMenu,
+      slotDoneCount,
+      cookLabel,
+      menuProgress,
+      menuReady,
+      homeMenuItems,
+      menuMoreCount: Math.max(0, slotMenu.length - homeMenuItems.length),
+      journeySteps,
+      journeyProgress
+    });
+  },
+
+  onJourneyStep(e) {
+    const step = e.currentTarget.dataset.step;
+    if (step === 'order') this.goRecipes();
+    else if (step === 'cook') this.data.slotMenu.length ? this.goCook() : this.goRecipes();
+    else if (step === 'record') this.goCookLog();
+    else if (step === 'community') this.goCommunity();
+  },
+
+  goCookLog() {
+    wx.switchTab({ url: '/pages/cook-log/index' });
+  },
+
+  goCommunity() {
+    if (!features.COMMUNITY) return;
+    wx.switchTab({ url: '/pages/community/index' });
   },
 
   goWeek() {
@@ -451,6 +528,14 @@ Page({
     });
   },
 
+  async openWishActions(e) {
+    try {
+      const result = await wx.showActionSheet({ itemList: ['修改心愿', '移除心愿'] });
+      if (result.tapIndex === 0) this.editWish(e);
+      if (result.tapIndex === 1) this.removeWish(e);
+    } catch (err) { /* 取消菜单不改动心愿。 */ }
+  },
+
   // 许愿 → 挑菜 → 入菜单：wishId/slot 一路透传，详情页加菜成功后自动销愿
   pickDishForWish(wish) {
     const text = ((wish && wish.text) || '').trim();
@@ -462,7 +547,7 @@ Page({
     const slot = (wish && wish.slot) || this.data.currentSlot || 'dinner';
     wx.navigateTo({
       url: `/pkg-extra/recipes/search/index?keyword=${encodeURIComponent(text)}&wishId=${encodeURIComponent(wishId)}&slot=${slot}`,
-      fail: () => wx.switchTab({ url: '/pages/recipes/index' })
+      fail: () => wx.navigateTo({ url: '/pages/recipes/index' })
     });
   },
 
@@ -738,7 +823,7 @@ Page({
   },
 
   goMenu() {
-    wx.navigateTo({ url: '/pages/menu/index' });
+    wx.switchTab({ url: '/pages/menu/index' });
   },
 
   goShopping() {
@@ -751,13 +836,40 @@ Page({
   },
 
   goRecipes() {
-    wx.switchTab({ url: '/pages/recipes/index' });
+    wx.navigateTo({ url: '/pages/recipes/index' });
+  },
+
+  goRandomPick() {
+    wx.navigateTo({ url: `/pages/recipes/index?pick=random&meal=${encodeURIComponent(this.data.currentSlot)}` });
+  },
+
+  goPantryPick() {
+    wx.navigateTo({ url: `/pages/recipes/index?pick=pantry&meal=${encodeURIComponent(this.data.currentSlot)}` });
+  },
+
+  goPantry() {
+    wx.navigateTo({ url: '/pages/pantry/index' });
+  },
+
+  onHomeSearchInput(e) {
+    this.setData({ homeSearchText: e.detail.value || '' });
+  },
+
+  searchRecipes() {
+    const keyword = this.data.homeSearchText.trim();
+    wx.navigateTo({ url: `/pages/recipes/index?q=${encodeURIComponent(keyword)}&meal=${encodeURIComponent(this.data.currentSlot)}` });
   },
 
   onHeroImgError() {
     const hero = this.data.heroRecipe;
     if (!hero) return;
     this.setData({ 'heroRecipe.dishImg': fallbackDishImg(hero.id || hero.title) });
+  },
+
+  onMenuImgError(e) {
+    const idx = e.currentTarget.dataset.index;
+    const item = this.data.homeMenuItems[idx];
+    if (item) onImgError(e, this, `homeMenuItems[${idx}].dishImg`, item.title);
   },
 
   onGridImgError(e) {

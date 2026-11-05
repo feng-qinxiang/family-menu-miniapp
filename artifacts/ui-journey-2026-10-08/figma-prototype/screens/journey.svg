@@ -1,0 +1,234 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1260" height="650" viewBox="0 0 1260 650">
+<title>一餐的页面流程</title>
+<rect width="100%" height="100%" fill="#fbf8f3"/>
+<g id="layer-0" data-name="从今晚想吃什么，到一家人的好味道" data-x="32" data-y="24" data-w="1160" data-h="48.0">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="32" font-weight="600" text-anchor="start">
+<tspan x="32" y="56.0">从今晚想吃什么，到一家人的好味道</tspan>
+</text>
+</g>
+<g id="layer-1" data-name="点菜  →  做菜  →  记录  →  社区  →  再点一次" data-x="32" data-y="80" data-w="1160" data-h="27.0">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="18" font-weight="400" text-anchor="start">
+<tspan x="32" y="98.0">点菜  →  做菜  →  记录  →  社区  →  再点一次</tspan>
+</text>
+</g>
+<g id="layer-2" data-name="点菜" data-x="32" data-y="155" data-w="281" data-h="34.5">
+<text fill="#c8381f" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="23" font-weight="600" text-anchor="start">
+<tspan x="32" y="178.0">点菜</tspan>
+</text>
+</g>
+<g id="layer-3" data-name="流程 / home" data-x="32" data-y="206" data-w="280" data-h="65">
+<rect x="32" y="206" width="280" height="65" rx="8" fill="#ffffff"/>
+</g>
+<g id="layer-4" data-name="点菜首页" data-x="46" data-y="214" data-w="252" data-h="24.0">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="16" font-weight="500" text-anchor="start">
+<tspan x="46" y="230.0">点菜首页</tspan>
+</text>
+</g>
+<g id="layer-5" data-name="home" data-x="46" data-y="242" data-w="252" data-h="17.25">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="11.5" font-weight="400" text-anchor="start">
+<tspan x="46" y="253.5">home</tspan>
+</text>
+</g>
+<g id="layer-6" data-name="流程 / recipes" data-x="32" data-y="291" data-w="280" data-h="65">
+<rect x="32" y="291" width="280" height="65" rx="8" fill="#ffffff"/>
+</g>
+<g id="layer-7" data-name="菜谱库 · 紧凑菜单" data-x="46" data-y="299" data-w="252" data-h="24.0">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="16" font-weight="500" text-anchor="start">
+<tspan x="46" y="315.0">菜谱库 · 紧凑菜单</tspan>
+</text>
+</g>
+<g id="layer-8" data-name="recipes" data-x="46" data-y="327" data-w="252" data-h="17.25">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="11.5" font-weight="400" text-anchor="start">
+<tspan x="46" y="338.5">recipes</tspan>
+</text>
+</g>
+<g id="layer-9" data-name="流程 / picker" data-x="32" data-y="376" data-w="280" data-h="65">
+<rect x="32" y="376" width="280" height="65" rx="8" fill="#ffffff"/>
+</g>
+<g id="layer-10" data-name="冰箱挑菜 · 随机结果" data-x="46" data-y="384" data-w="252" data-h="24.0">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="16" font-weight="500" text-anchor="start">
+<tspan x="46" y="400.0">冰箱挑菜 · 随机结果</tspan>
+</text>
+</g>
+<g id="layer-11" data-name="picker" data-x="46" data-y="412" data-w="252" data-h="17.25">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="11.5" font-weight="400" text-anchor="start">
+<tspan x="46" y="423.5">picker</tspan>
+</text>
+</g>
+<g id="layer-12" data-name="流程 / detail" data-x="32" data-y="461" data-w="280" data-h="65">
+<rect x="32" y="461" width="280" height="65" rx="8" fill="#ffffff"/>
+</g>
+<g id="layer-13" data-name="菜谱详情 · 用料与冰箱" data-x="46" data-y="469" data-w="252" data-h="24.0">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="16" font-weight="500" text-anchor="start">
+<tspan x="46" y="485.0">菜谱详情 · 用料与冰箱</tspan>
+</text>
+</g>
+<g id="layer-14" data-name="detail" data-x="46" data-y="497" data-w="252" data-h="17.25">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="11.5" font-weight="400" text-anchor="start">
+<tspan x="46" y="508.5">detail</tspan>
+</text>
+</g>
+<g id="layer-15" data-name="备菜" data-x="336" data-y="155" data-w="281" data-h="34.5">
+<text fill="#c8381f" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="23" font-weight="600" text-anchor="start">
+<tspan x="336" y="178.0">备菜</tspan>
+</text>
+</g>
+<g id="layer-16" data-name="流程 / pantry" data-x="336" data-y="206" data-w="280" data-h="65">
+<rect x="336" y="206" width="280" height="65" rx="8" fill="#ffffff"/>
+</g>
+<g id="layer-17" data-name="冰箱库存 · 先用临期" data-x="350" data-y="214" data-w="252" data-h="24.0">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="16" font-weight="500" text-anchor="start">
+<tspan x="350" y="230.0">冰箱库存 · 先用临期</tspan>
+</text>
+</g>
+<g id="layer-18" data-name="pantry" data-x="350" data-y="242" data-w="252" data-h="17.25">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="11.5" font-weight="400" text-anchor="start">
+<tspan x="350" y="253.5">pantry</tspan>
+</text>
+</g>
+<g id="layer-19" data-name="流程 / photo" data-x="336" data-y="291" data-w="280" data-h="65">
+<rect x="336" y="291" width="280" height="65" rx="8" fill="#ffffff"/>
+</g>
+<g id="layer-20" data-name="食材图片 · 拍照选择" data-x="350" data-y="299" data-w="252" data-h="24.0">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="16" font-weight="500" text-anchor="start">
+<tspan x="350" y="315.0">食材图片 · 拍照选择</tspan>
+</text>
+</g>
+<g id="layer-21" data-name="photo" data-x="350" data-y="327" data-w="252" data-h="17.25">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="11.5" font-weight="400" text-anchor="start">
+<tspan x="350" y="338.5">photo</tspan>
+</text>
+</g>
+<g id="layer-22" data-name="流程 / notifications" data-x="336" data-y="376" data-w="280" data-h="65">
+<rect x="336" y="376" width="280" height="65" rx="8" fill="#ffffff"/>
+</g>
+<g id="layer-23" data-name="消息中心 · 临期通知" data-x="350" data-y="384" data-w="252" data-h="24.0">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="16" font-weight="500" text-anchor="start">
+<tspan x="350" y="400.0">消息中心 · 临期通知</tspan>
+</text>
+</g>
+<g id="layer-24" data-name="notifications" data-x="350" data-y="412" data-w="252" data-h="17.25">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="11.5" font-weight="400" text-anchor="start">
+<tspan x="350" y="423.5">notifications</tspan>
+</text>
+</g>
+<g id="layer-25" data-name="流程 / shopping" data-x="336" data-y="461" data-w="280" data-h="65">
+<rect x="336" y="461" width="280" height="65" rx="8" fill="#ffffff"/>
+</g>
+<g id="layer-26" data-name="买菜清单与连续加购" data-x="350" data-y="469" data-w="252" data-h="24.0">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="16" font-weight="500" text-anchor="start">
+<tspan x="350" y="485.0">买菜清单与连续加购</tspan>
+</text>
+</g>
+<g id="layer-27" data-name="shopping" data-x="350" data-y="497" data-w="252" data-h="17.25">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="11.5" font-weight="400" text-anchor="start">
+<tspan x="350" y="508.5">shopping</tspan>
+</text>
+</g>
+<g id="layer-28" data-name="做菜" data-x="640" data-y="155" data-w="281" data-h="34.5">
+<text fill="#c8381f" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="23" font-weight="600" text-anchor="start">
+<tspan x="640" y="178.0">做菜</tspan>
+</text>
+</g>
+<g id="layer-29" data-name="流程 / cook" data-x="640" data-y="206" data-w="280" data-h="65">
+<rect x="640" y="206" width="280" height="65" rx="8" fill="#ffffff"/>
+</g>
+<g id="layer-30" data-name="今日做菜" data-x="654" data-y="214" data-w="252" data-h="24.0">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="16" font-weight="500" text-anchor="start">
+<tspan x="654" y="230.0">今日做菜</tspan>
+</text>
+</g>
+<g id="layer-31" data-name="cook" data-x="654" data-y="242" data-w="252" data-h="17.25">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="11.5" font-weight="400" text-anchor="start">
+<tspan x="654" y="253.5">cook</tspan>
+</text>
+</g>
+<g id="layer-32" data-name="流程 / step" data-x="640" data-y="291" data-w="280" data-h="65">
+<rect x="640" y="291" width="280" height="65" rx="8" fill="#ffffff"/>
+</g>
+<g id="layer-33" data-name="分步做菜 · 底部计时" data-x="654" data-y="299" data-w="252" data-h="24.0">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="16" font-weight="500" text-anchor="start">
+<tspan x="654" y="315.0">分步做菜 · 底部计时</tspan>
+</text>
+</g>
+<g id="layer-34" data-name="step" data-x="654" data-y="327" data-w="252" data-h="17.25">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="11.5" font-weight="400" text-anchor="start">
+<tspan x="654" y="338.5">step</tspan>
+</text>
+</g>
+<g id="layer-35" data-name="流程 / finish" data-x="640" data-y="376" data-w="280" data-h="65">
+<rect x="640" y="376" width="280" height="65" rx="8" fill="#ffffff"/>
+</g>
+<g id="layer-36" data-name="分步做菜 · 完成记录" data-x="654" data-y="384" data-w="252" data-h="24.0">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="16" font-weight="500" text-anchor="start">
+<tspan x="654" y="400.0">分步做菜 · 完成记录</tspan>
+</text>
+</g>
+<g id="layer-37" data-name="finish" data-x="654" data-y="412" data-w="252" data-h="17.25">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="11.5" font-weight="400" text-anchor="start">
+<tspan x="654" y="423.5">finish</tspan>
+</text>
+</g>
+<g id="layer-38" data-name="记录与分享" data-x="944" data-y="155" data-w="281" data-h="34.5">
+<text fill="#c8381f" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="23" font-weight="600" text-anchor="start">
+<tspan x="944" y="178.0">记录与分享</tspan>
+</text>
+</g>
+<g id="layer-39" data-name="流程 / record" data-x="944" data-y="206" data-w="280" data-h="65">
+<rect x="944" y="206" width="280" height="65" rx="8" fill="#ffffff"/>
+</g>
+<g id="layer-40" data-name="做菜记录" data-x="958" data-y="214" data-w="252" data-h="24.0">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="16" font-weight="500" text-anchor="start">
+<tspan x="958" y="230.0">做菜记录</tspan>
+</text>
+</g>
+<g id="layer-41" data-name="record" data-x="958" data-y="242" data-w="252" data-h="17.25">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="11.5" font-weight="400" text-anchor="start">
+<tspan x="958" y="253.5">record</tspan>
+</text>
+</g>
+<g id="layer-42" data-name="流程 / publish" data-x="944" data-y="291" data-w="280" data-h="65">
+<rect x="944" y="291" width="280" height="65" rx="8" fill="#ffffff"/>
+</g>
+<g id="layer-43" data-name="晒一餐 · 发布预览" data-x="958" data-y="299" data-w="252" data-h="24.0">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="16" font-weight="500" text-anchor="start">
+<tspan x="958" y="315.0">晒一餐 · 发布预览</tspan>
+</text>
+</g>
+<g id="layer-44" data-name="publish" data-x="958" data-y="327" data-w="252" data-h="17.25">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="11.5" font-weight="400" text-anchor="start">
+<tspan x="958" y="338.5">publish</tspan>
+</text>
+</g>
+<g id="layer-45" data-name="流程 / community" data-x="944" data-y="376" data-w="280" data-h="65">
+<rect x="944" y="376" width="280" height="65" rx="8" fill="#ffffff"/>
+</g>
+<g id="layer-46" data-name="社区动态" data-x="958" data-y="384" data-w="252" data-h="24.0">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="16" font-weight="500" text-anchor="start">
+<tspan x="958" y="400.0">社区动态</tspan>
+</text>
+</g>
+<g id="layer-47" data-name="community" data-x="958" data-y="412" data-w="252" data-h="17.25">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="11.5" font-weight="400" text-anchor="start">
+<tspan x="958" y="423.5">community</tspan>
+</text>
+</g>
+<g id="layer-48" data-name="流程 / post" data-x="944" data-y="461" data-w="280" data-h="65">
+<rect x="944" y="461" width="280" height="65" rx="8" fill="#ffffff"/>
+</g>
+<g id="layer-49" data-name="帖子详情与评论" data-x="958" data-y="469" data-w="252" data-h="24.0">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="16" font-weight="500" text-anchor="start">
+<tspan x="958" y="485.0">帖子详情与评论</tspan>
+</text>
+</g>
+<g id="layer-50" data-name="post" data-x="958" data-y="497" data-w="252" data-h="17.25">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="11.5" font-weight="400" text-anchor="start">
+<tspan x="958" y="508.5">post</tspan>
+</text>
+</g>
+<g id="layer-51" data-name="社区作品 → 关联菜谱 → 点回今晚菜单     我的 → 冰箱 / 买菜 / 记录 / 消息" data-x="32" data-y="579" data-w="1160" data-h="22.5">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="400" text-anchor="start">
+<tspan x="32" y="594.0">社区作品 → 关联菜谱 → 点回今晚菜单     我的 → 冰箱 / 买菜 / 记录 / 消息</tspan>
+</text>
+</g>
+</svg>

@@ -3,26 +3,29 @@ const {
   deletePantryItem,
   getPantryItems,
   getPantryMatch,
-  getWeeklyMenu,
   updatePantryItem
 } = require('../../utils/api');
+const { getIngredientPhotos } = require('../../utils/api');
+const { editIngredientPhoto } = require('../../utils/ingredient-photo');
 const { getCapsule } = require('../../utils/capsule');
-const { withTabSelect } = require('../../behaviors/tab-select');
 const { runGuarded } = require('../../utils/interaction');
-const { recipeDishImg } = require('../../utils/image');
-const { parseLocalDate } = require('../../utils/dish-logic');
-const { INGREDIENT_CATEGORIES, categoryOf: sharedCategoryOf } = require('../../utils/ingredients');
-
-// 分类规则统一在 utils/ingredients（冰箱与买菜清单必须同一套，否则两页对不上账）
-const CATEGORY_RULES = INGREDIENT_CATEGORIES;
+const { categoryOf: sharedCategoryOf } = require('../../utils/ingredients');
+const { daysLeft, expiryText, pantrySummary, normalizeMatches } = require('../../utils/pantry-match');
+const { ingredientImage } = require('../../utils/image');
+const subscribe = require('../../utils/subscribe');
 
 Page({
   data: {
     capsuleTop: 'calc(env(safe-area-inset-top) + 90rpx)',
     capsuleRight: '96px',
     categories: [],
+    pantryItems: [],
+    ingredientPhotos: {},
+    ingredientPhotosFailed: false,
+    pantryFilter: 'all',
     matchResults: [],
-    pantrySummary: { count: 0, expiringCount: 0, categoryCount: 0 },
+    matchReadyCount: 0,
+    pantrySummary: { count: 0, expiringCount: 0, expiredCount: 0, undatedCount: 0, priorityText: '' },
     newItem: { ingredientName: '', amount: '', unit: '', expiresAt: '' },
     showAddForm: false,
     showMatch: false,
@@ -30,6 +33,11 @@ Page({
     loading: true,
     loadError: false,
     adding: false,
+    reminderSettingsLoaded: false,
+    reminderTemplateReady: false,
+    reminderSubscribed: false,
+    reminderBusy: false,
+    reminderExpanded: false,
     // 编辑弹层：editingId 为 null 时弹层不显示
     editingId: null,
     editDraft: { ingredientName: '', amount: '', unit: '', expiresAt: '' },
@@ -44,8 +52,47 @@ Page({
   },
 
   onShow() {
-    withTabSelect(this);
+    this.loadReminderSetting();
     Promise.resolve(this.loadPantry(this._hasLoaded === true)).then(() => { this._hasLoaded = true; });
+  },
+
+  loadReminderSetting() {
+    return subscribe.preload(true).then(setting => this.setData({
+      reminderSettingsLoaded: true,
+      reminderTemplateReady: !!(setting && setting.available && setting.templates && setting.templates.pantry)
+    }));
+  },
+
+  goNotifications() {
+    wx.navigateTo({ url: '/pkg-extra/me/notifications/index' });
+  },
+
+  toggleReminder() {
+    this.setData({ reminderExpanded: !this.data.reminderExpanded });
+  },
+
+  async subscribeReminder() {
+    if (this.data.reminderBusy || !this.data.reminderSettingsLoaded) return;
+    if (!this.data.reminderTemplateReady) {
+      wx.showModal({ title: '临期提醒', content: '有到期日的食材会提前 3 天进入临期提醒，每天汇总一次。微信提醒暂未开放，可到消息中心查看临期消息。', showCancel: false, confirmText: '知道了' });
+      return;
+    }
+    this.setData({ reminderBusy: true });
+    try {
+      // 在手势中同步发起授权；不能先等待请求。
+      const accepted = await subscribe.apply('pantry', true);
+      if (!accepted) {
+        wx.showToast({ title: '未订阅，仍可查看站内消息', icon: 'none' });
+        return;
+      }
+      await subscribe.setEnabled(true);
+      this.setData({ reminderSubscribed: true });
+      wx.showToast({ title: '已订阅一次临期提醒', icon: 'none' });
+    } catch (err) {
+      wx.showToast({ title: '设置没保存，请再试一次', icon: 'none' });
+    } finally {
+      this.setData({ reminderBusy: false });
+    }
   },
 
   onPullDownRefresh() {
@@ -62,13 +109,11 @@ Page({
     if (!silent) this.setData({ loading: true });
     this.setData({ loadError: false });
     let pantryItems = [];
-    let weeklyMenu = null;
     let failed = false;
     try {
-      // 禁用数组解构：该语法编译后依赖 @babel/runtime 辅助模块，未打包进小程序会整页白屏
-      const loaded = await Promise.all([getPantryItems(), getWeeklyMenu()]);
+      const loaded = await Promise.all([getPantryItems(), getIngredientPhotos().catch(() => null)]);
       pantryItems = loaded[0];
-      weeklyMenu = loaded[1];
+      this.setData({ ingredientPhotos: loaded[1] || {}, ingredientPhotosFailed: loaded[1] === null });
     } catch (e) {
       pantryItems = [];
       failed = true;
@@ -79,23 +124,22 @@ Page({
         loading: false,
         loadError: true,
         categories: [],
-        pantrySummary: { count: 0, expiringCount: 0, categoryCount: 0 }
+        pantryItems: [],
+        matchResults: [],
+        showMatch: false,
+        pantrySummary: pantrySummary([])
       });
       return;
     }
-    const enriched = this.enrichPantryItems(pantryItems || [], weeklyMenu);
-    const categories = this.groupByCategory(enriched);
+    const enriched = this.enrichPantryItems(pantryItems || []);
     this.setData({
-      categories,
-      pantrySummary: {
-        count: enriched.length,
-        expiringCount: enriched.filter((it) => it.expiringSoon).length,
-        categoryCount: categories.length
-      },
+      pantryItems: enriched,
+      pantrySummary: pantrySummary(pantryItems),
       loaded: true,
       loading: false,
       loadError: false
     });
+    this.applyPantryFilter();
     // 库存变化后自动刷新匹配
     this.matchRecipes(true);
   },
@@ -107,6 +151,46 @@ Page({
 
   toggleAddForm() {
     this.setData({ showAddForm: !this.data.showAddForm });
+  },
+
+  selectPantryFilter(e) {
+    const filter = e.currentTarget.dataset.filter;
+    if (!['all', 'expiring', 'expired'].includes(filter)) return;
+    this.setData({ pantryFilter: filter });
+    this.applyPantryFilter();
+  },
+
+  applyPantryFilter() {
+    const filter = this.data.pantryFilter;
+    const items = this.data.pantryItems.filter(item => filter === 'all' || (filter === 'expiring' ? item.expiringSoon : item.expired));
+    this.setData({ categories: this.groupByCategory(items) });
+  },
+
+  goRandomPick() {
+    wx.navigateTo({ url: '/pages/recipes/index?pick=pantry' });
+  },
+
+  clearExpiry() {
+    this.setData({ 'editDraft.expiresAt': '' });
+  },
+
+  async editIngredientPhoto(e) {
+    const name = e.currentTarget.dataset.name;
+    const photos = await runGuarded(this, 'ingredientPhoto', () => editIngredientPhoto(name, this.data.ingredientPhotos[name]), {
+      success: result => result ? '食材图片已保存' : '', fail: err => err.message || '保存失败，原图片已保留'
+    });
+    if (photos === undefined) return;
+    this.setData({ ingredientPhotos: photos, ingredientPhotosFailed: false });
+    this.setData({ pantryItems: this.enrichPantryItems(this.data.pantryItems) });
+    this.applyPantryFilter();
+  },
+
+  async openItemActions(e) {
+    let result;
+    try { result = await wx.showActionSheet({ itemList: ['编辑数量与到期日', '删除食材'] }); }
+    catch (err) { return; }
+    if (result.tapIndex === 0) this.openEditSheet(e);
+    else if (result.tapIndex === 1) await this.removeItem(e);
   },
 
   async addItem() {
@@ -220,6 +304,9 @@ Page({
   },
 
   async matchRecipes(silent) {
+    const seq = (this._matchSeq || 0) + 1;
+    this._matchSeq = seq;
+    this.setData({ matchLoading: true });
     let matchResults = [];
     let failed = false;
     try {
@@ -229,8 +316,12 @@ Page({
       matchResults = [];
       failed = true;
     }
+    if (seq !== this._matchSeq) return;
+    const matches = this.normalizeMatches(matchResults);
     this.setData({
-      matchResults: this.normalizeMatches(matchResults),
+      matchResults: matches,
+      matchReadyCount: matches.filter(item => item.full).length,
+      matchLoading: false,
       showMatch: true,
       matchFailed: failed
     });
@@ -243,6 +334,12 @@ Page({
   },
 
   // —— 数据加工 ——
+  onPhotoError(e) {
+    const id = e.currentTarget.dataset.id;
+    this.setData({ pantryItems: this.data.pantryItems.map(item => item.id === id ? { ...item, coverBroken: true } : item) });
+    this.applyPantryFilter();
+  },
+
   enrichPantryItems(pantryItems) {
     return pantryItems.map((item) => {
       const days = this.daysLeft(item.expiresAt);
@@ -251,10 +348,14 @@ Page({
         ...item,
         id: item.id || item.itemId || item.pantryItemId || item.ingredientName,
         amountText: this.buildAmountText(item),
+        cover: ingredientImage(item, this.data.ingredientPhotos),
+        coverBroken: false,
         expiresText: this.buildExpiresText(days),
-        expiringSoon
+        expiringSoon,
+        expired: days !== null && days < 0,
+        daysLeft: days
       };
-    });
+    }).sort((a, b) => (a.daysLeft === null ? Infinity : a.daysLeft) - (b.daysLeft === null ? Infinity : b.daysLeft));
   },
 
   groupByCategory(items) {
@@ -267,7 +368,7 @@ Page({
       buckets[cat.key].items.push(item);
     });
     // 固定顺序：蔬菜 → 肉蛋 → 调料 → 其他
-    const order = ['veg', 'meat', 'season', 'other'];
+    const order = ['veg', 'meat', 'seasoning', 'other'];
     return order
       .map((k) => buckets[k])
       .filter(Boolean)
@@ -291,52 +392,12 @@ Page({
   },
 
   normalizeMatches(matches) {
-    return (matches || []).map((item) => {
-      const recipe = item.recipe || {};
-      // 后端已返回权威 matchedCount/totalCount，直接采用；
-      // 仅旧响应缺字段时才退回 recipe.ingredients 估算
-      const rate = item.matchRate || 0;
-      let total = Number(item.totalCount) || 0;
-      let have = Number(item.matchedCount) || 0;
-      if (!total) {
-        const ingredients = Array.isArray(recipe.ingredients) ? recipe.ingredients : [];
-        total = ingredients.length || 0;
-        have = total ? Math.round(rate * total) : 0;
-      }
-      const full = total > 0 && have >= total;
-      const missingList = item.missingIngredients && item.missingIngredients.length
-        ? item.missingIngredients
-        : [];
-      return {
-        id: item.id || recipe.id || item.recipeId,
-        title: recipe.title || '未命名',
-        metaText: `${recipe.cuisine || '家常'} · ${recipe.timeCost || '--'} 分钟`,
-        coverImage: recipeDishImg(recipe),
-        haveText: total ? `${have}/${total}` : `${Math.round(rate * 100)}%`,
-        percentWidth: Math.max(6, Math.round(rate * 100)),
-        full,
-        missingText: full
-          ? '食材都有，直接开火'
-          : (missingList.length ? `还差 ${missingList.join('、')}` : '还差一点配料')
-      };
-    });
+    return normalizeMatches(matches);
   },
 
 
   daysLeft(expiresAt) {
-    if (!expiresAt) return null;
-    // 用本地解析：new Date('2026-09-10') 按 UTC 算，东八区会少一天
-    const target = parseLocalDate(expiresAt);
-    if (!target) return null;
-    // 必须按「日历日」算：拿到期日的 0 点去减当前时刻，会把一天切成两种结果——
-    // 同一天上午算出 0、下午算出 -1。实测（2026-09-19 16:35）：
-    //   到期=今天 → -1 → 显示「已过期，尽快处理」（今天其实还能吃）
-    //   到期=明天 → 0 → 显示「还剩 0 天」；此后每个数都少一天
-    // 而且「临期待用」的判据是 days>=0，所以到期当天的食材根本不计入临期。
-    // 两边都归到当天 0 点再相减，才是用户理解的那个数。
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return Math.round((target.getTime() - today.getTime()) / 86400000);
+    return daysLeft(expiresAt);
   },
 
   buildAmountText(item) {
@@ -345,11 +406,6 @@ Page({
   },
 
   buildExpiresText(days) {
-    if (days === null) return '未填到期日';
-    if (days < 0) return '已过期，尽快处理';
-    // 到期当天说「还剩 0 天」读起来像已经没了；这一天恰恰是最该提醒的一天
-    if (days === 0) return '今天就到期，先用';
-    if (days <= 3) return `还剩 ${days} 天，先用`;
-    return `保质期 还剩 ${days} 天`;
+    return expiryText(days);
   }
 });

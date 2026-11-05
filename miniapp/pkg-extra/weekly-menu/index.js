@@ -1,6 +1,6 @@
 const { generateWeeklyMenu, getWeeklyMenu } = require('../../utils/api');
-const { recipeDishImg } = require('../../utils/image');
-const { todayDateKey } = require('../../utils/dish-logic');
+const { recipeDishImg, onPhotoError: markPhotoBroken } = require('../../utils/image');
+const { todayDateKey, parseLocalDate } = require('../../utils/dish-logic');
 
 const WK_SHORT = ['日', '一', '二', '三', '四', '五', '六'];
 const WK_FULL = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
@@ -10,9 +10,7 @@ function dishImageFor(recipe) {
 }
 
 function parseDate(str) {
-  if (!str) return null;
-  const d = new Date(String(str).replace(' ', 'T'));
-  return isNaN(d.getTime()) ? null : d;
+  return parseLocalDate(str);
 }
 
 function mdLabel(d) {
@@ -148,6 +146,7 @@ Page({
       return {
         index,
         short: WK_SHORT[wkIndex] || String(index + 1),
+        dateNumber: d ? d.getDate() : '',
         filled: day.recipeCount > 0,
         isToday: day.isToday
       };
@@ -184,8 +183,10 @@ Page({
     wx.navigateTo({ url: `/pkg-extra/recipe-detail/index?id=${encodeURIComponent(id)}` });
   },
 
+  onPhotoError(e) { markPhotoBroken(e, this); },
+
   onAddTap() {
-    wx.switchTab({ url: '/pages/recipes/index' });
+    wx.navigateTo({ url: '/pages/recipes/index' });
   },
   onShareAppMessage() {
     return {

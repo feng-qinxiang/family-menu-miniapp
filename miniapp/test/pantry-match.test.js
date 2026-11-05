@@ -38,6 +38,9 @@ const repeatedNeeds = [{ name: '鸡蛋', unit: '个', amount: '2' }, { name: '�
 assert.deepStrictEqual(pantryMatches(splitStock, repeatedNeeds), [false, false], '重复配料不能复用同一份库存');
 assert.deepStrictEqual(pantryMatches(splitStock, repeatedNeeds, 0.5), [true, true]);
 
+assert.strictEqual(pantryHas([{ name: '鸡蛋', unit: '个', amount: '8', expiresAt: '2000-01-01' }], '鸡蛋', '个', '2'), false, '过期食材不能算够用');
+assert.strictEqual(pantryHas([{ name: '鸡蛋', unit: '个', amount: '8', expiresAt: '' }], '鸡蛋', '个', '2'), true, '未填写到期日不能当成已过期');
+
 // 真实详情页在更改份数时，数量、够用标记和缺料计数一起刷新。
 let pageDefinition;
 global.Page = (page) => { pageDefinition = page; };

@@ -6,7 +6,6 @@
 
 .lp-help {
   font-family: var(--serif);
-  font-style: italic;
   font-size: var(--fs-sub);
   font-weight: 700;
   color: var(--gold-deep);
@@ -21,7 +20,6 @@
 .lp-eyebrow {
   display: block;
   font-family: var(--serif);
-  font-style: italic;
   font-size: var(--fs-sub);
   letter-spacing: 3rpx;
   font-weight: 700;
@@ -67,7 +65,7 @@
 }
 .lp-inp.is-focus {
   border-color: var(--pop);
-  box-shadow: 0 4rpx 18rpx rgba(232, 71, 42, 0.15);
+  box-shadow: 0 4rpx 18rpx rgba(200, 56, 31, 0.15);
 }
 .lp-ic { flex: none; width: 36rpx; height: 36rpx; }
 
@@ -224,7 +222,6 @@
 .lp-ln { flex: 1; height: 2rpx; background: var(--c-border); }
 .lp-or {
   font-family: var(--serif);
-  font-style: italic;
   font-size: var(--fs-cap);
   letter-spacing: 2rpx;
   font-weight: 700;

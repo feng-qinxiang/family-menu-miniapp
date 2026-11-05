@@ -1,0 +1,50 @@
+{
+  "checkedAt": "2026-10-09T06:08:23.566Z",
+  "passed": true,
+  "preview": "http://127.0.0.1:8847/#followup-update",
+  "desktop": {
+    "catalog": 39,
+    "height": 879,
+    "overflow": false,
+    "screenshots": [
+      {
+        "alt": "菜谱库 · 左侧分类，右侧完整菜卡",
+        "loaded": true
+      },
+      {
+        "alt": "买菜清单 · 名称与数量同排",
+        "loaded": true
+      },
+      {
+        "alt": "冰箱库存 · 提醒与挑菜合组",
+        "loaded": true
+      },
+      {
+        "alt": "帖子详情 · 大图阅读，底部互动",
+        "loaded": true
+      },
+      {
+        "alt": "消息中心 · 正文用满卡片",
+        "loaded": true
+      },
+      {
+        "alt": "菜谱列表 · 图文与操作细节",
+        "loaded": true
+      }
+    ],
+    "width": 1344
+  },
+  "mobile": [
+    {
+      "width": 375,
+      "height": 812,
+      "overflow": false
+    },
+    {
+      "width": 320,
+      "height": 740,
+      "overflow": false
+    }
+  ],
+  "viewportReset": true
+}

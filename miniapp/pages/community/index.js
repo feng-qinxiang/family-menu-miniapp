@@ -20,7 +20,7 @@ const reportReasons = ['内容不实', '步骤不全', '疑似搬运', '其他']
 const FEED_PAGE_SIZE = 20;
 
 // 头像撞色轮转（番茄红 / 深墨 / 松绿）
-const AVATAR_COLORS = ['#e8472a', '#3a2e23', '#2f4a3a', '#b08949'];
+const AVATAR_COLORS = ['#c8381f', '#3a2e23', '#2f4a3a', '#b08949'];
 // 热门话题：后端暂无话题接口，点击直接带关键词跳菜谱搜索（复用搜索页 keyword 参数）
 const HOT_TOPICS = [
   { tag: '今天吃什么' },
@@ -34,7 +34,7 @@ Page({
   onPhotoError(e) { markPhotoBroken(e, this); },
   data: {
     // 紧凑页头避让胶囊；兜底值与 utils/capsule.js 一致，量到真实值前不偏位
-    capsuleTop: 'calc(env(safe-area-inset-top) + 90rpx)',
+    capsuleTop: 'calc(env(safe-area-inset-top) + 178rpx)',
     capsuleRight: '96px',
     fontScale: 'normal',
     // 信息流回顶键（滚深出现）
@@ -66,7 +66,7 @@ Page({
     // 入口（tabBar/首页/我的）已隐藏，但审核员可用页面路径直达，所以这里守一道。
     if (!features.COMMUNITY) { features.leaveToHome(); return; }
     const capsule = getCapsule();
-    this.setData({ capsuleTop: capsule.top, capsuleRight: capsule.right });
+    this.setData({ capsuleTop: capsule.bottom, capsuleRight: capsule.right });
     this.loadTopics();
   },
 
@@ -191,12 +191,12 @@ Page({
       const recipeImg = recipe && recipe.coverImage ? recipe.coverImage : '';
       const images = Array.isArray(post.images) ? post.images.filter(Boolean) : [];
       // 以前这里按 index 轮播本地菜品图：用户会把它当成邻居家的实拍，属于伪造内容。
-      // 无图就交给 wxml 的占位块，只保留「本帖关联菜谱」自己的封面。
+      // 实拍只展示帖图；关联菜谱封面只在菜谱卡里展示，避免冒充作者作品。
       return {
         ...post,
         authorInitial: post.author ? post.author.slice(0, 1) : '匿',
         avatarColor: AVATAR_COLORS[index % AVATAR_COLORS.length],
-        photo: images[0] || recipeImg || '',
+        photo: images[0] || '',
         imageCount: images.length,
         recipeThumb: recipeImg,
         tags: Array.isArray(post.tags) ? post.tags : [],

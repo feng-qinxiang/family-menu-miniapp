@@ -8,175 +8,25 @@
   background: var(--paper);
 }
 
-/* 固定透明返回栏（叠在 hero 上）*/
-.imp-nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 60;
-}
-.imp-nav .navbar-title { color: var(--anchor-contrast); text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.35); }
-.imp-nav .navbar-back { background: rgba(255, 255, 255, 0.18); }
-.imp-nav .navbar-back-icon { border-color: var(--anchor-contrast); }
-
-/* ============ HERO ============ */
-/* 与全站照片头统一高度，勿再单独写 560rpx */
-.imp-hero {
-  position: relative;
-  height: var(--photo-hero-h);
-  overflow: hidden;
-}
-.imp-hero-img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-.imp-hero-mask {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(20, 14, 8, 0.5) 0%, rgba(20, 14, 8, 0) 28%, rgba(20, 14, 8, 0.2) 52%, rgba(20, 14, 8, 0.9) 100%);
-}
-.imp-hero-bignum {
-  position: absolute;
-  top: 96rpx;
-  right: 30rpx;
-  font-family: var(--serif);
-  font-size: calc(420rpx * var(--fs-mul, 1));
-  font-weight: 700;
-  line-height: 1;
-  color: rgba(255, 255, 255, 0.07);
-  pointer-events: none;
-}
-.imp-hero-body {
-  position: absolute;
-  left: 46rpx;
-  right: 46rpx;
-  bottom: 100rpx;
-  z-index: 5;
-  color: var(--anchor-contrast);
-}
-.imp-tag {
-  display: inline-block;
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: var(--fs-cap);
-  letter-spacing: 2rpx;
-  font-weight: 700;
-  color: var(--anchor-contrast);
-  background: var(--pop);
-  padding: 8rpx 22rpx;
-  border-radius: var(--r-xs);
-}
-.imp-hero-title {
-  font-size: var(--fs-hero-lg);
-  line-height: 0.9;
-  letter-spacing: -5rpx;
-  margin: 26rpx 0 18rpx;
-  -webkit-text-stroke: 3rpx var(--c-surface);
-}
-.imp-hero-sub {
-  font-size: var(--fs-cap);
-  color: rgba(255, 255, 255, 0.85);
-  line-height: 1.5;
-  max-width: 560rpx;
-  text-shadow: 0 2rpx 8rpx rgba(20, 14, 8, 0.55);
-}
-
-/* ============ SHEET ============ */
-.imp-sheet {
-  position: relative;
-  margin-top: -50rpx;
-  background: var(--paper);
-  border-radius: var(--r-sheet) var(--r-sheet) 0 0;
-  padding: 50rpx 0 calc(env(safe-area-inset-bottom) + 40rpx);
-  z-index: 10;
-}
-.imp-pad { padding: 0 46rpx; }
-
-/* ============ 导入方式卡 ============ */
-.imp-methods { display: flex; gap: 18rpx; padding: 0 46rpx; }
-.imp-mcol { display: flex; flex-direction: column; gap: 18rpx; flex: 1; }
-/* 拍照识别下线后只剩一张卡：撑满左卡高度，避免右侧留白 */
-.imp-mcol .imp-method { flex: 1; }
+.imp-sheet { padding: 0 0 calc(env(safe-area-inset-bottom) + 40rpx); }
+.imp-pad { padding: 0 var(--page-gutter); }
+.imp-methods { display: flex; gap: 8rpx; padding: 4rpx; margin: 0 var(--page-gutter); background: var(--paper-2); border-radius: var(--r-md); }
 .imp-method {
-  box-sizing: border-box;
-  background: var(--c-surface);
-  border-radius: 28rpx;
-  padding: 26rpx 24rpx;
-  border: var(--bd-card);
-  box-shadow: var(--sh-soft);
-}
-.imp-method-main {
-  position: relative;
-  overflow: hidden;
   flex: 1;
-  background: var(--anchor);
-  border-color: var(--ink-deep);
-  color: var(--anchor-contrast);
+  min-width: 0;
+  box-sizing: border-box;
+  min-height: 88rpx;
+  padding: 16rpx 20rpx;
+  border: 2rpx solid transparent;
+  border-radius: var(--r-sm);
 }
-.imp-method.on {
-  border-color: var(--pop);
-}
-.imp-method-main.on { border-color: var(--pop); }
-.imp-method-main .deco-circle {
-  position: absolute;
-  right: -40rpx;
-  top: -40rpx;
-  width: 170rpx;
-  height: 170rpx;
-  border-radius: 50%;
-  background: rgba(232, 71, 42, 0.18);
-}
-.m-icon {
-  position: relative;
-  z-index: 2;
-  width: 72rpx;
-  height: 72rpx;
-  border-radius: 22rpx;
-  background: var(--pop-soft);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.m-icon-gold { background: rgba(232, 71, 42, 0.14); }
-.m-name {
-  position: relative;
-  z-index: 2;
-  font-size: calc(29rpx * var(--fs-mul, 1));
-  font-weight: 800;
-  color: var(--ink);
-  margin-top: 20rpx;
-  letter-spacing: -0.5rpx;
-}
-.imp-method-main .m-name { color: var(--anchor-contrast); }
-.m-desc {
-  position: relative;
-  z-index: 2;
-  font-size: calc(23rpx * var(--fs-mul, 1));
-  color: var(--mut);
-  margin-top: 8rpx;
-  line-height: 1.4;
-}
-.imp-method-main .m-desc { color: rgba(244, 217, 168, 0.8); }
-.m-badge {
-  position: relative;
-  z-index: 2;
-  display: inline-block;
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: calc(21rpx * var(--fs-mul, 1));
-  font-weight: 700;
-  color: var(--anchor-contrast);
-  background: var(--pop);
-  padding: 5rpx 16rpx;
-  border-radius: var(--r-xs);
-  margin-top: 20rpx;
-}
+.imp-method.on { border-color: var(--pop-mist); background: var(--c-surface); box-shadow: var(--sh-card); }
+.m-name { font-size: var(--fs-sub); font-weight: 800; color: var(--ink); }
+.imp-method.on .m-name { color: var(--pop-deep); }
+.m-desc { margin-top: 4rpx; font-size: var(--fs-cap); line-height: 1.5; color: var(--mut-strong); }
 
 /* 图标（纯 CSS 描边）*/
-.ic-link, .ic-text, .ic-cam, .ic-shield {
+.ic-link, .ic-shield {
   width: 36rpx;
   height: 36rpx;
   position: relative;
@@ -200,38 +50,6 @@
 }
 .ic-link-pop { border-color: var(--pop); }
 .ic-link-pop::after { background: var(--pop); }
-.ic-text {
-  width: 40rpx;
-  height: 32rpx;
-  border: 4rpx solid var(--pop);
-  border-radius: 6rpx;
-}
-.ic-text::after {
-  content: "";
-  position: absolute;
-  left: 8rpx;
-  top: 10rpx;
-  width: 20rpx;
-  border-top: 4rpx solid var(--pop);
-  box-shadow: 0 10rpx 0 var(--pop);
-}
-.ic-cam {
-  width: 40rpx;
-  height: 30rpx;
-  border: 4rpx solid var(--pop);
-  border-radius: var(--r-xs);
-}
-.ic-cam::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 14rpx;
-  height: 14rpx;
-  border: 4rpx solid var(--pop);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-}
 .ic-shield {
   width: 32rpx;
   height: 36rpx;
@@ -242,48 +60,39 @@
 /* ============ 粘贴区 ============ */
 .imp-shead-row {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
-  gap: 20rpx;
+  flex-wrap: wrap;
+  gap: 16rpx;
 }
-.imp-shead-row .sh-comp,
-.imp-shead-row section-head {
-  flex: 1;
-  min-width: 0;
-}
+.imp-input-title { flex: 1; min-width: 0; font-size: calc(32rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--ink); }
 .sample {
   font-size: calc(25rpx * var(--fs-mul, 1));
   color: var(--gold-deep);
   font-weight: 700;
   flex: none;
-  padding-bottom: 6rpx;
+  min-height: 88rpx;
+  display: flex;
+  align-items: center;
 }
-.ta-wrap { position: relative; padding: 28rpx; }
+.ta-wrap { position: relative; padding: 24rpx; box-shadow: none; }
 .ta-input {
   box-sizing: border-box;
   width: 100%;
-  min-height: 200rpx;
-  font-size: var(--fs-cap);
+  min-height: 240rpx;
+  font-size: var(--fs-sub);
   color: var(--ink);
   line-height: 1.65;
 }
 .ta-ph { color: var(--mut-2); }
-.ta-cursor {
-  position: absolute;
-  left: 28rpx;
-  top: 28rpx;
-  width: 3rpx;
-  height: 30rpx;
-  background: var(--pop);
-  animation: blink 1s steps(1) infinite;
-  pointer-events: none;
-}
 .ta-foot {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 24rpx;
-  padding-top: 24rpx;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  margin-top: 16rpx;
+  padding-top: 16rpx;
   border-top: 2rpx solid var(--paper-2);
 }
 .ta-cnt { font-size: calc(23rpx * var(--fs-mul, 1)); color: var(--mut-2); }
@@ -294,6 +103,7 @@
   display: flex;
   align-items: center;
   gap: 10rpx;
+  justify-content: center;
   background: var(--pop);
   color: var(--anchor-contrast);
   font-size: var(--fs-cap);
@@ -369,7 +179,6 @@
 .res-tag {
   display: inline-block;
   font-family: var(--serif);
-  font-style: italic;
   font-size: calc(21rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: var(--anchor-contrast);
@@ -409,7 +218,6 @@
 }
 .blabel .en {
   font-family: var(--serif);
-  font-style: italic;
   font-weight: 700;
   color: var(--gold-deep);
   font-size: var(--fs-mini);
@@ -547,11 +355,13 @@
 
 /* 最近导入加载失败的重试入口 */
 .recent-failed {
-  margin: 24rpx 0;
-  padding: 28rpx;
-  text-align: center;
-  font-size: calc(25rpx * var(--fs-mul, 1));
-  color: var(--mut);
-  background: var(--paper-2);
-  border-radius: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 88rpx;
+  margin-top: 16rpx;
+  font-size: var(--fs-cap);
+  color: var(--mut-strong);
+  border: 2rpx solid var(--c-border-light);
+  border-radius: var(--r-md);
 }

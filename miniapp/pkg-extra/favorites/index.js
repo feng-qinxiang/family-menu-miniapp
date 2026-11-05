@@ -7,7 +7,7 @@ const { getMyFavorites, toggleCommunityFavorite } = require('../../utils/api');
 const { recipesFromPosts } = require('../../utils/dish-logic');
 
 // 帖子头像撞色轮转
-const AVATAR_COLORS = ['#b08949', '#2f4a3a', '#e8472a', '#3a2e23'];
+const AVATAR_COLORS = ['#b08949', '#2f4a3a', '#c8381f', '#3a2e23'];
 
 Page({
   data: {
@@ -182,7 +182,7 @@ Page({
 
   // 空态 CTA：去逛菜谱（tabbar 页用 switchTab）
   goRecipes() {
-    wx.switchTab({
+    wx.navigateTo({
       url: '/pages/recipes/index',
       fail: () => this._toast('菜谱页暂未开放')
     });

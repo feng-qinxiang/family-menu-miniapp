@@ -232,7 +232,6 @@
 }
 .ft-eb {
   font-family: var(--serif);
-  font-style: italic;
   font-size: var(--fs-cap);
   color: var(--gold-deep);
   font-weight: 700;

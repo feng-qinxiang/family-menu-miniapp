@@ -21,52 +21,54 @@
 
   <!-- 正文 -->
   <scroll-view wx:else scroll-y="true" class="scroll" enhanced="{{true}}" show-scrollbar="{{false}}"
-    scroll-top="{{scrollTopTo}}" scroll-with-animation bindscroll="onScrollBody">
+    scroll-top="{{scrollTopTo}}" scroll-into-view="{{scrollIntoView}}" scroll-with-animation bindscroll="onScrollBody">
     <view class="body">
       <!-- 作者块 -->
       <view class="author g-fade-up">
         <view class="ava ava-{{post.avaTheme}}">{{post.avaText}}</view>
         <view class="acol">
           <view class="aname ellipsis">{{post.author}}</view>
-          <view class="atime ellipsis">{{post.authorMeta}}</view>
+          <view class="atime">{{post.authorMeta}}</view>
         </view>
+        <button class="react-share tap-scale" size="mini" open-type="share" aria-label="分享这条帖子">
+          <view class="ricon ico-share"></view><text>分享</text>
+        </button>
         <view wx:if="{{post.mine}}" class="adel tap-scale" catchtap="onDeletePost">删除</view>
       </view>
 
-      <!-- 标题 -->
-      <view class="eyebrow-serif eyebrow-mt g-fade-up g-d1">家常味道</view>
-      <view class="post-title-row g-fade-up g-d1">
-        <view class="post-title">{{post.title}}</view>
-        <text wx:if="{{post.isPending}}" class="pd-pending">审核中 · 审核通过后大家可见</text>
-      </view>
-
-      <!-- 正文段落 -->
-      <view class="post-text g-fade-up g-d2">
-        <view wx:for="{{post.paragraphs}}" wx:key="index" class="ptext-p">{{item}}</view>
-      </view>
-
-      <!-- 帖子图集：有配图走九宫格（点击看大图），无图保留菜图位 -->
+      <!-- 实拍大图：多图原生滑动，点击预览原图。无图不占位。 -->
       <view wx:if="{{post.images.length}}" class="pimgs g-fade-up g-d2">
+        <swiper wx:if="{{post.images.length > 1}}" class="post-gallery" current="{{photoIndex}}" bindchange="onPhotoChange" aria-label="帖子图片，左右滑动查看">
+          <swiper-item wx:for="{{post.images}}" wx:key="*this">
+            <image class="pimg {{post.imageErrors[index] ? 'img-broken' : ''}}" src="{{item}}" mode="aspectFill" lazy-load data-err-key="{{'post.imageErrors[' + index + ']'}}" binderror="onPhotoError" data-url="{{item}}" bindtap="onPreviewImage" />
+          </swiper-item>
+        </swiper>
         <image
-          wx:for="{{post.images}}"
-          wx:key="*this"
-          class="pimg"
-          src="{{item}}"
+          wx:else
+          class="pimg {{post.imageErrors[0] ? 'img-broken' : ''}}"
+          src="{{post.images[0]}}"
           mode="aspectFill"
           lazy-load
-          data-url="{{item}}"
+          data-err-key="post.imageErrors[0]" binderror="onPhotoError"
+          data-url="{{post.images[0]}}"
           bindtap="onPreviewImage"
         />
+        <view class="post-photo-counter">{{photoIndex + 1}} / {{post.images.length}}</view>
       </view>
-      <block wx:elif="{{post.cover}}">
-        <image class="dish-img {{post.coverBroken ? 'img-broken' : ''}} g-fade-up g-d2" src="{{post.cover}}" mode="aspectFill"
-          data-err-key="post.coverBroken" binderror="onPhotoError"></image>
-        <view class="imgcap">— 出锅那一刻，香气直接拉满 —</view>
-      </block>
-
-      <!-- 标签 -->
-      <view wx:if="{{post.tags.length}}" class="ptags g-fade-up g-d3">
-        <text wx:for="{{post.tags}}" wx:key="*this" class="ptag">#{{item}}</text>
+      <view class="post-copy g-fade-up g-d1">
+        <view class="post-title-row">
+          <view class="post-title">{{post.title}}</view>
+          <text wx:if="{{post.isPending}}" class="pd-pending">审核中 · 审核通过后大家可见</text>
+        </view>
+        <view class="post-text">
+          <view wx:for="{{post.paragraphs}}" wx:key="index" class="ptext-p">{{item}}</view>
+        </view>
+        <view class="post-footer">
+          <view wx:if="{{post.tags.length}}" class="ptags">
+            <text wx:for="{{post.tags}}" wx:key="*this" class="ptag">#{{item}}</text>
+          </view>
+          <view class="react-report tap-scale" bindtap="onReport" aria-role="button">举报</view>
+        </view>
       </view>
 
       <!-- 关联菜谱卡 -->
@@ -75,7 +77,7 @@
         class="recipe-card tap-scale g-fade-up g-d3"
         bindtap="onOpenRecipe"
       >
-        <image class="rc-img" src="{{post.recipe.coverImage || post.cover}}" mode="aspectFill"></image>
+        <image wx:if="{{post.recipe.coverImage}}" class="rc-img {{post.recipeCoverBroken ? 'img-broken' : ''}}" src="{{post.recipe.coverImage}}" mode="aspectFill" data-err-key="post.recipeCoverBroken" binderror="onPhotoError"></image><view wx:else class="rc-img rc-img-text">{{post.recipe.title}}</view>
         <view class="rc-mid">
           <view class="rc-kick">关联菜谱</view>
           <view class="rc-name ellipsis">{{post.recipe.title}}</view>
@@ -86,50 +88,20 @@
         </view>
       </view>
 
-      <!-- 操作栏 -->
-      <view class="react-bar g-fade-up g-d4">
-        <view class="react tap-scale {{post.liked ? 'liked' : ''}}" bindtap="onToggleLike">
-          <view class="ricon ricon-heart {{post.liked ? 'on' : ''}}"></view>
-          <text class="n">{{post.likeCount}}</text>
-        </view>
-        <view
-          class="react tap-scale {{post.favorited ? 'fav-on' : ''}}"
-          bindtap="onToggleFavorite"
-        >
-          <view class="ricon ricon-star {{post.favorited ? 'on' : ''}}"></view>
-          <text class="n">收藏 {{post.favoriteCount}}</text>
-        </view>
-        <view class="react">
-          <view class="ricon ico-bubble"></view>
-          <text class="n">{{post.commentCount}}</text>
-        </view>
-        <!-- 次级动作单独一行（分享 / 举报）：不靠 button 的 UA 默认宽度去撑分布 -->
-        <view class="react-sub">
-          <button class="react react-share tap-scale" open-type="share">
-            <view class="ricon ico-share"></view>
-            <text class="n">分享</text>
-          </button>
-          <view class="react react-report tap-scale" bindtap="onReport">
-            <view class="ricon ico-flag"></view>
-            <text class="n">举报</text>
-          </view>
-        </view>
-      </view>
-
       <!-- 评论区 -->
-      <view class="csec">
+      <view class="csec" id="post-comments">
         <view class="cs-head">
-          <text class="cs-title">评论</text>
+          <text class="cs-title">全部评论</text>
           <text class="cnt">{{post.commentCount}} 条</text>
         </view>
 
+        <view wx:if="{{commentsError}}" class="comment-retry"><text>评论暂时没加载出来</text><view class="tap-scale" bindtap="retryComments" aria-role="button">{{commentsLoading ? '加载中' : '重新加载'}}</view></view>
         <view wx:if="{{comments.length}}" class="cmt-list">
           <view wx:for="{{comments}}" wx:key="commentId" class="cmt">
             <view class="ava ava-sm ava-{{item.avaTheme}}">{{item.avaText}}</view>
             <view class="ccol">
               <view class="crow">
-                <text class="cname ellipsis">{{item.author}}</text>
-                <text class="ctime">{{item.createdAt}}</text>
+                <view class="cmeta"><text class="cname">{{item.author}}</text><text class="ctime">{{item.createdAt}}</text></view>
                 <text
                   wx:if="{{item.mine}}"
                   class="cdel tap-scale"
@@ -142,12 +114,7 @@
           </view>
         </view>
 
-        <state-empty
-          wx:else
-          type="gray"
-          title="还没有评论"
-          desc="来说两句，给楼主点个鼓励"
-        ></state-empty>
+        <view wx:elif="{{!commentsError}}" class="comment-empty"><view>还没有评论</view></view>
       </view>
     </view>
   </scroll-view>
@@ -157,17 +124,32 @@
 
   <!-- 底部输入框 -->
   <view wx:if="{{!loading && !loadError && post}}" class="inputbar safe-bottom">
-    <input
+    <view class="comment-compose {{commentText.length || submitting ? 'is-writing' : ''}}">
+    <image wx:if="{{!commentText.length && !submitting}}" class="compose-icon" src="/assets/icons/lucide/message-circle.svg" mode="aspectFit" aria-hidden="true" />
+    <textarea
       class="field"
       value="{{commentText}}"
       placeholder="写下你的评论…"
       placeholder-class="field-ph"
       confirm-type="send"
+      auto-height maxlength="500" disable-default-padding
       bindinput="onCommentInput"
       bindconfirm="onSubmitComment"
     />
-    <view class="send tap-scale {{submitting ? 'send-busy' : ''}}" bindtap="onSubmitComment">
-      <view class="send-icon"></view>
+    </view>
+    <view wx:if="{{commentText.length || submitting}}" class="send tap-scale {{submitting ? 'send-busy' : ''}}" bindtap="onSubmitComment" aria-role="button" aria-label="发送评论" aria-disabled="{{submitting}}">
+      <text>{{submitting ? '发送中' : '发送'}}</text>
+    </view>
+    <view wx:else class="react-bar">
+      <view class="react tap-scale {{post.liked ? 'liked' : ''}}" bindtap="onToggleLike" aria-role="button" aria-label="{{post.liked ? '取消点赞' : '点赞'}}，{{post.likeCount}} 个赞" aria-pressed="{{post.liked}}">
+        <image class="reaction-icon" src="/assets/icons/lucide/heart.svg" mode="aspectFit" aria-hidden="true" /><text class="n">{{post.likeCount || '赞'}}</text>
+      </view>
+      <view class="react tap-scale {{post.favorited ? 'fav-on' : ''}}" bindtap="onToggleFavorite" aria-role="button" aria-label="{{post.favorited ? '取消收藏' : '收藏'}}，{{post.favoriteCount}} 次收藏" aria-pressed="{{post.favorited}}">
+        <image class="reaction-icon" src="/assets/icons/lucide/bookmark.svg" mode="aspectFit" aria-hidden="true" /><text class="n">{{post.favoriteCount || '收藏'}}</text>
+      </view>
+      <view class="react tap-scale" bindtap="goComments" aria-role="button" aria-label="查看全部{{post.commentCount}}条评论">
+        <image class="reaction-icon" src="/assets/icons/lucide/message-circle.svg" mode="aspectFit" aria-hidden="true" /><text class="n">{{post.commentCount || '评论'}}</text>
+      </view>
     </view>
   </view>
 </view>

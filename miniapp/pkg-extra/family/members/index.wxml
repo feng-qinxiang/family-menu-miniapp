@@ -3,11 +3,6 @@
   <nav-bar title="家庭管理" show-back="{{true}}" status-bar-height="{{statusBarHeight}}" />
 
   <view class="mem-scroll">
-    <!-- Hero 标题 -->
-    <view class="mem-head g-fade-up">
-      <text class="mem-eyebrow">家庭成员</text>
-      <view class="mem-h1">家庭<text class="t-pop">成员</text></view>
-    </view>
 
     <!-- 家庭信息暗卡 -->
     <view class="card-dark famcard g-fade-up g-d1">
@@ -82,7 +77,7 @@
   <!-- 底部邀请按钮 -->
   <view class="mem-footer safe-bottom">
     <view class="btn btn-pop btn-block mem-invbtn tap-scale" catchtap="onInvite">
-      <view class="mem-invbtn-icon"></view>
+      <image class="mem-invbtn-icon" src="/assets/icons/lucide/user-plus.svg" mode="aspectFit" aria-hidden="true" />
       邀请新成员
     </view>
   </view>

@@ -4,9 +4,8 @@
 <view class="page {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <view class="body">
     <!-- Hero -->
-    <view class="eyebrow eyebrow-serif g-fade-up">注销账号</view>
     <view class="doctitle g-fade-up g-d1">
-      不用的账号<text class="pop">可以注销</text>
+      不用的账号可以注销
     </view>
     <view class="effective g-fade-up g-d2">
       <text class="effective-dot"></text>处理时限：15 个工作日

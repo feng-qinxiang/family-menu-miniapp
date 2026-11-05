@@ -1,11 +1,12 @@
-/** Three design directions share one local scenario. No API or storage writes. */
+/** Four design directions share one local scenario. No API or storage writes. */
 const { getCapsule } = require('../../utils/capsule');
 const features = require('../../utils/features');
 
 const DESIGNS = [
   { key: 'a', label: 'A 现版优化', name: '熟悉的味道，更清楚的流程', desc: '保留米白、番茄红与菜图，让这一餐先被看见。' },
   { key: 'b', label: 'B 家庭点菜单', name: '把一家人的这一餐放在中心', desc: '菜单像一张家里的点菜单，点好就开火，上桌就记下。' },
-  { key: 'c', label: 'C 清爽厨房', name: '少一点装饰，多一点好用', desc: '紧凑的菜谱网格、清晰的进度，做饭时一眼找到操作。' }
+  { key: 'c', label: 'C 清爽厨房', name: '少一点装饰，多一点好用', desc: '紧凑的菜谱网格、清晰的进度，做饭时一眼找到操作。' },
+  { key: 'd', label: 'D 现代家庭融合', name: '现代流程，家人一起定', desc: '保留原版的大图与行动感，加入家庭头像、点菜单和共同决定。' }
 ];
 const TABS = [
   { key: 'order', label: '点菜', icon: 'tab-home', active: 'tab-home-active' },

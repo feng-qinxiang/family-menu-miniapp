@@ -1,0 +1,21 @@
+{
+  "checkedAt": "2026-10-09T01:41:09.807Z",
+  "passed": true,
+  "url": "http://127.0.0.1:8847/#refinement-update",
+  "latestCards": 11,
+  "formalCards": 39,
+  "search": {
+    "keyword": "菜谱详情",
+    "visible": 1,
+    "total": 39
+  },
+  "communityFilter": {
+    "visible": 2,
+    "total": 39
+  },
+  "visibleLatestImagesLoaded": 3,
+  "imageReferences": 96,
+  "missingImages": [],
+  "screenshot": "screens/gallery-refinement-final.jpg",
+  "checkedBy": "Codex in-app browser; page reloaded, search and filters exercised, latest viewport visually inspected"
+}

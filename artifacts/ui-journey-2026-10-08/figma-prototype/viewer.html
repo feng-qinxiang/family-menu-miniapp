@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="data:,">
+<title>一家人的饭桌 · 交互原型与 Figma 文件</title>
+<style>
+  :root{color-scheme:light;--paper:#fbf8f3;--ink:#2c241b;--muted:#716555;--red:#c8381f;--line:#e8e2d8}
+  *{box-sizing:border-box;letter-spacing:0} body{margin:0;background:#f0ebe2;color:var(--ink);font-family:"PingFang SC","Microsoft YaHei",sans-serif;font-size:14px}
+  button,select,input,textarea{font:inherit}button,a{touch-action:manipulation}button{cursor:pointer}button:focus-visible,a:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--red);outline-offset:3px}
+  .top{display:flex;justify-content:space-between;gap:16px;align-items:center;padding:17px 28px;background:var(--paper);border-bottom:1px solid var(--line)}
+  h1{margin:0;font-size:21px}.top p{margin:5px 0 0;font-size:12px;color:var(--muted)}
+  .exports{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.exports a{padding:9px 13px;min-height:38px;border:1px solid var(--line);border-radius:7px;color:var(--ink);background:white;text-decoration:none;font-size:12px}.exports .primary{background:var(--red);color:white;border-color:var(--red)}
+  .workspace{max-width:1260px;margin:auto;display:grid;grid-template-columns:225px minmax(300px,1fr) 260px;gap:32px;padding:20px 28px 16px;align-items:start}
+  .label{color:var(--muted);font-size:11px;margin:3px 0 12px}.page-list{display:flex;flex-direction:column;gap:4px}
+  .page-list button{display:flex;align-items:center;gap:11px;min-height:35px;padding:8px 9px;border:0;border-radius:6px;background:transparent;color:var(--muted);text-align:left;font-size:12px}
+  .page-list button[aria-pressed=true]{background:var(--paper);color:var(--red);font-weight:600}.page-list span{color:#aa9d8a;font-size:10px;font-variant-numeric:tabular-nums}.page-list .guide{margin-top:10px}
+  .preview{text-align:center;min-width:0}.phone{width:min(390px,max(280px,calc((100dvh - 160px)*.462)));margin:0 auto;border:7px solid #352c23;border-radius:30px;overflow:hidden;background:var(--paper);box-shadow:0 14px 40px #2c241b1a}
+  .screen{position:relative;aspect-ratio:390/844}.screen svg{display:block;width:100%;height:100%}.hotspot{position:absolute;padding:0;border:0;background:transparent;border-radius:7px;color:transparent;cursor:pointer}
+  .hotspot:hover{background:#c8381f10;outline:1px solid #c8381f66}.hotspot:focus-visible{outline-offset:-2px;outline:3px solid var(--red)}.show-hotspots .hotspot{background:#c8381f0c;outline:1px dashed #c8381f77}
+  .preview.board .phone{width:100%;border:1px solid var(--line);border-radius:8px}.preview.board .screen{aspect-ratio:1260/650}.preview.board{grid-column:2/4}
+  .caption{margin-top:10px;font-size:11px;color:var(--muted)}
+  .notes{padding-top:5px;min-width:0}h2{font-size:19px;line-height:1.5;margin:0 0 12px}.notes p{margin:0 0 18px;color:var(--muted);font-size:13px;line-height:1.8}
+  .flow{padding:16px;border-radius:9px;background:var(--paper);margin:20px 0}.flow strong{display:block;font-size:13px;margin-bottom:8px}.flow p{font-size:12px;margin:0;line-height:1.9}
+  .controls{display:flex;gap:8px;flex-wrap:wrap}.controls button{border:1px solid #ddd3c5;border-radius:6px;background:var(--paper);color:var(--muted);padding:9px 11px;font-size:12px;min-height:38px}
+  .figma-note{border-top:1px solid #ddd3c5;padding-top:18px;margin-top:22px}.figma-note a{color:var(--red);text-underline-offset:3px}.sample{font-size:11px!important;line-height:1.7!important;margin-top:17px!important;color:#998a77!important}
+  #toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);max-width:calc(100% - 32px);padding:12px 19px;border-radius:8px;background:var(--ink);color:white;box-shadow:0 5px 25px #0002;z-index:20;font-size:13px;line-height:1.6;text-align:center}#toast:empty{display:none}
+  .mobile-select{display:none}
+  .live-layer{position:absolute;inset:0;z-index:8;overflow:hidden;text-align:left}.live-inner{position:absolute;top:0;left:0;width:390px;height:844px;transform:scale(var(--screen-scale));transform-origin:top left;font-size:14px;color:var(--ink)}
+  .demo-mask{position:absolute;inset:0;width:390px;height:844px;border:0;background:#2c241b66}.demo-panel{position:absolute;bottom:0;left:0;width:390px;max-height:650px;overflow-y:auto;background:var(--paper);border-radius:16px 16px 0 0;padding:20px 20px 28px;line-height:1.6}
+  .demo-title{display:flex;justify-content:space-between;align-items:center;gap:12px}.demo-title h3{margin:0;font-size:22px;font-weight:600}.demo-close{width:44px;height:44px;border:0;border-radius:8px;background:transparent;font-size:24px;color:var(--muted)}
+  .demo-panel p{margin:8px 0 16px;font-size:13px;color:var(--muted)}.demo-input{display:block;resize:vertical;width:100%;min-height:88px;padding:12px;border:1px solid var(--line);border-radius:9px;background:#f0ebe2;color:var(--ink);line-height:1.6}
+  .demo-example{width:100%;min-height:44px;display:block;text-align:left;border:0;border-bottom:1px solid var(--line);padding:8px 0;background:transparent;font-size:13px;color:var(--muted)}.demo-caption{display:block;font-size:12.5px;color:var(--muted);margin:16px 0 8px}
+  .demo-caption[hidden]{display:none}.demo-labels{display:flex;flex-wrap:wrap;gap:8px}.demo-labels span{padding:5px 9px;background:#e9f1e9;color:#2f4a3a;border-radius:4px;font-size:13px}.demo-warning{font-size:13px;color:#af3928;margin-top:12px}.demo-submit{width:100%;min-height:48px;border:0;border-radius:9px;padding:10px 12px;background:#2f4a3a;color:white;font-size:14px;font-weight:600}.demo-submit:disabled{background:#f0ebe2;color:#716555;cursor:default}.demo-panel .demo-note{font-size:12.5px;margin:14px 0 18px}
+  .demo-request{display:flex;flex-direction:column;gap:12px;padding-top:24px}.demo-request::before{content:"";position:absolute;top:10px;left:175px;width:40px;height:4px;border-radius:2px;background:var(--line)}
+  .demo-request .demo-title h3{font-weight:700}.demo-request .demo-intro{margin:-8px 0 0}.demo-request .demo-input{height:84px;min-height:84px;resize:none;background:#f0ebe2;border-color:#e3dbce}
+  .demo-examples .demo-caption{margin:0 0 8px}.demo-example-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.demo-suggestion{min-height:76px;padding:10px 12px;text-align:left;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--ink)}.demo-suggestion strong{display:block;font-size:13px;font-weight:600}.demo-suggestion small{display:block;margin-top:4px;font-size:12px;line-height:1.5;color:var(--muted)}
+  .demo-preview{padding:12px 14px;background:white;border-radius:8px}.demo-preview .demo-caption{margin:0 0 8px}.demo-request .demo-labels{display:grid;gap:8px}.demo-condition{display:grid;grid-template-columns:46px 1fr;gap:12px;font-size:13px}.demo-request .demo-condition span{padding:0;background:transparent;color:var(--muted);font-size:13px}.demo-condition strong{font-weight:500;color:#2f4a3a}
+  .demo-request .demo-warning{margin:0;padding:10px 12px;border-left:2px solid #af3928;background:#fdece6;line-height:1.6}.demo-request .demo-note{font-size:12px;margin:0}.demo-request [hidden]{display:none}
+  @media(max-width:1050px){.workspace{grid-template-columns:188px minmax(280px,1fr) 220px;gap:20px;padding:20px}.top{padding:16px 20px}.notes p{font-size:12px}.phone{min-width:280px}}
+  @media(max-width:800px){.workspace{grid-template-columns:185px 1fr}.notes{grid-column:1/3;max-width:700px}.preview.board{grid-column:2}.notes .flow{margin:0 0 12px}.notes h2,.notes>p:first-of-type{display:none}.figma-note{margin-top:15px;padding-top:15px}.phone{width:min(390px,calc(100vw - 240px))}.top{align-items:start}.exports{justify-content:end}.top h1{font-size:18px}}
+  @media(max-width:600px){.top{padding:16px;display:block}.exports{justify-content:start;margin-top:13px;gap:7px}.exports a{font-size:11px;padding:8px 10px}.workspace{display:flex;flex-direction:column;padding:14px 15px;gap:14px}.sidebar{width:100%}.page-list,.sidebar .label{display:none}.mobile-select{display:block;width:100%;min-height:42px;padding:8px;background:var(--paper);border:1px solid #ddd3c5;border-radius:7px;color:var(--ink)}.preview{width:100%}.phone{width:100%;max-width:390px;border-width:5px}.notes{width:100%;padding-top:2px}.preview.board .phone{min-width:0}.preview.board .screen{min-height:0}.caption{font-size:11px}}
+</style>
+<header class="top">
+  <div><h1>一家人的饭桌</h1><p>可以点着看的原型 · 17 个页面与状态 · 沿用当前版本</p></div>
+  <nav class="exports" aria-label="原型文件"><a href="../#followup-update">返回当前小程序</a><a id="svg-link" href="screens/home.svg" download>下载当前 SVG</a><a class="primary" href="family-menu-figma-kit.zip" download>下载 Figma 原型包</a></nav>
+</header>
+<main class="workspace">
+  <aside class="sidebar"><div class="label">一餐的页面</div><nav class="page-list" id="page-list" aria-label="原型页面"></nav><select class="mobile-select" id="page-select" aria-label="选择原型页面"></select></aside>
+  <section class="preview" id="preview" aria-label="手机交互原型"><div class="phone"><div class="screen" id="screen"><p class="caption">正在打开完整原型…<br><a href="index.html">打开原型</a></p></div></div><div class="caption" id="caption">点击界面里的按钮，沿着一餐的流程体验。</div></section>
+  <aside class="notes"><h2 id="page-title"></h2><p id="page-note"></p><div class="flow"><strong>试着完成一餐</strong><p>点菜 → 冰箱能做 → 换一道 → 加入晚餐<br>做菜 → 开始计时 → 下一步 → 完成并记录<br>记录 → 晒到社区 → 帖子详情 → 关联菜谱</p></div><div class="controls"><button id="areas" aria-pressed="false">显示可点击区域</button><button id="reset">重新体验</button></div><div class="figma-note"><p>Figma 是编辑界面与连接跳转的设计画布。现在直接看这份原型即可，之后可用原型包继续修改。</p><p><a href="README.md" target="_blank" rel="noopener">查看导入方法</a> · <a href="https://www.figma.com/" target="_blank" rel="noopener">Figma 官网</a></p></div><p class="sample">内容与图片为设计样例。点菜、发布、拍照和计时在这里用于演示；真实小程序继续使用原有业务。</p></aside>
+</main>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+const DATA = /*__PROTOTYPE__*/ null;
+if (DATA === null) {
+  location.replace('index.html' + location.hash);
+} else {
+const byId = new Map(DATA.screens.map(s=>[s.id,s]));
+const MEAL_REQUEST = /*__MEAL_REQUEST__*/ null;
+const screen = document.getElementById('screen');
+const list = document.getElementById('page-list');
+const selector = document.getElementById('page-select');
+let active = 'home', added = false, bought = 0, remaining = 120, ticking = null, shuffled = false, messageTimer;
+let requestText = '', activeRequest = null, demoPicked = null;
+const sampleRecipes = [
+  {id:1,title:'番茄炒蛋',timeCost:15,servings:3,cuisine:'家常',tasteTags:['酸甜','清淡'],full:true,urgent:true,asset:'dishes/tomato-egg.jpg'},
+  {id:2,title:'虾仁炒豌豆',timeCost:20,servings:2,cuisine:'家常',tasteTags:['清淡'],full:true,urgent:false,asset:'dishes/shrimp-peas.jpg'},
+  {id:3,title:'红烧肉',timeCost:45,servings:4,cuisine:'家常',tasteTags:['鲜香'],full:false,urgent:false,asset:'dishes/hongshao-pork.jpg'}
+];
+function buttonText(label, className, fn){const b=document.createElement('button');b.type='button';b.className=className;b.textContent=label;b.addEventListener('click',fn);return b}
+function panel(title, close){
+  screen.querySelector('.live-layer')?.remove();
+  const layer=document.createElement('div');layer.className='live-layer';
+  const inner=document.createElement('div');inner.className='live-inner';
+  inner.append(buttonText('','demo-mask',close));inner.firstChild.setAttribute('aria-label','关闭'+title);
+  const body=document.createElement('section');body.className='demo-panel';body.setAttribute('role','dialog');body.setAttribute('aria-label',title);
+  const heading=document.createElement('div');heading.className='demo-title';const h=document.createElement('h3');h.textContent=title;heading.append(h,buttonText('×','demo-close',close));heading.lastChild.setAttribute('aria-label','关闭'+title);body.append(heading);
+  inner.append(body);layer.append(inner);screen.append(layer);resizeLive();return body;
+}
+function resizeLive(){screen.style.setProperty('--screen-scale',screen.clientWidth/390)}
+new ResizeObserver(resizeLive).observe(screen);
+function requestPool(request){return sampleRecipes.filter(r=>(!request.minServings||r.servings>=request.minServings)&&(!request.maxTime||r.timeCost<=request.maxTime)&&(!request.cuisine||r.cuisine===request.cuisine)&&(!request.pantryOnly||r.full)&&(!request.mildOnly||MEAL_REQUEST.hasMildLabel(r)))}
+function chooseRequest(request){
+  let candidates=requestPool(request).filter(r=>!demoPicked||r.id!==demoPicked.id);
+  if(!candidates.length)candidates=requestPool(request);
+  const urgent=request.pantryOnly?candidates.filter(r=>r.urgent):[];
+  const pool=urgent.length?urgent:candidates;return pool.length?pool[Math.floor(Math.random()*pool.length)]:null;
+}
+function renderRequest(){
+  const body=panel('这顿想怎么吃？',()=>show('recipes'));
+  body.classList.add('demo-request');
+  const intro=document.createElement('p');intro.className='demo-intro';intro.textContent='说说人数、耗时和口味，我们来挑一道。';body.append(intro);
+  const input=document.createElement('textarea');input.className='demo-input';input.maxLength=100;input.value=requestText;input.placeholder='例如：两人吃，30分钟，不辣，冰箱有的';input.setAttribute('aria-label','这顿饭的条件');body.append(input);
+  const examples=document.createElement('div');examples.className='demo-examples';
+  const exampleCaption=document.createElement('span');exampleCaption.className='demo-caption';exampleCaption.textContent='试试这样说';examples.append(exampleCaption);
+  const exampleGrid=document.createElement('div');exampleGrid.className='demo-example-grid';examples.append(exampleGrid);
+  for(const [title,value] of [['两人快手餐','两人吃，30分钟，不辣'],['先用冰箱','晚餐，冰箱有的，临期优先']]){
+    const b=buttonText('','demo-suggestion',()=>{input.value=value;requestText=value;update()});
+    const name=document.createElement('strong');name.textContent=title;const copy=document.createElement('small');copy.textContent=value;b.append(name,copy);exampleGrid.append(b);
+  }body.append(examples);
+  const preview=document.createElement('div');preview.className='demo-preview';
+  const caption=document.createElement('span');caption.className='demo-caption';caption.textContent='按这些条件筛选';
+  const labels=document.createElement('div');labels.className='demo-labels';labels.setAttribute('aria-live','polite');
+  preview.append(caption,labels);body.append(preview);
+  const warning=document.createElement('div');warning.className='demo-warning';warning.setAttribute('role','status');body.append(warning);
+  const note=document.createElement('p');note.className='demo-note';note.textContent='只选有“不辣／清淡”标注的菜。';body.append(note);
+  const submit=buttonText('按这些条件挑一道','demo-submit',()=>{
+    const request=MEAL_REQUEST.parseMealRequest(requestText,['家常','川菜','粤菜','湘菜','鲁菜','西餐','日料']);
+    if(!request.canApply)return;
+    const picked=chooseRequest(request);
+    if(!picked){warning.hidden=false;warning.textContent='样例菜谱中暂时没有符合条件的菜，试试调整人数或耗时。';return}
+    activeRequest=request;demoPicked=picked;show('picker');toast('已按确认条件挑选 · 样例演示');
+  });body.append(submit);
+  function update(){
+    const result=MEAL_REQUEST.parseMealRequest(requestText,['家常','川菜','粤菜','湘菜','鲁菜','西餐','日料']);
+    const rows=[['人数',result.minServings?result.minServings+' 人以上':''],['耗时',result.maxTime?result.maxTime+' 分钟内':''],['菜系',result.cuisine],['餐次',({breakfast:'早餐',lunch:'午餐',dinner:'晚餐',snack:'加餐'})[result.mealType]],['口味',result.mildOnly?'有不辣／清淡标注':''],['食材',result.pantryOnly?'冰箱能做 · 临期优先':'']];
+    labels.replaceChildren();for(const [key,value] of rows){if(!value)continue;const row=document.createElement('div');row.className='demo-condition';const label=document.createElement('span');label.textContent=key;const copy=document.createElement('strong');copy.textContent=value;row.append(label,copy);labels.append(row)}
+    examples.hidden=!!requestText.trim();preview.hidden=!result.labels.length;note.hidden=!result.mildOnly;warning.hidden=!result.warnings.length;warning.textContent=result.warnings.join('；');submit.disabled=!result.canApply;
+  }
+  input.addEventListener('input',()=>{requestText=input.value;update()});update();
+}
+for (let i=0;i<DATA.screens.length;i++){
+  const s=DATA.screens[i], btn=document.createElement('button');
+  const number=document.createElement('span');number.textContent=s.width===390?String(i+1).padStart(2,'0'):'↗';
+  btn.append(number,document.createTextNode(s.title));btn.dataset.page=s.id;btn.setAttribute('aria-pressed','false');
+  if(s.width!==390)btn.className='guide';btn.addEventListener('click',()=>show(s.id));list.append(btn);
+  selector.add(new Option(s.title,s.id));
+}
+function toast(message){clearTimeout(messageTimer);document.getElementById('toast').textContent=message;messageTimer=setTimeout(()=>document.getElementById('toast').textContent='',4500)}
+function setLayer(name,value){const group=screen.querySelector(`[data-name="${name}"]`);if(group){const lines=value.split('\n');group.querySelectorAll('tspan').forEach((span,i)=>span.textContent=lines[i]||'')}}
+function setPicture(name,asset){const im=screen.querySelector(`[data-name="${name}"] image`);if(im)im.setAttributeNS('http://www.w3.org/1999/xlink','href','data:image/jpeg;base64,'+DATA.images[asset])}
+function render(){
+  const s=byId.get(active);screen.innerHTML=(active==='request'?byId.get('recipes'):s).svg;screen.querySelector('svg').setAttribute('aria-hidden','true');
+  for(const h of active==='request'?[]:s.hotspots){const b=document.createElement('button');b.className='hotspot';b.setAttribute('aria-label',h.label);b.title=h.label;b.style.cssText=`left:${h.x/s.width*100}%;top:${h.y/s.height*100}%;width:${h.w/s.width*100}%;height:${h.h/s.height*100}%`;b.addEventListener('click',()=>activate(h));screen.append(b)}
+  if(added){setLayer('menu-count','3 道菜 · 展示最近点的 2 道');setLayer('cook-menu-count','3 道菜 · 1 道制作中');if(shuffled){setLayer('menu-secondary-title','虾仁炒豌豆');setPicture('menu-secondary-photo','dishes/shrimp-peas.jpg')}}
+  if(active==='picker'&&shuffled){setLayer('picked-title','虾仁炒豌豆');setLayer('picked-meta','20 分钟 · 2 人份');setLayer('picked-taste','清鲜 · 虾仁与豌豆');setLayer('picked-note','虾仁和豌豆先解冻，\n沥干再下锅。\n大火快炒，清鲜上桌。');setPicture('picked-image','dishes/shrimp-peas.jpg')}
+  if(active==='picker'&&demoPicked){setLayer('picked-heading','按你的条件，挑一道');setLayer('picked-subheading','人数、耗时和口味已按确认条件筛选');setLayer('picked-title',demoPicked.title);setLayer('picked-meta',`${demoPicked.timeCost} 分钟 · ${demoPicked.servings} 人份`);setLayer('picked-taste',demoPicked.cuisine+' · '+demoPicked.tasteTags.join(' · '));setLayer('picked-stock',demoPicked.full?'食材齐全 · 按菜谱量':'还有食材待补');setPicture('picked-image',demoPicked.asset);setLayer('picked-note',demoPicked.full?'符合已确认的条件。\n按菜谱量备料，\n点开就能看做法。':'符合已确认的条件。\n还有食材待补，\n点开做法核对用料。')}
+  if(active==='step'){setLayer('timer-value',`${String(Math.floor(remaining/60)).padStart(2,'0')}:${String(remaining%60).padStart(2,'0')}`);setLayer('开始计时',ticking?'暂停计时':'开始计时')}
+  for(const b of list.querySelectorAll('button'))b.setAttribute('aria-pressed',String(b.dataset.page===active));
+  selector.value=active;document.getElementById('page-title').textContent=s.title;document.getElementById('page-note').textContent=s.note;
+  document.getElementById('svg-link').href=`screens/${s.id}.svg`;
+  document.getElementById('preview').classList.toggle('board',s.width!==390);
+  document.querySelector('.notes').hidden=s.width!==390;
+  document.getElementById('caption').textContent=s.width===390?'点击界面里的按钮，沿着一餐的流程体验。':'设计画布 · 可下载 SVG，也可在原型包中查看。';
+  if(active==='request')renderRequest();
+}
+function show(id){if(!byId.has(id))id='home';active=id;history.replaceState(null,'','#'+id);render()}
+function activate(h){
+  switch(h.action){
+    case 'cart':added=true;show('home');toast('已加入晚餐 · 原型演示');return;
+    case 'shuffle':if(activeRequest){demoPicked=chooseRequest(activeRequest)}else{shuffled=!shuffled}render();toast('换一道符合条件的菜');return;
+    case 'reminder':{const body=panel('临期提醒',()=>render());const p=document.createElement('p');p.textContent='有到期日的食材提前 3 天提醒，每天汇总一次。每次微信授权可接收一条提醒，用完可再次订阅。';body.append(p,buttonText('查看站内消息','demo-example',()=>show('notifications')),buttonText('订阅一次','demo-submit',()=>toast('实际订阅请在小程序中完成；此处为原型演示。')));return}
+    case 'timer':
+      if(ticking){clearInterval(ticking);ticking=null;render();return}
+      if(remaining===0)remaining=120;
+      ticking=setInterval(()=>{remaining=Math.max(0,remaining-1);if(active==='step')setLayer('timer-value',`${String(Math.floor(remaining/60)).padStart(2,'0')}:${String(remaining%60).padStart(2,'0')}`);if(remaining===0){clearInterval(ticking);ticking=null;if(active==='step')setLayer('开始计时','重新计时');toast('这一步时间到了 · 原型演示')}},1000);render();return;
+    case 'finish':clearInterval(ticking);ticking=null;show('record');toast('已完成，接着看看记录 · 原型演示');return;
+    case 'publish':show('post');toast('发布后进入作品详情 · 原型演示');return;
+    case 'photo':show('pantry');toast('已展示图片选择入口；实际拍照请在小程序中体验。');return;
+    case 'restore':show('pantry');toast('无图时显示食材名称 · 原型演示');return;
+    case 'bought':bought=Math.min(2,bought+1);toast(`已买好 ${bought+1} / 3 样 · 原型演示`);return;
+    case 'remove':toast('这里展示移除入口；真实清单在小程序中修改。');return;
+    case 'read-all':toast('这里展示批量已读入口；真实消息在小程序中修改。');return;
+    case 'draft-photo':toast('先填写食材名，再拍照或选图；真实上传在小程序中体验。');return;
+    case 'draft-add':toast('添加后清空草稿，继续添加下一种食材 · 原型演示');return;
+    case 'subscribe':toast('请在小程序中订阅；每次授权可接收一条临期提醒。');return;
+    case 'like':toast('已点赞 · 原型演示');return;
+    case 'favorite':toast('已收藏 · 原型演示');return;
+    case 'comment':toast('这里展示评论入口；真实评论在小程序中填写。');return;
+    case 'share':toast('这里展示分享入口；真实分享在小程序中体验。');return;
+    default:
+      if(h.action){toast('此处展示筛选入口；完整筛选在当前小程序中体验。');return}
+      show(h.to);
+  }
+}
+selector.addEventListener('change',()=>show(selector.value));
+document.getElementById('areas').addEventListener('click',e=>{const on=e.currentTarget.getAttribute('aria-pressed')!=='true';e.currentTarget.setAttribute('aria-pressed',String(on));screen.classList.toggle('show-hotspots',on)});
+document.getElementById('reset').addEventListener('click',()=>{clearInterval(ticking);ticking=null;remaining=120;shuffled=false;added=false;bought=0;requestText='';activeRequest=null;demoPicked=null;show('home');toast('已回到最初的样例')});
+window.addEventListener('hashchange',()=>show(location.hash.slice(1)));
+show(location.hash.slice(1)||'home');
+}
+</script>
+</html>

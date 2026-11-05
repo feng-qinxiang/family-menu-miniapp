@@ -73,6 +73,15 @@ function localDishByIngredient(name) {
   return '';
 }
 
+// 食材只显示用户上传的照片；未上传的名称交给页面文字兜底。
+function ingredientImage(item, photos) {
+  if (!item) return '';
+  const explicit = item.coverImage || item.imageUrl;
+  if (typeof explicit === 'string' && explicit.trim()) return explicit.trim();
+  const name = String(item.ingredientName || item.name || '').trim();
+  return photos && Object.prototype.hasOwnProperty.call(photos, name) ? photos[name] || '' : '';
+}
+
 function fallbackDishImg(seed) {
   const byTitle = localDishByTitle(seed);
   if (byTitle) return byTitle;
@@ -126,6 +135,7 @@ module.exports = {
   recipeDishImg,
   localDishByTitle,
   localDishByIngredient,
+  ingredientImage,
   stepDishImg,
   onImgError,
   onPhotoError

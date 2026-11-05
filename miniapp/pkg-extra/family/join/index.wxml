@@ -4,8 +4,6 @@
 <view class="container {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <!-- Hero -->
   <view class="head g-fade-up">
-    <view class="eyebrow-serif">有邀请码？</view>
-    <view class="title-stroke--ink hero-title">加入<text class="pop">家庭</text></view>
     <view class="lead">输入家人分享的 8 位邀请码，或扫描他们的二维码，一起共享菜单和买菜清单。</view>
   </view>
 

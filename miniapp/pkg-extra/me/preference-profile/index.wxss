@@ -47,7 +47,6 @@
 .ov-content { position: relative; z-index: 3; }
 .ov-eyebrow {
   font-family: var(--serif);
-  font-style: italic;
   font-size: var(--fs-cap);
   letter-spacing: 1rpx;
   color: var(--gold);
