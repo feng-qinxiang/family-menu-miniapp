@@ -7,7 +7,7 @@
       <view class="vip-meta">
         <view class="vip-m">实时云同步</view>
         <view class="vip-m">最多 8 位家人</view>
-        <view class="vip-m">{{priceMeta.yearly}}</view>
+        <view wx:if="{{priceMeta.yearly}}" class="vip-m">{{priceMeta.yearly}}</view>
       </view>
   </view>
 

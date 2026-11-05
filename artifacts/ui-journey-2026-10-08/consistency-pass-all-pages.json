@@ -97,14 +97,6 @@
       "gated": false
     },
     {
-      "route": "pkg-extra/vip/index",
-      "state": "main",
-      "image": "screens/all-pkg-extra-vip-index.jpg",
-      "width": 591,
-      "height": 1280,
-      "gated": true
-    },
-    {
       "route": "pkg-extra/vip/upgrade/index",
       "state": "main",
       "image": "screens/all-pkg-extra-vip-upgrade-index.jpg",
@@ -145,6 +137,214 @@
       "gated": true
     },
     {
+      "route": "pkg-extra/recipe-detail/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-recipe-detail-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/recipe-detail/index",
+      "state": "食材",
+      "image": "screens/all-pkg-extra-recipe-detail-index-食材.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/recipe-detail/index",
+      "state": "食材大字",
+      "image": "screens/all-pkg-extra-recipe-detail-index-食材大字.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/recipe-detail/index",
+      "state": "做法与评价",
+      "image": "screens/all-pkg-extra-recipe-detail-index-做法与评价.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/recipe-edit/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-recipe-edit-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/recipe-edit/index",
+      "state": "用料",
+      "image": "screens/all-pkg-extra-recipe-edit-index-用料.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/recipe-edit/index",
+      "state": "步骤",
+      "image": "screens/all-pkg-extra-recipe-edit-index-步骤.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/recipes/search/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-recipes-search-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/auth/login/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-auth-login-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/auth/login-phone/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-auth-login-phone-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": true
+    },
+    {
+      "route": "pkg-extra/family/join/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-family-join-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/family/members/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-family-members-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/family/invite/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-family-invite-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/me/settings/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-me-settings-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/me/notifications/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-me-notifications-index.jpg?v=20261011-filter-actions",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/me/notifications/index",
+      "state": "大字",
+      "image": "screens/all-pkg-extra-me-notifications-index-大字.jpg?v=20261011-filter-actions",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/me/notifications/index",
+      "state": "已读",
+      "image": "screens/all-pkg-extra-me-notifications-index-已读.jpg?v=20261011-filter-actions",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/me/preference-profile/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-me-preference-profile-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/me/feedback/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-me-feedback-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/me/help-faq/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-me-help-faq-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/me/about/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-me-about-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/legal/terms/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-legal-terms-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/legal/privacy/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-legal-privacy-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/legal/deletion/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-legal-deletion-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/me/profile-edit/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-me-profile-edit-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/vip/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-vip-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": true
+    },
+    {
       "route": "pkg-extra/favorites/index",
       "state": "main",
       "image": "screens/all-pkg-extra-favorites-index.jpg",
@@ -167,13 +367,6 @@
       "actualRoute": "pkg-extra/community/post-detail/index",
       "gated": false,
       "temporarySample": true,
-      "passed": true
-    },
-    {
-      "route": "pkg-extra/vip/index",
-      "actualRoute": "pkg-extra/vip/index",
-      "gated": true,
-      "temporarySample": false,
       "passed": true
     },
     {
@@ -202,6 +395,144 @@
       "actualRoute": "pkg-extra/payment/success/index",
       "gated": true,
       "temporarySample": true,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/recipe-detail/index",
+      "actualRoute": "pkg-extra/recipe-detail/index",
+      "gated": false,
+      "temporarySample": true,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/recipe-edit/index",
+      "actualRoute": "pkg-extra/recipe-edit/index",
+      "gated": false,
+      "temporarySample": true,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/recipes/search/index",
+      "actualRoute": "pkg-extra/recipes/search/index",
+      "gated": false,
+      "temporarySample": true,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/cook-log/index",
+      "actualRoute": "pages/cook-log/index",
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/auth/login/index",
+      "actualRoute": "pkg-extra/auth/login/index",
+      "gated": false,
+      "temporarySample": false,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/auth/login-phone/index",
+      "actualRoute": "pkg-extra/auth/login-phone/index",
+      "gated": true,
+      "temporarySample": false,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/family/join/index",
+      "actualRoute": "pkg-extra/family/join/index",
+      "gated": false,
+      "temporarySample": false,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/family/members/index",
+      "actualRoute": "pkg-extra/family/members/index",
+      "gated": false,
+      "temporarySample": true,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/family/invite/index",
+      "actualRoute": "pkg-extra/family/invite/index",
+      "gated": false,
+      "temporarySample": true,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/me/settings/index",
+      "actualRoute": "pkg-extra/me/settings/index",
+      "gated": false,
+      "temporarySample": true,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/me/notifications/index",
+      "actualRoute": "pkg-extra/me/notifications/index",
+      "gated": false,
+      "temporarySample": true,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/me/preference-profile/index",
+      "actualRoute": "pkg-extra/me/preference-profile/index",
+      "gated": false,
+      "temporarySample": true,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/me/feedback/index",
+      "actualRoute": "pkg-extra/me/feedback/index",
+      "gated": false,
+      "temporarySample": true,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/me/help-faq/index",
+      "actualRoute": "pkg-extra/me/help-faq/index",
+      "gated": false,
+      "temporarySample": false,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/me/about/index",
+      "actualRoute": "pkg-extra/me/about/index",
+      "gated": false,
+      "temporarySample": false,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/legal/terms/index",
+      "actualRoute": "pkg-extra/legal/terms/index",
+      "gated": false,
+      "temporarySample": false,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/legal/privacy/index",
+      "actualRoute": "pkg-extra/legal/privacy/index",
+      "gated": false,
+      "temporarySample": false,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/legal/deletion/index",
+      "actualRoute": "pkg-extra/legal/deletion/index",
+      "gated": false,
+      "temporarySample": false,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/me/profile-edit/index",
+      "actualRoute": "pkg-extra/me/profile-edit/index",
+      "gated": false,
+      "temporarySample": true,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/vip/index",
+      "actualRoute": "pkg-extra/vip/index",
+      "gated": true,
+      "temporarySample": false,
       "passed": true
     },
     {
@@ -2011,10 +2342,614 @@
       },
       "paymentEnabled": false,
       "passed": true
+    },
+    {
+      "route": "pkg-extra/recipe-detail/index",
+      "state": "ingredients",
+      "ingredientRows": [
+        {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": -314.609375,
+          "bottom": -226.609375,
+          "width": 358,
+          "height": 88
+        },
+        {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": -226.609375,
+          "bottom": -138.609375,
+          "width": 358,
+          "height": 88
+        },
+        {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": -138.609375,
+          "bottom": -51.609375,
+          "width": 358,
+          "height": 87
+        }
+      ],
+      "rects": {
+        ".rd-page": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 0,
+          "bottom": 844,
+          "width": 390,
+          "height": 844
+        },
+        ".rd-footbar": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 722,
+          "bottom": 844,
+          "width": 390,
+          "height": 122
+        }
+      },
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/recipe-detail/index",
+      "state": "ingredients-large-long-name",
+      "ingredientRows": [
+        {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": -317.65625,
+          "bottom": -229.65625,
+          "width": 358,
+          "height": 88
+        },
+        {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": -229.65625,
+          "bottom": -141.65625,
+          "width": 358,
+          "height": 88
+        },
+        {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": -141.65625,
+          "bottom": -54.65625,
+          "width": 358,
+          "height": 87
+        }
+      ],
+      "rects": {
+        ".rd-page": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 0,
+          "bottom": 844,
+          "width": 390,
+          "height": 844
+        },
+        ".rd-footbar": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 722,
+          "bottom": 844,
+          "width": 390,
+          "height": 122
+        }
+      },
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/me/notifications/index",
+      "state": "pantry-reminder",
+      "rects": {
+        ".ncard": {
+          "id": "",
+          "dataset": {
+            "id": 9001
+          },
+          "left": 23,
+          "right": 367,
+          "top": 301.390625,
+          "bottom": 459.140625,
+          "width": 344,
+          "height": 157.75
+        },
+        ".nhead": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 354,
+          "top": 314.390625,
+          "bottom": 353.140625,
+          "width": 318,
+          "height": 38.75
+        },
+        ".nt-h3": {
+          "id": "",
+          "dataset": {},
+          "left": 76,
+          "right": 296.9140625,
+          "top": 314.390625,
+          "bottom": 336.140625,
+          "width": 220.9140625,
+          "height": 21.75
+        },
+        ".nt-body": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 354,
+          "top": 361.140625,
+          "bottom": 400.140625,
+          "width": 318,
+          "height": 39
+        },
+        ".nfoot": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 354,
+          "top": 406.140625,
+          "bottom": 452.140625,
+          "width": 318,
+          "height": 46
+        },
+        ".nbtn": {
+          "id": "",
+          "dataset": {
+            "id": 9001
+          },
+          "left": 289,
+          "right": 354,
+          "top": 407.140625,
+          "bottom": 452.140625,
+          "width": 65,
+          "height": 45
+        },
+        ".nread-state": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 65,
+          "top": 421.890625,
+          "bottom": 437.390625,
+          "width": 29,
+          "height": 15.5
+        },
+        ".reddot": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 41,
+          "top": 427.140625,
+          "bottom": 432.140625,
+          "width": 5,
+          "height": 5
+        },
+        ".nt-time": {
+          "id": "",
+          "dataset": {},
+          "left": 303.9140625,
+          "right": 354,
+          "top": 314.390625,
+          "bottom": 331.390625,
+          "width": 50.0859375,
+          "height": 17
+        },
+        ".nt": {
+          "id": "",
+          "dataset": {},
+          "left": 76,
+          "right": 296.9140625,
+          "top": 314.390625,
+          "bottom": 353.140625,
+          "width": 220.9140625,
+          "height": 38.75
+        },
+        ".notif-title-row": {
+          "id": "",
+          "dataset": {},
+          "left": 23,
+          "right": 367,
+          "top": 107,
+          "bottom": 159.84375,
+          "width": 344,
+          "height": 52.84375
+        },
+        ".cpt-titles": {
+          "id": "",
+          "dataset": {},
+          "left": 23,
+          "right": 258,
+          "top": 107,
+          "bottom": 159.84375,
+          "width": 235,
+          "height": 52.84375
+        },
+        ".notif-readall": {
+          "id": "",
+          "dataset": {},
+          "left": 266,
+          "right": 367,
+          "top": 110.921875,
+          "bottom": 155.921875,
+          "width": 101,
+          "height": 45
+        },
+        ".notif-readall-label": {
+          "id": "",
+          "dataset": {},
+          "left": 266,
+          "right": 367,
+          "top": 116.8984375,
+          "bottom": 149.9453125,
+          "width": 101,
+          "height": 33.046875
+        },
+        ".notif-page >>> .navbar": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 0,
+          "bottom": 87,
+          "width": 390,
+          "height": 87
+        },
+        ".cpt-head": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 95,
+          "bottom": 197.34375,
+          "width": 390,
+          "height": 102.34375
+        }
+      },
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/me/notifications/index",
+      "state": "large-long-text",
+      "rects": {
+        ".ncard": {
+          "id": "",
+          "dataset": {
+            "id": 9001
+          },
+          "left": 23,
+          "right": 367,
+          "top": 316.0859375,
+          "bottom": 530.6015625,
+          "width": 344,
+          "height": 214.515625
+        },
+        ".nhead": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 354,
+          "top": 329.0859375,
+          "bottom": 400.6015625,
+          "width": 318,
+          "height": 71.515625
+        },
+        ".nt-h3": {
+          "id": "",
+          "dataset": {},
+          "left": 76,
+          "right": 281.890625,
+          "top": 329.0859375,
+          "bottom": 379.1015625,
+          "width": 205.890625,
+          "height": 50.015625
+        },
+        ".nt-body": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 354,
+          "top": 408.6015625,
+          "bottom": 471.6015625,
+          "width": 318,
+          "height": 63
+        },
+        ".nfoot": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 354,
+          "top": 477.6015625,
+          "bottom": 523.6015625,
+          "width": 318,
+          "height": 46
+        },
+        ".nbtn": {
+          "id": "",
+          "dataset": {
+            "id": 9001
+          },
+          "left": 277,
+          "right": 354,
+          "top": 478.6015625,
+          "bottom": 523.6015625,
+          "width": 77,
+          "height": 45
+        },
+        ".nread-state": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 71,
+          "top": 491.0234375,
+          "bottom": 511.171875,
+          "width": 35,
+          "height": 20.1484375
+        },
+        ".reddot": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 41,
+          "top": 498.59375,
+          "bottom": 503.59375,
+          "width": 5,
+          "height": 5
+        },
+        ".nt-time": {
+          "id": "",
+          "dataset": {},
+          "left": 288.890625,
+          "right": 354,
+          "top": 329.0859375,
+          "bottom": 350.5859375,
+          "width": 65.109375,
+          "height": 21.5
+        },
+        ".nt": {
+          "id": "",
+          "dataset": {},
+          "left": 76,
+          "right": 281.890625,
+          "top": 329.0859375,
+          "bottom": 400.6015625,
+          "width": 205.890625,
+          "height": 71.515625
+        },
+        ".notif-title-row": {
+          "id": "",
+          "dataset": {},
+          "left": 23,
+          "right": 367,
+          "top": 107,
+          "bottom": 168.390625,
+          "width": 344,
+          "height": 61.390625
+        },
+        ".cpt-titles": {
+          "id": "",
+          "dataset": {},
+          "left": 23,
+          "right": 240,
+          "top": 107,
+          "bottom": 168.390625,
+          "width": 217,
+          "height": 61.390625
+        },
+        ".notif-readall": {
+          "id": "",
+          "dataset": {},
+          "left": 248,
+          "right": 367,
+          "top": 115.1953125,
+          "bottom": 160.1953125,
+          "width": 119,
+          "height": 45
+        },
+        ".notif-readall-label": {
+          "id": "",
+          "dataset": {},
+          "left": 248,
+          "right": 367,
+          "top": 118.84375,
+          "bottom": 156.5390625,
+          "width": 119,
+          "height": 37.6953125
+        },
+        ".notif-page >>> .navbar": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 0,
+          "bottom": 87,
+          "width": 390,
+          "height": 87
+        },
+        ".cpt-head": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 95,
+          "bottom": 207.390625,
+          "width": 390,
+          "height": 112.390625
+        }
+      },
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/me/notifications/index",
+      "state": "read",
+      "rects": {
+        ".ncard": {
+          "id": "",
+          "dataset": {
+            "id": 9001
+          },
+          "left": 23,
+          "right": 367,
+          "top": 301.390625,
+          "bottom": 500.390625,
+          "width": 344,
+          "height": 199
+        },
+        ".nhead": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 354,
+          "top": 314.390625,
+          "bottom": 374.890625,
+          "width": 318,
+          "height": 60.5
+        },
+        ".nt-h3": {
+          "id": "",
+          "dataset": {},
+          "left": 76,
+          "right": 296.9140625,
+          "top": 314.390625,
+          "bottom": 357.890625,
+          "width": 220.9140625,
+          "height": 43.5
+        },
+        ".nt-body": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 354,
+          "top": 382.890625,
+          "bottom": 441.390625,
+          "width": 318,
+          "height": 58.5
+        },
+        ".nfoot": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 354,
+          "top": 447.390625,
+          "bottom": 493.390625,
+          "width": 318,
+          "height": 46
+        },
+        ".nbtn": {
+          "id": "",
+          "dataset": {
+            "id": 9001
+          },
+          "left": 289,
+          "right": 354,
+          "top": 448.390625,
+          "bottom": 493.390625,
+          "width": 65,
+          "height": 45
+        },
+        ".nread-state": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 56,
+          "top": 463.140625,
+          "bottom": 478.640625,
+          "width": 20,
+          "height": 15.5
+        },
+        ".reddot": null,
+        ".nt-time": {
+          "id": "",
+          "dataset": {},
+          "left": 303.9140625,
+          "right": 354,
+          "top": 314.390625,
+          "bottom": 331.390625,
+          "width": 50.0859375,
+          "height": 17
+        },
+        ".nt": {
+          "id": "",
+          "dataset": {},
+          "left": 76,
+          "right": 296.9140625,
+          "top": 314.390625,
+          "bottom": 374.890625,
+          "width": 220.9140625,
+          "height": 60.5
+        },
+        ".notif-title-row": {
+          "id": "",
+          "dataset": {},
+          "left": 23,
+          "right": 367,
+          "top": 107,
+          "bottom": 159.84375,
+          "width": 344,
+          "height": 52.84375
+        },
+        ".cpt-titles": {
+          "id": "",
+          "dataset": {},
+          "left": 23,
+          "right": 367,
+          "top": 107,
+          "bottom": 159.84375,
+          "width": 344,
+          "height": 52.84375
+        },
+        ".notif-readall": null,
+        ".notif-readall-label": null,
+        ".notif-page >>> .navbar": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 0,
+          "bottom": 87,
+          "width": 390,
+          "height": 87
+        },
+        ".cpt-head": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 95,
+          "bottom": 197.34375,
+          "width": 390,
+          "height": 102.34375
+        }
+      },
+      "passed": true
     }
   ],
-  "checkedAt": "2026-11-05T12:33:33.315Z",
-  "passed": false,
+  "checkedAt": "2026-11-05T12:51:32.116Z",
+  "passed": true,
   "source": "Native formal pages; temporary sample data restored; closed features kept closed; no business write APIs.",
   "formalRoutes": 39
 }

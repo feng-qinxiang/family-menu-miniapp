@@ -23,6 +23,8 @@ function cli(tool, args = []) {
   return result.result;
 }
 const patch = value => cli('automation_page_action', ['--action', 'setData', '--patch', JSON.stringify(value)]);
+// ponytail: IDE skill 0.3.15 的 callMethod 调用时丢了 this，改用 evaluate 在当前页上直接调用
+const callPage = method => cli('automation_evaluate', ['--fn-source', `function() { getCurrentPages().pop()[${JSON.stringify(method)}](); }`]);
 const read = () => cli('automation_page_action', ['--action', 'getData']).data;
 const current = () => cli('automation_runtime_info', ['--action', 'currentPage']).currentPage.path;
 function boxes(selectors) {
@@ -118,7 +120,7 @@ const sample = {
   'pkg-extra/community/post-detail/index': { postId: '201', post, photoIndex: 0, commentText: '', submitting: false, commentsError: false, comments: [{ commentId: 1, author: '家人', avaText: '家', avaTheme: 'lan', createdAt: '18:45', content: '明天也想吃这道，少放一点盐就好。', mine: false }, { commentId: 2, author: '掌勺人', avaText: '厨', avaTheme: 'lin', createdAt: '18:50', content: '好，下次照这个火候再做。', mine: false }] },
   'pkg-extra/me/settings/index': { subscribeAvailable: true, subscribeEnabled: false },
   'pkg-extra/me/notifications/index': { activeTab: 'all', all: [{ id: 9001, group: 'today', kind: 'pantry', icon: 'bell', title: '2 项食材快到期了', time: '今天 09:00', unread: true, body: [{ t: 'n', v: '番茄今天到期；鸡蛋剩 2 天。先检查新鲜度，再安排做菜。' }], action: { label: '查看冰箱', ghost: false, type: 'pantry' } }] },
-  'pkg-extra/favorites/index': { recipes: [recipe, { ...recipe, id: 102, title: '清炒时蔬', coverImage: '/assets/dishes/stir-fry-veg.jpg', cover: '/assets/dishes/stir-fry-veg.jpg', dishImg: '/assets/dishes/stir-fry-veg.jpg', timeCost: 10 }], recipeCount: 2, postCount: 1, countText: '2 道菜谱 · 1 条分享', posts: [{ id: 201, title: post.title, cover: recipe.cover, tag: '家常菜', author: '家人', avatarText: '家', avatarColor: '#c74d32', likeCount: 12 }] },
+  'pkg-extra/favorites/index': { recipes: [{ ...recipe, favorited: true }, { ...recipe, favorited: true, id: 102, title: '清炒时蔬', coverImage: '/assets/dishes/stir-fry-veg.jpg', cover: '/assets/dishes/stir-fry-veg.jpg', dishImg: '/assets/dishes/stir-fry-veg.jpg', timeCost: 10 }], recipeCount: 2, postCount: 1, countText: '2 道菜谱 · 1 条分享', posts: [{ id: 201, title: post.title, cover: recipe.cover, tag: '家常菜', author: '家人', avatarText: '家', avatarColor: '#c74d32', likeCount: 12 }] },
   'pkg-extra/recipe-detail/index': { ingredientPhotos: { '番茄': '/assets/ingredients/tomato.jpg', '鸡蛋': '/assets/ingredients/egg.jpg' }, ingredientPhotosFailed: false, recipeId: 101, recipe: { ...recipe, ingredients, steps, totalCount: 3, haveCount: 2, cookCount: 8, reviews: [{ author: '家人', initial: '家', score: 5, content: '火候刚好，下次还想吃。', when: '昨天' }] }, servings: 2, baseServings: 2, missCount: 1, works: [{ id: 201, author: '家人', title: post.title, cover: recipe.cover, likeCount: 12 }] },
   'pkg-extra/recipe-edit/index': { pageLoading: false, tipText: '', form: { ...recipe, difficulty: 'medium', ingredients, steps, videoUrl: '' }, tagsLabel: '鲜香、下饭', tasteTagsText: '鲜香、下饭', previewInfo: { title: recipe.title, meta: '家常 · 15分钟 · 2人', desc: recipe.summary }, formQuality: { ingredientCount: 3, stepCount: 3, hasSummary: true, readyText: '可以保存' } },
   'pkg-extra/recipes/search/index': { keyword: '番茄', allRecipes: [recipe], list: [{ ...recipe, titleParts: [{ t: '番茄', hl: true }, { t: '炒蛋', hl: false }], label: '家常', timeText: '15 分钟' }], total: 1 },
@@ -176,7 +178,7 @@ try {
       cli('automation_viewport_action', ['--action', 'pageScrollTo', '--scroll-top', '0']);
       assert.equal(current(), entry.route, 'capture remains on intended route');
       if (entry.route === 'pkg-extra/me/notifications/index') {
-        cli('automation_page_action', ['--action', 'callMethod', '--method', 'recompute']);
+        callPage('recompute');
         const notificationData = read();
         assert.equal(notificationData.visibleCount, 1, 'temporary pantry reminder remains visible after grouping');
         assert.equal(notificationData.groups[0].items[0].action.type, 'pantry', 'reminder opens the pantry');
@@ -185,10 +187,10 @@ try {
       capture(entry, selector);
       if (entry.route === 'pkg-extra/me/notifications/index') {
         patch({ fontScale: 'lg', 'all[0].title': '番茄、鸡蛋和香菇快到期了，今天做饭可以先看看', 'all[0].body': [{ t: 'n', v: '番茄今天到期；鸡蛋剩 2 天；香菇剩 1 天。先检查食材新鲜度，再安排做菜。进入冰箱可查看每种食材的数量和具体到期日。' }] });
-        cli('automation_page_action', ['--action', 'callMethod', '--method', 'recompute']);
+        callPage('recompute');
         notificationLayout(entry, 'large-long-text'); capture(entry, '.ncard', '大字');
         patch({ fontScale: 'normal', 'all[0].unread': false });
-        cli('automation_page_action', ['--action', 'callMethod', '--method', 'recompute']);
+        callPage('recompute');
         notificationLayout(entry, 'read'); capture(entry, '.ncard', '已读');
       }
       if (entry.route === 'pkg-extra/community/post-detail/index') {
