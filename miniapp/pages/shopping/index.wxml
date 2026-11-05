@@ -15,7 +15,8 @@
       <view class="tap-scale sp-seg-item {{tab === 'pantry' ? 'on' : ''}}" data-tab="pantry" bindtap="switchTab" aria-role="tab" aria-selected="{{tab === 'pantry'}}">家里已有 {{pantryCount ? '(' + pantryCount + ')' : ''}}</view>
     </view>
 
-    <view class="mkt-photo-note" wx:if="{{ingredientPhotosFailed}}">食材图片暂未同步</view>
+    <!-- 只在当前视图真有食材图位时提示：空态/失败态/骨架下没有图可缺 -->
+    <view class="mkt-photo-note" wx:if="{{ingredientPhotosFailed && (tab === 'shopping' ? (!loading && !loadError && shoppingList.items.length) : (!pantryError && pantryCategories.length))}}">食材图片暂未同步</view>
 
     <!-- 待买清单视图 -->
     <block wx:if="{{tab === 'shopping'}}">
@@ -179,7 +180,7 @@
         <view class="sp-pantry-form" wx:if="{{showPantryForm}}">
           <input class="mkt-add-input" placeholder="食材名" placeholder-class="mkt-ph"
             value="{{newPantryItem.ingredientName}}" data-field="ingredientName" bindinput="onPantryInput" />
-          <input class="mkt-add-input sm" placeholder="量" placeholder-class="mkt-ph"
+          <input class="mkt-add-input sm" placeholder="数量" placeholder-class="mkt-ph"
             value="{{newPantryItem.amount}}" data-field="amount" bindinput="onPantryInput" />
           <input class="mkt-add-input sm" placeholder="单位" placeholder-class="mkt-ph"
             value="{{newPantryItem.unit}}" data-field="unit" bindinput="onPantryInput" />

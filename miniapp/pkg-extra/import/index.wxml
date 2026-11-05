@@ -39,7 +39,7 @@
         ></textarea>
         <view class="ta-foot">
           <text class="ta-cnt">已粘贴 {{charCount}} 字</text>
-          <view class="parsebtn tap-scale {{parsing ? 'disabled' : ''}}" bindtap="parseImport" aria-role="button" aria-label="开始解析" aria-disabled="{{parsing}}">{{parsing ? '解析中…' : '开始解析 →'}}</view>
+          <view class="parsebtn tap-scale {{parsing ? 'disabled' : ''}} {{preview ? 'parsebtn--done' : ''}}" bindtap="parseImport" aria-role="button" aria-label="开始解析" aria-disabled="{{parsing}}">{{parsing ? '解析中…' : '开始解析 →'}}</view>
         </view>
       </view>
 
@@ -58,7 +58,7 @@
             <image wx:if="{{preview.coverImage}}" class="res-cover-img" src="{{preview.coverImage}}" mode="aspectFill" />
             <image wx:else class="res-cover-img" src="/assets/dishes/orange-chicken.jpg" mode="aspectFill" />
             <view wx:if="{{!preview.coverImage}}" class="tap-scale res-cover-add" bindtap="chooseCover">+ 封面</view>
-            <view wx:else class="tap-scale res-cover-del" catchtap="removeCover">×</view>
+            <view wx:else class="tap-scale res-cover-del" catchtap="removeCover" aria-role="button" aria-label="移除封面">×</view>
           </view>
           <view class="res-info">
             <text class="res-tag">已解析</text>
@@ -110,7 +110,7 @@
               <view class="tap-scale step-img-add" wx:if="{{!item.image}}" data-index="{{index}}" bindtap="chooseStepImage">+ 配图</view>
               <view class="step-img-wrap" wx:else>
                 <image class="step-img" src="{{item.image}}" mode="aspectFill" lazy-load />
-                <view class="tap-scale step-img-del" data-index="{{index}}" catchtap="removeStepImage">×</view>
+                <view class="tap-scale step-img-del" data-index="{{index}}" catchtap="removeStepImage" aria-role="button" aria-label="移除第 {{index + 1}} 步的配图">×</view>
               </view>
             </view>
           </view>

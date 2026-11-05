@@ -3,27 +3,31 @@
 .m-sheet { padding: 0 var(--page-gutter); }
 .m-add { min-height: 88rpx; display: flex; align-items: center; padding: 0 20rpx; color: var(--pop); font-size: var(--fs-sub); font-weight: 700; }
 .mn-seg { display: flex; padding: 6rpx; background: var(--paper-2); border-radius: var(--r-pill); margin: 8rpx 0 28rpx; }
-.mn-seg-item { flex: 1; min-height: 80rpx; display: flex; align-items: center; justify-content: center; color: var(--mut); font-size: var(--fs-body); font-weight: 600; border-radius: var(--r-pill); }
-.mn-seg-item.on { background: var(--c-surface); color: var(--ink); box-shadow: var(--sh-card); }
+.mn-seg-item { position: relative; flex: 1; min-height: 80rpx; display: flex; align-items: center; justify-content: center; color: var(--mut); font-size: var(--fs-body); font-weight: 600; border-radius: var(--r-pill); }
+/* 视觉 80rpx 不变，热区上下撑到 88rpx（撑进轨道 6rpx 内边距，不超出轨道） */
+.mn-seg-item::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: var(--tap-min); transform: translateY(-50%); }
+/* 选中滑块走 --seg-thumb：深色档卡面与轨道几乎同色，看不出选中 */
+.mn-seg-item.on { background: var(--seg-thumb); color: var(--ink); box-shadow: var(--sh-card); }
 .m-overview { display: flex; align-items: flex-start; gap: 22rpx; margin-bottom: 20rpx; padding: 24rpx; }
-.m-overview-photo { flex: none; width: var(--tile-list-wide); height: var(--tile-list-tall); border-radius: var(--r-md); background: var(--paper-2); }
+.m-overview-photo { flex: none; width: var(--tile-list-wide); height: var(--tile-list-tall); border-radius: var(--r-sm); /* 内层圆角不大于外层卡 */ background: var(--paper-2); }
 .m-overview-copy { flex: 1; min-width: 0; }
 .m-overview-progress { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4rpx 12rpx; margin-top: 12rpx; font-size: var(--fs-cap); color: var(--mut-strong); }
-.m-overview .m-overview-title { font-size: var(--fs-lg); }
 .m-overview .m-overview-sub { font-size: var(--fs-cap); }
 .m-overview .m-progress-track { margin: 10rpx 0 12rpx; }
 .m-overview .m-main-action { padding: 0 16rpx; font-size: var(--fs-sub); }
 .m-overview-top, .m-overview-bottom, .m-week-head { display: flex; align-items: center; justify-content: space-between; gap: 20rpx; }
 .m-overview-top > view { min-width: 0; }
-.m-overview-title { font-size: var(--fs-h2); font-weight: 800; color: var(--ink); line-height: 1.4; }
+/* 卡片标题一档：今日总览卡、本周计划卡、首页「这一餐的进度」都是 --fs-lg / 800（周卡原来单独大一档 --fs-h2） */
+.m-overview-title { font-size: var(--fs-lg); font-weight: 800; color: var(--ink); line-height: 1.4; }
 .m-overview-sub { margin-top: 8rpx; font-size: var(--fs-sub); line-height: 1.6; color: var(--mut); }
 .m-progress-num { flex: none; font-size: var(--fs-stat); color: var(--pop); font-weight: 800; }
 .m-progress-den { font-size: var(--fs-body); color: var(--mut); font-weight: 500; }
 .m-progress-track { height: 10rpx; background: var(--paper-2); border-radius: var(--r-pill); overflow: hidden; margin: 24rpx 0 16rpx; }
-.m-progress-fill { height: 100%; background: var(--pop); border-radius: var(--r-pill); }
-.m-main-action { display: flex; align-items: center; justify-content: center; min-height: 88rpx; padding: 0 30rpx; /* 例外：按钮不是卡，左右留白跟字号走 */ background: var(--pop); color: var(--anchor-contrast); font-size: var(--fs-body); font-weight: 700; border-radius: var(--r-card); /* 实心主按钮统一走 --r-card */ }
+.m-progress-fill { height: 100%; background: var(--pop-fill); border-radius: var(--r-pill); }
+.m-main-action { display: flex; align-items: center; justify-content: center; min-height: 88rpx; padding: 0 30rpx; /* 例外：按钮不是卡，左右留白跟字号走 */ background: var(--pop-fill); color: var(--anchor-contrast); font-size: var(--fs-body); font-weight: 700; border-radius: var(--r-card); /* 实心主按钮统一走 --r-card */ }
 .m-quick-row { display: flex; gap: 16rpx; margin: 24rpx 0 8rpx; }
-.m-quick-card { flex: 1; min-width: 0; background: var(--c-surface); padding: 22rpx 16rpx; border: var(--bd-card); border-radius: var(--r-md); }
+/* 圆角与上方总览卡同为 --r-card（原 --r-md 并排看更圆） */
+.m-quick-card { flex: 1; min-width: 0; background: var(--c-surface); padding: 22rpx 16rpx; /* 例外：三列并排的窄卡，24rpx 会把大字档副标题挤成两行 */ border: var(--bd-card); border-radius: var(--r-card); }
 .m-quick-title { color: var(--ink); font-size: var(--fs-sub); font-weight: 700; line-height: 1.5; }
 .m-arrow { color: var(--mut); font-size: var(--fs-cap); }
 .m-quick-sub { margin-top: 8rpx; color: var(--mut); font-size: var(--fs-cap); line-height: 1.5; }
@@ -43,14 +47,14 @@
 .m-rby { color: var(--mut); font-size: var(--fs-cap); margin-top: 8rpx; line-height: 1.5; }
 .m-state { flex: none; padding: 6rpx 12rpx; background: var(--paper-2); color: var(--mut); font-size: var(--fs-mini); font-weight: 600; border-radius: var(--r-xs); }
 .m-state.st-cooking { background: var(--pop-soft); color: var(--pop-deep); }
-.m-state.st-done { background: var(--c-accent-soft); color: var(--pine); }
+.m-state.st-done { background: var(--c-accent-soft); color: var(--pine-ink); }
 .m-dish-bottom { display: flex; align-items: center; justify-content: space-between; gap: 12rpx; border-top: 1rpx solid var(--line); padding: 14rpx 0; margin-top: 22rpx; }
 .m-remove { flex: none; display: flex; align-items: center; min-height: 88rpx; font-size: var(--fs-cap); color: var(--mut); }
 .m-acts { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 14rpx; }
 .m-act { min-height: 88rpx; box-sizing: border-box; display: flex; align-items: center; justify-content: center; padding: 0 22rpx; /* 例外：按钮不是卡，左右留白跟字号走 */ border-radius: var(--r-card); font-size: var(--fs-sub); font-weight: 700; }
 .m-act-cook { background: var(--anchor); color: var(--anchor-contrast); }   /* 每道菜一颗：降为深色锚点，同屏只留顶部「进入厨房」一颗红 */
 .m-act-done { color: var(--ink); background: var(--paper-2); }
-.m-done-note { color: var(--pine); font-size: var(--fs-sub); }
+.m-done-note { color: var(--pine-ink); font-size: var(--fs-sub); }
 .m-shopping-build { display: flex; align-items: center; justify-content: space-between; gap: 24rpx; padding: 28rpx 0; border-top: 1rpx solid var(--line); }
 .m-shopping-build > view { min-width: 0; }
 .m-shopping-build > text { flex: none; }
@@ -62,7 +66,16 @@
 .m-wk-recipe { flex: 1; min-width: 0; color: var(--ink); font-size: var(--fs-sub); line-height: 1.6; }
 .m-wk-count { color: var(--mut); font-size: var(--fs-cap); flex: none; }
 .m-week-regenerate { margin-top: 12rpx; min-height: var(--tap-min); display: flex; align-items: center; justify-content: center; color: var(--mut); font-size: var(--fs-sub); }
-.m-skel-card { height: 240rpx; background: var(--skeleton); border-radius: var(--r-md); margin-bottom: 24rpx; }
-.m-skel-dish { height: 300rpx; background: var(--skeleton); border-radius: var(--r-md); margin-bottom: 20rpx; }
+/* 骨架圆角等于它替身的卡（.card / .m-row 都是 --r-card），加载完不跳角 */
+.m-skel-card { height: 240rpx; background: var(--skeleton); border-radius: var(--r-card); margin-bottom: 24rpx; }
+.m-skel-dish { height: 300rpx; background: var(--skeleton); border-radius: var(--r-card); margin-bottom: 20rpx; }
 .font-lg .m-dish-bottom { flex-wrap: wrap; }
 .font-lg .m-acts { margin-left: auto; }
+
+/* 深色档覆盖放在文件末尾：@media 不加权重，写在被覆盖的规则之前会被盖回去。
+   「已上桌」对齐首页 .hm-status--done 的深色档（--pine 文字在深底上只有约 2.9:1）；
+   「制作中」直接用 --pop-deep，深色档已在 app.wxss 提亮，不逐页覆盖 */
+@media (prefers-color-scheme: dark) {
+  .m-state.st-done { color: var(--c-success); background: var(--c-success-soft); }
+  .m-done-note { color: var(--c-success); }
+}

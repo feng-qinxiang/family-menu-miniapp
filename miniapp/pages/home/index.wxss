@@ -96,7 +96,7 @@
   width: 18rpx;
   height: 18rpx;
   border-radius: 50%;
-  background: var(--pop);
+  background: var(--pop-fill);
   border: 3rpx solid var(--c-surface);
   z-index: 2;
 }
@@ -121,7 +121,7 @@
   letter-spacing: 1rpx;
   font-weight: 700;
   color: var(--anchor-contrast);
-  background: var(--pop);
+  background: var(--pop-fill);
   padding: 8rpx 22rpx;
   border-radius: var(--r-pill);
   border: 2rpx solid rgba(255, 255, 255, 0.65);   /* 白描边：红 pill 叠红汤/暖色菜图时保持辨识度 */
@@ -211,7 +211,7 @@
   height: 88rpx;
   min-height: 44px;
   border-radius: var(--r-card);
-  background: var(--pop);
+  background: var(--pop-fill);
   color: var(--anchor-contrast);
   font-size: calc(29rpx * var(--fs-mul, 1));
   font-weight: 800;
@@ -273,8 +273,10 @@
   z-index: 20;
 }
 .mh-pad { padding: 0 46rpx; }
-.hm-pick-tools { display: flex; align-items: center; flex-wrap: wrap; gap: 12rpx; margin: 0 var(--page-gutter) 20rpx; }
-.hm-pick-tool { flex: 1; display: flex; align-items: center; justify-content: center; gap: 10rpx; min-height: 88rpx; padding: 0 16rpx; border-radius: var(--r-md); background: var(--c-surface); color: var(--ink); font-size: var(--fs-sub); font-weight: 700; border: var(--bd-card); }
+/* 下边距 24rpx：与下方 菜单卡→进度卡→心愿卡 之间的 24rpx 同一节奏（原 20rpx） */
+.hm-pick-tools { display: flex; align-items: center; flex-wrap: wrap; gap: 12rpx; margin: 0 var(--page-gutter) 24rpx; }
+/* 圆角与下方菜单卡、卡内「买食材」次按钮同为 --r-card（原 --r-md 比紧挨着的卡更圆） */
+.hm-pick-tool { flex: 1; display: flex; align-items: center; justify-content: center; gap: 10rpx; min-height: 88rpx; padding: 0 16rpx; /* 例外：并排两颗次按钮，不是卡表面 */ border-radius: var(--r-card); background: var(--c-surface); color: var(--ink); font-size: var(--fs-sub); font-weight: 700; border: var(--bd-card); }
 .hm-pick-tool image { width: 30rpx; height: 30rpx; flex: none; filter: brightness(0); opacity: .8; }
 .hm-pick-stock { display: flex; align-items: center; min-height: 88rpx; color: var(--mut-strong); font-size: var(--fs-cap); }
 .hm-recipe-search { display: flex; align-items: center; gap: 16rpx; margin: 16rpx var(--page-gutter) 8rpx; padding: 0 20rpx; background: var(--c-surface); border: var(--bd-card); border-radius: var(--r-md); }
@@ -282,7 +284,9 @@
 .hm-search-input { flex: 1; min-width: 0; min-height: 88rpx; font-size: var(--fs-sub); color: var(--ink); }
 .hm-search-placeholder { color: var(--mut); }
 .hm-search-submit { min-height: 88rpx; min-width: 88rpx; display: flex; align-items: center; justify-content: flex-end; font-size: var(--fs-sub); font-weight: 700; color: var(--pop-deep); }
-.font-lg .hm-pick-stock { flex-basis: 100%; justify-content: flex-end; min-height: 60rpx; }
+.font-lg .hm-pick-stock { flex-basis: 100%; justify-content: flex-end; min-height: 60rpx; position: relative; }
+/* 大字档「看库存」独占一行、视觉只有 60rpx：热区只向下补到 88rpx（伸进下方留白），不向上压到两颗工具按钮 */
+.font-lg .hm-pick-stock::after { content: ''; position: absolute; left: 0; right: 0; top: 0; height: var(--tap-min); }
 
 /* chips */
 .hm-recipes-head { margin-top: 32rpx; }
@@ -428,7 +432,7 @@
 }
 .hm-status--todo { color: var(--mut-strong); background: var(--paper-2); }
 .hm-status--cooking { color: var(--pop-deep); background: var(--pop-soft); }
-.hm-status--done { color: var(--pine); background: var(--c-accent-soft); }
+.hm-status--done { color: var(--pine-ink); background: var(--c-accent-soft); }
 .hm-menu-byline {
   margin-top: 8rpx;
   color: var(--mut-strong);
@@ -532,10 +536,11 @@
 .hm-menu-action-primary.hm-menu-pick .hm-menu-action-icon { filter: brightness(0); opacity: 0.6; }   /* 图标 SVG 是浅色描边，与次按钮同法压暗 */
 
 /* ============ 点菜、做菜、记录、社区 ============ */
+/* 左右与上方菜单卡、下方心愿卡同为 --pad-card-sm：三张卡左缘齐平，里面的标题也要齐（原 --pad-card 错开 4rpx） */
 .hm-journey {
   box-sizing: border-box;
   margin: 24rpx 46rpx 0;
-  padding: var(--pad-card);
+  padding: 28rpx var(--pad-card-sm);
   border: var(--bd-card);
   border-radius: var(--r-card);
   background: var(--c-surface);
@@ -624,7 +629,7 @@
   line-height: 1.4;
 }
 .hm-journey-step.is-current .hm-journey-label { color: var(--pop-deep); }
-.hm-journey-step.is-complete .hm-journey-label { color: var(--pine); }
+.hm-journey-step.is-complete .hm-journey-label { color: var(--pine-ink); }
 .hm-journey-caption {
   box-sizing: border-box;
   display: block;
@@ -642,14 +647,16 @@
 .font-lg .hm-menu-dish-title { flex: none; width: 100%; }
 
 @media (prefers-color-scheme: dark) {
+  /* 这些 SVG 在浅色档靠 brightness(0) 压成黑色，深色档要翻成白色，否则黑图标落在深卡上看不见 */
+  .hm-pick-tool image,
   .hm-journey-icon image,
   .hm-menu-action-secondary .hm-menu-action-icon,
   .hm-menu-action-primary.hm-menu-pick .hm-menu-action-icon { filter: brightness(0) invert(1); }
+  /* 空盘插画是奶油色实底，深卡上会亮成一块白斑；压到 0.3，餐具与卡底的对比和浅色档相当 */
+  .hm-menu-empty-plate { opacity: 0.3; }
   .hm-status--done { color: var(--c-success); background: var(--c-success-soft); }
   .hm-menu-progress-fill { background: var(--c-success); }
   .hm-journey-progress { background: var(--c-success); }
-  .hm-status--cooking,
-  .hm-journey-step.is-current .hm-journey-label { color: var(--pop); }
   .hm-journey-step.is-complete .hm-journey-label { color: var(--c-success); }
 }
 
@@ -767,7 +774,7 @@
   padding: 16rpx;
   margin-top: 12rpx;
   background: var(--paper);
-  border-radius: var(--r-md);
+  border-radius: var(--r-sm);   /* 内层圆角不大于外层心愿卡（--r-card） */
   color: var(--mut-strong);
   font-size: var(--fs-cap);
 }
@@ -824,7 +831,7 @@
   font-weight: 700;
   color: var(--mut-strong);
 }
-.fp-wish-linked { color: var(--pine); font-size: var(--fs-cap); }
+.fp-wish-linked { color: var(--pine-ink); font-size: var(--fs-cap); }
 .fp-wish-confirm {
   margin-top: 22rpx;
   min-height: 44px;
@@ -873,7 +880,7 @@
   margin-bottom: 40rpx;
 }
 .mh-hero--empty .mh-greet .mh-hi {
-  color: var(--gold);
+  color: var(--gold-on-dark);
   font-size: calc(25rpx * var(--fs-mul, 1));
 }
 .mh-hero--empty .mh-greet .mh-name {
@@ -884,7 +891,7 @@
 .mh-empty-eyebrow {
   font-family: var(--serif);
   font-size: calc(25rpx * var(--fs-mul, 1));
-  color: var(--gold);
+  color: var(--gold-on-dark);
   font-weight: 700;
   letter-spacing: 1rpx;
   margin-bottom: 12rpx;
@@ -915,11 +922,20 @@
   box-sizing: border-box;
   padding: 20rpx 44rpx;   /* 例外：这是实心按钮不是卡，左右留白跟字号走 */
   border-radius: var(--r-card);   /* 实心主按钮统一走 --r-card */
-  background: var(--pop);
+  background: var(--pop-fill);
   color: var(--anchor-contrast);
   font-size: calc(28rpx * var(--fs-mul, 1));
   font-weight: 800;
   box-shadow: var(--sh-pop);
+}
+
+/* 深色档覆盖要写在被覆盖的规则之后：@media 不加权重，写在前面会被后面的浅色规则盖回去 */
+@media (prefers-color-scheme: dark) {
+  /* 已选菜谱：与「已上桌」同一个完成色（--pine 文字在深底上只有约 2.9:1） */
+  .fp-wish-linked { color: var(--c-success); }
+  /* 空态 hero 底是 --anchor 锚点色，而 --gold 深色档翻成 #8a6a3a，金字压在锚点底上不到 3:1 */
+  .mh-hero--empty .mh-greet .mh-hi,
+  .mh-empty-eyebrow { color: var(--anchor-contrast); }
 }
 
 /* ============ 许愿弹窗（root-portal 渲染在页面根之外，不保证继承 page 变量；
@@ -945,22 +961,27 @@
   --r-pill: 999rpx;
   --sh-pop: 0 6rpx 16rpx rgba(200, 56, 31, 0.22);
   --fs-cap: 23rpx;
+  --ink-deep: #3a2e23;          /* 「算了」按钮字色（原副本漏了这两项） */
+  --anchor-contrast: #fbf8f3;   /* 「许愿」按钮字色，两档恒定 */
+  --pop-fill: #c8381f;          /* 「许愿」红底（同 app.wxss --pop-fill） */
 }
 /* 深色模式副本：root-portal 不继承 page 变量，dark 值取 theme.json dark 段 */
 .wish-backdrop.is-dark,
 .wish-modal.is-dark {
   --pop: #ff6a4d;
   --pop-soft: #3a2218;
-  --pop-deep: #d94b30;
+  --pop-deep: #ff7a5c;
   --ink: #efefef;
   --mut: #9a9a96;
   --mut-2: #757570;
   --mut-strong: #c4c0b8;
-  --paper-2: #262626;
+  --paper-2: #2e2e2e;
   --c-surface: #242424;
   --line: #333333;
   --line-light: #333333;
   --sh-pop: 0 6rpx 16rpx rgba(0, 0, 0, 0.45);
+  --ink-deep: #e2e2e2;
+  --pop-fill: #c8381f;          /* 深色档 --pop 上放浅字只有 2.7:1，红底用品牌原红（4.9:1） */
 }
 
 .wish-backdrop {
@@ -1020,12 +1041,12 @@
   width: 100%;
   box-sizing: border-box;
   height: 96rpx;
-  padding: 0 28rpx;
+  padding: 0 28rpx;   /* 例外：输入框不是卡表面；root-portal 里取不到 --pad-card，数值与它相同 */
   font-size: calc(29rpx * var(--fs-mul, 1));
   color: var(--ink);
   background: var(--paper-2);
   border: none;
-  border-radius: 28rpx;   /* 对齐 state-dialog 按钮圆角 */
+  border-radius: var(--r-card);   /* 与弹窗按钮、state-dialog 按钮同为 --r-card（原 28rpx） */
   transition: border-color .2s;
 }
 .wish-modal-input:focus,
@@ -1050,7 +1071,7 @@
   justify-content: center;
 }
 .wish-btn-cancel { background: var(--paper-2); color: var(--ink-deep); }
-.wish-btn-ok { background: var(--pop); color: var(--anchor-contrast); box-shadow: 0 4rpx 8rpx rgba(180, 40, 20, 0.3), 0 20rpx 44rpx rgba(200, 56, 31, 0.4); }
+.wish-btn-ok { background: var(--pop-fill); color: var(--anchor-contrast); box-shadow: 0 4rpx 8rpx rgba(180, 40, 20, 0.3), 0 20rpx 44rpx rgba(200, 56, 31, 0.4); }
 .wish-btn-ok.off { opacity: 0.4; }
 
 /* ============ SKELETON ============ */
@@ -1152,7 +1173,7 @@
   height: 5rpx;
   margin-left: -24rpx;
   border-radius: 3rpx;
-  background: var(--pop);
+  background: var(--pop-fill);
 }
 .mh-load-error-title {
   font-size: calc(36rpx * var(--fs-mul, 1));
@@ -1175,7 +1196,7 @@
   align-items: center;
   justify-content: center;
   border-radius: var(--r-card);
-  background: var(--pop);
+  background: var(--pop-fill);
   color: var(--anchor-contrast);
   font-size: var(--fs-btn);
   font-weight: 800;

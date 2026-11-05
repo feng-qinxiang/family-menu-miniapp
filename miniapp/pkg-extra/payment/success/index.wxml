@@ -12,7 +12,7 @@
   <view class="ps-title g-fade-up g-d2">
     开通成功
   </view>
-  <view class="ps-sub g-fade-up g-d3">家庭云同步已生效，现在全家的菜谱、菜单和购物清单都会实时同步啦。</view>
+  <view class="ps-sub g-fade-up g-d3">家庭云同步已生效，现在全家的菜谱、菜单和买菜清单都会实时同步啦。</view>
 
   <!-- VIP 标签 -->
   <view class="ps-viptag g-fade-up g-d3">

@@ -10,7 +10,7 @@
   <!-- 8 位邀请码 -->
   <view class="code-label g-fade-up g-d1">
     <text class="code-label-tx">8 位邀请码</text>
-    <view class="paste tap-scale" catchtap="onPaste">
+    <view class="paste hit-88 tap-scale" aria-role="button" aria-label="粘贴邀请码" catchtap="onPaste">
       <view class="paste-ic"></view>
       <text>粘贴</text>
     </view>
@@ -103,7 +103,7 @@
 
   <!-- 创建新家 -->
   <view class="createnew">
-    <text class="createnew-link tap-scale" catchtap="onCreate">还没有家庭？创建一个新家 ›</text>
+    <text class="createnew-link hit-88 tap-scale" aria-role="button" catchtap="onCreate">还没有家庭？创建一个新家 ›</text>
   </view>
 
   <view class="safe-bottom"></view>

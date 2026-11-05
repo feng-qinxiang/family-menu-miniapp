@@ -50,7 +50,7 @@
   width: var(--ava-hero);
   height: var(--ava-hero);
   border-radius: calc(var(--ava-hero) * var(--r-ava));
-  background: var(--pop);
+  background: var(--pop-fill);
   border: 6rpx solid var(--c-surface);
   display: flex;
   align-items: center;
@@ -78,7 +78,7 @@
   width: 74rpx;
   height: 74rpx;
   border-radius: 50%;
-  background: var(--pop);
+  background: var(--pop-fill);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -88,7 +88,7 @@
 .pe-cam-icon {
   width: 30rpx;
   height: 24rpx;
-  border: 4rpx solid var(--c-surface);
+  border: 4rpx solid var(--anchor-contrast);   /* 红底白图标：恒浅 */
   border-radius: 6rpx;
   position: relative;
 }
@@ -101,7 +101,7 @@
   width: 12rpx;
   height: 12rpx;
   border-radius: 50%;
-  border: 3rpx solid var(--c-surface);
+  border: 3rpx solid var(--anchor-contrast);
 }
 .pe-avatar-hint {
   margin-top: 24rpx;
@@ -121,14 +121,15 @@
   font-weight: 700;
 }
 
-/* 行内说明文字：用于「忌口」等需要一句解释的字段 */
+/* 行内说明文字：用于「忌口」等需要一句解释的字段。
+   这句是在说「选了会影响点菜」，不是装饰：原 --fs-tiny + --mut-2 只有 19rpx / 2.4:1，改为 --fs-mini + --mut */
 .pe-hint {
   margin-top: 16rpx;
   font-family: var(--sans);
   font-style: normal;
-  font-size: var(--fs-tiny);
+  font-size: var(--fs-mini);
   line-height: 1.6;
-  color: var(--mut-2);
+  color: var(--mut);
   font-weight: 400;
   letter-spacing: 0;
 }
@@ -228,6 +229,9 @@
   align-items: center;
   gap: 24rpx;
 }
+/* 纵向行的小标题独占一行，不需要和别的行对齐列宽：
+   固定 132rpx 在大字档装不下「口味偏好」4 个字（33rpx × 4 ≈ 134rpx），会折成两行 */
+.pe-frow-head .pe-flabel { width: auto; }
 .pe-tagwrap {
   display: flex;
   flex-wrap: wrap;
@@ -245,9 +249,10 @@
 }
 
 /* ===== 保存按钮 ===== */
-/* padding 简写会盖掉 .safe-bottom，底部安全区写在这里 */
+/* padding 简写会盖掉 .safe-bottom，底部安全区写在这里。
+   左右走 --page-gutter：上面两张表单卡是 46rpx 页边距，按钮原先 28rpx、两边各宽出一截 */
 .pe-savebar {
-  padding: 48rpx 28rpx calc(40rpx + env(safe-area-inset-bottom));
+  padding: 48rpx var(--page-gutter) calc(40rpx + env(safe-area-inset-bottom));
 }
 .pe-savebar .btn {
   gap: 14rpx;
@@ -256,8 +261,8 @@
 .pe-save-check {
   width: 28rpx;
   height: 16rpx;
-  border-left: 5rpx solid var(--c-surface);
-  border-bottom: 5rpx solid var(--c-surface);
+  border-left: 5rpx solid var(--anchor-contrast);   /* 红底白勾：恒浅 */
+  border-bottom: 5rpx solid var(--anchor-contrast);
   transform: rotate(-45deg);
   margin-top: -6rpx;
 }

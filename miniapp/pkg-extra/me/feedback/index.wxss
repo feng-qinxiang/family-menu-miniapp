@@ -72,7 +72,7 @@
 .ta-ph { color: var(--mut); }
 .counter {
   position: absolute;
-  right: 30rpx;
+  right: var(--pad-card);   /* 与输入文字同一条右边 */
   bottom: 24rpx;
   font-size: calc(23rpx * var(--fs-mul, 1));
   font-weight: 600;
@@ -125,7 +125,7 @@
   width: 20rpx;
   height: 3rpx;
   border-radius: 2rpx;
-  background: var(--paper);
+  background: var(--anchor-contrast);   /* --anchor 底上的前景用配套的 --anchor-contrast；--paper 深色档翻成 #1c1c1c，× 从浅色变成了黑色 */
 }
 .del-x::before { transform: rotate(45deg); }
 .del-x::after { transform: rotate(-45deg); }
@@ -164,10 +164,10 @@
   align-items: center;
   gap: 20rpx;
   height: 104rpx;
-  padding: 0 30rpx;
+  padding: 0 var(--pad-card);
   background: var(--c-surface);
   border: var(--bd-card);
-  border-radius: var(--r-md);
+  border-radius: var(--r-card);   /* 与上面的描述框同一个圆角（原 --r-md，两个输入框一方一圆） */
   box-shadow: var(--sh-soft);
 }
 .mail-ic {
@@ -207,7 +207,7 @@
 .send-ic {
   width: 30rpx;
   height: 30rpx;
-  background: var(--c-surface);
+  background: var(--anchor-contrast);   /* 红底白图标：与按钮文字同色、恒浅 */
   flex: none;
   /* 纸飞机三角 */
   clip-path: polygon(100% 0, 0 45%, 42% 56%, 55% 100%);
@@ -220,7 +220,8 @@
 }
 
 /* ===== 我的历史反馈 ===== */
-.fh { margin: 26rpx 30rpx 60rpx; }
+/* 左右不再内缩 30rpx：上面的输入卡、按钮都贴页边距，这一块原先缩进一截、边缘对不齐 */
+.fh { margin: 26rpx 0 60rpx; }
 .fh-head {
   font-size: calc(28rpx * var(--fs-mul, 1));
   font-weight: 800;
@@ -237,8 +238,8 @@
 .fh-list { display: flex; flex-direction: column; gap: 18rpx; }
 .fh-item {
   background: var(--paper-2);
-  border-radius: var(--r-card, 16rpx);
-  padding: 24rpx 26rpx;
+  border-radius: var(--r-card);
+  padding: 24rpx var(--pad-card-sm);
 }
 .fh-row { display: flex; align-items: center; justify-content: space-between; }
 .fh-badge {
@@ -250,7 +251,7 @@
   border-radius: var(--r-pill);
 }
 .fh-badge.ok {
-  color: var(--pine);
+  color: var(--pine-ink);
   background: rgba(47, 74, 58, 0.12);
 }
 .fh-time { font-size: var(--fs-mini); color: var(--mut); }
@@ -264,7 +265,7 @@
   margin-top: 14rpx;
   padding: 16rpx 20rpx;
   background: rgba(47, 74, 58, 0.06);
-  border-radius: 12rpx;
+  border-radius: var(--r-xs);
   display: flex;
   gap: 12rpx;
   align-items: flex-start;
@@ -273,10 +274,17 @@
   flex: none;
   font-size: var(--fs-mini);
   font-weight: 800;
-  color: var(--pine);
+  color: var(--pine-ink);
 }
 .fh-reply-v {
   font-size: var(--fs-sub);
   line-height: 1.6;
   color: var(--mut-strong);
+}
+/* 深色档：浅色档写死的低透明度墨绿/金底（rgba 47,74,58 / 176,137,73）压在深色卡面上几乎看不出，
+   换成会翻转的 soft 底。墨绿字本身归 lead 的 --pine → --pine-ink 统一替换，这里不动 */
+@media (prefers-color-scheme: dark) {
+  .fh-badge { background: var(--c-gold-soft); }
+  .fh-badge.ok { background: var(--c-accent-soft); }
+  .fh-reply { background: var(--c-accent-soft); }
 }

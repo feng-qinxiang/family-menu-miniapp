@@ -46,11 +46,24 @@
   color: var(--mut-strong);
 }
 .paste-ic {
+  position: relative;
   width: 26rpx;
   height: 26rpx;
   border: 4rpx solid var(--mut-strong);
   border-radius: var(--r-xs);
   box-sizing: border-box;
+}
+/* 顶上加一枚夹子：只有方框时看着像个没勾的复选框，不像「粘贴」 */
+.paste-ic::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -8rpx;
+  width: 12rpx;
+  height: 8rpx;
+  transform: translateX(-50%);
+  border-radius: 2rpx;
+  background: var(--mut-strong);
 }
 
 .codeboxes {
@@ -87,7 +100,7 @@
   content: "";
   width: 4rpx;
   height: 54rpx;
-  background: var(--pop);
+  background: var(--pop-fill);
   border-radius: 2rpx;
   animation: blink 1s steps(1) infinite;
 }
@@ -136,7 +149,7 @@
   width: 12rpx;
   height: 12rpx;
   border-radius: 50%;
-  background: var(--anchor);
+  background: var(--ink-deep);   /* 与外框同色（两档都是）；--anchor 是锚点卡底色、深色档另有取值，不该拿来画图标 */
 }
 
 /* ===== 分隔 ===== */
@@ -201,7 +214,7 @@
   width: 46rpx;
   height: 46rpx;
   border-radius: 50%;
-  background: var(--pop);
+  background: var(--pop-fill);
   border: 5rpx solid var(--c-surface);
   display: flex;
   align-items: center;
@@ -210,8 +223,8 @@
 .badge-ic {
   width: 18rpx;
   height: 10rpx;
-  border-left: 5rpx solid var(--c-surface);
-  border-bottom: 5rpx solid var(--c-surface);
+  border-left: 5rpx solid var(--anchor-contrast);   /* 红底白勾：恒浅 */
+  border-bottom: 5rpx solid var(--anchor-contrast);
   transform: rotate(-45deg) translateY(-2rpx);
 }
 
@@ -310,8 +323,8 @@
 .apply-arrow {
   width: 18rpx;
   height: 18rpx;
-  border-top: 5rpx solid var(--c-surface);
-  border-right: 5rpx solid var(--c-surface);
+  border-top: 5rpx solid var(--anchor-contrast);   /* 与按钮文字同色：恒浅 */
+  border-right: 5rpx solid var(--anchor-contrast);
   transform: rotate(45deg);
 }
 

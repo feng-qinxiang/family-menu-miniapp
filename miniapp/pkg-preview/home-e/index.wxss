@@ -26,7 +26,7 @@ page { --e-gutter: var(--sp-lg); background: var(--paper); }
 .pe-seg-tab.is-on { background: var(--ink); color: var(--paper); font-weight: 800; box-shadow: var(--sh-card); }
 .pe-seg-badge {
   min-width: 36rpx; height: 36rpx; padding: 0 10rpx; box-sizing: border-box; border-radius: var(--r-pill);
-  background: var(--pop); color: var(--anchor-contrast); font-size: var(--fs-mini); font-weight: 800; line-height: 36rpx; text-align: center;
+  background: var(--pop-fill); color: var(--anchor-contrast); font-size: var(--fs-mini); font-weight: 800; line-height: 36rpx; text-align: center;
 }
 .pe-tip {
   display: flex; align-items: center; justify-content: space-between; gap: 16rpx; margin: 0 var(--e-gutter) 24rpx;
@@ -51,7 +51,7 @@ page { --e-gutter: var(--sp-lg); background: var(--paper); }
 .pe-ava:first-child { margin-left: 0; }
 /* 家人五色和「我的」页同一套（按成员顺序轮）；金色底上的字用恒定深棕，深色档也看得清。
    蓝色深色档会翻成浅蓝，米白字看不清，字改取卡面色（浅色档白、深色档深灰，两档都是镂空字） */
-.tone-0 { background: linear-gradient(135deg, var(--cat-gold), var(--gold-deep)); color: var(--anchor); }
+.tone-0 { background: linear-gradient(135deg, var(--cat-gold), var(--gold-deep)); color: var(--cat-brown-deep); }   /* 不用 --anchor：它深色档会提亮，压在金底上只剩约 2.2:1 */
 .tone-1 { background: var(--cat-brown); }
 .tone-2 { background: var(--pine); }
 .tone-3 { background: var(--cat-purple); }
@@ -109,7 +109,7 @@ page { --e-gutter: var(--sp-lg); background: var(--paper); }
 .pe-stub-sub { margin-top: 6rpx; font-size: var(--fs-cap); color: var(--mut); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .pe-cta {
   flex-shrink: 0; min-height: 96rpx; padding: 0 56rpx; display: flex; align-items: center; justify-content: center;
-  border-radius: var(--r-pill); background: var(--pop); color: var(--anchor-contrast);
+  border-radius: var(--r-pill); background: var(--pop-fill); color: var(--anchor-contrast);
   font-size: var(--fs-lg); font-weight: 800; letter-spacing: 2rpx; box-shadow: var(--sh-pop);
 }
 /* 微信内置 button:not([size=mini]) 固定 184px 宽，单类名压不过，带上父级提高优先级撑满 */
@@ -167,7 +167,7 @@ page { --e-gutter: var(--sp-lg); background: var(--paper); }
   width: 56rpx; height: 56rpx; border-radius: 50%; display: flex; align-items: center; justify-content: center;
   background: var(--c-surface); color: var(--pop); box-shadow: var(--sh-card); font-size: var(--fs-h2); font-weight: 700; line-height: 1;
 }
-.pe-plus-dot.is-on { background: var(--pop); color: var(--anchor-contrast); font-size: var(--fs-body); box-shadow: var(--sh-pop); }
+.pe-plus-dot.is-on { background: var(--pop-fill); color: var(--anchor-contrast); font-size: var(--fs-body); box-shadow: var(--sh-pop); }
 /* 末尾一张「查看全部」，滑到头有去处 */
 .pe-card-all {
   width: 168rpx; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12rpx;

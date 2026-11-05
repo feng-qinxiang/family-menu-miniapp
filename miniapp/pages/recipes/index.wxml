@@ -71,7 +71,7 @@
       <view class="rx-stock-summary">
         <view class="rx-stock-head"><text>冰箱现有<text wx:if="{{!pantryStockLoading && !pantryStockFailed && pantryItems.length}}"> · {{pantryItems.length}} 种</text></text><view class="tap-scale rx-stock-link" bindtap="goPantry" aria-role="button">查看全部 ›</view></view>
         <view class="rx-stock-note" wx:if="{{pantryStockLoading}}">正在看看冰箱里有什么…</view>
-        <view class="rx-stock-note" wx:elif="{{pantryStockFailed}}">库存暂时没加载出来<text class="tap-scale" bindtap="loadPantryChoices"> · 重试</text></view>
+        <view class="rx-stock-note" wx:elif="{{pantryStockFailed}}">库存暂时没加载出来<text class="tap-scale" bindtap="loadPantryChoices" aria-role="button" aria-label="重新加载冰箱库存"> · 重试</text></view>
         <view class="rx-stock-items" wx:elif="{{pantryItems.length}}">
           <view class="rx-stock-item" wx:for="{{pantryItems}}" wx:key="id" wx:if="{{index < 6}}"><text class="rx-stock-name">{{item.ingredientName}}</text><text class="rx-stock-amount">{{item.amountText || '数量待补'}}</text></view>
           <text class="rx-stock-more" wx:if="{{pantryItems.length > 6}}">另有 {{pantryItems.length - 6}} 种，可查看全部</text>

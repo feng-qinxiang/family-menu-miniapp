@@ -33,7 +33,7 @@
   bottom: 6rpx;
   width: 8rpx;
   border-radius: 6rpx;
-  background: var(--pop);
+  background: var(--pop-fill);
 }
 .vu-eyebrow {
   font-family: var(--serif);
@@ -87,7 +87,7 @@
   font-family: var(--serif);
   font-size: var(--fs-mini);
   letter-spacing: 3rpx;
-  color: var(--gold);
+  color: var(--gold-on-dark);
   font-weight: 700;
 }
 .vu-hero-ht {
@@ -134,10 +134,10 @@
   letter-spacing: 1rpx;
   font-weight: 700;
   color: var(--anchor-contrast);
-  background: var(--pop);
+  background: var(--pop-fill);
   padding: 8rpx 21rpx;
   border-radius: var(--r-pill);
-  box-shadow: 0 12rpx 27rpx rgba(200, 56, 31, 0.4);
+  box-shadow: var(--sh-pop);   /* 原写死红晕 rgba(200,56,31,.4)，深色档在深底上会晕出一团红 */
 }
 .vu-tick {
   position: absolute;
@@ -155,8 +155,8 @@
   color: var(--anchor-contrast);
 }
 .vu-plan.on .vu-tick {
-  background: var(--pop);
-  border-color: var(--pop);
+  background: var(--pop-fill);
+  border-color: var(--pop-fill);
 }
 .vu-ptop { padding-left: 58rpx; }
 .vu-pname {
@@ -195,6 +195,8 @@
   color: var(--mut-2);
   text-decoration: line-through;
 }
+/* 「每月仅 x 元」整段一起换行：原先紧跟在划线价后面断行，「元」一个字掉到第二行 */
+.vu-permo { display: inline-block; }
 
 /* 价格明细 */
 .vu-detail { margin-bottom: 42rpx; }
@@ -245,7 +247,7 @@
   width: 22rpx;
   height: 22rpx;
   flex: none;
-  background: var(--pop);
+  background: var(--pop-fill);
   clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
 }
 
@@ -292,7 +294,7 @@
   width: 46rpx;
   height: 46rpx;
   border-radius: 50%;
-  background: var(--pop);
+  background: var(--pop-fill);
   flex: none;
   display: flex;
   align-items: center;
@@ -300,7 +302,7 @@
   font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: 900;
   color: var(--anchor-contrast);
-  box-shadow: 0 12rpx 27rpx rgba(200, 56, 31, 0.32);
+  box-shadow: var(--sh-pop);   /* 同上：写死红晕不跟深色档 */
 }
 
 /* 底部支付栏 */

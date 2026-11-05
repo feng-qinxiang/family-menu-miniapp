@@ -82,7 +82,7 @@
   gap: 24rpx;
   padding: 28rpx var(--pad-card);
   border-radius: var(--r-card);
-  background: linear-gradient(120deg, var(--pop-deep) 0%, var(--pop) 100%);
+  background: linear-gradient(120deg, var(--pop-deep-fill) 0%, var(--pop-fill) 100%);
   box-shadow: var(--sh-soft);
 }
 .mag-vip-ic {
@@ -105,7 +105,7 @@
 }
 .mag-vip-mid { flex: 1; min-width: 0; }
 .mag-vip-t { font-size: calc(28rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--anchor-contrast); }
-.mag-vip-t .hl { color: var(--gold); }
+.mag-vip-t .hl { color: var(--gold-on-dark); }
 .mag-vip-s { margin-top: 6rpx; font-size: var(--fs-mini); color: rgba(255, 255, 255, 0.7); }
 .mag-vip-go {
   flex: none;
@@ -138,12 +138,14 @@
   letter-spacing: -2rpx;
   line-height: 1;
 }
+/* 骨架与真数字同盒：高度 = 一行字（line-height 1 → 1em），靠左（真数字不居中）。
+   原来 48rpx 高、margin auto 居中，数字回来时下移 8rpx、横向跳到左边 */
 .mag-snum.num-skel {
   width: 84rpx;
-  height: 48rpx;
+  height: 1em;
   border-radius: 14rpx;
   background: var(--skeleton);
-  margin: 0 auto;
+  margin: 0;
   color: transparent;
 }
 /* 列表骨架（最近上桌 / 口味偏好加载态） */
@@ -187,7 +189,9 @@
 }
 
 /* ---------- 最近上桌 ---------- */
-.mag-history { padding: 12rpx 34rpx; }
+/* 下面四张列表卡左右原来都是裸 34rpx：比上方统计卡/快捷卡/今日卡（--pad-card-sm）多缩进 10rpx，
+   同一屏的卡里文字左边缘错开。统一走 --pad-card-sm */
+.mag-history { padding: 12rpx var(--pad-card-sm); }
 .mag-hrow {
   display: flex;
   align-items: center;
@@ -220,7 +224,7 @@
 }
 
 /* ---------- 厨房工具 ---------- */
-.mag-tools { padding: 8rpx 34rpx; }
+.mag-tools { padding: 8rpx var(--pad-card-sm); }
 .mag-trow {
   display: flex;
   align-items: center;
@@ -241,7 +245,7 @@
   font-weight: 800;
 }
 .ti-1 { background: var(--c-gold-soft); color: var(--gold-deep); }
-.ti-2 { background: var(--c-accent-soft); color: var(--pine); }
+.ti-2 { background: var(--c-accent-soft); color: var(--pine-ink); }
 .ti-4 { background: var(--c-accent-soft); color: var(--cat-plum-deep); }
 .mag-tmid { flex: 1; min-width: 0; }
 .mag-tname { font-size: calc(32rpx * var(--fs-mul, 1)); font-weight: 700; color: var(--ink); }
@@ -249,7 +253,7 @@
 .mag-tarrow { flex: none; font-size: calc(36rpx * var(--fs-mul, 1)); color: var(--mut-2); }
 
 /* ---------- 口味偏好 ---------- */
-.mag-pref { padding: 38rpx 34rpx; }
+.mag-pref { padding: 38rpx var(--pad-card-sm); }
 .mag-prow { margin-bottom: 30rpx; }
 .mag-prow:last-child { margin-bottom: 0; }
 .mag-ptop {
@@ -269,7 +273,7 @@
 .mag-pbar-i {
   height: 100%;
   border-radius: 12rpx;
-  background: linear-gradient(90deg, var(--orange), var(--pop));
+  background: linear-gradient(90deg, var(--orange), var(--pop-fill));
 }
 .mag-pbar.alt .mag-pbar-i {
   background: linear-gradient(90deg, var(--cat-green), var(--pine));
@@ -280,7 +284,7 @@
 .ti-fam  { background: var(--c-info-soft); color: var(--c-info); }
 
 /* ---------- 设置分组 ---------- */
-.mag-settings { padding: 0 34rpx; }
+.mag-settings { padding: 0 var(--pad-card-sm); }
 .mag-srow {
   display: flex;
   align-items: center;
@@ -394,9 +398,9 @@
 .mag-shortcut .mag-ticon { width: 64rpx; height: 64rpx; font-size: var(--fs-sub); }
 .mag-shortcut .mag-tname { font-size: var(--fs-sub); line-height: 1.45; word-break: break-all; }
 .mag-shortcut .mag-tdesc { font-size: var(--fs-mini); line-height: 1.5; }
-.mag-today { padding: 24rpx; margin-bottom: 20rpx; }
+.mag-today { padding: var(--pad-card-sm); margin-bottom: 20rpx; }
 .mag-today-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12rpx; flex-wrap: wrap; font-size: var(--fs-lg); font-weight: 700; color: var(--ink); }
-.mag-today-status { font-size: var(--fs-cap); font-weight: 500; color: var(--pine); }
+.mag-today-status { font-size: var(--fs-cap); font-weight: 500; color: var(--pine-ink); }
 .mag-today-dishes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14rpx; margin-top: 18rpx; }
 .mag-today-dish { min-width: 0; }
 .mag-today-dish image { display: block; width: 100%; height: 126rpx; border-radius: var(--r-sm); background: var(--paper-2); }
@@ -404,3 +408,13 @@
 .mag-today-footer { display: flex; justify-content: space-between; align-items: center; gap: 12rpx; flex-wrap: wrap; margin-top: 16rpx; color: var(--mut-strong); font-size: var(--fs-cap); line-height: 1.5; }
 .mag-today-footer text:last-child { color: var(--pop-deep); font-weight: 700; }
 .mag-hsub { line-height: 1.5; word-break: break-all; }
+
+/* ---------- 深色档 ----------
+   1) 金/蓝头像底两档都偏亮，字却跟着 --ink-deep / --anchor-contrast 翻成浅色（约 1.6:1 / 2.4:1），
+      改用头像色板里恒定的深棕 --cat-brown-deep（约 3.6~4.2:1）。不用 --anchor：它深色档会提亮；
+   2) --pine / --cat-plum-deep 当文字在深底上约 2.6:1，与首页/会员页同法换浅一档 */
+@media (prefers-color-scheme: dark) {
+  .mavt-a, .mavt-e { color: var(--cat-brown-deep); }
+  .ti-2, .mag-today-status { color: var(--c-success); }
+  .ti-4 { color: var(--cat-purple-light); }
+}

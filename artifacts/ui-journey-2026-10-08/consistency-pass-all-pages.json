@@ -4,369 +4,386 @@
       "route": "pkg-extra/community/post-detail/index",
       "state": "main",
       "image": "screens/all-pkg-extra-community-post-detail-index.jpg",
-      "width": 591,
-      "height": 1280,
+      "width": 351,
+      "height": 760,
       "gated": false
     },
     {
       "route": "pkg-extra/community/post-detail/index",
       "state": "多图",
       "image": "screens/all-pkg-extra-community-post-detail-index-多图.jpg",
-      "width": 591,
-      "height": 1280,
+      "width": 351,
+      "height": 760,
       "gated": false
     },
     {
       "route": "pkg-extra/community/post-detail/index",
       "state": "多图第三张",
       "image": "screens/all-pkg-extra-community-post-detail-index-多图第三张.jpg",
-      "width": 591,
-      "height": 1280,
+      "width": 351,
+      "height": 760,
       "gated": false
     },
     {
       "route": "pkg-extra/community/post-detail/index",
       "state": "评论",
       "image": "screens/all-pkg-extra-community-post-detail-index-评论.jpg",
-      "width": 591,
-      "height": 1280,
+      "width": 351,
+      "height": 760,
       "gated": false
     },
     {
       "route": "pkg-extra/community/post-detail/index",
       "state": "评论大字",
       "image": "screens/all-pkg-extra-community-post-detail-index-评论大字.jpg",
-      "width": 591,
-      "height": 1280,
+      "width": 351,
+      "height": 760,
       "gated": false
     },
     {
       "route": "pkg-extra/community/post-detail/index",
       "state": "大字",
       "image": "screens/all-pkg-extra-community-post-detail-index-大字.jpg",
-      "width": 591,
-      "height": 1280,
+      "width": 351,
+      "height": 760,
       "gated": false
     },
     {
       "route": "pkg-extra/community/post-detail/index",
       "state": "写评论",
       "image": "screens/all-pkg-extra-community-post-detail-index-写评论.jpg",
-      "width": 591,
-      "height": 1280,
+      "width": 351,
+      "height": 760,
       "gated": false
     },
     {
       "route": "pkg-extra/community/post-detail/index",
       "state": "发送中",
       "image": "screens/all-pkg-extra-community-post-detail-index-发送中.jpg",
-      "width": 591,
-      "height": 1280,
+      "width": 351,
+      "height": 760,
       "gated": false
     },
     {
       "route": "pkg-extra/community/post-detail/index",
       "state": "无图",
       "image": "screens/all-pkg-extra-community-post-detail-index-无图.jpg",
-      "width": 591,
-      "height": 1280,
+      "width": 351,
+      "height": 760,
       "gated": false
     },
     {
       "route": "pkg-extra/community/post-detail/index",
       "state": "图片失效",
       "image": "screens/all-pkg-extra-community-post-detail-index-图片失效.jpg",
-      "width": 591,
-      "height": 1280,
+      "width": 351,
+      "height": 760,
       "gated": false
     },
     {
       "route": "pkg-extra/community/post-detail/index",
       "state": "无评论",
       "image": "screens/all-pkg-extra-community-post-detail-index-无评论.jpg",
-      "width": 591,
-      "height": 1280,
+      "width": 351,
+      "height": 760,
       "gated": false
     },
     {
       "route": "pkg-extra/community/post-detail/index",
       "state": "评论加载失败",
       "image": "screens/all-pkg-extra-community-post-detail-index-评论加载失败.jpg",
-      "width": 591,
-      "height": 1280,
-      "gated": false
-    },
-    {
-      "route": "pkg-extra/vip/upgrade/index",
-      "state": "main",
-      "image": "screens/all-pkg-extra-vip-upgrade-index.jpg",
-      "width": 591,
-      "height": 1280,
-      "gated": true
-    },
-    {
-      "route": "pkg-extra/vip/orders/index",
-      "state": "main",
-      "image": "screens/all-pkg-extra-vip-orders-index.jpg",
-      "width": 591,
-      "height": 1280,
-      "gated": true
-    },
-    {
-      "route": "pkg-extra/payment/checkout/index",
-      "state": "main",
-      "image": "screens/all-pkg-extra-payment-checkout-index.jpg",
-      "width": 591,
-      "height": 1280,
-      "gated": true
-    },
-    {
-      "route": "pkg-extra/payment/checkout/index",
-      "state": "大字",
-      "image": "screens/all-pkg-extra-payment-checkout-index-大字.jpg",
-      "width": 591,
-      "height": 1280,
-      "gated": true
-    },
-    {
-      "route": "pkg-extra/payment/success/index",
-      "state": "main",
-      "image": "screens/all-pkg-extra-payment-success-index.jpg",
-      "width": 591,
-      "height": 1280,
-      "gated": true
-    },
-    {
-      "route": "pkg-extra/recipe-detail/index",
-      "state": "main",
-      "image": "screens/all-pkg-extra-recipe-detail-index.jpg",
-      "width": 591,
-      "height": 1280,
-      "gated": false
-    },
-    {
-      "route": "pkg-extra/recipe-detail/index",
-      "state": "食材",
-      "image": "screens/all-pkg-extra-recipe-detail-index-食材.jpg",
-      "width": 591,
-      "height": 1280,
-      "gated": false
-    },
-    {
-      "route": "pkg-extra/recipe-detail/index",
-      "state": "食材大字",
-      "image": "screens/all-pkg-extra-recipe-detail-index-食材大字.jpg",
-      "width": 591,
-      "height": 1280,
-      "gated": false
-    },
-    {
-      "route": "pkg-extra/recipe-detail/index",
-      "state": "做法与评价",
-      "image": "screens/all-pkg-extra-recipe-detail-index-做法与评价.jpg",
-      "width": 591,
-      "height": 1280,
-      "gated": false
-    },
-    {
-      "route": "pkg-extra/recipes/search/index",
-      "state": "main",
-      "image": "screens/all-pkg-extra-recipes-search-index.jpg",
-      "width": 591,
-      "height": 1280,
-      "gated": false
-    },
-    {
-      "route": "pkg-extra/auth/login/index",
-      "state": "main",
-      "image": "screens/all-pkg-extra-auth-login-index.jpg",
-      "width": 591,
-      "height": 1280,
-      "gated": false
-    },
-    {
-      "route": "pkg-extra/auth/login-phone/index",
-      "state": "main",
-      "image": "screens/all-pkg-extra-auth-login-phone-index.jpg",
-      "width": 591,
-      "height": 1280,
-      "gated": true
-    },
-    {
-      "route": "pkg-extra/family/join/index",
-      "state": "main",
-      "image": "screens/all-pkg-extra-family-join-index.jpg",
-      "width": 591,
-      "height": 1280,
-      "gated": false
-    },
-    {
-      "route": "pkg-extra/family/members/index",
-      "state": "main",
-      "image": "screens/all-pkg-extra-family-members-index.jpg",
-      "width": 591,
-      "height": 1280,
-      "gated": false
-    },
-    {
-      "route": "pkg-extra/family/invite/index",
-      "state": "main",
-      "image": "screens/all-pkg-extra-family-invite-index.jpg",
-      "width": 591,
-      "height": 1280,
-      "gated": false
-    },
-    {
-      "route": "pkg-extra/me/preference-profile/index",
-      "state": "main",
-      "image": "screens/all-pkg-extra-me-preference-profile-index.jpg",
-      "width": 591,
-      "height": 1280,
-      "gated": false
-    },
-    {
-      "route": "pkg-extra/me/feedback/index",
-      "state": "main",
-      "image": "screens/all-pkg-extra-me-feedback-index.jpg",
-      "width": 591,
-      "height": 1280,
-      "gated": false
-    },
-    {
-      "route": "pkg-extra/me/help-faq/index",
-      "state": "main",
-      "image": "screens/all-pkg-extra-me-help-faq-index.jpg",
-      "width": 591,
-      "height": 1280,
-      "gated": false
-    },
-    {
-      "route": "pkg-extra/me/about/index",
-      "state": "main",
-      "image": "screens/all-pkg-extra-me-about-index.jpg",
-      "width": 591,
-      "height": 1280,
-      "gated": false
-    },
-    {
-      "route": "pkg-extra/legal/terms/index",
-      "state": "main",
-      "image": "screens/all-pkg-extra-legal-terms-index.jpg",
-      "width": 591,
-      "height": 1280,
-      "gated": false
-    },
-    {
-      "route": "pkg-extra/legal/privacy/index",
-      "state": "main",
-      "image": "screens/all-pkg-extra-legal-privacy-index.jpg",
-      "width": 591,
-      "height": 1280,
-      "gated": false
-    },
-    {
-      "route": "pkg-extra/legal/deletion/index",
-      "state": "main",
-      "image": "screens/all-pkg-extra-legal-deletion-index.jpg",
-      "width": 591,
-      "height": 1280,
-      "gated": false
-    },
-    {
-      "route": "pkg-extra/me/profile-edit/index",
-      "state": "main",
-      "image": "screens/all-pkg-extra-me-profile-edit-index.jpg",
-      "width": 591,
-      "height": 1280,
+      "width": 351,
+      "height": 760,
       "gated": false
     },
     {
       "route": "pkg-extra/vip/index",
       "state": "main",
       "image": "screens/all-pkg-extra-vip-index.jpg",
-      "width": 591,
-      "height": 1280,
+      "width": 351,
+      "height": 760,
+      "gated": true
+    },
+    {
+      "route": "pkg-extra/vip/upgrade/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-vip-upgrade-index.jpg",
+      "width": 351,
+      "height": 760,
+      "gated": true
+    },
+    {
+      "route": "pkg-extra/vip/orders/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-vip-orders-index.jpg",
+      "width": 351,
+      "height": 760,
+      "gated": true
+    },
+    {
+      "route": "pkg-extra/payment/checkout/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-payment-checkout-index.jpg",
+      "width": 351,
+      "height": 760,
+      "gated": true
+    },
+    {
+      "route": "pkg-extra/payment/checkout/index",
+      "state": "大字",
+      "image": "screens/all-pkg-extra-payment-checkout-index-大字.jpg",
+      "width": 351,
+      "height": 760,
+      "gated": true
+    },
+    {
+      "route": "pkg-extra/payment/success/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-payment-success-index.jpg",
+      "width": 351,
+      "height": 760,
       "gated": true
     },
     {
       "route": "pkg-extra/favorites/index",
       "state": "main",
       "image": "screens/all-pkg-extra-favorites-index.jpg",
-      "width": 591,
-      "height": 1280,
+      "width": 351,
+      "height": 760,
       "gated": false
     },
     {
       "route": "pkg-extra/favorites/index",
       "state": "帖子",
       "image": "screens/all-pkg-extra-favorites-index-帖子.jpg",
-      "width": 591,
-      "height": 1280,
+      "width": 351,
+      "height": 760,
       "gated": false
     },
     {
-      "route": "pkg-extra/me/notifications/index",
+      "route": "pkg-extra/recipe-detail/index",
       "state": "main",
-      "image": "screens/all-pkg-extra-me-notifications-index.jpg?v=20261011-filter-actions",
-      "width": 591,
-      "height": 1280,
+      "image": "screens/all-pkg-extra-recipe-detail-index.jpg",
+      "width": 351,
+      "height": 760,
       "gated": false
     },
     {
-      "route": "pkg-extra/me/notifications/index",
-      "state": "大字",
-      "image": "screens/all-pkg-extra-me-notifications-index-大字.jpg?v=20261011-filter-actions",
-      "width": 591,
-      "height": 1280,
+      "route": "pkg-extra/recipe-detail/index",
+      "state": "食材",
+      "image": "screens/all-pkg-extra-recipe-detail-index-食材.jpg",
+      "width": 351,
+      "height": 760,
       "gated": false
     },
     {
-      "route": "pkg-extra/me/notifications/index",
-      "state": "已读",
-      "image": "screens/all-pkg-extra-me-notifications-index-已读.jpg?v=20261011-filter-actions",
-      "width": 591,
-      "height": 1280,
+      "route": "pkg-extra/recipe-detail/index",
+      "state": "食材大字",
+      "image": "screens/all-pkg-extra-recipe-detail-index-食材大字.jpg",
+      "width": 351,
+      "height": 760,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/recipe-detail/index",
+      "state": "做法与评价",
+      "image": "screens/all-pkg-extra-recipe-detail-index-做法与评价.jpg",
+      "width": 351,
+      "height": 760,
       "gated": false
     },
     {
       "route": "pkg-extra/recipe-edit/index",
       "state": "main",
       "image": "screens/all-pkg-extra-recipe-edit-index.jpg",
-      "width": 591,
-      "height": 1280,
+      "width": 351,
+      "height": 760,
       "gated": false
     },
     {
       "route": "pkg-extra/recipe-edit/index",
       "state": "用料",
       "image": "screens/all-pkg-extra-recipe-edit-index-用料.jpg",
-      "width": 591,
-      "height": 1280,
+      "width": 351,
+      "height": 760,
       "gated": false
     },
     {
       "route": "pkg-extra/recipe-edit/index",
       "state": "步骤",
       "image": "screens/all-pkg-extra-recipe-edit-index-步骤.jpg",
-      "width": 591,
-      "height": 1280,
+      "width": 351,
+      "height": 760,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/recipes/search/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-recipes-search-index.jpg",
+      "width": 351,
+      "height": 760,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/auth/login/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-auth-login-index.jpg",
+      "width": 351,
+      "height": 760,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/auth/login-phone/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-auth-login-phone-index.jpg",
+      "width": 351,
+      "height": 760,
+      "gated": true
+    },
+    {
+      "route": "pkg-extra/family/join/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-family-join-index.jpg",
+      "width": 351,
+      "height": 760,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/family/members/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-family-members-index.jpg",
+      "width": 351,
+      "height": 760,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/family/invite/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-family-invite-index.jpg",
+      "width": 351,
+      "height": 760,
       "gated": false
     },
     {
       "route": "pkg-extra/me/settings/index",
       "state": "main",
       "image": "screens/all-pkg-extra-me-settings-index.jpg",
-      "width": 591,
-      "height": 1280,
+      "width": 351,
+      "height": 760,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/me/notifications/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-me-notifications-index.jpg?v=20261011-filter-actions",
+      "width": 351,
+      "height": 760,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/me/notifications/index",
+      "state": "大字",
+      "image": "screens/all-pkg-extra-me-notifications-index-大字.jpg?v=20261011-filter-actions",
+      "width": 351,
+      "height": 760,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/me/notifications/index",
+      "state": "已读",
+      "image": "screens/all-pkg-extra-me-notifications-index-已读.jpg?v=20261011-filter-actions",
+      "width": 351,
+      "height": 760,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/me/preference-profile/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-me-preference-profile-index.jpg",
+      "width": 351,
+      "height": 760,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/me/feedback/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-me-feedback-index.jpg",
+      "width": 351,
+      "height": 760,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/me/help-faq/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-me-help-faq-index.jpg",
+      "width": 351,
+      "height": 760,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/me/about/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-me-about-index.jpg",
+      "width": 351,
+      "height": 760,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/legal/terms/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-legal-terms-index.jpg",
+      "width": 351,
+      "height": 760,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/legal/privacy/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-legal-privacy-index.jpg",
+      "width": 351,
+      "height": 760,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/legal/deletion/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-legal-deletion-index.jpg",
+      "width": 351,
+      "height": 760,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/me/profile-edit/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-me-profile-edit-index.jpg",
+      "width": 351,
+      "height": 760,
       "gated": false
     }
   ],
   "routes": [
     {
+      "route": "pkg-extra/cook-log/index",
+      "actualRoute": "pages/cook-log/index",
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/cook-log/index",
+      "actualRoute": "pages/cook-log/index",
+      "passed": true
+    },
+    {
       "route": "pkg-extra/community/post-detail/index",
       "actualRoute": "pkg-extra/community/post-detail/index",
       "gated": false,
       "temporarySample": true,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/vip/index",
+      "actualRoute": "pkg-extra/vip/index",
+      "gated": true,
+      "temporarySample": false,
       "passed": true
     },
     {
@@ -398,8 +415,22 @@
       "passed": true
     },
     {
+      "route": "pkg-extra/favorites/index",
+      "actualRoute": "pkg-extra/favorites/index",
+      "gated": false,
+      "temporarySample": true,
+      "passed": true
+    },
+    {
       "route": "pkg-extra/recipe-detail/index",
       "actualRoute": "pkg-extra/recipe-detail/index",
+      "gated": false,
+      "temporarySample": true,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/recipe-edit/index",
+      "actualRoute": "pkg-extra/recipe-edit/index",
       "gated": false,
       "temporarySample": true,
       "passed": true
@@ -447,6 +478,20 @@
     {
       "route": "pkg-extra/family/invite/index",
       "actualRoute": "pkg-extra/family/invite/index",
+      "gated": false,
+      "temporarySample": true,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/me/settings/index",
+      "actualRoute": "pkg-extra/me/settings/index",
+      "gated": false,
+      "temporarySample": true,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/me/notifications/index",
+      "actualRoute": "pkg-extra/me/notifications/index",
       "gated": false,
       "temporarySample": true,
       "passed": true
@@ -506,41 +551,6 @@
       "gated": false,
       "temporarySample": true,
       "passed": true
-    },
-    {
-      "route": "pkg-extra/vip/index",
-      "actualRoute": "pkg-extra/vip/index",
-      "gated": true,
-      "temporarySample": false,
-      "passed": true
-    },
-    {
-      "route": "pkg-extra/favorites/index",
-      "actualRoute": "pkg-extra/favorites/index",
-      "gated": false,
-      "temporarySample": true,
-      "passed": true
-    },
-    {
-      "route": "pkg-extra/me/notifications/index",
-      "actualRoute": "pkg-extra/me/notifications/index",
-      "gated": false,
-      "temporarySample": true,
-      "passed": true
-    },
-    {
-      "route": "pkg-extra/recipe-edit/index",
-      "actualRoute": "pkg-extra/recipe-edit/index",
-      "gated": false,
-      "temporarySample": true,
-      "passed": true
-    },
-    {
-      "route": "pkg-extra/me/settings/index",
-      "actualRoute": "pkg-extra/me/settings/index",
-      "gated": false,
-      "temporarySample": true,
-      "passed": true
     }
   ],
   "layouts": [
@@ -564,17 +574,17 @@
           "left": 0,
           "right": 390,
           "top": 87,
-          "bottom": 939.3671875,
+          "bottom": 939.359375,
           "width": 390,
-          "height": 852.3671875
+          "height": 852.359375
         },
         ".recipe-card": {
           "id": "",
           "dataset": {},
           "left": 16,
           "right": 374,
-          "top": 577.9765625,
-          "bottom": 674.9765625,
+          "top": 577.96875,
+          "bottom": 674.96875,
           "width": 358,
           "height": 97
         },
@@ -585,8 +595,8 @@
           },
           "left": 29,
           "right": 100,
-          "top": 590.9765625,
-          "bottom": 661.9765625,
+          "top": 590.96875,
+          "bottom": 661.96875,
           "width": 71,
           "height": 71
         },
@@ -595,8 +605,8 @@
           "dataset": {},
           "left": 109,
           "right": 336,
-          "top": 593.703125,
-          "bottom": 659.25,
+          "top": 593.6875,
+          "bottom": 659.234375,
           "width": 227,
           "height": 65.546875
         },
@@ -646,8 +656,8 @@
           "dataset": {},
           "left": 16,
           "right": 374,
-          "top": 726.7734375,
-          "bottom": 821.5703125,
+          "top": 726.765625,
+          "bottom": 821.5625,
           "width": 358,
           "height": 94.796875
         },
@@ -656,8 +666,8 @@
           "dataset": {},
           "left": 64,
           "right": 374,
-          "top": 741.7734375,
-          "bottom": 779.7734375,
+          "top": 741.765625,
+          "bottom": 779.765625,
           "width": 310,
           "height": 38
         },
@@ -677,9 +687,9 @@
           "left": 16,
           "right": 374,
           "top": 401,
-          "bottom": 426.1953125,
+          "bottom": 426.1875,
           "width": 358,
-          "height": 25.1953125
+          "height": 25.1875
         },
         ".react-share": {
           "id": "",
@@ -706,10 +716,10 @@
           "dataset": {},
           "left": 72,
           "right": 296,
-          "top": 95.8984375,
+          "top": 95.90625,
           "bottom": 137.09375,
           "width": 224,
-          "height": 41.1953125
+          "height": 41.1875
         },
         ".atime": {
           "id": "",
@@ -726,10 +736,10 @@
           "dataset": {},
           "left": 72,
           "right": 296,
-          "top": 95.8984375,
+          "top": 95.90625,
           "bottom": 117.59375,
           "width": 224,
-          "height": 21.6953125
+          "height": 21.6875
         },
         ".post-title-row": {
           "id": "",
@@ -737,9 +747,9 @@
           "left": 16,
           "right": 374,
           "top": 401,
-          "bottom": 426.1953125,
+          "bottom": 426.1875,
           "width": 358,
-          "height": 25.1953125
+          "height": 25.1875
         },
         ".post-copy": {
           "id": "",
@@ -747,17 +757,17 @@
           "left": 16,
           "right": 374,
           "top": 389,
-          "bottom": 571.9765625,
+          "bottom": 571.96875,
           "width": 358,
-          "height": 182.9765625
+          "height": 182.96875
         },
         ".post-text": {
           "id": "",
           "dataset": {},
           "left": 16,
           "right": 374,
-          "top": 434.1953125,
-          "bottom": 518.9765625,
+          "top": 434.1875,
+          "bottom": 518.96875,
           "width": 358,
           "height": 84.78125
         },
@@ -766,8 +776,8 @@
           "dataset": {},
           "left": 16,
           "right": 374,
-          "top": 526.9765625,
-          "bottom": 571.9765625,
+          "top": 526.96875,
+          "bottom": 571.96875,
           "width": 358,
           "height": 45
         },
@@ -776,8 +786,8 @@
           "dataset": {},
           "left": 16,
           "right": 321,
-          "top": 539.7265625,
-          "bottom": 559.2265625,
+          "top": 539.71875,
+          "bottom": 559.21875,
           "width": 305,
           "height": 19.5
         },
@@ -786,8 +796,8 @@
           "dataset": {},
           "left": 329,
           "right": 374,
-          "top": 526.9765625,
-          "bottom": 571.9765625,
+          "top": 526.96875,
+          "bottom": 571.96875,
           "width": 45,
           "height": 45
         }
@@ -798,8 +808,8 @@
           "dataset": {},
           "left": 16,
           "right": 374,
-          "top": 434.1953125,
-          "bottom": 459.7890625,
+          "top": 434.1875,
+          "bottom": 459.78125,
           "width": 358,
           "height": 25.59375
         },
@@ -808,8 +818,8 @@
           "dataset": {},
           "left": 16,
           "right": 374,
-          "top": 467.7890625,
-          "bottom": 518.9765625,
+          "top": 467.78125,
+          "bottom": 518.96875,
           "width": 358,
           "height": 51.1875
         }
@@ -835,20 +845,20 @@
           "dataset": {},
           "left": 0,
           "right": 390,
-          "top": -104.5,
-          "bottom": 1043.1171875,
+          "top": -104,
+          "bottom": 1043.59375,
           "width": 390,
-          "height": 1147.6171875
+          "height": 1147.59375
         },
         ".recipe-card": {
           "id": "",
           "dataset": {},
           "left": 16,
           "right": 374,
-          "top": 601.46875,
-          "bottom": 705.7578125,
+          "top": 601.96875,
+          "bottom": 706.265625,
           "width": 358,
-          "height": 104.2890625
+          "height": 104.296875
         },
         ".rc-img": {
           "id": "",
@@ -857,8 +867,8 @@
           },
           "left": 29,
           "right": 100,
-          "top": 618.109375,
-          "bottom": 689.109375,
+          "top": 618.609375,
+          "bottom": 689.609375,
           "width": 71,
           "height": 71
         },
@@ -867,18 +877,18 @@
           "dataset": {},
           "left": 109,
           "right": 336,
-          "top": 614.46875,
-          "bottom": 692.7578125,
+          "top": 614.96875,
+          "bottom": 693.265625,
           "width": 227,
-          "height": 78.2890625
+          "height": 78.296875
         },
         ".react-bar": {
           "id": "",
           "dataset": {},
           "left": 239,
           "right": 378,
-          "top": 756.9140625,
-          "bottom": 801.9140625,
+          "top": 756.90625,
+          "bottom": 801.90625,
           "width": 139,
           "height": 45
         },
@@ -918,28 +928,28 @@
           "dataset": {},
           "left": 16,
           "right": 374,
-          "top": 761.2734375,
-          "bottom": 914.6171875,
+          "top": 761.78125,
+          "bottom": 915.109375,
           "width": 358,
-          "height": 153.34375
+          "height": 153.328125
         },
         ".cmeta": {
           "id": "",
           "dataset": {},
           "left": 64,
           "right": 374,
-          "top": 776.2734375,
-          "bottom": 821.8515625,
+          "top": 776.78125,
+          "bottom": 822.34375,
           "width": 310,
-          "height": 45.578125
+          "height": 45.5625
         },
         ".pimgs": {
           "id": "",
           "dataset": {},
           "left": 16,
           "right": 374,
-          "top": -40.703125,
-          "bottom": 199.296875,
+          "top": -40.203125,
+          "bottom": 199.796875,
           "width": 358,
           "height": 240
         },
@@ -948,8 +958,8 @@
           "dataset": {},
           "left": 16,
           "right": 374,
-          "top": 211.296875,
-          "bottom": 267.296875,
+          "top": 211.796875,
+          "bottom": 267.796875,
           "width": 358,
           "height": 56
         },
@@ -958,8 +968,8 @@
           "dataset": {},
           "left": 304,
           "right": 374,
-          "top": -96.6015625,
-          "bottom": -51.6015625,
+          "top": -96.109375,
+          "bottom": -51.109375,
           "width": 70,
           "height": 45
         },
@@ -968,8 +978,8 @@
           "dataset": {},
           "left": 16,
           "right": 374,
-          "top": -98.5,
-          "bottom": -49.703125,
+          "top": -98,
+          "bottom": -49.203125,
           "width": 358,
           "height": 48.796875
         },
@@ -978,8 +988,8 @@
           "dataset": {},
           "left": 72,
           "right": 295,
-          "top": -98.5,
-          "bottom": -49.703125,
+          "top": -98,
+          "bottom": -49.203125,
           "width": 223,
           "height": 48.796875
         },
@@ -988,8 +998,8 @@
           "dataset": {},
           "left": 72,
           "right": 295,
-          "top": -70.703125,
-          "bottom": -49.703125,
+          "top": -70.203125,
+          "bottom": -49.203125,
           "width": 223,
           "height": 21
         },
@@ -998,8 +1008,8 @@
           "dataset": {},
           "left": 72,
           "right": 295,
-          "top": -98.5,
-          "bottom": -73.703125,
+          "top": -98,
+          "bottom": -73.203125,
           "width": 223,
           "height": 24.796875
         },
@@ -1008,8 +1018,8 @@
           "dataset": {},
           "left": 16,
           "right": 374,
-          "top": 211.296875,
-          "bottom": 267.296875,
+          "top": 211.796875,
+          "bottom": 267.796875,
           "width": 358,
           "height": 56
         },
@@ -1018,8 +1028,8 @@
           "dataset": {},
           "left": 16,
           "right": 374,
-          "top": 199.296875,
-          "bottom": 595.46875,
+          "top": 199.796875,
+          "bottom": 595.96875,
           "width": 358,
           "height": 396.171875
         },
@@ -1028,8 +1038,8 @@
           "dataset": {},
           "left": 16,
           "right": 374,
-          "top": 275.296875,
-          "bottom": 542.46875,
+          "top": 275.796875,
+          "bottom": 542.96875,
           "width": 358,
           "height": 267.171875
         },
@@ -1038,8 +1048,8 @@
           "dataset": {},
           "left": 16,
           "right": 374,
-          "top": 550.46875,
-          "bottom": 595.46875,
+          "top": 550.96875,
+          "bottom": 595.96875,
           "width": 358,
           "height": 45
         },
@@ -1048,8 +1058,8 @@
           "dataset": {},
           "left": 16,
           "right": 321,
-          "top": 562.46875,
-          "bottom": 583.46875,
+          "top": 562.96875,
+          "bottom": 583.96875,
           "width": 305,
           "height": 21
         },
@@ -1058,8 +1068,8 @@
           "dataset": {},
           "left": 329,
           "right": 374,
-          "top": 550.46875,
-          "bottom": 595.46875,
+          "top": 550.96875,
+          "bottom": 595.96875,
           "width": 45,
           "height": 45
         }
@@ -1070,8 +1080,8 @@
           "dataset": {},
           "left": 16,
           "right": 374,
-          "top": 275.296875,
-          "bottom": 390.484375,
+          "top": 275.796875,
+          "bottom": 390.984375,
           "width": 358,
           "height": 115.1875
         },
@@ -1080,8 +1090,8 @@
           "dataset": {},
           "left": 16,
           "right": 374,
-          "top": 398.484375,
-          "bottom": 542.46875,
+          "top": 398.984375,
+          "bottom": 542.96875,
           "width": 358,
           "height": 143.984375
         }
@@ -1108,9 +1118,9 @@
           "left": 0,
           "right": 390,
           "top": 87,
-          "bottom": 1234.6171875,
+          "bottom": 1234.59375,
           "width": 390,
-          "height": 1147.6171875
+          "height": 1147.59375
         },
         ".recipe-card": {
           "id": "",
@@ -1118,9 +1128,9 @@
           "left": 16,
           "right": 374,
           "top": 792.96875,
-          "bottom": 897.2578125,
+          "bottom": 897.265625,
           "width": 358,
-          "height": 104.2890625
+          "height": 104.296875
         },
         ".rc-img": {
           "id": "",
@@ -1140,9 +1150,9 @@
           "left": 109,
           "right": 336,
           "top": 805.96875,
-          "bottom": 884.2578125,
+          "bottom": 884.265625,
           "width": 227,
-          "height": 78.2890625
+          "height": 78.296875
         },
         ".react-bar": null,
         ".inputbar": {
@@ -1190,20 +1200,20 @@
           "dataset": {},
           "left": 16,
           "right": 374,
-          "top": 952.7734375,
-          "bottom": 1106.1171875,
+          "top": 952.78125,
+          "bottom": 1106.109375,
           "width": 358,
-          "height": 153.34375
+          "height": 153.328125
         },
         ".cmeta": {
           "id": "",
           "dataset": {},
           "left": 64,
           "right": 374,
-          "top": 967.7734375,
-          "bottom": 1013.3515625,
+          "top": 967.78125,
+          "bottom": 1013.34375,
           "width": 310,
-          "height": 45.578125
+          "height": 45.5625
         },
         ".pimgs": {
           "id": "",
@@ -1230,8 +1240,8 @@
           "dataset": {},
           "left": 304,
           "right": 374,
-          "top": 94.8984375,
-          "bottom": 139.8984375,
+          "top": 94.890625,
+          "bottom": 139.890625,
           "width": 70,
           "height": 45
         },
@@ -1380,9 +1390,9 @@
           "left": 0,
           "right": 390,
           "top": 87,
-          "bottom": 1234.6171875,
+          "bottom": 1234.59375,
           "width": 390,
-          "height": 1147.6171875
+          "height": 1147.59375
         },
         ".recipe-card": {
           "id": "",
@@ -1390,9 +1400,9 @@
           "left": 16,
           "right": 374,
           "top": 792.96875,
-          "bottom": 897.2578125,
+          "bottom": 897.265625,
           "width": 358,
-          "height": 104.2890625
+          "height": 104.296875
         },
         ".rc-img": {
           "id": "",
@@ -1412,9 +1422,9 @@
           "left": 109,
           "right": 336,
           "top": 805.96875,
-          "bottom": 884.2578125,
+          "bottom": 884.265625,
           "width": 227,
-          "height": 78.2890625
+          "height": 78.296875
         },
         ".react-bar": null,
         ".inputbar": {
@@ -1462,20 +1472,20 @@
           "dataset": {},
           "left": 16,
           "right": 374,
-          "top": 952.7734375,
-          "bottom": 1106.1171875,
+          "top": 952.78125,
+          "bottom": 1106.109375,
           "width": 358,
-          "height": 153.34375
+          "height": 153.328125
         },
         ".cmeta": {
           "id": "",
           "dataset": {},
           "left": 64,
           "right": 374,
-          "top": 967.7734375,
-          "bottom": 1013.3515625,
+          "top": 967.78125,
+          "bottom": 1013.34375,
           "width": 310,
-          "height": 45.578125
+          "height": 45.5625
         },
         ".pimgs": {
           "id": "",
@@ -1502,8 +1512,8 @@
           "dataset": {},
           "left": 304,
           "right": 374,
-          "top": 94.8984375,
-          "bottom": 139.8984375,
+          "top": 94.890625,
+          "bottom": 139.890625,
           "width": 70,
           "height": 45
         },
@@ -1652,9 +1662,9 @@
           "left": 0,
           "right": 390,
           "top": 87,
-          "bottom": 1234.6171875,
+          "bottom": 1234.59375,
           "width": 390,
-          "height": 1147.6171875
+          "height": 1147.59375
         },
         ".recipe-card": {
           "id": "",
@@ -1662,9 +1672,9 @@
           "left": 16,
           "right": 374,
           "top": 792.96875,
-          "bottom": 897.2578125,
+          "bottom": 897.265625,
           "width": 358,
-          "height": 104.2890625
+          "height": 104.296875
         },
         ".rc-img": {
           "id": "",
@@ -1684,17 +1694,17 @@
           "left": 109,
           "right": 336,
           "top": 805.96875,
-          "bottom": 884.2578125,
+          "bottom": 884.265625,
           "width": 227,
-          "height": 78.2890625
+          "height": 78.296875
         },
         ".react-bar": {
           "id": "",
           "dataset": {},
           "left": 239,
           "right": 378,
-          "top": 756.9140625,
-          "bottom": 801.9140625,
+          "top": 756.90625,
+          "bottom": 801.90625,
           "width": 139,
           "height": 45
         },
@@ -1734,20 +1744,20 @@
           "dataset": {},
           "left": 16,
           "right": 374,
-          "top": 952.7734375,
-          "bottom": 1106.1171875,
+          "top": 952.78125,
+          "bottom": 1106.109375,
           "width": 358,
-          "height": 153.34375
+          "height": 153.328125
         },
         ".cmeta": {
           "id": "",
           "dataset": {},
           "left": 64,
           "right": 374,
-          "top": 967.7734375,
-          "bottom": 1013.3515625,
+          "top": 967.78125,
+          "bottom": 1013.34375,
           "width": 310,
-          "height": 45.578125
+          "height": 45.5625
         },
         ".pimgs": {
           "id": "",
@@ -1774,8 +1784,8 @@
           "dataset": {},
           "left": 304,
           "right": 374,
-          "top": 94.8984375,
-          "bottom": 139.8984375,
+          "top": 94.890625,
+          "bottom": 139.890625,
           "width": 70,
           "height": 45
         },
@@ -1924,17 +1934,17 @@
           "left": 0,
           "right": 390,
           "top": 87,
-          "bottom": 711.1640625,
+          "bottom": 711.15625,
           "width": 390,
-          "height": 624.1640625
+          "height": 624.15625
         },
         ".recipe-card": {
           "id": "",
           "dataset": {},
           "left": 16,
           "right": 374,
-          "top": 328.9765625,
-          "bottom": 425.9765625,
+          "top": 328.96875,
+          "bottom": 425.96875,
           "width": 358,
           "height": 97
         },
@@ -1945,8 +1955,8 @@
           },
           "left": 29,
           "right": 100,
-          "top": 341.9765625,
-          "bottom": 412.9765625,
+          "top": 341.96875,
+          "bottom": 412.96875,
           "width": 71,
           "height": 71
         },
@@ -1955,8 +1965,8 @@
           "dataset": {},
           "left": 109,
           "right": 336,
-          "top": 344.703125,
-          "bottom": 410.25,
+          "top": 344.6875,
+          "bottom": 410.234375,
           "width": 227,
           "height": 65.546875
         },
@@ -2006,8 +2016,8 @@
           "dataset": {},
           "left": 16,
           "right": 374,
-          "top": 477.7734375,
-          "bottom": 593.3671875,
+          "top": 477.765625,
+          "bottom": 593.359375,
           "width": 358,
           "height": 115.59375
         },
@@ -2016,8 +2026,8 @@
           "dataset": {},
           "left": 64,
           "right": 374,
-          "top": 492.7734375,
-          "bottom": 530.7734375,
+          "top": 492.765625,
+          "bottom": 530.765625,
           "width": 310,
           "height": 38
         },
@@ -2028,9 +2038,9 @@
           "left": 16,
           "right": 374,
           "top": 152,
-          "bottom": 177.1953125,
+          "bottom": 177.1875,
           "width": 358,
-          "height": 25.1953125
+          "height": 25.1875
         },
         ".react-share": {
           "id": "",
@@ -2057,10 +2067,10 @@
           "dataset": {},
           "left": 72,
           "right": 296,
-          "top": 95.8984375,
+          "top": 95.90625,
           "bottom": 137.09375,
           "width": 224,
-          "height": 41.1953125
+          "height": 41.1875
         },
         ".atime": {
           "id": "",
@@ -2077,10 +2087,10 @@
           "dataset": {},
           "left": 72,
           "right": 296,
-          "top": 95.8984375,
+          "top": 95.90625,
           "bottom": 117.59375,
           "width": 224,
-          "height": 21.6953125
+          "height": 21.6875
         },
         ".post-title-row": {
           "id": "",
@@ -2088,9 +2098,9 @@
           "left": 16,
           "right": 374,
           "top": 152,
-          "bottom": 177.1953125,
+          "bottom": 177.1875,
           "width": 358,
-          "height": 25.1953125
+          "height": 25.1875
         },
         ".post-copy": {
           "id": "",
@@ -2098,17 +2108,17 @@
           "left": 16,
           "right": 374,
           "top": 140,
-          "bottom": 322.9765625,
+          "bottom": 322.96875,
           "width": 358,
-          "height": 182.9765625
+          "height": 182.96875
         },
         ".post-text": {
           "id": "",
           "dataset": {},
           "left": 16,
           "right": 374,
-          "top": 185.1953125,
-          "bottom": 269.9765625,
+          "top": 185.1875,
+          "bottom": 269.96875,
           "width": 358,
           "height": 84.78125
         },
@@ -2117,8 +2127,8 @@
           "dataset": {},
           "left": 16,
           "right": 374,
-          "top": 277.9765625,
-          "bottom": 322.9765625,
+          "top": 277.96875,
+          "bottom": 322.96875,
           "width": 358,
           "height": 45
         },
@@ -2127,8 +2137,8 @@
           "dataset": {},
           "left": 16,
           "right": 321,
-          "top": 290.7265625,
-          "bottom": 310.2265625,
+          "top": 290.71875,
+          "bottom": 310.21875,
           "width": 305,
           "height": 19.5
         },
@@ -2137,8 +2147,8 @@
           "dataset": {},
           "left": 329,
           "right": 374,
-          "top": 277.9765625,
-          "bottom": 322.9765625,
+          "top": 277.96875,
+          "bottom": 322.96875,
           "width": 45,
           "height": 45
         }
@@ -2149,8 +2159,8 @@
           "dataset": {},
           "left": 16,
           "right": 374,
-          "top": 185.1953125,
-          "bottom": 210.7890625,
+          "top": 185.1875,
+          "bottom": 210.78125,
           "width": 358,
           "height": 25.59375
         },
@@ -2159,8 +2169,8 @@
           "dataset": {},
           "left": 16,
           "right": 374,
-          "top": 218.7890625,
-          "bottom": 269.9765625,
+          "top": 218.78125,
+          "bottom": 269.96875,
           "width": 358,
           "height": 51.1875
         }
@@ -2187,17 +2197,17 @@
           "left": 23,
           "right": 367,
           "top": 131.5,
-          "bottom": 277.4453125,
+          "bottom": 277.4375,
           "width": 344,
-          "height": 145.9453125
+          "height": 145.9375
         },
         ".pay-plan-copy": {
           "id": "",
           "dataset": {},
           "left": 94,
           "right": 291,
-          "top": 147.9765625,
-          "bottom": 192.0234375,
+          "top": 147.96875,
+          "bottom": 192.015625,
           "width": 197,
           "height": 44.046875
         },
@@ -2226,10 +2236,10 @@
           "dataset": {},
           "left": 23,
           "right": 182,
-          "top": 752.0234375,
+          "top": 752.03125,
           "bottom": 798.96875,
           "width": 159,
-          "height": 46.9453125
+          "height": 46.9375
         },
         ".btn-pay": {
           "id": "",
@@ -2275,9 +2285,9 @@
           "left": 23,
           "right": 367,
           "top": 136,
-          "bottom": 286.640625,
+          "bottom": 286.625,
           "width": 344,
-          "height": 150.640625
+          "height": 150.625
         },
         ".pay-plan-copy": {
           "id": "",
@@ -2285,47 +2295,47 @@
           "left": 94,
           "right": 279,
           "top": 151,
-          "bottom": 202.6953125,
+          "bottom": 202.6875,
           "width": 185,
-          "height": 51.6953125
+          "height": 51.6875
         },
         ".pay-selected": {
           "id": "",
           "dataset": {},
           "left": 288,
           "right": 352,
-          "top": 163.7734375,
-          "bottom": 189.921875,
+          "top": 163.765625,
+          "bottom": 189.90625,
           "width": 64,
-          "height": 26.1484375
+          "height": 26.140625
         },
         ".payarea": {
           "id": "",
           "dataset": {},
           "left": 0,
           "right": 390,
-          "top": 734.3046875,
+          "top": 734.3125,
           "bottom": 844,
           "width": 390,
-          "height": 109.6953125
+          "height": 109.6875
         },
         ".pay-due": {
           "id": "",
           "dataset": {},
           "left": 23,
           "right": 182,
-          "top": 745.3046875,
+          "top": 745.3125,
           "bottom": 800,
           "width": 159,
-          "height": 54.6953125
+          "height": 54.6875
         },
         ".btn-pay": {
           "id": "",
           "dataset": {},
           "left": 192,
           "right": 367,
-          "top": 748.1484375,
-          "bottom": 797.1484375,
+          "top": 748.15625,
+          "bottom": 797.15625,
           "width": 175,
           "height": 49
         },
@@ -2335,9 +2345,9 @@
           "left": 0,
           "right": 390,
           "top": 87,
-          "bottom": 734.3046875,
+          "bottom": 734.3125,
           "width": 390,
-          "height": 647.3046875
+          "height": 647.3125
         }
       },
       "paymentEnabled": false,
@@ -2352,8 +2362,8 @@
           "dataset": {},
           "left": 16,
           "right": 374,
-          "top": -314.609375,
-          "bottom": -226.609375,
+          "top": 291.890625,
+          "bottom": 379.890625,
           "width": 358,
           "height": 88
         },
@@ -2362,8 +2372,8 @@
           "dataset": {},
           "left": 16,
           "right": 374,
-          "top": -226.609375,
-          "bottom": -138.609375,
+          "top": 379.890625,
+          "bottom": 467.890625,
           "width": 358,
           "height": 88
         },
@@ -2372,8 +2382,8 @@
           "dataset": {},
           "left": 16,
           "right": 374,
-          "top": -138.609375,
-          "bottom": -51.609375,
+          "top": 467.890625,
+          "bottom": 554.890625,
           "width": 358,
           "height": 87
         }
@@ -2411,8 +2421,8 @@
           "dataset": {},
           "left": 16,
           "right": 374,
-          "top": -317.65625,
-          "bottom": -229.65625,
+          "top": 305.328125,
+          "bottom": 393.328125,
           "width": 358,
           "height": 88
         },
@@ -2421,8 +2431,8 @@
           "dataset": {},
           "left": 16,
           "right": 374,
-          "top": -229.65625,
-          "bottom": -141.65625,
+          "top": 393.328125,
+          "bottom": 481.328125,
           "width": 358,
           "height": 88
         },
@@ -2431,8 +2441,8 @@
           "dataset": {},
           "left": 16,
           "right": 374,
-          "top": -141.65625,
-          "bottom": -54.65625,
+          "top": 481.328125,
+          "bottom": 568.328125,
           "width": 358,
           "height": 87
         }
@@ -2491,10 +2501,10 @@
           "id": "",
           "dataset": {},
           "left": 76,
-          "right": 296.9140625,
+          "right": 296.90625,
           "top": 314.390625,
           "bottom": 336.140625,
-          "width": 220.9140625,
+          "width": 220.90625,
           "height": 21.75
         },
         ".nt-body": {
@@ -2552,21 +2562,21 @@
         ".nt-time": {
           "id": "",
           "dataset": {},
-          "left": 303.9140625,
+          "left": 303.90625,
           "right": 354,
           "top": 314.390625,
           "bottom": 331.390625,
-          "width": 50.0859375,
+          "width": 50.09375,
           "height": 17
         },
         ".nt": {
           "id": "",
           "dataset": {},
           "left": 76,
-          "right": 296.9140625,
+          "right": 296.90625,
           "top": 314.390625,
           "bottom": 353.140625,
-          "width": 220.9140625,
+          "width": 220.90625,
           "height": 38.75
         },
         ".notif-title-row": {
@@ -2604,8 +2614,8 @@
           "dataset": {},
           "left": 266,
           "right": 367,
-          "top": 116.8984375,
-          "bottom": 149.9453125,
+          "top": 116.890625,
+          "bottom": 149.9375,
           "width": 101,
           "height": 33.046875
         },
@@ -2643,38 +2653,38 @@
           },
           "left": 23,
           "right": 367,
-          "top": 316.0859375,
-          "bottom": 530.6015625,
+          "top": 316.0625,
+          "bottom": 530.5625,
           "width": 344,
-          "height": 214.515625
+          "height": 214.5
         },
         ".nhead": {
           "id": "",
           "dataset": {},
           "left": 36,
           "right": 354,
-          "top": 329.0859375,
-          "bottom": 400.6015625,
+          "top": 329.0625,
+          "bottom": 400.5625,
           "width": 318,
-          "height": 71.515625
+          "height": 71.5
         },
         ".nt-h3": {
           "id": "",
           "dataset": {},
           "left": 76,
           "right": 281.890625,
-          "top": 329.0859375,
-          "bottom": 379.1015625,
+          "top": 329.0625,
+          "bottom": 379.0625,
           "width": 205.890625,
-          "height": 50.015625
+          "height": 50
         },
         ".nt-body": {
           "id": "",
           "dataset": {},
           "left": 36,
           "right": 354,
-          "top": 408.6015625,
-          "bottom": 471.6015625,
+          "top": 408.5625,
+          "bottom": 471.5625,
           "width": 318,
           "height": 63
         },
@@ -2683,8 +2693,8 @@
           "dataset": {},
           "left": 36,
           "right": 354,
-          "top": 477.6015625,
-          "bottom": 523.6015625,
+          "top": 477.5625,
+          "bottom": 523.5625,
           "width": 318,
           "height": 46
         },
@@ -2695,8 +2705,8 @@
           },
           "left": 277,
           "right": 354,
-          "top": 478.6015625,
-          "bottom": 523.6015625,
+          "top": 478.5625,
+          "bottom": 523.5625,
           "width": 77,
           "height": 45
         },
@@ -2705,18 +2715,18 @@
           "dataset": {},
           "left": 36,
           "right": 71,
-          "top": 491.0234375,
-          "bottom": 511.171875,
+          "top": 490.984375,
+          "bottom": 511.125,
           "width": 35,
-          "height": 20.1484375
+          "height": 20.140625
         },
         ".reddot": {
           "id": "",
           "dataset": {},
           "left": 36,
           "right": 41,
-          "top": 498.59375,
-          "bottom": 503.59375,
+          "top": 498.546875,
+          "bottom": 503.546875,
           "width": 5,
           "height": 5
         },
@@ -2725,8 +2735,8 @@
           "dataset": {},
           "left": 288.890625,
           "right": 354,
-          "top": 329.0859375,
-          "bottom": 350.5859375,
+          "top": 329.0625,
+          "bottom": 350.5625,
           "width": 65.109375,
           "height": 21.5
         },
@@ -2735,10 +2745,10 @@
           "dataset": {},
           "left": 76,
           "right": 281.890625,
-          "top": 329.0859375,
-          "bottom": 400.6015625,
+          "top": 329.0625,
+          "bottom": 400.5625,
           "width": 205.890625,
-          "height": 71.515625
+          "height": 71.5
         },
         ".notif-title-row": {
           "id": "",
@@ -2746,9 +2756,9 @@
           "left": 23,
           "right": 367,
           "top": 107,
-          "bottom": 168.390625,
+          "bottom": 168.375,
           "width": 344,
-          "height": 61.390625
+          "height": 61.375
         },
         ".cpt-titles": {
           "id": "",
@@ -2756,17 +2766,17 @@
           "left": 23,
           "right": 240,
           "top": 107,
-          "bottom": 168.390625,
+          "bottom": 168.375,
           "width": 217,
-          "height": 61.390625
+          "height": 61.375
         },
         ".notif-readall": {
           "id": "",
           "dataset": {},
           "left": 248,
           "right": 367,
-          "top": 115.1953125,
-          "bottom": 160.1953125,
+          "top": 115.1875,
+          "bottom": 160.1875,
           "width": 119,
           "height": 45
         },
@@ -2776,9 +2786,9 @@
           "left": 248,
           "right": 367,
           "top": 118.84375,
-          "bottom": 156.5390625,
+          "bottom": 156.53125,
           "width": 119,
-          "height": 37.6953125
+          "height": 37.6875
         },
         ".notif-page >>> .navbar": {
           "id": "",
@@ -2796,9 +2806,9 @@
           "left": 0,
           "right": 390,
           "top": 95,
-          "bottom": 207.390625,
+          "bottom": 207.375,
           "width": 390,
-          "height": 112.390625
+          "height": 112.375
         }
       },
       "passed": true
@@ -2833,10 +2843,10 @@
           "id": "",
           "dataset": {},
           "left": 76,
-          "right": 296.9140625,
+          "right": 296.90625,
           "top": 314.390625,
           "bottom": 357.890625,
-          "width": 220.9140625,
+          "width": 220.90625,
           "height": 43.5
         },
         ".nt-body": {
@@ -2885,21 +2895,21 @@
         ".nt-time": {
           "id": "",
           "dataset": {},
-          "left": 303.9140625,
+          "left": 303.90625,
           "right": 354,
           "top": 314.390625,
           "bottom": 331.390625,
-          "width": 50.0859375,
+          "width": 50.09375,
           "height": 17
         },
         ".nt": {
           "id": "",
           "dataset": {},
           "left": 76,
-          "right": 296.9140625,
+          "right": 296.90625,
           "top": 314.390625,
           "bottom": 374.890625,
-          "width": 220.9140625,
+          "width": 220.90625,
           "height": 60.5
         },
         ".notif-title-row": {
@@ -2948,7 +2958,7 @@
       "passed": true
     }
   ],
-  "checkedAt": "2026-11-05T13:36:16.835Z",
+  "checkedAt": "2026-11-05T18:52:17.827Z",
   "passed": true,
   "source": "Native formal pages; temporary sample data restored; closed features kept closed; no business write APIs.",
   "formalRoutes": 39

@@ -29,7 +29,7 @@
       wx:key="num"
       class="item g-fade-up {{item.open ? 'open' : ''}} g-d{{index < 6 ? index + 1 : 6}}"
     >
-      <view class="q tap-scale" catchtap="onToggle" data-num="{{item.num}}">
+      <view class="q tap-scale" catchtap="onToggle" data-num="{{item.num}}" aria-role="button" aria-expanded="{{item.open}}">
         <text class="qnum">{{item.num}}</text>
         <text class="q-title clamp-2">{{item.question}}</text>
         <view class="caret">

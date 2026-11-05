@@ -35,7 +35,7 @@
   width: 78rpx;
   height: 78rpx;
   border-radius: var(--r-md);
-  background: var(--pop);
+  background: var(--pop-fill);
   color: var(--anchor-contrast);
   font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: var(--w-bold);

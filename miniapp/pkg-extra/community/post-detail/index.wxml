@@ -33,7 +33,7 @@
         <button class="react-share tap-scale" size="mini" open-type="share" aria-label="分享这条帖子">
           <view class="ricon ico-share"></view><text>分享</text>
         </button>
-        <view wx:if="{{post.mine}}" class="adel tap-scale" catchtap="onDeletePost">删除</view>
+        <view wx:if="{{post.mine}}" class="adel tap-scale" catchtap="onDeletePost" aria-role="button" aria-label="删除这条帖子">删除</view>
       </view>
 
       <!-- 实拍大图：多图原生滑动，点击预览原图。无图不占位。 -->
@@ -53,7 +53,7 @@
           data-url="{{post.images[0]}}"
           bindtap="onPreviewImage"
         />
-        <view class="post-photo-counter">{{photoIndex + 1}} / {{post.images.length}}</view>
+        <view wx:if="{{post.images.length > 1}}" class="post-photo-counter">{{photoIndex + 1}} / {{post.images.length}}</view>
       </view>
       <view class="post-copy g-fade-up g-d1">
         <view class="post-title-row">
@@ -107,6 +107,8 @@
                   class="cdel tap-scale"
                   catchtap="onDeleteComment"
                   data-comment-id="{{item.commentId}}"
+                  aria-role="button"
+                  aria-label="删除我的这条评论"
                 >删除</text>
               </view>
               <view class="ctext">{{item.content}}<text wx:if="{{item.isPending}}" class="cd-pending">（审核中，通过后大家可见）</text></view>

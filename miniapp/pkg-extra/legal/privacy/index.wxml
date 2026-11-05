@@ -3,10 +3,9 @@
 
 <view class="page {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <view class="body">
-    <!-- Hero -->
-    <view class="doctitle g-fade-up g-d1">
-      你的隐私{{'\n'}}我们认真守护
-    </view>
+    <!-- Hero：文字紧贴标签写。.doctitle 是 white-space: pre-line，标签后的换行缩进会被保留成一整行空行
+         （约 67rpx：截图里标题比用户协议页低 40px） -->
+    <view class="doctitle g-fade-up g-d1">你的隐私{{'\n'}}我们认真守护</view>
     <view class="effective g-fade-up g-d2">
       <text class="effective-dot"></text>生效日期：{{effectiveDate}}
     </view>
@@ -58,7 +57,7 @@
       <view class="ft-eb">联系我们</view>
       <view class="ft-text">运营者：{{operatorName}}</view>
       <view class="ft-text">如对本隐私政策有任何疑问，或希望行使查询、更正、删除个人信息的权利，欢迎随时联系我们：</view>
-      <view class="ft-mail tap-scale" catchtap="onCopyContact">{{operatorContact}}</view>
+      <view class="ft-mail hit-88 tap-scale" aria-role="button" aria-label="复制联系方式 {{operatorContact}}" catchtap="onCopyContact">{{operatorContact}}</view>
     </view>
 
     <view class="safe-bottom"></view>

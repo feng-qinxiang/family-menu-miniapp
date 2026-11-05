@@ -3,182 +3,182 @@
     {
       "state": "home",
       "image": "screens/app-home.jpg",
-      "width": 591,
-      "height": 1280
+      "width": 351,
+      "height": 760
     },
     {
       "state": "cook",
       "image": "screens/app-cook.jpg",
-      "width": 591,
-      "height": 1280
+      "width": 351,
+      "height": 760
     },
     {
       "state": "cook-large",
       "image": "screens/app-cook-large.jpg",
-      "width": 591,
-      "height": 1280
+      "width": 351,
+      "height": 760
     },
     {
       "state": "record",
       "image": "screens/app-record.jpg",
-      "width": 591,
-      "height": 1280
+      "width": 351,
+      "height": 760
     },
     {
       "state": "record-large",
       "image": "screens/app-record-large.jpg",
-      "width": 591,
-      "height": 1280
-    },
-    {
-      "state": "recipes",
-      "image": "screens/app-recipes.jpg",
-      "width": 591,
-      "height": 1280
-    },
-    {
-      "state": "pantry",
-      "image": "screens/app-pantry.jpg",
-      "width": 591,
-      "height": 1280
-    },
-    {
-      "state": "shopping",
-      "image": "screens/app-shopping.jpg",
-      "width": 591,
-      "height": 1280
-    },
-    {
-      "state": "shopping-large",
-      "image": "screens/app-shopping-large.jpg",
-      "width": 591,
-      "height": 1280
-    },
-    {
-      "state": "import",
-      "image": "screens/app-import.jpg",
-      "width": 591,
-      "height": 1280
-    },
-    {
-      "state": "import-large",
-      "image": "screens/app-import-large.jpg",
-      "width": 591,
-      "height": 1280
-    },
-    {
-      "state": "weekly",
-      "image": "screens/app-weekly.jpg",
-      "width": 591,
-      "height": 1280
-    },
-    {
-      "state": "weekly-large",
-      "image": "screens/app-weekly-large.jpg",
-      "width": 591,
-      "height": 1280
-    },
-    {
-      "state": "family",
-      "image": "screens/app-family.jpg",
-      "width": 591,
-      "height": 1280
-    },
-    {
-      "state": "family-large",
-      "image": "screens/app-family-large.jpg",
-      "width": 591,
-      "height": 1280
+      "width": 351,
+      "height": 760
     },
     {
       "state": "community",
       "image": "screens/app-community.jpg",
-      "width": 591,
-      "height": 1280
+      "width": 351,
+      "height": 760
     },
     {
       "state": "community-large",
       "image": "screens/app-community-large.jpg",
-      "width": 591,
-      "height": 1280
+      "width": 351,
+      "height": 760
     },
     {
       "state": "community-text",
       "image": "screens/app-community-text.jpg",
-      "width": 591,
-      "height": 1280
+      "width": 351,
+      "height": 760
     },
     {
       "state": "me",
       "image": "screens/app-me.jpg",
-      "width": 591,
-      "height": 1280
+      "width": 351,
+      "height": 760
     },
     {
       "state": "me-large",
       "image": "screens/app-me-large.jpg",
-      "width": 591,
-      "height": 1280
+      "width": 351,
+      "height": 760
+    },
+    {
+      "state": "recipes",
+      "image": "screens/app-recipes.jpg",
+      "width": 351,
+      "height": 760
+    },
+    {
+      "state": "pantry",
+      "image": "screens/app-pantry.jpg",
+      "width": 351,
+      "height": 760
+    },
+    {
+      "state": "shopping",
+      "image": "screens/app-shopping.jpg",
+      "width": 351,
+      "height": 760
+    },
+    {
+      "state": "shopping-large",
+      "image": "screens/app-shopping-large.jpg",
+      "width": 351,
+      "height": 760
+    },
+    {
+      "state": "import",
+      "image": "screens/app-import.jpg",
+      "width": 351,
+      "height": 760
+    },
+    {
+      "state": "import-large",
+      "image": "screens/app-import-large.jpg",
+      "width": 351,
+      "height": 760
+    },
+    {
+      "state": "weekly",
+      "image": "screens/app-weekly.jpg",
+      "width": 351,
+      "height": 760
+    },
+    {
+      "state": "weekly-large",
+      "image": "screens/app-weekly-large.jpg",
+      "width": 351,
+      "height": 760
+    },
+    {
+      "state": "family",
+      "image": "screens/app-family.jpg",
+      "width": 351,
+      "height": 760
+    },
+    {
+      "state": "family-large",
+      "image": "screens/app-family-large.jpg",
+      "width": 351,
+      "height": 760
     },
     {
       "state": "kitchen",
       "image": "screens/app-kitchen.jpg",
-      "width": 591,
-      "height": 1280
+      "width": 351,
+      "height": 760
     },
     {
       "state": "kitchen-large",
       "image": "screens/app-kitchen-large.jpg",
-      "width": 591,
-      "height": 1280
+      "width": 351,
+      "height": 760
     },
     {
       "state": "kitchen-running",
       "image": "screens/app-kitchen-running.jpg",
-      "width": 591,
-      "height": 1280
+      "width": 351,
+      "height": 760
     },
     {
       "state": "kitchen-paused-large",
       "image": "screens/app-kitchen-paused-large.jpg",
-      "width": 591,
-      "height": 1280
+      "width": 351,
+      "height": 760
     },
     {
       "state": "cook-mode",
       "image": "screens/app-cook-mode.jpg",
-      "width": 591,
-      "height": 1280
+      "width": 351,
+      "height": 760
     },
     {
       "state": "cook-mode-large",
       "image": "screens/app-cook-mode-large.jpg",
-      "width": 591,
-      "height": 1280
+      "width": 351,
+      "height": 760
     },
     {
       "state": "cook-mode-running",
       "image": "screens/app-cook-mode-running.jpg",
-      "width": 591,
-      "height": 1280
+      "width": 351,
+      "height": 760
     },
     {
       "state": "cook-mode-paused-large",
       "image": "screens/app-cook-mode-paused-large.jpg",
-      "width": 591,
-      "height": 1280
+      "width": 351,
+      "height": 760
     },
     {
       "state": "cook-mode-background-large",
       "image": "screens/app-cook-mode-background-large.jpg",
-      "width": 591,
-      "height": 1280
+      "width": 351,
+      "height": 760
     },
     {
       "state": "cook-mode-long-large",
       "image": "screens/app-cook-mode-long-large.jpg",
-      "width": 591,
-      "height": 1280
+      "width": 351,
+      "height": 760
     }
   ],
   "layouts": [
@@ -189,11 +189,11 @@
       "child": {
         "id": "",
         "dataset": {},
-        "left": 136.6015625,
+        "left": 136.609375,
         "right": 354,
-        "top": 539,
-        "bottom": 583,
-        "width": 217.3984375,
+        "top": 541,
+        "bottom": 585,
+        "width": 217.390625,
         "height": 44
       },
       "box": {
@@ -201,8 +201,8 @@
         "dataset": {},
         "left": 23,
         "right": 367,
-        "top": 472,
-        "bottom": 734,
+        "top": 474,
+        "bottom": 736,
         "width": 344,
         "height": 262
       },
@@ -230,9 +230,9 @@
         "left": 23,
         "right": 367,
         "top": 246.34375,
-        "bottom": 400.3828125,
+        "bottom": 400.375,
         "width": 344,
-        "height": 154.0390625
+        "height": 154.03125
       },
       "passed": true
     },
@@ -246,9 +246,9 @@
         "left": 134,
         "right": 354,
         "top": 259.34375,
-        "bottom": 387.3828125,
+        "bottom": 387.375,
         "width": 220,
-        "height": 128.0390625
+        "height": 128.03125
       },
       "box": {
         "id": "",
@@ -256,9 +256,9 @@
         "left": 23,
         "right": 367,
         "top": 246.34375,
-        "bottom": 400.3828125,
+        "bottom": 400.375,
         "width": 344,
-        "height": 154.0390625
+        "height": 154.03125
       },
       "passed": true
     },
@@ -275,8 +275,8 @@
         },
         "left": 36,
         "right": 111,
-        "top": 647.0625,
-        "bottom": 722.0625,
+        "top": 647.046875,
+        "bottom": 722.046875,
         "width": 75,
         "height": 75
       },
@@ -285,8 +285,8 @@
         "dataset": {},
         "left": 23,
         "right": 367,
-        "top": 634.0625,
-        "bottom": 794.0625,
+        "top": 634.046875,
+        "bottom": 794.046875,
         "width": 344,
         "height": 160
       },
@@ -303,8 +303,8 @@
         },
         "left": 280,
         "right": 354,
-        "top": 741.0625,
-        "bottom": 786.0625,
+        "top": 741.046875,
+        "bottom": 786.046875,
         "width": 74,
         "height": 45
       },
@@ -313,8 +313,8 @@
         "dataset": {},
         "left": 23,
         "right": 367,
-        "top": 634.0625,
-        "bottom": 794.0625,
+        "top": 634.046875,
+        "bottom": 794.046875,
         "width": 344,
         "height": 160
       },
@@ -331,8 +331,8 @@
         },
         "left": 36,
         "right": 123,
-        "top": 269.390625,
-        "bottom": 383.390625,
+        "top": 269.375,
+        "bottom": 383.375,
         "width": 87,
         "height": 114
       },
@@ -341,10 +341,10 @@
         "dataset": {},
         "left": 23,
         "right": 367,
-        "top": 256.390625,
-        "bottom": 422.6796875,
+        "top": 256.375,
+        "bottom": 422.640625,
         "width": 344,
-        "height": 166.2890625
+        "height": 166.265625
       },
       "passed": true
     },
@@ -357,20 +357,20 @@
         "dataset": {},
         "left": 134,
         "right": 354,
-        "top": 269.390625,
-        "bottom": 409.6796875,
+        "top": 269.375,
+        "bottom": 409.640625,
         "width": 220,
-        "height": 140.2890625
+        "height": 140.265625
       },
       "box": {
         "id": "",
         "dataset": {},
         "left": 23,
         "right": 367,
-        "top": 256.390625,
-        "bottom": 422.6796875,
+        "top": 256.375,
+        "bottom": 422.640625,
         "width": 344,
-        "height": 166.2890625
+        "height": 166.265625
       },
       "passed": true
     },
@@ -387,8 +387,8 @@
         },
         "left": 36,
         "right": 111,
-        "top": 686.515625,
-        "bottom": 761.515625,
+        "top": 686.453125,
+        "bottom": 761.453125,
         "width": 75,
         "height": 75
       },
@@ -397,10 +397,10 @@
         "dataset": {},
         "left": 23,
         "right": 367,
-        "top": 673.515625,
-        "bottom": 836.0078125,
+        "top": 673.453125,
+        "bottom": 835.9375,
         "width": 344,
-        "height": 162.4921875
+        "height": 162.484375
       },
       "passed": true
     },
@@ -415,8 +415,8 @@
         },
         "left": 276,
         "right": 354,
-        "top": 783.0078125,
-        "bottom": 828.0078125,
+        "top": 782.9375,
+        "bottom": 827.9375,
         "width": 78,
         "height": 45
       },
@@ -425,10 +425,10 @@
         "dataset": {},
         "left": 23,
         "right": 367,
-        "top": 673.515625,
-        "bottom": 836.0078125,
+        "top": 673.453125,
+        "bottom": 835.9375,
         "width": 344,
-        "height": 162.4921875
+        "height": 162.484375
       },
       "passed": true
     },
@@ -439,10 +439,10 @@
       "child": {
         "id": "",
         "dataset": {},
-        "left": 36,
-        "right": 123,
-        "top": 537.8203125,
-        "bottom": 651.8203125,
+        "left": 38,
+        "right": 125,
+        "top": 540.890625,
+        "bottom": 654.890625,
         "width": 87,
         "height": 114
       },
@@ -451,8 +451,8 @@
         "dataset": {},
         "left": 23,
         "right": 367,
-        "top": 524.8203125,
-        "bottom": 717.8203125,
+        "top": 527.890625,
+        "bottom": 720.890625,
         "width": 344,
         "height": 193
       },
@@ -468,11 +468,11 @@
           "recipeId": 101,
           "title": "红烧肉"
         },
-        "left": 292.6640625,
-        "right": 354,
-        "top": 667.8203125,
-        "bottom": 712.8203125,
-        "width": 61.3359375,
+        "left": 290.65625,
+        "right": 352,
+        "top": 670.890625,
+        "bottom": 715.890625,
+        "width": 61.34375,
         "height": 45
       },
       "box": {
@@ -480,8 +480,8 @@
         "dataset": {},
         "left": 23,
         "right": 367,
-        "top": 524.8203125,
-        "bottom": 717.8203125,
+        "top": 527.890625,
+        "bottom": 720.890625,
         "width": 344,
         "height": 193
       },
@@ -494,10 +494,10 @@
       "child": {
         "id": "",
         "dataset": {},
-        "left": 36,
-        "right": 123,
-        "top": 554.0703125,
-        "bottom": 668.0703125,
+        "left": 38,
+        "right": 125,
+        "top": 557.125,
+        "bottom": 671.125,
         "width": 87,
         "height": 114
       },
@@ -506,10 +506,10 @@
         "dataset": {},
         "left": 23,
         "right": 367,
-        "top": 541.0703125,
-        "bottom": 752.4453125,
+        "top": 544.125,
+        "bottom": 755.484375,
         "width": 344,
-        "height": 211.375
+        "height": 211.359375
       },
       "passed": true
     },
@@ -523,11 +523,11 @@
           "recipeId": 101,
           "title": "红烧肉"
         },
-        "left": 287.9453125,
-        "right": 354,
-        "top": 702.4453125,
-        "bottom": 747.4453125,
-        "width": 66.0546875,
+        "left": 285.9375,
+        "right": 352,
+        "top": 705.484375,
+        "bottom": 750.484375,
+        "width": 66.0625,
         "height": 45
       },
       "box": {
@@ -535,10 +535,290 @@
         "dataset": {},
         "left": 23,
         "right": 367,
-        "top": 541.0703125,
-        "bottom": 752.4453125,
+        "top": 544.125,
+        "bottom": 755.484375,
         "width": 344,
-        "height": 211.375
+        "height": 211.359375
+      },
+      "passed": true
+    },
+    {
+      "state": "community",
+      "selector": ".pphoto",
+      "parent": ".pcard",
+      "child": {
+        "id": "",
+        "dataset": {
+          "errKey": "posts[0].photoBroken"
+        },
+        "left": 36,
+        "right": 354,
+        "top": 313.296875,
+        "bottom": 541.296875,
+        "width": 318,
+        "height": 228
+      },
+      "box": {
+        "id": "",
+        "dataset": {
+          "id": 1,
+          "rv": 0
+        },
+        "left": 23,
+        "right": 367,
+        "top": 250.296875,
+        "bottom": 791.453125,
+        "width": 344,
+        "height": 541.15625
+      },
+      "passed": true
+    },
+    {
+      "state": "community",
+      "selector": ".pactions",
+      "parent": ".pcard",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 36,
+        "right": 354,
+        "top": 740.453125,
+        "bottom": 788.453125,
+        "width": 318,
+        "height": 48
+      },
+      "box": {
+        "id": "",
+        "dataset": {
+          "id": 1,
+          "rv": 0
+        },
+        "left": 23,
+        "right": 367,
+        "top": 250.296875,
+        "bottom": 791.453125,
+        "width": 344,
+        "height": 541.15625
+      },
+      "passed": true
+    },
+    {
+      "state": "community",
+      "selector": ".pa-report",
+      "parent": ".ptop",
+      "child": {
+        "id": "",
+        "dataset": {
+          "id": 1
+        },
+        "left": 309,
+        "right": 354,
+        "top": 261.296875,
+        "bottom": 306.296875,
+        "width": 45,
+        "height": 45
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 36,
+        "right": 354,
+        "top": 261.296875,
+        "bottom": 306.296875,
+        "width": 318,
+        "height": 45
+      },
+      "passed": true
+    },
+    {
+      "state": "community-large",
+      "selector": ".pphoto",
+      "parent": ".pcard",
+      "child": {
+        "id": "",
+        "dataset": {
+          "errKey": "posts[0].photoBroken"
+        },
+        "left": 36,
+        "right": 354,
+        "top": 324.203125,
+        "bottom": 552.203125,
+        "width": 318,
+        "height": 228
+      },
+      "box": {
+        "id": "",
+        "dataset": {
+          "id": 1,
+          "rv": 0
+        },
+        "left": 23,
+        "right": 367,
+        "top": 257.578125,
+        "bottom": 827.21875,
+        "width": 344,
+        "height": 569.640625
+      },
+      "passed": true
+    },
+    {
+      "state": "community-large",
+      "selector": ".pactions",
+      "parent": ".pcard",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 36,
+        "right": 354,
+        "top": 776.21875,
+        "bottom": 824.21875,
+        "width": 318,
+        "height": 48
+      },
+      "box": {
+        "id": "",
+        "dataset": {
+          "id": 1,
+          "rv": 0
+        },
+        "left": 23,
+        "right": 367,
+        "top": 257.578125,
+        "bottom": 827.21875,
+        "width": 344,
+        "height": 569.640625
+      },
+      "passed": true
+    },
+    {
+      "state": "community-large",
+      "selector": ".pa-report",
+      "parent": ".ptop",
+      "child": {
+        "id": "",
+        "dataset": {
+          "id": 1
+        },
+        "left": 309,
+        "right": 354,
+        "top": 270.390625,
+        "bottom": 315.390625,
+        "width": 45,
+        "height": 45
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 36,
+        "right": 354,
+        "top": 268.578125,
+        "bottom": 317.203125,
+        "width": 318,
+        "height": 48.625
+      },
+      "passed": true
+    },
+    {
+      "state": "me",
+      "selector": ".mag-shortcut",
+      "parent": ".mag-shortcuts",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 192,
+        "top": 376.84375,
+        "bottom": 435.6875,
+        "width": 169,
+        "height": 58.84375
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 376.84375,
+        "bottom": 565.375,
+        "width": 344,
+        "height": 188.53125
+      },
+      "passed": true
+    },
+    {
+      "state": "me",
+      "selector": ".mag-profile-copy",
+      "parent": ".mag-profile",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 77,
+        "right": 328.09375,
+        "top": 206.5,
+        "bottom": 248.1875,
+        "width": 251.09375,
+        "height": 41.6875
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 204.84375,
+        "bottom": 249.84375,
+        "width": 344,
+        "height": 45
+      },
+      "passed": true
+    },
+    {
+      "state": "me-large",
+      "selector": ".mag-shortcut",
+      "parent": ".mag-shortcuts",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 192,
+        "top": 398.75,
+        "bottom": 463.546875,
+        "width": 169,
+        "height": 64.796875
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 398.75,
+        "bottom": 605.140625,
+        "width": 344,
+        "height": 206.390625
+      },
+      "passed": true
+    },
+    {
+      "state": "me-large",
+      "selector": ".mag-profile-copy",
+      "parent": ".mag-profile",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 77,
+        "right": 319.9375,
+        "top": 213.375,
+        "bottom": 262.46875,
+        "width": 242.9375,
+        "height": 49.09375
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 213.375,
+        "bottom": 262.46875,
+        "width": 344,
+        "height": 49.09375
       },
       "passed": true
     },
@@ -553,8 +833,8 @@
         },
         "left": 300,
         "right": 354,
-        "top": 427.5859375,
-        "bottom": 472.5859375,
+        "top": 450.578125,
+        "bottom": 495.578125,
         "width": 54,
         "height": 45
       },
@@ -567,10 +847,10 @@
         },
         "left": 23,
         "right": 367,
-        "top": 350.1875,
-        "bottom": 481.5859375,
+        "top": 373.1875,
+        "bottom": 504.578125,
         "width": 344,
-        "height": 131.3984375
+        "height": 131.390625
       },
       "passed": true
     },
@@ -613,8 +893,8 @@
         },
         "left": 300,
         "right": 354,
-        "top": 458.359375,
-        "bottom": 503.359375,
+        "top": 485.84375,
+        "bottom": 530.84375,
         "width": 54,
         "height": 45
       },
@@ -627,10 +907,10 @@
         },
         "left": 23,
         "right": 367,
-        "top": 368.6015625,
-        "bottom": 512.359375,
+        "top": 396.078125,
+        "bottom": 539.84375,
         "width": 344,
-        "height": 143.7578125
+        "height": 143.765625
       },
       "passed": true
     },
@@ -645,8 +925,8 @@
         },
         "left": 26,
         "right": 194,
-        "top": 202.390625,
-        "bottom": 247.390625,
+        "top": 202.375,
+        "bottom": 247.375,
         "width": 168,
         "height": 45
       },
@@ -655,8 +935,8 @@
         "dataset": {},
         "left": 23,
         "right": 367,
-        "top": 199.390625,
-        "bottom": 250.390625,
+        "top": 199.375,
+        "bottom": 250.375,
         "width": 344,
         "height": 51
       },
@@ -669,11 +949,11 @@
       "child": {
         "id": "",
         "dataset": {},
-        "left": 255.3359375,
+        "left": 255.328125,
         "right": 354,
-        "top": 448.9921875,
-        "bottom": 493.9921875,
-        "width": 98.6640625,
+        "top": 448.984375,
+        "bottom": 493.984375,
+        "width": 98.671875,
         "height": 45
       },
       "box": {
@@ -681,8 +961,8 @@
         "dataset": {},
         "left": 23,
         "right": 367,
-        "top": 294.9921875,
-        "bottom": 506.9921875,
+        "top": 294.984375,
+        "bottom": 506.984375,
         "width": 344,
         "height": 212
       },
@@ -695,11 +975,11 @@
       "child": {
         "id": "",
         "dataset": {},
-        "left": 239.3359375,
+        "left": 239.328125,
         "right": 354,
-        "top": 486.0859375,
-        "bottom": 531.0859375,
-        "width": 114.6640625,
+        "top": 486.0625,
+        "bottom": 531.0625,
+        "width": 114.671875,
         "height": 45
       },
       "box": {
@@ -707,8 +987,8 @@
         "dataset": {},
         "left": 23,
         "right": 367,
-        "top": 332.0859375,
-        "bottom": 544.0859375,
+        "top": 332.0625,
+        "bottom": 544.0625,
         "width": 344,
         "height": 212
       },
@@ -751,8 +1031,8 @@
         },
         "left": 36,
         "right": 90,
-        "top": 408.7734375,
-        "bottom": 462.7734375,
+        "top": 408.765625,
+        "bottom": 462.765625,
         "width": 54,
         "height": 54
       },
@@ -762,9 +1042,9 @@
         "left": 23,
         "right": 367,
         "top": 365.625,
-        "bottom": 541.7734375,
+        "bottom": 541.765625,
         "width": 344,
-        "height": 176.1484375
+        "height": 176.140625
       },
       "passed": true
     },
@@ -776,10 +1056,10 @@
         "id": "",
         "dataset": {},
         "left": 24,
-        "right": 68.5703125,
+        "right": 68.578125,
         "top": 215.390625,
         "bottom": 236.1875,
-        "width": 44.5703125,
+        "width": 44.578125,
         "height": 20.796875
       },
       "box": {
@@ -788,10 +1068,10 @@
           "index": 0
         },
         "left": 23,
-        "right": 69.5703125,
+        "right": 69.578125,
         "top": 189.34375,
         "bottom": 252.1875,
-        "width": 46.5703125,
+        "width": 46.578125,
         "height": 62.84375
       },
       "passed": true
@@ -805,8 +1085,8 @@
         "dataset": {},
         "left": 279,
         "right": 367,
-        "top": 107.1953125,
-        "bottom": 152.1953125,
+        "top": 107.1875,
+        "bottom": 152.1875,
         "width": 88,
         "height": 45
       },
@@ -816,9 +1096,9 @@
         "left": 0,
         "right": 390,
         "top": 87,
-        "bottom": 199.390625,
+        "bottom": 199.375,
         "width": 390,
-        "height": 112.390625
+        "height": 112.375
       },
       "passed": true
     },
@@ -833,8 +1113,8 @@
         },
         "left": 36,
         "right": 90,
-        "top": 439.1328125,
-        "bottom": 493.1328125,
+        "top": 439.09375,
+        "bottom": 493.09375,
         "width": 54,
         "height": 54
       },
@@ -843,10 +1123,10 @@
         "dataset": {},
         "left": 23,
         "right": 367,
-        "top": 394.4375,
-        "bottom": 572.1328125,
+        "top": 394.40625,
+        "bottom": 572.09375,
         "width": 344,
-        "height": 177.6953125
+        "height": 177.6875
       },
       "passed": true
     },
@@ -858,11 +1138,11 @@
         "id": "",
         "dataset": {},
         "left": 24,
-        "right": 68.5703125,
-        "top": 230.0859375,
-        "bottom": 254,
-        "width": 44.5703125,
-        "height": 23.9140625
+        "right": 68.578125,
+        "top": 230.0625,
+        "bottom": 253.984375,
+        "width": 44.578125,
+        "height": 23.921875
       },
       "box": {
         "id": "",
@@ -870,10 +1150,10 @@
           "index": 0
         },
         "left": 23,
-        "right": 69.5703125,
-        "top": 199.390625,
-        "bottom": 270,
-        "width": 46.5703125,
+        "right": 69.578125,
+        "top": 199.375,
+        "bottom": 269.984375,
+        "width": 46.578125,
         "height": 70.609375
       },
       "passed": true
@@ -887,8 +1167,8 @@
         "dataset": {},
         "left": 36,
         "right": 354,
-        "top": 478.640625,
-        "bottom": 527.640625,
+        "top": 478.625,
+        "bottom": 527.625,
         "width": 318,
         "height": 49
       },
@@ -898,9 +1178,9 @@
         "left": 0,
         "right": 390,
         "top": 189.34375,
-        "bottom": 713.9375,
+        "bottom": 713.90625,
         "width": 390,
-        "height": 524.59375
+        "height": 524.5625
       },
       "passed": true
     },
@@ -913,8 +1193,8 @@
         "dataset": {},
         "left": 36,
         "right": 354,
-        "top": 491.78125,
-        "bottom": 540.78125,
+        "top": 491.75,
+        "bottom": 540.75,
         "width": 318,
         "height": 49
       },
@@ -923,290 +1203,10 @@
         "dataset": {},
         "left": 0,
         "right": 390,
-        "top": 199.390625,
-        "bottom": 733.125,
+        "top": 199.375,
+        "bottom": 733.09375,
         "width": 390,
-        "height": 533.734375
-      },
-      "passed": true
-    },
-    {
-      "state": "community",
-      "selector": ".pphoto",
-      "parent": ".pcard",
-      "child": {
-        "id": "",
-        "dataset": {
-          "errKey": "posts[0].photoBroken"
-        },
-        "left": 36,
-        "right": 354,
-        "top": 312.09375,
-        "bottom": 540.09375,
-        "width": 318,
-        "height": 228
-      },
-      "box": {
-        "id": "",
-        "dataset": {
-          "id": 1,
-          "rv": 0
-        },
-        "left": 23,
-        "right": 367,
-        "top": 249.09375,
-        "bottom": 788.7265625,
-        "width": 344,
-        "height": 539.6328125
-      },
-      "passed": true
-    },
-    {
-      "state": "community",
-      "selector": ".pactions",
-      "parent": ".pcard",
-      "child": {
-        "id": "",
-        "dataset": {},
-        "left": 36,
-        "right": 354,
-        "top": 737.7265625,
-        "bottom": 785.7265625,
-        "width": 318,
-        "height": 48
-      },
-      "box": {
-        "id": "",
-        "dataset": {
-          "id": 1,
-          "rv": 0
-        },
-        "left": 23,
-        "right": 367,
-        "top": 249.09375,
-        "bottom": 788.7265625,
-        "width": 344,
-        "height": 539.6328125
-      },
-      "passed": true
-    },
-    {
-      "state": "community",
-      "selector": ".pa-report",
-      "parent": ".ptop",
-      "child": {
-        "id": "",
-        "dataset": {
-          "id": 1
-        },
-        "left": 309,
-        "right": 354,
-        "top": 260.09375,
-        "bottom": 305.09375,
-        "width": 45,
-        "height": 45
-      },
-      "box": {
-        "id": "",
-        "dataset": {},
-        "left": 36,
-        "right": 354,
-        "top": 260.09375,
-        "bottom": 305.09375,
-        "width": 318,
-        "height": 45
-      },
-      "passed": true
-    },
-    {
-      "state": "community-large",
-      "selector": ".pphoto",
-      "parent": ".pcard",
-      "child": {
-        "id": "",
-        "dataset": {
-          "errKey": "posts[0].photoBroken"
-        },
-        "left": 36,
-        "right": 354,
-        "top": 324.2421875,
-        "bottom": 552.2421875,
-        "width": 318,
-        "height": 228
-      },
-      "box": {
-        "id": "",
-        "dataset": {
-          "id": 1,
-          "rv": 0
-        },
-        "left": 23,
-        "right": 367,
-        "top": 257.59375,
-        "bottom": 823.390625,
-        "width": 344,
-        "height": 565.796875
-      },
-      "passed": true
-    },
-    {
-      "state": "community-large",
-      "selector": ".pactions",
-      "parent": ".pcard",
-      "child": {
-        "id": "",
-        "dataset": {},
-        "left": 36,
-        "right": 354,
-        "top": 772.390625,
-        "bottom": 820.390625,
-        "width": 318,
-        "height": 48
-      },
-      "box": {
-        "id": "",
-        "dataset": {
-          "id": 1,
-          "rv": 0
-        },
-        "left": 23,
-        "right": 367,
-        "top": 257.59375,
-        "bottom": 823.390625,
-        "width": 344,
-        "height": 565.796875
-      },
-      "passed": true
-    },
-    {
-      "state": "community-large",
-      "selector": ".pa-report",
-      "parent": ".ptop",
-      "child": {
-        "id": "",
-        "dataset": {
-          "id": 1
-        },
-        "left": 309,
-        "right": 354,
-        "top": 270.4140625,
-        "bottom": 315.4140625,
-        "width": 45,
-        "height": 45
-      },
-      "box": {
-        "id": "",
-        "dataset": {},
-        "left": 36,
-        "right": 354,
-        "top": 268.59375,
-        "bottom": 317.2421875,
-        "width": 318,
-        "height": 48.6484375
-      },
-      "passed": true
-    },
-    {
-      "state": "me",
-      "selector": ".mag-shortcut",
-      "parent": ".mag-shortcuts",
-      "child": {
-        "id": "",
-        "dataset": {},
-        "left": 24,
-        "right": 192,
-        "top": 375.2890625,
-        "bottom": 434.1328125,
-        "width": 168,
-        "height": 58.84375
-      },
-      "box": {
-        "id": "",
-        "dataset": {},
-        "left": 24,
-        "right": 366,
-        "top": 375.2890625,
-        "bottom": 563.8203125,
-        "width": 342,
-        "height": 188.53125
-      },
-      "passed": true
-    },
-    {
-      "state": "me",
-      "selector": ".mag-profile-copy",
-      "parent": ".mag-profile",
-      "child": {
-        "id": "",
-        "dataset": {},
-        "left": 77,
-        "right": 328.1015625,
-        "top": 206.4921875,
-        "bottom": 248.1875,
-        "width": 251.1015625,
-        "height": 41.6953125
-      },
-      "box": {
-        "id": "",
-        "dataset": {},
-        "left": 23,
-        "right": 367,
-        "top": 204.84375,
-        "bottom": 249.84375,
-        "width": 344,
-        "height": 45
-      },
-      "passed": true
-    },
-    {
-      "state": "me-large",
-      "selector": ".mag-shortcut",
-      "parent": ".mag-shortcuts",
-      "child": {
-        "id": "",
-        "dataset": {},
-        "left": 24,
-        "right": 192,
-        "top": 397.2265625,
-        "bottom": 462.0234375,
-        "width": 168,
-        "height": 64.796875
-      },
-      "box": {
-        "id": "",
-        "dataset": {},
-        "left": 24,
-        "right": 366,
-        "top": 397.2265625,
-        "bottom": 603.6171875,
-        "width": 342,
-        "height": 206.390625
-      },
-      "passed": true
-    },
-    {
-      "state": "me-large",
-      "selector": ".mag-profile-copy",
-      "parent": ".mag-profile",
-      "child": {
-        "id": "",
-        "dataset": {},
-        "left": 77,
-        "right": 319.9453125,
-        "top": 213.390625,
-        "bottom": 262.484375,
-        "width": 242.9453125,
-        "height": 49.09375
-      },
-      "box": {
-        "id": "",
-        "dataset": {},
-        "left": 23,
-        "right": 367,
-        "top": 213.390625,
-        "bottom": 262.484375,
-        "width": 344,
-        "height": 49.09375
+        "height": 533.71875
       },
       "passed": true
     },
@@ -1219,8 +1219,8 @@
         "dataset": {},
         "left": 36,
         "right": 123,
-        "top": 217.1484375,
-        "bottom": 331.1484375,
+        "top": 217.140625,
+        "bottom": 331.140625,
         "width": 87,
         "height": 114
       },
@@ -1229,10 +1229,10 @@
         "dataset": {},
         "left": 36,
         "right": 354,
-        "top": 217.1484375,
-        "bottom": 371.59375,
+        "top": 217.140625,
+        "bottom": 371.578125,
         "width": 318,
-        "height": 154.4453125
+        "height": 154.4375
       },
       "passed": true
     },
@@ -1245,8 +1245,8 @@
         "dataset": {},
         "left": 133,
         "right": 354,
-        "top": 293.09375,
-        "bottom": 371.59375,
+        "top": 293.078125,
+        "bottom": 371.578125,
         "width": 221,
         "height": 78.5
       },
@@ -1255,10 +1255,10 @@
         "dataset": {},
         "left": 133,
         "right": 354,
-        "top": 217.1484375,
-        "bottom": 371.59375,
+        "top": 217.140625,
+        "bottom": 371.578125,
         "width": 221,
-        "height": 154.4453125
+        "height": 154.4375
       },
       "passed": true
     },
@@ -1271,8 +1271,8 @@
         "dataset": {},
         "left": 139,
         "right": 348,
-        "top": 320.59375,
-        "bottom": 365.59375,
+        "top": 320.578125,
+        "bottom": 365.578125,
         "width": 209,
         "height": 45
       },
@@ -1281,8 +1281,8 @@
         "dataset": {},
         "left": 133,
         "right": 354,
-        "top": 293.09375,
-        "bottom": 371.59375,
+        "top": 293.078125,
+        "bottom": 371.578125,
         "width": 221,
         "height": 78.5
       },
@@ -1297,8 +1297,8 @@
         "dataset": {},
         "left": 36,
         "right": 354,
-        "top": 378.59375,
-        "bottom": 423.59375,
+        "top": 378.578125,
+        "bottom": 423.578125,
         "width": 318,
         "height": 45
       },
@@ -1307,10 +1307,10 @@
         "dataset": {},
         "left": 23,
         "right": 367,
-        "top": 204.1484375,
-        "bottom": 436.59375,
+        "top": 204.140625,
+        "bottom": 436.578125,
         "width": 344,
-        "height": 232.4453125
+        "height": 232.4375
       },
       "passed": true
     },
@@ -1427,8 +1427,8 @@
         "dataset": {},
         "left": 36,
         "right": 123,
-        "top": 217.1484375,
-        "bottom": 331.1484375,
+        "top": 217.140625,
+        "bottom": 331.140625,
         "width": 87,
         "height": 114
       },
@@ -1437,10 +1437,10 @@
         "dataset": {},
         "left": 36,
         "right": 354,
-        "top": 217.1484375,
-        "bottom": 386.09375,
+        "top": 217.140625,
+        "bottom": 386.078125,
         "width": 318,
-        "height": 168.9453125
+        "height": 168.9375
       },
       "passed": true
     },
@@ -1453,8 +1453,8 @@
         "dataset": {},
         "left": 133,
         "right": 354,
-        "top": 293.09375,
-        "bottom": 386.09375,
+        "top": 293.078125,
+        "bottom": 386.078125,
         "width": 221,
         "height": 93
       },
@@ -1463,10 +1463,10 @@
         "dataset": {},
         "left": 133,
         "right": 354,
-        "top": 217.1484375,
-        "bottom": 386.09375,
+        "top": 217.140625,
+        "bottom": 386.078125,
         "width": 221,
-        "height": 168.9453125
+        "height": 168.9375
       },
       "passed": true
     },
@@ -1479,8 +1479,8 @@
         "dataset": {},
         "left": 139,
         "right": 348,
-        "top": 335.09375,
-        "bottom": 380.09375,
+        "top": 335.078125,
+        "bottom": 380.078125,
         "width": 209,
         "height": 45
       },
@@ -1489,8 +1489,8 @@
         "dataset": {},
         "left": 133,
         "right": 354,
-        "top": 293.09375,
-        "bottom": 386.09375,
+        "top": 293.078125,
+        "bottom": 386.078125,
         "width": 221,
         "height": 93
       },
@@ -1505,8 +1505,8 @@
         "dataset": {},
         "left": 36,
         "right": 354,
-        "top": 393.09375,
-        "bottom": 438.09375,
+        "top": 393.078125,
+        "bottom": 438.078125,
         "width": 318,
         "height": 45
       },
@@ -1515,10 +1515,10 @@
         "dataset": {},
         "left": 23,
         "right": 367,
-        "top": 204.1484375,
-        "bottom": 451.09375,
+        "top": 204.140625,
+        "bottom": 451.078125,
         "width": 344,
-        "height": 246.9453125
+        "height": 246.9375
       },
       "passed": true
     },
@@ -1531,8 +1531,8 @@
         "dataset": {},
         "left": 289.5,
         "right": 348,
-        "top": 299.09375,
-        "bottom": 330.09375,
+        "top": 299.078125,
+        "bottom": 330.078125,
         "width": 58.5,
         "height": 31
       },
@@ -1541,8 +1541,8 @@
         "dataset": {},
         "left": 133,
         "right": 354,
-        "top": 293.09375,
-        "bottom": 386.09375,
+        "top": 293.078125,
+        "bottom": 386.078125,
         "width": 221,
         "height": 93
       },
@@ -1568,9 +1568,9 @@
         "left": 36,
         "right": 354,
         "top": 220.171875,
-        "bottom": 406.2734375,
+        "bottom": 406.265625,
         "width": 318,
-        "height": 186.1015625
+        "height": 186.09375
       },
       "passed": true
     },
@@ -1584,9 +1584,9 @@
         "left": 133,
         "right": 354,
         "top": 308.625,
-        "bottom": 406.2734375,
+        "bottom": 406.265625,
         "width": 221,
-        "height": 97.6484375
+        "height": 97.640625
       },
       "box": {
         "id": "",
@@ -1594,9 +1594,9 @@
         "left": 133,
         "right": 354,
         "top": 220.171875,
-        "bottom": 406.2734375,
+        "bottom": 406.265625,
         "width": 221,
-        "height": 186.1015625
+        "height": 186.09375
       },
       "passed": true
     },
@@ -1609,8 +1609,8 @@
         "dataset": {},
         "left": 139,
         "right": 348,
-        "top": 355.2734375,
-        "bottom": 400.2734375,
+        "top": 355.265625,
+        "bottom": 400.265625,
         "width": 209,
         "height": 45
       },
@@ -1620,9 +1620,9 @@
         "left": 133,
         "right": 354,
         "top": 308.625,
-        "bottom": 406.2734375,
+        "bottom": 406.265625,
         "width": 221,
-        "height": 97.6484375
+        "height": 97.640625
       },
       "passed": true
     },
@@ -1635,8 +1635,8 @@
         "dataset": {},
         "left": 36,
         "right": 354,
-        "top": 413.2734375,
-        "bottom": 458.2734375,
+        "top": 413.265625,
+        "bottom": 458.265625,
         "width": 318,
         "height": 45
       },
@@ -1646,9 +1646,9 @@
         "left": 23,
         "right": 367,
         "top": 207.171875,
-        "bottom": 471.2734375,
+        "bottom": 471.265625,
         "width": 344,
-        "height": 264.1015625
+        "height": 264.09375
       },
       "passed": true
     },
@@ -1662,9 +1662,9 @@
         "left": 281.46875,
         "right": 348,
         "top": 314.625,
-        "bottom": 350.2734375,
+        "bottom": 350.265625,
         "width": 66.53125,
-        "height": 35.6484375
+        "height": 35.640625
       },
       "box": {
         "id": "",
@@ -1672,9 +1672,9 @@
         "left": 133,
         "right": 354,
         "top": 308.625,
-        "bottom": 406.2734375,
+        "bottom": 406.265625,
         "width": 221,
-        "height": 97.6484375
+        "height": 97.640625
       },
       "passed": true
     },
@@ -1843,10 +1843,10 @@
         "dataset": {},
         "left": 0,
         "right": 390,
-        "top": 131.78125,
+        "top": 131.765625,
         "bottom": 687,
         "width": 390,
-        "height": 555.21875
+        "height": 555.234375
       },
       "passed": true
     },
@@ -1971,10 +1971,10 @@
         "dataset": {},
         "left": 0,
         "right": 390,
-        "top": 667.1015625,
+        "top": 667.09375,
         "bottom": 844,
         "width": 390,
-        "height": 176.8984375
+        "height": 176.90625
       },
       "box": {
         "id": "",
@@ -2021,10 +2021,10 @@
         "dataset": {},
         "left": 0,
         "right": 390,
-        "top": 667.1015625,
+        "top": 667.09375,
         "bottom": 844,
         "width": 390,
-        "height": 176.8984375
+        "height": 176.90625
       },
       "screen": {
         "id": "",
@@ -2041,10 +2041,10 @@
         "dataset": {},
         "left": 0,
         "right": 390,
-        "top": 131.78125,
-        "bottom": 667.1015625,
+        "top": 131.765625,
+        "bottom": 667.09375,
         "width": 390,
-        "height": 535.3203125
+        "height": 535.328125
       },
       "passed": true
     },
@@ -2067,10 +2067,10 @@
         "dataset": {},
         "left": 23,
         "right": 367,
-        "top": 676.1015625,
+        "top": 676.09375,
         "bottom": 741,
         "width": 344,
-        "height": 64.8984375
+        "height": 64.90625
       },
       "passed": true
     },
@@ -2083,10 +2083,10 @@
         "dataset": {},
         "left": 0,
         "right": 390,
-        "top": 616.1015625,
+        "top": 616.09375,
         "bottom": 844,
         "width": 390,
-        "height": 227.8984375
+        "height": 227.90625
       },
       "box": {
         "id": "",
@@ -2133,10 +2133,10 @@
         "dataset": {},
         "left": 0,
         "right": 390,
-        "top": 616.1015625,
+        "top": 616.09375,
         "bottom": 844,
         "width": 390,
-        "height": 227.8984375
+        "height": 227.90625
       },
       "screen": {
         "id": "",
@@ -2153,10 +2153,10 @@
         "dataset": {},
         "left": 0,
         "right": 390,
-        "top": 131.78125,
-        "bottom": 616.1015625,
+        "top": 131.765625,
+        "bottom": 616.09375,
         "width": 390,
-        "height": 484.3203125
+        "height": 484.328125
       },
       "passed": true
     },
@@ -2179,10 +2179,10 @@
         "dataset": {},
         "left": 23,
         "right": 367,
-        "top": 676.1015625,
+        "top": 676.09375,
         "bottom": 741,
         "width": 344,
-        "height": 64.8984375
+        "height": 64.90625
       },
       "passed": true
     },
@@ -2195,10 +2195,10 @@
         "dataset": {},
         "left": 0,
         "right": 390,
-        "top": 616.1015625,
+        "top": 616.09375,
         "bottom": 844,
         "width": 390,
-        "height": 227.8984375
+        "height": 227.90625
       },
       "box": {
         "id": "",
@@ -2245,10 +2245,10 @@
         "dataset": {},
         "left": 0,
         "right": 390,
-        "top": 616.1015625,
+        "top": 616.09375,
         "bottom": 844,
         "width": 390,
-        "height": 227.8984375
+        "height": 227.90625
       },
       "screen": {
         "id": "",
@@ -2265,10 +2265,10 @@
         "dataset": {},
         "left": 0,
         "right": 390,
-        "top": 131.78125,
-        "bottom": 616.1015625,
+        "top": 131.765625,
+        "bottom": 616.09375,
         "width": 390,
-        "height": 484.3203125
+        "height": 484.328125
       },
       "passed": true
     },
@@ -2291,10 +2291,10 @@
         "dataset": {},
         "left": 23,
         "right": 367,
-        "top": 676.1015625,
+        "top": 676.09375,
         "bottom": 741,
         "width": 344,
-        "height": 64.8984375
+        "height": 64.90625
       },
       "passed": true
     }
@@ -2302,28 +2302,36 @@
   "runtime": [
     {
       "page": "pages/home/index",
-      "loadError": "网络请求失败，请稍后重试"
+      "loadError": false
     },
     {
       "page": "pages/menu/index",
-      "loadError": "网络请求失败，请稍后重试"
+      "loadError": false
     },
     {
       "page": "pages/cook-log/index",
-      "loadError": true
+      "loadError": false
+    },
+    {
+      "page": "pages/community/index",
+      "loadError": false
+    },
+    {
+      "page": "pages/me/index",
+      "loadError": false
     },
     {
       "page": "pages/recipes/index",
-      "loadError": true
+      "loadError": false
     },
     {
       "page": "pages/pantry/index",
-      "loadError": true,
+      "loadError": false,
       "loaded": true
     },
     {
       "page": "pages/shopping/index",
-      "loadError": true
+      "loadError": false
     },
     {
       "page": "pkg-extra/import/index",
@@ -2331,30 +2339,22 @@
     },
     {
       "page": "pkg-extra/weekly-menu/index",
-      "loadError": true
+      "loadError": false
     },
     {
       "page": "pkg-extra/family/create/index",
       "loadError": false
     },
     {
-      "page": "pages/community/index",
-      "loadError": true
-    },
-    {
-      "page": "pages/me/index",
-      "loadError": "网络请求失败，请稍后重试"
-    },
-    {
       "page": "pkg-extra/kitchen/index",
-      "loadError": true
+      "loadError": false
     },
     {
       "page": "pkg-extra/cook-mode/index",
       "loadError": true
     }
   ],
-  "checkedAt": "2026-11-05T13:34:10.006Z",
+  "checkedAt": "2026-11-05T18:47:00.734Z",
   "source": "temporary Page data; existing runtime state restored",
   "passed": true
 }

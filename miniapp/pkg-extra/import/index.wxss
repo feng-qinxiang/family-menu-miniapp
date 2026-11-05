@@ -45,11 +45,11 @@
   top: 50%;
   width: 22rpx;
   height: 4rpx;
-  background: var(--pop);
+  background: var(--pop-fill);
   transform: translate(-50%, -50%);
 }
 .ic-link-pop { border-color: var(--pop); }
-.ic-link-pop::after { background: var(--pop); }
+.ic-link-pop::after { background: var(--pop-fill); }
 .ic-shield {
   width: 32rpx;
   height: 36rpx;
@@ -95,7 +95,7 @@
   padding-top: 16rpx;
   border-top: 2rpx solid var(--paper-2);
 }
-.ta-cnt { font-size: calc(23rpx * var(--fs-mul, 1)); color: var(--mut-2); }
+.ta-cnt { font-size: calc(23rpx * var(--fs-mul, 1)); color: var(--mut-strong); }   /* --mut-2 只给装饰，字数是信息 */
 .parsebtn.disabled {
   opacity: 0.5;
 }
@@ -104,7 +104,7 @@
   align-items: center;
   gap: 10rpx;
   justify-content: center;
-  background: var(--pop);
+  background: var(--pop-fill);
   color: var(--anchor-contrast);
   font-size: var(--fs-cap);
   font-weight: 800;
@@ -112,6 +112,14 @@
   min-height: 88rpx;
   border-radius: var(--r-card); /* 实心主按钮统一 --r-card */
   box-shadow: var(--sh-pop);
+}
+/* 解析出结果后主操作换成下面的「存入我的菜谱」：这颗降为浅底次按钮，同屏只留一颗实心红。
+   用 --paper-2 填充而不是描边：白卡上 --bd-card 只有约 1.2:1，且加边框会让按钮在出结果时跳高 4rpx。
+   与菜单页「已做完」.m-act-done 同一写法 */
+.parsebtn.parsebtn--done {
+  background: var(--paper-2);
+  color: var(--ink);
+  box-shadow: none;
 }
 
 /* ============ 检测 banner ============ */
@@ -143,7 +151,7 @@
   position: relative;
   width: 200rpx;
   height: 200rpx;
-  border-radius: 28rpx;
+  border-radius: var(--r-sm);   /* 嵌在 --r-card 结果卡里：原来 28rpx 比外卡还圆 */
   overflow: hidden;
   flex: none;
   box-shadow: 0 10rpx 28rpx rgba(120, 70, 30, 0.2);
@@ -182,7 +190,7 @@
   font-size: calc(21rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: var(--anchor-contrast);
-  background: var(--pop);
+  background: var(--pop-fill);
   padding: 5rpx 16rpx;
   border-radius: var(--r-xs);
 }
@@ -225,8 +233,9 @@
 .res-empty { margin-top: 16rpx; font-size: calc(25rpx * var(--fs-mul, 1)); color: var(--mut); }
 
 .diff-row { display: flex; gap: 16rpx; margin-top: 20rpx; }
+/* 选中态走全局 .chip.on（深色锚点），与菜谱编辑页的难度分段一致；原来这里染成实心红，
+   和下面的「存入我的菜谱」同屏两颗红 */
 .diff-chip { flex: 1; justify-content: center; }
-.diff-chip.on { background: var(--pop); color: var(--anchor-contrast); border-color: var(--pop); }
 
 .ing-grid { display: flex; flex-wrap: wrap; gap: 16rpx; margin-top: 22rpx; }
 .ing {
@@ -245,7 +254,7 @@
   height: 50rpx;
   border-radius: var(--r-sm);
   background: var(--anchor);
-  color: var(--gold);
+  color: var(--gold-on-dark);   /* 深色档见文末 @media */
   font-size: var(--fs-sub);
   font-weight: 800;
   display: flex;
@@ -266,7 +275,7 @@
   padding: 10rpx 22rpx;
   border-radius: var(--r-pill);
 }
-.step-img-wrap { position: relative; margin-top: 14rpx; width: 160rpx; height: 160rpx; border-radius: 20rpx; overflow: hidden; }
+.step-img-wrap { position: relative; margin-top: 14rpx; width: 160rpx; height: 160rpx; border-radius: var(--r-sm); overflow: hidden; }
 .step-img { width: 100%; height: 100%; }
 .step-img-del::after,
 .res-cover-del::after {
@@ -301,12 +310,12 @@
   margin: 30rpx 28rpx 0;
   padding: 24rpx 28rpx;
   background: var(--paper-2);
-  border-radius: 28rpx;
+  border-radius: var(--r-sm);   /* 嵌在结果卡里，不比外卡圆 */
 }
 .s-icon {
   width: 64rpx;
   height: 64rpx;
-  border-radius: 18rpx;
+  border-radius: var(--r-xs);   /* 再嵌一层：比 .source 小一档 */
   background: var(--c-surface);
   display: flex;
   align-items: center;
@@ -333,14 +342,14 @@
   border-bottom: 2rpx solid var(--paper-2);
 }
 .recent:last-child { border-bottom: none; }
-.r-thumb { width: var(--tile-row-sm); height: var(--tile-row-sm); border-radius: 26rpx; flex: none; }
+.r-thumb { width: var(--tile-row-sm); height: var(--tile-row-sm); border-radius: var(--r-sm); flex: none; }   /* 嵌在 --r-card 列表卡里 */
 .r-mid { flex: 1; min-width: 0; }
 .r-title { font-size: calc(32rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--ink); letter-spacing: -0.5rpx; }
 .r-sub { font-size: calc(23rpx * var(--fs-mul, 1)); color: var(--mut); margin-top: 8rpx; }
 .r-state {
   font-size: var(--fs-mini);
   font-weight: 700;
-  color: var(--pine);
+  color: var(--pine-ink);
   background: rgba(47, 74, 58, 0.1);
   padding: 8rpx 18rpx;
   border-radius: var(--r-pill);
@@ -352,6 +361,12 @@
 
 
 
+
+/* 深色档：--gold 翻成 #8a6a3a，压在 --anchor 上看不清（旧 #3a2e23 上约 2.6:1，提亮后的 #866a50 上约 1:1）；
+   改用恒定浅字 --anchor-contrast（两种 --anchor 上都 ≥4.7:1） */
+@media (prefers-color-scheme: dark) {
+  .sno { color: var(--anchor-contrast); }
+}
 
 /* 最近导入加载失败的重试入口 */
 .recent-failed {

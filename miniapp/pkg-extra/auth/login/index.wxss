@@ -57,7 +57,7 @@
   width: 77rpx;
   height: 77rpx;
   border-radius: 25rpx;
-  background: var(--pop);
+  background: var(--pop-fill);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -98,7 +98,7 @@
   letter-spacing: 3rpx;
   font-weight: 700;
   color: var(--anchor-contrast);
-  background: var(--pop);
+  background: var(--pop-fill);
   padding: 11rpx 27rpx;
   border-radius: var(--r-xs);
 }
@@ -111,7 +111,8 @@
   line-height: 1.06;
   letter-spacing: -6rpx;
   margin: 30rpx 0 26rpx;
-  -webkit-text-stroke: 3rpx var(--c-surface);
+  /* 照片上的浅色字：描边要恒浅，--c-surface 深色档会变成深灰边 */
+  -webkit-text-stroke: 3rpx var(--anchor-contrast);
 }
 .hero-title .br { display: block; height: 0; }
 .slogan {
@@ -133,8 +134,14 @@
 }
 
 /* 微信登录主按钮（复用 .btn-wx 全局基色，本页扩展尺寸/阴影） */
-.login-wx {
+/* 微信内置 button:not([size=mini]) 固定 184px 宽，单类名压不过（实测只有 184px、居中，
+   比下面的手机号按钮窄一截）：带上父级提高优先级才能撑满 */
+.sheet .login-wx {
   width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
+.login-wx {
   border-radius: var(--r-card);
   padding: 33rpx 0;
   font-size: calc(32rpx * var(--fs-mul, 1));
@@ -243,8 +250,8 @@
   justify-content: center;
 }
 .agree .box.on {
-  background: var(--pop);
-  border-color: var(--pop);
+  background: var(--pop-fill);
+  border-color: var(--pop-fill);
 }
 .agree .box .check { color: var(--anchor-contrast); font-size: calc(25rpx * var(--fs-mul, 1)); font-weight: 900; }
 .agree .tx {

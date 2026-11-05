@@ -14,6 +14,10 @@
 .notif-readall { flex: none; display: flex; align-items: center; min-height: 88rpx; min-width: 88rpx; }
 .notif-readall-label { display: flex; align-items: center; justify-content: center; gap: 8rpx; padding: 14rpx 16rpx; border: var(--bd-card); border-radius: var(--r-sm); background: var(--c-surface); color: var(--mut-strong); font-size: var(--fs-cap); font-weight: 500; white-space: nowrap; }
 .notif-readall-icon { flex: none; width: 26rpx; height: 26rpx; opacity: .7; filter: brightness(0); }
+/* 浅色线框 SVG 压成墨色只在浅色档成立；深色档按钮底翻成 #242424，黑勾就看不见了，还原成原本的浅描边 */
+@media (prefers-color-scheme: dark) {
+  .notif-readall-icon { filter: none; }
+}
 .font-lg .notif-title-row { flex-wrap: nowrap; }
 .font-lg .notif-title-row .cpt-titles { flex-basis: auto; }
 
@@ -39,7 +43,7 @@
   width: 12rpx;
   height: 12rpx;
   border-radius: 50%;
-  background: var(--pop);
+  background: var(--pop-fill);
   margin-left: 4rpx;
 }
 
@@ -264,5 +268,5 @@
   width: 10rpx;
   height: 10rpx;
   border-radius: 50%;
-  background: var(--pop);
+  background: var(--pop-fill);
 }

@@ -71,7 +71,7 @@
       <view class="add-form" wx:if="{{showAddForm}}">
         <view class="af-row">
           <input class="af-input af-main" placeholder="食材名" placeholder-class="af-ph" value="{{newItem.ingredientName}}" bindinput="onNewInput" data-field="ingredientName" />
-          <input class="af-input af-sm" placeholder="量" placeholder-class="af-ph" value="{{newItem.amount}}" bindinput="onNewInput" data-field="amount" />
+          <input class="af-input af-sm" placeholder="数量" placeholder-class="af-ph" value="{{newItem.amount}}" bindinput="onNewInput" data-field="amount" />
           <input class="af-input af-sm" placeholder="单位" placeholder-class="af-ph" value="{{newItem.unit}}" bindinput="onNewInput" data-field="unit" />
         </view>
         <picker mode="date" value="{{newItem.expiresAt}}" bindchange="onNewInput" data-field="expiresAt">
@@ -87,7 +87,7 @@
       <view class="pantry-filter tap-scale {{pantryFilter === 'expired' ? 'on' : ''}}" data-filter="expired" bindtap="selectPantryFilter" aria-role="button" aria-selected="{{pantryFilter === 'expired'}}">过期 {{pantrySummary.expiredCount}}</view>
     </view>
     <view class="pantry-date-note" wx:if="{{loaded && !loadError && pantrySummary.undatedCount}}">{{pantrySummary.undatedCount}} 种未填到期日</view>
-    <view class="pantry-photo-note" wx:if="{{loaded && !loadError && ingredientPhotosFailed}}">食材图片暂未同步</view>
+    <view class="pantry-photo-note" wx:if="{{loaded && !loadError && ingredientPhotosFailed && categories.length}}">食材图片暂未同步</view>
     <view class="pantry-filter-empty" wx:if="{{loaded && !loadError && pantrySummary.count && !categories.length}}">{{pantryFilter === 'expiring' ? '暂时没有 3 天内到期的食材' : '暂时没有过期食材'}}</view>
 
     <!-- 分类 + 商品列表 -->
@@ -178,7 +178,7 @@
   <state-sheet visible="{{editingId ? true : false}}" title="编辑食材" bind:close="closeEditSheet">
     <view class="af-row">
       <input class="af-input af-main" placeholder="食材名" placeholder-class="af-ph" value="{{editDraft.ingredientName}}" bindinput="onEditInput" data-field="ingredientName" />
-      <input class="af-input af-sm" placeholder="量" placeholder-class="af-ph" value="{{editDraft.amount}}" bindinput="onEditInput" data-field="amount" />
+      <input class="af-input af-sm" placeholder="数量" placeholder-class="af-ph" value="{{editDraft.amount}}" bindinput="onEditInput" data-field="amount" />
       <input class="af-input af-sm" placeholder="单位" placeholder-class="af-ph" value="{{editDraft.unit}}" bindinput="onEditInput" data-field="unit" />
     </view>
     <view class="af-date-row">

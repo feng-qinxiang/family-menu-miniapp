@@ -12,7 +12,7 @@
 
       <!-- 顶部导航：复用 nav-bar，标题留空仅返回；右侧 slot 放编辑（仅自建菜谱） -->
       <nav-bar title="" status-bar-height="{{statusBarHeight}}">
-        <view wx:if="{{recipe.sourceType === 'owned'}}" class="rd-navedit tap-scale" bindtap="goEdit">编辑</view>
+        <view wx:if="{{recipe.sourceType === 'owned'}}" class="rd-navedit hit-88 tap-scale" bindtap="goEdit" aria-role="button">编辑</view>
       </nav-bar>
 
     </view>
@@ -165,10 +165,10 @@
 
   <!-- 悬浮快捷键：长菜谱滚深后一键回顶 / 直接退出（滚动超一屏出现） -->
   <view class="rd-quicknav" wx:if="{{showQuickNav}}">
-    <view class="rd-qbtn tap-scale" bindtap="backToTop" aria-label="回到顶部">
+    <view class="rd-qbtn tap-scale" bindtap="backToTop" aria-role="button" aria-label="回到顶部">
       <view class="rd-qic-up"></view>
     </view>
-    <view class="rd-qbtn rd-qbtn-exit tap-scale" bindtap="goBack" aria-label="退出">
+    <view class="rd-qbtn rd-qbtn-exit tap-scale" bindtap="goBack" aria-role="button" aria-label="退出">
       <view class="rd-qic-x"></view>
     </view>
   </view>

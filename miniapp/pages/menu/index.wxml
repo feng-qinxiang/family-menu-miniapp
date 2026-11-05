@@ -49,7 +49,7 @@
     </block>
     <block wx:elif="{{view === 'week'}}">
       <view class="m-week-card card" wx:if="{{weeklyDays.length}}"><view class="m-week-head"><view class="m-overview-title">这一周，好好吃饭</view><view class="m-week-link tap-scale" bindtap="goWeekly" aria-role="button">完整计划 ›</view></view><view class="m-wk-item tap-scale" wx:for="{{weeklyDays}}" wx:key="date" bindtap="goWeekly"><view class="m-wk-day"><view>{{item.d1}}</view><text>{{item.d2}}</text></view><view class="m-wk-recipe">{{item.recipeText}}</view><text class="m-wk-count">{{item.recipeCount}} 道</text></view><view class="m-week-regenerate tap-scale" bindtap="genWeekly" aria-role="button">重新生成本周计划</view></view>
-      <state-empty wx:else type="gold" title="下周吃什么，慢慢安排" desc="按家人的偏好排好七天，也可以自己调整每一天。" cta="生成本周菜单" bind:action="genWeekly" />
+      <state-empty wx:else type="pop" title="下周吃什么，慢慢安排" desc="按家人的偏好排好七天，也可以自己调整每一天。" cta="生成本周菜单" bind:action="genWeekly" />
     </block>
   </view>
 </view>

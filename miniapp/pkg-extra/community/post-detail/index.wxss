@@ -32,7 +32,7 @@
   box-shadow: 0 4rpx 12rpx rgba(60, 40, 20, 0.12);
 }
 .ava-sm { width: var(--ava-cmt); height: var(--ava-cmt); font-size: calc(var(--ava-cmt) * var(--ava-glyph) * var(--fs-mul, 1)); }
-.ava-lin { background: linear-gradient(135deg, var(--pop), var(--orange)); }
+.ava-lin { background: linear-gradient(135deg, var(--pop-fill), var(--orange)); }
 .ava-lan { background: linear-gradient(135deg, var(--pine), var(--cat-green)); }
 .ava-zhao { background: linear-gradient(135deg, var(--cat-purple-deep), var(--cat-purple-light)); }
 .ava-gold { background: linear-gradient(135deg, var(--gold-deep), var(--gold)); }
@@ -88,7 +88,7 @@
 .ptag {
   font-size: var(--fs-sub);
   font-weight: 500;
-  color: var(--pine);
+  color: var(--pine-ink);
   line-height: 1.5;
   word-break: break-all;
 }
@@ -108,13 +108,13 @@
 .rc-img {
   width: var(--tile-rc);
   height: var(--tile-rc);
-  border-radius: var(--r-chip);
+  border-radius: var(--r-sm);   /* 嵌在 --r-card 卡里：原来 --r-chip(30rpx) 比外卡还圆 */
   flex: none;
 }
 .rc-mid { flex: 1; min-width: 0; }
 .rc-kick {
   font-size: var(--fs-cap);
-  color: var(--pine);
+  color: var(--pine-ink);
   font-weight: 600;
 }
 .rc-name {
@@ -253,8 +253,12 @@
 .comment-compose { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10rpx; box-sizing: border-box; padding: 0 18rpx; border-radius: var(--r-pill); background: var(--paper-2); }
 .comment-compose.is-writing { border-radius: var(--r-md); }
 .compose-icon { width: 28rpx; height: 28rpx; flex: none; filter: brightness(0); opacity: .45; }
+/* 深色档：心形/书签 SVG 的描边写死是红色，原来 filter:none 让「未点赞」也显示成暗红，
+   和「已点赞」的红只差一点透明度；评论气泡 SVG 是浅色描边，三个图标两种颜色。
+   未激活一律压成单色浅灰（与首页 .hm-journey-icon 同一做法），激活态保持原色。 */
 @media (prefers-color-scheme: dark) {
-  .compose-icon, .react:not(.liked):not(.fav-on) .reaction-icon { filter: none; opacity: .7; }
+  .compose-icon { filter: none; opacity: .7; }
+  .react:not(.liked):not(.fav-on) .reaction-icon { filter: brightness(0) invert(1); opacity: .7; }
 }
 .field {
   flex: 1;
@@ -280,7 +284,7 @@
   font-size: var(--fs-cap);
   font-weight: 700;
   color: var(--anchor-contrast);
-  background: var(--pop);
+  background: var(--pop-fill);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -337,7 +341,7 @@
 }
 .post-gallery { height: var(--photo-head-h); border-radius: var(--r-md); overflow: hidden; }
 .post-photo-counter { position: absolute; right: 16rpx; bottom: 16rpx; pointer-events: none; padding: 8rpx 14rpx; border-radius: var(--r-pill); background: rgba(30, 25, 20, .64); color: #fff; font-size: var(--fs-mini); }
-.comment-empty { padding: 24rpx; border-radius: var(--r-md); background: var(--paper-2); }
+.comment-empty { margin-top: 16rpx; padding: 24rpx; border-radius: var(--r-md); background: var(--paper-2); }   /* 原来贴着「全部评论」标题 */
 .comment-empty view { font-size: var(--fs-sub); font-weight: 700; color: var(--ink); }
 .comment-empty text { display: block; margin-top: 10rpx; font-size: var(--fs-cap); color: var(--mut-strong); line-height: 1.6; }
 .comment-retry { display: flex; align-items: center; gap: 16rpx; color: var(--mut-strong); font-size: var(--fs-cap); }
@@ -385,6 +389,6 @@
   margin-left: 8rpx;
 }
 
-.rc-img-text { display: flex; align-items: center; justify-content: center; padding: 12rpx; box-sizing: border-box; background: var(--paper-2); color: var(--pine); font-size: var(--fs-sub); text-align: center; word-break: break-all; }
+.rc-img-text { display: flex; align-items: center; justify-content: center; padding: 12rpx; box-sizing: border-box; background: var(--paper-2); color: var(--pine-ink); font-size: var(--fs-sub); text-align: center; word-break: break-all; }
 .rc-name, .rc-meta { white-space: normal; line-height: 1.5; word-break: break-all; }
 .adel, .cdel { min-height: 88rpx; min-width: 88rpx; display: flex; align-items: center; justify-content: center; box-sizing: border-box; }

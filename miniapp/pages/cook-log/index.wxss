@@ -8,7 +8,8 @@
 .cl-stat text { font-size: var(--fs-cap); color: var(--mut); line-height: 1.5; }
 .calwrap { margin-bottom: 26rpx; }
 .cal-top { display: flex; justify-content: space-between; align-items: center; gap: 16rpx; }
-.ct { color: var(--ink); font-size: var(--fs-body); font-weight: 700; }
+/* 卡片标题一档：与首页「这一餐的进度」、做菜页总览卡同为 --fs-lg / 800（原 --fs-body / 700 小一档） */
+.ct { color: var(--ink); font-size: var(--fs-lg); font-weight: 800; }
 .cs { color: var(--mut); font-size: var(--fs-cap); flex: none; }
 .cal-days { display: flex; justify-content: space-between; gap: 6rpx; margin-top: 24rpx; }
 .cal-day { flex: 1; min-width: 0; text-align: center; color: var(--mut); }
@@ -17,7 +18,7 @@
 .cal-day.done .dd { background: var(--pop-soft); color: var(--pop-deep); font-weight: 700; }
 .cal-day.today .dd { border: 2rpx solid var(--pop); box-sizing: border-box; color: var(--pop); }
 .cal-dot { width: 6rpx; height: 6rpx; border-radius: 50%; margin: 10rpx auto 0; }
-.done .cal-dot { background: var(--pop); }
+.done .cal-dot { background: var(--pop-fill); }
 .cl-chips { margin: 8rpx 0 28rpx; }
 .month-sep { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; margin: 30rpx 0 20rpx; }
 .mtag { color: var(--ink); font-size: var(--fs-body); font-weight: 700; }
@@ -26,7 +27,7 @@
 .tcard.is-new { border-color: var(--pop-mist); }
 .cl-new { color: var(--pop-deep); font-size: var(--fs-cap); margin-bottom: 18rpx; font-weight: 600; }
 .tcard-main { display: flex; align-items: flex-start; gap: 22rpx; }
-.thumb-img { width: var(--tile-list-wide); height: var(--tile-list-tall); flex: none; border-radius: var(--r-md); background: var(--paper-2); }
+.thumb-img { width: var(--tile-list-wide); height: var(--tile-list-tall); flex: none; border-radius: var(--r-sm); /* 内层圆角不大于外层 .tcard */ background: var(--paper-2); }
 .tbody { flex: 1; min-width: 0; }
 .th4 { color: var(--ink); font-size: var(--fs-lg); font-weight: 700; line-height: 1.45; word-break: break-all; }
 .date { color: var(--mut); font-size: var(--fs-cap); margin-top: 10rpx; line-height: 1.6; }
@@ -42,4 +43,5 @@
 .tcard > .tcard-main:last-child, .tcard > .note:last-child { margin-bottom: 24rpx; }
 .loadmore { min-height: 88rpx; display: flex; align-items: center; justify-content: center; color: var(--ink); font-size: var(--fs-sub); }
 .listend { padding: 36rpx 0; text-align: center; color: var(--mut); font-size: var(--fs-cap); }
-.sk-card { height: 240rpx; margin: 20rpx 0; border-radius: var(--r-md); background: var(--skeleton); }
+/* 骨架圆角等于它替身的 .tcard（--r-card），加载完不跳角 */
+.sk-card { height: 240rpx; margin: 20rpx 0; border-radius: var(--r-card); background: var(--skeleton); }

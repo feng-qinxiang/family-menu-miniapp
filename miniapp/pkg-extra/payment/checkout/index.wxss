@@ -2,14 +2,14 @@
 .pay-scroll { flex: 1; min-height: 0; }
 .pay-content { padding: 12rpx var(--page-gutter) 40rpx; }
 .pay-steps { display: flex; justify-content: space-between; gap: 12rpx; margin: 16rpx 0 28rpx; font-size: var(--fs-cap); color: var(--mut-strong); line-height: 1.5; }
-.pay-steps .on { color: var(--pine); font-weight: 700; }
+.pay-steps .on { color: var(--pine-ink); font-weight: 700; }
 .merchant { padding: 28rpx; background: var(--c-surface); border: var(--bd-card); }
 .pay-plan-top { display: flex; align-items: center; gap: 18rpx; }
 .mlogo { display: flex; align-items: center; justify-content: center; flex: none; width: 92rpx; height: 92rpx; background: var(--pine); color: var(--anchor-contrast); font-size: var(--fs-h2); font-weight: 800; border-radius: var(--r-md); }
 .pay-plan-copy { flex: 1; min-width: 0; }
 .mname { color: var(--mut-strong); font-size: var(--fs-cap); }
 .msub { font-size: var(--fs-lg); font-weight: 800; margin-top: 6rpx; line-height: 1.5; word-break: break-all; }
-.pay-selected { flex: none; padding: 6rpx 12rpx; color: var(--pine); background: var(--c-accent-soft); border-radius: var(--r-xs); font-size: var(--fs-mini); }
+.pay-selected { flex: none; padding: 6rpx 12rpx; color: var(--pine-ink); background: var(--c-accent-soft); border-radius: var(--r-xs); font-size: var(--fs-mini); }
 .pay-plan-bottom { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 12rpx; border-top: var(--bd-card); margin-top: 24rpx; padding-top: 22rpx; color: var(--mut-strong); font-size: var(--fs-sub); }
 .sym { font-size: var(--fs-lg); color: var(--ink); margin-right: 4rpx; }
 .big { font-size: var(--fs-stat); font-weight: 800; color: var(--ink); }
@@ -26,12 +26,13 @@
 .pm-info { flex: 1; min-width: 0; }
 .pm-name { font-size: var(--fs-sub); font-weight: 700; }
 .pm-note { font-size: var(--fs-cap); color: var(--mut-strong); margin-top: 6rpx; line-height: 1.5; }
-.pm-check { flex: none; color: var(--pine); font-size: var(--fs-lg); font-weight: 800; }
+.pm-check { flex: none; color: var(--pine-ink); font-size: var(--fs-lg); font-weight: 800; }
 .pay-note { margin: 24rpx 4rpx 0; font-size: var(--fs-cap); color: var(--mut-strong); line-height: 1.6; }
 .payarea { display: flex; align-items: center; gap: 20rpx; flex: none; padding: 20rpx var(--page-gutter) calc(20rpx + env(safe-area-inset-bottom)); background: var(--c-surface); border-top: var(--bd-card); }
 .pay-due { flex: 1; min-width: 0; font-size: var(--fs-cap); color: var(--mut-strong); }
 .pay-due view { color: var(--ink); font-size: var(--fs-sub); margin-top: 4rpx; }
 .pay-due view text { font-size: var(--fs-h2); font-weight: 800; word-break: break-all; }
-.btn-pay { flex: 1; display: flex; align-items: center; justify-content: center; min-height: 96rpx; min-width: 0; padding: 16rpx; margin: 0; font-size: var(--fs-sub); font-weight: 700; line-height: 1.5; color: var(--anchor-contrast); background: var(--pine); border-radius: var(--r-md); }
+.btn-pay { flex: 1; display: flex; align-items: center; justify-content: center; min-height: 96rpx; min-width: 0; padding: 16rpx; margin: 0; font-size: var(--fs-btn); font-weight: 700; line-height: 1.5; color: var(--anchor-contrast); background: var(--pine); border-radius: var(--r-card); }
+/* ↑ 字号原为 --fs-sub（25rpx，次要说明档），比全站按钮小一档；圆角原为 --r-md：实心主按钮统一 --fs-btn / --r-card */
 .btn-pay::after { border: 0; }
 .btn-pay.is-unavailable { color: var(--mut-strong) !important; background: var(--paper-2) !important; }

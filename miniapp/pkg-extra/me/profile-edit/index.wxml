@@ -8,7 +8,7 @@
     <!-- 文字头像 -->
     <view class="pe-avatar-wrap g-fade-up g-d1">
       <text class="pe-eyebrow">个人资料</text>
-      <view class="pe-avatar tap-scale" catchtap="onChangeAvatar">
+      <view class="pe-avatar tap-scale" catchtap="onChangeAvatar" aria-role="button" aria-label="更换头像">
         <image wx:if="{{form.avatarUrl}}" class="pe-ava-img" src="{{form.avatarUrl}}" mode="aspectFill"></image>
         <view wx:else class="pe-ava-txt">{{avatarInitial}}</view>
         <view class="pe-cam">

@@ -31,7 +31,7 @@
 .mkt-pfill {
   height: 100%;
   border-radius: 12rpx;
-  background: linear-gradient(90deg, var(--orange), var(--pop));
+  background: linear-gradient(90deg, var(--orange), var(--pop-fill));
   box-shadow: 0 2rpx 8rpx rgba(200, 56, 31, 0.4);
   transition: width 0.4s var(--g-power3-out);
 }
@@ -50,7 +50,7 @@
   flex: none;
 }
 .mkt-gdot.veg { background: var(--pine); }
-.mkt-gdot.meat { background: var(--pop); }
+.mkt-gdot.meat { background: var(--pop-fill); }
 .mkt-gdot.spice { background: var(--gold-deep); }
 .mkt-gdot.other { background: var(--mut); }
 .mkt-gname { font-size: calc(32rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--ink); }
@@ -103,7 +103,7 @@
   font-weight: 800;
   color: var(--ink);
 }
-.mkt-thumb--letter.veg { background: var(--c-accent-soft); color: var(--pine); }
+.mkt-thumb--letter.veg { background: var(--c-accent-soft); color: var(--pine-ink); }
 .mkt-thumb--letter.meat { background: var(--pop-soft); color: var(--pop); }
 .mkt-thumb--letter.seasoning,
 .mkt-thumb--letter.season,
@@ -121,7 +121,7 @@
   border-radius: var(--r-pill);
   line-height: 1.5;
 }
-.mkt-tags .src.pantry { color: var(--pine); }
+.mkt-tags .src.pantry { color: var(--pine-ink); }
 .mkt-del {
   flex: none;
   font-size: var(--fs-lg);
@@ -196,7 +196,7 @@
 .mkt-add-quantity { display: flex; gap: 12rpx; margin-top: 12rpx; }
 .mkt-add-footer { flex: 1 1 100%; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12rpx; border-top: var(--bd-card); padding-top: 16rpx; }
 .mkt-add-footer > text { font-size: var(--fs-cap); color: var(--mut-strong); line-height: 1.5; }
-.mkt-ph { color: var(--mut-2); }
+.mkt-ph { color: var(--mut); }   /* 与冰箱页 .af-ph 同色；--mut-2 在输入底上只有约 2:1，而这几格没有标签，占位字就是标签 */
 .mkt-addbtn {
   flex: none;
   font-size: calc(25rpx * var(--fs-mul, 1));
@@ -234,17 +234,18 @@
 
 .mkt-refresh-wrap { margin-top: 50rpx; }
 
-/* 骨架屏 */
+/* 骨架屏：形状对齐真行 .mkt-item（左侧图块 + 右侧文字），加载完不跳版 */
 .mkt-sk {
   display: flex;
-  align-items: center;
-  gap: 26rpx;
-  margin-bottom: 22rpx;
-  padding: 28rpx 30rpx;
+  align-items: flex-start;
+  gap: 20rpx;
+  margin-bottom: 12rpx;
+  padding: 16rpx var(--pad-card-sm);
+  box-shadow: none;
 }
-/* 骨架里的"方框"替身是 .mkt-check（52rpx、圆角 18），
-   原来写成 var(--r-sheet)=20rpx，勾选框加载完会长大一圈 */
-.mkt-sk-dot { width: 52rpx; height: 52rpx; border-radius: 18rpx; flex: none; }
+/* 图块替身 = 真行左侧的 .mkt-photo（--tile-list-wide、--r-sm）。
+   原来还是旧版 52rpx 勾选框的形状，行里换成图块后没跟着改，加载完整行长高一截 */
+.mkt-sk-dot { width: var(--tile-list-wide); height: var(--tile-list-wide); border-radius: var(--r-sm); flex: none; }
 .mkt-sk-lines { flex: 1; }
 .mkt-sk-line { height: 22rpx; border-radius: var(--r-xs); margin-top: 14rpx; width: 60%; }
 .mkt-sk-line.strong { width: 40%; height: 30rpx; margin-top: 0; }
@@ -271,7 +272,7 @@
   border-radius: var(--r-pill);
 }
 .sp-seg-item.on {
-  background: var(--c-surface);
+  background: var(--seg-thumb);   /* 浅色档 = 卡面；深色档卡面与轨道同色，滑块会消失 */
   color: var(--ink);
   box-shadow: var(--sh-card);
 }
@@ -340,12 +341,23 @@
 .mkt-photo-hint { position: absolute; right: 6rpx; bottom: 6rpx; padding: 4rpx 10rpx; border-radius: var(--r-xs); background: var(--c-surface); color: var(--mut-strong); font-size: var(--fs-mini); line-height: 1.2; }
 .mkt-item-actions { display: flex; align-items: center; gap: 12rpx; margin-top: 12rpx; }
 .mkt-buy, .mkt-item-actions .mkt-del { box-sizing: border-box; display: flex; align-items: center; justify-content: center; min-height: 88rpx; margin: 0; padding: 0 16rpx; border-radius: var(--r-sm); font-size: var(--fs-cap); line-height: 1.4; }
-.mkt-buy { flex: 1; min-width: 0; gap: 8rpx; background: var(--pine); color: #fff; font-weight: 700; }
-.mkt-buy image { width: 28rpx; height: 28rpx; flex: none; filter: brightness(0) invert(1); }
+/* 「买好了」：每行都是实心深绿会把整张清单压得很重。改成松绿浅底 + 松绿字
+   （与冰箱页「挑一道/＋ 添加」的浅底按钮同一种次级实心），仍是整宽、88rpx 高、带勾；
+   「移除」保持白底细边灰字，比它弱一级 */
+.mkt-buy { flex: 1; min-width: 0; gap: 8rpx; background: var(--c-accent-soft); color: var(--pine-ink); font-weight: 700; }
+.mkt-buy image { width: 28rpx; height: 28rpx; flex: none; filter: brightness(0); }
 .mkt-item-actions .mkt-del { flex: none; width: 104rpx; min-width: 0; background: var(--c-surface); border: var(--bd-card); color: var(--mut-strong); font-weight: 500; }
 .mkt-buy::after, .mkt-item-actions .mkt-del::after { border: 0; }
-.mkt-bought { font-size: var(--fs-cap); color: var(--pine); line-height: 1.5; margin-top: 12rpx; }
+.mkt-bought { font-size: var(--fs-cap); color: var(--pine-ink); line-height: 1.5; margin-top: 12rpx; }
 .sp-pitem-copy { flex: 1; min-width: 0; }
 .sp-pitem-name { word-break: break-all; line-height: 1.5; }
 .sp-pitem-qty { margin-top: 8rpx; }
 .mkt-photo-note { font-size: var(--fs-mini); color: var(--mut); padding: 0 var(--page-gutter); margin-bottom: 16rpx; line-height: 1.5; }
+
+/* 深色档：--pine(#4e6b58) 当文字只有约 2.6:1，与首页/会员页同法换 --c-success；
+   「买好了」浅底在深色档是 #22302a，字和勾一起翻成浅色 */
+@media (prefers-color-scheme: dark) {
+  .mkt-tags .src.pantry, .mkt-bought, .mkt-thumb--letter.veg { color: var(--c-success); }
+  .mkt-buy { color: var(--ink); }
+  .mkt-buy image { filter: brightness(0) invert(1); }
+}

@@ -54,7 +54,7 @@
   width: 40rpx;
   height: 40rpx;
   border-radius: 50%;
-  background: var(--pop);
+  background: var(--pop-fill);
   border: 6rpx solid var(--paper);
   display: flex;
   align-items: center;
@@ -149,11 +149,11 @@
   align-items: center;
   justify-content: center;
   gap: 17rpx;
-  background: var(--pop);
+  background: var(--pop-fill);
   color: var(--anchor-contrast);
-  border-radius: var(--r-sm);
+  border-radius: var(--r-card);
   min-height: 96rpx;
-  padding: 18rpx;
+  padding: 18rpx 0;
   font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
   letter-spacing: 1rpx;
@@ -234,7 +234,7 @@
   left: 9rpx;
   width: 14rpx;
   height: 7rpx;
-  background: var(--pop);
+  background: var(--pop-fill);
   border-radius: 4rpx 4rpx 0 0;
 }
 /* 加号（白） */
@@ -249,7 +249,7 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  background: var(--c-surface);
+  background: var(--anchor-contrast);   /* 红底上的白：恒浅，--c-surface 深色档会变深灰 */
   border-radius: 2rpx;
   transform: translate(-50%, -50%);
 }
@@ -314,12 +314,12 @@
   background: var(--mut-2);
   transform: translateX(-50%);
 }
-/* 箭头（白） */
+/* 箭头（白，与按钮文字同色：恒浅） */
 .fc-ic-arrow {
   width: 16rpx;
   height: 16rpx;
-  border-top: 5rpx solid var(--c-surface);
-  border-right: 5rpx solid var(--c-surface);
+  border-top: 5rpx solid var(--anchor-contrast);
+  border-right: 5rpx solid var(--anchor-contrast);
   transform: rotate(45deg);
 }
 /* 灯泡 */

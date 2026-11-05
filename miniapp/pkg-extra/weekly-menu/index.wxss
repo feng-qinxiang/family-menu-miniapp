@@ -15,7 +15,7 @@
   min-height: 88rpx;
   padding: 18rpx 24rpx; /* 例外：这是 hero 上的按钮不是卡表面 */
   border-radius: var(--r-card); /* 实心主按钮统一 --r-card */
-  background: var(--pop);
+  background: var(--pop-fill);
   color: var(--anchor-contrast);
   font-size: var(--fs-sub);
   font-weight: 800;
@@ -24,7 +24,8 @@
 .wm-refresh-ic {
   width: 26rpx;
   height: 26rpx;
-  border: 4rpx solid var(--c-surface);
+  /* 图标与按钮文字同色（恒定浅色）。原来用 --c-surface，深色档翻成 #242424，红底上一枚深灰图标配浅色字 */
+  border: 4rpx solid var(--anchor-contrast);
   border-top-color: transparent;
   border-radius: 50%;
   position: relative;
@@ -36,7 +37,7 @@
   right: -3rpx;
   border-left: 8rpx solid transparent;
   border-right: 8rpx solid transparent;
-  border-bottom: 9rpx solid var(--c-surface);
+  border-bottom: 9rpx solid var(--anchor-contrast);
   transform: rotate(40deg);
 }
 
@@ -55,10 +56,10 @@
   color: var(--ink);
 }
 .wm-wb.today { border-color: var(--pop); }
-.wm-wb.on { background: var(--pop); border-color: var(--pop); color: var(--anchor-contrast); }
+.wm-wb.on { background: var(--pop-fill); border-color: var(--pop-fill); color: var(--anchor-contrast); }
 .wm-wb-d { display: block; font-size: var(--fs-cap); font-weight: 800; }
 .wm-wb-date { display: block; font-size: calc(32rpx * var(--fs-mul, 1)); font-weight: 800; line-height: 1.3; margin-top: 4rpx; }
-.wm-wb-dot { width: 8rpx; height: 8rpx; border-radius: 50%; background: var(--pop); margin: 10rpx auto 0; }
+.wm-wb-dot { width: 8rpx; height: 8rpx; border-radius: 50%; background: var(--pop-fill); margin: 10rpx auto 0; }
 .wm-wb-dot.empty { background: var(--line-deep); }
 .wm-wb.on .wm-wb-dot { background: var(--anchor-contrast); }
 .wm-wb.on .wm-wb-dot.empty { opacity: 0.35; }
@@ -69,7 +70,7 @@
   display: flex;
   background: var(--c-surface);
   border: var(--bd-card);
-  border-radius: var(--r-md);
+  border-radius: var(--r-card);   /* 与下面的日卡同一种卡表面：原来 24 对 16，上下挨着圆角不一 */
   padding: 18rpx 0;
 }
 .wm-scell {
@@ -142,7 +143,7 @@
   font-weight: 800;
   letter-spacing: 2rpx;
   color: var(--anchor-contrast);
-  background: var(--pop);
+  background: var(--pop-fill);
   padding: 6rpx 16rpx;
   border-radius: var(--r-pill);
 }
@@ -165,7 +166,7 @@
 .wm-slot {
   font-size: var(--fs-mini);
   font-weight: 700;
-  color: var(--pine);
+  color: var(--pine-ink);
   background: var(--c-accent-soft);
   padding: 2rpx 8rpx;
   border-radius: var(--r-xs);

@@ -4,7 +4,7 @@
 }
 
 .vip-meta { display: flex; flex-wrap: wrap; gap: 12rpx; margin-top: 24rpx; }
-.vip-m { padding: 12rpx 22rpx; font-size: var(--fs-cap); font-weight: 700; color: var(--pine); background: var(--c-accent-soft); border-radius: var(--r-pill); }
+.vip-m { padding: 12rpx 22rpx; font-size: var(--fs-cap); font-weight: 700; color: var(--pine-ink); background: var(--c-accent-soft); border-radius: var(--r-pill); }
 .vip-sheet { padding: 0 var(--page-gutter) calc(40rpx + env(safe-area-inset-bottom)); }
 
 /* ===== 权益网格 ===== */
@@ -81,7 +81,8 @@
   color: var(--mut-strong);
 }
 .vip-col-on { color: var(--pop); }
-.vip-tick { color: var(--mut-2); font-size: calc(32rpx * var(--fs-mul, 1)); font-weight: 900; }
+/* 免费版那一列的 ✓：--mut-2 压在白卡上只有 2.4:1，看着像一格空白；--mut 与旁边 ✕ 同一档可读 */
+.vip-tick { color: var(--mut); font-size: calc(32rpx * var(--fs-mul, 1)); font-weight: 900; }
 .vip-tick.on { color: var(--pop); }
 .vip-cross { color: var(--mut-strong); font-size: calc(25rpx * var(--fs-mul, 1)); }
 .vip-cell-txt { font-size: calc(23rpx * var(--fs-mul, 1)); font-weight: 700; color: var(--mut); }
@@ -108,7 +109,7 @@
   position: absolute;
   top: 0;
   right: 0;
-  background: var(--pop);
+  background: var(--pop-fill);
   color: var(--anchor-contrast);
   font-size: calc(21rpx * var(--fs-mul, 1));
   font-weight: 800;
@@ -129,7 +130,7 @@
   margin-top: 12rpx;
   font-size: calc(21rpx * var(--fs-mul, 1));
   font-weight: 800;
-  color: var(--pine);
+  color: var(--pine-ink);
   background: var(--c-accent-soft);
   padding: 5rpx 14rpx;
   border-radius: var(--r-pill);
@@ -146,7 +147,7 @@
   align-items: center;
   justify-content: center;
 }
-.vip-radio.on { background: var(--pop); border-color: var(--pop); }
+.vip-radio.on { background: var(--pop-fill); border-color: var(--pop-fill); }
 .vip-radio-tick { color: var(--anchor-contrast); font-size: calc(25rpx * var(--fs-mul, 1)); font-weight: 900; }
 
 /* ===== 成员 ===== */
@@ -185,7 +186,7 @@
   /* --success(#3a9d5d) 是恒定值、不随主题翻转：直接写在浅色档只有 3.22:1，低于 AA。
      --pine 才是随主题走的那一个（浅 #2f4a3a / 深 #4e6b58），所以默认用它，
      深色档再换到 --success（5.00:1）补足对比 —— 两档各取自己更高的那个。 */
-  color: var(--pine);
+  color: var(--pine-ink);
 }
 .vip-sdot {
   width: 14rpx;

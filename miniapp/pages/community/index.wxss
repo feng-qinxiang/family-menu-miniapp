@@ -18,7 +18,7 @@
   min-height: 72rpx;
   padding: 0 28rpx;
   border-radius: var(--r-card);
-  background: var(--pop);
+  background: var(--pop-fill);
   color: var(--anchor-contrast);
   font-size: var(--fs-btn);
   font-weight: 800;
@@ -42,7 +42,7 @@
 /* ===================== 内容区 ===================== */
 /* 不再压在 hero 上：去掉负 margin 与顶部圆角，只留底部留白 */
 .sheet { padding-bottom: 40rpx; }
-.pad { padding: 0 46rpx; }
+.pad { padding: 0 var(--page-gutter); }
 /* 页头已给出页名，区块标题贴近页头，首屏多露帖子（全局 .shead 上边距 56rpx） */
 .cm-feed-head { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; margin: 4rpx 0 12rpx; font-size: var(--fs-lg); font-weight: 800; color: var(--ink); }
 .cm-feed-count { font-size: var(--fs-cap); color: var(--mut-strong); font-weight: 500; }
@@ -176,14 +176,15 @@
 .pa-report { flex: none; min-width: 88rpx; min-height: 88rpx; font-size: var(--fs-lg); color: var(--mut-strong); font-weight: 700; display: flex; align-items: center; justify-content: center; }
 
 /* ===================== 加载骨架（与 .pcard 同形状，加载完不跳版） ===================== */
+/* 内边距/间距/头像与真卡 .pcard、.pavatar 同值（原来 28/34/84rpx 是旧版卡片的规格） */
 .cf-skel-card {
   background: var(--c-surface);
   border: var(--bd-card);
   border-radius: var(--r-card);
-  padding: var(--pad-card);
-  margin-bottom: 34rpx;
+  padding: 20rpx var(--pad-card-sm);
+  margin-bottom: 20rpx;
 }
-.cf-skel-head { width: 84rpx; height: 84rpx; border-radius: 26rpx; background: var(--skeleton); }
+.cf-skel-head { width: var(--ava-cmt); height: var(--ava-cmt); border-radius: calc(var(--ava-cmt) * var(--r-ava)); background: var(--skeleton); }
 .cf-skel-line { height: 26rpx; margin-top: 26rpx; border-radius: var(--r-xs); background: var(--skeleton); }
 .cf-skel-line--short { width: 55%; }
 
@@ -242,7 +243,7 @@
   font-size: calc(28rpx * var(--fs-mul, 1));
   line-height: 1.5;
 }
-.pf-ph { color: var(--mut-2); }
+.pf-ph { color: var(--mut); }   /* --mut-2 在白底上约 2.4:1，三格没有标签，占位字就是标签 */
 
 /* 关联的菜（「晒一晒」带过来的那道）：与输入框同一套描边圆角，
    读作「这条帖子会带出这张菜卡」，与普通发帖区分开。 */
@@ -276,7 +277,7 @@
   flex-shrink: 0;
   width: 88rpx;   /* 触控热区按 88rpx 标准走：这是「取消关联」，误点代价小但也不能点不中 */
   text-align: right;
-  color: var(--mut-2);
+  color: var(--mut);   /* 这一行唯一的可点标记，--mut-2 在白底上只有约 2.4:1 */
   font-size: calc(32rpx * var(--fs-mul, 1));
 }
 
@@ -358,7 +359,7 @@
   width: calc(44rpx * var(--fs-mul, 1));
   height: calc(44rpx * var(--fs-mul, 1));
   border-radius: 50%;
-  /* --anchor / --anchor-contrast 是"两主题都不翻转"的恒定色对；
+  /* --anchor / --anchor-contrast 是恒定深底浅字的色对（深色档 --anchor 只提亮一档，浅字仍 4.7:1）；
      原先用 --ink，深色档它翻成 #efefef，白底白字等于看不见删除按钮 */
   background: var(--anchor);
   color: var(--anchor-contrast);

@@ -230,8 +230,9 @@ try {
         patch({ commentsError: true }); capture(entry, '.comment-retry', '评论加载失败');
       }
       if (entry.route === 'pkg-extra/recipe-detail/index') {
-        const rects = boxes(['.rd-card', '.rd-scroll']);
-        const ingredientTop = Math.max(0, rects['.rd-card'].top - rects['.rd-scroll'].top - 160);
+        // 锚点用「用料」区块头（.rd-section-head 第一个就是它）：用料清单不在 .rd-card 里，旧锚点 .rd-card 会滚到评价卡，两张「食材」图都没拍到食材
+        const rects = boxes(['.rd-section-head', '.rd-scroll']);
+        const ingredientTop = Math.max(0, rects['.rd-section-head'].top - rects['.rd-scroll'].top - 160);
         cli('automation_element_action', ['--action', 'scrollTo', '--selector', '.rd-scroll', '--x', '0', '--y', String(ingredientTop)]);
         ingredientLayout(entry, 'ingredients');
         capture(entry, '.rd-ing', '食材');

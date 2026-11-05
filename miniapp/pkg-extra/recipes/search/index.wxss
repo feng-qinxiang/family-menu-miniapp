@@ -34,8 +34,9 @@
 .backbtn-icon {
   width: 20rpx;
   height: 20rpx;
-  border-left: 5rpx solid var(--paper);
-  border-bottom: 5rpx solid var(--paper);
+  /* 底是 --anchor：箭头用恒定浅字。原来用 --paper，深色档翻成近黑，深底上画深箭头（旧 --anchor 上约 1.3:1） */
+  border-left: 5rpx solid var(--anchor-contrast);
+  border-bottom: 5rpx solid var(--anchor-contrast);
   transform: rotate(45deg);
   margin-left: 6rpx;
 }
@@ -182,6 +183,10 @@
   margin-top: 22rpx;
 }
 .nohit-act {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  min-height: var(--tap-min);
   padding: 16rpx 26rpx;
   border-radius: var(--r-pill);
   background: var(--paper);

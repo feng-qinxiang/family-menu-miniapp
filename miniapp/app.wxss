@@ -9,8 +9,9 @@ page {
   --paper-2: var(--themePaper2, #f0ebe2);
   --ink: var(--themeInk, #2c241b);
   --ink-deep: var(--themeInkDeep, #3a2e23);   /* 深墨文字：深色档（media 块）翻转为浅字色 */
-  --anchor: #3a2e23;                           /* 深色锚点卡恒定底（今日菜单卡/餐盘托等）：两主题不翻转 */
+  --anchor: #3a2e23;                           /* 深色锚点卡底（今日菜单卡/餐盘托/选中 chip）：深色档提亮一档，见 media 块 */
   --anchor-contrast: #fbf8f3;                  /* 锚点卡上的恒定浅字（深色档不跟 --paper 翻转） */
+  --seg-thumb: var(--c-surface);               /* 分段控件选中滑块：浅色档同卡面；深色档卡面与轨道几乎同色，单独提亮 */
   --mut: var(--themeMut, #716555);
   --mut-2: var(--themeMut2, #b3a795);
   --mut-strong: var(--themeMutStrong, #6b5f50);    /* 强调次要文字（比 --mut 更深一档） */
@@ -128,7 +129,12 @@ page {
   --bd-card: 2rpx solid var(--themeBorderLight, #f1ece2);
 
   /* —— 扩展 token：语义色（UI 审计收敛，页面勿再写死 hex）—— */
-  --pop-deep: #b3381f;        /* 深番茄红：警示文字、番茄渐变深端 */
+  --pop-deep: #b3381f;        /* 深番茄红：警示文字（渐变深端用 --pop-deep-fill） */
+  --pop-fill: var(--pop);           /* 红色实心底（上面放浅字）：浅色档同 --pop；深色档另取更深的红，见 media 块 */
+  --pop-deep-fill: var(--pop-deep); /* 红色渐变深端（上面放浅字）：同上 */
+  --gold-on-dark: var(--gold);      /* 深底（锚点卡/照片/松绿底）上的金字和金色小图形：浅色档同 --gold；深色档 --gold 变暗金，见 media 块 */
+  --pine-ink: var(--pine);          /* 松绿当文字色：浅色档同 --pine；深色档 --pine 当字只有约 2.6:1，见 media 块 */
+  --shimmer-hi: rgba(255, 255, 255, 0.5);   /* 骨架屏扫光高光 */
   --pop-mist: #f6cfc4;        /* 浅红描边 */
   --orange: #f0853f;          /* 暖橙：--pop 的渐变伙伴 */
   --success: #3a9d5d;
@@ -243,7 +249,7 @@ page {
   page {
     /* —— 裸 --themeX 层（与 theme.json dark 段同值，改色先改 theme.json 再同步这里）—— */
     --themePaper: #1c1c1c;
-    --themePaper2: #262626;
+    --themePaper2: #2e2e2e;   /* 原 #262626 与卡面 #242424 只差 1.03:1，卡里的输入框、图块底看不见 */
     --themeInk: #efefef;
     --themeInkDeep: #e2e2e2;
     --themeMut: #9a9a96;
@@ -273,7 +279,14 @@ page {
     --themeGlassClear: rgba(36, 36, 36, 0);
 
     /* —— 字面量 token 深色档（theme.json 无这些键）—— */
-    --pop-deep: #d94b30;
+    --anchor: #735a44;       /* 原 #3a2e23 压在 #1c1c1c 上只有 1.29:1，选中 chip/返回键/锚点按钮几乎看不见；提亮后对页面底 2.7:1、对浅字 6.1:1、对浅金 4.7:1（再亮浅金字就不达标） */
+    --seg-thumb: #666666;    /* 卡面 #242424 与轨道几乎同色（原 1.03:1），滑块消失；提亮后对轨道 2.4:1、对浅字 5.0:1 */
+    --pop-deep: #ff7a5c;     /* 警示红字：原 #d94b30 在卡面上只有 3.7:1；深色档「深」即更亮，卡面 6.1:1 */
+    --pop-fill: #c8381f;     /* 红色实心底：--pop（#ff6a4d）上放浅字只有 2.7:1，填充改用品牌原红，浅字 4.9:1 */
+    --pop-deep-fill: #a3301b; /* 红色渐变深端：浅字 6.6:1 */
+    --gold-on-dark: #f4d9a8;  /* 深色档 --gold（#8a6a3a）压在锚点底上只有约 1.3:1；改用浅金，锚点底上 4.7:1 */
+    --pine-ink: #4eae8c;      /* 松绿文字：卡面 5.7:1（与 --themeSuccess 同值） */
+    --shimmer-hi: rgba(255, 255, 255, 0.06);   /* 白 .5 扫在 #2a2a2a 骨架上是一道刺眼亮条 */
     --pop-mist: #5a2a1e;
     --surface-pressed: #2e2e2e;
     --banner-grad-a: #2a241c;
@@ -296,7 +309,7 @@ page {
     --c-text-secondary: #9a9a96;
     --c-text-muted: #757570;
     --c-bg: #1c1c1c;
-    --c-bg-warm: #262626;
+    --c-bg-warm: #2e2e2e;   /* 同 --themePaper2 */
     --c-gold-soft: #332a1c;
     --c-gold-dark: #c9a35c;
     --c-warning: #c9a35c;
@@ -517,7 +530,7 @@ page.font-lg, .font-lg {
 .btn::after { border: none; }
 .btn.disabled { opacity: 0.6; }
 .btn-pop {
-  background: var(--pop);
+  background: var(--pop-fill);
   color: #fff;
   box-shadow: var(--sh-pop);
 }
@@ -608,7 +621,7 @@ button[disabled] {
   font-size: calc(22rpx * var(--fs-mul, 1));
   font-weight: 700;
 }
-.tag-pop { background: var(--pop); color: #fff; }
+.tag-pop { background: var(--pop-fill); color: #fff; }
 .tag-glass { background: rgba(40, 30, 20, 0.55); color: #fff; }
 
 /* ============ 文本工具 ============ */
@@ -654,7 +667,7 @@ button[disabled] {
 .subtitle { color: var(--mut-strong); }
 .divider { height: 2rpx; margin: 24rpx 0; background: var(--paper-2); }
 .row { display: flex; align-items: center; justify-content: space-between; }
-.primary-btn { box-sizing: border-box; display: flex; align-items: center; justify-content: center; min-height: 88rpx; border-radius: var(--r-card); background: var(--pop); color: #fff; font-size: var(--fs-btn); font-weight: 800; box-shadow: var(--sh-pop); }
+.primary-btn { box-sizing: border-box; display: flex; align-items: center; justify-content: center; min-height: 88rpx; border-radius: var(--r-card); background: var(--pop-fill); color: #fff; font-size: var(--fs-btn); font-weight: 800; box-shadow: var(--sh-pop); }
 .ghost-btn { box-sizing: border-box; display: flex; align-items: center; justify-content: center; min-height: 88rpx; border-radius: var(--r-card); background: var(--c-surface); color: var(--ink); border: var(--bd-card); font-size: var(--fs-btn); font-weight: 700; }
 .accent-btn { box-sizing: border-box; display: flex; align-items: center; justify-content: center; min-height: 88rpx; border-radius: var(--r-card); background: var(--pine); color: #fff; font-size: var(--fs-btn); font-weight: 700; }
 .primary-btn::after, .ghost-btn::after, .accent-btn::after { border: none; }
@@ -706,7 +719,7 @@ page {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.5) 50%, transparent 70%);
+  background: linear-gradient(100deg, transparent 30%, var(--shimmer-hi) 50%, transparent 70%);
   background-size: 200% 100%;
   animation: shimmer 1.2s ease-in-out infinite;
 }

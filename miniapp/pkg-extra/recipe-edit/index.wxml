@@ -15,7 +15,7 @@
   <block wx:if="{{editTab === 'info'}}">
     <view class="tap-scale rc-cover" wx:if="{{form.coverImage}}" bindtap="chooseCover">
       <image class="rc-cover-img" src="{{form.coverImage}}" mode="aspectFill" />
-      <view class="tap-scale rc-cover-x" catchtap="removeCover">×</view>
+      <view class="tap-scale rc-cover-x" catchtap="removeCover" aria-role="button" aria-label="移除封面">×</view>
     </view>
     <view class="tap-scale rc-addcover" wx:else bindtap="chooseCover">添加封面</view>
 
@@ -52,18 +52,18 @@
       <view class="rc-fact">
         <text class="rc-fact-k">耗时</text>
         <view class="rc-stepper">
-          <view class="rc-sbtn tap-scale" data-field="timeCost" data-delta="-1" bindtap="stepperChange">−</view>
+          <view class="rc-sbtn hit-88 tap-scale" data-field="timeCost" data-delta="-1" bindtap="stepperChange" aria-role="button" aria-label="耗时减少">−</view>
           <text class="rc-fact-v">{{form.timeCost}}</text>
-          <view class="rc-sbtn tap-scale" data-field="timeCost" data-delta="1" bindtap="stepperChange">+</view>
+          <view class="rc-sbtn hit-88 tap-scale" data-field="timeCost" data-delta="1" bindtap="stepperChange" aria-role="button" aria-label="耗时增加">+</view>
         </view>
         <text class="rc-fact-u">分钟</text>
       </view>
       <view class="rc-fact">
         <text class="rc-fact-k">几人份</text>
         <view class="rc-stepper">
-          <view class="rc-sbtn tap-scale" data-field="servings" data-delta="-1" bindtap="stepperChange">−</view>
+          <view class="rc-sbtn hit-88 tap-scale" data-field="servings" data-delta="-1" bindtap="stepperChange" aria-role="button" aria-label="减少人份">−</view>
           <text class="rc-fact-v">{{form.servings}}</text>
-          <view class="rc-sbtn tap-scale" data-field="servings" data-delta="1" bindtap="stepperChange">+</view>
+          <view class="rc-sbtn hit-88 tap-scale" data-field="servings" data-delta="1" bindtap="stepperChange" aria-role="button" aria-label="增加人份">+</view>
         </view>
         <text class="rc-fact-u">人</text>
       </view>
@@ -85,7 +85,7 @@
       <input class="rc-ing-name" placeholder="食材" placeholder-class="rc-ph" value="{{item.name}}" bindinput="onIngredientInput" data-index="{{index}}" data-field="name" />
       <input class="rc-ing-amt" placeholder="用量" placeholder-class="rc-ph" value="{{item.amount}}" bindinput="onIngredientInput" data-index="{{index}}" data-field="amount" />
       <input class="rc-ing-unit" placeholder=" " placeholder-class="rc-ph" value="{{item.unit}}" bindinput="onIngredientInput" data-index="{{index}}" data-field="unit" />
-      <text class="tap-scale rc-ing-x" data-index="{{index}}" bindtap="removeIngredient">×</text>
+      <text class="tap-scale rc-ing-x" data-index="{{index}}" bindtap="removeIngredient" aria-role="button" aria-label="删除{{item.name || '这一行'}}">×</text>
     </view>
     <view class="rc-more tap-scale" bindtap="addIngredient">再加一行</view>
   </block>
@@ -94,18 +94,18 @@
     <view class="rc-video-line tap-scale" wx:if="{{!form.videoUrl}}" bindtap="chooseLessonVideo">添加教学视频</view>
     <view class="rc-video" wx:else>
       <video class="rc-video-player" src="{{form.videoUrl}}" controls object-fit="cover" />
-      <view class="tap-scale rc-cover-x" catchtap="removeLessonVideo">×</view>
+      <view class="tap-scale rc-cover-x" catchtap="removeLessonVideo" aria-role="button" aria-label="移除教学视频">×</view>
     </view>
 
     <view class="rc-step" wx:for="{{form.steps}}" wx:key="index">
       <view class="rc-step-bar">
         <text class="rc-step-n">{{index + 1}}</text>
-        <text class="tap-scale rc-step-del" data-index="{{index}}" bindtap="removeStep">删除</text>
+        <text class="tap-scale rc-step-del" data-index="{{index}}" bindtap="removeStep" aria-role="button" aria-label="删除第 {{index + 1}} 步">删除</text>
       </view>
       <view class="tap-scale rc-shot" wx:if="{{!item.image}}" data-index="{{index}}" bindtap="chooseStepImage">加一张图</view>
       <view class="tap-scale rc-shot has" wx:else>
         <image class="rc-shot-img" src="{{item.image}}" mode="aspectFill" data-index="{{index}}" bindtap="chooseStepImage" />
-        <view class="tap-scale rc-cover-x" data-index="{{index}}" catchtap="removeStepImage">×</view>
+        <view class="tap-scale rc-cover-x" data-index="{{index}}" catchtap="removeStepImage" aria-role="button" aria-label="移除第 {{index + 1}} 步的配图">×</view>
       </view>
       <textarea
         wx:if="{{editingStep === index}}"

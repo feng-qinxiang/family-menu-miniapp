@@ -20,8 +20,8 @@
         <view class="topics" wx:if="{{hotTopics.length || currentTag}}">
           <scroll-view scroll-x class="topic-scroll" show-scrollbar="{{false}}">
             <view class="tchips">
-              <view class="tchip tap-scale {{!currentTag ? 'on' : ''}}" bindtap="clearTopic" aria-role="button"><text class="tt">全部</text></view>
-              <view class="tchip tap-scale {{currentTag === item.tag ? 'on' : ''}}" wx:for="{{hotTopics}}" wx:key="tag" data-tag="{{item.tag}}" bindtap="onTopicTap" aria-role="button"><text class="tt">#{{item.tag}}</text></view>
+              <view class="tchip tap-scale {{!currentTag ? 'on' : ''}}" bindtap="clearTopic" aria-role="button" aria-selected="{{!currentTag}}"><text class="tt">全部</text></view>
+              <view class="tchip tap-scale {{currentTag === item.tag ? 'on' : ''}}" wx:for="{{hotTopics}}" wx:key="tag" data-tag="{{item.tag}}" bindtap="onTopicTap" aria-role="button" aria-selected="{{currentTag === item.tag}}"><text class="tt">#{{item.tag}}</text></view>
             </view>
           </scroll-view>
           <view wx:if="{{currentTag}}" class="tag-filter"><text class="tag-filter-t">当前：#{{currentTag}}</text><view class="tag-filter-x tap-scale" bindtap="clearTopic" aria-role="button" aria-label="清空话题筛选，看全部">看全部 ×</view></view>
@@ -135,8 +135,8 @@
         </view>
       </view>
 
-      <!-- 广告位 -->
-      <ad-banner placement="community-bottom"></ad-banner>
+      <!-- 广告位：包进 .pad 与帖子卡同宽（原来贴满屏宽，圆角被屏幕边裁掉） -->
+      <view class="pad"><ad-banner placement="community-bottom"></ad-banner></view>
 
       <!-- 流末 -->
       <view class="pad" wx:if="{{posts.length}}">
@@ -183,7 +183,7 @@
     <view wx:if="{{postForm.recipeId}}" class="pf-dish">
       <view class="pf-dish-tag">这道菜</view>
       <view class="pf-dish-name ellipsis">{{postForm.recipeTitle || '关联的菜'}}</view>
-      <view class="pf-dish-x tap-scale" catchtap="clearPostDish" aria-role="button" aria-label="取消关联">×</view>
+      <view class="pf-dish-x hit-88 tap-scale" catchtap="clearPostDish" aria-role="button" aria-label="取消关联">×</view>
     </view>
     <!-- 配图：最多 6 张，点了就选（相册/相机），可删 -->
     <view class="pf-imgs">
@@ -194,8 +194,8 @@
       <view wx:if="{{postForm.images.length < 6}}" class="pf-img-add tap-scale" bindtap="addPostImages" aria-role="button" aria-label="添加配图">＋</view>
     </view>
     <view class="pf-actions">
-      <view class="btn btn-ghost pf-cancel tap-scale" catchtap="togglePostForm">取消</view>
-      <view class="btn btn-pop pf-submit tap-scale {{postSubmitting ? 'is-busy' : ''}}" catchtap="submitPost">{{postSubmitting ? '发布中…' : '发布'}}</view>
+      <view class="btn btn-ghost pf-cancel tap-scale" catchtap="togglePostForm" aria-role="button">取消</view>
+      <view class="btn btn-pop pf-submit tap-scale {{postSubmitting ? 'is-busy' : ''}}" catchtap="submitPost" aria-role="button">{{postSubmitting ? '发布中…' : '发布'}}</view>
     </view>
   </state-sheet>
 
@@ -220,8 +220,8 @@
       bindinput="onReportDescInput"
     />
     <view class="pf-actions">
-      <view class="btn btn-ghost pf-cancel tap-scale" catchtap="closeReportSheet">取消</view>
-      <view class="btn btn-pop pf-submit tap-scale {{reportSubmitting ? 'is-busy' : ''}}" catchtap="submitReport">{{reportSubmitting ? '提交中…' : '提交举报'}}</view>
+      <view class="btn btn-ghost pf-cancel tap-scale" catchtap="closeReportSheet" aria-role="button">取消</view>
+      <view class="btn btn-pop pf-submit tap-scale {{reportSubmitting ? 'is-busy' : ''}}" catchtap="submitReport" aria-role="button">{{reportSubmitting ? '提交中…' : '提交举报'}}</view>
     </view>
   </state-sheet>
 </view>

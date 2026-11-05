@@ -6,17 +6,19 @@
   min-height: 100vh;
   background: var(--paper);
 }
-.pantry-heading { padding: 16rpx 24rpx 20rpx; }
+.pantry-heading { padding: 16rpx var(--page-gutter) 20rpx; }   /* 与买菜清单/我的同一页边距（原 24rpx） */
 .pantry-heading-title { font-size: calc(36rpx * var(--fs-mul, 1)); line-height: 1.4; font-weight: 700; color: var(--ink); }
 .pantry-heading-title > text { display: block; margin-top: 8rpx; color: var(--mut-strong); font-size: var(--fs-sub); font-weight: 400; }
 
 /* ============ 内容层 ============ */
 /* 底部留白含 tabBar 实高（--tabbar-h 已带安全区），最后一张卡不会被压住 */
 .psheet {
-  padding: 0 24rpx calc(env(safe-area-inset-bottom) + 40rpx);
+  padding: 0 var(--page-gutter) calc(env(safe-area-inset-bottom) + 40rpx);
 }
 .psheet .shead { margin-top: 8rpx; }
 .psheet .shead:first-child { margin-top: 0; }
+/* 「能做与待补」与「在库食材」同级：全局 .shead-title 是 36rpx，在这页会比页头标题（36/700）还重 */
+.psheet .shead .shead-title { font-size: var(--fs-lg); }
 .pantry-overview { padding: 20rpx var(--pad-card-sm) 0; border-radius: var(--r-card); background: var(--c-surface); border: var(--bd-card); margin-bottom: 12rpx; }
 .pantry-pick { padding-bottom: 16rpx; border-bottom: var(--bd-card); }
 .pantry-pick-head { display: flex; flex-wrap: wrap; align-items: center; gap: 12rpx; }
@@ -32,7 +34,7 @@
 .pantry-add { display: flex; align-items: center; justify-content: center; min-height: 88rpx; padding: 0 20rpx; border-radius: var(--r-md); background: var(--pop-soft); color: var(--pop-deep); font-size: var(--fs-sub); font-weight: 700; }
 .pantry-filters { display: flex; gap: 8rpx; margin-top: 12rpx; padding: 4rpx; background: var(--paper-2); border-radius: var(--r-md); }
 .pantry-filter { flex: 1; min-height: 88rpx; display: flex; align-items: center; justify-content: center; border-radius: var(--r-sm); color: var(--mut-strong); font-size: var(--fs-sub); font-weight: 600; }
-.pantry-filter.on { background: var(--c-surface); color: var(--ink); font-weight: 800; box-shadow: var(--sh-card); }
+.pantry-filter.on { background: var(--seg-thumb); color: var(--ink); font-weight: 800; box-shadow: var(--sh-card); }   /* 浅色档 = 卡面；深色档卡面与轨道同色，滑块会消失 */
 .pantry-filter-empty { padding: 24rpx 0; color: var(--mut-strong); font-size: var(--fs-sub); }
 .pi-main { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6rpx 16rpx; }
 .pitem.expired .pi-nm { color: var(--mut-strong); }
@@ -197,7 +199,7 @@
   border: var(--bd-card);
   margin-bottom: 27rpx;
 }
-.mc-top { display: flex; gap: 20rpx; padding: 22rpx; }
+.mc-top { display: flex; gap: 20rpx; padding: var(--pad-card-sm); }   /* 与下方进度条同一内缩（原 22 / 27 各一套） */
 .mc-ph {
   
   
@@ -225,10 +227,10 @@
   font-weight: 700;
   margin-top: 13rpx;
 }
-.mc-miss.full { color: var(--pine); }
+.mc-miss.full { color: var(--pine-ink); }
 .mc-h4, .mc-miss { white-space: normal; word-break: break-all; line-height: 1.5; }
 .mc-meta { line-height: 1.5; }
-.mc-status { display: flex; align-items: center; justify-content: space-between; gap: 8rpx; flex-wrap: wrap; margin-top: 12rpx; color: var(--pine); font-size: var(--fs-cap); }
+.mc-status { display: flex; align-items: center; justify-content: space-between; gap: 8rpx; flex-wrap: wrap; margin-top: 12rpx; color: var(--pine-ink); font-size: var(--fs-cap); }
 .mc-badge { flex: none; text-align: right; }
 .mc-pct {
   font-size: calc(40rpx * var(--fs-mul, 1));
@@ -244,7 +246,7 @@
 .mc-bar {
   height: 10rpx;
   background: var(--paper-2);
-  margin: 0 27rpx 27rpx;
+  margin: 0 var(--pad-card-sm) var(--pad-card-sm);
   border-radius: 6rpx;
   overflow: hidden;
 }
@@ -274,4 +276,7 @@
 /* 铃铛 SVG 用 brightness(0) 压成黑色，深色档要翻成浅色，否则黑图标落在深底上看不见 */
 @media (prefers-color-scheme: dark) {
   .pantry-reminder-title image { filter: brightness(0) invert(1); }
+  /* 深色档 --pine(#4e6b58) 当文字/细条只有约 2.6:1，与首页/会员页同法换 --c-success */
+  .mc-miss.full, .mc-status { color: var(--c-success); }
+  .mc-bar-i.full { background: var(--c-success); }
 }

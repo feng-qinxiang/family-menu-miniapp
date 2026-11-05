@@ -3,7 +3,7 @@
   <!-- sticky 搜索栏：状态栏占位 + 返回 + 输入 + 清除 + 取消 -->
   <view class="searchbar" style="padding-top: {{statusBarHeight}}px;">
     <view class="searchbar-inner" style="padding-right: {{capsuleRight}}px;">
-      <view class="backbtn tap-scale" catchtap="onBack">
+      <view class="backbtn tap-scale" catchtap="onBack" aria-role="button" aria-label="返回">
         <view class="backbtn-icon"></view>
       </view>
 
@@ -17,12 +17,12 @@
           confirm-type="search"
           bindinput="onInput"
         />
-        <view wx:if="{{keyword}}" class="clr tap-scale" catchtap="onClear">
+        <view wx:if="{{keyword}}" class="clr tap-scale" catchtap="onClear" aria-role="button" aria-label="清空搜索词">
           <view class="clr-x"></view>
         </view>
       </view>
 
-      <text class="cancel tap-scale" catchtap="onCancel">取消</text>
+      <text class="cancel hit-88 tap-scale" catchtap="onCancel" aria-role="button">取消</text>
     </view>
   </view>
 
@@ -37,7 +37,8 @@
       <view class="rtitle g-fade-up g-d1">
         <text class="rtitle-t">找到「</text><text class="rtitle-kw pop">{{keyword || '全部'}}</text><text class="rtitle-t">」</text>
       </view>
-      <view class="rcount g-fade-up g-d2">
+      <!-- 计数只在拿到数据后出：加载中/失败时原来会先显示「共 0 道菜」，和下面的加载失败态自相矛盾 -->
+      <view wx:if="{{loaded && !loading && !loadError}}" class="rcount g-fade-up g-d2">
         <block wx:if="{{noExactHit && nearbyMode}}">没有正好叫这个的，下面是沾边的 <text class="rcount-n">{{total}}</text> 道</block>
         <block wx:elif="{{noExactHit}}">一道都没有，看看下面的办法</block>
         <block wx:else>共 <text class="rcount-n">{{total}}</text> 道菜 · 按「{{sortLabel}}」排列</block>
@@ -89,7 +90,7 @@
             </view>
             <view class="gc-meta">
               <text class="gc-meta-i">{{item.cuisine}}</text>
-              <text class="gc-dot"></text>
+              <text wx:if="{{item.timeText}}" class="gc-dot"></text>
               <text wx:if="{{item.timeText}}" class="gc-meta-i">{{item.timeText}}</text>
             </view>
           </view>

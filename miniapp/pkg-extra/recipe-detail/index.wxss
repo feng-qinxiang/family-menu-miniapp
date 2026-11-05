@@ -51,7 +51,8 @@
 .rd-summary { font-size: var(--fs-body); color: var(--ink); line-height: 1.7; margin-top: 20rpx; }
 .rd-section-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12rpx 20rpx; margin-bottom: 16rpx; }
 .rd-section-head > view:first-child { display: flex; flex-wrap: wrap; align-items: baseline; gap: 16rpx; }
-.rd-section-title { font-size: var(--fs-h2); font-weight: 600; line-height: 1.5; }
+/* 与同页 section-head（家人评价/大家晒的）同一字重：同级标题原来 600 对 800，并排看一轻一重 */
+.rd-section-title { font-size: var(--fs-h2); font-weight: 800; line-height: 1.5; }
 .rd-stock-count, .rd-method-count { font-size: var(--fs-cap); color: var(--mut-strong); }
 .rd-method-head { margin-top: 36rpx; }
 
@@ -133,7 +134,7 @@
   flex: none;
 }
 .rd-dot.have { background: var(--pine); }
-.rd-dot.miss { background: var(--pop); }
+.rd-dot.miss { background: var(--pop-fill); }
 /* flex:1 不给 min-width:0 时，长食材名拒绝收缩，会把右边的用量顶出卡片右缘 */
 .rd-iname { flex: 1; min-width: 0; }
 .rd-iname-h {
@@ -171,11 +172,13 @@
 .rd-ingredient-photo { position: relative; flex: none; width: var(--tile-rc); height: var(--tile-rc); background: var(--paper-2); border-radius: var(--r-md); overflow: hidden; }
 .rd-ingredient-image { display: block; width: 100%; height: 100%; }
 /* 缩略图名称最多两行，底部预留编辑标签；完整名称在右侧。 */
-.rd-ingredient-text { box-sizing: border-box; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 12rpx 8rpx 44rpx; font-size: var(--fs-cap); font-weight: 800; color: var(--pine); line-height: 1.2; text-align: center; word-break: break-all; }
+.rd-ingredient-text { box-sizing: border-box; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 12rpx 8rpx 44rpx; font-size: var(--fs-cap); font-weight: 800; color: var(--pine-ink); line-height: 1.2; text-align: center; word-break: break-all; }
 .rd-ingredient-label { display: -webkit-box; width: 100%; max-height: calc(var(--fs-cap) * 2.4); -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.rd-photo-edit { position: absolute; bottom: 0; left: 0; right: 0; padding: 4rpx 0; line-height: 1.3; text-align: center; background: rgba(255,255,255,.88); color: var(--mut-strong); font-size: var(--fs-mini); }
+/* 底条走 --glass：原来写死白 .88，深色档 --mut-strong 翻成浅灰压在白条上，「换图/加图」只剩约 1.8:1 */
+.rd-photo-edit { position: absolute; bottom: 0; left: 0; right: 0; padding: 4rpx 0; line-height: 1.3; text-align: center; background: var(--glass); color: var(--mut-strong); font-size: var(--fs-mini); }
 
-/* 加入买菜清单按钮 */
+/* 加入买菜清单按钮：同屏只留一颗实心红（底栏「开始做菜」），这里降为浅红底次按钮。
+   保留红系是因为它说的是「缺料/待采购」（与 .rd-note.miss 同义）。 */
 .rd-ing-cart { padding: 0 0 22rpx; }
 .rd-cart-btn {
   display: flex;
@@ -184,12 +187,11 @@
   gap: 12rpx;
   width: 100%;
   min-height: 92rpx;
-  border-radius: 28rpx;
-  background: var(--pop);
-  color: var(--anchor-contrast);
+  border-radius: var(--r-card);
+  background: var(--pop-soft);
+  color: var(--pop-deep);
   font-size: calc(28rpx * var(--fs-mul, 1));
   font-weight: 800;
-  box-shadow: var(--sh-pop);
 }
 .rd-cnum {
   display: inline-flex;
@@ -199,7 +201,7 @@
   height: 42rpx;
   padding: 0 12rpx;
   border-radius: 21rpx;
-  background: rgba(255, 255, 255, 0.25);
+  background: var(--c-surface);   /* 按钮改浅红底后，原来的白 .25 叠在浅底上看不出胶囊 */
   font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: 900;
 }
@@ -276,7 +278,7 @@
   height: 48rpx;
   border-radius: var(--r-sm);
   background: var(--paper-2);
-  color: var(--pine);
+  color: var(--pine-ink);
   font-size: var(--fs-sub);
   font-weight: 600;
   flex: none;
@@ -304,7 +306,8 @@
   margin-top: 16rpx;
   font-size: calc(23rpx * var(--fs-mul, 1));
   font-weight: 700;
-  color: var(--gold-deep);
+  /* 小号提示字用 --mut-strong：--gold-deep 在 --paper-2 上约 3.0:1，偏淡；金色留给左侧星标 */
+  color: var(--mut-strong);
   background: var(--paper-2);
   padding: 10rpx 20rpx;
   border-radius: var(--r-chip);
@@ -346,7 +349,7 @@
   background: var(--c-border);
   clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
 }
-.rd-star.on { background: var(--pop); }
+.rd-star.on { background: var(--pop-fill); }
 .rd-cm { font-size: var(--fs-sub); line-height: 1.5; color: var(--mut); }
 
 /* 写评价入口 */
@@ -371,16 +374,16 @@
   font-weight: 900;
   color: var(--anchor-contrast);
   font-family: var(--serif);
-  background: var(--pop);
+  background: var(--pop-fill);
 }
 .rd-fakein {
   flex: 1;
   height: 84rpx;
   line-height: 84rpx;
-  border-radius: 26rpx;
+  border-radius: var(--r-card);   /* 嵌在 --r-card 卡里：原来 26rpx 比外卡还圆 */
   background: var(--paper-2);
   border: 2rpx solid var(--c-border);
-  padding: 0 28rpx;
+  padding: 0 var(--pad-card);
   font-size: var(--fs-sub);
   color: var(--mut-strong);
   font-weight: 600;
@@ -389,9 +392,9 @@
   flex: none;
   min-width: 100rpx;
   height: 88rpx;
-  border-radius: 26rpx;
+  border-radius: var(--r-card);
   background: var(--anchor);
-  color: var(--gold);
+  color: var(--gold-on-dark);
   font-size: var(--fs-sub);
   font-weight: 800;
   display: flex;
@@ -413,7 +416,7 @@
   flex: none;
   width: var(--dish-thumb);
   height: var(--dish-thumb);
-  border-radius: var(--r-md);
+  border-radius: var(--r-sm);   /* 嵌在 --r-card 卡里，圆角不能比外卡大 */
 }
 .rd-work-thumb--none {
   display: flex;
@@ -456,7 +459,7 @@
   flex: none;
   width: 156rpx;
   height: 104rpx;
-  border-radius: var(--r-chip);
+  border-radius: var(--r-card);   /* 底栏三键统一 --r-card（实心主按钮约定，同排次按钮跟随） */
   background: var(--paper-2);
   color: var(--ink-deep);
   font-size: calc(25rpx * var(--fs-mul, 1));
@@ -472,8 +475,8 @@
 .rd-primary-btn {
   flex: 1;
   height: 104rpx;
-  border-radius: var(--r-chip);
-  background: var(--pop);
+  border-radius: var(--r-card);
+  background: var(--pop-fill);
   color: var(--anchor-contrast);
   font-size: calc(28rpx * var(--fs-mul, 1));
   font-weight: 900;
@@ -489,9 +492,9 @@
   flex: none;
   width: 170rpx;
   height: 104rpx;
-  border-radius: var(--r-chip);
+  border-radius: var(--r-card);
   background: var(--anchor);
-  color: var(--gold);
+  color: var(--gold-on-dark);
   font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: 800;
   display: flex;
@@ -507,7 +510,7 @@
 /* 已在今日菜单：松绿描边 + 对勾，与"待加入"深色底区分 */
 .rd-secondary-btn--added {
   background: var(--paper-2);
-  color: var(--pine);
+  color: var(--pine-ink);
   border: 2rpx solid var(--pine);
 }
 .rd-secondary-btn--added .rd-ic-check {
@@ -610,3 +613,12 @@
 
 /* ===== 空态 ===== */
 .rd-empty-page { padding-top: 0; }
+
+/* ===== 深色档 ===== */
+/* --gold 深色档翻成 #8a6a3a，压在 --anchor 上看不清（旧深色 --anchor #3a2e23 上约 2.6:1，
+   深色档提亮后的 #866a50 上约 1:1）。深色档改用恒定浅字 --anchor-contrast（两种 --anchor 上都 ≥4.7:1）；
+   浅色档不进这条，金字观感不变。「已在菜单」态自己换了底色和字色，必须排除，否则会被这里盖掉。 */
+@media (prefers-color-scheme: dark) {
+  .rd-gobtn,
+  .rd-secondary-btn:not(.rd-secondary-btn--added) { color: var(--anchor-contrast); }
+}

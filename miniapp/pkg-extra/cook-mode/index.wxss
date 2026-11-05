@@ -179,7 +179,7 @@
   margin-top: -44rpx;
 }
 .dot.done { background: var(--gold-deep); }
-.dot.now { background: var(--pop); }
+.dot.now { background: var(--pop-fill); }
 
 /* 离开的那一步还在倒数时的小条（本页是恒定暗底：只用 --cook-* 常量，勿用会翻转的 token） */
 .bgchip {
@@ -254,14 +254,14 @@
   -webkit-text-stroke: 3rpx rgba(255, 255, 255, 0.85);
 }
 
-/* 步骤文本滚动区 */
+/* 步骤文本滚动区：左右留白放在内层 .stepwrap-pad，不放 scroll-view 本身。
+   放在 scroll-view 上时滚动条画在内容盒右缘、正好压在文字最后一列上（长步骤 + 大字档截图可见）；
+   挪进内层后滚动条回到屏幕边，scroll-view 也不再有 content-box 撑宽的问题。 */
 .stepwrap {
   flex: 1;
   min-height: 0;
-  padding: 0 46rpx;
-  /* scroll-view 原生默认 width:100% + content-box，padding 会把总宽撑出视口导致文字被裁 */
-  box-sizing: border-box;
 }
+.stepwrap-pad { padding: 0 46rpx; }
 .stepeyebrow {
   font-family: var(--serif);
   font-size: var(--fs-sub);
@@ -400,14 +400,17 @@
   align-items: center;
   justify-content: center;
   padding: 0 12rpx;
-  background: var(--cook-pop);
-  color: var(--cook-mark);
+  /* 同屏只留一颗实心红（底部「下一步」）：计时键降为浅红底 + 红描边，与 .ing.on 同一组色 */
+  background: rgba(200, 56, 31, 0.18);
+  border: 2rpx solid rgba(200, 56, 31, 0.55);
+  color: var(--cook-ink);
   font-size: var(--fs-sub);
   font-weight: 800;
 }
 .tbtn.ghost {
   min-width: 88rpx;
   background: transparent;
+  border-color: transparent;
   color: var(--cook-ink-mut);
 }
 .timer-add { display: flex; align-items: center; flex-wrap: wrap; gap: 12rpx; min-height: 88rpx; padding: 8rpx 18rpx; box-sizing: border-box; border-radius: var(--r-md); background: var(--cook-surface); font-size: var(--fs-cap); color: var(--cook-ink-mut); }
@@ -425,7 +428,7 @@
 .btn {
   box-sizing: border-box;
   height: 100rpx;
-  border-radius: var(--r-md);
+  border-radius: var(--r-card);   /* 实心主按钮统一 --r-card（与厨房总控/导入同一约定） */
   display: flex;
   align-items: center;
   justify-content: center;

@@ -28,8 +28,8 @@
 /* 邀请暗卡（基于 .card-dark） */
 .fi-invite {
   margin-top: 46rpx;
-  padding: 58rpx 50rpx 50rpx;
-  border-radius: 54rpx;
+  padding: 58rpx 50rpx 50rpx;   /* 例外：8 格邀请码要按 81rpx 一格排开，左右收到 --pad-card 会把格子撑宽、整卡变样 */
+  border-radius: var(--r-card);   /* 原 54rpx：同屏按钮与家庭管理页暗卡都是 --r-card，这张单独圆一大截 */
   text-align: center;
 }
 .fi-iv-cap {
@@ -38,7 +38,7 @@
   font-family: var(--serif);
   font-size: var(--fs-cap);
   letter-spacing: 2rpx;
-  color: var(--gold);
+  color: var(--gold-on-dark);
   font-weight: 700;
 }
 
@@ -76,6 +76,8 @@
   justify-content: center;
   gap: 14rpx;
   width: 100%;
+  box-sizing: border-box;
+  min-height: var(--tap-min);   /* 22rpx 上下内边距 + 25rpx 字：截图实测约 84rpx 高 */
   padding: 22rpx 0;
   border-radius: var(--r-card);
   background: rgba(255, 255, 255, 0.1);
@@ -119,11 +121,20 @@
   box-shadow: none;
 }
 .fi-wxbtn::after { border: none; }
+/* 真分享按钮是原生 <button>：微信内置 button:not([size=mini]) 固定 184px 宽，
+   .btn-block 单类名压不过（登录页同款按钮实测就是 184px 居中）。本次截图是拿码失败态、渲染的是 view，
+   拿到码后的 button 态未截到。带上父级提高优先级撑满 */
+.fi-page .fi-wxbtn {
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
+/* 绿底上的白色气泡：恒浅，--c-surface 深色档会变深灰 */
 .fi-ic-wx {
   width: 38rpx;
   height: 32rpx;
   border-radius: 50% 50% 50% var(--r-xs);
-  background: var(--c-surface);
+  background: var(--anchor-contrast);
   position: relative;
 }
 .fi-ic-wx::after {
@@ -134,7 +145,7 @@
   width: 30rpx;
   height: 26rpx;
   border-radius: 50% 50% var(--r-xs) 50%;
-  background: var(--c-surface);
+  background: var(--anchor-contrast);
   box-shadow: 0 0 0 4rpx var(--wx);
 }
 
@@ -162,9 +173,9 @@
   align-items: flex-start;
   gap: 17rpx;
   margin-top: 46rpx;
-  padding: 27rpx 31rpx;
+  padding: 27rpx var(--pad-card);
   background: var(--paper-2);
-  border-radius: 31rpx;
+  border-radius: var(--r-card);
 }
 .fi-ic {
   flex: none;
@@ -178,7 +189,8 @@
 }
 @media (prefers-color-scheme: dark) {
   .fi-ic--ink { filter: none; }
-  .fi-copybtn--retry .fi-ic--ink { filter: brightness(0); }   /* 金色按钮两种模式都是浅底 */
+  /* 重试按钮的字是 --ink-deep，深色档翻成浅字（金底也翻成深金 #8a6a3a），
+     图标原先强制压黑就成了「深底黑图标 + 浅色字」，跟着字一起还原 */
 }
 .fi-note-ic {
   margin-top: 4rpx;

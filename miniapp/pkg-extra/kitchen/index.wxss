@@ -133,7 +133,7 @@
   flex: none;
   width: var(--tile-list-wide);
   height: var(--tile-list-tall);
-  border-radius: var(--r-md);
+  border-radius: var(--r-sm);   /* 嵌在 --r-card 卡里：原来 --r-md(24rpx) 比外卡还圆 */
   background: var(--paper);
 }
 .k-main-flag {
@@ -187,7 +187,7 @@
 }
 .k-tag.done {
   background: rgba(47, 74, 58, 0.12);
-  color: var(--pine);
+  color: var(--pine-ink);
 }
 .k-meta {
   margin-top: 8rpx;
@@ -201,7 +201,7 @@
   margin-top: 14rpx;
   padding: 12rpx;
   background: var(--paper);
-  border-radius: var(--r-md);
+  border-radius: var(--r-sm);   /* 嵌套面板不比外卡圆 */
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -237,7 +237,7 @@
   padding: 12rpx 8rpx;
   line-height: 1.5;
   text-align: center;
-  border-radius: var(--r-md);
+  border-radius: var(--r-sm);   /* 与外层 .k-timer 同档，不再比它圆 */
   background: var(--pop-soft);
   color: var(--pop-deep);
   font-size: var(--fs-cap);
@@ -272,8 +272,13 @@
   box-sizing: border-box;
 }
 .k-act.primary {
-  background: var(--pop);
+  background: var(--anchor);
   color: var(--anchor-contrast);
+}
+/* 同屏只留一颗实心红：只有主灶那张卡的「开做/继续做」用 --pop，其余卡降为深色锚点
+   （与菜单页 .m-act-cook 同一做法）。主灶一定是未上桌的菜，所以有菜可做时恰好一颗红。 */
+.k-card.main .k-act.primary {
+  background: var(--pop-fill);
 }
 .k-act.ghost {
   border: 2rpx solid var(--line-deep);
@@ -286,7 +291,8 @@
   margin-top: 26rpx;
   padding: 30rpx;
   border-radius: var(--r-card, 16rpx);
-  background: var(--ink);
+  /* 恒定深底配恒定浅字：原来底用 --ink，深色档翻成 #efefef，压着恒定浅色字 = 整条横幅没字 */
+  background: var(--anchor);
   color: var(--anchor-contrast);
   text-align: center;
   font-size: calc(29rpx * var(--fs-mul, 1));

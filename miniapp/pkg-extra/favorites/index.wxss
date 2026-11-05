@@ -35,12 +35,13 @@
 .fav-tabs {
   display: flex;
   gap: 54rpx;
-  margin-top: 42rpx;
+  margin-top: 26rpx;   /* 与 .fav-tab 的 padding-top 合计仍是 42rpx：tab 文字位置不变，命中区够 88rpx */
   padding-bottom: 0;
   border-bottom: 2rpx solid var(--paper-2);
 }
 .fav-tab {
   position: relative;
+  padding-top: var(--sp-sm);
   padding-bottom: 24rpx;
   font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
@@ -58,7 +59,7 @@
   bottom: -2rpx;
   height: 6rpx;
   border-radius: 6rpx;
-  background: var(--pop);
+  background: var(--pop-fill);
 }
 .fav-tab-badge {
   margin-left: 8rpx;
@@ -100,7 +101,7 @@
 .fav-pthumb {
   width: var(--tile-grid);
   height: var(--tile-grid);
-  border-radius: var(--r-md);
+  border-radius: var(--r-sm);   /* 嵌在 --r-card 卡里，圆角不能比外卡大 */
   flex: none;
   background: var(--paper-2);
 }
@@ -165,7 +166,7 @@
   width: 16rpx;
   height: 16rpx;
   border-radius: 50%;
-  background: var(--pop);
+  background: var(--pop-fill);
   flex: none;
 }
 /* 加载骨架 */
@@ -183,9 +184,11 @@
   width: 80%;
 }
 .fav-skel-line.strong { width: 60%; }
-.fav-pane-skel { display: flex; flex-direction: column; gap: 20rpx; }
+/* 骨架与真卡同高同间距：真卡 = 封面 --tile-grid + 上下 --pad-card-sm + 2rpx 边框×2，间距 = .fav-pcard 的 27rpx。
+   原来 180rpx / 20rpx，加载完每张卡长 49rpx、整列往下跳 */
+.fav-pane-skel { display: flex; flex-direction: column; gap: 27rpx; }
 .fav-pcard-skel {
-  height: 180rpx;
+  height: calc(var(--tile-grid) + var(--pad-card-sm) * 2 + 4rpx);
   border-radius: var(--r-card);
   background: var(--paper-2);
 }

@@ -78,7 +78,7 @@
   flex: 1;
   box-sizing: border-box;
   height: 100rpx;
-  border-radius: 28rpx;
+  border-radius: var(--r-card);   /* 实心按钮统一小圆角；首页许愿弹窗按钮同步用 --r-card */
   font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
   letter-spacing: 0.6rpx;
@@ -88,12 +88,12 @@
 }
 .sd-btn--ghost { background: var(--paper-2); color: var(--ink-deep); }
 .sd-btn--danger {
-  background: var(--pop);
+  background: var(--pop-fill);
   color: var(--anchor-contrast);
   box-shadow: 0 4rpx 8rpx rgba(180, 40, 20, 0.3), 0 20rpx 44rpx rgba(200, 56, 31, 0.4);
 }
 .sd-btn--warn {
-  background: var(--pop);
+  background: var(--pop-fill);
   color: var(--anchor-contrast);
   box-shadow: 0 4rpx 8rpx rgba(180, 40, 20, 0.3), 0 20rpx 44rpx rgba(200, 56, 31, 0.4);
 }

@@ -10,8 +10,11 @@
 }
 
 /* —— Hero —— */
+/* font-weight：原先靠 title-stroke 类给 900，8 月去掉那个类时没补，标题掉成 400，
+   比下面 36rpx/900 的小节标题还轻（用户协议页、开通成功页同一处遗漏） */
 .doctitle {
   font-size: calc(66rpx * var(--fs-mul, 1));
+  font-weight: 900;
   letter-spacing: -3rpx;
   line-height: 1.02;
   margin: 14rpx 0 26rpx;
@@ -33,12 +36,12 @@
   width: 16rpx;
   height: 16rpx;
   border-radius: 4rpx;
-  background: var(--pop);
+  background: var(--pop-fill);
 }
 
 .intro {
-  font-size: calc(25rpx * var(--fs-mul, 1));
-  line-height: 1.85;
+  font-size: calc(28rpx * var(--fs-mul, 1));
+  line-height: 1.75;
   color: var(--mut-strong);
   margin: 34rpx 0 4rpx;
 }
@@ -57,7 +60,7 @@
   font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: 700;
   color: var(--anchor-contrast);
-  background: var(--pop);
+  background: var(--pop-fill);
   box-shadow: var(--sh-pop);
   width: 58rpx;
   height: 58rpx;
@@ -73,9 +76,10 @@
   color: var(--ink-deep);
   letter-spacing: -0.8rpx;
 }
+/* 长文正文与用户协议页同档（28rpx / 1.75）：原 25rpx 是次要说明的字号，三份法律文本两种正文大小 */
 .sec-body {
-  font-size: calc(25rpx * var(--fs-mul, 1));
-  line-height: 1.85;
+  font-size: calc(28rpx * var(--fs-mul, 1));
+  line-height: 1.75;
   color: var(--mut-strong);
   margin-top: 22rpx;
 }
@@ -222,7 +226,7 @@
   width: 10rpx;
   height: 10rpx;
   border-radius: 50%;
-  background: var(--pop);
+  background: var(--pop-fill);
 }
 
 /* —— 联系框（深色卡）—— */
@@ -233,7 +237,7 @@
 .ft-eb {
   font-family: var(--serif);
   font-size: var(--fs-cap);
-  color: var(--gold-deep);
+  color: var(--gold-on-dark);   /* 暗卡 .card-dark 上的金字：原 --gold-deep 浅色档只有 3.65:1，与其它暗卡眉题同用浅金 */
   font-weight: 700;
 }
 .ft-text {
