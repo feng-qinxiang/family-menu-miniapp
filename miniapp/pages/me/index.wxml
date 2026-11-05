@@ -21,7 +21,6 @@
       <view wx:else class="mag-profile-avatar mag-profile-letter">{{profile.initial}}</view>
       <view class="mag-profile-copy"><view class="mag-profile-name">{{profile.nickname}}</view><view class="mag-profile-sub">把家常味，留在自己的厨房</view></view><text class="mag-profile-edit">编辑 ›</text>
     </view>
-    <view class="cpt-sub" wx:if="{{monthCookCount > 0}}">本月一起做了 {{monthCookCount}} 道菜</view>
   </view>
 
   <!-- 内容区 -->

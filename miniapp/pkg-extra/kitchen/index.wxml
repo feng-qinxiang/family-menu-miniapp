@@ -1,6 +1,6 @@
 <!-- pages/kitchen/index · 厨房总控（多菜并行一屏管理） -->
 <view class="kitchen {{fontScale === 'lg' ? 'font-lg' : ''}}">
-  <nav-bar title="厨房总控" show-back="{{true}}"></nav-bar>
+  <nav-bar class="k-nav" title="厨房总控" show-back="{{true}}"></nav-bar>
 
   <!-- 加载中 -->
   <view wx:if="{{loading}}" class="k-loading">

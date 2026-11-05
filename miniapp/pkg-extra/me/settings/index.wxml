@@ -50,7 +50,7 @@
         data-key="{{item.key}}"
         bindtap="onGeneralTap"
       >
-        <view class="set-ic"><text class="set-glyph">{{item.key === 'font' ? 'A' : '⟳'}}</text></view>
+        <view class="set-ic"><text class="set-glyph">{{item.key === 'font' ? 'A' : '清'}}</text></view>
         <view class="set-mid"><view class="set-name">{{item.name}}</view></view>
         <text wx:if="{{item.value}}" class="set-val">{{item.value}}</text>
         <view class="set-chev"></view>

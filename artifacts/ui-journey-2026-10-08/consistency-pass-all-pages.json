@@ -169,30 +169,6 @@
       "gated": false
     },
     {
-      "route": "pkg-extra/recipe-edit/index",
-      "state": "main",
-      "image": "screens/all-pkg-extra-recipe-edit-index.jpg",
-      "width": 591,
-      "height": 1280,
-      "gated": false
-    },
-    {
-      "route": "pkg-extra/recipe-edit/index",
-      "state": "用料",
-      "image": "screens/all-pkg-extra-recipe-edit-index-用料.jpg",
-      "width": 591,
-      "height": 1280,
-      "gated": false
-    },
-    {
-      "route": "pkg-extra/recipe-edit/index",
-      "state": "步骤",
-      "image": "screens/all-pkg-extra-recipe-edit-index-步骤.jpg",
-      "width": 591,
-      "height": 1280,
-      "gated": false
-    },
-    {
       "route": "pkg-extra/recipes/search/index",
       "state": "main",
       "image": "screens/all-pkg-extra-recipes-search-index.jpg",
@@ -236,14 +212,6 @@
       "route": "pkg-extra/family/invite/index",
       "state": "main",
       "image": "screens/all-pkg-extra-family-invite-index.jpg",
-      "width": 591,
-      "height": 1280,
-      "gated": false
-    },
-    {
-      "route": "pkg-extra/me/settings/index",
-      "state": "main",
-      "image": "screens/all-pkg-extra-me-settings-index.jpg",
       "width": 591,
       "height": 1280,
       "gated": false
@@ -359,6 +327,38 @@
       "width": 591,
       "height": 1280,
       "gated": false
+    },
+    {
+      "route": "pkg-extra/recipe-edit/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-recipe-edit-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/recipe-edit/index",
+      "state": "用料",
+      "image": "screens/all-pkg-extra-recipe-edit-index-用料.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/recipe-edit/index",
+      "state": "步骤",
+      "image": "screens/all-pkg-extra-recipe-edit-index-步骤.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/me/settings/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-me-settings-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
     }
   ],
   "routes": [
@@ -400,13 +400,6 @@
     {
       "route": "pkg-extra/recipe-detail/index",
       "actualRoute": "pkg-extra/recipe-detail/index",
-      "gated": false,
-      "temporarySample": true,
-      "passed": true
-    },
-    {
-      "route": "pkg-extra/recipe-edit/index",
-      "actualRoute": "pkg-extra/recipe-edit/index",
       "gated": false,
       "temporarySample": true,
       "passed": true
@@ -454,13 +447,6 @@
     {
       "route": "pkg-extra/family/invite/index",
       "actualRoute": "pkg-extra/family/invite/index",
-      "gated": false,
-      "temporarySample": true,
-      "passed": true
-    },
-    {
-      "route": "pkg-extra/me/settings/index",
-      "actualRoute": "pkg-extra/me/settings/index",
       "gated": false,
       "temporarySample": true,
       "passed": true
@@ -538,6 +524,20 @@
     {
       "route": "pkg-extra/me/notifications/index",
       "actualRoute": "pkg-extra/me/notifications/index",
+      "gated": false,
+      "temporarySample": true,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/recipe-edit/index",
+      "actualRoute": "pkg-extra/recipe-edit/index",
+      "gated": false,
+      "temporarySample": true,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/me/settings/index",
+      "actualRoute": "pkg-extra/me/settings/index",
       "gated": false,
       "temporarySample": true,
       "passed": true
@@ -2948,7 +2948,7 @@
       "passed": true
     }
   ],
-  "checkedAt": "2026-11-05T12:53:12.872Z",
+  "checkedAt": "2026-11-05T13:36:16.835Z",
   "passed": true,
   "source": "Native formal pages; temporary sample data restored; closed features kept closed; no business write APIs.",
   "formalRoutes": 39

@@ -7,6 +7,7 @@
   padding: 0 46rpx calc(env(safe-area-inset-bottom) + 40rpx);
   box-sizing: border-box;
 }
+.k-nav { display: block; margin: 0 -46rpx; }   /* 导航栏不吃页面左右留白，返回键与其它二级页同位 */
 
 /* —— 加载态 —— */
 .k-loading {

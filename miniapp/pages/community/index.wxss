@@ -204,7 +204,7 @@
   font-weight: 700;
   color: var(--ink);
 }
-.tchip.on { background: var(--pop-soft); color: var(--pop-deep); }   /* 与菜谱快筛选中态一致：浅红底 + 深红字 */
+.tchip.on { background: var(--anchor); color: var(--anchor-contrast); }   /* 单选筛选与全局 .chip.on 一致：深底白字 */
 .tchip.on .tt { color: inherit; }
 .tchip .tt { font-size: var(--fs-sub); font-weight: 800; color: var(--ink); letter-spacing: -0.4rpx; }
 

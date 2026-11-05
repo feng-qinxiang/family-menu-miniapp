@@ -57,9 +57,10 @@ page { background: var(--paper); }
   justify-content: center;
   background: transparent;
   color: #fff;
-  font-size: calc(28rpx * var(--fs-mul, 1));
+  font-size: 0;   /* 节点里的 × 只留给读屏；视觉 × 由 ::before 画，否则两个 × 并排 */
 }
 .rc-cover-x::before {
+  font-size: calc(28rpx * var(--fs-mul, 1));
   content: '×';
   width: var(--ctl-x);
   height: var(--ctl-x);

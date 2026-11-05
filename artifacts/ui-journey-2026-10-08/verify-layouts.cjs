@@ -17,7 +17,7 @@ function cli(tool, args = []) {
   const cooldown = 1500 - (Date.now() - lastCall);
   if (cooldown > 0) Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, cooldown);
   lastCall = Date.now();
-  const run = spawnSync('/usr/local/bin/wechatide', ['-c', 'Codex', tool, '--project', root, ...args], { encoding: 'utf8', timeout: 55000 });
+  const run = spawnSync('/usr/local/bin/wechatide', ['-c', process.env.WECHATIDE_CLIENT || 'Codex', tool, '--project', root, ...args], { encoding: 'utf8', timeout: 55000 });
   assert.equal(run.status, 0, `${tool}: ${run.error ? run.error.message : run.stdout}`);
   const result = JSON.parse(run.stdout.slice(run.stdout.indexOf('{')));
   assert.equal(result.ok, true, `${tool}: ${result.message || result.errorType}`);
@@ -68,7 +68,7 @@ function sample(page, name, value, selector, check, large = false) {
   delete original.__webviewId__;
   try {
     patch({ ...value, loading: false, loadError: false, fontScale: 'normal', revealOn: false });
-    if (page === 'pages/home/index') cli('automation_page_action', ['--action', 'callMethod', '--method', 'updateSlotMenu']);
+    if (page === 'pages/home/index') cli('automation_evaluate', ['--fn-source', 'function() { getCurrentPages().pop().updateSlotMenu(); }']); // ponytail: IDE skill 0.3.15 的 callMethod 丢 this
     scroll(0);
     if (check) check(name);
     capture(name, selector);

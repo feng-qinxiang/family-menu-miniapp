@@ -129,8 +129,7 @@
   border-radius: var(--r-card);   /* 统计卡回到全站卡片标准 16rpx */
   padding: 22rpx var(--pad-card-sm);
   min-width: 0;
-  border: var(--bd-card);
-  box-shadow: var(--sh-raised);
+  border: var(--bd-card);   /* 与下方快捷入口同为描边卡，不再单独加双层投影 */
 }
 .mag-snum {
   font-size: var(--fs-stat);

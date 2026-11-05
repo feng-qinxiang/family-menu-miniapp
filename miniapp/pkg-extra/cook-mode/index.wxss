@@ -253,19 +253,6 @@
   line-height: 0.8;
   -webkit-text-stroke: 3rpx rgba(255, 255, 255, 0.85);
 }
-.stepimg .small {
-  position: absolute;
-  bottom: 40rpx;
-  left: 176rpx;
-  right: 30rpx;
-  z-index: 2;
-}
-.stepimg .small .t {
-  font-size: var(--fs-cap);
-  font-weight: 800;
-  color: var(--anchor-contrast);
-  margin-top: 6rpx;
-}
 
 /* 步骤文本滚动区 */
 .stepwrap {
