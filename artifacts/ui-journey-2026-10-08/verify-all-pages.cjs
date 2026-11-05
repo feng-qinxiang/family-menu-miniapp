@@ -137,8 +137,9 @@ const selectors = {
 };
 function capture(entry, selector, suffix = '') {
   const image = suffix ? entry.image.replace('.jpg', `-${suffix}.jpg`) : entry.image;
-  const result = cli('simulator_screenshot', ['--wait-for-selector', selector, '--wait', '0.3', '--path', path.join(__dirname, image)]);
-  assert.ok(result.imageWidth > 0 && result.imageHeight > 0 && fs.statSync(path.join(__dirname, image)).size > 1000, `${entry.title} screenshot exists`);
+  const file = path.join(__dirname, image.split('?')[0]); // catalog 里的 ?v= 只是给画廊破缓存，落盘不带
+  const result = cli('simulator_screenshot', ['--wait-for-selector', selector, '--wait', '0.3', '--path', file]);
+  assert.ok(result.imageWidth > 0 && result.imageHeight > 0 && fs.statSync(file).size > 1000, `${entry.title} screenshot exists`);
   proof.screens = proof.screens.filter(x => x.image !== image);
   proof.screens.push({ route: entry.route, state: suffix || 'main', image, width: result.imageWidth, height: result.imageHeight, gated: entry.gated });
   if (suffix) entry.variants = [...(entry.variants || []).filter(x => x.label !== suffix), { label: suffix, image }];
@@ -274,7 +275,7 @@ try {
   const formal = [...app.pages, ...(app.subPackages || app.subpackages).filter(x => x.root !== 'pkg-preview').flatMap(x => x.pages.map(p => x.root + '/' + p))];
   assert.deepEqual(new Set(catalog.pages.map(x => x.route)), new Set(formal));
   assert.equal(catalog.formalRoutes, formal.length);
-  proof.passed = selected.size ? true : catalog.pages.every(x => fs.existsSync(path.join(__dirname, x.image)));
+  proof.passed = selected.size ? true : catalog.pages.every(x => fs.existsSync(path.join(__dirname, x.image.split('?')[0])));
   assert.ok(proof.passed, 'every formal route has a screenshot');
   proof.formalRoutes = formal.length;
   cli('automation_navigate', ['--action', 'switchTab', '--url', '/pages/home/index']);

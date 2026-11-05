@@ -249,30 +249,6 @@
       "gated": false
     },
     {
-      "route": "pkg-extra/me/notifications/index",
-      "state": "main",
-      "image": "screens/all-pkg-extra-me-notifications-index.jpg?v=20261011-filter-actions",
-      "width": 591,
-      "height": 1280,
-      "gated": false
-    },
-    {
-      "route": "pkg-extra/me/notifications/index",
-      "state": "大字",
-      "image": "screens/all-pkg-extra-me-notifications-index-大字.jpg?v=20261011-filter-actions",
-      "width": 591,
-      "height": 1280,
-      "gated": false
-    },
-    {
-      "route": "pkg-extra/me/notifications/index",
-      "state": "已读",
-      "image": "screens/all-pkg-extra-me-notifications-index-已读.jpg?v=20261011-filter-actions",
-      "width": 591,
-      "height": 1280,
-      "gated": false
-    },
-    {
       "route": "pkg-extra/me/preference-profile/index",
       "state": "main",
       "image": "screens/all-pkg-extra-me-preference-profile-index.jpg",
@@ -356,6 +332,30 @@
       "route": "pkg-extra/favorites/index",
       "state": "帖子",
       "image": "screens/all-pkg-extra-favorites-index-帖子.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/me/notifications/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-me-notifications-index.jpg?v=20261011-filter-actions",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/me/notifications/index",
+      "state": "大字",
+      "image": "screens/all-pkg-extra-me-notifications-index-大字.jpg?v=20261011-filter-actions",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/me/notifications/index",
+      "state": "已读",
+      "image": "screens/all-pkg-extra-me-notifications-index-已读.jpg?v=20261011-filter-actions",
       "width": 591,
       "height": 1280,
       "gated": false
@@ -466,13 +466,6 @@
       "passed": true
     },
     {
-      "route": "pkg-extra/me/notifications/index",
-      "actualRoute": "pkg-extra/me/notifications/index",
-      "gated": false,
-      "temporarySample": true,
-      "passed": true
-    },
-    {
       "route": "pkg-extra/me/preference-profile/index",
       "actualRoute": "pkg-extra/me/preference-profile/index",
       "gated": false,
@@ -538,6 +531,13 @@
     {
       "route": "pkg-extra/favorites/index",
       "actualRoute": "pkg-extra/favorites/index",
+      "gated": false,
+      "temporarySample": true,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/me/notifications/index",
+      "actualRoute": "pkg-extra/me/notifications/index",
       "gated": false,
       "temporarySample": true,
       "passed": true
@@ -2948,7 +2948,7 @@
       "passed": true
     }
   ],
-  "checkedAt": "2026-11-05T12:51:32.116Z",
+  "checkedAt": "2026-11-05T12:53:12.872Z",
   "passed": true,
   "source": "Native formal pages; temporary sample data restored; closed features kept closed; no business write APIs.",
   "formalRoutes": 39
