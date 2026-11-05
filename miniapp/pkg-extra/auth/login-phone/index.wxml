@@ -1,7 +1,7 @@
 <!-- pages/auth/login-phone · 手机号登录(二级页) -->
 <view class="lp safe-bottom {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <nav-bar title="手机号登录" show-back="{{true}}">
-    <text class="tap-scale lp-help" catchtap="onHelp">帮助</text>
+    <text class="tap-scale hit-88 lp-help" aria-role="button" catchtap="onHelp">帮助</text>
   </nav-bar>
 
   <view class="lp-body">

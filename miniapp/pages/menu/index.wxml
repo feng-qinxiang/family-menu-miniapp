@@ -2,14 +2,14 @@
   <view class="cpt-head" style="padding-top: {{capsuleTop}};">
     <view class="cpt-row">
       <view class="cpt-titles"><view class="cpt-eyebrow">{{todayLabel}} · 全家一起做</view><view class="cpt-title">今天做什么</view></view>
-      <view class="cpt-action m-add tap-scale" bindtap="goAddRecipe">+ 再点几道</view>
+      <view class="cpt-action m-add tap-scale" bindtap="goAddRecipe" aria-role="button" aria-label="再点几道菜">+ 再点几道</view>
     </view>
     <view class="cpt-sub">点好的菜都在这儿，备好食材，按自己的节奏开火。</view>
   </view>
   <view class="m-sheet">
     <view class="mn-seg">
-      <view class="tap-scale mn-seg-item {{view === 'today' ? 'on' : ''}}" data-view="today" bindtap="switchView">今日三餐</view>
-      <view class="tap-scale mn-seg-item {{view === 'week' ? 'on' : ''}}" data-view="week" bindtap="switchView">本周计划</view>
+      <view class="tap-scale mn-seg-item {{view === 'today' ? 'on' : ''}}" data-view="today" bindtap="switchView" aria-role="button" aria-selected="{{view === 'today'}}">今日三餐</view>
+      <view class="tap-scale mn-seg-item {{view === 'week' ? 'on' : ''}}" data-view="week" bindtap="switchView" aria-role="button" aria-selected="{{view === 'week'}}">本周计划</view>
     </view>
     <state-empty wx:if="{{loadError}}" type="offline" title="菜单没加载出来" desc="{{loadError}}" cta="重新加载" bind:action="retryLoad" />
     <view wx:elif="{{loading}}" class="m-skeleton"><view class="m-skel-card shimmer" /><view class="m-skel-dish shimmer" /><view class="m-skel-dish shimmer" /></view>
@@ -21,13 +21,13 @@
           <view class="m-overview-sub">{{totalCount}} 道已点 · {{cookingCount}} 道制作中</view>
           <view class="m-overview-progress"><text>{{doneCount}} / {{totalCount}} 道已上桌</text><text>{{cookPercent}}%</text></view>
           <view class="m-progress-track"><view class="m-progress-fill" style="width: {{cookPercent}}%;" /></view>
-          <view wx:if="{{doneCount === totalCount}}" class="m-main-action tap-scale" bindtap="goCookLog">回看记录 ›</view><view wx:else class="m-main-action tap-scale" bindtap="goKitchen">进入厨房 ›</view>
+          <view wx:if="{{doneCount === totalCount}}" class="m-main-action tap-scale" bindtap="goCookLog" aria-role="button">回看记录 ›</view><view wx:else class="m-main-action tap-scale" bindtap="goKitchen" aria-role="button">进入厨房 ›</view>
         </view>
       </view>
       <view class="m-quick-row">
-        <view class="m-quick-card tap-scale" bindtap="goShopping"><view class="m-quick-title">买菜清单 <text class="m-arrow">›</text></view><view class="m-quick-sub">{{basketText}}</view></view>
-        <view class="m-quick-card tap-scale" bindtap="goPantry"><view class="m-quick-title">我的冰箱 <text class="m-arrow">›</text></view><view class="m-quick-sub">{{pantryReadyCount ? pantryReadyCount + ' 项可用' : '先看看有啥'}}</view></view>
-        <view class="m-quick-card tap-scale" bindtap="goWeekly"><view class="m-quick-title">周菜单 <text class="m-arrow">›</text></view><view class="m-quick-sub">{{weeklyDays.length ? '查看本周计划' : '提前安排'}}</view></view>
+        <view class="m-quick-card tap-scale" bindtap="goShopping" aria-role="button" aria-label="买菜清单，{{basketText}}"><view class="m-quick-title">买菜清单 <text class="m-arrow">›</text></view><view class="m-quick-sub">{{basketText}}</view></view>
+        <view class="m-quick-card tap-scale" bindtap="goPantry" aria-role="button" aria-label="我的冰箱"><view class="m-quick-title">我的冰箱 <text class="m-arrow">›</text></view><view class="m-quick-sub">{{pantryReadyCount ? pantryReadyCount + ' 项可用' : '先看看有啥'}}</view></view>
+        <view class="m-quick-card tap-scale" bindtap="goWeekly" aria-role="button" aria-label="周菜单"><view class="m-quick-title">周菜单 <text class="m-arrow">›</text></view><view class="m-quick-sub">{{weeklyDays.length ? '查看本周计划' : '提前安排'}}</view></view>
       </view>
       <block wx:if="{{mealGroups.length}}">
         <section-head eyebrow="从待做到上桌" title="点好的菜" hint="共 {{totalCount}} 道" />
@@ -35,20 +35,20 @@
           <view class="m-meal-label">{{group.label}}<text class="m-meal-count">{{group.items.length}} 道菜</text></view>
           <view class="m-cook-order" wx:if="{{group.cookOrderText}}"><text class="m-co-tag">先慢后快</text><text class="m-co-text">{{group.cookOrderText}}</text></view>
           <view class="m-row {{dish.status === 'done' ? 'is-done' : ''}} {{dish.status === 'cooking' ? 'is-cooking' : ''}}" wx:for="{{group.items}}" wx:for-item="dish" wx:for-index="dishIndex" wx:key="recipeId">
-            <view class="m-dish-top tap-scale" data-id="{{dish.recipeId}}" bindtap="goDetail">
+            <view class="m-dish-top tap-scale" data-id="{{dish.recipeId}}" bindtap="goDetail" aria-role="button" aria-label="查看{{dish.recipe.title}}菜谱">
               <image class="m-thumb" src="{{dish.dishImage}}" mode="aspectFill" lazy-load data-group="{{gIdx}}" data-dish="{{dishIndex}}" data-seed="{{dish.recipeId}}" binderror="onImgError" />
               <view class="m-rmid"><view class="m-rname">{{dish.recipe.title}}</view><view class="m-rsub">{{dish.recipe.cuisine || '家常'}} · {{dish.recipe.timeCost || '--'}} 分钟<text wx:if="{{dish.recipe.servings}}"> · {{dish.recipe.servings}} 人份</text></view><view class="m-rby" wx:if="{{dish.addedByName}}">{{dish.addedByName}} 想吃</view></view>
               <text class="m-state {{dish.status === 'cooking' ? 'st-cooking' : (dish.status === 'done' ? 'st-done' : '')}}">{{dish.status === 'cooking' ? '制作中' : (dish.status === 'done' ? '已上桌' : '待做')}}</text>
             </view>
-            <view class="m-dish-bottom"><view class="m-remove tap-scale" data-id="{{dish.recipeId}}" data-meal="{{dish.mealType}}" bindtap="removeItem">移出菜单</view><view class="m-acts" wx:if="{{dish.status !== 'done'}}"><view class="m-act m-act-done tap-scale" data-id="{{dish.recipeId}}" data-item="{{dish.itemId}}" bindtap="markCooked">直接上桌</view><view class="m-act m-act-cook tap-scale" data-id="{{dish.recipeId}}" data-item="{{dish.itemId}}" bindtap="startCook">{{dish.status === 'cooking' ? '继续做菜' : '开始做菜'}}</view></view><view class="m-done-note" wx:else>这道菜做好啦 ✓</view></view>
+            <view class="m-dish-bottom"><view class="m-remove tap-scale" data-id="{{dish.recipeId}}" data-meal="{{dish.mealType}}" bindtap="removeItem" aria-role="button" aria-label="把{{dish.recipe.title}}移出菜单">移出菜单</view><view class="m-acts" wx:if="{{dish.status !== 'done'}}"><view class="m-act m-act-done tap-scale" data-id="{{dish.recipeId}}" data-item="{{dish.itemId}}" bindtap="markCooked" aria-role="button" aria-label="{{dish.recipe.title}}直接上桌">直接上桌</view><view class="m-act m-act-cook tap-scale" data-id="{{dish.recipeId}}" data-item="{{dish.itemId}}" bindtap="startCook" aria-role="button" aria-label="{{dish.status === 'cooking' ? '继续做' : '开始做'}}{{dish.recipe.title}}">{{dish.status === 'cooking' ? '继续做菜' : '开始做菜'}}</view></view><view class="m-done-note" wx:else>这道菜做好啦 ✓</view></view>
           </view>
         </view>
-        <view class="m-shopping-build tap-scale" bindtap="buildShopping"><view><view class="m-quick-title">按菜单整理食材</view><view class="m-quick-sub">将点好的菜汇总成一份买菜清单</view></view><text class="m-arrow">生成清单 ›</text></view>
+        <view class="m-shopping-build tap-scale" bindtap="buildShopping" aria-role="button" aria-label="按菜单生成买菜清单"><view><view class="m-quick-title">按菜单整理食材</view><view class="m-quick-sub">将点好的菜汇总成一份买菜清单</view></view><text class="m-arrow">生成清单 ›</text></view>
       </block>
       <state-empty wx:else type="pop" title="想吃的菜，先点上" desc="选好菜会带着图片来到这里，备菜、做菜、上桌一步步完成。" cta="去挑几道菜" bind:action="goAddRecipe" />
     </block>
     <block wx:elif="{{view === 'week'}}">
-      <view class="m-week-card card" wx:if="{{weeklyDays.length}}"><view class="m-week-head"><view class="m-overview-title">这一周，好好吃饭</view><view class="m-week-link tap-scale" bindtap="goWeekly">完整计划 ›</view></view><view class="m-wk-item tap-scale" wx:for="{{weeklyDays}}" wx:key="date" bindtap="goWeekly"><view class="m-wk-day"><view>{{item.d1}}</view><text>{{item.d2}}</text></view><view class="m-wk-recipe">{{item.recipeText}}</view><text class="m-wk-count">{{item.recipeCount}} 道</text></view><view class="m-week-regenerate tap-scale" bindtap="genWeekly">重新生成本周计划</view></view>
+      <view class="m-week-card card" wx:if="{{weeklyDays.length}}"><view class="m-week-head"><view class="m-overview-title">这一周，好好吃饭</view><view class="m-week-link tap-scale" bindtap="goWeekly" aria-role="button">完整计划 ›</view></view><view class="m-wk-item tap-scale" wx:for="{{weeklyDays}}" wx:key="date" bindtap="goWeekly"><view class="m-wk-day"><view>{{item.d1}}</view><text>{{item.d2}}</text></view><view class="m-wk-recipe">{{item.recipeText}}</view><text class="m-wk-count">{{item.recipeCount}} 道</text></view><view class="m-week-regenerate tap-scale" bindtap="genWeekly" aria-role="button">重新生成本周计划</view></view>
       <state-empty wx:else type="gold" title="下周吃什么，慢慢安排" desc="按家人的偏好排好七天，也可以自己调整每一天。" cta="生成本周菜单" bind:action="genWeekly" />
     </block>
   </view>

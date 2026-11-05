@@ -155,7 +155,7 @@
   justify-content: center;
   gap: 18rpx;
   height: 104rpx;
-  border-radius: var(--r-pill);
+  border-radius: var(--r-card);
   background: var(--pop);
   color: var(--anchor-contrast);
   font-size: calc(32rpx * var(--fs-mul, 1));

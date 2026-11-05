@@ -11,8 +11,8 @@
   <view class="mkt-sheet">
     <!-- 顶部 tab：待买 / 家里已有 -->
     <view class="sp-seg">
-      <view class="tap-scale sp-seg-item {{tab === 'shopping' ? 'on' : ''}}" data-tab="shopping" bindtap="switchTab">待买清单</view>
-      <view class="tap-scale sp-seg-item {{tab === 'pantry' ? 'on' : ''}}" data-tab="pantry" bindtap="switchTab">家里已有 {{pantryCount ? '(' + pantryCount + ')' : ''}}</view>
+      <view class="tap-scale sp-seg-item {{tab === 'shopping' ? 'on' : ''}}" data-tab="shopping" bindtap="switchTab" aria-role="tab" aria-selected="{{tab === 'shopping'}}">待买清单</view>
+      <view class="tap-scale sp-seg-item {{tab === 'pantry' ? 'on' : ''}}" data-tab="pantry" bindtap="switchTab" aria-role="tab" aria-selected="{{tab === 'pantry'}}">家里已有 {{pantryCount ? '(' + pantryCount + ')' : ''}}</view>
     </view>
 
     <view class="mkt-photo-note" wx:if="{{ingredientPhotosFailed}}">食材图片暂未同步</view>
@@ -130,7 +130,7 @@
 
       <scroll-view class="mkt-quicks" scroll-x enhanced show-scrollbar="{{false}}">
         <view class="mkt-quicks-inner">
-          <view class="mkt-quick tap-scale {{addItemSubmitting ? 'is-busy' : ''}}" wx:for="{{quickItems}}" wx:key="ingredientName" data-name="{{item.ingredientName}}" data-amount="{{item.amount}}" data-unit="{{item.unit}}" bindtap="addQuickItem">
+          <view class="mkt-quick tap-scale {{addItemSubmitting ? 'is-busy' : ''}}" wx:for="{{quickItems}}" wx:key="ingredientName" data-name="{{item.ingredientName}}" data-amount="{{item.amount}}" data-unit="{{item.unit}}" bindtap="addQuickItem" aria-role="button" aria-label="加购{{item.ingredientName}}">
             <text class="plus">＋</text>{{item.ingredientName}}
           </view>
         </view>
@@ -138,7 +138,7 @@
 
       <!-- 重新整理 -->
       <view class="mkt-pad mkt-refresh-wrap">
-        <view class="btn btn-dark btn-block tap-scale" bindtap="refreshList">按今日菜单重新整理</view>
+        <view class="btn btn-dark btn-block tap-scale" bindtap="refreshList" aria-role="button">按今日菜单重新整理</view>
       </view>
     </block>
     </block>
@@ -164,7 +164,7 @@
               <text class="mkt-photo-hint">{{it.cover && !it.coverBroken ? '换图' : '拍照'}}</text>
               </view>
               <view class="sp-pitem-copy"><view class="sp-pitem-name">{{it.ingredientName || it.name}}</view><view class="sp-pitem-qty">{{it.amount || ''}} {{it.unit || ''}}</view></view>
-              <view class="sp-pitem-del tap-scale" data-id="{{it.id || it.pantryItemId}}" catchtap="removePantryEntry">×</view>
+              <view class="sp-pitem-del tap-scale" data-id="{{it.id || it.pantryItemId}}" catchtap="removePantryEntry" aria-role="button" aria-label="移除{{it.ingredientName || it.name}}">×</view>
             </view>
           </view>
         </view>
@@ -173,7 +173,7 @@
         </view>
 
         <!-- 添加入口 -->
-        <view class="sp-pantry-add-btn tap-scale" bindtap="togglePantryForm">
+        <view class="sp-pantry-add-btn tap-scale" bindtap="togglePantryForm" aria-role="button" aria-expanded="{{showPantryForm}}">
           {{showPantryForm ? '收起' : '+ 添加食材'}}
         </view>
         <view class="sp-pantry-form" wx:if="{{showPantryForm}}">
@@ -183,7 +183,7 @@
             value="{{newPantryItem.amount}}" data-field="amount" bindinput="onPantryInput" />
           <input class="mkt-add-input sm" placeholder="单位" placeholder-class="mkt-ph"
             value="{{newPantryItem.unit}}" data-field="unit" bindinput="onPantryInput" />
-          <view class="mkt-addbtn tap-scale" bindtap="addPantryEntry">记入</view>
+          <view class="mkt-addbtn tap-scale" bindtap="addPantryEntry" aria-role="button">记入</view>
         </view>
       </view>
     </block>

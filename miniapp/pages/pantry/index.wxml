@@ -77,14 +77,14 @@
         <picker mode="date" value="{{newItem.expiresAt}}" bindchange="onNewInput" data-field="expiresAt">
           <view class="af-input af-date">到期日 <text>{{newItem.expiresAt || '选填 · 点击选择日期'}}</text></view>
         </picker>
-        <view class="tap-scale btn btn-pop btn-block af-submit {{adding ? 'is-busy' : ''}}" bindtap="addItem">{{adding ? '保存中…' : '记入冰箱'}}</view>
+        <view class="tap-scale btn btn-pop btn-block af-submit {{adding ? 'is-busy' : ''}}" bindtap="addItem" aria-role="button">{{adding ? '保存中…' : '记入冰箱'}}</view>
       </view>
     </block>
 
     <view class="pantry-filters" wx:if="{{loaded && !loadError && pantrySummary.count}}">
-      <view class="pantry-filter tap-scale {{pantryFilter === 'all' ? 'on' : ''}}" data-filter="all" bindtap="selectPantryFilter" aria-role="button">全部 {{pantrySummary.count}}</view>
-      <view class="pantry-filter tap-scale {{pantryFilter === 'expiring' ? 'on' : ''}}" data-filter="expiring" bindtap="selectPantryFilter" aria-role="button">临期 {{pantrySummary.expiringCount}}</view>
-      <view class="pantry-filter tap-scale {{pantryFilter === 'expired' ? 'on' : ''}}" data-filter="expired" bindtap="selectPantryFilter" aria-role="button">过期 {{pantrySummary.expiredCount}}</view>
+      <view class="pantry-filter tap-scale {{pantryFilter === 'all' ? 'on' : ''}}" data-filter="all" bindtap="selectPantryFilter" aria-role="button" aria-selected="{{pantryFilter === 'all'}}">全部 {{pantrySummary.count}}</view>
+      <view class="pantry-filter tap-scale {{pantryFilter === 'expiring' ? 'on' : ''}}" data-filter="expiring" bindtap="selectPantryFilter" aria-role="button" aria-selected="{{pantryFilter === 'expiring'}}">临期 {{pantrySummary.expiringCount}}</view>
+      <view class="pantry-filter tap-scale {{pantryFilter === 'expired' ? 'on' : ''}}" data-filter="expired" bindtap="selectPantryFilter" aria-role="button" aria-selected="{{pantryFilter === 'expired'}}">过期 {{pantrySummary.expiredCount}}</view>
     </view>
     <view class="pantry-date-note" wx:if="{{loaded && !loadError && pantrySummary.undatedCount}}">{{pantrySummary.undatedCount}} 种未填到期日</view>
     <view class="pantry-photo-note" wx:if="{{loaded && !loadError && ingredientPhotosFailed}}">食材图片暂未同步</view>
@@ -154,6 +154,8 @@
       wx:key="id"
       bindtap="onMatchTap"
       data-id="{{item.id}}"
+      aria-role="button"
+      aria-label="查看{{item.title}}的用料"
     >
       <view class="mc-top">
         <image class="mc-ph" src="{{item.coverImage}}" mode="aspectFill" lazy-load />
@@ -183,11 +185,11 @@
       <picker class="af-date-picker" mode="date" value="{{editDraft.expiresAt}}" bindchange="onEditInput" data-field="expiresAt">
         <view class="af-input af-date">到期日 <text>{{editDraft.expiresAt || '选填 · 点击选择日期'}}</text></view>
       </picker>
-      <view wx:if="{{editDraft.expiresAt}}" class="af-date-clear tap-scale" bindtap="clearExpiry" aria-role="button">清除</view>
+      <view wx:if="{{editDraft.expiresAt}}" class="af-date-clear tap-scale" bindtap="clearExpiry" aria-role="button" aria-label="清除到期日">清除</view>
     </view>
     <view class="af-actions">
-      <view class="btn btn-ghost af-cancel tap-scale" catchtap="closeEditSheet">取消</view>
-      <view class="btn btn-pop af-save tap-scale {{editing ? 'is-busy' : ''}}" catchtap="saveEdit">{{editing ? '保存中…' : '保存'}}</view>
+      <view class="btn btn-ghost af-cancel tap-scale" catchtap="closeEditSheet" aria-role="button">取消</view>
+      <view class="btn btn-pop af-save tap-scale {{editing ? 'is-busy' : ''}}" catchtap="saveEdit" aria-role="button">{{editing ? '保存中…' : '保存'}}</view>
     </view>
   </state-sheet>
 </view>

@@ -208,8 +208,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20rpx 30rpx;
-  border-radius: var(--r-md);
+  padding: 20rpx 30rpx;   /* 例外：这是按钮不是卡表面，左右留白跟字号走 */
+  border-radius: var(--r-card);   /* 实心主按钮按全站约定用卡片圆角 */
 }
 .mkt-add-footer .mkt-addbtn { padding: 16rpx 22rpx; }
 
@@ -222,7 +222,11 @@
   font-weight: 700;
   color: var(--mut-strong);
   background: var(--paper-2);
-  padding: 18rpx 30rpx;
+  box-sizing: border-box;
+  min-height: var(--tap-min);   /* 原 18rpx 上下内边距只有约 70rpx 高 */
+  display: inline-flex;
+  align-items: center;
+  padding: 0 30rpx;
   border-radius: var(--r-pill);
   white-space: nowrap;
 }
@@ -317,7 +321,7 @@
   border-radius: var(--r-card);
   background: var(--anchor);
   color: var(--anchor-contrast);
-  font-size: var(--fs-cap);
+  font-size: var(--fs-btn);   /* 实心按钮字号对齐 .btn */
   font-weight: 800;
   display: flex; align-items: center; justify-content: center;
 }
@@ -327,7 +331,8 @@
   margin-top: 18rpx;
   flex-wrap: wrap;
 }
-.mkt-photo { position: relative; flex: none; width: var(--tile-list-wide); height: var(--tile-list-wide); overflow: hidden; border-radius: var(--r-md); }
+/* 内层圆角不大于外层 .mkt-item（--r-card） */
+.mkt-photo { position: relative; flex: none; width: var(--tile-list-wide); height: var(--tile-list-wide); overflow: hidden; border-radius: var(--r-sm); }
 .mkt-photo .mkt-thumb { width: 100%; height: 100%; padding: 0 12rpx; box-sizing: border-box; text-align: center; word-break: break-all; font-size: var(--fs-lg); line-height: 1.4; }
 .mkt-photo image.mkt-thumb { padding: 0; }
 .mkt-photo .mkt-thumb--letter { padding-bottom: 36rpx; }

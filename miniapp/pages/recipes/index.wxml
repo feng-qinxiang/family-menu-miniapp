@@ -19,7 +19,7 @@
       <view class="rx-search">
         <view class="rx-search-ico"></view>
         <input class="rx-search-input" placeholder="搜菜名、菜系、口味" placeholder-class="rx-search-ph"
-          value="{{searchText}}" bindinput="onSearchInput" bindfocus="onSearchFocus" bindblur="onSearchBlur" />
+          value="{{searchText}}" aria-label="搜索菜谱" bindinput="onSearchInput" bindfocus="onSearchFocus" bindblur="onSearchBlur" />
       </view>
       <view class="rx-filter-btn tap-scale {{showAdvFilter || advFilter.maxTime || advFilter.minServings ? 'on' : ''}}"
         bindtap="toggleAdvFilter" aria-role="button" aria-expanded="{{showAdvFilter}}" aria-label="点菜条件：耗时、人份">
@@ -203,7 +203,7 @@
     </view>
 
     <!-- 上拉加载 -->
-    <view wx:if="{{!loading && hasMore}}" class="tap-scale rx-loadmore" bindtap="loadMore">
+    <view wx:if="{{!loading && hasMore}}" class="tap-scale rx-loadmore" bindtap="loadMore" aria-role="button">
       <view class="rx-loadmore-chev"></view>
       上拉加载更多 · 还有 {{remainCount}} 道
     </view>
@@ -216,7 +216,7 @@
     <!-- 空状态 -->
     <view wx:elif="{{!loading && !filteredRecipes.length && !pickerOpen}}">
       <state-empty type="search" title="没有符合条件的菜谱" desc="换个来源或菜系，再试试" cta="清空筛选" bindaction="clearFilter">
-        <view class="rx-empty-extra tap-scale" bindtap="goCreate">去新建一道</view>
+        <view class="rx-empty-extra tap-scale" bindtap="goCreate" aria-role="button">去新建一道</view>
       </state-empty>
     </view>
       </view>
@@ -251,13 +251,13 @@
 
   <!-- ===== 餐盘 tray：有菜才出现 ===== -->
   <view class="rx-tray" wx:if="{{!loading && menuTray.count}}">
-    <view class="tap-scale rx-tray-badge" bindtap="goMenu">{{menuTray.count}}</view>
-    <view class="tap-scale rx-tray-copy" bindtap="goMenu">
+    <view class="tap-scale rx-tray-badge" bindtap="goMenu" aria-role="button" aria-label="今日餐盘 {{menuTray.count}} 道">{{menuTray.count}}</view>
+    <view class="tap-scale rx-tray-copy" bindtap="goMenu" aria-role="button">
       <view class="rx-tray-t">今日餐盘</view>
       <view class="rx-tray-s">{{menuTray.names}}</view>
     </view>
-    <view class="rx-tray-mini tap-scale" wx:if="{{menuTray.shoppingCount}}" catchtap="goShopping">买 {{menuTray.shoppingCount}}</view>
-    <view class="rx-tray-go tap-scale" catchtap="goMenu">
+    <view class="rx-tray-mini tap-scale" wx:if="{{menuTray.shoppingCount}}" catchtap="goShopping" aria-role="button" aria-label="买菜清单待买 {{menuTray.shoppingCount}} 样">买 {{menuTray.shoppingCount}}</view>
+    <view class="rx-tray-go tap-scale" catchtap="goMenu" aria-role="button" aria-label="去点单">
       去点单
       <view class="rx-tray-arrow"></view>
     </view>

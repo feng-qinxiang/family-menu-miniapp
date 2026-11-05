@@ -151,8 +151,8 @@
   align-items: center;
   justify-content: center;
   gap: 18rpx;
-  padding: 32rpx;
-  border-radius: var(--r-md);
+  padding: 32rpx 0;
+  border-radius: var(--r-card);
   font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
   letter-spacing: 1rpx;
@@ -236,8 +236,8 @@
   align-items: center;
   justify-content: center;
   gap: 18rpx;
-  padding: 30rpx;
-  border-radius: var(--r-md);
+  padding: 30rpx 0;
+  border-radius: var(--r-card);
   font-size: calc(28rpx * var(--fs-mul, 1));
   font-weight: 800;
   letter-spacing: 1rpx;

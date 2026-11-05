@@ -77,7 +77,7 @@
     </scroll-view>
 
     <view class="cook-dock">
-      <view wx:if="{{bgIdx >= 0}}" class="bgchip tap-scale" catchtap="jumpToBgStep" role="button" aria-label="返回{{bgName}}，剩余{{bgText}}">
+      <view wx:if="{{bgIdx >= 0}}" class="bgchip tap-scale" catchtap="jumpToBgStep" aria-role="button" aria-label="返回{{bgName}}，剩余{{bgText}}">
         <view class="ic-clock-sm bgchip-ic"></view>
         <text class="bgchip-tx">{{bgName}} · {{bgText}}</text>
         <text wx:if="{{bgExtra}}" class="bgchip-more">另有 {{bgExtra}} 步</text>
@@ -85,21 +85,21 @@
       </view>
       <!-- 常驻计时在步骤内容下方、翻步操作上方。 -->
       <view wx:if="{{hasTimer}}" class="timer {{running ? 'is-running' : ''}}">
-        <view class="tap-scale tl" catchtap="pickDuration" role="button" aria-label="更换本步计时时长">
+        <view class="tap-scale tl" catchtap="pickDuration" aria-role="button" aria-label="更换本步计时时长">
           <view class="cap">{{running ? '计时中' : (timerLeft === 0 ? '计时结束' : (timerLeft < timerTotal ? '已暂停' : '这一步计时'))}}<text class="cap-pick">换时长 ›</text></view>
           <view class="num">{{timerText}}</view>
         </view>
         <view class="timer-acts">
-          <view class="tbtn ghost tap-scale" catchtap="resetTimer" role="button" aria-label="重置本步计时">
+          <view class="tbtn ghost tap-scale" catchtap="resetTimer" aria-role="button" aria-label="重置本步计时">
             <text>重置</text>
           </view>
-          <view class="tbtn tap-scale" catchtap="toggleTimer" role="button" aria-label="{{running ? '暂停计时' : '开始或继续计时'}}">
+          <view class="tbtn tap-scale" catchtap="toggleTimer" aria-role="button" aria-label="{{running ? '暂停计时' : '开始或继续计时'}}">
             <text>{{running ? '暂停' : (timerLeft < timerTotal && timerLeft > 0 ? '继续' : '开始')}}</text>
           </view>
         </view>
       </view>
 
-      <view wx:else class="timer-add tap-scale" catchtap="pickDuration" role="button" aria-label="为这一步添加计时">
+      <view wx:else class="timer-add tap-scale" catchtap="pickDuration" aria-role="button" aria-label="为这一步添加计时">
         <view class="ic-clock-sm"></view><text>这一步需要计时？</text><text class="timer-add-action">＋ 添加计时</text>
       </view>
 

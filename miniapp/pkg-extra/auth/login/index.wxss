@@ -135,8 +135,8 @@
 /* 微信登录主按钮（复用 .btn-wx 全局基色，本页扩展尺寸/阴影） */
 .login-wx {
   width: 100%;
-  border-radius: 35rpx;
-  padding: 33rpx;
+  border-radius: var(--r-card);
+  padding: 33rpx 0;
   font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
   letter-spacing: 1rpx;
@@ -157,8 +157,8 @@
   background: var(--c-surface);
   color: var(--ink-deep);
   border: 3rpx solid var(--paper-2);
-  border-radius: 35rpx;
-  padding: 31rpx;
+  border-radius: var(--r-card);
+  padding: 31rpx 0;
   font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
   display: flex;

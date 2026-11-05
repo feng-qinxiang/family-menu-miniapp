@@ -508,7 +508,7 @@
   justify-content: center;
   gap: 12rpx;
   border-radius: var(--r-card);
-  background: var(--pop);
+  background: var(--anchor);   /* 首屏已有 hero「加到菜单」一颗红，这里降为深色锚点，同屏只留一颗红 */
   color: var(--anchor-contrast);
   font-size: var(--fs-btn);
   font-weight: 800;
@@ -828,8 +828,8 @@
 .fp-wish-confirm {
   margin-top: 22rpx;
   min-height: 44px;
-  padding: 12rpx 24rpx;
-  border-radius: var(--r-pill);
+  padding: 12rpx var(--pad-card-sm);
+  border-radius: var(--r-card);   /* 实心主按钮统一走 --r-card */
   background: var(--anchor);
   color: var(--anchor-contrast);
   font-size: calc(28rpx * var(--fs-mul, 1));
@@ -911,8 +911,10 @@
 .mh-empty-go {
   display: inline-flex;
   align-items: center;
-  padding: 20rpx 44rpx;
-  border-radius: var(--r-pill);
+  min-height: 44px;
+  box-sizing: border-box;
+  padding: 20rpx 44rpx;   /* 例外：这是实心按钮不是卡，左右留白跟字号走 */
+  border-radius: var(--r-card);   /* 实心主按钮统一走 --r-card */
   background: var(--pop);
   color: var(--anchor-contrast);
   font-size: calc(28rpx * var(--fs-mul, 1));
@@ -1039,7 +1041,7 @@
 .wish-btn-ok {
   flex: 1;
   height: 100rpx;
-  border-radius: 28rpx;
+  border-radius: var(--r-card);   /* 弹窗块里已声明 --r-card 副本 */
   font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
   letter-spacing: 0.6rpx;

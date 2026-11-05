@@ -21,7 +21,7 @@
 .m-progress-den { font-size: var(--fs-body); color: var(--mut); font-weight: 500; }
 .m-progress-track { height: 10rpx; background: var(--paper-2); border-radius: var(--r-pill); overflow: hidden; margin: 24rpx 0 16rpx; }
 .m-progress-fill { height: 100%; background: var(--pop); border-radius: var(--r-pill); }
-.m-main-action { display: flex; align-items: center; justify-content: center; min-height: 88rpx; padding: 0 30rpx; background: var(--pop); color: var(--anchor-contrast); font-size: var(--fs-body); font-weight: 700; border-radius: var(--r-pill); }
+.m-main-action { display: flex; align-items: center; justify-content: center; min-height: 88rpx; padding: 0 30rpx; /* 例外：按钮不是卡，左右留白跟字号走 */ background: var(--pop); color: var(--anchor-contrast); font-size: var(--fs-body); font-weight: 700; border-radius: var(--r-card); /* 实心主按钮统一走 --r-card */ }
 .m-quick-row { display: flex; gap: 16rpx; margin: 24rpx 0 8rpx; }
 .m-quick-card { flex: 1; min-width: 0; background: var(--c-surface); padding: 22rpx 16rpx; border: var(--bd-card); border-radius: var(--r-md); }
 .m-quick-title { color: var(--ink); font-size: var(--fs-sub); font-weight: 700; line-height: 1.5; }
@@ -47,8 +47,8 @@
 .m-dish-bottom { display: flex; align-items: center; justify-content: space-between; gap: 12rpx; border-top: 1rpx solid var(--line); padding: 14rpx 0; margin-top: 22rpx; }
 .m-remove { flex: none; display: flex; align-items: center; min-height: 88rpx; font-size: var(--fs-cap); color: var(--mut); }
 .m-acts { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 14rpx; }
-.m-act { min-height: 88rpx; box-sizing: border-box; display: flex; align-items: center; justify-content: center; padding: 0 22rpx; border-radius: var(--r-pill); font-size: var(--fs-sub); font-weight: 700; }
-.m-act-cook { background: var(--pop); color: var(--anchor-contrast); }
+.m-act { min-height: 88rpx; box-sizing: border-box; display: flex; align-items: center; justify-content: center; padding: 0 22rpx; /* 例外：按钮不是卡，左右留白跟字号走 */ border-radius: var(--r-card); font-size: var(--fs-sub); font-weight: 700; }
+.m-act-cook { background: var(--anchor); color: var(--anchor-contrast); }   /* 每道菜一颗：降为深色锚点，同屏只留顶部「进入厨房」一颗红 */
 .m-act-done { color: var(--ink); background: var(--paper-2); }
 .m-done-note { color: var(--pine); font-size: var(--fs-sub); }
 .m-shopping-build { display: flex; align-items: center; justify-content: space-between; gap: 24rpx; padding: 28rpx 0; border-top: 1rpx solid var(--line); }
@@ -61,7 +61,7 @@
 .m-wk-day text { color: var(--mut); font-size: var(--fs-cap); font-weight: 500; }
 .m-wk-recipe { flex: 1; min-width: 0; color: var(--ink); font-size: var(--fs-sub); line-height: 1.6; }
 .m-wk-count { color: var(--mut); font-size: var(--fs-cap); flex: none; }
-.m-week-regenerate { padding-top: 24rpx; min-height: 64rpx; text-align: center; color: var(--mut); font-size: var(--fs-sub); }
+.m-week-regenerate { margin-top: 12rpx; min-height: var(--tap-min); display: flex; align-items: center; justify-content: center; color: var(--mut); font-size: var(--fs-sub); }
 .m-skel-card { height: 240rpx; background: var(--skeleton); border-radius: var(--r-md); margin-bottom: 24rpx; }
 .m-skel-dish { height: 300rpx; background: var(--skeleton); border-radius: var(--r-md); margin-bottom: 20rpx; }
 .font-lg .m-dish-bottom { flex-wrap: wrap; }

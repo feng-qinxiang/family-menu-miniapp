@@ -17,7 +17,8 @@
   display: flex; align-items: center; gap: 6rpx;
   background: var(--pop); color: var(--anchor-contrast);
   font-size: var(--fs-sub); font-weight: 800;
-  padding: 14rpx 26rpx; border-radius: var(--r-pill);
+  padding: 14rpx 26rpx;   /* 例外：这是实心按钮不是卡，左右留白跟字号走 */
+  border-radius: var(--r-card);   /* 实心主按钮统一走 --r-card，不用胶囊 */
   box-shadow: var(--sh-pop);
 }
 .rx-create-plus { font-size: var(--fs-lg); font-weight: 700; line-height: 1; }
@@ -130,7 +131,7 @@
 .rx-picked-ready { margin-top: 4rpx; font-size: var(--fs-cap); font-weight: 700; color: var(--pine); }
 .rx-picked-priority { margin-top: 12rpx; color: var(--pop-deep); font-size: var(--fs-cap); line-height: 1.5; font-weight: 500; }
 .rx-picker-actions { display: flex; align-items: stretch; gap: 16rpx; margin-top: 20rpx; }
-.rx-picker-next, .rx-picker-add { min-height: 88rpx; flex: 1; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; border-radius: var(--r-md); padding: 0 12rpx; font-size: var(--fs-sub); font-weight: 700; }
+.rx-picker-next, .rx-picker-add { min-height: 88rpx; flex: 1; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; border-radius: var(--r-card); padding: 0 12rpx; /* 例外：并排两颗按钮，不是卡 */ font-size: var(--fs-sub); font-weight: 700; }
 .rx-picker-next { background: var(--paper); color: var(--ink); flex-direction: column; padding: 10rpx 12rpx; }
 .rx-picker-next text { display: block; font-size: var(--fs-mini); color: var(--mut-strong); margin-top: 2rpx; }
 .rx-picker-add { background: var(--pop); color: var(--anchor-contrast); }
@@ -211,7 +212,7 @@
 .rx-request-labels > view > text:last-child { flex: 1; min-width: 0; }
 .rx-request-warning { color: var(--pop-deep); font-size: var(--fs-sub); line-height: 1.6; padding: 16rpx 20rpx; border-left: 4rpx solid var(--pop-deep); background: var(--pop-soft); margin: 0 0 24rpx; }
 .rx-request-note { margin: 12rpx 0 20rpx; font-size: var(--fs-sub); }
-.rx-request-submit { min-height: 96rpx; display: flex; align-items: center; justify-content: center; background: var(--pine); color: #fff; border-radius: var(--r-md); font-size: var(--fs-body); font-weight: 600; }
+.rx-request-submit { min-height: 96rpx; display: flex; align-items: center; justify-content: center; background: var(--pine); color: var(--anchor-contrast); border-radius: var(--r-card); font-size: var(--fs-body); font-weight: 600; }
 .rx-request-submit::after { border: 0; }
 .rx-request-submit[disabled] { background: var(--paper-2); color: var(--mut-strong); }
 .rx-card-slot { min-width: 0; }
@@ -260,7 +261,7 @@
 }
 .rx-tray-go {
   flex: none; display: flex; align-items: center; gap: 10rpx;
-  min-height: 88rpx; box-sizing: border-box; padding: 0 28rpx; border-radius: var(--r-pill);
+  min-height: 88rpx; box-sizing: border-box; padding: 0 28rpx; border-radius: var(--r-card);   /* 例外：浮条按钮不是卡 */
   background: var(--anchor-contrast); color: var(--anchor); font-size: var(--fs-sub); font-weight: 800;
 }
 /* CSS 画的箭头，颜色跟文字走（原来是写死白色描边的 SVG，换浅底后会看不见） */

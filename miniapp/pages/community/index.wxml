@@ -10,7 +10,7 @@
         <view class="cpt-titles">
           <view class="cpt-title">邻里厨房</view>
         </view>
-        <view class="cpt-action cm-post-btn tap-scale" catchtap="togglePostForm">+ 发帖</view>
+        <view class="cpt-action cm-post-btn tap-scale" catchtap="togglePostForm" aria-role="button" aria-label="发帖">+ 发帖</view>
       </view>
       <view class="cpt-sub">晒一餐，聊做法，把好菜点回家。</view>
     </view>
@@ -20,11 +20,11 @@
         <view class="topics" wx:if="{{hotTopics.length || currentTag}}">
           <scroll-view scroll-x class="topic-scroll" show-scrollbar="{{false}}">
             <view class="tchips">
-              <view class="tchip tap-scale {{!currentTag ? 'on' : ''}}" bindtap="clearTopic" aria-role="button">全部</view>
+              <view class="tchip tap-scale {{!currentTag ? 'on' : ''}}" bindtap="clearTopic" aria-role="button"><text class="tt">全部</text></view>
               <view class="tchip tap-scale {{currentTag === item.tag ? 'on' : ''}}" wx:for="{{hotTopics}}" wx:key="tag" data-tag="{{item.tag}}" bindtap="onTopicTap" aria-role="button"><text class="tt">#{{item.tag}}</text></view>
             </view>
           </scroll-view>
-          <view wx:if="{{currentTag}}" class="tag-filter"><text class="tag-filter-t">当前：#{{currentTag}}</text><view class="tag-filter-x tap-scale" bindtap="clearTopic">看全部 ×</view></view>
+          <view wx:if="{{currentTag}}" class="tag-filter"><text class="tag-filter-t">当前：#{{currentTag}}</text><view class="tag-filter-x tap-scale" bindtap="clearTopic" aria-role="button" aria-label="清空话题筛选，看全部">看全部 ×</view></view>
         </view>
         <view class="cm-feed-head"><text>今日餐桌</text><text wx:if="{{posts.length}}" class="cm-feed-count">{{communitySummary.postCount}} 篇分享</text></view>
 
@@ -90,6 +90,8 @@
               class="tap-scale precipe"
               catchtap="openRecipe"
               data-recipe-id="{{item.recipe.id}}"
+              aria-role="button"
+              aria-label="查看做法：{{item.recipe.title}}"
             >
               <image wx:if="{{item.recipeThumb}}" class="rthumb {{item.recipeThumbBroken ? 'img-broken' : ''}}" src="{{item.recipeThumb}}" mode="aspectFill" lazy-load data-err-key="{{'posts[' + index + '].recipeThumbBroken'}}" binderror="onPhotoError" />
               <view class="rmid">
@@ -111,6 +113,8 @@
                 class="tap-scale pa-btn {{item.liked ? 'on' : ''}}"
                 catchtap="toggleLike"
                 data-id="{{item.id}}"
+                aria-role="button"
+                aria-label="{{item.liked ? '取消点赞' : '点赞'}}，{{item.likeCount}} 赞"
               >
                 <view class="pa-ico ico-heart {{item.liked ? 'on' : ''}}"></view>{{item.likeCount}} 赞
               </view>
@@ -118,10 +122,12 @@
                 class="tap-scale pa-btn {{item.favorited ? 'on' : ''}}"
                 catchtap="toggleFavorite"
                 data-id="{{item.id}}"
+                aria-role="button"
+                aria-label="{{item.favorited ? '取消收藏' : '收藏'}}"
               >
                 <view class="pa-ico ico-star {{item.favorited ? 'on' : ''}}"></view>{{item.favorited ? '已收藏' : '收藏'}}
               </view>
-              <view class="tap-scale pa-btn" catchtap="openPost" data-id="{{item.id}}">
+              <view class="tap-scale pa-btn" catchtap="openPost" data-id="{{item.id}}" aria-role="button" aria-label="{{item.commentCount || 0}} 条评论，查看帖子">
                 <view class="pa-ico ico-chat"></view>{{item.commentCount || 0}} 评论
               </view>
             </view>
@@ -177,15 +183,15 @@
     <view wx:if="{{postForm.recipeId}}" class="pf-dish">
       <view class="pf-dish-tag">这道菜</view>
       <view class="pf-dish-name ellipsis">{{postForm.recipeTitle || '关联的菜'}}</view>
-      <view class="pf-dish-x tap-scale" catchtap="clearPostDish" aria-label="取消关联">×</view>
+      <view class="pf-dish-x tap-scale" catchtap="clearPostDish" aria-role="button" aria-label="取消关联">×</view>
     </view>
     <!-- 配图：最多 6 张，点了就选（相册/相机），可删 -->
     <view class="pf-imgs">
       <view wx:for="{{postForm.images}}" wx:key="*this" class="pf-img">
         <image src="{{item}}" mode="aspectFill" />
-        <view class="pf-img-del tap-scale" data-index="{{index}}" catchtap="removePostImage">×</view>
+        <view class="pf-img-del tap-scale" data-index="{{index}}" catchtap="removePostImage" aria-role="button" aria-label="删除第{{index + 1}}张配图">×</view>
       </view>
-      <view wx:if="{{postForm.images.length < 6}}" class="pf-img-add tap-scale" bindtap="addPostImages">＋</view>
+      <view wx:if="{{postForm.images.length < 6}}" class="pf-img-add tap-scale" bindtap="addPostImages" aria-role="button" aria-label="添加配图">＋</view>
     </view>
     <view class="pf-actions">
       <view class="btn btn-ghost pf-cancel tap-scale" catchtap="togglePostForm">取消</view>
@@ -202,6 +208,8 @@
         class="rp-reason tap-scale {{activeReportReason === item ? 'rp-reason--on' : ''}}"
         catchtap="setReportReason"
         data-reason="{{item}}"
+        aria-role="button"
+        aria-selected="{{activeReportReason === item}}"
       >{{item}}</view>
     </view>
     <textarea

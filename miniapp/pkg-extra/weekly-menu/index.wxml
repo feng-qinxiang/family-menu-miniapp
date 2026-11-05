@@ -9,7 +9,7 @@
         <view class="cpt-eyebrow">给这一周，留点期待</view>
         <view class="cpt-title">一周吃什么</view>
       </view>
-      <view class="cpt-action wm-refresh tap-scale" bindtap="regenerate" role="button" aria-label="重新安排本周菜单">
+      <view class="cpt-action wm-refresh tap-scale" bindtap="regenerate" aria-role="button" aria-label="重新安排本周菜单">
         <view class="wm-refresh-ic"></view>
         <text>重新排</text>
       </view>
@@ -36,7 +36,7 @@
       <view
         class="wm-wb {{item.isToday ? 'today' : ''}} {{activeIndex === item.index ? 'on' : ''}} tap-scale"
         wx:for="{{weekbar}}" wx:key="index" data-index="{{item.index}}" bindtap="onWeekTap"
-        role="button" aria-label="查看周{{item.short}}的菜单{{item.isToday ? '，今天' : ''}}" aria-pressed="{{activeIndex === item.index}}"
+        aria-role="button" aria-label="查看周{{item.short}}的菜单{{item.isToday ? '，今天' : ''}}" aria-pressed="{{activeIndex === item.index}}"
       >
         <text class="wm-wb-d">{{item.short}}</text>
         <text class="wm-wb-date">{{item.dateNumber}}</text>
@@ -91,7 +91,7 @@
         </view>
         <view class="wm-arr"></view>
       </view>
-      <view wx:else class="wm-dish empty tap-scale" bindtap="onAddTap" role="button" aria-label="为午餐挑选菜谱">
+      <view wx:else class="wm-dish empty tap-scale" bindtap="onAddTap" aria-role="button" aria-label="为午餐挑选菜谱">
         <text class="wm-slot">午餐</text><text class="wm-et">还没安排</text><text class="wm-es">＋ 挑一道</text>
       </view>
 
@@ -109,7 +109,7 @@
         </view>
         <view class="wm-arr"></view>
       </view>
-      <view wx:else class="wm-dish empty tap-scale" bindtap="onAddTap" role="button" aria-label="为晚餐挑选菜谱">
+      <view wx:else class="wm-dish empty tap-scale" bindtap="onAddTap" aria-role="button" aria-label="为晚餐挑选菜谱">
         <text class="wm-slot dinner">晚餐</text><text class="wm-et">还没安排</text><text class="wm-es">＋ 挑一道</text>
       </view>
     </view>

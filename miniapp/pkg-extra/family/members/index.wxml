@@ -52,7 +52,9 @@
         <view wx:elif="{{item.isOwner}}" class="mself">创建者</view>
         <view
           wx:elif="{{item.removable}}"
-          class="mremove tap-scale"
+          class="mremove hit-88 tap-scale"
+          aria-role="button"
+          aria-label="移出家庭"
           data-id="{{item.userId}}"
           catchtap="onRemoveTap"
         >

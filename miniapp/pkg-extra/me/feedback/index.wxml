@@ -1,6 +1,6 @@
 <!-- 意见反馈 · 二级页：类型多选 + 描述(500计数) + 图片上传(≤3) + 联系方式 + 提交占位 -->
 <nav-bar title="意见反馈" show-back="{{true}}" status-bar-height="{{statusBarHeight}}">
-  <view class="nav-submit tap-scale" catchtap="onSubmit">提交</view>
+  <view class="nav-submit hit-88 tap-scale" aria-role="button" catchtap="onSubmit">提交</view>
 </nav-bar>
 
 <view class="container fb {{fontScale === 'lg' ? 'font-lg' : ''}}">
@@ -45,11 +45,11 @@
     <view class="uploads">
       <view class="up-img" wx:for="{{images}}" wx:key="*this">
         <image class="up-pic" src="{{item}}" mode="aspectFill"></image>
-        <view class="del tap-scale" data-index="{{index}}" catchtap="onRemoveImage">
+        <view class="del tap-scale" aria-role="button" aria-label="删除这张图片" data-index="{{index}}" catchtap="onRemoveImage">
           <view class="del-x"></view>
         </view>
       </view>
-      <view wx:if="{{images.length < 3}}" class="up-add tap-scale" catchtap="onChooseImage">
+      <view wx:if="{{images.length < 3}}" class="up-add tap-scale" aria-role="button" aria-label="添加图片" catchtap="onChooseImage">
         <view class="up-plus"></view>
         <text class="up-t">{{images.length}}/3</text>
       </view>

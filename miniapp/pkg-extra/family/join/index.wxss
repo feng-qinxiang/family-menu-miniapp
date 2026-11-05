@@ -108,8 +108,8 @@
   box-sizing: border-box;
   background: var(--c-surface);
   border: 3rpx solid var(--paper-2);
-  border-radius: var(--r-md);
-  padding: 28rpx;
+  border-radius: var(--r-card);
+  padding: 28rpx 0;
   font-size: calc(28rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--ink-deep);

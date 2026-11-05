@@ -10,11 +10,11 @@
   <view class="imp-sheet">
     <!-- 导入方式 -->
     <view class="imp-methods g-fade-up g-d1">
-      <view class="imp-method tap-scale {{activeTab === 'xhs' ? 'on' : ''}}" data-tab="xhs" bindtap="switchTab" role="button" aria-label="导入分享文案" aria-pressed="{{activeTab === 'xhs'}}">
+      <view class="imp-method tap-scale {{activeTab === 'xhs' ? 'on' : ''}}" data-tab="xhs" bindtap="switchTab" aria-role="button" aria-label="导入分享文案" aria-pressed="{{activeTab === 'xhs'}}">
         <view class="m-name">分享文案</view>
         <view class="m-desc">小红书 / 下厨房</view>
       </view>
-      <view class="imp-method tap-scale {{activeTab === 'manual' ? 'on' : ''}}" data-tab="manual" bindtap="switchTab" role="button" aria-label="导入纯文本" aria-pressed="{{activeTab === 'manual'}}">
+      <view class="imp-method tap-scale {{activeTab === 'manual' ? 'on' : ''}}" data-tab="manual" bindtap="switchTab" aria-role="button" aria-label="导入纯文本" aria-pressed="{{activeTab === 'manual'}}">
         <view class="m-name">纯文本</view>
         <view class="m-desc">手敲或粘贴文字</view>
       </view>
@@ -39,7 +39,7 @@
         ></textarea>
         <view class="ta-foot">
           <text class="ta-cnt">已粘贴 {{charCount}} 字</text>
-          <view class="parsebtn tap-scale {{parsing ? 'disabled' : ''}}" bindtap="parseImport">{{parsing ? '解析中…' : '开始解析 →'}}</view>
+          <view class="parsebtn tap-scale {{parsing ? 'disabled' : ''}}" bindtap="parseImport" aria-role="button" aria-label="开始解析" aria-disabled="{{parsing}}">{{parsing ? '解析中…' : '开始解析 →'}}</view>
         </view>
       </view>
 

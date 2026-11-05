@@ -6,7 +6,7 @@
         <view class="cpt-eyebrow">我的厨房</view>
         <view class="cpt-title mag-fam-name">{{familyProfile.familyName || '我的家'}}</view>
       </view>
-      <view class="cpt-action mag-manage tap-scale" bindtap="goMemberManage">＋ 管理</view>
+      <view class="cpt-action mag-manage tap-scale" bindtap="goMemberManage" aria-role="button" aria-label="管理家庭成员">＋ 管理</view>
     </view>
     <!-- 成员行：首屏加载中/首屏失败时成员数还不可信，不显示「0 位成员」，行高照留防跳动；
          静默刷新失败时 memberCount 是上一次的真值，照常显示 -->
@@ -26,7 +26,7 @@
   <!-- 内容区 -->
   <view class="mag-sheet">
     <!-- VIP banner（支付开关关闭时隐藏） -->
-    <view class="mag-vip tap-scale" wx:if="{{features.PAYMENT}}" bindtap="goVip">
+    <view class="mag-vip tap-scale" wx:if="{{features.PAYMENT}}" bindtap="goVip" aria-role="button">
       <view class="mag-vip-ic"><view class="mag-vip-glyph"></view></view>
       <view class="mag-vip-mid">
         <view class="mag-vip-t">{{vipStatus.vip ? '已开通' : '开通'}}<text class="hl">家庭云同步</text></view>
@@ -36,7 +36,7 @@
     </view>
 
     <!-- 身份引导：见 pages/me/index.js#buildBindCard。微信登录过的账号不显示 -->
-    <view class="mag-phone tap-scale" wx:if="{{bindCard.show}}" bindtap="goBind">
+    <view class="mag-phone tap-scale" wx:if="{{bindCard.show}}" bindtap="goBind" aria-role="button">
       <view class="mag-phone-ic"><view class="mag-phone-glyph"></view></view>
       <view class="mag-phone-mid">
         <view class="mag-phone-t">{{bindCard.title}}</view>
@@ -49,33 +49,33 @@
     <view class="mag-load-error" wx:if="{{loadError}}">
       <view class="mag-load-error-title">厨房数据没加载出来</view>
       <view class="mag-load-error-desc">{{loadError}}</view>
-      <view class="mag-load-error-btn tap-scale" bindtap="retryLoad">重新加载</view>
+      <view class="mag-load-error-btn tap-scale" bindtap="retryLoad" aria-role="button">重新加载</view>
     </view>
 
     <!-- 数据卡 -->
     <view class="mag-stats g-fade-up g-d1">
-      <view class="mag-stat tap-scale" bindtap="goRecipes">
+      <view class="mag-stat tap-scale" bindtap="goRecipes" aria-role="button">
         <view class="mag-snum {{loading ? 'shimmer num-skel' : ''}}">{{savedCount}}</view>
         <view class="mag-scap">我的菜谱</view>
         <view class="mag-scap-note">自建+导入</view>
       </view>
-      <view class="mag-stat tap-scale" bindtap="goCookLog">
+      <view class="mag-stat tap-scale" bindtap="goCookLog" aria-role="button">
         <view class="mag-snum {{loading ? 'shimmer num-skel' : ''}}">{{monthCookCount}}</view>
         <view class="mag-scap">本月做菜</view>
       </view>
-      <view class="mag-stat tap-scale" bindtap="goFamilyMembers">
+      <view class="mag-stat tap-scale" bindtap="goFamilyMembers" aria-role="button">
         <view class="mag-snum {{loading ? 'shimmer num-skel' : ''}}">{{memberCount}}</view>
         <view class="mag-scap">家庭成员</view>
       </view>
     </view>
 
     <view class="mag-shortcuts">
-      <view class="mag-shortcut tap-scale" bindtap="goRecipes"><view class="mag-ticon ti-1">菜</view><view><view class="mag-tname">我的菜谱</view><view class="mag-tdesc">挑菜与新建</view></view></view>
-      <view class="mag-shortcut tap-scale" bindtap="goPantry"><view class="mag-ticon ti-fam">鲜</view><view><view class="mag-tname">冰箱库存</view><view class="mag-tdesc">用料与到期日</view></view></view>
-      <view class="mag-shortcut tap-scale" bindtap="goShopping"><view class="mag-ticon ti-2">买</view><view><view class="mag-tname">买菜清单</view><view class="mag-tdesc">一份清单买齐</view></view></view>
-      <view class="mag-shortcut tap-scale" bindtap="goWeekly"><view class="mag-ticon ti-1">周</view><view><view class="mag-tname">一周计划</view><view class="mag-tdesc">提前安排三餐</view></view></view>
-      <view class="mag-shortcut tap-scale" bindtap="goImport"><view class="mag-ticon ti-4">导</view><view><view class="mag-tname">导入菜谱</view><view class="mag-tdesc">收好喜欢的做法</view></view></view>
-      <view wx:if="{{features.COMMUNITY}}" class="mag-shortcut tap-scale" bindtap="goFavorites"><view class="mag-ticon ti-2">藏</view><view><view class="mag-tname">我的收藏</view><view class="mag-tdesc">好菜与好分享</view></view></view>
+      <view class="mag-shortcut tap-scale" bindtap="goRecipes" aria-role="button"><view class="mag-ticon ti-1">菜</view><view><view class="mag-tname">我的菜谱</view><view class="mag-tdesc">挑菜与新建</view></view></view>
+      <view class="mag-shortcut tap-scale" bindtap="goPantry" aria-role="button"><view class="mag-ticon ti-fam">鲜</view><view><view class="mag-tname">冰箱库存</view><view class="mag-tdesc">用料与到期日</view></view></view>
+      <view class="mag-shortcut tap-scale" bindtap="goShopping" aria-role="button"><view class="mag-ticon ti-2">买</view><view><view class="mag-tname">买菜清单</view><view class="mag-tdesc">一份清单买齐</view></view></view>
+      <view class="mag-shortcut tap-scale" bindtap="goWeekly" aria-role="button"><view class="mag-ticon ti-1">周</view><view><view class="mag-tname">一周计划</view><view class="mag-tdesc">提前安排三餐</view></view></view>
+      <view class="mag-shortcut tap-scale" bindtap="goImport" aria-role="button"><view class="mag-ticon ti-4">导</view><view><view class="mag-tname">导入菜谱</view><view class="mag-tdesc">收好喜欢的做法</view></view></view>
+      <view wx:if="{{features.COMMUNITY}}" class="mag-shortcut tap-scale" bindtap="goFavorites" aria-role="button"><view class="mag-ticon ti-2">藏</view><view><view class="mag-tname">我的收藏</view><view class="mag-tdesc">好菜与好分享</view></view></view>
     </view>
     <view class="mag-today card tap-scale" wx:if="{{!loading && !loadError}}" bindtap="goCooking" aria-role="button" aria-label="查看今天的菜单">
       <view class="mag-today-head"><text>今天这一餐</text><text class="mag-today-status">{{todayTotal ? todayDone + '/' + todayTotal + ' 道已上桌' : '还没点菜'}}</text></view>
@@ -96,7 +96,7 @@
             </view>
           </view>
         </view>
-        <view class="mag-hmore tap-scale" bindtap="goCookLog">查看全部记录 ›</view>
+        <view class="mag-hmore tap-scale" bindtap="goCookLog" aria-role="button">查看全部记录 ›</view>
       </view>
     </view>
     <!-- 最近上桌：加载骨架 -->
@@ -141,7 +141,7 @@
     <view class="g-fade-up g-d5">
       <section-head eyebrow="全家口味" title="偏好画像" />
       <view class="card mag-tools">
-        <view class="mag-trow tap-scale" bindtap="goPreference">
+        <view class="mag-trow tap-scale" bindtap="goPreference" aria-role="button">
           <view class="mag-ticon ti-pref">偏</view>
           <view class="mag-tmid">
             <view class="mag-tname">我的偏好画像</view>
@@ -149,7 +149,7 @@
           </view>
           <view class="mag-tarrow">›</view>
         </view>
-        <view class="mag-trow tap-scale" bindtap="goFamilyMembers">
+        <view class="mag-trow tap-scale" bindtap="goFamilyMembers" aria-role="button">
           <view class="mag-ticon ti-fam">家</view>
           <view class="mag-tmid">
             <view class="mag-tname">家庭成员管理</view>
@@ -163,31 +163,31 @@
     <!-- 设置 & 关于 -->
     <view class="g-fade-up g-d6">
       <view class="card mag-settings">
-        <view class="mag-srow tap-scale" bindtap="goProfileEdit">
+        <view class="mag-srow tap-scale" bindtap="goProfileEdit" aria-role="button">
           <view class="mag-sname">编辑资料</view>
           <view class="mag-sarrow">›</view>
         </view>
-        <view class="mag-srow tap-scale" bindtap="goNotifications">
+        <view class="mag-srow tap-scale" bindtap="goNotifications" aria-role="button">
           <view class="mag-sname">消息</view>
           <view class="mag-sarrow">›</view>
         </view>
-        <view class="mag-srow tap-scale" bindtap="goSettings">
+        <view class="mag-srow tap-scale" bindtap="goSettings" aria-role="button">
           <view class="mag-sname">设置</view>
           <view class="mag-sarrow">›</view>
         </view>
-        <view class="mag-srow tap-scale" bindtap="goFeedback">
+        <view class="mag-srow tap-scale" bindtap="goFeedback" aria-role="button">
           <view class="mag-sname">意见反馈</view>
           <view class="mag-sarrow">›</view>
         </view>
-        <view class="mag-srow tap-scale" bindtap="goAbout">
+        <view class="mag-srow tap-scale" bindtap="goAbout" aria-role="button">
           <view class="mag-sname">关于我们</view>
           <view class="mag-sarrow">›</view>
         </view>
-        <view class="mag-srow tap-scale" bindtap="goPrivacy">
+        <view class="mag-srow tap-scale" bindtap="goPrivacy" aria-role="button">
           <view class="mag-sname">隐私政策</view>
           <view class="mag-sarrow">›</view>
         </view>
-        <view class="mag-srow tap-scale last" bindtap="goTerms">
+        <view class="mag-srow tap-scale last" bindtap="goTerms" aria-role="button">
           <view class="mag-sname">用户协议</view>
           <view class="mag-sarrow">›</view>
         </view>

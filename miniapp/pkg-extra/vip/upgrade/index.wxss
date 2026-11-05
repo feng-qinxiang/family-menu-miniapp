@@ -341,7 +341,7 @@
   font-weight: 800;
   letter-spacing: 1rpx;
   gap: 17rpx;
-  border-radius: var(--r-md);
+  border-radius: var(--r-card);
 }
 .vu-paybtn.loading { opacity: 0.7; }
 .vu-wxic { font-size: var(--fs-h2); font-weight: 700; }

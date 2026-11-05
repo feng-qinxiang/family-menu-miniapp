@@ -93,8 +93,10 @@
               data-id="{{item.recipeId}}"
               data-item="{{item.id}}"
               catchtap="startCook"
+              aria-role="button"
+              aria-label="{{item.status === 'cooking' ? '继续做' : '开做'}}{{item.title}}"
             >{{item.status === 'cooking' ? '继续做 ›' : '开做 ›'}}</view>
-            <view class="k-act ghost tap-scale" data-id="{{item.recipeId}}" data-index="{{index}}" catchtap="markCooked">上桌</view>
+            <view class="k-act ghost tap-scale" data-id="{{item.recipeId}}" data-index="{{index}}" catchtap="markCooked" aria-role="button" aria-label="{{item.title}}上桌">上桌</view>
           </view>
           <!-- 已上桌：晒到社区。菜刚出锅、照片刚拍，是「做菜 → 社区」最自然的入口 -->
           <!-- COMMUNITY 关闭时这条动作行整个不渲染（否则用户看到的是空动作行） -->
@@ -104,6 +106,8 @@
               data-id="{{item.recipeId}}"
               data-title="{{item.title}}"
               catchtap="shareCooked"
+              aria-role="button"
+              aria-label="把{{item.title}}晒到邻里厨房"
             >晒到邻里厨房 ›</view>
           </view>
       </view>

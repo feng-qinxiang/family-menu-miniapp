@@ -157,8 +157,12 @@
   font-size: calc(32rpx * var(--fs-mul, 1));
 }
 .ps-link {
-  display: block;
-  margin-top: 34rpx;
+  /* 两条文字链上下紧挨，用 hit-88 会互抢点击：让行本身撑满最小命中区 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--tap-min);
+  margin-top: 6rpx;
   text-align: center;
   font-size: var(--fs-cap);
   font-weight: 600;

@@ -72,7 +72,7 @@
 
 /* ---------- 内容区 ---------- */
 .mag-sheet {
-  padding: 8rpx var(--ctl-x, 48rpx) 0;
+  padding: 8rpx var(--page-gutter) 0;   /* 与 .cpt-head 同一页边距（原误用删除钮直径 --ctl-x，差 2rpx 对不齐） */
 }
 
 /* ---------- VIP banner ---------- */
@@ -153,7 +153,7 @@
      两处一起收敛到紧凑行图块规格 --tile-row-sm(104rpx)。 */
   width: var(--tile-row-sm);
   height: var(--tile-row-sm);
-  border-radius: var(--r-chip);   /* = 真卡 .mag-thumb 的圆角，原来骨架是 --r-md(24)、真卡 30 */
+  border-radius: var(--r-sm);   /* = 真卡 .mag-thumb 的圆角；两处一起收到不大于外层卡 */
   background: var(--skeleton);
   flex: none;
 }
@@ -182,8 +182,8 @@
 /* 统计卡补充说明：只留有信息量的（如「自建+导入」），和标题重复的不写 */
 .mag-scap-note {
   margin-top: 4rpx;
-  font-size: var(--fs-tiny);
-  color: var(--mut);
+  font-size: var(--fs-mini);   /* 19rpx 浅字太弱，升一档 */
+  color: var(--mut-strong);
 }
 
 /* ---------- 最近上桌 ---------- */
@@ -198,7 +198,7 @@
 .mag-thumb {
   width: var(--dish-thumb);
   height: var(--dish-thumb);
-  border-radius: var(--r-chip);
+  border-radius: var(--r-sm);   /* 内层圆角不大于外层 .card */
   flex: none;
   background: var(--paper-2);
 }
@@ -296,7 +296,7 @@
 .mag-footer {
   text-align: center;
   font-size: calc(23rpx * var(--fs-mul, 1));
-  color: var(--mut-2);
+  color: var(--mut);   /* --mut-2 在米白底上对比度不足 */
   padding: 40rpx 0 60rpx;
 }
 /* 游客绑定手机引导条 */
@@ -350,8 +350,8 @@
 /* ---------- 加载失败态 ---------- */
 .mag-load-error {
   margin: 40rpx 0;
-  padding: 56rpx 40rpx;
-  border-radius: var(--r-lg);
+  padding: 56rpx var(--pad-card);
+  border-radius: var(--r-card);
   background: var(--c-surface);
   box-shadow: var(--sh-card);
   text-align: center;
@@ -389,7 +389,7 @@
 .mag-profile-sub { font-size: var(--fs-cap); color: var(--mut-strong); margin-top: 4rpx; line-height: 1.5; }
 .mag-profile-edit { flex: none; color: var(--mut-strong); font-size: var(--fs-cap); }
 .mag-shortcuts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12rpx; margin: 20rpx 0; }
-.mag-shortcut { display: flex; align-items: center; gap: 12rpx; padding: 20rpx 16rpx; background: var(--c-surface); border: var(--bd-card); border-radius: var(--r-md); min-width: 0; }
+.mag-shortcut { display: flex; align-items: center; gap: 12rpx; padding: 20rpx var(--pad-card-sm); background: var(--c-surface); border: var(--bd-card); border-radius: var(--r-card); min-width: 0; }
 .mag-shortcut > view:last-child { min-width: 0; }
 .mag-shortcut .mag-ticon { width: 64rpx; height: 64rpx; font-size: var(--fs-sub); }
 .mag-shortcut .mag-tname { font-size: var(--fs-sub); line-height: 1.45; word-break: break-all; }

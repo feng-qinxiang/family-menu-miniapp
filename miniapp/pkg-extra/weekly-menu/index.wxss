@@ -13,8 +13,8 @@
   gap: 10rpx;
   box-sizing: border-box;
   min-height: 88rpx;
-  padding: 18rpx 24rpx;
-  border-radius: var(--r-pill);
+  padding: 18rpx 24rpx; /* 例外：这是 hero 上的按钮不是卡表面 */
+  border-radius: var(--r-card); /* 实心主按钮统一 --r-card */
   background: var(--pop);
   color: var(--anchor-contrast);
   font-size: var(--fs-sub);

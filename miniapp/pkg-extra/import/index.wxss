@@ -108,9 +108,9 @@
   color: var(--anchor-contrast);
   font-size: var(--fs-cap);
   font-weight: 800;
-  padding: 0 40rpx;
+  padding: 0 40rpx; /* 例外：这是按钮不是卡表面，左右内边距按按钮文字宽度定 */
   min-height: 88rpx;
-  border-radius: var(--r-pill);
+  border-radius: var(--r-card); /* 实心主按钮统一 --r-card */
   box-shadow: var(--sh-pop);
 }
 

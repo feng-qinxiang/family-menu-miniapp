@@ -56,7 +56,7 @@
           </picker>
         </view>
 
-        <view class="fc-createbtn tap-scale" bindtap="onCreate" role="button" aria-label="创建家庭" aria-disabled="{{submitting}}">
+        <view class="fc-createbtn tap-scale" bindtap="onCreate" aria-role="button" aria-label="创建家庭" aria-disabled="{{submitting}}">
           <text>{{submitting ? '创建中…' : '创建家庭'}}</text>
           <view class="fc-ic fc-ic-arrow"></view>
         </view>

@@ -37,7 +37,7 @@
       </view>
 
       <view class="guest">
-        <text class="guest-link tap-scale" bindtap="onGuest">先随便逛逛 ›</text>
+        <text class="guest-link hit-88 tap-scale" aria-role="button" bindtap="onGuest">先随便逛逛 ›</text>
       </view>
 
       <view class="divider-deco">

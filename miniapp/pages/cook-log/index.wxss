@@ -22,7 +22,7 @@
 .month-sep { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; margin: 30rpx 0 20rpx; }
 .mtag { color: var(--ink); font-size: var(--fs-body); font-weight: 700; }
 .mcnt { color: var(--mut); font-size: var(--fs-cap); }
-.tcard { background: var(--c-surface); border: var(--bd-card); border-radius: var(--r-card); padding: 24rpx var(--pad-card-sm) 0; margin-bottom: 22rpx; overflow: hidden; }
+.tcard { background: var(--c-surface); border: var(--bd-card); border-radius: var(--r-card); padding: 24rpx var(--pad-card) 0;   /* 与上方统计卡/周历卡（.card = --pad-card）左右对齐 */ margin-bottom: 22rpx; overflow: hidden; }
 .tcard.is-new { border-color: var(--pop-mist); }
 .cl-new { color: var(--pop-deep); font-size: var(--fs-cap); margin-bottom: 18rpx; font-weight: 600; }
 .tcard-main { display: flex; align-items: flex-start; gap: 22rpx; }

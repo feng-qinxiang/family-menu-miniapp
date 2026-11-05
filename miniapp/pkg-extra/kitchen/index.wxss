@@ -265,7 +265,8 @@
   /* 开做/上桌是厨房总控最主要的一步，高度抬到 88rpx 命中标准；
      两键横向 flex:1 且留有 14rpx 间距，加高不会互相误触 */
   min-height: 88rpx;
-  border-radius: var(--r-pill);
+  /* 实心主按钮统一 --r-card（项目约定：只有小 chip/标签保留胶囊） */
+  border-radius: var(--r-card);
   font-size: calc(28rpx * var(--fs-mul, 1));
   font-weight: 800;
   box-sizing: border-box;
