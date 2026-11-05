@@ -374,7 +374,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--r-pill);
+  border-radius: var(--r-card);
   background: var(--anchor);
   color: var(--anchor-contrast);
   font-size: calc(25rpx * var(--fs-mul, 1));

@@ -314,7 +314,7 @@
 .sp-pantry-add-btn {
   margin-top: 24rpx;
   height: 88rpx;
-  border-radius: var(--r-pill);
+  border-radius: var(--r-card);
   background: var(--anchor);
   color: var(--anchor-contrast);
   font-size: var(--fs-cap);

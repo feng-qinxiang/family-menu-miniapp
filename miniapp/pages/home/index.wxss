@@ -210,7 +210,7 @@
   justify-content: center;
   height: 88rpx;
   min-height: 44px;
-  border-radius: var(--r-pill);
+  border-radius: var(--r-card);
   background: var(--pop);
   color: var(--anchor-contrast);
   font-size: calc(29rpx * var(--fs-mul, 1));
@@ -224,12 +224,12 @@
   box-sizing: border-box;
   height: var(--tap-min);
   min-height: 44px;
-  padding: 0 26rpx;
+  padding: 0 var(--pad-card-sm);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10rpx;
-  border-radius: 44rpx;
+  border-radius: var(--r-card);
   background: rgba(20, 14, 8, 0.48);
   border: 2rpx solid rgba(255, 255, 255, 0.55);
 }
@@ -527,6 +527,9 @@
 .hm-menu-empty-plate { width: 140rpx; height: 140rpx; flex: none; opacity: 0.8; }
 .font-lg .hm-menu-empty-plate { width: 100rpx; height: 100rpx; }
 .hm-menu-pick { margin-top: 22rpx; }
+/* 同屏只留一个红色主按钮（hero「加到菜单」）；这里降为描边次按钮 */
+.hm-menu-action-primary.hm-menu-pick { background: var(--c-surface); color: var(--ink); border: var(--bd-card); }
+.hm-menu-action-primary.hm-menu-pick .hm-menu-action-icon { filter: brightness(0); opacity: 0.6; }   /* 图标 SVG 是浅色描边，与次按钮同法压暗 */
 
 /* ============ 点菜、做菜、记录、社区 ============ */
 .hm-journey {
@@ -640,7 +643,8 @@
 
 @media (prefers-color-scheme: dark) {
   .hm-journey-icon image,
-  .hm-menu-action-secondary .hm-menu-action-icon { filter: brightness(0) invert(1); }
+  .hm-menu-action-secondary .hm-menu-action-icon,
+  .hm-menu-action-primary.hm-menu-pick .hm-menu-action-icon { filter: brightness(0) invert(1); }
   .hm-status--done { color: var(--c-success); background: var(--c-success-soft); }
   .hm-menu-progress-fill { background: var(--c-success); }
   .hm-journey-progress { background: var(--c-success); }
@@ -1168,7 +1172,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--r-pill);
+  border-radius: var(--r-card);
   background: var(--pop);
   color: var(--anchor-contrast);
   font-size: var(--fs-btn);

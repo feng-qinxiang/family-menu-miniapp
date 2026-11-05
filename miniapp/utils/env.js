@@ -57,7 +57,7 @@ function resolveConfig() {
 // 拿运行平台：devtools=开发者工具；ios/android=真机。拿不到按开发工具处理，保持旧行为。
 function isDevtools() {
   try {
-    const info = wx.getSystemInfoSync();
+    const info = typeof wx.getDeviceInfo === 'function' ? wx.getDeviceInfo() : wx.getSystemInfoSync();
     return !info || !info.platform || info.platform === 'devtools';
   } catch (e) {
     return true;

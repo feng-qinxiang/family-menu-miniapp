@@ -318,7 +318,7 @@ page { background: var(--paper); }
   height: 64rpx;
   line-height: 64rpx;
   text-align: center;
-  border-radius: var(--r-pill);
+  border-radius: var(--r-card);
   background: var(--pop);
   color: var(--anchor-contrast);
   font-size: calc(var(--fs-btn) * var(--fs-mul, 1));
