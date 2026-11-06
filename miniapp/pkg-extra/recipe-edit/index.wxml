@@ -106,7 +106,7 @@
       </view>
       <view class="tap-scale rc-shot" wx:if="{{!item.image}}" data-index="{{index}}" bindtap="chooseStepImage">加一张图</view>
       <view class="tap-scale rc-shot has" wx:else>
-        <image class="rc-shot-img" src="{{item.image}}" mode="aspectFill" data-index="{{index}}" bindtap="chooseStepImage" />
+        <image class="rc-shot-img" src="{{item.image}}" mode="aspectFill" lazy-load data-index="{{index}}" bindtap="chooseStepImage" />
         <view class="tap-scale rc-cover-x" data-index="{{index}}" catchtap="removeStepImage" aria-role="button" aria-label="移除第 {{index + 1}} 步的配图">×</view>
       </view>
       <textarea

@@ -52,7 +52,7 @@
         <view class="rd-photo-hint">{{ingredientPhotosFailed ? '图片暂未更新，先用已有图片或名称。' : '点左侧上传食材图，未上传时显示名称。'}}</view>
         <view class="rd-ing" wx:for="{{recipe.ingredients}}" wx:key="index">
           <view class="rd-ingredient-photo tap-scale" data-name="{{item.name}}" bindtap="onIngredientPhoto" aria-role="button" aria-label="设置{{item.name}}的食材图片">
-            <image wx:if="{{item.cover && !item.coverBroken}}" src="{{item.cover}}" mode="aspectFill" class="rd-ingredient-image tap-scale" data-err-key="{{'recipe.ingredients[' + index + '].coverBroken'}}" binderror="onPhotoError" />
+            <image wx:if="{{item.cover && !item.coverBroken}}" src="{{item.cover}}" mode="aspectFill" lazy-load class="rd-ingredient-image tap-scale" data-err-key="{{'recipe.ingredients[' + index + '].coverBroken'}}" binderror="onPhotoError" />
             <view wx:else class="rd-ingredient-text"><text class="rd-ingredient-label">{{item.name}}</text></view>
             <text class="rd-photo-edit">{{item.cover ? '换图' : '加图'}}</text>
           </view>
@@ -94,7 +94,7 @@
           <view class="rd-sno">{{index + 1}}</view>
           <view class="rd-stx">
             <view class="rd-stx-p">{{item.text}}</view>
-            <image wx:if="{{item.image}}" class="rd-step-img {{item.imgBroken ? 'img-broken' : ''}}" src="{{item.image}}" mode="aspectFill"
+            <image wx:if="{{item.image}}" class="rd-step-img {{item.imgBroken ? 'img-broken' : ''}}" src="{{item.image}}" mode="aspectFill" lazy-load
               bindtap="previewStepImage" data-url="{{item.image}}"
               data-err-key="{{'recipe.steps[' + index + '].imgBroken'}}" binderror="onPhotoError" />
             <view wx:if="{{item.tip}}" class="rd-tip">

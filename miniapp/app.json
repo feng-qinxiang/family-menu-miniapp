@@ -60,7 +60,13 @@
   ],
   "preloadRule": {
     "pages/home/index": {
-      "network": "wifi",
+      "network": "all",
+      "packages": [
+        "pkg-extra"
+      ]
+    },
+    "pages/menu/index": {
+      "network": "all",
       "packages": [
         "pkg-extra"
       ]
