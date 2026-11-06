@@ -9,38 +9,44 @@
 
 **精致美食杂志 + 大胆撞色**（warm 定稿，标杆 `artifacts/home-final-warm.html`）：
 
-- 奶油纸底 `#fbf8f3`、深墨文字 `#2c241b`、番茄红点睛 `#c8381f`（全站占比约 4%）、金 `#b08949`、墨绿 `#2f4a3a`
+- 奶油纸底 `#fbf8f3`、深墨文字 `#2c241b`、番茄红点睛 `#c8381f`（全站占比约 4%）、金 `#a58145`、墨绿 `#2f4a3a`
 - 深色大图 Hero + 暖光叠层 + 底部渐变；镂空白描边标题（`title-stroke`，Android 用 text-shadow 兜底）
 - 卡片白底小圆角（`--r-card: 16rpx`，下厨房式）+ 轻量暖阴影（`--sh-card`）
 - 头像一律「文字 + 品牌色」，禁止用菜图/占位图当头像
-- 底部导航固定 4 tab：今日 / 菜谱 / 冰箱 / 我的；二级页用 `nav-bar` 返回
+- 底部导航固定 5 tab：点菜 / 做菜 / 记录 / 社区 / 我的（唯一数据源 `utils/tabs.js`）；二级页用 `nav-bar` 返回
 
 ## 二、颜色 Token（app.wxss 权威定义）
 
 | Token | 浅色值 | 深色值 | 用途 |
 |-------|--------|--------|------|
 | `--paper` | #fbf8f3 | #1c1c1c | 页面底色 |
-| `--paper-2` | #f0ebe2 | #262626 | 次级底色/输入底 |
+| `--paper-2` | #f0ebe2 | #2e2e2e | 次级底色/输入底（深色档原 #262626 与卡面只差 1.03:1，2026-11 提亮） |
 | `--ink` | #2c241b | #efefef | 主文字 |
 | `--ink-deep` | #3a2e23 | #e2e2e2 | 深墨文字（深色档翻转为浅字色；暗卡底用 `--anchor`） |
 | `--mut` | #716555 | #9a9a96 | 次要文字（纸底 #f0ebe2 上 4.79:1，≥AA） |
 | `--mut-2` | #b3a795 | #757570 | 弱提示（仅装饰） |
 | `--mut-strong` | #6b5f50 | #c4c0b8 | 强调次要文字 |
-| `--pop` | #c8381f | #ff6a4d | 主色/CTA/点睛（白字 5.20:1；2026-11 由 #e8472a 加深以过 AA） |
+| `--pop` | #c8381f | #ff6a4d | 主色文字/描边/点睛（白字 5.20:1；2026-11 由 #e8472a 加深以过 AA）。**实心红底用 `--pop-fill`** |
 | `--pop-soft` | #fdece6 | #3a2218 | 主色浅底 |
-| `--gold` / `--gold-deep` | #f4d9a8 / #b08949 | #8a6a3a / #c9a35c | eyebrow/徽章 |
-| `--pine` | #2f4a3a | #4e6b58 | 墨绿点缀 |
+| `--pop-deep` | #b3381f | #ff7a5c | 警示红字（深色档「深」即更亮：卡面 6.1:1）。渐变深端用 `--pop-deep-fill` |
+| `--gold` / `--gold-deep` | #f4d9a8 / #a58145 | #8a6a3a / #c9a35c | eyebrow/徽章。**深底上的金字用 `--gold-on-dark`** |
+| `--pine` | #2f4a3a | #4e6b58 | 墨绿底/点缀。**松绿文字用 `--pine-ink`** |
 | `--surface` | #ffffff | #242424 | 卡片/输入框底 |
 | `--line` / `--line-deep` | #e8e0d0 / #d5c9b8 | #333333 / #3a3a3a | 分隔线/描边 |
 | `--skeleton` | #efe4d7 | #2a2a2a | 骨架屏 |
-| `--anchor` | #3a2e23（两主题恒定） | 同左 | 深色锚点卡恒定底（今日菜单卡/餐盘托/激活片） |
+| `--anchor` | #3a2e23 | #735a44 | 深色锚点卡底（今日菜单卡/餐盘托/选中 chip/返回键）。深色档原值压在页面底上只有 1.29:1，提亮一档；浅字 6.1:1、浅金 4.7:1 |
 | `--anchor-contrast` | #fbf8f3（两主题恒定） | 同左 | 锚点卡/彩底/照片上的恒定浅字 |
+| `--pop-fill` / `--pop-deep-fill` | 同 `--pop` / `--pop-deep` | #c8381f / #a3301b | 红色实心底、红渐变（上面放浅字）。深色档 `--pop` 上浅字只有 2.7:1 |
+| `--gold-on-dark` | 同 `--gold` | #f4d9a8 | 锚点卡/照片/暗卡上的金字和金色小图形 |
+| `--pine-ink` | 同 `--pine` | #4eae8c | 松绿当文字色（深色档 `--pine` 当字只有约 2.6:1） |
+| `--seg-thumb` | 同 `--surface` | #666666 | 分段控件选中滑块（深色档卡面与轨道几乎同色） |
 | `--cook-bg` | #1a1410 | #111111 | 烹饪模式沉浸底 |
 
 - 深色模式真实机制（2026-09-12 实证修订）：**theme.json 变量只对 app.json/页面 json 的 `@` 引用生效，不注入 WXSS**。
   WXSS 深色由 `app.wxss` 的 `@media (prefers-color-scheme: dark)` 块实现（覆盖裸 `--themeX` 层 + 字面量 token 深色档）。
   **改深色值必须同步两处：theme.json dark 段 + app.wxss media 块。**
 - **铁律**：页面 WXSS 禁止新增十六进制色值；必须用 token。特殊场景（遮罩 mask、root-portal 变量副本）允许并在注释中说明
+- **深色档配对**（static-check 第 32 条拦截）：红色实心底写 `var(--pop-fill)`、金字写 `var(--gold-on-dark)`、松绿字写 `var(--pine-ink)`，不要直接用 `--pop` / `--gold` / `--pine`
 
 ## 三、字号标尺
 
@@ -70,7 +76,7 @@
 | 照片 hero 高度 | `--hero-h: 862rpx`（小 hero `--hero-h-sm: 620rpx`） |
 | 返回键 | 统一 `nav-bar` 组件或 88rpx 圆形浮钮 |
 | 按钮 | 最小高度 88rpx，圆角 `--r-card`，字号 `--fs-btn` |
-| 触达目标 | 可点元素 ≥ 88rpx；图片角标类删除钮 ≥ 56rpx |
+| 触达目标 | 可点元素 ≥ 88rpx；图片角标类删除钮 ≥ 56rpx。新写的命中区用 `var(--tap-min)`：宽度 < 375px 的屏上 88rpx 不足 44px，app.wxss 用媒体查询把它兜到 44px |
 | 弹窗 | 底部弹层用 `state-sheet`（自带滚动锁），确认弹窗用 `state-dialog` |
 | 空态 | 一律 `state-empty`（type: pop/gold/gray/search/offline） |
 

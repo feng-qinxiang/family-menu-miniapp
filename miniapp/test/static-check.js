@@ -1224,6 +1224,25 @@ if (fs.existsSync(envPath)) {
   }
 });
 
+// ---- 32. 深色档会失对比的三种写法必须走专用 token ----
+// --pop / --gold / --pine 在深色档都换成了「当前景色好看」的值，压到别的用途上就失对比：
+// 红底上的浅字只剩 2.7:1、锚点底上的暗金字 1.3:1、深底上的松绿字 2.6:1。
+// 浅色档专用 token 与原 token 同值，所以这条只挡深色档回归。app.wxss 是 token 定义处，跳过。
+const DARK_PAIR_RULES = [
+  [/background(?:-color)?\s*:[^;]*var\(\s*--pop\s*\)/, '红色实心底用 var(--pop-fill)'],
+  [/(?:^|[^-\w])color\s*:\s*var\(\s*--gold\s*\)/, '金字用 var(--gold-on-dark)'],
+  [/(?:^|[^-\w])color\s*:\s*var\(\s*--pine\s*\)/, '松绿字用 var(--pine-ink)'],
+];
+for (const file of files) {
+  if (!file.endsWith('.wxss') || rel(file) === 'app.wxss') continue;
+  const lines = fs.readFileSync(file, 'utf8').replace(/\/\*[\s\S]*?\*\//g, (c) => c.replace(/[^\n]/g, ' ')).split('\n');
+  lines.forEach((line, i) => {
+    for (const [re, fix] of DARK_PAIR_RULES) {
+      if (re.test(line)) problems.push(`深色档会失对比 ${rel(file)}:${i + 1} -> ${line.trim().slice(0, 80)}（${fix}）`);
+    }
+  });
+}
+
 console.log(`检查了 ${files.length} 个文件（其中 ${jsChecked} 个 .js 过了语法解析）`);
 if (preflight.length) {
   console.log('\n⚠ 提审前需部署方填写（不阻断 CI，但缺了就等着被驳回）：');

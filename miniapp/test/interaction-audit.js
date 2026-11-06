@@ -143,9 +143,8 @@ const reportBReal = reportB.filter((r) => {
 const reportC = [];
 // C 类刻意小于 88rpx 的白名单（附理由）：
 const C_CONFIRMED = {
-  // 步进器 ± 按钮：紧邻成对，88rpx 热区会互相重叠误触
-  'pkg-extra/recipe-detail/index.wxss.rd-sbtn': '步进器 ± 按钮 72rpx，刻意尺寸防重叠误触',
-  'pkg-extra/recipe-edit/index.wxss.rc-sbtn': '步进器 ± 按钮 72rpx，刻意尺寸防重叠误触',
+  // 步进器 ± 按钮：视觉 72rpx；wxml 挂了 hit-88，热区 88rpx。两钮中间隔着数字，热区不会互相重叠
+  'pkg-extra/recipe-edit/index.wxss.rc-sbtn': '步进器 ± 按钮视觉 72rpx，hit-88 撑到 88rpx 热区',
 };
 const SIZE_RE = /(min-)?(width|height):\s*(\d+)rpx/g;
 for (const file of files.filter((f) => f.endsWith('.wxss'))) {
