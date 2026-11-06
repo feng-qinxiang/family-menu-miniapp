@@ -222,7 +222,15 @@ Page({
     // 需要保留的本地键：身份锚点、登录态、显示偏好、口味偏好、心愿缓存、待补发许愿
     // wish_pending_v1 必须留下：那是离线期间还没发出去的许愿，
     // 清掉就等于用户以为"联网后自动同步"的心愿被静默销毁（队列存在的意义就是扛住网络失败）。
-    const KEEP_KEYS = ['device_id', 'auth_token', 'font_scale', 'profile_prefs_v1', 'family_wishes_v1', 'wish_pending_v1'];
+    // session_kind 必须跟 auth_token 一起留：401 续期靠它分辨微信用户和游客（utils/api.js renewSession），
+    // 丢了它，微信用户的 token 一到期就会被静默续成本机游客，家庭、菜单、收藏全"消失"。
+    const KEEP_KEYS = ['device_id', 'auth_token', 'session_kind', 'font_scale', 'profile_prefs_v1', 'family_wishes_v1', 'wish_pending_v1'];
+    // cook_completion_* 是还没确认落库的做菜记录（utils/api.js addCookHistory）：
+    // 清掉的话重试会换一个新 completionId，服务端就认作另一次做菜（双记录、双扣冰箱）
+    try {
+      const info = wx.getStorageInfoSync();
+      (info.keys || []).forEach((k) => { if (k.indexOf('cook_completion_') === 0) KEEP_KEYS.push(k); });
+    } catch (e) { /* 拿不到键列表就只保留固定的那几个 */ }
     try {
       const kept = {};
       KEEP_KEYS.forEach((key) => {

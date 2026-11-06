@@ -4,7 +4,6 @@
   "enablePullDownRefresh": true,
   "usingComponents": {
     "nav-bar": "/components/nav-bar/index",
-    "state-empty": "/components/state-empty/index",
-    "section-head": "/components/section-head/index"
+    "state-empty": "/components/state-empty/index"
   }
 }

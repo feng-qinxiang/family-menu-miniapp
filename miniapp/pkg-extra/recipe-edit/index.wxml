@@ -1,4 +1,4 @@
-<nav-bar title="{{isEdit ? '编辑菜谱' : '新建菜谱'}}"></nav-bar>
+<nav-bar title="{{isEdit ? '编辑菜谱' : '新建菜谱'}}" leave-confirm="{{leaveDirty}}"></nav-bar>
 
 <state-loading wx:if="{{pageLoading}}" text="加载菜谱中…"></state-loading>
 
@@ -10,7 +10,9 @@
 </view>
 
 <view class="rc-body {{fontScale === 'lg' ? 'font-lg' : ''}}">
-  <text class="rc-tip" wx:if="{{tipText}}">{{tipText}}</text>
+  <!-- 编辑模式原菜谱没拉到：空表单保存会覆盖原菜谱，submit 已拦住，这里给常驻的重试入口 -->
+  <view class="rc-tip tap-scale" wx:if="{{loadFailed}}" bindtap="retryLoad" aria-role="button">原菜谱没加载出来，点这里重试</view>
+  <text class="rc-tip" wx:elif="{{tipText}}">{{tipText}}</text>
 
   <block wx:if="{{editTab === 'info'}}">
     <view class="tap-scale rc-cover" wx:if="{{form.coverImage}}" bindtap="chooseCover">

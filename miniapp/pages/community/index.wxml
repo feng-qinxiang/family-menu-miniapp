@@ -138,9 +138,10 @@
       <!-- 广告位：包进 .pad 与帖子卡同宽（原来贴满屏宽，圆角被屏幕边裁掉） -->
       <view class="pad"><ad-banner placement="community-bottom"></ad-banner></view>
 
-      <!-- 流末 -->
+      <!-- 流末；翻页失败时整行可点重试 -->
       <view class="pad" wx:if="{{posts.length}}">
-        <view class="feed-end"><text>{{hasMore ? '上拉加载更多…' : '没有更多了'}}</text></view>
+        <view wx:if="{{loadMoreFailed && hasMore}}" class="feed-end feed-end--retry tap-scale" bindtap="loadMorePosts" aria-role="button"><text>加载失败，点这里重试</text></view>
+        <view wx:else class="feed-end"><text>{{hasMore ? '上拉加载更多…' : '没有更多了'}}</text></view>
       </view>
 
       <view class="safe-bottom"></view>

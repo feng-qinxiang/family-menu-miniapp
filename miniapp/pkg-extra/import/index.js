@@ -1,6 +1,7 @@
 const { previewImport, saveRecipe, getRecipes } = require('../../utils/api');
 const { parseRecipeText, DIFFICULTY_LABELS } = require('../../utils/parser');
 const { chooseAndUpload } = require('../../utils/upload');
+const { setLeaveGuard } = require('../../utils/interaction');
 
 // 本地菜图兜底池（接口清单 16 张）
 const FALLBACK_DISHES = [
@@ -19,6 +20,8 @@ Page({
     preview: null,
     saving: false,
     parsing: false,
+    // 预览被改过且没存：切 tab、返回都要确认（syncLeave 维护）
+    leaveDirty: false,
     recentImports: [],
     difficultyOptions: [
       { key: 'easy', label: '简单' },
@@ -65,9 +68,27 @@ Page({
   },
 
   // ponytail: 拍照识别（OCR 截图提文字）未实现已下线入口，重做时需接入 OCR 服务再补回第三个 tab
-  switchTab(e) {
+  async switchTab(e) {
     const { tab } = e.currentTarget.dataset;
+    if (!tab || tab === this.data.activeTab) return;
+    // 预览改过（菜名、菜系、难度、封面、步骤图）才确认；没改过的清掉无妨，粘贴的原文还在，重新解析即可
+    if (this.data.leaveDirty) {
+      const res = await wx.showModal({
+        title: '放弃改过的解析结果？',
+        content: '切换导入方式会清空下面的预览，你改过的内容不会保留。',
+        confirmText: '放弃',
+        cancelText: '取消'
+      });
+      if (!res.confirm) return;
+    }
     this.setData({ activeTab: tab, preview: null });
+    this.syncLeave();
+  },
+
+  // 预览和解析出来时比有没有改动；_parsedPreview 是每次解析完的快照
+  syncLeave() {
+    const preview = this.data.preview;
+    setLeaveGuard(this, !!preview && JSON.stringify(preview) !== this._parsedPreview);
   },
 
   sampleText() {
@@ -121,6 +142,9 @@ Page({
     );
     if (localUsable) {
       this.setData({ preview: localResult });
+      // 解析结果的快照：switchTab 拿它判断用户有没有改过预览
+      this._parsedPreview = JSON.stringify(this.data.preview);
+      this.syncLeave();
       return;
     }
     // 远端解析：loading 期间按钮禁点防重复提交
@@ -137,6 +161,8 @@ Page({
             steps: (preview.steps || []).map((s) => (typeof s === 'string' ? { text: s, image: '' } : s))
           }
         });
+        this._parsedPreview = JSON.stringify(this.data.preview);
+        this.syncLeave();
     } catch (err) {
       wx.showToast({ title: '解析失败，请重试', icon: 'none' });
     } finally {
@@ -146,10 +172,12 @@ Page({
 
   onPreviewTitleInput(e) {
     this.setData({ 'preview.title': e.detail.value });
+    this.syncLeave();
   },
 
   onPreviewCuisineInput(e) {
     this.setData({ 'preview.detectedCuisine': e.detail.value });
+    this.syncLeave();
   },
 
   selectDifficulty(e) {
@@ -158,6 +186,7 @@ Page({
       'preview.difficulty': key,
       'preview.difficultyLabel': DIFFICULTY_LABELS[key] || '中等'
     });
+    this.syncLeave();
   },
 
   async chooseCover() {
@@ -165,6 +194,7 @@ Page({
     // 上传失败时 chooseAndUpload 返回 ['']，空串视为失败并提示
     if (urls.length && urls[0]) {
       this.setData({ 'preview.coverImage': urls[0] });
+      this.syncLeave();
     } else if (urls.length) {
       wx.showToast({ title: '封面上传失败，请重试', icon: 'none' });
     }
@@ -172,6 +202,7 @@ Page({
 
   removeCover() {
     this.setData({ 'preview.coverImage': '' });
+    this.syncLeave();
   },
 
   async chooseStepImage(e) {
@@ -179,6 +210,7 @@ Page({
     const urls = await chooseAndUpload(1);
     if (urls.length && urls[0]) {
       this.setData({ [`preview.steps[${index}].image`]: urls[0] });
+      this.syncLeave();
     } else if (urls.length) {
       wx.showToast({ title: '图片上传失败，请重试', icon: 'none' });
     }
@@ -187,6 +219,7 @@ Page({
   removeStepImage(e) {
     const { index } = e.currentTarget.dataset;
     this.setData({ [`preview.steps[${index}].image`]: '' });
+    this.syncLeave();
   },
 
   openRecent(e) {
@@ -216,7 +249,10 @@ Page({
         tasteTags: ['导入', preview.isXhs ? '小红书' : '手动录入'],
         timeCost: preview.timeCost || 15,
         servings: preview.servings || 2,
-        steps: (preview.steps || []).map((s) => (typeof s === 'string' ? s : (s.text || '').trim())).filter(Boolean),
+        // 步骤带上配图：只传纯文本的话，用户在预览里加的步骤图保存后静默丢失（服务端 RecipeStep 收 {text,image}）
+        steps: (preview.steps || [])
+          .map((s) => (typeof s === 'string' ? { text: s.trim(), image: '' } : { text: (s.text || '').trim(), image: s.image || '' }))
+          .filter((s) => s.text),
         ingredients: preview.ingredients || [],
         summary: `从${preview.isXhs ? '小红书' : '文本'}导入`
       });
@@ -226,12 +262,26 @@ Page({
       return;
     }
     wx.setStorageSync('last_imported_recipe', recipe);
-    this.setData({ saving: false });
     wx.showToast({ title: '已保存', icon: 'success' });
+    // 已存好：撤掉离开确认，否则下面的跳转也会被拦
+    this._parsedPreview = JSON.stringify(preview);
+    this.syncLeave();
     if (recipe && recipe.id) {
-      setTimeout(() => {
-        wx.navigateTo({ url: `/pkg-extra/recipe-detail/index?id=${recipe.id}` });
+      // 成功路径不复位 saving，并用 redirectTo 换掉本页：否则跳转前再点、
+      // 或从详情页返回后再点「存入」，都会多出一道删不掉的重复菜谱
+      this._navTimer = setTimeout(() => {
+        wx.redirectTo({ url: `/pkg-extra/recipe-detail/index?id=${recipe.id}` });
       }, 600);
+    } else {
+      // 存成功却拿不到 id、跳不走：清掉预览，同一份内容不能再存第二次
+      this.setData({ saving: false, preview: null });
+    }
+  },
+
+  onUnload() {
+    if (this._navTimer) {
+      clearTimeout(this._navTimer);
+      this._navTimer = null;
     }
   }
 });

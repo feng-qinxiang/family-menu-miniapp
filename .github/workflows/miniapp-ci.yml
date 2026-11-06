@@ -78,6 +78,11 @@ jobs:
       - name: Followup UI behavior
         run: node miniapp/test/ui-followup.test.js
 
+      # 返回键防连点、表单离开确认、保存成功后防重复、原数据没拉到时不许保存、离线心愿补发单飞。
+      # 这几条坏了都不报错，只会多出一道删不掉的重复菜谱、或者把用户资料清空。
+      - name: 表单防丢与防重复回归
+        run: node miniapp/test/form-guard.test.js
+
       # 收藏页帖子卡封面口径：帖子自己的图 → 关联菜谱封面 → 不放图。
       # 这条错了只会在卡片上配错图：实测一道无配图的「周末烤的面包」被配成扬州炒饭的本地图。
       - name: 纯逻辑单测（收藏页封面口径）

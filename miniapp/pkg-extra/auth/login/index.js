@@ -49,6 +49,8 @@ Page({
       success: (loginRes) => {
         const code = loginRes && loginRes.code;
         if (!code) {
+          // 上面开的是 mask:true 的 loading，这里不关，全屏遮罩会一直卡着
+          wx.hideLoading();
           this.setData({ submitting: false });
           this.toast('微信登录失败，请重试');
           return;

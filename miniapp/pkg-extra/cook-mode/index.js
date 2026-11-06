@@ -142,7 +142,13 @@ Page({
   },
 
   onShow() {
+    // 兜底：常亮被别处关掉过（如另一层烹饪模式卸载、切出小程序）时，回到本页重新打开
+    if (wx.setKeepScreenOn) {
+      wx.setKeepScreenOn({ keepScreenOn: true });
+    }
     if (this.data.dotsHint) {
+      // 首次进入 onLoad 已经设过一个：不先清，前一个就成了没人管的计时器
+      this._clearDotsHintTimer();
       this._dotsHintTimer = setTimeout(() => this.setData({ dotsHint: false }), 4000);
     }
     this.ensureTicker();

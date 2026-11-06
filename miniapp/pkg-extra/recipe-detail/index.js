@@ -9,7 +9,7 @@ const {
   getTodayMenu,
   removeWish
 } = require('../../utils/api');
-const { runGuarded } = require('../../utils/interaction');
+const { runGuarded, guard, release } = require('../../utils/interaction');
 const { recipeDishImg, stepDishImg, ingredientImage, onPhotoError: markPhotoBroken } = require('../../utils/image');
 const { editIngredientPhoto } = require('../../utils/ingredient-photo');
 const { sourceLabels: baseSourceLabels } = require('../../utils/constants');
@@ -314,7 +314,8 @@ Page({
         wx.showToast({ title: '已加入今日菜单', icon: 'success' });
       }
     } catch (err) {
-      wx.showToast({ title: '加入失败', icon: 'none' });
+      // api 层已经弹过服务端原文，这里用同一句话（不再用通用文案盖掉它）
+      wx.showToast({ title: (err && err.message) || '加入失败', icon: 'none' });
     } finally {
       this.setData({ addingToday: false });
     }
@@ -337,28 +338,37 @@ Page({
   // —— 开始做菜：进入烹饪模式 ——
   startCook() {
     if (!this.data.recipe) return;
+    // 导航锁：与菜单页同一约定，连点会叠两层烹饪模式（上层退出时关掉常亮）
+    if (this._startingCook) return;
+    this._startingCook = true;
     const recipe = this.data.recipe;
     wx.navigateTo({
       url: `/pkg-extra/cook-mode/index?id=${recipe.id}&servings=${this.data.servings}`,
       fail: () => {
         // 真机导航失败兜底（cook-mode 页面存在，这里只报打开失败，不误报"未开发"）
         wx.showToast({ title: '页面打开失败，请重试', icon: 'none' });
-      }
+      },
+      complete: () => { this._startingCook = false; }
     });
   },
 
   writeReview() {
     if (!this.data.recipe) return;
     const recipe = this.data.recipe;
+    // 选分面板 + 写字弹窗整段只开一份（同 recordCook）：连点会叠两套，各发一条评价
+    if (!guard(this, 'reviewModal')) return;
+    const done = () => release(this, 'reviewModal');
     // 先选真实评分（1~5 星），再写文字；不再默认写死 5 分
     wx.showActionSheet({
       itemList: ['⭐⭐⭐⭐⭐ 5 分', '⭐⭐⭐⭐ 4 分', '⭐⭐⭐ 3 分', '⭐⭐ 2 分', '⭐ 1 分'],
+      fail: done,
       success: (sheet) => {
         const score = 5 - sheet.tapIndex;
         wx.showModal({
           title: `写评价 · ${score} 分`,
           editable: true,
           placeholderText: '我也做了，写两句给家人看看…',
+          complete: done,
           success: async (res) => {
             if (!res.confirm) return;
             const content = (res.content || '').trim();
@@ -445,16 +455,19 @@ Page({
   recordCook() {
     if (!this.data.recipe) return;
     const recipe = this.data.recipe;
+    // 确认框只开一份：连点让它弹两次时，第二次带的是新 completionId，服务端认作两次做菜（双记录、双扣冰箱）
+    if (!guard(this, 'recordModal')) return;
     // 「记录做过」不带评分（做了≠满分），评分走「写评价」流程
     wx.showModal({
       title: '记录做菜',
       content: `确认已做了「${recipe.title}」？`,
+      complete: () => release(this, 'recordModal'),
       success: async (res) => {
         if (res.confirm) {
           let recorded = false;
           let pantryDeducted = 0;
-          // 连点模态框的「确定」原来会落两条做菜历史、扣两遍冰箱：这里挡页面级重复，
-          // 服务端另有幂等兜底（MysqlKitchenStore.addCookHistory）
+          // 连点模态框的「确定」原来会落两条做菜历史、扣两遍冰箱：这里挡页面级重复。
+          // 服务端那条 60 秒兜底只管不带 completionId 的请求，而 addCookHistory 每次都带，所以帮不上忙
           await runGuarded(this, 'cooked', () => addCookHistory({ recipeId: recipe.id, remark: '',
             servings: this.data.servings }, { completionKey: `record-${recipe.id}` })
             .then((r) => {

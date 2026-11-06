@@ -184,7 +184,7 @@
             value="{{newPantryItem.amount}}" data-field="amount" bindinput="onPantryInput" />
           <input class="mkt-add-input sm" placeholder="单位" placeholder-class="mkt-ph"
             value="{{newPantryItem.unit}}" data-field="unit" bindinput="onPantryInput" />
-          <view class="mkt-addbtn tap-scale" bindtap="addPantryEntry" aria-role="button">记入</view>
+          <view class="mkt-addbtn tap-scale {{pantryAdding ? 'is-busy' : ''}}" bindtap="addPantryEntry" aria-role="button" aria-disabled="{{pantryAdding}}">{{pantryAdding ? '保存中…' : '记入'}}</view>
         </view>
       </view>
     </block>

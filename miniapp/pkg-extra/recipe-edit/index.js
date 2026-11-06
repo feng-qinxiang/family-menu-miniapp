@@ -2,6 +2,7 @@ const { getRecipeDetail, saveRecipe, updateRecipe } = require('../../utils/api')
 const { chooseImage, chooseVideo, uploadFile } = require('../../utils/upload');
 const { LOCAL_DISHES, recipeDishImg } = require('../../utils/image');
 const { cuisineList } = require('../../utils/constants');
+const { setLeaveGuard } = require('../../utils/interaction');
 
 const PICKER_IMAGES = LOCAL_DISHES.map((file) => `/assets/dishes/${file}.jpg`);
 
@@ -57,6 +58,10 @@ Page({
       { name: '低脂', active: false }
     ],
     saving: false,
+    // 编辑模式下原菜谱没拉到：此时表单是空的，保存（PUT）会把原菜谱整条覆盖掉，必须拦住
+    loadFailed: false,
+    // 表单和打开时比有改动：返回要确认（setLeaveGuard 维护）
+    leaveDirty: false,
     editTab: 'info',
     editingStep: -1,
     tagsLabel: '未选',
@@ -84,6 +89,7 @@ Page({
       if (prefillTitle) {
         this.setData({ 'form.title': prefillTitle });
       }
+      this._baseline = JSON.stringify(this.data.form);
       this.refreshQuality();
     }
   },
@@ -93,12 +99,12 @@ Page({
     try {
       recipe = await getRecipeDetail(id);
     } catch (err) {
-      this.setData({ pageLoading: false });
+      this.setData({ pageLoading: false, loadFailed: true });
       wx.showToast({ title: '菜谱加载失败', icon: 'none' });
       return;
     }
     if (!recipe) {
-      this.setData({ pageLoading: false });
+      this.setData({ pageLoading: false, loadFailed: true });
       return;
     }
     // 服务端已返回结构化步骤 {text,image,video}，表单直接用同构对象
@@ -129,9 +135,18 @@ Page({
       tasteTagsText: form.tasteTags.join(','),
       tagsLabel: this.labelForTags(form.tasteTags),
       commonTags: this.buildCommonTags(form.tasteTags),
-      pageLoading: false
+      pageLoading: false,
+      loadFailed: false
     });
+    this._baseline = JSON.stringify(this.data.form);
     this.refreshQuality();
+  },
+
+  // 加载失败的重试入口（页内提示行和保存拦截弹窗共用）
+  retryLoad() {
+    if (!this.data.recipeId) return;
+    this.setData({ pageLoading: true });
+    this.loadRecipe(this.data.recipeId);
   },
 
   // 校验失败时把用户带到出问题的那一页：菜名/菜系在「介绍」，食材在「用料」，
@@ -159,6 +174,7 @@ Page({
   selectDifficulty(e) {
     const { key } = e.currentTarget.dataset;
     this.setData({ 'form.difficulty': key });
+    this.syncLeave();
   },
 
   selectCuisine(e) {
@@ -208,8 +224,14 @@ Page({
     });
   },
 
-  removeCover() {
+  async removeCover() {
+    // 有内容才确认（下面四个删除同理）：删错了没有撤销，空行空图直接删不打扰
+    if (this.data.form.coverImage) {
+      const res = await wx.showModal({ title: '移除封面？', confirmText: '移除', cancelText: '取消' });
+      if (!res.confirm) return;
+    }
     this.setData({ 'form.coverImage': '' });
+    this.syncLeave();
   },
 
   toggleCommonTag(e) {
@@ -245,8 +267,13 @@ Page({
     this.refreshQuality();
   },
 
-  removeIngredient(e) {
+  async removeIngredient(e) {
     const { index } = e.currentTarget.dataset;
+    const row = this.data.form.ingredients[Number(index)] || {};
+    if (row.name || row.amount || row.unit) {
+      const res = await wx.showModal({ title: '删除这一行食材？', confirmText: '删除', cancelText: '取消' });
+      if (!res.confirm) return;
+    }
     const ingredients = this.data.form.ingredients.filter((_, i) => i !== Number(index));
     this.setData({ 'form.ingredients': ingredients.length ? ingredients : [{ name: '', amount: '', unit: '' }] });
     this.refreshQuality();
@@ -278,9 +305,14 @@ Page({
     });
   },
 
-  removeStepImage(e) {
+  async removeStepImage(e) {
     const { index } = e.currentTarget.dataset;
+    if ((this.data.form.steps[Number(index)] || {}).image) {
+      const res = await wx.showModal({ title: '移除这一步的配图？', confirmText: '移除', cancelText: '取消' });
+      if (!res.confirm) return;
+    }
     this.setData({ [`form.steps[${index}].image`]: '' });
+    this.syncLeave();
   },
 
   chooseLessonVideo() {
@@ -299,6 +331,7 @@ Page({
     if (!url) return;
     if (this.data.mediaSheet.mode === 'cover') {
       this.setData({ 'form.coverImage': url, 'mediaSheet.visible': false });
+      this.syncLeave();
       return;
     }
     const index = this.data.mediaSheet.index;
@@ -306,6 +339,7 @@ Page({
       [`form.steps[${index}].image`]: url,
       'mediaSheet.visible': false
     });
+    this.syncLeave();
   },
 
   // 统一的「传完落地」：成功才写进表单并关面板；失败留 pendingUpload 供重试。
@@ -319,10 +353,12 @@ Page({
     const mode = this.data.mediaSheet.mode;
     if (mode === 'video') {
       this.setData({ 'form.videoUrl': url, 'mediaSheet.visible': false, pendingUpload: null, uploading: false });
+      this.syncLeave();
       return;
     }
     if (mode === 'cover') {
       this.setData({ 'form.coverImage': url, 'mediaSheet.visible': false, pendingUpload: null, uploading: false });
+      this.syncLeave();
       return;
     }
     const index = this.data.mediaSheet.index;
@@ -332,6 +368,7 @@ Page({
       pendingUpload: null,
       uploading: false
     });
+    this.syncLeave();
   },
 
   // 真的在传：给 loading 反馈，防止网络慢时用户以为没反应又点一次
@@ -368,8 +405,13 @@ Page({
     return this._uploadTemp(path);
   },
 
-  removeLessonVideo() {
+  async removeLessonVideo() {
+    if (this.data.form.videoUrl) {
+      const res = await wx.showModal({ title: '移除教学视频？', confirmText: '移除', cancelText: '取消' });
+      if (!res.confirm) return;
+    }
     this.setData({ 'form.videoUrl': '' });
+    this.syncLeave();
   },
 
   addStep() {
@@ -378,8 +420,13 @@ Page({
     this.refreshQuality();
   },
 
-  removeStep(e) {
+  async removeStep(e) {
     const { index } = e.currentTarget.dataset;
+    const step = this.data.form.steps[Number(index)] || {};
+    if ((step.text && step.text.trim()) || step.image) {
+      const res = await wx.showModal({ title: `删除第 ${Number(index) + 1} 步？`, confirmText: '删除', cancelText: '取消' });
+      if (!res.confirm) return;
+    }
     const steps = this.data.form.steps.filter((_, i) => i !== Number(index));
     this.setData({ 'form.steps': steps.length ? steps : [{ text: '', image: '' }] });
     this.refreshQuality();
@@ -411,6 +458,14 @@ Page({
       tipText,
       previewInfo: this.buildPreviewInfo(form)
     });
+    // 文字、用料、步骤、标签、份量的改动都经过这里，顺手判一次有没有没保存的修改
+    this.syncLeave();
+  },
+
+  // 和打开时的表单比；_baseline 没有（原菜谱没加载出来，保存本来就拦着）就不拦返回
+  syncLeave() {
+    if (this._baseline === undefined) return;
+    setLeaveGuard(this, JSON.stringify(this.data.form) !== this._baseline);
   },
 
   buildPreviewInfo(form) {
@@ -429,6 +484,16 @@ Page({
 
   async submit() {
     if (this.data.saving) return;
+    if (this.data.loadFailed) {
+      const res = await wx.showModal({
+        title: '原菜谱还没加载出来',
+        content: '现在保存会用这张空表单覆盖原菜谱。先重新加载一次？',
+        confirmText: '重新加载',
+        cancelText: '取消'
+      });
+      if (res.confirm) this.retryLoad();
+      return;
+    }
     this.setData({ saving: true });
     const { form, isEdit, recipeId } = this.data;
     if (!form.title.trim()) {
@@ -513,7 +578,18 @@ Page({
       }
       wx.showToast({ title: '已创建', icon: 'success' });
     }
-    this.setData({ saving: false });
-    setTimeout(() => wx.navigateBack(), 600);
+    // 成功路径不复位 saving：返回前这 600ms 再点一次就是一道删不掉的重复菜谱，
+    // 两个计时器还会各退一层页面。页面卸载时清计时器（同 pages/menu）
+    // 已存好：撤掉离开确认，否则下面的 navigateBack 也会被系统拦一下
+    this._baseline = undefined;
+    setLeaveGuard(this, false);
+    this._navTimer = setTimeout(() => wx.navigateBack(), 600);
+  },
+
+  onUnload() {
+    if (this._navTimer) {
+      clearTimeout(this._navTimer);
+      this._navTimer = null;
+    }
   }
 });

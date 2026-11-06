@@ -1,5 +1,5 @@
 <view class="imp-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
-  <nav-bar title="导入菜谱" status-bar-height="{{statusBarHeight}}" />
+  <nav-bar title="导入菜谱" status-bar-height="{{statusBarHeight}}" leave-confirm="{{leaveDirty}}" />
   <view class="cpt-head">
     <view class="cpt-eyebrow">收藏的好菜，变成家常味</view>
     <view class="cpt-title">把好菜带回家</view>

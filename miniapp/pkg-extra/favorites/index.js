@@ -151,9 +151,11 @@ Page({
     const postId = recipe._postId;
     if (!postId) {
       this._toast('无法定位收藏来源');
+      // 卡片已经在本地翻成「未收藏」了，重拉一次让它和实际对上（同 notifications 失败后 loadData）
+      this.loadData(true);
       return;
     }
-    // 防重：连点会多次切换收藏态，本地状态来回漂
+    // 防重：连点会多次切换收藏态，本地状态来回漂。在途那次成功后会整体刷新，这里不用再拉
     if (this.__favBusy) return;
     this.__favBusy = true;
     wx.showLoading({ title: '处理中', mask: true });
@@ -166,6 +168,7 @@ Page({
       .catch(() => {
         wx.hideLoading();
         this._toast('操作失败，请稍后重试');
+        this.loadData(true);
       })
       .then(() => { this.__favBusy = false; });
   },

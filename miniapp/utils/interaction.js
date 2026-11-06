@@ -89,8 +89,29 @@ function guard(ctx, key) {
   return acquire(ctx, key);
 }
 
+const LEAVE_TEXT = '放弃未保存的修改？';
+
+/**
+ * 表单页「有没保存的修改」开关。两条返回路都要拦：
+ *  - nav-bar 返回键：页面 wxml 写 <nav-bar leave-confirm="{{leaveDirty}}">，由组件弹确认；
+ *  - 系统返回（安卓返回键等）：wx.enableAlertBeforeUnload。iOS 左滑返回系统不给拦。
+ * 状态没变不 setData。保存成功、跳走之前调 setLeaveGuard(page, false)，否则代码里的返回也会被拦。
+ */
+function setLeaveGuard(page, dirty) {
+  const next = !!dirty;
+  if (!page || !!page.data.leaveDirty === next) return;
+  page.setData({ leaveDirty: next });
+  if (next && typeof wx.enableAlertBeforeUnload === 'function') {
+    wx.enableAlertBeforeUnload({ message: LEAVE_TEXT });
+  } else if (!next && typeof wx.disableAlertBeforeUnload === 'function') {
+    wx.disableAlertBeforeUnload();
+  }
+}
+
 module.exports = {
   runGuarded,
   guard,
-  release
+  release,
+  setLeaveGuard,
+  LEAVE_TEXT
 };

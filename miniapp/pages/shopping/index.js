@@ -15,7 +15,7 @@ const { indexPantry, pantryHas } = require('../../utils/pantry-match');
 
 const { ingredientImage, onPhotoError } = require('../../utils/image');
 const { editIngredientPhoto } = require('../../utils/ingredient-photo');
-const { runGuarded } = require('../../utils/interaction');
+const { runGuarded, guard, release } = require('../../utils/interaction');
 const { INGREDIENT_CATEGORIES, categoryOf } = require('../../utils/ingredients');
 const { shoppingEmptyReason } = require('../../utils/kitchen');
 
@@ -88,7 +88,8 @@ Page({
     skeletonRows: [1, 2, 3],
     loading: true,
     loadError: false,
-    addItemSubmitting: false
+    addItemSubmitting: false,
+    pantryAdding: false
   },
 
   onShow() {
@@ -194,19 +195,23 @@ Page({
     this.setData({ [`newPantryItem.${field}`]: e.detail.value });
   },
 
+  // 防连点同冰箱页 addItem：pantry_item 没有唯一键，连点会记入多条
   async addPantryEntry() {
+    if (this.data.pantryAdding) return;
     const { ingredientName, amount, unit } = this.data.newPantryItem;
     if (!(ingredientName || '').trim()) {
       wx.showToast({ title: '请输入食材名', icon: 'none' });
       return;
     }
+    this.setData({ pantryAdding: true });
     try {
       await addPantryItem({ ingredientName: ingredientName.trim(), amount, unit });
     } catch (err) {
+      this.setData({ pantryAdding: false });
       wx.showToast({ title: '添加失败', icon: 'none' });
       return;
     }
-    this.setData({ newPantryItem: { ingredientName: '', amount: '', unit: '' }, showPantryForm: false });
+    this.setData({ newPantryItem: { ingredientName: '', amount: '', unit: '' }, showPantryForm: false, pantryAdding: false });
     try {
       const items = await getPantryItems();
       this.setPantryView(items);
@@ -276,6 +281,17 @@ Page({
 
   async toggleItem(event) {
     const { id } = event.currentTarget.dataset;
+    // 同一项在途时忽略再点（同社区页点赞）：两条 PATCH 乱序到达，服务端最终状态会和界面相反
+    const key = `toggle-${id}`;
+    if (!guard(this, key)) return;
+    try {
+      await this.toggleItemOnce(id);
+    } finally {
+      release(this, key);
+    }
+  },
+
+  async toggleItemOnce(id) {
     const items = (this.data.shoppingList && this.data.shoppingList.items) || [];
     const idx = items.findIndex((it) => it.itemId === id);
     if (idx < 0) return;
@@ -350,7 +366,8 @@ Page({
     } catch (err) {
       wx.hideLoading();
       this.setData({ addItemSubmitting: false });
-      wx.showToast({ title: '添加失败，请重试', icon: 'none' });
+      // api 层已经弹过服务端原文，用同一句，不拿通用文案盖掉
+      wx.showToast({ title: (err && err.message) || '添加失败，请重试', icon: 'none' });
       return;
     }
     if (result) {

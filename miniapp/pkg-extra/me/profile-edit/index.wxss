@@ -26,6 +26,16 @@
   padding: 8rpx 0 40rpx;
 }
 
+/* 原资料没加载出来的重试行：整行可点，最小命中区走 token */
+.pe-loadfail {
+  display: flex;
+  align-items: center;
+  min-height: var(--tap-min);
+  padding: 0 46rpx;
+  font-size: var(--fs-cap);
+  color: var(--pop);
+}
+
 /* ===== 文字头像 ===== */
 .pe-avatar-wrap {
   display: flex;

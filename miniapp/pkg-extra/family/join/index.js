@@ -158,12 +158,15 @@ Page({
     joinFamily(this.data.code)
       .then(() => {
         wx.hideLoading();
-        this.setData({ submitting: false });
         wx.showToast({ title: '已加入家庭', icon: 'success' });
-        setTimeout(() => {
-          wx.navigateTo({
+        // 同创建页：成功后不复位 submitting，redirectTo 替换本页，计时器 onUnload 里清
+        this._navTimer = setTimeout(() => {
+          wx.redirectTo({
             url: '/pkg-extra/family/members/index',
-            fail: () => wx.navigateBack({ delta: 1, fail: () => {} }),
+            fail: () => {
+              this.setData({ submitting: false });
+              wx.navigateBack({ delta: 1, fail: () => {} });
+            },
           });
         }, 600);
       })
@@ -172,6 +175,13 @@ Page({
         this.setData({ submitting: false });
         wx.showToast({ title: err.message || '加入失败', icon: 'none' });
       });
+  },
+
+  onUnload() {
+    if (this._navTimer) {
+      clearTimeout(this._navTimer);
+      this._navTimer = null;
+    }
   },
 
   onCreate() {

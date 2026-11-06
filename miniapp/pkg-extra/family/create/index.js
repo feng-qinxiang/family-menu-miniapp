@@ -89,6 +89,8 @@ Page({
     if (this.data.avatar) {
       avatarUrl = await uploadFile(this.data.avatar).catch(() => '');
     }
+    // 选了合影却没传上去（uploadFile 返回 ''）：家庭照建，但要说清楚，别让人以为合影也存好了
+    const avatarFailed = !!this.data.avatar && !avatarUrl;
     createFamily({
       name,
       avatarUrl: avatarUrl || '',
@@ -96,12 +98,18 @@ Page({
     })
       .then(() => {
         wx.hideLoading();
-        this.setData({ submitting: false });
-        wx.showToast({ title: '家庭创建成功', icon: 'success' });
-        setTimeout(() => {
-          wx.navigateTo({
+        wx.showToast(avatarFailed
+          ? { title: '家庭已创建，合影没传上去', icon: 'none' }
+          : { title: '家庭创建成功', icon: 'success' });
+        // 成功后不复位 submitting，并用 redirectTo 替换本页（同 payment/checkout）：
+        // 600ms 内再点不会重发、不会多推一层，返回也回不到已提交的表单
+        this._navTimer = setTimeout(() => {
+          wx.redirectTo({
             url: '/pkg-extra/family/invite/index',
-            fail: () => wx.navigateTo({ url: '/pkg-extra/family/members/index' }),
+            fail: () => wx.redirectTo({
+              url: '/pkg-extra/family/members/index',
+              fail: () => this.setData({ submitting: false }),
+            }),
           });
         }, 600);
       })
@@ -110,6 +118,13 @@ Page({
         this.setData({ submitting: false });
         wx.showToast({ title: err.message || '创建失败', icon: 'none' });
       });
+  },
+
+  onUnload() {
+    if (this._navTimer) {
+      clearTimeout(this._navTimer);
+      this._navTimer = null;
+    }
   },
 
   goJoin() {

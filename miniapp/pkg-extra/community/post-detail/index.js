@@ -2,6 +2,7 @@
 const features = require('../../../utils/features');
 const api = require('../../../utils/api');
 const { onPhotoError: markPhotoBroken } = require('../../../utils/image');
+const { guard, release } = require('../../../utils/interaction');
 
 // 头像底色循环（与设计稿一致的撞色梯度）
 const AVA_THEMES = ['lin', 'lan', 'zhao', 'gold', 'pine'];
@@ -282,9 +283,11 @@ Page({
   },
 
   // 收藏切换
-  // 点赞：先本地翻转，失败回滚（与列表页一致）
+  // 点赞：先本地翻转，失败回滚（与列表页一致）；在途期间忽略重复点击——
+  // 接口是切换语义，连点两次服务端回到原状，界面却会按两次响应来回跳
   onToggleLike() {
     if (!this.data.postId || !this.data.post) return;
+    if (!guard(this, 'like')) return;
     const before = this.data.post;
     const liked = !before.liked;
     const likeCount = Math.max(0, (before.likeCount || 0) + (liked ? 1 : -1));
@@ -304,7 +307,8 @@ Page({
       .catch(() => {
         this.setData({ post: before });
         this.showToast('点赞失败，请重试', 'error');
-      });
+      })
+      .finally(() => release(this, 'like'));
   },
 
   onToggleFavorite() {
@@ -364,20 +368,24 @@ Page({
   },
 
   // 作者删自己的帖子：确认后软删，返回上一页（列表页 onShow 会自动刷新）
+  // _deleting 挡连点（确认框弹两次会删两遍、各起一个返回计时器）；成功后不放，页面马上要走
   onDeletePost() {
-    if (!this.data.postId) return;
+    if (!this.data.postId || this._deleting) return;
+    this._deleting = true;
     wx.showModal({
       title: '删除这篇分享？',
       content: '删除后其他人将无法看到，自己也不能恢复',
       confirmText: '删除',
       confirmColor: '#c8381f',
+      fail: () => { this._deleting = false; },
       success: (res) => {
-        if (!res.confirm) return;
+        if (!res.confirm) { this._deleting = false; return; }
         api
           .deleteCommunityPost(this.data.postId)
           .then(() => {
             this.showToast('已删除', 'top');
-            setTimeout(() => {
+            // 存起来、onUnload 清：用户这 600ms 里自己点了返回，计时器不能在上一页再退一层
+            this._navTimer = setTimeout(() => {
               const pages = getCurrentPages();
               if (pages && pages.length > 1) {
                 wx.navigateBack({ delta: 1, fail: () => {} });
@@ -386,9 +394,19 @@ Page({
               }
             }, 600);
           })
-          .catch(() => this.showToast('删除失败，请重试', 'error'));
+          .catch(() => {
+            this._deleting = false;
+            this.showToast('删除失败，请重试', 'error');
+          });
       }
     });
+  },
+
+  onUnload() {
+    if (this._navTimer) {
+      clearTimeout(this._navTimer);
+      this._navTimer = null;
+    }
   },
 
   // 评论者删自己的评论：确认后软删，本地同步移除并回补计数

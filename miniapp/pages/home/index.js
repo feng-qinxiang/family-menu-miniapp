@@ -222,9 +222,15 @@ Page({
       const info = typeof wx.getAppBaseInfo === 'function' ? wx.getAppBaseInfo() : {};
       if (info.theme && info.theme !== this.data.theme) this.setData({ theme: info.theme });
       if (typeof wx.onThemeChange === 'function') {
-        wx.onThemeChange((res) => this.setData({ theme: res.theme }));
+        // 存下引用，onUnload 里摘掉：tab 页平时不卸载，但 reLaunch 会新建首页，旧监听不摘就叠一层
+        this._onTheme = (res) => this.setData({ theme: res.theme });
+        wx.onThemeChange(this._onTheme);
       }
     } catch (e) {}
+  },
+
+  onUnload() {
+    if (this._onTheme && typeof wx.offThemeChange === 'function') wx.offThemeChange(this._onTheme);
   },
 
   onShow() {
@@ -238,7 +244,9 @@ Page({
     if (todayKey !== this.data.todayKey) {
       this.setData({ todayKey });
     }
-    this.refreshWishes();
+    // 冷启动时 onLoad 刚拉过心愿（同一时刻），第一次 onShow 不再重复请求；之后每次回到首页再拉
+    if (this._shownOnce) this.refreshWishes();
+    this._shownOnce = true;
     if (this._inited) {
       this.refreshLight();
     }
@@ -279,15 +287,22 @@ Page({
     }
   },
 
-  // 补发离线期间积压的许愿；成功的出队，仍失败的留队下次再试
+  // 补发离线期间积压的许愿；成功的出队，仍失败的留队下次再试。
+  // 单飞（同 utils/api.js 的 bootstrapSession）：冷启动时 onLoad 和 onShow 同时进来，
+  // 两边读到同一批队列会各 addWish 一遍，family_wish 没有唯一键，全家都会看到重复心愿。
+  // 按 date:slot 分开，切餐次时另一餐的补发不用排队。
   async flushPendingWishes(date, slot) {
+    const key = `${date}:${slot}`;
+    this._flushing = this._flushing || {};
+    if (this._flushing[key]) return this._flushing[key];
     const pending = loadPending().filter((w) => w.date === date && w.slot === slot);
     if (!pending.length) return;
-    await Promise.all(pending.map((w) =>
+    this._flushing[key] = Promise.all(pending.map((w) =>
       addWish({ date: w.date, slot: w.slot, text: w.text, recipeId: null })
         .then(() => { removePending(w.id); })
         .catch(() => {})
-    ));
+    )).then(() => { this._flushing[key] = null; });
+    return this._flushing[key];
   },
 
   selectSlot(e) {

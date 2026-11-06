@@ -321,6 +321,10 @@ Page({
   async startCook(e) {
     const { id, item } = e.currentTarget.dataset;
     if (!id) return;
+    // 导航锁（同 vip/upgrade 的 activating）：连点会叠两层烹饪模式，
+    // 退出上层时它的 onUnload 关掉常亮，下层还在做菜屏幕却会灭。锁要在 await 之前拿。
+    if (this._startingCook) return;
+    this._startingCook = true;
     // 先写入「烧着呢」再跳转：此前是 fire-and-forget，跳到烹饪模式后立刻返回菜单
     // 会读到旧状态（onShow 重拉早于写入完成）。写入很快，等一下换来状态一致。
     if (item) {
@@ -333,7 +337,8 @@ Page({
     }
     wx.navigateTo({
       url: `/pkg-extra/cook-mode/index?id=${id}&menuItemId=${item || ''}`,
-      fail: () => wx.showToast({ title: '页面打开失败，请重试', icon: 'none' })
+      fail: () => wx.showToast({ title: '页面打开失败，请重试', icon: 'none' }),
+      complete: () => { this._startingCook = false; }
     });
   },
 
@@ -423,16 +428,33 @@ Page({
     }
   },
 
+  // 「重新生成本周计划」会整份覆盖：已有计划时先确认（同 weekly-menu 的 regenerate）；
+  // 空态里的「生成本周菜单」没东西可覆盖，不确认。_genWeekly 挡连点。
   async genWeekly() {
-    wx.showLoading({ title: '排周菜单', mask: true });
+    if (this._genWeekly) return;
+    this._genWeekly = true;
     try {
-      await generateWeeklyMenu();
-      wx.hideLoading();
-      wx.showToast({ title: '已生成', icon: 'success' });
-      this.loadData();
-    } catch (err) {
-      wx.hideLoading();
-      wx.showToast({ title: '生成失败', icon: 'none' });
+      if ((this.data.weeklyDays || []).length) {
+        const res = await wx.showModal({
+          title: '重新排一版本周计划？',
+          content: '会按全家口味重新生成七天安排，覆盖当前这一版。',
+          confirmText: '重新排',
+          cancelText: '取消'
+        });
+        if (!res.confirm) return;
+      }
+      wx.showLoading({ title: '排周菜单', mask: true });
+      try {
+        await generateWeeklyMenu();
+        wx.hideLoading();
+        wx.showToast({ title: '已生成', icon: 'success' });
+        this.loadData();
+      } catch (err) {
+        wx.hideLoading();
+        wx.showToast({ title: '生成失败', icon: 'none' });
+      }
+    } finally {
+      this._genWeekly = false;
     }
   },
 

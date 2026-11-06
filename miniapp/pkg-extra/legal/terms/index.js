@@ -85,9 +85,12 @@ Page({
   },
 
   // CTA「我已阅读并同意」：提示后返回上一页
+  // 连点（或点完马上自己返回）会有两个计时器各 navigateBack 一次，多退一层：只认第一下，计时器 onUnload 清
   onAgree() {
+    if (this._agreeing) return;
+    this._agreeing = true;
     wx.showToast({ title: '已同意用户协议', icon: 'success' });
-    setTimeout(() => {
+    this._navTimer = setTimeout(() => {
       const pages = getCurrentPages();
       if (pages && pages.length > 1) {
         wx.navigateBack({ delta: 1 });
@@ -100,5 +103,12 @@ Page({
         });
       }
     }, 600);
+  },
+
+  onUnload() {
+    if (this._navTimer) {
+      clearTimeout(this._navTimer);
+      this._navTimer = null;
+    }
   }
 });

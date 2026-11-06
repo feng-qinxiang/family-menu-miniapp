@@ -216,6 +216,9 @@
 .feed-end { display: flex; align-items: center; justify-content: center; gap: 22rpx; margin: 40rpx 0 8rpx; }
 .feed-end::before, .feed-end::after { content: ""; height: 2rpx; width: 88rpx; background: var(--c-border); }
 .feed-end text { font-size: calc(23rpx * var(--fs-mul, 1)); color: var(--mut-strong); letter-spacing: 2rpx; font-weight: 600; }
+/* 翻页失败的重试行：整行是热区，最小命中高度走 token；字色换成可点的强调色 */
+.feed-end--retry { min-height: var(--tap-min); margin-top: 20rpx; }
+.feed-end--retry text { color: var(--pop); }
 
 /* ===================== 发帖弹层（容器由 state-sheet 组件提供，页面只留表单样式） ===================== */
 .pf-input {
