@@ -65,13 +65,15 @@
   border-radius: var(--r-md);
 }
 .rd-sbtn {
-  width: 88rpx;
-  height: 88rpx;
+  width: var(--tap-min);
+  height: var(--tap-min);
   border-radius: var(--r-md);
   display: flex;
   align-items: center;
   justify-content: center;
 }
+.rd-sbtn.is-disabled { opacity: 0.35; }
+.rd-sbtn.is-disabled:active { transform: none; }
 .rd-sbtn-minus,
 .rd-sbtn-plus {
   position: relative;
@@ -169,11 +171,11 @@
   word-break: break-all;
 }
 .rd-photo-hint { font-size: var(--fs-cap); color: var(--mut-strong); line-height: 1.5; padding-bottom: 8rpx; }
-.rd-ingredient-photo { position: relative; flex: none; width: var(--tile-rc); height: var(--tile-rc); background: var(--paper-2); border-radius: var(--r-md); overflow: hidden; }
+.rd-ingredient-photo { position: relative; flex: none; width: var(--tile-row-sm); height: var(--tile-row-sm); background: var(--paper-2); border-radius: var(--r-sm); overflow: hidden; }
 .rd-ingredient-image { display: block; width: 100%; height: 100%; }
-/* 缩略图名称最多两行，底部预留编辑标签；完整名称在右侧。 */
-.rd-ingredient-text { box-sizing: border-box; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 12rpx 8rpx 44rpx; font-size: var(--fs-cap); font-weight: 800; color: var(--pine-ink); line-height: 1.2; text-align: center; word-break: break-all; }
-.rd-ingredient-label { display: -webkit-box; width: 100%; max-height: calc(var(--fs-cap) * 2.4); -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+/* 无照片时只露首字，不与右侧全名重复；下方留出「加图/换图」。 */
+.rd-ingredient-text { box-sizing: border-box; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 4rpx 8rpx 32rpx; font-size: var(--fs-lg); font-weight: 700; color: var(--pine-ink); line-height: 1.2; }
+.rd-ingredient-label { overflow: hidden; }
 /* 底条走 --glass：原来写死白 .88，深色档 --mut-strong 翻成浅灰压在白条上，「换图/加图」只剩约 1.8:1 */
 .rd-photo-edit { position: absolute; bottom: 0; left: 0; right: 0; padding: 4rpx 0; line-height: 1.3; text-align: center; background: var(--glass); color: var(--mut-strong); font-size: var(--fs-mini); }
 

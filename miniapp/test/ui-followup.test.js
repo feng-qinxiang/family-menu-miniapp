@@ -43,7 +43,7 @@ global.Page = page => { definition = page; };
 function page(file, privateFields = []) {
   require(file);
   assert.ok(Object.keys(definition.data).every(key => !privateFields.includes(key.replace(/^_/, ''))), '原始列表不放进 data 默认值');
-  return { ...definition, data: JSON.parse(JSON.stringify(definition.data)), setData(patch, cb) {
+  const instance = { ...definition, data: JSON.parse(JSON.stringify(definition.data)), setData(patch, cb) {
     for (const [key, value] of Object.entries(patch)) {
       const parts = key.split('.'); let target = this.data;
       assert.ok(!privateFields.includes(parts[0].replace(/^_/, '')), 'setData 只发送展示数据，不发送原始列表');
@@ -52,17 +52,40 @@ function page(file, privateFields = []) {
     }
     if (cb) cb();
   } };
+  // 模拟原生 Page 包装方法：定义中函数自带的 cancel 等属性不会带到页面实例。
+  for (const [key, method] of Object.entries(definition)) {
+    if (typeof method === 'function') instance[key] = function (...args) { return method.apply(this, args); };
+  }
+  return instance;
 }
 const event = dataset => ({ currentTarget: { dataset } });
 const settled = () => new Promise(resolve => setImmediate(resolve));
 (async () => {
   try {
     const recipePage = page('../pages/recipes/index');
+    recipePage.confirmSearch(); // 带链接关键词进入、还没输入时也能立即搜索或退出。
+    recipePage.onUnload();
     await recipePage.loadRecipes();
     assert.ok(recipePage.data.cuisineList.includes('主食'), '真实自定义菜系也可选择');
     recipePage.selectSource(event({ source: 'owned' }));
     recipePage.setFilterCuisine(event({ val: '主食' }));
     assert.deepEqual(recipePage._filteredRecipes.map(r => r.id), [1], '菜系和来源同时生效');
+    const filters = JSON.stringify({ source: recipePage.data.activeSource, advanced: recipePage.data.advFilter, avoids: recipePage.data.avoidTags });
+    const realApply = recipePage.applyFilter;
+    let applies = 0;
+    recipePage.applyFilter = function () { applies++; return realApply.call(this); };
+    recipePage.onSearchInput({ detail: { value: '没有这道菜' } });
+    recipePage.confirmSearch();
+    assert.equal(recipePage._filteredRecipes.length, 0, '键盘搜索立即生效，不等防抖');
+    assert.equal(applies, 1);
+    recipePage.onSearchInput({ detail: { value: '炒' } });
+    recipePage.clearSearch();
+    assert.equal(recipePage.data.searchText, '');
+    assert.deepEqual(recipePage._filteredRecipes.map(r => r.id), [1], '清关键词后保留原来的菜系和来源');
+    assert.equal(JSON.stringify({ source: recipePage.data.activeSource, advanced: recipePage.data.advFilter, avoids: recipePage.data.avoidTags }), filters);
+    await new Promise(resolve => setTimeout(resolve, 350));
+    assert.equal(applies, 2, '确认和清空都取消待执行防抖，不重复筛选');
+    recipePage.applyFilter = realApply;
     recipePage.selectRailMode(event({ mode: 'source' }));
     assert.equal(recipePage.data.advFilter.cuisine, '主食', '切换左侧分类保留另一维条件');
     recipePage.selectSource(event({ source: 'community' }));

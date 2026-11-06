@@ -56,6 +56,15 @@ function page(module, privateFields = []) {
     detail.changeServings({ currentTarget: { dataset: { delta: 1 } } });
     assert.equal(detail.data.recipe.ingredients[0].cover, '/uploaded/tomato.jpg', '改份数保留图片');
     assert.equal(detail.data.recipe.ingredients[0].inStock, false);
+    for (const [servings, delta] of [[1, -1], [20, 1]]) {
+      detail.setData({ servings });
+      const before = JSON.stringify(detail.data);
+      detail.changeServings({ currentTarget: { dataset: { delta } } });
+      assert.equal(JSON.stringify(detail.data), before, '份数在上下限不改变用量或库存提示');
+      detail.changeServings({ currentTarget: { dataset: { delta: -delta } } });
+      assert.equal(detail.data.servings, servings - delta, '从上下限往范围内仍能正常调整');
+      assert.equal(detail.data.recipe.ingredients[0].amountText, String(servings - delta));
+    }
     photosFail = true;
     await detail.loadRecipe(1);
     assert.equal(detail.data.loadError, false, '照片接口失败不阻断整份菜谱');

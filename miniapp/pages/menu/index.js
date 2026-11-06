@@ -13,7 +13,7 @@ const {
 } = require('../../utils/api');
 const { mealTypeLabels, mealOrder } = require('../../utils/constants');
 const { animateNumber, stopNumberAnim } = require('../../utils/count-up');
-const { localPath, recipeDishImg, LOCAL_DISHES, onImgError: handleImgError, onPhotoError: markPhotoBroken } = require('../../utils/image');
+const { localPath, recipeDishImg, LOCAL_DISHES, onImgError: handleImgError } = require('../../utils/image');
 const { runGuarded } = require('../../utils/interaction');
 const { shoppingEmptyReason } = require('../../utils/kitchen');
 const { indexPantry, pantryHas } = require('../../utils/pantry-match');
@@ -67,7 +67,6 @@ function buildCookOrder(list) {
 }
 
 Page({
-  onPhotoError(e) { markPhotoBroken(e, this); },
   data: {
     view: 'today',          // today | week (§3 segment)
     todayLabel: buildToday(),

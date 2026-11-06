@@ -7,7 +7,7 @@ const { LEAVE_TEXT } = require('../utils/interaction');
 
 const stubs = {};
 ['saveRecipe', 'updateRecipe', 'getRecipeDetail', 'getCurrentUser', 'getFamilyProfile',
-  'updateProfile', 'updateMemberAvoidTags', 'addWish'].forEach((name) => {
+  'updateProfile', 'updateMemberAvoidTags', 'addWish', 'addTodayMenuRecipe'].forEach((name) => {
   api[name] = (...args) => stubs[name](...args);   // 页面在 require 时解构 api，先换成可改的转发
 });
 
@@ -169,6 +169,34 @@ const leaveModals = () => calls.modals.filter((t) => t === LEAVE_TEXT).length;
     assert.equal(p.data.saving, true, '成功后不复位 saving');
     assert.equal(p.data.leaveDirty, false);
     p.onUnload();
+  }
+  // 首页点菜：失败不亮「已点」，成功后即使清单刷新尚未完成也不能再 POST。
+  {
+    const h = makePage(homeDef);
+    const e = { currentTarget: { dataset: { id: 7 } } };
+    let writes = 0, refreshes = 0, finish;
+    h._inited = true;
+    h.refreshLight = () => { refreshes++; };
+    stubs.addTodayMenuRecipe = async () => { writes++; throw new Error('offline'); };
+    await h.addToToday(e);
+    assert.equal(h.data.pickedRecipeIds[7], undefined, '失败保留可重试状态');
+    assert.equal(refreshes, 0);
+    stubs.addTodayMenuRecipe = () => { writes++; return new Promise(resolve => { finish = resolve; }); };
+    const first = h.addToToday(e);
+    await h.addToToday(e);
+    assert.equal(writes, 2, '在途连点只发一次');
+    assert.equal(h.data.pickedRecipeIds[7], undefined, '未确认成功不提前勾选');
+    finish(); // API 成功无返回体也要显示已点。
+    await first;
+    assert.equal(h.data.pickedRecipeIds[7], true);
+    assert.equal(refreshes, 1);
+    h.refreshWishes = () => {};
+    h.selectSlot({ currentTarget: { dataset: { slot: 'lunch' } } });
+    assert.equal(h.data.pickedRecipeIds[7], true, '清单刷新未回时切餐次，仍保留已确认的点菜');
+    await h.addToToday({ detail: { id: '7' } });
+    assert.equal(writes, 2, '成功后的第二下不会因旧 todayMenu 再次提交');
+    h.setData(h._slotMenuPatch([]));
+    assert.deepEqual(h.data.pickedRecipeIds, {}, '重新同步空菜单后可重新点菜');
   }
   // 首页离线心愿补发：冷启动 onLoad 和 onShow 同时进来，同一批只能发一次（family_wish 没有唯一键）
   {

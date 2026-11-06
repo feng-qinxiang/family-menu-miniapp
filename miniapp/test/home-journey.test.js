@@ -45,6 +45,9 @@ try {
   ];
   p.updateSlotMenu();
 
+  assert.deepEqual(p.data.pickedRecipeIds, { 1: true, 2: true, 3: true, 4: true, 5: true }, '已点标记包含全天各餐，首页与菜谱页采用同一查重口径');
+  assert.equal(p._slotMenuPatch([dish('2', 'todo', '我')]).pickedRecipeIds[2], true, '字符串与数字菜谱 ID 共用标记');
+  assert.deepEqual(p._slotMenuPatch([]).pickedRecipeIds, {}, '权威空菜单清除旧标记，不能沿用当前菜单');
   assert.equal(p.data.slotMenu.length, 4, 'The selected meal excludes dishes from other meals');
   assert.deepEqual(p.data.homeMenuItems.map((item) => item.recipeId), [1, 2, 3]);
   assert.equal(p.data.menuMoreCount, 1, 'The home list shows at most three dishes');

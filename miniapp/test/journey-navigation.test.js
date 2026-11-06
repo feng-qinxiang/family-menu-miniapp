@@ -8,7 +8,7 @@ global.getApp = () => app;
 global.wx = {
   getStorageSync() { return ''; },
   navigateTo(options) { navigation.push({ type: 'navigate', url: options.url }); },
-  switchTab(options) { navigation.push({ type: 'tab', url: options.url }); }
+  switchTab(options) { navigation.push({ type: 'tab', url: options.url }); if (options.success) options.success(); }
 };
 
 function page(module) {
@@ -24,8 +24,19 @@ function route(instance, method, type, url) {
 }
 
 try {
-  route(page('../pages/home/index'), 'goCookLog', 'tab', '/pages/cook-log/index');
+  const home = page('../pages/home/index');
+  route(home, 'goCookLog', 'tab', '/pages/cook-log/index');
   const menu = page('../pages/menu/index');
+  menu.route = 'pages/menu/index';
+  menu.loadData = () => {};
+  global.getCurrentPages = () => [menu];
+  for (const entry of [home, page('../pages/recipes/index')]) {
+    menu.switchView({ currentTarget: { dataset: { view: 'week' } } });
+    menu.onShow();
+    assert.equal(menu.data.view, 'week', '普通 tab 回访保留本周计划');
+    route(entry, 'goMenu', 'tab', '/pages/menu/index');
+    assert.equal(menu.data.view, 'today', '今日菜单入口不能误落到保留的周计划');
+  }
   route(menu, 'goCookLog', 'tab', '/pages/cook-log/index');
   route(menu, 'goAddRecipe', 'navigate', '/pages/recipes/index');
   route(menu, 'goPantry', 'navigate', '/pages/pantry/index');
@@ -72,5 +83,6 @@ try {
   delete global.Page;
   delete global.wx;
   delete global.getApp;
+  delete global.getCurrentPages;
 }
 console.log('journey-navigation.test ok: tabs, secondary tools, legacy completion links, record covers and filters');

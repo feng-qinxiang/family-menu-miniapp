@@ -9,6 +9,7 @@ const { recipesFromPosts } = require('../../utils/dish-logic');
 const { runGuarded } = require('../../utils/interaction');
 const { pantrySummary, normalizeMatches } = require('../../utils/pantry-match');
 const { parseMealRequest, hasMildLabel } = require('../../utils/meal-request');
+const { openTodayMenu } = require('../../utils/tabs');
 
 // 与社区页 FEED_PAGE_SIZE 对齐（pages/community/index.js）；原为 6，每屏只出 6 个，
 // 滚两下就得再点一次「上拉加载更多」，列表页不该这么碎。
@@ -360,12 +361,20 @@ Page({
 
   onSearchInput(event) {
     this.setData({ searchText: event.detail.value || '' });
+    // 放实例上：Page 会包装定义中的函数，丢掉函数自带的 .cancel；也不能跨页共享计时器。
+    if (!this._debouncedFilter) this._debouncedFilter = debounce(() => this.applyFilter(), 300);
     this._debouncedFilter();
   },
 
-  _debouncedFilter: debounce(function () {
+  confirmSearch() {
+    if (this._debouncedFilter) this._debouncedFilter.cancel();
     this.applyFilter();
-  }, 300),
+  },
+
+  clearSearch() {
+    this.setData({ searchText: '' });
+    this.confirmSearch(); // 只清关键词，保留菜系、耗时与忌口条件
+  },
 
   onSearchFocus() {
     this.setData({ searchFocused: true });
@@ -460,7 +469,7 @@ Page({
 
   onUnload() {
     // 防抖定时器要主动取消：否则 300ms 后仍会跑一次 applyFilter()，对已销毁的页面 setData
-    this._debouncedFilter.cancel();
+    if (this._debouncedFilter) this._debouncedFilter.cancel();
     disposeScrollReveal(this);
   },
 
@@ -560,7 +569,7 @@ Page({
   },
 
   goMenu() {
-    wx.switchTab({ url: '/pages/menu/index' });
+    openTodayMenu();
   },
 
   // —— 回顶悬浮键（页面级滚动） ——

@@ -20,6 +20,7 @@ const features = require('../../utils/features');
 const { fallbackDishImg, recipeDishImg, dishImageUrl, onImgError } = require('../../utils/image');
 const { decorateHero, filterBySlot, todayDateKey } = require('../../utils/dish-logic');
 const { withTabSelect } = require('../../behaviors/tab-select');
+const { openTodayMenu } = require('../../utils/tabs');
 const { withScrollReveal } = require('../../behaviors/scroll-reveal');
 const subscribe = require('../../utils/subscribe');
 const WISH_STORAGE_KEY = 'family_wishes_v1';
@@ -167,6 +168,7 @@ Page({
     heroRecipe: null,
     visibleRecipes: [],
     todayMenu: [],
+    pickedRecipeIds: {},  // 仅传已点标记，首屏与推荐菜卡共享同一状态
     slotMenu: [],          // 当前餐次 (currentSlot) 的菜单项，随 slotbar 联动
     shoppingPending: 0,
     cuisineTiles: [],
@@ -319,7 +321,13 @@ Page({
 
   // 纯计算：返回餐次卡片相关字段；loadAll 传入新 todayMenu 合进同一次 setData
   _slotMenuPatch(todayMenu) {
-    const slotMenu = filterBySlot(todayMenu || this.data.todayMenu, this.data.currentSlot);
+    const menu = todayMenu || this.data.todayMenu || [];
+    const slotMenu = filterBySlot(menu, this.data.currentSlot);
+    // 切餐次不撤销刚确认的点菜；只有新菜单响应才替换整份已点标记。
+    const pickedRecipeIds = {
+      ...(todayMenu === undefined ? this.data.pickedRecipeIds : {}),
+      ...Object.fromEntries(menu.map(item => [String(item.recipeId), true]))
+    };
     // 上桌进度：菜单页标记的 done 状态在首页卡片同步展示
     const slotDoneCount = slotMenu.filter(it => it.status === 'done').length;
     // 空餐次仍在点菜阶段；全上桌后主动作转向记录。
@@ -370,6 +378,7 @@ Page({
       : journeyStage === 'cook' ? (features.COMMUNITY ? 25 : 33.3333)
         : (features.COMMUNITY ? 50 : 66.6667);
     return {
+      pickedRecipeIds,
       slotMenu,
       slotDoneCount,
       cookLabel,
@@ -702,8 +711,7 @@ Page({
         dishImg: recipeDishImg(item.recipe || { id: item.recipeId })
       }));
       const shoppingPending = shoppingItems.filter(i => !i.purchased).length;
-      this.setData({ todayMenu: normalizedItems, shoppingPending });
-      this.updateSlotMenu();
+      this.setData({ todayMenu: normalizedItems, shoppingPending, ...this._slotMenuPatch(normalizedItems) });
       writeCache(CACHE_KEY_MENU, normalizedItems, this._cacheFamilyId);
       writeCache(CACHE_KEY_SHOPPING, shoppingPending, this._cacheFamilyId);
     } catch (err) {
@@ -830,18 +838,24 @@ Page({
     const id = (e.detail && e.detail.id) || (e.currentTarget && e.currentTarget.dataset && e.currentTarget.dataset.id);
     if (!id) return;
     // 查重（对照 recipes 页 todayDishIds 模式）：已在今日菜单直接提示，不重复加
-    if ((this.data.todayMenu || []).some(it => String(it.recipeId) === String(id))) {
+    if (this.data.pickedRecipeIds[id] || (this.data.todayMenu || []).some(it => String(it.recipeId) === String(id))) {
       wx.showToast({ title: '已经在今日菜单里啦', icon: 'none' });
       return;
     }
     const slot = this.data.currentSlot || 'dinner';
     const slotLabel = mealTypeLabels[slot] || '晚餐';
     // 防重 + 即时反馈：joined 在途时重复点击被忽略（此前连点会重复 POST）
-    await runGuarded(this, `add-${id}`, () => addTodayMenuRecipe(id, slot), {
+    const added = await runGuarded(this, `add-${id}`, async () => {
+      await addTodayMenuRecipe(id, slot);
+      return true;
+    }, {
       loading: '加入中',
       success: `已加入今日${slotLabel}`,
       fail: '加入失败，请重试'
     });
+    if (!added) return;
+    // 成功即亮起已点状态；后续清单刷新失败也不会重新露出「加入」按钮。
+    this.setData({ [`pickedRecipeIds.${id}`]: true });
     if (this._inited) this.refreshLight();
   },
 
@@ -852,7 +866,7 @@ Page({
   },
 
   goMenu() {
-    wx.switchTab({ url: '/pages/menu/index' });
+    openTodayMenu();
   },
 
   goShopping() {

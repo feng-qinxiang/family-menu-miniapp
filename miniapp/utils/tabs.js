@@ -52,7 +52,19 @@ function visibleTabs() {
   return ALL_TABS.filter((tab) => !tab.feature || features[tab.feature]);
 }
 
+// 「今日菜单 / 去做菜」明确落到今日三餐；普通底栏切换仍保留用户的周计划视图。
+function openTodayMenu() {
+  wx.switchTab({
+    url: '/pages/menu/index',
+    success() {
+      const page = getCurrentPages().slice(-1)[0];
+      if (page && page.route === 'pages/menu/index') page.setData({ view: 'today' });
+    }
+  });
+}
+
 module.exports = {
   ALL_TABS,
-  visibleTabs
+  visibleTabs,
+  openTodayMenu
 };

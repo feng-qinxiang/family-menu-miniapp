@@ -19,7 +19,8 @@
       <view class="rx-search">
         <view class="rx-search-ico"></view>
         <input class="rx-search-input" placeholder="搜菜名、菜系、口味" placeholder-class="rx-search-ph"
-          value="{{searchText}}" aria-label="搜索菜谱" bindinput="onSearchInput" bindfocus="onSearchFocus" bindblur="onSearchBlur" />
+          value="{{searchText}}" aria-label="搜索菜谱" confirm-type="search" bindconfirm="confirmSearch" bindinput="onSearchInput" bindfocus="onSearchFocus" bindblur="onSearchBlur" />
+        <view wx:if="{{searchText}}" class="rx-search-clear tap-scale" bindtap="clearSearch" aria-role="button" aria-label="清空搜索，保留筛选条件"><view class="rx-clear-icon" aria-hidden="true" /></view>
       </view>
       <view class="rx-filter-btn tap-scale {{showAdvFilter || advFilter.maxTime || advFilter.minServings ? 'on' : ''}}"
         bindtap="toggleAdvFilter" aria-role="button" aria-expanded="{{showAdvFilter}}" aria-label="点菜条件：耗时、人份">
@@ -257,8 +258,8 @@
       <view class="rx-tray-s">{{menuTray.names}}</view>
     </view>
     <view class="rx-tray-mini tap-scale" wx:if="{{menuTray.shoppingCount}}" catchtap="goShopping" aria-role="button" aria-label="买菜清单待买 {{menuTray.shoppingCount}} 样">买 {{menuTray.shoppingCount}}</view>
-    <view class="rx-tray-go tap-scale" catchtap="goMenu" aria-role="button" aria-label="去点单">
-      去点单
+    <view class="rx-tray-go tap-scale" catchtap="goMenu" aria-role="button" aria-label="去做菜">
+      去做菜
       <view class="rx-tray-arrow"></view>
     </view>
   </view>

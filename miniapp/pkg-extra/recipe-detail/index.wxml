@@ -34,9 +34,9 @@
       <view class="rd-section-head">
         <view><text class="rd-section-title">用料</text><text class="rd-stock-count" wx:if="{{recipe.totalCount}}">家里有 {{recipe.haveCount}}/{{recipe.totalCount}}</text></view>
         <view class="rd-srv">
-          <view class="rd-sbtn tap-scale" data-delta="{{-1}}" bindtap="changeServings" aria-role="button" aria-label="减少人份"><view class="rd-sbtn-minus"></view></view>
+          <view class="rd-sbtn tap-scale {{servings <= 1 ? 'is-disabled' : ''}}" data-delta="{{-1}}" bindtap="changeServings" aria-role="button" aria-label="减少人份，最少一人份" aria-disabled="{{servings <= 1}}"><view class="rd-sbtn-minus"></view></view>
           <text class="rd-sval">{{servings}} 人份</text>
-          <view class="rd-sbtn tap-scale" data-delta="{{1}}" bindtap="changeServings" aria-role="button" aria-label="增加人份"><view class="rd-sbtn-plus"></view></view>
+          <view class="rd-sbtn tap-scale {{servings >= 20 ? 'is-disabled' : ''}}" data-delta="{{1}}" bindtap="changeServings" aria-role="button" aria-label="增加人份，最多二十人份" aria-disabled="{{servings >= 20}}"><view class="rd-sbtn-plus"></view></view>
         </view>
       </view>
 
@@ -49,11 +49,11 @@
           </view>
         </view>
 
-        <view class="rd-photo-hint">{{ingredientPhotosFailed ? '图片暂未更新，先用已有图片或名称。' : '点左侧上传食材图，未上传时显示名称。'}}</view>
+        <view class="rd-photo-hint">{{ingredientPhotosFailed ? '图片暂未更新，先用已有图片或名称。' : '点左侧可添食材照片，完整名称在右侧。'}}</view>
         <view class="rd-ing" wx:for="{{recipe.ingredients}}" wx:key="index">
           <view class="rd-ingredient-photo tap-scale" data-name="{{item.name}}" bindtap="onIngredientPhoto" aria-role="button" aria-label="设置{{item.name}}的食材图片">
             <image wx:if="{{item.cover && !item.coverBroken}}" src="{{item.cover}}" mode="aspectFill" lazy-load class="rd-ingredient-image tap-scale" data-err-key="{{'recipe.ingredients[' + index + '].coverBroken'}}" binderror="onPhotoError" />
-            <view wx:else class="rd-ingredient-text"><text class="rd-ingredient-label">{{item.name}}</text></view>
+            <view wx:else class="rd-ingredient-text" aria-hidden="true"><text class="rd-ingredient-label">{{item.name[0]}}</text></view>
             <text class="rd-photo-edit">{{item.cover ? '换图' : '加图'}}</text>
           </view>
           <view class="rd-iname">

@@ -217,6 +217,7 @@
   font-weight: 800;
   box-shadow: var(--sh-pop);
 }
+.mh-hero-add.is-picked { background: var(--pine); box-shadow: none; }
 /* 换一道：圆形毛玻璃次按钮，与主按钮并排（决策动作同级，不再埋在文字链里） */
 .mh-hero-shuffle {
   /* 纯图标圆钮易被看成计时器：改胶囊 + 「换一道」文字，语义可读 */

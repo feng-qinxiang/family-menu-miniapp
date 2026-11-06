@@ -15,14 +15,13 @@
     <view wx:elif="{{loading}}" class="m-skeleton"><view class="m-skel-card shimmer" /><view class="m-skel-dish shimmer" /><view class="m-skel-dish shimmer" /></view>
     <block wx:elif="{{view === 'today'}}">
       <view wx:if="{{totalCount}}" class="m-overview card">
-        <image wx:if="{{mealGroups.length}}" class="m-overview-photo {{overviewPhotoBroken ? 'img-broken' : ''}}" src="{{mealGroups[0].items[0].dishImage}}" mode="aspectFill" data-err-key="overviewPhotoBroken" binderror="onPhotoError" />
         <view class="m-overview-copy">
           <view class="m-overview-title">{{doneCount === totalCount ? '这一餐，做好了' : (cookingCount ? '厨房正在飘香' : '准备开火吧')}}</view>
           <view class="m-overview-sub">{{totalCount}} 道已点 · {{cookingCount}} 道制作中</view>
           <view class="m-overview-progress"><text>{{doneCount}} / {{totalCount}} 道已上桌</text><text>{{cookPercent}}%</text></view>
           <view class="m-progress-track"><view class="m-progress-fill" style="width: {{cookPercent}}%;" /></view>
-          <view wx:if="{{doneCount === totalCount}}" class="m-main-action tap-scale" bindtap="goCookLog" aria-role="button">回看记录 ›</view><view wx:else class="m-main-action tap-scale" bindtap="goKitchen" aria-role="button">进入厨房 ›</view>
         </view>
+        <view wx:if="{{doneCount === totalCount}}" class="m-main-action tap-scale" bindtap="goCookLog" aria-role="button">回看记录 ›</view><view wx:else class="m-main-action tap-scale" bindtap="goKitchen" aria-role="button">进入厨房 ›</view>
       </view>
       <view class="m-quick-row">
         <view class="m-quick-card tap-scale" bindtap="goShopping" aria-role="button" aria-label="买菜清单，{{basketText}}"><view class="m-quick-title">买菜清单 <text class="m-arrow">›</text></view><view class="m-quick-sub">{{basketText}}</view></view>

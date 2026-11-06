@@ -72,7 +72,7 @@
         <view class="mh-m">{{heroRecipe.cuisine || '家常'}}<block wx:if="{{heroRecipe.tasteTags[0]}}"> · {{heroRecipe.tasteTags[0]}}</block></view>
       </view>
       <view class="mh-hero-acts">
-        <view class="mh-hero-add tap-scale" catchtap="addToToday" data-id="{{heroRecipe.id}}" aria-role="button" aria-label="把{{heroRecipe.title}}加到当前餐次菜单">加到菜单</view>
+        <view class="mh-hero-add tap-scale {{pickedRecipeIds[heroRecipe.id] ? 'is-picked' : ''}}" catchtap="{{pickedRecipeIds[heroRecipe.id] ? 'goMenu' : 'addToToday'}}" data-id="{{heroRecipe.id}}" aria-role="button" aria-label="{{pickedRecipeIds[heroRecipe.id] ? '这道菜已点，查看今日菜单' : '把' + heroRecipe.title + '加入当前餐次'}}">{{pickedRecipeIds[heroRecipe.id] ? '已点 · 看菜单' : '加入' + (currentSlot === 'breakfast' ? '早餐' : currentSlot === 'lunch' ? '午餐' : '晚餐')}}</view>
         <view class="mh-hero-shuffle tap-scale" catchtap="shuffleHero" aria-role="button" aria-label="换一道">
           <view class="mh-ico-shuffle"></view>
           <text class="mh-shuffle-tx">换一道</text>
@@ -311,6 +311,7 @@
             showAdd="{{true}}"
             showFav="{{false}}"
             addPlacement="corner"
+            selected="{{!!pickedRecipeIds[item.id]}}"
             bind:tap="goDetail"
             bind:add="addToToday"
           />
