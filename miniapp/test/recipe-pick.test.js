@@ -77,14 +77,15 @@ const event = data => ({ currentTarget: { dataset: data } });
     p.onLoad({ pick: 'pantry', meal: 'lunch', q: '' });
     assert.equal(p.data.activeMealType, 'lunch');
     assert.equal(p.data.mealIndex, 1);
-    p.setData({ loading: false, recipes: recipes.map(recipe => p.normalizeRecipe(recipe, [])), avoidTags: ['辣'] });
+    p._recipes = recipes.map(recipe => p.normalizeRecipe(recipe, []));
+    p.setData({ loading: false, avoidTags: ['辣'] });
     await p.loadPantryChoices();
     assert.equal(p.data.showPantryDetails, true);
-    assert.match(p.data.filteredRecipes[0].pantryStatus, /食材齐全/);
+    assert.match(p._filteredRecipes[0].pantryStatus, /食材齐全/);
     p.togglePantryDetails({ detail: { value: false } });
     assert.equal(p.data.showPantryDetails, false);
     assert.deepEqual(wx.savedPreference, { key: 'recipe_pantry_details', value: false });
-    assert.deepEqual(p.data.filteredRecipes.map(recipe => recipe.id), [1, 3, 5], '排除缺料和家人忌口');
+    assert.deepEqual(p._filteredRecipes.map(recipe => recipe.id), [1, 3, 5], '排除缺料和家人忌口');
     assert.ok([1, 5].includes(p.data.pickedRecipe.id), '有临期时优先挑能用掉它的菜');
     const first = p.data.pickedRecipe.id;
     p.pickRandom();
@@ -126,8 +127,8 @@ const event = data => ({ currentTarget: { dataset: data } });
     assert.equal(p.data.pickedRecipe, null, '匹配失败不退回随便推荐');
     p.closePicker();
     p.setData({ searchText: '', todayDishIds: [] }); p.applyFilter();
-    assert.equal(p.data.filteredRecipes[0].pantryStatus, '用料暂未确认', '网络失败不能伪装为没材料');
-    assert.ok(p.data.filteredRecipes.length, '库存接口失败不阻断普通挑菜');
+    assert.equal(p._filteredRecipes[0].pantryStatus, '用料暂未确认', '网络失败不能伪装为没材料');
+    assert.ok(p._filteredRecipes.length, '库存接口失败不阻断普通挑菜');
     failMatch = false; failStock = true;
     await p.loadPantryChoices();
     assert.equal(p.data.pantryStockFailed, true, '库存读取失败不能显示为空冰箱');
@@ -143,12 +144,13 @@ const event = data => ({ currentTarget: { dataset: data } });
     // 真实 Page 的按需挑菜：只确认条件和挑选，不自动写入菜单。
     const beforeRequestWrites = writes.length;
     p.clearFilter();
-    p.setData({ recipes: [
+    p._recipes = [
       p.normalizeRecipe({ id: 7, title: '蒸蛋', timeCost: 15, servings: 2, cuisine: '家常', tasteTags: ['清淡'] }, []),
       p.normalizeRecipe({ id: 8, title: '未填耗时', servings: 2, tasteTags: ['清淡'] }, []),
       p.normalizeRecipe({ id: 9, title: '未填人份', timeCost: 15, tasteTags: ['清淡'] }, []),
       p.normalizeRecipe({ id: 10, title: '香辣鸡丁', timeCost: 15, servings: 2, tasteTags: ['辣'] }, [])
-    ], todayDishIds: [], avoidTags: [] });
+    ];
+    p.setData({ todayDishIds: [], avoidTags: [] });
     p.openMealRequest();
     p.onMealRequestInput({ detail: { value: '两人吃，30分钟，不辣，晚餐' } });
     assert.equal(p.data.requestPreview.canApply, true);
@@ -157,7 +159,7 @@ const event = data => ({ currentTarget: { dataset: data } });
     p.applyMealRequest();
     assert.equal(p.data.requestOpen, false);
     assert.equal(p.data.activeMealType, 'dinner');
-    assert.deepEqual(p.data.filteredRecipes.map(r => r.id), [7], '未知耗时、人份与辣味菜都不能混入');
+    assert.deepEqual(p._filteredRecipes.map(r => r.id), [7], '未知耗时、人份与辣味菜都不能混入');
     assert.equal(p.data.pickedRecipe.id, 7);
     assert.equal(writes.length, beforeRequestWrites, '识别、预览和随机均不调用点菜写入');
     p.openMealRequest();

@@ -88,6 +88,11 @@ jobs:
       - name: 纯逻辑单测（收藏页封面口径）
         run: node miniapp/test/favorites-cover.test.js
 
+      # 数字 count-up 每页一个定时器、每帧一次 setData（菜单页三数字并行 ~54 次 → ~18 次）。
+      # 这条坏了不报错，只会在低端机上卡顿，或把 0 落成 '0' 骗过空态守卫。
+      - name: 纯逻辑单测（数字 count-up 合帧）
+        run: node miniapp/test/count-up.test.js
+
       # A 类（绑了事件却没按下反馈）是机械判定、没有误报，脚本对它 exit 1；
       # B / C 靠类名与尺寸启发式，文本链接本就不该有 88rpx 热区，脚本只报告不影响退出码。
       - name: 交互体检（A 类阻断，B/C 报告）

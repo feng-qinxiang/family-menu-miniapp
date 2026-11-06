@@ -5,7 +5,7 @@
   <view class="cpt-head rx-heading">
     <view class="cpt-row">
       <view class="cpt-titles">
-        <view class="rx-heading-title">家里的菜谱<text class="rx-heading-count" wx:if="{{recipes.length}}">{{recipes.length}} 道</text></view>
+        <view class="rx-heading-title">家里的菜谱<text class="rx-heading-count" wx:if="{{recipeCount}}">{{recipeCount}} 道</text></view>
       </view>
       <view class="cpt-action rx-create tap-scale" bindtap="goCreate" aria-role="button" aria-label="新建菜谱">
         <text class="rx-create-plus">+</text>新建
@@ -150,7 +150,7 @@
     <!-- 结果条：「N 道可点」与「点到 晚餐」并成一行（原来是 section-head 大标题 + 单独一行下拉） -->
     <view class="rx-listbar" wx:if="{{!loading && displayedRecipes.length}}">
       <view class="rx-listbar-l">
-        <text class="rx-listbar-n">{{pickMode === 'pantry' ? '冰箱能做的菜' : '可选菜品'}} · {{filteredRecipes.length}}</text>
+        <text class="rx-listbar-n">{{pickMode === 'pantry' ? '冰箱能做的菜' : '可选菜品'}} · {{filteredCount}}</text>
       </view>
       <!-- 点到下拉：自定义面板替代原生 picker（原生白滚轮与整体风格不符） -->
       <view class="rx-meal-picker">
@@ -214,7 +214,7 @@
     </view>
 
     <!-- 空状态 -->
-    <view wx:elif="{{!loading && !filteredRecipes.length && !pickerOpen}}">
+    <view wx:elif="{{!loading && !filteredCount && !pickerOpen}}">
       <state-empty type="search" title="没有符合条件的菜谱" desc="换个来源或菜系，再试试" cta="清空筛选" bindaction="clearFilter">
         <view class="rx-empty-extra tap-scale" bindtap="goCreate" aria-role="button">去新建一道</view>
       </state-empty>

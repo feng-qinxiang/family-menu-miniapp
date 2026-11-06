@@ -66,8 +66,9 @@ Page({
     pantryItems: [],
     pantryStockFailed: false,
     pantryStockLoading: true,
-    recipes: [],
-    filteredRecipes: [],
+    // 全部/筛选后菜谱放 this._recipes / this._filteredRecipes（wxml 只渲染 displayedRecipes，其余只要计数）
+    recipeCount: 0,
+    filteredCount: 0,
     displayedRecipes: [],
     // 页头副标题里的菜系概览（按道数取前 3），来自真实数据，不写死
     cuisineSummary: '',
@@ -116,7 +117,11 @@ Page({
 
   onShow() {
       // 首次进页面需要骨架；之后切回来只静默刷新，避免整页闪一下
-      Promise.all([this.loadRecipes(this._hasLoaded === true), this.loadPantryChoices()]).then(() => { this._hasLoaded = true; });
+      // 两个 load 都不在内部过滤，全部回来后只跑一次 applyFilter（原先各跑一次）
+      Promise.all([this.loadRecipes(this._hasLoaded === true, true), this.loadPantryChoices(true)]).then(() => {
+        this._hasLoaded = true;
+        this.applyFilter();
+      });
     },
 
     onPullDownRefresh() {
@@ -124,7 +129,8 @@ Page({
     },
 
     // silent=true：已有数据时的「回页刷新」，不显示整页骨架（避免切 tab 闪一下）
-  async loadRecipes(silent) {
+    // skipFilter=true：调用方会在并行加载都完成后统一 applyFilter
+  async loadRecipes(silent, skipFilter) {
     if (!silent) this.setData({ loading: true });
     try {
       const source = this.data.activeSource;
@@ -149,8 +155,9 @@ Page({
             .filter(Boolean)
         : [];
       const avoidTags = Array.from(new Set(memberAvoids));
+      this._recipes = raw.map((recipe) => this.normalizeRecipe(recipe, tray.ids));
       this.setData({
-        recipes: raw.map((recipe) => this.normalizeRecipe(recipe, tray.ids)),
+        recipeCount: this._recipes.length,
         cuisineSummary: summarizeCuisines(raw),
         cuisineList: Array.from(new Set(cuisineList.concat(raw.map(recipe => String(recipe.cuisine || '').trim()).filter(Boolean), this.data.advFilter.cuisine || []).filter(Boolean))),
         todayDishIds: tray.ids,
@@ -160,9 +167,11 @@ Page({
         loading: false,
         loadError: false
       });
-      this.applyFilter();
+      if (!skipFilter) this.applyFilter();
     } catch (err) {
-      this.setData({ recipes: [], cuisineSummary: '', filteredRecipes: [], displayedRecipes: [], pickedRecipe: null, pickCount: 0, loading: false, loadError: true });
+      this._recipes = [];
+      this._filteredRecipes = [];
+      this.setData({ recipeCount: 0, cuisineSummary: '', filteredCount: 0, displayedRecipes: [], pickedRecipe: null, pickCount: 0, loading: false, loadError: true });
     }
   },
 
@@ -171,7 +180,7 @@ Page({
     this.loadRecipes();
   },
 
-  async loadPantryChoices() {
+  async loadPantryChoices(skipFilter) {
     const seq = (this._pantrySeq || 0) + 1;
     this._pantrySeq = seq;
     this.setData({ pantryLoading: true, pantryStockLoading: true, pantryStockFailed: false, pantryFailed: false, pantryMatches: [], pickedRecipe: null, pickCount: 0 });
@@ -187,7 +196,7 @@ Page({
       pantryStockFailed: loaded[0].status === 'rejected',
       pantryFailed: loaded[0].status === 'rejected' || loaded[1].status === 'rejected'
     });
-    this.applyFilter();
+    if (skipFilter !== true) this.applyFilter();
   },
 
   openPicker(e) {
@@ -202,7 +211,7 @@ Page({
   },
 
   pickerCandidates() {
-    return this.data.filteredRecipes.filter(recipe => !this.data.todayDishIds.includes(String(recipe.id)));
+    return (this._filteredRecipes || []).filter(recipe => !this.data.todayDishIds.includes(String(recipe.id)));
   },
 
   pickRandom() {
@@ -310,11 +319,11 @@ Page({
     const ids = this.data.todayDishIds.includes(key)
       ? this.data.todayDishIds
       : this.data.todayDishIds.concat(key);
-    const recipes = this.data.recipes.map((recipe) => ({
+    this._recipes = (this._recipes || []).map((recipe) => ({
       ...recipe,
       selected: ids.includes(String(recipe.id || ''))
     }));
-    const names = recipes
+    const names = this._recipes
       .filter((recipe) => ids.includes(String(recipe.id || '')))
       .map((recipe) => recipe.title)
       .filter(Boolean)
@@ -322,7 +331,6 @@ Page({
       .join('、');
     this.setData({
       todayDishIds: ids,
-      recipes,
       menuTray: {
         ...this.data.menuTray,
         count: ids.length,
@@ -371,10 +379,11 @@ Page({
     const { cuisine, maxTime, minServings } = this.data.advFilter;
     // 忌口过滤：仅在开启时生效（家庭成员在 家庭成员 页配置）
     const avoidTags = this.data.avoidActive ? (this.data.avoidTags || []) : [];
+    const allRecipes = this._recipes || [];
     const avoidFiltered = avoidTags.length
-      ? (this.data.recipes || []).filter((recipe) => !matchesAvoid(recipe, avoidTags))
-      : (this.data.recipes || []);
-    const avoidHiddenCount = (this.data.recipes || []).length - avoidFiltered.length;
+      ? allRecipes.filter((recipe) => !matchesAvoid(recipe, avoidTags))
+      : allRecipes;
+    const avoidHiddenCount = allRecipes.length - avoidFiltered.length;
     const matchMap = new Map(this.data.pantryMatches.map(recipe => [String(recipe.id), recipe]));
     const filteredRecipes = avoidFiltered.filter((recipe) => {
       if (this.data.requestMildOnly && !hasMildLabel(recipe)) return false;
@@ -415,8 +424,9 @@ Page({
     });
 
     const displayed = filteredRecipes.slice(0, PAGE_SIZE);
+    this._filteredRecipes = filteredRecipes;
     this.setData({
-      filteredRecipes,
+      filteredCount: filteredRecipes.length,
       displayedRecipes: displayed,
       hasMore: filteredRecipes.length > displayed.length,
       remainCount: filteredRecipes.length - displayed.length,
@@ -438,11 +448,12 @@ Page({
 
   loadMore() {
     if (!this.data.hasMore) return;
-    const next = this.data.filteredRecipes.slice(0, this.data.displayedRecipes.length + PAGE_SIZE);
+    const all = this._filteredRecipes || [];
+    const next = all.slice(0, this.data.displayedRecipes.length + PAGE_SIZE);
     this.setData({
       displayedRecipes: next,
-      hasMore: this.data.filteredRecipes.length > next.length,
-      remainCount: this.data.filteredRecipes.length - next.length
+      hasMore: all.length > next.length,
+      remainCount: all.length - next.length
     }, () => withScrollReveal(this, { item: '.rx-card-slot' }));
   },
 

@@ -50,7 +50,6 @@ Page({
     weekDoneText: '',
     cooks: [],           // chip 用厨师列表
     activeFilter: 'all', // all | 五星 | cook:xxx
-    groups: [],          // 月份分组 [{ key, label, en, count, items: [] }]
     visibleGroups: [],   // 受 expanded 控制
     expanded: false,
     totalCount: 0,
@@ -253,8 +252,8 @@ Page({
       visibleGroups.push(Object.assign({}, g, { items: take }));
     });
 
+    // 全量 groups 不进 data：wxml 只渲染 visibleGroups
     this.setData({
-      groups,
       filteredCount: list.length,
       visibleGroups,
       hiddenCount: expanded ? 0 : hidden

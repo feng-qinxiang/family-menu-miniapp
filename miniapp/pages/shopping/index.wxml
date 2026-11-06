@@ -84,9 +84,9 @@
       </view>
 
       <!-- 已入篮分组 -->
-      <view class="mkt-pad" wx:if="{{purchasedItems.length}}">
+      <view class="mkt-pad" wx:if="{{summary.purchasedCount}}">
         <view class="mkt-shead">
-          <text>已入篮</text><text class="mkt-section-count">{{purchasedItems.length}} 样</text>
+          <text>已入篮</text><text class="mkt-section-count">{{summary.purchasedCount}} 样</text>
         </view>
 
         <block wx:for="{{groupedPurchased}}" wx:key="key" wx:for-item="group" wx:for-index="gidx">

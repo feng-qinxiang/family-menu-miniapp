@@ -320,7 +320,7 @@
         <view class="mh-seeall-card tap-scale" bindtap="goRecipes">
           <view class="mh-sa-circle"><view class="mh-ico-arrow-gold"></view></view>
           <view class="mh-sa-t">查看全部</view>
-          <view class="mh-sa-s">{{allRecipes.length}} 道菜谱</view>
+          <view class="mh-sa-s">{{allRecipeCount}} 道菜谱</view>
         </view>
       </view>
     </scroll-view>

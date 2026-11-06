@@ -63,8 +63,6 @@ Page({
       status: 'OPEN',
       items: []
     },
-    pendingItems: [],
-    purchasedItems: [],
     groupedPending: [],
     groupedPurchased: [],
     // 空清单的原因（'no-menu' / 'no-ingredients'）与对应文案，由 buildShoppingState 填
@@ -458,8 +456,7 @@ Page({
     const emptyReason = shoppingEmptyReason((context.todayMenu && context.todayMenu.items || []).length, totalCount);
     return {
       shoppingList: { ...normalized, items },
-      pendingItems,
-      purchasedItems,
+      // pendingItems / purchasedItems 不进 data：wxml 只渲染两个 grouped 列表，计数走 summary
       groupedPending: this.groupItems(pendingItems),
       groupedPurchased: this.groupItems(purchasedItems),
       emptyReason,

@@ -72,7 +72,6 @@ Page({
     view: 'today',          // today | week (§3 segment)
     todayLabel: buildToday(),
     mealTimeLabel: mealTimeLabel(),
-    heroImage: '/assets/dishes/hot-sour-soup.jpg',
     todayMenu: [],
     mealGroups: [],
     totalCount: 0,
@@ -194,12 +193,6 @@ Page({
         });
       }
 
-      const heroItem = items[0];
-      const heroImage = resolveImage(
-        heroItem && heroItem.recipe,
-        (heroItem && heroItem.recipeId) || 'hot-sour-soup'
-      );
-
       // 菜篮子磁贴副标题：清单为空有两种原因，别都说成「食材已齐」
       // （清单只按菜谱用料聚合、不看冰箱，见 utils/kitchen.js#shoppingEmptyReason）
       const basketReason = shoppingEmptyReason(totalCount, shoppingItems.length);
@@ -210,7 +203,6 @@ Page({
       this.setData({
         todayMenu: items,
         mealGroups: groups,
-        heroImage: items.length ? heroImage : '/assets/dishes/hot-sour-soup.jpg',
         mealTimeLabel: mealTimeLabel(),
         totalCount,
         doneCount,
@@ -466,10 +458,6 @@ Page({
     };
   },
 
-  // 图片加载失败兜底：coverImage 失效时用本地占位图（home 页同款策略）
-  onHeroImgError() {
-    this.setData({ heroImage: fallbackDishImg('hot-sour-soup') });
-  },
 
   onImgError(e) {
     const { group, dish, seed } = e.currentTarget.dataset;

@@ -26,7 +26,6 @@ Page({
     weekbar: [],
     rangeText: '',
     heroSub: '',
-    heroImage: '/assets/dishes/fried-rice.jpg',
     menuSummary: {
       dayCount: 0,
       recipeCount: 0,

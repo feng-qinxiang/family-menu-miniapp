@@ -136,7 +136,6 @@ Page({
     greeting: '你好',
     mealWord: mealWordText(),
     currentUser: {},
-    familyProfile: { members: [] },
 
     // 餐次 & 许愿池（§3 / §5）
     slots: SLOTS,
@@ -172,7 +171,7 @@ Page({
     shoppingPending: 0,
     cuisineTiles: [],
 
-    allRecipes: [],
+    allRecipeCount: 0,     // 全部菜谱数；数组本身放 this._allRecipes（wxml 只用计数）
     loadError: '',
     // 有可展示内容时刷新失败不摘下方结构（DEC-5）
     hasHomeData: false,
@@ -189,7 +188,7 @@ Page({
     const hasRecipes =
       !!(d.heroRecipe) ||
       (Array.isArray(d.visibleRecipes) && d.visibleRecipes.length > 0) ||
-      (Array.isArray(d.allRecipes) && d.allRecipes.length > 0);
+      Number(d.allRecipeCount) > 0;
     const hasMenuCard = Array.isArray(d.slotMenu) && d.slotMenu.length > 0;
     const hasWishes = Array.isArray(d.wishes) && d.wishes.length > 0;
     return !!(hasRecipes || hasMenuCard || hasWishes);
@@ -315,7 +314,12 @@ Page({
 
   // 当前餐次菜单：todayMenu 按 currentSlot 过滤（mealType 缺失默认归 dinner，见 dish-logic.js）
   updateSlotMenu() {
-    const slotMenu = filterBySlot(this.data.todayMenu, this.data.currentSlot);
+    this.setData(this._slotMenuPatch());
+  },
+
+  // 纯计算：返回餐次卡片相关字段；loadAll 传入新 todayMenu 合进同一次 setData
+  _slotMenuPatch(todayMenu) {
+    const slotMenu = filterBySlot(todayMenu || this.data.todayMenu, this.data.currentSlot);
     // 上桌进度：菜单页标记的 done 状态在首页卡片同步展示
     const slotDoneCount = slotMenu.filter(it => it.status === 'done').length;
     // 空餐次仍在点菜阶段；全上桌后主动作转向记录。
@@ -365,7 +369,7 @@ Page({
     const journeyProgress = journeyStage === 'order' ? 0
       : journeyStage === 'cook' ? (features.COMMUNITY ? 25 : 33.3333)
         : (features.COMMUNITY ? 50 : 66.6667);
-    this.setData({
+    return {
       slotMenu,
       slotDoneCount,
       cookLabel,
@@ -375,7 +379,7 @@ Page({
       menuMoreCount: Math.max(0, slotMenu.length - homeMenuItems.length),
       journeySteps,
       journeyProgress
-    });
+    };
   },
 
   onJourneyStep(e) {
@@ -640,30 +644,35 @@ Page({
       writeCache(CACHE_KEY_MENU, normalizedItems, this._cacheFamilyId);
       writeCache(CACHE_KEY_SHOPPING, shoppingPending, this._cacheFamilyId);
 
-      const patch = {
+      // 大数组不进 data：wxml 只用计数；refreshLight / applyFilters 回退读实例属性
+      this._allRecipes = allRecipes;
+      this._familyProfile = family || { members: [] };
+      const patch = Object.assign({
         loading: false,
         loadError: '',
         greeting: greetingText(),
         mealWord: mealWordText(),
         currentUser: user || {},
-        familyProfile: family || { members: [] },
         role: myRole || '',
         // owner/admin 是「做饭人」可确认菜单；普通 member 需等待；查不到角色（无家庭）不阻断
         canConfirm: myRole ? ['owner', 'admin'].indexOf(myRole) !== -1 : true,
         todayMenu: normalizedItems,
-        shoppingPending,
-        allRecipes,
+        allRecipeCount: allRecipes.length,
         cuisineTiles
-      };
+      },
+      // 餐次卡片必须用新 normalizedItems 算，旧 this.data.todayMenu 还没写进去
+      this._slotMenuPatch(normalizedItems),
+      this._filterPatch('all', allRecipes));
+      // 待买数：缓存已显示且相等 → 直接落定；不等 → 从当前显示值起跳，不从 0 重数
+      stopNumberAnim(this, 'shoppingPending');
+      const shownPending = Number(this.data.shoppingPending) || 0;
+      if (shownPending === shoppingPending) patch.shoppingPending = shoppingPending;
       patch.hasHomeData = this._syncHasHomeData(patch);
-      this.setData(patch);
-      // 待买数 count-up（600ms cubic-out）
-      animateNumber(this, 'shoppingPending', patch.shoppingPending);
-      this.updateSlotMenu();
-
-      this.applyFilters('all', allRecipes);
-      // applyFilters 后刷新 hasHomeData（hero/visible/side 已写入）
-      this.setData({ hasHomeData: this._syncHasHomeData() });
+      // 首屏合成一次 setData（原先 patch + updateSlotMenu + applyFilters + 补发 hasHomeData 共 4 次）
+      this.setData(patch, () => withScrollReveal(this, { item: '.mh-rcard-slot' }));
+      if (shownPending !== shoppingPending) {
+        animateNumber(this, 'shoppingPending', shoppingPending, { from: shownPending });
+      }
       this._inited = true;
       if (this._loadAllWatchdog) { clearTimeout(this._loadAllWatchdog); this._loadAllWatchdog = null; }
     } catch (err) {
@@ -705,12 +714,12 @@ Page({
       const loaded = await Promise.all([getFamilyProfile(), getCurrentUser()]);
       const family = loaded[0], user = loaded[1];
       const patch = {};
-      if (family) patch.familyProfile = family;
+      if (family) this._familyProfile = family;
       if (user) patch.currentUser = user;
       if (family || user) {
         const myRole = this._resolveMyRole(
           user || this.data.currentUser,
-          family || this.data.familyProfile
+          family || this._familyProfile || { members: [] }
         );
         patch.role = myRole || '';
         patch.canConfirm = myRole ? ['owner', 'admin'].indexOf(myRole) !== -1 : true;
@@ -779,7 +788,12 @@ Page({
    * _heroOffset 只在用户主动点「换一个」或切菜系时变化，所以同一天反复进出首页看到的是同一批推荐。
    */
   applyFilters(cuisine, recipesSource) {
-    const recipes = recipesSource || this.data.allRecipes;
+    this.setData(this._filterPatch(cuisine, recipesSource), () => withScrollReveal(this, { item: '.mh-rcard-slot' }));
+  },
+
+  // 纯计算：返回推荐区字段；全部菜谱放实例属性 _allRecipes（wxml 只要计数，不进 data）
+  _filterPatch(cuisine, recipesSource) {
+    const recipes = recipesSource || this._allRecipes || [];
     const filtered = (cuisine === 'all'
       ? recipes
       : recipes.filter(r => r.cuisine === cuisine))
@@ -792,11 +806,11 @@ Page({
     const hero = list[0] || null;
     const visible = list.slice(1, 11);
 
-    this.setData({
+    return {
       activeCuisine: cuisine,
       heroRecipe: hero ? { ...hero, titleClass: decorateHero(hero.title) } : null,
       visibleRecipes: visible
-    }, () => withScrollReveal(this, { item: '.mh-rcard-slot' }));
+    };
   },
 
   selectCuisine(e) {

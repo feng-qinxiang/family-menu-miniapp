@@ -49,8 +49,7 @@ Page({
     finishing: false,
     finished: false,
     recipeId: '',
-    recipe: null,
-    dishName: '',
+    dishName: '',      // 整份菜谱不进 data（wxml 不渲染），放 this._recipe 给 onFinish 用
     dishImg: '',
     steps: [],
     ingredients: [],
@@ -237,7 +236,8 @@ Page({
     if (failed || !recipe) {
       // failed（网络错误/缺参）→ loadError 显示可重试失败态；
       // 非 failed 且 recipe 为空（真没步骤）→ 沿用下方空数据守护
-      this.setData({ loading: false, recipe: null, steps: [], total: 0, loadError: failed });
+      this._recipe = null;
+      this.setData({ loading: false, steps: [], total: 0, loadError: failed });
       return;
     }
 
@@ -271,9 +271,9 @@ Page({
       return { name, label: label || name, checked: false };
     });
 
+    this._recipe = recipe;
     this.setData({
       loading: false,
-      recipe,
       dishName: recipe.title || '今日菜谱',
       dishImg,
       steps,
@@ -543,7 +543,8 @@ Page({
 
   // 完成 → 先请用户打个真实评分，保存成功后才清进度、上桌和离开。
   async onFinish() {
-    const { recipeId, recipe } = this.data;
+    const recipeId = this.data.recipeId;
+    const recipe = this._recipe;
     if (!recipeId) return;
     const title = recipe ? recipe.title : '';
     const gotoLog = () => {
