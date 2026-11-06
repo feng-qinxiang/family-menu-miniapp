@@ -4,7 +4,7 @@
 
     <!-- Hero -->
     <view class="hero">
-      <image class="hero-img" src="/assets/dishes/chicken-congee.jpg" mode="aspectFill" />
+      <image class="hero-img" src="{{heroImage}}" mode="aspectFill" binderror="onHeroImageError" />
       <view class="hero-mask"></view>
 
       <view class="brandbar g-fade-down g-d1">

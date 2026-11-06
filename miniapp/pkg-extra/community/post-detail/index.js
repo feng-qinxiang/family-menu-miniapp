@@ -1,7 +1,7 @@
 // pages/community/post-detail · 帖子详情（全新页）
 const features = require('../../../utils/features');
 const api = require('../../../utils/api');
-const { onPhotoError: markPhotoBroken } = require('../../../utils/image');
+const { dishImageUrl, onPhotoError: markPhotoBroken } = require('../../../utils/image');
 const { guard, release } = require('../../../utils/interaction');
 
 // 头像底色循环（与设计稿一致的撞色梯度）
@@ -23,12 +23,12 @@ function normalizePost(post) {
   // 邻居的分享就被显示成了不相干的一道菜——列表页已因同样的理由去掉过这个兜底
   // （见 pages/community/index.js 的 photo 注释），详情页漏改了。
   // 帖子自己上传的实拍图走 images 画廊渲染，不在这里冒充。
-  const cover = (post.recipe && post.recipe.coverImage) || '';
+  const cover = dishImageUrl((post.recipe && post.recipe.coverImage) || '');
   const paragraphs = String(post.content || '')
     .split(/\n+/)
     .map((t) => t.trim())
     .filter(Boolean);
-  const images = Array.isArray(post.images) ? post.images.filter(Boolean) : [];
+  const images = Array.isArray(post.images) ? post.images.filter(Boolean).map(dishImageUrl) : [];
   return {
     id: post.id,
     title: post.title || '未命名分享',
@@ -46,7 +46,7 @@ function normalizePost(post) {
     commentCount: post.commentCount || 0,
     favorited: !!post.favorited,
     tags: Array.isArray(post.tags) ? post.tags : [],
-    recipe: post.recipe || null,
+    recipe: post.recipe ? { ...post.recipe, coverImage: cover } : null,
     // 是否作者本人（作者才显示删帖入口）
     mine: !!post.mine,
     // 待审核中（仅作者本人可见阶段），标题旁加角标

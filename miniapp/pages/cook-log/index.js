@@ -1,5 +1,5 @@
 const { getCookHistory, addTodayMenuRecipe } = require('../../utils/api');
-const { recipeDishImg } = require('../../utils/image');
+const { recipeDishImg, localPath, onPhotoError: markPhotoBroken } = require('../../utils/image');
 const { getCapsule } = require('../../utils/capsule');
 const { withTabSelect } = require('../../behaviors/tab-select');
 const { composePostWithRecipe } = require('../../utils/post-share');
@@ -33,6 +33,11 @@ function mealOf(date, idx) {
 function pad2(n) { return n < 10 ? '0' + n : '' + n; }
 
 Page({
+  onPhotoError(e) {
+    const record = (this._all || []).find(item => String(item.id) === String(e.currentTarget.dataset.id));
+    if (record) record.coverBroken = true;
+    markPhotoBroken(e, this);
+  },
   data: {
     features,
     capsuleTop: 'calc(env(safe-area-inset-top) + 178rpx)',
@@ -43,7 +48,7 @@ Page({
     showBackTop: false,
     scrollTopTo: -1,
     loading: true,
-    heroCover: '/assets/dishes/beef-broccoli.jpg',
+    heroCover: localPath('beef-broccoli'),
     bigNum: 0,
     stats: { dishes: 0, fireDays: 0, praise: 0 },
     week: [],            // 本周打卡 7 态
@@ -186,7 +191,7 @@ Page({
 
     this.setData({
       loading: false,
-      heroCover: enriched.length ? enriched[0].cover : '/assets/dishes/beef-broccoli.jpg',
+      heroCover: enriched.length ? enriched[0].cover : localPath('beef-broccoli'),
       bigNum: monthItems.length,
       stats: {
         dishes: monthItems.length,

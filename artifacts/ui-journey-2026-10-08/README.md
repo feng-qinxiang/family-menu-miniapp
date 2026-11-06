@@ -351,6 +351,6 @@ MEAL_UI_LAYOUT_EVIDENCE=refinement-all-pages.json /Users/xx/.local/opt/node22/bi
 python3 -m http.server 8847 --bind 127.0.0.1 --directory artifacts/ui-journey-2026-10-08
 ```
 
-截图按仓库规则不入 Git，可通过布局脚本重新生成。正式入口为 `pages/home/index`；历史方向预览为 `pkg-preview/journey/index?design=d`，参数 design 可取 a/b/c/d。
+截图按仓库规则不入 Git，可通过布局脚本重新生成。正式入口为 `pages/home/index`。2026-11-06 经用户确认，`pkg-preview` 首页风格与旅程预览已从小程序包移除；`verify-native.cjs` 是历史预览采样脚本，不再适用于当前版本，历史设计仍可通过 Git 查看。菜图现位于 `server/src/main/resources/static/assets/dishes`，Figma 原型构建从这里读取。
 
 本轮修改保留在 worktree 中，未提交、合并或推送。远端 CI、上线部署与生产验证不在本次已完成范围内。

@@ -16,13 +16,13 @@ const build = (list) => definition._buildPosts(list);
     images: ['/assets/dishes/wontons.jpg'],
     recipe: { id: 101, coverImage: '/assets/dishes/egg-drop-soup.jpg' }
   }]);
-  assert.strictEqual(posts[0].cover, '/assets/dishes/wontons.jpg', '帖子自己的图应当优先');
+  assert.strictEqual(posts[0].cover, 'http://localhost:9088/assets/dishes/wontons.jpg', '帖子自己的图应当优先');
 }
 
 // ② 没自己的图才退到关联菜谱封面
 {
   const posts = build([{ id: 2, title: '汤', images: [], recipe: { id: 101, coverImage: '/assets/dishes/egg-drop-soup.jpg' } }]);
-  assert.strictEqual(posts[0].cover, '/assets/dishes/egg-drop-soup.jpg');
+  assert.strictEqual(posts[0].cover, 'http://localhost:9088/assets/dishes/egg-drop-soup.jpg');
 }
 
 // ③ 都没有就不放图（WXML 用 wx:if 收掉图位），不许再拿无关本地菜图兜底

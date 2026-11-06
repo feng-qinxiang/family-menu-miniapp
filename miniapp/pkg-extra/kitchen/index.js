@@ -3,7 +3,7 @@
 // 纯逻辑在 utils/kitchen.js（有 node 断言），本页只管数据与事件。
 const features = require('../../utils/features');
 const api = require('../../utils/api');
-const { recipeDishImg } = require('../../utils/image');
+const { recipeDishImg, onPhotoError: markPhotoBroken } = require('../../utils/image');
 const { mealTypeLabels, mealOrder } = require('../../utils/constants');
 const { runGuarded } = require('../../utils/interaction');
 const subscribe = require('../../utils/subscribe');
@@ -24,6 +24,12 @@ const DURATIONS = [
 ];
 
 Page({
+  onPhotoError(e) {
+    const group = this.data.groups.find(item => item.meal === this.data.activeMeal);
+    const item = group && group.items.find(row => String(row.id) === String(e.currentTarget.dataset.id));
+    if (item) item.coverBroken = true;
+    markPhotoBroken(e, this);
+  },
   data: {
     fontScale: 'normal',
     loading: true,

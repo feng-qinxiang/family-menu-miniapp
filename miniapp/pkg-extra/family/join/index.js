@@ -1,11 +1,14 @@
 // pages/family/join · 加入家庭逻辑
 const { previewJoinFamily, joinFamily } = require('../../../utils/api');
 const { ensurePrivacy } = require('../../../utils/privacy');
+const { localPath, onImgError } = require('../../../utils/image');
 
 const AV_COLORS = ['var(--gold-deep)', '#2f4a3a', 'var(--ink-deep)', '#826044', '#366d9f'];
 
 Page({
+  onHeroImageError(e) { onImgError(e, this, 'heroImage'); },
   data: {
+    heroImage: localPath('hongshao-pork'),
     statusBarHeight: 0,
     code: '',
     cells: ['', '', '', '', '', '', '', ''],

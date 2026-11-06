@@ -1,9 +1,12 @@
 // pages/auth/login/index · 登录落地页逻辑
 const api = require('../../../utils/api');
 const features = require('../../../utils/features');
+const { localPath, onImgError } = require('../../../utils/image');
 
 Page({
+  onHeroImageError(e) { onImgError(e, this, 'heroImage'); },
   data: {
+    heroImage: localPath('chicken-congee'),
     features,
     agreed: false,
     submitting: false,

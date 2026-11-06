@@ -50,7 +50,6 @@ Page({
   data: {
     tab: 'shopping',          // shopping | pantry
     pantryCategories: [],
-    ingredientPhotos: {},
     ingredientPhotosFailed: false,
     pantryCount: 0,
     pantryError: false,
@@ -117,7 +116,8 @@ Page({
         getIngredientPhotos().catch(() => null)
       ]);
       const shoppingList = loaded[0], todayMenu = loaded[1], pantryItems = loaded[2];
-      this.setData({ ingredientPhotos: loaded[3] || {}, ingredientPhotosFailed: loaded[3] === null });
+      this._ingredientPhotos = loaded[3] || {};
+      this.setData({ ingredientPhotosFailed: loaded[3] === null });
       this._lastContext = { todayMenu, pantryItems };
       this.applyShoppingList(shoppingList, { todayMenu, pantryItems, loading: false });
       this.setPantryView(pantryItems);
@@ -140,7 +140,7 @@ Page({
   setPantryView(pantryItems) {
     const items = Array.isArray(pantryItems) ? pantryItems : [];
     this.setData({
-      pantryCategories: groupPantry(items, this.data.ingredientPhotos),
+      pantryCategories: groupPantry(items, this._ingredientPhotos),
       pantryCount: items.length,
       // 拉到数据就说明这次没失败（重试成功后失败态要自动消失）
       pantryError: false
@@ -152,11 +152,12 @@ Page({
 
   async editIngredientPhoto(e) {
     const name = e.currentTarget.dataset.name;
-    const photos = await runGuarded(this, 'ingredientPhoto', () => editIngredientPhoto(name, this.data.ingredientPhotos[name]), {
+    const photos = await runGuarded(this, 'ingredientPhoto', () => editIngredientPhoto(name, (this._ingredientPhotos || {})[name]), {
       success: result => result ? '食材图片已保存' : '', fail: err => err.message || '保存失败，原图片已保留'
     });
     if (photos === undefined) return;
-    this.setData({ ingredientPhotos: photos, ingredientPhotosFailed: false,
+    this._ingredientPhotos = photos;
+    this.setData({ ingredientPhotosFailed: false,
       newItemCover: ingredientImage(this.data.newItem, photos), newItemCoverBroken: false });
     this.applyShoppingList(this.data.shoppingList, this._lastContext || {});
     this.setPantryView(this._pantryItems || []);
@@ -318,7 +319,7 @@ Page({
     const { field } = e.currentTarget.dataset;
     const patch = { [`newItem.${field}`]: e.detail.value };
     if (field === 'ingredientName') {
-      patch.newItemCover = ingredientImage({ ingredientName: e.detail.value }, this.data.ingredientPhotos);
+      patch.newItemCover = ingredientImage({ ingredientName: e.detail.value }, this._ingredientPhotos);
       patch.newItemCoverBroken = false;
     }
     this.setData(patch);
@@ -495,7 +496,7 @@ Page({
         pantryText: inPantry ? '库存里已有' : '',
         categoryKey: category.key,
         categoryLabel: category.label,
-        cover: ingredientImage(item, this.data.ingredientPhotos),
+        cover: ingredientImage(item, this._ingredientPhotos),
         initial: String(item.ingredientName || '菜').slice(0, 1)
       };
     });

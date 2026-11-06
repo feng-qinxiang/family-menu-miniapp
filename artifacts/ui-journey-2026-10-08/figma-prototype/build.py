@@ -50,7 +50,7 @@ def text(value, x, y, w, size=14, color="ink", weight=400, h=None, align="left",
 def photo(asset, x, y, w, h, radius=8, name=None):
     # 食材示例照片小程序不用（只给原型画图），2026-11 从 miniapp/assets/ingredients 挪到本目录 assets/，不再占主包
     local = OUT / "assets" / asset
-    path = local if local.exists() else ROOT / "miniapp/assets" / asset
+    path = local if local.exists() else ROOT / "server/src/main/resources/static/assets" / asset
     if asset not in images:
         images[asset] = base64.b64encode(path.read_bytes()).decode()
     return node("image", x, y, w, h, name or f"示例图片 / {path.stem}", asset=asset, radius=radius)

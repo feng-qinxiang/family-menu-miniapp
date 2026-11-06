@@ -45,17 +45,6 @@
         "legal/deletion/index",
         "me/profile-edit/index"
       ]
-    },
-    {
-      "root": "pkg-preview",
-      "pages": [
-        "home-a/index",
-        "home-b/index",
-        "home-c/index",
-        "home-d/index",
-        "home-e/index",
-        "journey/index"
-      ]
     }
   ],
   "preloadRule": {

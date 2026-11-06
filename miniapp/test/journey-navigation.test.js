@@ -52,7 +52,7 @@ try {
   assert.deepEqual(records.map((record) => record.recipeId), [102, 101]);
   assert.equal(records[0].highlight, true);
   assert.equal(records[0].cover, '/uploaded/tomato-egg.jpg', 'Uploaded recipe cover wins');
-  assert.equal(records[1].cover, '/assets/dishes/hongshao-pork.jpg', 'No cover uses a matching local recipe image');
+  assert.equal(records[1].cover, 'http://localhost:9088/assets/dishes/hongshao-pork.jpg', 'No cover uses a matching server recipe image');
   log.onSelectFilter({ currentTarget: { dataset: { value: 'star5' } } });
   assert.equal(log.data.filteredCount, 1);
   assert.equal(log.data.visibleGroups[0].items[0].recipeId, 102);

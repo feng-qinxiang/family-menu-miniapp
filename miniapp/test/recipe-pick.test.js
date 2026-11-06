@@ -40,13 +40,17 @@ global.wx = {
 };
 let definition;
 global.Page = value => { definition = value; };
-function page(module) {
+function page(module, privateFields = []) {
   require(module);
+  assert.ok(Object.keys(definition.data).every(key => !privateFields.includes(key.replace(/^_/, ''))), '仅供 JS 使用的字段不放进 data 默认值');
   return Object.assign({}, definition, {
     data: JSON.parse(JSON.stringify(definition.data)),
+    patches: [],
     setData(patch, callback) {
+      this.patches.push(Object.keys(patch));
       for (const [key, value] of Object.entries(patch)) {
-        const parts = key.split('.');
+        const parts = key.replace(/\[(\d+)\]/g, '.$1').split('.');
+        assert.ok(!privateFields.includes(parts[0].replace(/^_/, '')), 'setData 不发送私有原始数据');
         let target = this.data;
         while (parts.length > 1) target = target[parts.shift()];
         target[parts[0]] = value;
@@ -73,7 +77,9 @@ const event = data => ({ currentTarget: { dataset: data } });
     assert.equal(ingredientImage({ ingredientName: '番茄酱' }), '', '不能把加工品误配为原食材');
     assert.equal(ingredientImage({ ingredientName: '番茄', coverImage: '/uploaded/stock.jpg' }), '/uploaded/stock.jpg', '条目自身图片优先');
 
-    const p = page('../pages/recipes/index');
+    const p = page('../pages/recipes/index', ['pantryMatches']);
+    p.applyFilter();
+    assert.deepEqual(p.data.displayedRecipes, [], 'onLoad 前缺省的匹配列表也能安全筛选');
     p.onLoad({ pick: 'pantry', meal: 'lunch', q: '' });
     assert.equal(p.data.activeMealType, 'lunch');
     assert.equal(p.data.mealIndex, 1);
@@ -175,10 +181,14 @@ const event = data => ({ currentTarget: { dataset: data } });
     p.selectRailMode({ currentTarget: { dataset: {} }, detail: { value: '1' } });
     assert.equal(p.data.railMode, 'source', '原生 picker 切换分类维度');
 
-    const fridge = page('../pages/pantry/index');
+    const fridge = page('../pages/pantry/index', ['pantryItems', 'ingredientPhotos']);
+    fridge.applyPantryFilter();
+    fridge.onPhotoError(event({ id: 1 }));
+    assert.deepEqual(fridge.data.categories, [], 'onLoad 前筛选和坏图事件按空库存处理');
     fridge.toggleReminder(); assert.equal(fridge.data.reminderExpanded, true);
     fridge.toggleReminder(); assert.equal(fridge.data.reminderExpanded, false);
-    fridge.setData({ pantryItems: fridge.enrichPantryItems(stocks), pantryFilter: 'expiring' });
+    fridge._pantryItems = fridge.enrichPantryItems(stocks);
+    fridge.setData({ pantryFilter: 'expiring' });
     fridge.applyPantryFilter();
     assert.deepEqual(fridge.data.categories.flatMap(category => category.items).map(item => item.id), [1]);
     fridge.selectPantryFilter(event({ filter: 'expired' }));
@@ -188,10 +198,21 @@ const event = data => ({ currentTarget: { dataset: data } });
     fridge.clearExpiry();
     assert.equal(fridge.data.editDraft.expiresAt, '');
     fridge.selectPantryFilter(event({ filter: 'all' }));
+    // 断开原始列表与视图的对象引用，避免测试替身共享引用掩盖漏掉的定向更新或私有状态同步。
+    fridge.data.categories = structuredClone(fridge.data.categories);
+    const beforePhotoError = fridge.patches.length;
     fridge.onPhotoError(event({ id: 1 }));
+    assert.deepEqual(fridge.patches.slice(beforePhotoError), [['categories[0].items[0].coverBroken']], '坏图仅更新目标行，不重传库存或分组');
     assert.equal(fridge.data.categories.flatMap(cat => cat.items).find(item => item.id === 1).coverBroken, true, '图片失败后显示文字');
+    assert.equal(fridge._pantryItems.find(item => item.id === 2).coverBroken, false, '其他食材不受影响');
     fridge.selectPantryFilter(event({ filter: 'expiring' }));
     assert.equal(fridge.data.categories[0].items[0].coverBroken, true, '切换筛选仍保留文字兜底');
+    const beforeHiddenError = fridge.patches.length;
+    fridge.onPhotoError(event({ id: 2 }));
+    fridge.onPhotoError(event({ id: 'missing' }));
+    assert.equal(fridge.patches.length, beforeHiddenError, '已隐藏或不存在的食材不改当前行');
+    fridge.selectPantryFilter(event({ filter: 'expired' }));
+    assert.equal(fridge.data.categories[0].items[0].coverBroken, true, '隐藏项的坏图状态也保留在原始列表');
     assert.deepEqual(fridge.groupByCategory([{ id: 9, ingredientName: '盐' }]).map(cat => cat.key), ['seasoning'], '调味库存不能因分类 key 不一致而消失');
     const stockActions = [];
     fridge.openEditSheet = e => stockActions.push({ action: 'edit', id: e.currentTarget.dataset.id });
@@ -205,12 +226,12 @@ const event = data => ({ currentTarget: { dataset: data } });
     wx.showActionSheet = async () => ({ tapIndex: 1 });
     await fridge.openItemActions(event({ id: 1 }));
     assert.equal(confirmationCount, 1, '删除入口仍经过原来的二次确认');
-    assert.equal(fridge.data.pantryItems.length, stocks.length, '取消删除保留所有库存');
+    assert.equal(fridge._pantryItems.length, stocks.length, '取消删除保留所有库存');
     wx.showActionSheet = async () => { throw new Error('cancel'); };
-    const shopping = page('../pages/shopping/index');
+    const shopping = page('../pages/shopping/index', ['ingredientPhotos']);
     shopping.setPantryView([{ id: 9, ingredientName: '盐' }]);
     assert.equal(shopping.data.pantryCategories[0].key, 'seasoning');
-    shopping.setData({ ingredientPhotos: { '番茄': '/uploaded/tomato.jpg' } });
+    shopping._ingredientPhotos = { '番茄': '/uploaded/tomato.jpg' };
     const boughtIngredients = shopping.enrichItems([
       { ingredientName: '番茄', sourceRecipes: ['番茄炒蛋'] },
       { ingredientName: '牛奶', sourceRecipes: ['番茄炒蛋'] }

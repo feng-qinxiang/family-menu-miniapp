@@ -1,4 +1,5 @@
 const { getVipStatus } = require('../../../utils/api');
+const { localPath, onImgError } = require('../../../utils/image');
 const { loadPlans, FALLBACK, trimYuan } = require('../../../utils/plans');
 
 const MONTHS_OF_YEAR = 12;
@@ -36,7 +37,9 @@ function fallbackPlanMap() {
 }
 
 Page({
+  onHeroImageError(e) { onImgError(e, this, 'heroImage'); },
   data: {
+    heroImage: localPath('hongshao-pork'),
     statusBarHeight: 0,
     isVip: false,
     planName: '',

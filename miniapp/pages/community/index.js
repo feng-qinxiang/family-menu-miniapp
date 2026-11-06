@@ -12,7 +12,7 @@ const { runGuarded, guard, release } = require('../../utils/interaction');
 const { chooseImage, uploadFile } = require('../../utils/upload');
 const { withTabSelect } = require('../../behaviors/tab-select');
 const { withScrollReveal } = require('../../behaviors/scroll-reveal');
-const { onPhotoError: markPhotoBroken } = require('../../utils/image');
+const { dishImageUrl, onPhotoError: markPhotoBroken } = require('../../utils/image');
 const { takePendingRecipe } = require('../../utils/post-share');
 
 const reportReasons = ['内容不实', '步骤不全', '疑似搬运', '其他'];
@@ -197,8 +197,8 @@ Page({
   normalizePosts(posts) {
     return (posts || []).map((post, index) => {
       const recipe = post.recipe || null;
-      const recipeImg = recipe && recipe.coverImage ? recipe.coverImage : '';
-      const images = Array.isArray(post.images) ? post.images.filter(Boolean) : [];
+      const recipeImg = dishImageUrl(recipe && recipe.coverImage ? recipe.coverImage : '');
+      const images = Array.isArray(post.images) ? post.images.filter(Boolean).map(dishImageUrl) : [];
       // 以前这里按 index 轮播本地菜品图：用户会把它当成邻居家的实拍，属于伪造内容。
       // 实拍只展示帖图；关联菜谱封面只在菜谱卡里展示，避免冒充作者作品。
       return {

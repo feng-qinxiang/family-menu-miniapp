@@ -87,7 +87,7 @@
       <section-head eyebrow="做菜记录" title="最近上桌" hint="全部" more="{{true}}" bindtapmore="goCookLog" />
       <view class="card mag-history">
         <view class="mag-hrow {{revealOn ? (reveal[index] ? 'g-fade-up' : 'rv-hold') : ''}}" data-rv="{{index}}" wx:for="{{cookHistory}}" wx:key="id">
-          <image class="mag-thumb" src="{{item.cover}}" mode="aspectFill" lazy-load />
+          <image class="mag-thumb {{item.coverBroken ? 'img-broken' : ''}}" src="{{item.cover}}" mode="aspectFill" lazy-load data-err-key="{{'cookHistory[' + index + '].coverBroken'}}" binderror="onPhotoError" />
           <view class="mag-hmid">
             <view class="mag-hname">{{item.recipeTitle}}</view>
             <view class="mag-hsub">{{item.whenLabel}}</view>

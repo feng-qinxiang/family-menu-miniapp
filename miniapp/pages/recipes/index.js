@@ -40,6 +40,7 @@ function summarizeCuisines(list) {
 }
 
 Page({
+  onPickedImgError(e) { onImgError(e, this, 'pickedRecipe.cover'); },
   data: {
     sourceTabs,
     cuisineList,
@@ -62,7 +63,6 @@ Page({
     pantryLoading: true,
     pantryFailed: false,
     pantrySummary: { count: 0, expiringCount: 0, expiredCount: 0, priorityText: '' },
-    pantryMatches: [],
     pantryItems: [],
     pantryStockFailed: false,
     pantryStockLoading: true,
@@ -183,15 +183,16 @@ Page({
   async loadPantryChoices(skipFilter) {
     const seq = (this._pantrySeq || 0) + 1;
     this._pantrySeq = seq;
-    this.setData({ pantryLoading: true, pantryStockLoading: true, pantryStockFailed: false, pantryFailed: false, pantryMatches: [], pickedRecipe: null, pickCount: 0 });
+    this._pantryMatches = [];
+    this.setData({ pantryLoading: true, pantryStockLoading: true, pantryStockFailed: false, pantryFailed: false, pickedRecipe: null, pickCount: 0 });
     const loaded = await Promise.allSettled([getPantryItems(), getPantryMatch()]);
     if (seq !== this._pantrySeq) return;
     const stocks = loaded[0].status === 'fulfilled' && Array.isArray(loaded[0].value) ? loaded[0].value : [];
     // ponytail: 复用匹配接口的前 10 道候选；菜谱增多后再给匹配接口加分页。
+    this._pantryMatches = loaded[1].status === 'fulfilled' ? normalizeMatches(loaded[1].value) : [];
     this.setData({
       pantryItems: stocks.map(item => ({ ...item, amountText: `${item.amount || ''}${item.unit || ''}` })),
       pantrySummary: pantrySummary(stocks),
-      pantryMatches: loaded[1].status === 'fulfilled' ? normalizeMatches(loaded[1].value) : [],
       pantryLoading: false, pantryStockLoading: false,
       pantryStockFailed: loaded[0].status === 'rejected',
       pantryFailed: loaded[0].status === 'rejected' || loaded[1].status === 'rejected'
@@ -384,7 +385,7 @@ Page({
       ? allRecipes.filter((recipe) => !matchesAvoid(recipe, avoidTags))
       : allRecipes;
     const avoidHiddenCount = allRecipes.length - avoidFiltered.length;
-    const matchMap = new Map(this.data.pantryMatches.map(recipe => [String(recipe.id), recipe]));
+    const matchMap = new Map((this._pantryMatches || []).map(recipe => [String(recipe.id), recipe]));
     const filteredRecipes = avoidFiltered.filter((recipe) => {
       if (this.data.requestMildOnly && !hasMildLabel(recipe)) return false;
       if (this.data.pickMode === 'pantry') {

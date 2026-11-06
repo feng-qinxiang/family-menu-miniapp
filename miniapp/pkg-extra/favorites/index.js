@@ -5,11 +5,13 @@
 const features = require('../../utils/features');
 const { getMyFavorites, toggleCommunityFavorite } = require('../../utils/api');
 const { recipesFromPosts } = require('../../utils/dish-logic');
+const { dishImageUrl, onPhotoError: markPhotoBroken } = require('../../utils/image');
 
 // 帖子头像撞色轮转
 const AVATAR_COLORS = ['#b08949', '#2f4a3a', '#c8381f', '#3a2e23'];
 
 Page({
+  onPhotoError(e) { markPhotoBroken(e, this); },
   data: {
     // 大字模式：档位由设置页写进 storage，根节点挂 .font-lg 才会吃到 --fs-mul
     fontScale: 'normal',
@@ -111,7 +113,7 @@ Page({
       // 封面口径与社区信息流一致：帖子自己的图 → 关联菜谱封面 → 没有就不放图。
       // 原来用本地菜图轮转兜底，「周末烤的面包」会被配上扬州炒饭的照片（实测 h5 日志里 picked 是 fried-rice.jpg）
       const images = Array.isArray(p.images) ? p.images.filter(Boolean) : [];
-      const cover = images[0] || recipe.coverImage || '';
+      const cover = dishImageUrl(images[0] || recipe.coverImage || '');
       const author = p.author || '匿名厨友';
       const tag = (Array.isArray(p.tags) && p.tags[0]) || 'Family Kitchen';
       return {

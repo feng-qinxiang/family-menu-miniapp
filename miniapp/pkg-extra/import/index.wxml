@@ -55,8 +55,8 @@
       <view class="rescard g-fade-up" wx:if="{{preview}}">
         <view class="res-top">
           <view class="res-cover">
-            <image wx:if="{{preview.coverImage}}" class="res-cover-img" src="{{preview.coverImage}}" mode="aspectFill" />
-            <image wx:else class="res-cover-img" src="/assets/dishes/orange-chicken.jpg" mode="aspectFill" />
+            <image wx:if="{{preview.coverImage}}" class="res-cover-img" src="{{preview.coverImage === coverFailedUrl ? imagePlaceholder : preview.coverImage}}" mode="aspectFill" data-err-key="coverFailedUrl" data-url="{{preview.coverImage}}" binderror="onPreviewImageError" />
+            <image wx:else class="res-cover-img" src="{{fallbackCover}}" mode="aspectFill" data-image-path="fallbackCover" binderror="onImageError" />
             <view wx:if="{{!preview.coverImage}}" class="tap-scale res-cover-add" bindtap="chooseCover">+ 封面</view>
             <view wx:else class="tap-scale res-cover-del" catchtap="removeCover" aria-role="button" aria-label="移除封面">×</view>
           </view>
@@ -109,7 +109,7 @@
               <view class="stext">{{item.text}}</view>
               <view class="tap-scale step-img-add" wx:if="{{!item.image}}" data-index="{{index}}" bindtap="chooseStepImage">+ 配图</view>
               <view class="step-img-wrap" wx:else>
-                <image class="step-img" src="{{item.image}}" mode="aspectFill" lazy-load />
+                <image class="step-img" src="{{item.image === stepImageErrors[index] ? imagePlaceholder : item.image}}" mode="aspectFill" lazy-load data-err-key="stepImageErrors[{{index}}]" data-url="{{item.image}}" binderror="onPreviewImageError" />
                 <view class="tap-scale step-img-del" data-index="{{index}}" catchtap="removeStepImage" aria-role="button" aria-label="移除第 {{index + 1}} 步的配图">×</view>
               </view>
             </view>
@@ -140,7 +140,7 @@
         <section-head eyebrow="记录" title="最近" popPart="导入" />
         <view class="recent-list g-fade-up">
           <view class="recent tap-scale" wx:for="{{recentImports}}" wx:key="id" data-id="{{item.id}}" bindtap="openRecent">
-            <image class="r-thumb" src="{{item.cover}}" mode="aspectFill" lazy-load />
+            <image class="r-thumb" src="{{item.cover}}" mode="aspectFill" lazy-load data-image-path="recentImports[{{index}}].cover" binderror="onImageError" />
             <view class="r-mid">
               <view class="r-title ellipsis">{{item.title}}</view>
               <view class="r-sub">{{item.srcLabel}}</view>

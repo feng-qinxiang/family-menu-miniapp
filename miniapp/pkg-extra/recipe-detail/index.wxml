@@ -7,7 +7,7 @@
 
     <!-- ===== Hero 大图 ===== -->
     <view class="rd-hero">
-      <image class="rd-hero-img" src="{{recipe.cover}}" mode="aspectFill" />
+      <image class="rd-hero-img {{recipe.coverBroken ? 'img-broken' : ''}}" src="{{recipe.cover}}" mode="aspectFill" data-err-key="recipe.coverBroken" binderror="onPhotoError" />
       <view class="rd-hero-mask"></view>
 
       <!-- 顶部导航：复用 nav-bar，标题留空仅返回；右侧 slot 放编辑（仅自建菜谱） -->
@@ -79,7 +79,7 @@
             object-fit="cover"
           />
           <block wx:else>
-            <image class="rd-video-poster" src="{{recipe.cover}}" mode="aspectFill" />
+            <image class="rd-video-poster {{recipe.coverBroken ? 'img-broken' : ''}}" src="{{recipe.cover}}" mode="aspectFill" data-err-key="recipe.coverBroken" binderror="onPhotoError" />
             <view class="rd-video-mask"></view>
             <view class="rd-video-play">
               <view class="rd-ic rd-ic-play rd-ic-play-lg"></view>
@@ -142,7 +142,7 @@
       <view class="card rd-card">
         <block wx:if="{{works.length}}">
           <view class="rd-work tap-scale" wx:for="{{works}}" wx:key="id" data-id="{{item.id}}" bindtap="openWork">
-            <image wx:if="{{item.cover}}" class="rd-work-thumb" src="{{item.cover}}" mode="aspectFill" lazy-load />
+            <image wx:if="{{item.cover}}" class="rd-work-thumb {{item.coverBroken ? 'img-broken' : ''}}" src="{{item.cover}}" mode="aspectFill" lazy-load data-err-key="{{'works[' + index + '].coverBroken'}}" binderror="onPhotoError" />
             <view wx:else class="rd-work-thumb rd-work-thumb--none">{{item.initial}}</view>
             <view class="rd-work-body">
               <view class="rd-work-title clamp-2">{{item.title}}</view>

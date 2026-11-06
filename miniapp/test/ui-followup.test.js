@@ -10,19 +10,28 @@ const recipes = [
   { id: 2, title: '炒饭', cuisine: '主食', sourceType: 'community', timeCost: 15, servings: 2 },
   { id: 3, title: '回锅肉', cuisine: '川菜', sourceType: 'owned', mine: true, timeCost: 25, servings: 2 }
 ];
+let recipeResult = recipes, recipesFail = false, notificationsFail = false, readFails = false;
+let notificationItems = [{ id: 1, kind: 'pantry', actionType: 'pantry', title: '临期提醒', unread: true, group: 'today' }];
+const readCalls = [], routes = [];
 Object.assign(api, {
-  getRecipes: async () => recipes,
+  getRecipes: async () => { if (recipesFail) throw new Error('offline'); return recipeResult; },
   getTodayMenu: async () => ({ items: [] }),
   getShoppingList: async () => [],
   getFamilyProfile: async () => ({ members: [] }),
   getSubscribeSetting: async () => setting,
   updateSubscribe: async enabled => { if (updateFails) throw new Error('offline'); writes++; setting = { ...setting, enabled }; return setting; },
-  getNotifications: async () => ({ items: [{ id: 1, kind: 'pantry', actionType: 'pantry', title: '临期提醒', unread: true, group: 'today' }] }),
+  getNotifications: async () => { if (notificationsFail) throw new Error('offline'); return { items: notificationItems }; },
+  markNotificationsRead: async ids => {
+    readCalls.push(ids);
+    if (readFails) throw new Error('offline');
+    notificationItems = notificationItems.map(item => !ids.length || ids.includes(item.id) ? { ...item, unread: false } : item);
+  },
   getCommunityPost: async () => ({ id: 1, title: '晚饭', content: '家里的味道', images: [] }),
   getCommunityComments: async () => { if (commentsFail) throw new Error('offline'); return [{ commentId: 1, author: '家人', content: '好吃' }]; }
 });
 global.wx = {
   getStorageSync: () => '', setStorageSync() {}, showToast() {},
+  navigateTo: options => routes.push(options.url),
   showModal() { modalCount++; },
   requestSubscribeMessage(options) {
     requested++;
@@ -31,11 +40,13 @@ global.wx = {
   }
 };
 global.Page = page => { definition = page; };
-function page(file) {
+function page(file, privateFields = []) {
   require(file);
+  assert.ok(Object.keys(definition.data).every(key => !privateFields.includes(key.replace(/^_/, ''))), '原始列表不放进 data 默认值');
   return { ...definition, data: JSON.parse(JSON.stringify(definition.data)), setData(patch, cb) {
     for (const [key, value] of Object.entries(patch)) {
       const parts = key.split('.'); let target = this.data;
+      assert.ok(!privateFields.includes(parts[0].replace(/^_/, '')), 'setData 只发送展示数据，不发送原始列表');
       while (parts.length > 1) target = target[parts.shift()];
       target[parts[0]] = value;
     }
@@ -92,11 +103,91 @@ const settled = () => new Promise(resolve => setImmediate(resolve));
     assert.equal(requested, before + 1);
     assert.equal(await grant, true);
 
-    const notifications = page('../pkg-extra/me/notifications/index');
+    const notifications = page('../pkg-extra/me/notifications/index', ['all']);
+    notifications.recompute();
+    assert.equal(notifications.data.visibleCount, 0, '初次加载前按空列表处理');
     notifications.loadData(); await settled();
-    assert.equal(notifications.data.all[0].action.label, '查看冰箱');
+    assert.equal(notifications._all[0].action.label, '查看冰箱');
     notifications.setData({ activeTab: 'family' }); notifications.recompute();
     assert.equal(notifications.data.visibleCount, 1, '临期消息归到家庭');
+    notifications.onTabChange(event({ key: 'system' }));
+    assert.equal(notifications.data.visibleCount, 0);
+    assert.equal(notifications.data.unreadCount, 1, '空筛选不影响全量未读数');
+    notifications.onTabChange(event({ key: 'family' }));
+    readFails = true;
+    notifications.markRead(1);
+    assert.equal(notifications._all[0].unread, false, '单条已读先乐观更新私有列表');
+    assert.equal(notifications.data.unreadCount, 0);
+    await settled();
+    assert.equal(notifications._all[0].unread, true, '请求失败回滚原始列表');
+    assert.equal(notifications.data.groups[0].items[0].unread, true);
+    assert.equal(notifications.data.tabs.find(tab => tab.key === 'family').unread, 1);
+    readFails = false;
+    notifications.onCardTap(event({ id: 1 })); await settled();
+    assert.equal(routes.pop(), '/pages/pantry/index', '点击卡片仍从私有列表取动作');
+    assert.equal(notifications.data.unreadCount, 0);
+    notifications.onAction(event({ id: 1 }));
+    assert.equal(routes.pop(), '/pages/pantry/index', '动作按钮仍能定位通知');
+    assert.deepEqual(readCalls, [[1], [1]], '已读卡片不重复写入');
+    notificationItems = [
+      { ...notificationItems[0], unread: true },
+      { id: 2, kind: 'sys', unread: true, group: 'earlier' }
+    ];
+    notifications.loadData(); await settled();
+    readFails = true;
+    notifications.onReadAll(); notifications.onReadAll();
+    assert.equal(notifications.data.unreadCount, 0);
+    await settled();
+    assert.deepEqual(readCalls, [[1], [1], []], '全部已读在途连点只写一次');
+    assert.equal(notifications.data.unreadCount, 2, '全部已读失败后重拉并恢复各 tab 计数');
+    assert.equal(notifications.data.visibleCount, 1);
+    assert.equal(notifications.__readAllBusy, false);
+    readFails = false;
+    notifications.onReadAll(); await settled();
+    assert.ok(notifications._all.every(item => !item.unread));
+    assert.equal(notifications.data.unreadCount, 0);
+    notificationsFail = true;
+    notifications.loadData(); await settled();
+    assert.equal(notifications.data.loadError, true);
+    assert.deepEqual(notifications._all, []);
+    assert.equal(notifications.data.visibleCount, 0, '加载失败不能复现旧消息');
+    assert.ok(notifications.data.groups.every(group => group.items.length === 0));
+    notificationsFail = false; notificationItems = [];
+    notifications.retryLoad(); await settled();
+    assert.equal(notifications.data.loadError, false, '空消息不是失败');
+    assert.equal(notifications.data.unreadCount, 0);
+
+    const search = page('../pkg-extra/recipes/search/index', ['allRecipes']);
+    search.onInput({ detail: { value: '饭' } });
+    assert.equal(search.data.total, 0, '首次加载前输入也可按空列表筛选');
+    search._fetch('饭'); await settled();
+    assert.deepEqual(search.data.list.map(item => item.id), [1, 2]);
+    assert.ok(search.data.list[0].titleParts.some(part => part.hl && part.t === '饭'));
+    search.onSortTap(event({ key: 'fast' }));
+    assert.deepEqual(search.data.list.map(item => item.id), [2, 1]);
+    assert.deepEqual(search._allRecipes.map(item => item.id), [1, 2, 3], '排序不改变原始列表');
+    search.onClear(); search.onSortTap(event({ key: 'sichuan' }));
+    assert.deepEqual(search.data.list.map(item => item.id), [3]);
+    search.onSortTap(event({ key: 'all' }));
+    search.onInput({ detail: { value: '回锅鱼' } });
+    assert.equal(search.data.noExactHit, true);
+    assert.equal(search.data.nearbyMode, true);
+    assert.deepEqual(search.data.list.map(item => item.id), [3], '近邻回退仍读取完整私有列表');
+    assert.ok(search.data.list[0].titleParts.every(part => !part.hl), '近邻不冒充精确命中');
+    recipesFail = true;
+    search._fetch(''); await settled();
+    assert.equal(search.data.loadError, true);
+    assert.deepEqual(search._allRecipes, []);
+    search.onClear();
+    assert.equal(search.data.total, 0, '失败后筛选不恢复旧结果');
+    recipesFail = false; recipeResult = { list: [] };
+    search.onRetry(); await settled();
+    assert.equal(search.data.loadError, false);
+    assert.deepEqual(search.data.list, []);
+    recipeResult = { list: recipes };
+    search.onRetry(); await settled();
+    assert.equal(search.data.total, 3, '重试兼容 list 包装的返回值');
+    recipeResult = recipes;
 
     const detail = page('../pkg-extra/community/post-detail/index');
     detail.setData({ postId: '1' });

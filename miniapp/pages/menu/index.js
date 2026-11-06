@@ -13,7 +13,7 @@ const {
 } = require('../../utils/api');
 const { mealTypeLabels, mealOrder } = require('../../utils/constants');
 const { animateNumber, stopNumberAnim } = require('../../utils/count-up');
-const { fallbackDishImg, recipeDishImg, LOCAL_DISHES, onPhotoError: markPhotoBroken } = require('../../utils/image');
+const { localPath, recipeDishImg, LOCAL_DISHES, onImgError: handleImgError, onPhotoError: markPhotoBroken } = require('../../utils/image');
 const { runGuarded } = require('../../utils/interaction');
 const { shoppingEmptyReason } = require('../../utils/kitchen');
 const { indexPantry, pantryHas } = require('../../utils/pantry-match');
@@ -46,7 +46,7 @@ function hashIndex(seed, mod) {
 }
 
 function localDishImage(seed) {
-  return `/assets/dishes/${LOCAL_DISHES[hashIndex(seed, LOCAL_DISHES.length)]}.jpg`;
+  return localPath(LOCAL_DISHES[hashIndex(seed, LOCAL_DISHES.length)]);
 }
 
 function resolveImage(recipe, seed) {
@@ -72,7 +72,6 @@ Page({
     view: 'today',          // today | week (§3 segment)
     todayLabel: buildToday(),
     mealTimeLabel: mealTimeLabel(),
-    todayMenu: [],
     mealGroups: [],
     totalCount: 0,
     doneCount: 0,
@@ -200,8 +199,8 @@ Page({
         : basketReason === 'no-ingredients' ? '没录食材'
         : (pendingItems.length ? pendingItems.length + ' 样待买' : '食材已齐');
 
+      this._todayMenu = items;
       this.setData({
-        todayMenu: items,
         mealGroups: groups,
         mealTimeLabel: mealTimeLabel(),
         totalCount,
@@ -348,7 +347,7 @@ Page({
     let done = false;
     let recorded = false;
     let pantryDeducted = 0;
-    const menuItem = this.data.todayMenu.find((it) => String(it.itemId) === String(item));
+    const menuItem = (this._todayMenu || []).find((it) => String(it.itemId) === String(item));
     await runGuarded(this, `cooked-${item || id}`, async () => {
       const r = await addCookHistory({ recipeId: id,
         servings: Number(menuItem && menuItem.recipe && menuItem.recipe.servings) > 0 ? Number(menuItem.recipe.servings) : 2,
@@ -451,7 +450,7 @@ Page({
   },
 
   onShareAppMessage() {
-    const n = (this.data.todayMenu && this.data.todayMenu.length) || 0;
+    const n = (this._todayMenu || []).length;
     return {
       title: n > 0 ? '今天家里吃这些（' + n + ' 道）' : '今天的菜单，来看看吗',
       path: '/pages/menu/index'
@@ -460,8 +459,8 @@ Page({
 
 
   onImgError(e) {
-    const { group, dish, seed } = e.currentTarget.dataset;
+    const { group, dish } = e.currentTarget.dataset;
     if (typeof group !== 'number' || typeof dish !== 'number') return;
-    this.setData({ [`mealGroups[${group}].items[${dish}].dishImage`]: fallbackDishImg(seed) });
+    handleImgError(e, this, `mealGroups[${group}].items[${dish}].dishImage`);
   },
 });

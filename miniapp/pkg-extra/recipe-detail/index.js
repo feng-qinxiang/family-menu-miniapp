@@ -10,7 +10,7 @@ const {
   removeWish
 } = require('../../utils/api');
 const { runGuarded, guard, release } = require('../../utils/interaction');
-const { recipeDishImg, stepDishImg, ingredientImage, onPhotoError: markPhotoBroken } = require('../../utils/image');
+const { recipeDishImg, stepDishImg, dishImageUrl, ingredientImage, onPhotoError: markPhotoBroken } = require('../../utils/image');
 const { editIngredientPhoto } = require('../../utils/ingredient-photo');
 const { sourceLabels: baseSourceLabels } = require('../../utils/constants');
 const features = require('../../utils/features');
@@ -56,7 +56,6 @@ Page({
     servings: 2,
     baseServings: 2,
     missCount: 0,
-    ingredientPhotos: {},
     ingredientPhotosFailed: false,
     skeletonRows: [1, 2, 3],
     loading: true,
@@ -124,7 +123,7 @@ Page({
       ]);
       const recipe = loaded[0], pantryItems = loaded[1], todayMenu = loaded[2];
       const rawWorks = Array.isArray(loaded[3]) ? loaded[3] : [];
-      const ingredientPhotos = loaded[4] || this.data.ingredientPhotos;
+      const ingredientPhotos = loaded[4] || this._ingredientPhotos || {};
       const menuItems = (todayMenu && Array.isArray(todayMenu.items)) ? todayMenu.items : [];
       const inTodayMenu = menuItems.some((it) => String(it.recipeId) === String(id));
       if (!recipe) {
@@ -180,11 +179,12 @@ Page({
           author,
           initial: author.trim().charAt(0),
           likeCount: p.likeCount || 0,
-          cover: images[0] || '',
+          cover: dishImageUrl(images[0]) || '',
           pending: p.auditStatus === 'PENDING'
         };
       });
 
+      this._ingredientPhotos = ingredientPhotos;
       this.setData({
         recipe: {
           ...recipe,
@@ -210,7 +210,6 @@ Page({
         missCount,
         works,
         inTodayMenu,
-        ingredientPhotos,
         ingredientPhotosFailed: loaded[4] === null,
         playingVideo: false,
         loadError: false,
@@ -226,10 +225,11 @@ Page({
   async onIngredientPhoto(e) {
     const name = e.currentTarget.dataset.name;
     const photos = await runGuarded(this, 'ingredientPhoto',
-      () => editIngredientPhoto(name, this.data.ingredientPhotos[name]),
+      () => editIngredientPhoto(name, (this._ingredientPhotos || {})[name]),
       { success: result => result ? '食材图片已保存' : '', fail: err => err.message || '保存失败，原图片已保留' });
     if (photos === undefined) return;
-    this.setData({ ingredientPhotos: photos, ingredientPhotosFailed: false,
+    this._ingredientPhotos = photos;
+    this.setData({ ingredientPhotosFailed: false,
       'recipe.ingredients': this.data.recipe.ingredients.map(ing => ({ ...ing, cover: ingredientImage(ing, photos), coverBroken: false })) });
   },
 

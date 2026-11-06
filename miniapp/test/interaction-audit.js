@@ -18,6 +18,14 @@
  */
 const fs = require('fs');
 const path = require('path');
+const assert = require('node:assert/strict');
+
+// load/error 是资源生命周期，不是触摸交互；保留其余原有事件检查。
+const BOUND_EVENT = /\b(?:bind|catch|mut-bind):?(?!(?:error|load)\s*=)[a-zA-Z-]+\s*=/;
+assert.equal(BOUND_EVENT.test('binderror="onError" bind:load="onLoad"'), false);
+for (const attr of ['bindtap="go"', 'bind:tap="go"', 'catch:longpress="go"', 'mut-bind:tap="go"', 'binderror="failed" bindtap="go"']) {
+  assert.equal(BOUND_EVENT.test(attr), true, '资源事件不能让真正的点击绕过反馈检查');
+}
 
 const ROOT = path.join(__dirname, '..');
 const walk = (dir, out = []) => {
@@ -81,7 +89,7 @@ for (const file of wxmlFiles) {
   const actives = activeClasses(file);
   for (const t of extractTags(src)) {
     const className = (t.attrs.match(/class="([^"]*)"/) || [])[1] || '';
-    const hasEvent = /\b(?:bind|catch|mut-bind)(?::)?[a-zA-Z-]+\s*=/.test(t.attrs);
+    const hasEvent = BOUND_EVENT.test(t.attrs);
     if (hasEvent) className.split(/\s+/).forEach((c) => c && boundClasses.add(c));
     // 动态类（{{item}}）不参与判断，只看写死的类名
     const staticClasses = className.split(/\s+/).filter((c) => c && !/[{}]/.test(c));
@@ -198,8 +206,8 @@ reportCReal.slice(0, 20).forEach((r) => console.log('   · ' + r));
 if (reportCReal.length > 20) console.log(`   … 其余 ${reportCReal.length - 20} 处`);
 console.log('\n（B / C 只报告不判定：靠类名与尺寸启发式识别，文本链接类小热区属正常，需按元素性质人工判断）');
 
-// A 类是纯机械判定（这行或父级有没有 tap-scale / hover-class），不存在误报，
-// 所以直接判失败——否则"新增页面忘了加按下反馈"会一路溜到线上。
+// A 类排除资源生命周期和已知例外后仍阻断，
+// 避免"新增页面忘了加按下反馈"一路溜到线上。
 if (reportA.length) {
   console.error(`\n✘ A 类 ${reportA.length} 处：绑了事件却没有按下反馈，请加 tap-scale 或 hover-class`);
   process.exit(1);

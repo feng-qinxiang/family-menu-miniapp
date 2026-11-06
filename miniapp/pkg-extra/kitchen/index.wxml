@@ -58,7 +58,7 @@
         class="k-card {{item.main ? 'main' : ''}} {{item.status === 'done' ? 'is-done' : ''}}"
       >
         <view class="k-card-head">
-          <image class="k-img" src="{{item.img}}" mode="aspectFill" lazy-load />
+          <image class="k-img {{item.coverBroken ? 'img-broken' : ''}}" src="{{item.img}}" mode="aspectFill" lazy-load data-id="{{item.id}}" data-err-key="{{'items[' + index + '].coverBroken'}}" binderror="onPhotoError" />
           <view class="k-col">
           <view class="k-title-row">
             <text class="k-title">{{item.title}}</text>

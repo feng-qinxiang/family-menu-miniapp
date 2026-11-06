@@ -13,7 +13,7 @@
 
     <!-- Hero 图 -->
     <view class="vu-hero card g-fade-up g-d2">
-      <image class="vu-hero-img" src="/assets/dishes/hongshao-pork.jpg" mode="aspectFill"></image>
+      <image class="vu-hero-img" src="{{heroImage}}" mode="aspectFill" binderror="onHeroImageError"></image>
       <view class="vu-hero-mask"></view>
       <view class="vu-hero-ic">
         <view class="vu-hero-et">家庭会员</view>

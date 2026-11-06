@@ -17,7 +17,7 @@ const { runGuarded } = require('../../utils/interaction');
 const { animateNumber, stopNumberAnim } = require('../../utils/count-up');
 const { sourceLabels, mealTypeLabels, SLOTS, cuisineLabels } = require('../../utils/constants');
 const features = require('../../utils/features');
-const { fallbackDishImg, recipeDishImg, onImgError } = require('../../utils/image');
+const { fallbackDishImg, recipeDishImg, dishImageUrl, onImgError } = require('../../utils/image');
 const { decorateHero, filterBySlot, todayDateKey } = require('../../utils/dish-logic');
 const { withTabSelect } = require('../../behaviors/tab-select');
 const { withScrollReveal } = require('../../behaviors/scroll-reveal');
@@ -337,7 +337,7 @@ Page({
       return {
         recipeId: item.recipeId,
         title: recipe.title || '一道家常菜',
-        dishImg: item.dishImg || recipeDishImg(recipe),
+        dishImg: dishImageUrl(item.dishImg) || recipeDishImg(recipe),
         addedByName: item.addedByName || '',
         status,
         statusClass: status === 'done' ? 'done' : status === 'cooking' ? 'cooking' : 'todo',
@@ -892,7 +892,7 @@ Page({
   onHeroImgError() {
     const hero = this.data.heroRecipe;
     if (!hero) return;
-    this.setData({ 'heroRecipe.dishImg': fallbackDishImg(hero.id || hero.title) });
+    onImgError(null, this, 'heroRecipe.dishImg');
   },
 
   onMenuImgError(e) {
@@ -905,7 +905,7 @@ Page({
     const idx = e.currentTarget.dataset.index;
     const item = this.data.visibleRecipes[idx];
     if (typeof idx === 'number' && item) {
-      this.setData({ [`visibleRecipes[${idx}].dishImg`]: fallbackDishImg(item.id || item.title) });
+      onImgError(e, this, `visibleRecipes[${idx}].dishImg`);
     }
   },
 

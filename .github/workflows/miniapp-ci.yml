@@ -7,10 +7,12 @@ on:
   push:
     paths:
       - 'miniapp/**'
+      - 'server/src/main/resources/static/assets/dishes/**'
       - '.github/workflows/miniapp-ci.yml'
   pull_request:
     paths:
       - 'miniapp/**'
+      - 'server/src/main/resources/static/assets/dishes/**'
       - '.github/workflows/miniapp-ci.yml'
 
 jobs:
@@ -29,6 +31,9 @@ jobs:
 
       - name: 纯逻辑单测（点菜/菜谱）
         run: node miniapp/test/dish-logic.test.js
+
+      - name: 点菜要求解析回归
+        run: node miniapp/test/meal-request.test.js
 
       - name: 纯逻辑单测（厨房/库存/周菜单）
         run: node miniapp/test/kitchen-logic.test.js
@@ -58,8 +63,8 @@ jobs:
       - name: 做菜一致性回归（回包丢失恢复/身份分区/上桌顺序）
         run: node miniapp/test/cook-consistency.test.js
 
-      - name: 四主线设计预览（点菜/做菜/记录/社区）
-        run: node miniapp/test/journey-preview.test.js
+      - name: 服务端菜图与包内断网兜底
+        run: node miniapp/test/dish-images.test.js
 
       - name: 首页菜单与四阶段入口回归
         run: node miniapp/test/home-journey.test.js
@@ -93,7 +98,7 @@ jobs:
       - name: 纯逻辑单测（数字 count-up 合帧）
         run: node miniapp/test/count-up.test.js
 
-      # A 类（绑了事件却没按下反馈）是机械判定、没有误报，脚本对它 exit 1；
+      # A 类（交互事件缺按下反馈，排除资源 load/error 等例外）会 exit 1；
       # B / C 靠类名与尺寸启发式，文本链接本就不该有 88rpx 热区，脚本只报告不影响退出码。
       - name: 交互体检（A 类阻断，B/C 报告）
         run: node miniapp/test/interaction-audit.js

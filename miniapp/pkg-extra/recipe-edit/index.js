@@ -1,10 +1,10 @@
 const { getRecipeDetail, saveRecipe, updateRecipe } = require('../../utils/api');
 const { chooseImage, chooseVideo, uploadFile } = require('../../utils/upload');
-const { LOCAL_DISHES, recipeDishImg } = require('../../utils/image');
+const { LOCAL_DISHES, recipeDishImg, localPath, dishImageUrl, dishImagePath, DISH_PLACEHOLDER } = require('../../utils/image');
 const { cuisineList } = require('../../utils/constants');
 const { setLeaveGuard } = require('../../utils/interaction');
 
-const PICKER_IMAGES = LOCAL_DISHES.map((file) => `/assets/dishes/${file}.jpg`);
+function pickerImages() { return LOCAL_DISHES.map(localPath); }
 
 const DIFFICULTY_OPTIONS = [
   { key: 'easy', label: '简单' },
@@ -16,7 +16,13 @@ const DIFFICULTY_OPTIONS = [
 const CUISINE_OPTIONS = ['家常'].concat(cuisineList.filter((c) => c !== '家常'));
 
 Page({
+  // 只记显示失败，原始图片仍留在表单里；断网后保存不能把照片改成占位图。
+  onImageError(e) { this.setData({ [e.currentTarget.dataset.errKey]: e.currentTarget.dataset.url }); },
   data: {
+    imagePlaceholder: DISH_PLACEHOLDER,
+    coverFailedUrl: '',
+    stepImageErrors: [],
+    pickerErrors: [],
     // 大字模式：档位由设置页写进 storage，根节点挂 .font-lg 才会吃到 --fs-mul
     fontScale: 'normal',
     isEdit: false,
@@ -71,7 +77,7 @@ Page({
     // 而是留下面板和原临时路径，给一个「重试」入口（tempPath 不能落库，但可以重传）。
     pendingUpload: null,
     uploading: false,
-    pickerImages: PICKER_IMAGES
+    pickerImages: []
   },
 
   onLoad(options) {
@@ -111,7 +117,7 @@ Page({
     const steps = (recipe.steps && recipe.steps.length)
       ? recipe.steps.map((s) => ({
           text: (s && s.text) || '',
-          image: (s && s.image) || '',
+          image: dishImageUrl(s && s.image) || '',
           video: (s && s.video) || ''
         }))
       : [{ text: '', image: '' }];
@@ -121,7 +127,7 @@ Page({
       timeCost: recipe.timeCost || 15,
       servings: recipe.servings || 2,
       difficulty: recipe.difficulty || 'medium',
-      coverImage: recipe.coverImage || recipeDishImg(recipe) || '',
+      coverImage: dishImageUrl(recipe.coverImage) || recipeDishImg(recipe) || '',
       tasteTags: recipe.tasteTags || [],
       summary: recipe.summary || '',
       ingredients: (recipe.ingredients && recipe.ingredients.length)
@@ -135,6 +141,8 @@ Page({
       tasteTagsText: form.tasteTags.join(','),
       tagsLabel: this.labelForTags(form.tasteTags),
       commonTags: this.buildCommonTags(form.tasteTags),
+      coverFailedUrl: '',
+      stepImageErrors: [],
       pageLoading: false,
       loadFailed: false
     });
@@ -215,11 +223,11 @@ Page({
 
   chooseCover() {
     const cover = this.data.form.coverImage || '';
-    const pickerImages = (cover && PICKER_IMAGES.indexOf(cover) < 0)
-      ? [cover].concat(PICKER_IMAGES)
-      : PICKER_IMAGES;
+    const images = pickerImages();
+    const choices = (cover && images.indexOf(cover) < 0) ? [cover].concat(images) : images;
     this.setData({
-      pickerImages,
+      pickerImages: choices,
+      pickerErrors: [],
       mediaSheet: { visible: true, mode: 'cover', index: 0 }
     });
   },
@@ -230,7 +238,7 @@ Page({
       const res = await wx.showModal({ title: '移除封面？', confirmText: '移除', cancelText: '取消' });
       if (!res.confirm) return;
     }
-    this.setData({ 'form.coverImage': '' });
+    this.setData({ 'form.coverImage': '', coverFailedUrl: '' });
     this.syncLeave();
   },
 
@@ -296,11 +304,11 @@ Page({
   chooseStepImage(e) {
     const index = Number(e.currentTarget.dataset.index);
     const cover = this.data.form.coverImage || '';
-    const pickerImages = (cover && PICKER_IMAGES.indexOf(cover) < 0)
-      ? [cover].concat(PICKER_IMAGES)
-      : PICKER_IMAGES;
+    const images = pickerImages();
+    const choices = (cover && images.indexOf(cover) < 0) ? [cover].concat(images) : images;
     this.setData({
-      pickerImages,
+      pickerImages: choices,
+      pickerErrors: [],
       mediaSheet: { visible: true, mode: 'image', index }
     });
   },
@@ -311,7 +319,7 @@ Page({
       const res = await wx.showModal({ title: '移除这一步的配图？', confirmText: '移除', cancelText: '取消' });
       if (!res.confirm) return;
     }
-    this.setData({ [`form.steps[${index}].image`]: '' });
+    this.setData({ [`form.steps[${index}].image`]: '', [`stepImageErrors[${index}]`]: '' });
     this.syncLeave();
   },
 
@@ -330,13 +338,14 @@ Page({
     const url = e.currentTarget.dataset.url;
     if (!url) return;
     if (this.data.mediaSheet.mode === 'cover') {
-      this.setData({ 'form.coverImage': url, 'mediaSheet.visible': false });
+      this.setData({ 'form.coverImage': url, coverFailedUrl: '', 'mediaSheet.visible': false });
       this.syncLeave();
       return;
     }
     const index = this.data.mediaSheet.index;
     this.setData({
       [`form.steps[${index}].image`]: url,
+      [`stepImageErrors[${index}]`]: '',
       'mediaSheet.visible': false
     });
     this.syncLeave();
@@ -357,13 +366,14 @@ Page({
       return;
     }
     if (mode === 'cover') {
-      this.setData({ 'form.coverImage': url, 'mediaSheet.visible': false, pendingUpload: null, uploading: false });
+      this.setData({ 'form.coverImage': url, coverFailedUrl: '', 'mediaSheet.visible': false, pendingUpload: null, uploading: false });
       this.syncLeave();
       return;
     }
     const index = this.data.mediaSheet.index;
     this.setData({
       [`form.steps[${index}].image`]: url,
+      [`stepImageErrors[${index}]`]: '',
       'mediaSheet.visible': false,
       pendingUpload: null,
       uploading: false
@@ -428,7 +438,10 @@ Page({
       if (!res.confirm) return;
     }
     const steps = this.data.form.steps.filter((_, i) => i !== Number(index));
-    this.setData({ 'form.steps': steps.length ? steps : [{ text: '', image: '' }] });
+    this.setData({
+      'form.steps': steps.length ? steps : [{ text: '', image: '' }],
+      stepImageErrors: this.data.stepImageErrors.filter((_, i) => i !== Number(index))
+    });
     this.refreshQuality();
   },
 
@@ -534,14 +547,14 @@ Page({
       timeCost: Number(form.timeCost) || 15,
       servings: Number(form.servings) || 2,
       difficulty: form.difficulty || 'medium',
-      coverImage: form.coverImage || '',
+      coverImage: dishImagePath(form.coverImage) || '',
       tasteTags: form.tasteTags.filter(Boolean),
       summary: form.summary.trim(),
         ingredients: form.ingredients.filter((i) => i.name.trim()),
         // 教学视频只挂第 0 步（页面约定，与详情页 hoist 取法一致）
         steps: form.steps.filter((s) => s.text.trim()).map((s, i) => ({
           text: s.text,
-          image: s.image || '',
+          image: dishImagePath(s.image) || '',
           video: i === 0 ? (form.videoUrl || '') : ''
         })),
       sourceType: 'owned'

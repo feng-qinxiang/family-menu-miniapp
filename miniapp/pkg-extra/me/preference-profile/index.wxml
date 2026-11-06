@@ -23,7 +23,7 @@
   <block wx:else>
     <!-- Hero 统计卡：深色菜图 + 大数字水印 -->
     <view class="ov g-fade-up">
-      <image class="ov-bg" src="{{heroImg}}" mode="aspectFill"></image>
+      <image class="ov-bg" src="{{heroImg}}" mode="aspectFill" binderror="onHeroImageError"></image>
       <view class="ov-mask"></view>
       <text class="ov-big">{{totalCooks}}</text>
       <view class="ov-content">

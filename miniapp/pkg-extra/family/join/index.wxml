@@ -56,7 +56,7 @@
     <view class="famcard card">
       <view class="fc-top">
         <view class="fc-cover">
-          <image class="fc-cover-img" src="/assets/dishes/hongshao-pork.jpg" mode="aspectFill" />
+          <image class="fc-cover-img" src="{{heroImage}}" mode="aspectFill" binderror="onHeroImageError" />
           <view class="badge"><view class="badge-ic"></view></view>
         </view>
         <view class="fc-mid">

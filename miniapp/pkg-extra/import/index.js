@@ -2,15 +2,22 @@ const { previewImport, saveRecipe, getRecipes } = require('../../utils/api');
 const { parseRecipeText, DIFFICULTY_LABELS } = require('../../utils/parser');
 const { chooseAndUpload } = require('../../utils/upload');
 const { setLeaveGuard } = require('../../utils/interaction');
+const { localPath, dishImageUrl, dishImagePath, onImgError, DISH_PLACEHOLDER } = require('../../utils/image');
 
-// 本地菜图兜底池（接口清单 16 张）
+// 内置菜图兜底池（由后端提供）
 const FALLBACK_DISHES = [
   'sweet-sour-chicken', 'sichuan-eggplant', 'hot-sour-soup', 'kungpao-chicken',
   'mapo-tofu', 'tomato-egg', 'hongshao-pork', 'beef-broccoli'
 ];
 
 Page({
+  onImageError(e) { onImgError(e, this, e.currentTarget.dataset.imagePath); },
+  onPreviewImageError(e) { this.setData({ [e.currentTarget.dataset.errKey]: e.currentTarget.dataset.url }); },
   data: {
+    imagePlaceholder: DISH_PLACEHOLDER,
+    coverFailedUrl: '',
+    stepImageErrors: [],
+    fallbackCover: localPath('orange-chicken'),
     // 大字模式：档位由设置页写进 storage，根节点挂 .font-lg 才会吃到 --fs-mul
     fontScale: 'normal',
     statusBarHeight: 0,
@@ -55,7 +62,7 @@ Page({
         return {
           id: r.id,
           title: r.title || '未命名菜谱',
-          cover: r.coverImage || `/assets/dishes/${FALLBACK_DISHES[i % FALLBACK_DISHES.length]}.jpg`,
+          cover: dishImageUrl(r.coverImage) || localPath(FALLBACK_DISHES[i % FALLBACK_DISHES.length]),
           srcLabel: isXhs ? '小红书' : (url ? '链接' : '纯文本'),
           srcType: isXhs ? 'link' : (url ? 'link' : 'text')
         };
@@ -158,7 +165,8 @@ Page({
         this.setData({
           preview: {
             ...preview,
-            steps: (preview.steps || []).map((s) => (typeof s === 'string' ? { text: s, image: '' } : s))
+            coverImage: dishImageUrl(preview.coverImage) || '',
+            steps: (preview.steps || []).map((s) => (typeof s === 'string' ? { text: s, image: '' } : { ...s, image: dishImageUrl(s.image) || '' }))
           }
         });
         this._parsedPreview = JSON.stringify(this.data.preview);
@@ -245,13 +253,13 @@ Page({
         sourceUrl: preview.sourceUrl || '',
         cuisine: preview.detectedCuisine,
         difficulty: preview.difficulty || 'medium',
-        coverImage: preview.coverImage || '',
+        coverImage: dishImagePath(preview.coverImage) || '',
         tasteTags: ['导入', preview.isXhs ? '小红书' : '手动录入'],
         timeCost: preview.timeCost || 15,
         servings: preview.servings || 2,
         // 步骤带上配图：只传纯文本的话，用户在预览里加的步骤图保存后静默丢失（服务端 RecipeStep 收 {text,image}）
         steps: (preview.steps || [])
-          .map((s) => (typeof s === 'string' ? { text: s.trim(), image: '' } : { text: (s.text || '').trim(), image: s.image || '' }))
+          .map((s) => (typeof s === 'string' ? { text: s.trim(), image: '' } : { text: (s.text || '').trim(), image: dishImagePath(s.image) || '' }))
           .filter((s) => s.text),
         ingredients: preview.ingredients || [],
         summary: `从${preview.isXhs ? '小红书' : '文本'}导入`

@@ -89,7 +89,7 @@
       </view>
       <block wx:elif="{{pickedRecipe}}">
         <view class="rx-picked-main tap-scale" bindtap="goDetail" data-id="{{pickedRecipe.id}}" aria-role="button" aria-label="查看{{pickedRecipe.title}}菜谱">
-          <view class="rx-picked-photo"><image class="rx-picked-thumb" src="{{pickedRecipe.cover}}" mode="aspectFill" /></view>
+          <view class="rx-picked-photo"><image class="rx-picked-thumb" src="{{pickedRecipe.cover}}" mode="aspectFill" binderror="onPickedImgError" /></view>
           <view class="rx-picked-copy">
             <view class="rx-picked-name">{{pickedRecipe.title}}</view>
             <view class="rx-picked-meta">{{pickedRecipe.timeCost || '--'}} 分钟 · {{pickedRecipe.servings || '--'}} 人份</view>

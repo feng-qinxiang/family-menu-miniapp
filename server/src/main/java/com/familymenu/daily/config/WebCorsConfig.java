@@ -79,6 +79,10 @@ public class WebCorsConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // 随后端发布的公共菜图；沿用数据库里的 /assets 路径，与私有上传文件分开。
+        registry.addResourceHandler("/assets/dishes/**")
+                .addResourceLocations("classpath:/static/assets/dishes/")
+                .setCacheControl(CacheControl.maxAge(Duration.ofDays(7)).cachePublic());
         Path uploadRoot = Paths.get(uploadDir).toAbsolutePath().normalize();
         // 目录必须先存在：Path#toUri() 只在"确实是已存在的目录"时才补结尾斜杠，
         // 而首次部署时 uploads/ 还没建，location 会少了结尾 "/"，Spring 把它当文件而非目录，

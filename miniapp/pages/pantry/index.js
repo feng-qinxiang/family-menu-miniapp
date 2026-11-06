@@ -19,8 +19,6 @@ Page({
     capsuleTop: 'calc(env(safe-area-inset-top) + 90rpx)',
     capsuleRight: '96px',
     categories: [],
-    pantryItems: [],
-    ingredientPhotos: {},
     ingredientPhotosFailed: false,
     pantryFilter: 'all',
     matchResults: [],
@@ -113,27 +111,27 @@ Page({
     try {
       const loaded = await Promise.all([getPantryItems(), getIngredientPhotos().catch(() => null)]);
       pantryItems = loaded[0];
-      this.setData({ ingredientPhotos: loaded[1] || {}, ingredientPhotosFailed: loaded[1] === null });
+      this._ingredientPhotos = loaded[1] || {};
+      this.setData({ ingredientPhotosFailed: loaded[1] === null });
     } catch (e) {
       pantryItems = [];
       failed = true;
     }
     if (failed) {
+      this._pantryItems = [];
       this.setData({
         loaded: true,
         loading: false,
         loadError: true,
         categories: [],
-        pantryItems: [],
         matchResults: [],
         showMatch: false,
         pantrySummary: pantrySummary([])
       });
       return;
     }
-    const enriched = this.enrichPantryItems(pantryItems || []);
+    this._pantryItems = this.enrichPantryItems(pantryItems || []);
     this.setData({
-      pantryItems: enriched,
       pantrySummary: pantrySummary(pantryItems),
       loaded: true,
       loading: false,
@@ -162,7 +160,7 @@ Page({
 
   applyPantryFilter() {
     const filter = this.data.pantryFilter;
-    const items = this.data.pantryItems.filter(item => filter === 'all' || (filter === 'expiring' ? item.expiringSoon : item.expired));
+    const items = (this._pantryItems || []).filter(item => filter === 'all' || (filter === 'expiring' ? item.expiringSoon : item.expired));
     this.setData({ categories: this.groupByCategory(items) });
   },
 
@@ -176,12 +174,13 @@ Page({
 
   async editIngredientPhoto(e) {
     const name = e.currentTarget.dataset.name;
-    const photos = await runGuarded(this, 'ingredientPhoto', () => editIngredientPhoto(name, this.data.ingredientPhotos[name]), {
+    const photos = await runGuarded(this, 'ingredientPhoto', () => editIngredientPhoto(name, (this._ingredientPhotos || {})[name]), {
       success: result => result ? '食材图片已保存' : '', fail: err => err.message || '保存失败，原图片已保留'
     });
     if (photos === undefined) return;
-    this.setData({ ingredientPhotos: photos, ingredientPhotosFailed: false });
-    this.setData({ pantryItems: this.enrichPantryItems(this.data.pantryItems) });
+    this._ingredientPhotos = photos;
+    this._pantryItems = this.enrichPantryItems(this._pantryItems || []);
+    this.setData({ ingredientPhotosFailed: false });
     this.applyPantryFilter();
   },
 
@@ -336,8 +335,13 @@ Page({
   // —— 数据加工 ——
   onPhotoError(e) {
     const id = e.currentTarget.dataset.id;
-    this.setData({ pantryItems: this.data.pantryItems.map(item => item.id === id ? { ...item, coverBroken: true } : item) });
-    this.applyPantryFilter();
+    const item = (this._pantryItems || []).find(item => item.id === id);
+    if (!item) return;
+    item.coverBroken = true;
+    this.data.categories.forEach((category, group) => {
+      const index = category.items.findIndex(item => item.id === id);
+      if (index >= 0) this.setData({ [`categories[${group}].items[${index}].coverBroken`]: true });
+    });
   },
 
   enrichPantryItems(pantryItems) {
@@ -348,7 +352,7 @@ Page({
         ...item,
         id: item.id || item.itemId || item.pantryItemId || item.ingredientName,
         amountText: this.buildAmountText(item),
-        cover: ingredientImage(item, this.data.ingredientPhotos),
+        cover: ingredientImage(item, this._ingredientPhotos),
         coverBroken: false,
         expiresText: this.buildExpiresText(days),
         expiringSoon,

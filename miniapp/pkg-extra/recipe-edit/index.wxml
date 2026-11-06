@@ -16,7 +16,7 @@
 
   <block wx:if="{{editTab === 'info'}}">
     <view class="tap-scale rc-cover" wx:if="{{form.coverImage}}" bindtap="chooseCover">
-      <image class="rc-cover-img" src="{{form.coverImage}}" mode="aspectFill" />
+      <image class="rc-cover-img" src="{{form.coverImage === coverFailedUrl ? imagePlaceholder : form.coverImage}}" mode="aspectFill" data-err-key="coverFailedUrl" data-url="{{form.coverImage}}" binderror="onImageError" />
       <view class="tap-scale rc-cover-x" catchtap="removeCover" aria-role="button" aria-label="移除封面">×</view>
     </view>
     <view class="tap-scale rc-addcover" wx:else bindtap="chooseCover">添加封面</view>
@@ -106,7 +106,7 @@
       </view>
       <view class="tap-scale rc-shot" wx:if="{{!item.image}}" data-index="{{index}}" bindtap="chooseStepImage">加一张图</view>
       <view class="tap-scale rc-shot has" wx:else>
-        <image class="rc-shot-img" src="{{item.image}}" mode="aspectFill" lazy-load data-index="{{index}}" bindtap="chooseStepImage" />
+        <image class="rc-shot-img" src="{{item.image === stepImageErrors[index] ? imagePlaceholder : item.image}}" mode="aspectFill" lazy-load data-index="{{index}}" bindtap="chooseStepImage" data-err-key="stepImageErrors[{{index}}]" data-url="{{item.image}}" binderror="onImageError" />
         <view class="tap-scale rc-cover-x" data-index="{{index}}" catchtap="removeStepImage" aria-role="button" aria-label="移除第 {{index + 1}} 步的配图">×</view>
       </view>
       <textarea
@@ -176,9 +176,11 @@
         wx:for="{{pickerImages}}"
         wx:key="*this"
         class="tap-scale rc-pick-cell"
-        src="{{item}}"
+        src="{{item === pickerErrors[index] ? imagePlaceholder : item}}"
         mode="aspectFill"
         data-url="{{item}}"
+        data-err-key="pickerErrors[{{index}}]"
+        binderror="onImageError"
         catchtap="pickLocalImage"
       />
     </view>

@@ -1,9 +1,9 @@
 // 偏好画像页 · 我们家的口味（二级页，游客直进）
 // 数据源：getPreferenceProfile() + getCookHistory()
 const api = require('../../../utils/api');
-const { recipeDishImg } = require('../../../utils/image');
+const { recipeDishImg, localPath, onImgError } = require('../../../utils/image');
 
-const HERO_IMG = '/assets/dishes/hongshao-pork.jpg';
+const HERO_IMG = localPath('hongshao-pork');
 
 // 条形图配色（套用全局 token，渐变收尾用柔色）
 const BAR_GRADIENTS = [
@@ -21,6 +21,7 @@ function pickLocalImage(title) {
 }
 
 Page({
+  onHeroImageError(e) { onImgError(e, this, 'heroImg'); },
   data: {
     statusBarHeight: 0,
     loading: true,
