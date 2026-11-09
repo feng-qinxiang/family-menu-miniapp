@@ -1,6 +1,6 @@
 .cl-page { height: 100vh; background: var(--paper); }
 .cl-scroll { height: 100%; }
-.cl-content { padding: 0 var(--page-gutter) calc(var(--tabbar-h) + 40rpx); }
+.cl-content { padding: 0 var(--page-gutter) calc(var(--tabbar-h) + 48rpx); }   /* 空态/列表末尾都要躲开自定义 tabBar */
 .cl-stats { display: flex; margin: 8rpx 0 24rpx; }
 .cl-stat { flex: 1; text-align: center; min-width: 0; }
 .cl-stat + .cl-stat { border-left: 1rpx solid var(--line); }
@@ -15,10 +15,14 @@
 .cal-day { flex: 1; min-width: 0; text-align: center; color: var(--mut); }
 .dw { font-size: var(--fs-cap); }
 .dd { width: 60rpx; height: 60rpx; display: flex; align-items: center; justify-content: center; margin: 10rpx auto 0; border-radius: 50%; color: var(--mut); font-size: var(--fs-body); }
-.cal-day.done .dd { background: var(--pop-soft); color: var(--pop-deep); font-weight: 700; }
-.cal-day.today .dd { border: 2rpx solid var(--pop); box-sizing: border-box; color: var(--pop); }
-.cal-dot { width: 6rpx; height: 6rpx; border-radius: 50%; margin: 10rpx auto 0; }
-.done .cal-dot { background: var(--pop-fill); }
+/* 周历三态：有记录 = 数字下一颗小点；今天 = 深色实心圆；未来 = 淡掉。过去没记录保持普通灰字 */
+.cal-day.done .dd { color: var(--ink); font-weight: 700; }
+.cal-day.today .dd { background: var(--anchor); color: var(--anchor-contrast); font-weight: 700; }
+.cal-day.today .dw { color: var(--ink); font-weight: 700; }
+.cal-day.future { opacity: 0.4; }
+.cal-dot { width: 10rpx; height: 10rpx; border-radius: 50%; margin: 10rpx auto 0; }
+.cal-day.done .cal-dot { background: var(--pop-fill); }
+.cl-stats-none { margin: 0 0 20rpx; font-size: var(--fs-cap); color: var(--mut); }
 .cl-chips { margin: 8rpx 0 28rpx; }
 .month-sep { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; margin: 30rpx 0 20rpx; }
 .mtag { color: var(--ink); font-size: var(--fs-body); font-weight: 700; }
@@ -34,7 +38,7 @@
 .cl-rating { display: flex; align-items: center; flex-wrap: wrap; gap: 4rpx; margin-top: 10rpx; }
 .cl-star { color: var(--line-deep); font-size: var(--fs-sub); }
 .cl-star.on { color: var(--gold-deep); }
-.cl-unrated { color: var(--mut); font-size: var(--fs-mini); margin-left: 8rpx; }
+.cl-unrated { color: var(--mut); font-size: var(--fs-cap); }
 .note { margin-top: 12rpx; color: var(--ink-deep); font-size: var(--fs-sub); line-height: 1.65; word-break: break-all; }
 .cl-actions { display: flex; align-items: center; justify-content: space-between; gap: 20rpx; border-top: 1rpx solid var(--line); margin-top: 22rpx; padding: 8rpx 0; }
 .redo, .cl-share { min-height: 88rpx; display: flex; align-items: center; font-size: var(--fs-sub); font-weight: 600; }

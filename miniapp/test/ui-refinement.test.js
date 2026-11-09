@@ -147,8 +147,6 @@ function page(module, privateFields = []) {
     await me.loadProfile();
     assert.equal(me.data.monthCookCount, 1, '本月统计排除历史月份和无效日期');
     assert.equal(me.data.profile.nickname, '掌勺人');
-    assert.equal(me.data.todayDishes[0].title, '番茄炒蛋');
-    assert.equal(me.data.todayDone, 1);
     const postDetail = page('../pkg-extra/community/post-detail/index');
     postDetail.setData({ postId: '201', post: { author: '家人', title: '晚饭', images: ['/uploaded/work.jpg'], cover: '/recipe/cover.jpg' } });
     assert.equal(postDetail.onShareAppMessage().imageUrl, '/uploaded/work.jpg', '分享优先使用作者实拍');

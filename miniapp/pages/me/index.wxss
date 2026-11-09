@@ -8,68 +8,6 @@
   background: var(--paper);
 }
 
-/* ---------- 紧凑页头里的家庭身份（.cpt-head 本体在 app.wxss） ---------- */
-/* 家庭名是用户自己起的，可能很长：最多两行，不截成一行省略号 */
-.mag-fam-name {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  overflow: hidden;
-  word-break: break-all;
-}
-.mag-fam {
-  display: flex;
-  align-items: center;
-  margin-top: 20rpx;
-  min-height: var(--ava-cmt);   /* 首屏加载时行是空的，留高度防数据回来跳一下 */
-}
-.mag-ava {
-  width: var(--ava-cmt);
-  height: var(--ava-cmt);
-  margin-left: -18rpx;
-  border-radius: calc(var(--ava-cmt) * var(--r-ava));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(var(--ava-cmt) * var(--ava-glyph) * var(--fs-mul, 1));
-  font-weight: 800;
-  color: var(--anchor-contrast);
-  border: 4rpx solid var(--paper);   /* 堆叠描边取纸色，深色模式随 token 翻转 */
-}
-.mag-ava:first-child { margin-left: 0; }
-.mavt-a { background: var(--cat-gold); color: var(--ink-deep); }   /* 深字压亮金 5.98:1；--gold-deep 已加深，不能再当深字的底 */
-.mavt-b { background: var(--cat-brown); }
-.mavt-c { background: var(--pine); }
-.mavt-d { background: var(--cat-purple); }
-.mavt-e { background: var(--c-info); }
-.mag-fam-lbl {
-  margin-left: 20rpx;
-  font-size: var(--fs-sub);
-  color: var(--mut);
-}
-.mag-fam-lbl .b { color: var(--ink); font-weight: 800; }
-/* 「＋ 管理」：次级操作，墨色描边胶囊（番茄红留给本屏主操作「去登录」）；
-   视觉 64rpx 高，::after 把热区撑到 88rpx */
-.mag-manage {
-  position: relative;
-  font-size: var(--fs-sub);
-  font-weight: 700;
-  line-height: 60rpx;
-  padding: 0 26rpx;
-  color: var(--ink);
-  border: 2rpx solid var(--line-deep);
-  border-radius: var(--r-pill);
-}
-.mag-manage::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  height: 88rpx;
-  margin-top: -44rpx;
-}
-
 /* ---------- 内容区 ---------- */
 .mag-sheet {
   padding: 8rpx var(--page-gutter) 0;   /* 与 .cpt-head 同一页边距（原误用删除钮直径 --ctl-x，差 2rpx 对不齐） */
@@ -117,37 +55,6 @@
   border-radius: var(--r-pill);
 }
 
-/* ---------- 数据卡 ---------- */
-.mag-stats {
-  display: flex;
-  gap: 12rpx;
-  margin-top: 16rpx;
-}
-.mag-stat {
-  flex: 1;
-  background: var(--c-surface);
-  border-radius: var(--r-card);   /* 统计卡回到全站卡片标准 16rpx */
-  padding: 22rpx var(--pad-card-sm);
-  min-width: 0;
-  border: var(--bd-card);   /* 与下方快捷入口同为描边卡，不再单独加双层投影 */
-}
-.mag-snum {
-  font-size: var(--fs-stat);
-  font-weight: 900;
-  color: var(--ink);
-  letter-spacing: -2rpx;
-  line-height: 1;
-}
-/* 骨架与真数字同盒：高度 = 一行字（line-height 1 → 1em），靠左（真数字不居中）。
-   原来 48rpx 高、margin auto 居中，数字回来时下移 8rpx、横向跳到左边 */
-.mag-snum.num-skel {
-  width: 84rpx;
-  height: 1em;
-  border-radius: 14rpx;
-  background: var(--skeleton);
-  margin: 0;
-  color: transparent;
-}
 /* 列表骨架（最近上桌 / 口味偏好加载态） */
 .mag-skel-thumb {
   /* 骨架必须和它替身的那张卡同尺寸，否则数据回来时整行会跳一下。
@@ -174,20 +81,6 @@
   margin-top: 16rpx;
   width: 100%;
 }
-.mag-scap {
-  margin-top: 14rpx;
-  font-size: var(--fs-mini);
-  font-weight: 600;
-  color: var(--mut);
-  white-space: nowrap;
-}
-/* 统计卡补充说明：只留有信息量的（如「自建+导入」），和标题重复的不写 */
-.mag-scap-note {
-  margin-top: 4rpx;
-  font-size: var(--fs-mini);   /* 19rpx 浅字太弱，升一档 */
-  color: var(--mut-strong);
-}
-
 /* ---------- 最近上桌 ---------- */
 /* 下面四张列表卡左右原来都是裸 34rpx：比上方统计卡/快捷卡/今日卡（--pad-card-sm）多缩进 10rpx，
    同一屏的卡里文字左边缘错开。统一走 --pad-card-sm */
@@ -223,35 +116,6 @@
   color: var(--gold-deep);
 }
 
-/* ---------- 厨房工具 ---------- */
-.mag-tools { padding: 8rpx var(--pad-card-sm); }
-.mag-trow {
-  display: flex;
-  align-items: center;
-  gap: 28rpx;
-  padding: 28rpx 0;
-  border-bottom: 2rpx solid var(--paper-2);
-}
-.mag-trow:last-child { border-bottom: none; }
-.mag-ticon {
-  width: 80rpx;
-  height: 80rpx;
-  flex: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 26rpx;
-  font-size: calc(32rpx * var(--fs-mul, 1));
-  font-weight: 800;
-}
-.ti-1 { background: var(--c-gold-soft); color: var(--gold-deep); }
-.ti-2 { background: var(--c-accent-soft); color: var(--pine-ink); }
-.ti-4 { background: var(--c-accent-soft); color: var(--cat-plum-deep); }
-.mag-tmid { flex: 1; min-width: 0; }
-.mag-tname { font-size: calc(32rpx * var(--fs-mul, 1)); font-weight: 700; color: var(--ink); }
-.mag-tdesc { margin-top: 6rpx; font-size: calc(23rpx * var(--fs-mul, 1)); color: var(--mut-strong); }
-.mag-tarrow { flex: none; font-size: calc(36rpx * var(--fs-mul, 1)); color: var(--mut-2); }
-
 /* ---------- 口味偏好 ---------- */
 .mag-pref { padding: 38rpx var(--pad-card-sm); }
 .mag-prow { margin-bottom: 30rpx; }
@@ -278,10 +142,6 @@
 .mag-pbar.alt .mag-pbar-i {
   background: linear-gradient(90deg, var(--cat-green), var(--pine));
 }
-
-/* ---------- 偏好画像 & 家庭成员 图标色 ---------- */
-.ti-pref { background: var(--pop-soft); color: var(--pop-deep); }
-.ti-fam  { background: var(--c-info-soft); color: var(--c-info); }
 
 /* ---------- 设置分组 ---------- */
 .mag-settings { padding: 0 var(--pad-card-sm); }
@@ -320,32 +180,13 @@
   width: 64rpx;
   height: 64rpx;
   border-radius: 50%;
-  background: var(--ink);
+  background: var(--paper-2);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
-/* 绑手机：听筒几何标，不用 ☏ */
-.mag-phone-glyph {
-  width: 22rpx;
-  height: 30rpx;
-  border: 3rpx solid var(--paper);
-  border-radius: 6rpx 6rpx 10rpx 10rpx;
-  box-sizing: border-box;
-  position: relative;
-}
-.mag-phone-glyph::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  bottom: 4rpx;
-  width: 10rpx;
-  height: 3rpx;
-  margin-left: -5rpx;
-  border-radius: 2rpx;
-  background: var(--paper);
-}
+.mag-phone-ic image { width: 34rpx; height: 34rpx; }
 .mag-phone-mid { flex: 1; min-width: 0; }
 .mag-phone-t { font-size: calc(28rpx * var(--fs-mul, 1)); font-weight: 700; color: var(--ink); }
 .mag-phone-s { margin-top: 6rpx; font-size: calc(23rpx * var(--fs-mul, 1)); color: var(--mut); }
@@ -385,36 +226,37 @@
   font-weight: 700;
 }
 
-.mag-profile { display: flex; align-items: center; gap: 18rpx; margin-top: 20rpx; }
-.mag-profile-avatar { width: 88rpx; height: 88rpx; flex: none; border-radius: var(--r-md); background: var(--paper-2); }
-.mag-profile-letter { display: flex; align-items: center; justify-content: center; background: var(--pine); color: var(--anchor-contrast); font-size: var(--fs-lg); font-weight: 800; }
-.mag-profile-copy { flex: 1; min-width: 0; }
-.mag-profile-name { font-size: var(--fs-lg); font-weight: 700; color: var(--ink); word-break: break-all; line-height: 1.45; }
-.mag-profile-sub { font-size: var(--fs-cap); color: var(--mut-strong); margin-top: 4rpx; line-height: 1.5; }
-.mag-profile-edit { flex: none; color: var(--mut-strong); font-size: var(--fs-cap); }
-.mag-shortcuts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12rpx; margin: 20rpx 0; }
-.mag-shortcut { display: flex; align-items: center; gap: 12rpx; padding: 20rpx var(--pad-card-sm); background: var(--c-surface); border: var(--bd-card); border-radius: var(--r-card); min-width: 0; }
-.mag-shortcut > view:last-child { min-width: 0; }
-.mag-shortcut .mag-ticon { width: 64rpx; height: 64rpx; font-size: var(--fs-sub); }
-.mag-shortcut .mag-tname { font-size: var(--fs-sub); line-height: 1.45; word-break: break-all; }
-.mag-shortcut .mag-tdesc { font-size: var(--fs-mini); line-height: 1.5; }
-.mag-today { padding: var(--pad-card-sm); margin-bottom: 20rpx; }
-.mag-today-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12rpx; flex-wrap: wrap; font-size: var(--fs-lg); font-weight: 700; color: var(--ink); }
-.mag-today-status { font-size: var(--fs-cap); font-weight: 500; color: var(--pine-ink); }
-.mag-today-dishes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14rpx; margin-top: 18rpx; }
-.mag-today-dish { min-width: 0; }
-.mag-today-dish image { display: block; width: 100%; height: 126rpx; border-radius: var(--r-sm); background: var(--paper-2); }
-.mag-today-dish view { font-size: var(--fs-cap); color: var(--ink); line-height: 1.5; margin-top: 8rpx; word-break: break-all; }
-.mag-today-footer { display: flex; justify-content: space-between; align-items: center; gap: 12rpx; flex-wrap: wrap; margin-top: 16rpx; color: var(--mut-strong); font-size: var(--fs-cap); line-height: 1.5; }
-.mag-today-footer text:last-child { color: var(--pop-deep); font-weight: 700; }
 .mag-hsub { line-height: 1.5; word-break: break-all; }
 
-/* ---------- 深色档 ----------
-   1) 金/蓝头像底两档都偏亮，字却跟着 --ink-deep / --anchor-contrast 翻成浅色（约 1.6:1 / 2.4:1），
-      改用头像色板里恒定的深棕 --cat-brown-deep（约 3.6~4.2:1）。不用 --anchor：它深色档会提亮；
-   2) --pine / --cat-plum-deep 当文字在深底上约 2.6:1，与首页/会员页同法换浅一档 */
+/* ---------- 身份卡：我 + 我家 + 一句统计 ---------- */
+/* 头像是这页唯一的单字方块（人名头像），底色用暖中性，不和主按钮抢红 */
+.mag-id { padding: 8rpx var(--pad-card-sm) 0; }
+.mag-id-me, .mag-id-fam { display: flex; align-items: center; gap: 20rpx; min-height: var(--tap-min); }
+.mag-id-me { padding: 20rpx 0; border-bottom: 2rpx solid var(--paper-2); }
+.mag-id-ava { width: var(--ava-head); height: var(--ava-head); flex: none; border-radius: calc(var(--ava-head) * var(--r-ava)); background: var(--paper-2); }
+.mag-id-letter { display: flex; align-items: center; justify-content: center; color: var(--ink); font-size: var(--fs-h2); font-weight: 700; }
+.mag-id-copy { flex: 1; min-width: 0; }
+.mag-id-name { font-size: var(--fs-lg); font-weight: 800; color: var(--ink); line-height: 1.4; word-break: break-all; }
+.mag-id-edit { margin-top: 4rpx; font-size: var(--fs-cap); color: var(--mut-strong); }
+.mag-chev { width: 32rpx; height: 32rpx; flex: none; }
+.mag-id-fam { padding: 12rpx 0; }
+.mag-id-fam-ic { width: 40rpx; height: 40rpx; flex: none; }
+/* 家庭名是用户自己起的，可能很长：最多两行 */
+.mag-id-fam-name { flex: 1; min-width: 0; font-size: var(--fs-body); font-weight: 700; color: var(--ink); line-height: 1.45; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; word-break: break-all; }
+.mag-id-fam-cnt { flex: none; font-size: var(--fs-cap); color: var(--mut-strong); }
+.mag-id-stats { padding: 0 0 20rpx 60rpx; font-size: var(--fs-cap); color: var(--mut); line-height: 1.5; }
+.mag-id .mag-skel-line.strong { height: 30rpx; width: 45%; }
+
+/* ---------- 常用入口：三列线性图标，单一暖中性底 ---------- */
+.mag-shortcuts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4rpx; margin: 16rpx 0 20rpx; padding: 12rpx var(--pad-card-sm); background: var(--c-surface); border: var(--bd-card); border-radius: var(--r-card); }
+.mag-shortcut { display: flex; flex-direction: column; align-items: center; gap: 10rpx; padding: 16rpx 0; min-width: 0; min-height: var(--tap-min); }
+.mag-sic { width: 80rpx; height: 80rpx; display: flex; align-items: center; justify-content: center; border-radius: var(--r-md); background: var(--paper-2); }
+.mag-sic image { width: 44rpx; height: 44rpx; }
+.mag-scname { font-size: var(--fs-sub); font-weight: 600; color: var(--ink); line-height: 1.4; text-align: center; }
+
+/* lucide SVG 的描边色各不相同（深墨/米白/番茄红），统一压成墨色线条；深色档再翻成浅色 */
+.mag-sic image, .mag-chev, .mag-id-fam-ic, .mag-phone-ic image { filter: brightness(0); opacity: 0.72; }
+.mag-chev { opacity: 0.35; }
 @media (prefers-color-scheme: dark) {
-  .mavt-a, .mavt-e { color: var(--cat-brown-deep); }
-  .ti-2, .mag-today-status { color: var(--c-success); }
-  .ti-4 { color: var(--cat-purple-light); }
+  .mag-sic image, .mag-chev, .mag-id-fam-ic, .mag-phone-ic image { filter: brightness(0) invert(1); }
 }

@@ -17,6 +17,7 @@
 }
 
 /* ===== 头像 ===== */
+/* 人名头像：暖中性底（与社区信息流一致）；红色只留给操作 */
 .ava {
   flex: none;
   display: flex;
@@ -25,18 +26,12 @@
   width: var(--ava-head);
   height: var(--ava-head);
   border-radius: calc(var(--ava-head) * var(--r-ava));
-  font-family: var(--serif);
   font-weight: 700;
   font-size: calc(var(--ava-head) * var(--ava-glyph) * var(--fs-mul, 1));
-  color: var(--anchor-contrast);
-  box-shadow: 0 4rpx 12rpx rgba(60, 40, 20, 0.12);
+  color: var(--ink);
+  background: var(--paper-2);
 }
-.ava-sm { width: var(--ava-cmt); height: var(--ava-cmt); font-size: calc(var(--ava-cmt) * var(--ava-glyph) * var(--fs-mul, 1)); }
-.ava-lin { background: linear-gradient(135deg, var(--pop-fill), var(--orange)); }
-.ava-lan { background: linear-gradient(135deg, var(--pine), var(--cat-green)); }
-.ava-zhao { background: linear-gradient(135deg, var(--cat-purple-deep), var(--cat-purple-light)); }
-.ava-gold { background: linear-gradient(135deg, var(--gold-deep), var(--gold)); }
-.ava-pine { background: linear-gradient(135deg, var(--pine), var(--cat-green-light)); }
+.ava-sm { width: var(--ava-cmt); height: var(--ava-cmt); border-radius: calc(var(--ava-cmt) * var(--r-ava)); font-size: calc(var(--ava-cmt) * var(--ava-glyph) * var(--fs-mul, 1)); }
 
 /* ===== 作者块 ===== */
 .author {
@@ -85,10 +80,14 @@
   min-width: 0;
   gap: 6rpx 16rpx;
 }
+/* 标签只读：浅底小胶囊，不带 #，不用强调色（不像链接） */
 .ptag {
-  font-size: var(--fs-sub);
+  padding: 2rpx 16rpx;
+  border-radius: var(--r-pill);
+  background: var(--paper);
+  font-size: var(--fs-cap);
   font-weight: 500;
-  color: var(--pine-ink);
+  color: var(--mut-strong);
   line-height: 1.5;
   word-break: break-all;
 }

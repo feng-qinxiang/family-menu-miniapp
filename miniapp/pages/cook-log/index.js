@@ -1,5 +1,5 @@
 const { getCookHistory, addTodayMenuRecipe } = require('../../utils/api');
-const { recipeDishImg, localPath, onPhotoError: markPhotoBroken } = require('../../utils/image');
+const { recipeDishImg, onPhotoError: markPhotoBroken } = require('../../utils/image');
 const { getCapsule } = require('../../utils/capsule');
 const { withTabSelect } = require('../../behaviors/tab-select');
 const { composePostWithRecipe } = require('../../utils/post-share');
@@ -48,10 +48,9 @@ Page({
     showBackTop: false,
     scrollTopTo: -1,
     loading: true,
-    heroCover: localPath('beef-broccoli'),
-    bigNum: 0,
     stats: { dishes: 0, fireDays: 0, praise: 0 },
-    week: [],            // 本周打卡 7 态
+    hasMonthStats: false, // 本月一条都没有时不放大三个 0
+    week: [],            // 本周 7 天：done(有记录) / today / future
     weekDoneText: '',
     cooks: [],           // chip 用厨师列表
     activeFilter: 'all', // all | 五星 | cook:xxx
@@ -168,10 +167,12 @@ Page({
       d.setDate(monday.getDate() + i);
       const key = d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
       const isToday = d.toDateString() === todayStr;
-      let state = '';
-      if (doneSet[key]) { state = 'done'; doneCount++; }
-      else if (isToday) state = 'today';
-      else if (d.getTime() < todayStart.getTime()) state = 'miss';
+      // 几个状态可叠加：今天做过饭时既要实心今日标，也要下面的小点
+      const states = [];
+      if (doneSet[key]) { states.push('done'); doneCount++; }
+      if (isToday) states.push('today');
+      else if (d.getTime() > todayStart.getTime()) states.push('future');
+      const state = states.join(' ');
       week.push({
         dw: WEEK_LABELS[d.getDay()],
         dd: d.getDate(),
@@ -191,15 +192,14 @@ Page({
 
     this.setData({
       loading: false,
-      heroCover: enriched.length ? enriched[0].cover : localPath('beef-broccoli'),
-      bigNum: monthItems.length,
+      hasMonthStats: monthItems.length > 0,
       stats: {
         dishes: monthItems.length,
         fireDays: Object.keys(fireDaySet).length,
         praise
       },
       week,
-      weekDoneText: doneCount + ' / 7 天',
+      weekDoneText: doneCount ? '开火 ' + doneCount + ' 天' : '这周还没记录',
       cooks,
       totalCount: enriched.length
     }, () => this.applyFilter());

@@ -25,10 +25,10 @@
     <view class="body">
       <!-- 作者块 -->
       <view class="author g-fade-up">
-        <view class="ava ava-{{post.avaTheme}}">{{post.avaText}}</view>
+        <view class="ava">{{post.avaText}}</view>
         <view class="acol">
           <view class="aname ellipsis">{{post.author}}</view>
-          <view class="atime">{{post.authorMeta}}</view>
+          <view wx:if="{{post.authorMeta}}" class="atime">{{post.authorMeta}}</view>
         </view>
         <button class="react-share tap-scale" size="mini" open-type="share" aria-label="分享这条帖子">
           <view class="ricon ico-share"></view><text>分享</text>
@@ -65,7 +65,7 @@
         </view>
         <view class="post-footer">
           <view wx:if="{{post.tags.length}}" class="ptags">
-            <text wx:for="{{post.tags}}" wx:key="*this" class="ptag">#{{item}}</text>
+            <text wx:for="{{post.tags}}" wx:key="*this" class="ptag">{{item}}</text>
           </view>
           <view class="react-report tap-scale" bindtap="onReport" aria-role="button">举报</view>
         </view>
@@ -98,7 +98,7 @@
         <view wx:if="{{commentsError}}" class="comment-retry"><text>评论暂时没加载出来</text><view class="tap-scale" bindtap="retryComments" aria-role="button">{{commentsLoading ? '加载中' : '重新加载'}}</view></view>
         <view wx:if="{{comments.length}}" class="cmt-list">
           <view wx:for="{{comments}}" wx:key="commentId" class="cmt">
-            <view class="ava ava-sm ava-{{item.avaTheme}}">{{item.avaText}}</view>
+            <view class="ava ava-sm">{{item.avaText}}</view>
             <view class="ccol">
               <view class="crow">
                 <view class="cmeta"><text class="cname">{{item.author}}</text><text class="ctime">{{item.createdAt}}</text></view>

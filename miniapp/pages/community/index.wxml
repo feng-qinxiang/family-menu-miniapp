@@ -21,10 +21,9 @@
           <scroll-view scroll-x class="topic-scroll" show-scrollbar="{{false}}">
             <view class="tchips">
               <view class="tchip tap-scale {{!currentTag ? 'on' : ''}}" bindtap="clearTopic" aria-role="button" aria-selected="{{!currentTag}}"><text class="tt">全部</text></view>
-              <view class="tchip tap-scale {{currentTag === item.tag ? 'on' : ''}}" wx:for="{{hotTopics}}" wx:key="tag" data-tag="{{item.tag}}" bindtap="onTopicTap" aria-role="button" aria-selected="{{currentTag === item.tag}}"><text class="tt">#{{item.tag}}</text></view>
+              <view class="tchip tap-scale {{currentTag === item.tag ? 'on' : ''}}" wx:for="{{hotTopics}}" wx:key="tag" data-tag="{{item.tag}}" bindtap="onTopicTap" aria-role="button" aria-selected="{{currentTag === item.tag}}"><text class="tt">{{item.tag}}</text></view>
             </view>
           </scroll-view>
-          <view wx:if="{{currentTag}}" class="tag-filter"><text class="tag-filter-t">当前：#{{currentTag}}</text><view class="tag-filter-x tap-scale" bindtap="clearTopic" aria-role="button" aria-label="清空话题筛选，看全部">看全部 ×</view></view>
         </view>
         <view class="cm-feed-head"><text>今日餐桌</text><text wx:if="{{posts.length}}" class="cm-feed-count">{{communitySummary.postCount}} 篇分享</text></view>
 
@@ -57,11 +56,8 @@
             bindtap="openPost"
           >
             <view class="ptop">
-              <view class="pavatar" style="background:{{item.avatarColor}}">{{item.authorInitial}}</view>
-              <view class="pmeta">
-                <view class="pname">{{item.author}}</view>
-                <view class="ptime">{{item.timeText || '家常分享'}}</view>
-              </view>
+              <view class="pavatar">{{item.authorInitial}}</view>
+              <view class="pmeta"><view class="pname">{{item.author}}</view></view>
               <view class="tap-scale pa-report" catchtap="openReportSheet" data-id="{{item.id}}" aria-role="button" aria-label="举报{{item.title}}">···</view>
             </view>
 
@@ -84,7 +80,7 @@
             </view>
             <view class="pcontent clamp-2">{{item.content}}</view>
 
-            <!-- 关联菜谱 -->
+            <!-- 关联菜谱：一行小卡（话题已在页顶筛选条里，卡内不再重复一排 #标签） -->
             <view
               wx:if="{{item.recipe}}"
               class="tap-scale precipe"
@@ -94,17 +90,8 @@
               aria-label="查看做法：{{item.recipe.title}}"
             >
               <image wx:if="{{item.recipeThumb}}" class="rthumb {{item.recipeThumbBroken ? 'img-broken' : ''}}" src="{{item.recipeThumb}}" mode="aspectFill" lazy-load data-err-key="{{'posts[' + index + '].recipeThumbBroken'}}" binderror="onPhotoError" />
-              <view class="rmid">
-                <view class="rk">这道菜的做法</view>
-                <view class="rn ellipsis">{{item.recipe.title}}</view>
-                <view class="rm">{{item.recipe.cuisine}} · {{item.recipe.timeCost}} 分钟 · {{item.recipe.servings}} 人份</view>
-              </view>
-              <view class="rgo"><view class="rgo-arrow"></view></view>
-            </view>
-
-            <!-- 标签 -->
-            <view class="ptags" wx:if="{{item.tags.length}}">
-              <text wx:for="{{item.tags}}" wx:for-item="tag" wx:key="*this" class="p-tag">#{{tag}}</text>
+              <view class="rn ellipsis"><text class="rk">做法</text>{{item.recipe.title}}<text wx:if="{{item.recipe.timeCost}}" class="rm"> · {{item.recipe.timeCost}} 分钟</text></view>
+              <image class="rgo" src="/assets/icons/lucide/chevron-right.svg" mode="aspectFit" aria-hidden="true" />
             </view>
 
             <!-- 操作栏 -->
@@ -116,7 +103,7 @@
                 aria-role="button"
                 aria-label="{{item.liked ? '取消点赞' : '点赞'}}，{{item.likeCount}} 赞"
               >
-                <view class="pa-ico ico-heart {{item.liked ? 'on' : ''}}"></view>{{item.likeCount}} 赞
+                <view class="pa-ico ico-heart {{item.liked ? 'on' : ''}}"></view>{{item.likeCount || ''}} 赞
               </view>
               <view
                 class="tap-scale pa-btn {{item.favorited ? 'on' : ''}}"
@@ -128,7 +115,7 @@
                 <view class="pa-ico ico-star {{item.favorited ? 'on' : ''}}"></view>{{item.favorited ? '已收藏' : '收藏'}}
               </view>
               <view class="tap-scale pa-btn" catchtap="openPost" data-id="{{item.id}}" aria-role="button" aria-label="{{item.commentCount || 0}} 条评论，查看帖子">
-                <view class="pa-ico ico-chat"></view>{{item.commentCount || 0}} 评论
+                <view class="pa-ico ico-chat"></view>{{item.commentCount || ''}} 评论
               </view>
             </view>
           </view>

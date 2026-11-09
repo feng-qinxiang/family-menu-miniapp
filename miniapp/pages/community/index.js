@@ -19,8 +19,6 @@ const reportReasons = ['内容不实', '步骤不全', '疑似搬运', '其他']
 // 信息流分页：后端 /api/community/posts 已支持 page/size（上限 50）
 const FEED_PAGE_SIZE = 20;
 
-// 头像撞色轮转（番茄红 / 深墨 / 松绿）
-const AVATAR_COLORS = ['#c8381f', '#3a2e23', '#2f4a3a', '#b08949'];
 // 热门话题：后端暂无话题接口，点击直接带关键词跳菜谱搜索（复用搜索页 keyword 参数）
 const HOT_TOPICS = [
   { tag: '今天吃什么' },
@@ -195,7 +193,7 @@ Page({
   },
 
   normalizePosts(posts) {
-    return (posts || []).map((post, index) => {
+    return (posts || []).map((post) => {
       const recipe = post.recipe || null;
       const recipeImg = dishImageUrl(recipe && recipe.coverImage ? recipe.coverImage : '');
       const images = Array.isArray(post.images) ? post.images.filter(Boolean).map(dishImageUrl) : [];
@@ -204,7 +202,6 @@ Page({
       return {
         ...post,
         authorInitial: post.author ? post.author.slice(0, 1) : '匿',
-        avatarColor: AVATAR_COLORS[index % AVATAR_COLORS.length],
         photo: images[0] || '',
         imageCount: images.length,
         recipeThumb: recipeImg,
@@ -277,12 +274,10 @@ Page({
   },
 
   // 用服务端回来的一条换掉本地那条，只发 posts[i]（原来整份列表重发，翻到第 3 页一次约 150KB）。
-  // 头像底色是按列表位置配的，单条重新 normalize 会变色，沿用原来的。
   replacePost(updated) {
     const i = this.postIndex(updated && updated.id);
     if (i < 0) return;
     const next = this.normalizePosts([updated])[0];
-    next.avatarColor = this.data.posts[i].avatarColor;
     this.setData({ [`posts[${i}]`]: next });
   },
 

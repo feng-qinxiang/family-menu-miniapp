@@ -4,14 +4,6 @@ const api = require('../../../utils/api');
 const { dishImageUrl, onPhotoError: markPhotoBroken } = require('../../../utils/image');
 const { guard, release } = require('../../../utils/interaction');
 
-// 头像底色循环（与设计稿一致的撞色梯度）
-const AVA_THEMES = ['lin', 'lan', 'zhao', 'gold', 'pine'];
-function avaTheme(seed) {
-  const s = String(seed || '');
-  let sum = 0;
-  for (let i = 0; i < s.length; i++) sum += s.charCodeAt(i);
-  return AVA_THEMES[sum % AVA_THEMES.length];
-}
 function avaText(name) {
   return name ? String(name).slice(0, 1) : '匿';
 }
@@ -33,8 +25,8 @@ function normalizePost(post) {
     id: post.id,
     title: post.title || '未命名分享',
     author: post.author || '匿名厨友',
-    authorMeta: post.timeText || post.createdAt || '家常分享',
-    avaTheme: avaTheme(post.author),
+    // 没有时间就不写占位语（原「家常分享」是凑数的副标题）
+    authorMeta: post.timeText || post.createdAt || '',
     avaText: avaText(post.author),
     paragraphs: paragraphs.length ? paragraphs : [post.content || '暂无正文'],
     cover,
@@ -59,7 +51,6 @@ function normalizeComment(c) {
     // 无真实 commentId 的兜底数据不可删（mine 也不会为 true）
     commentId: c.commentId || ('c-' + Math.random().toString(36).slice(2)),
     author: c.author || '匿名厨友',
-    avaTheme: avaTheme(c.author),
     avaText: avaText(c.author),
     content: c.content || '',
     createdAt: c.createdAt || '刚刚',

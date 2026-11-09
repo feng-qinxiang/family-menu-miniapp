@@ -61,69 +61,41 @@
 .pavatar {
   width: var(--ava-cmt);
   height: var(--ava-cmt);
-  border-radius: calc(var(--ava-cmt) * var(--r-ava));
+  border-radius: calc(var(--ava-cmt) * var(--r-ava));   /* 人名头像：暖中性底；红色只留给操作，头像不再像按钮。形状走全站 --r-ava */
   flex: none;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: calc(var(--ava-cmt) * var(--ava-glyph) * var(--fs-mul, 1));
-  font-weight: 900;
-  color: var(--anchor-contrast);
-  font-family: var(--serif);
+  font-weight: 700;
+  color: var(--ink);
+  background: var(--paper-2);
 }
 .pmeta { flex: 1; min-width: 0; }
 .pname { font-size: calc(28rpx * var(--fs-mul, 1)); font-weight: 700; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.ptime { font-size: var(--fs-cap); color: var(--mut-strong); margin-top: 4rpx; }
 .ptitle { font-size: calc(32rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--ink); letter-spacing: 0; margin: 14rpx 0 8rpx; line-height: 1.45; }
 .pcontent { font-size: calc(28rpx * var(--fs-mul, 1)); color: var(--mut-strong); line-height: 1.6; }
 /* 内层圆角不大于外层 .pcard（--r-card） */
-.pphoto { display: block; width: 100%; height: var(--photo-feed-h); border-radius: var(--r-sm); margin-top: 14rpx; }
+.pphoto { display: block; width: 100%; height: var(--photo-feed-h); border-radius: var(--r-sm); margin-top: 16rpx; background: var(--paper-2); }
 
-/* 关联菜谱 */
+/* 关联菜谱：一行小卡 */
 .precipe {
   display: flex;
   align-items: center;
-  gap: 16rpx;
-  margin-top: 18rpx;
-  padding: 16rpx;
+  gap: 14rpx;
+  min-height: var(--tap-min);
+  box-sizing: border-box;
+  margin-top: 16rpx;
+  padding: 0 12rpx 0 0;
+  overflow: hidden;
   background: var(--paper);
   border-radius: var(--r-sm);
-  border: 2rpx solid var(--paper-2);
 }
-.precipe .rthumb { width: var(--tile-row-sm); height: var(--tile-row-sm); border-radius: var(--r-sm); flex: none; }
-.precipe .rmid { flex: 1; min-width: 0; }
-/* 21rpx 金字在米白底上对比度不足 4.5:1，改为次要文字色 + 辅助字号 */
-.precipe .rk { font-size: var(--fs-cap); color: var(--mut-strong); font-weight: 700; }
-.precipe .rn { font-size: calc(28rpx * var(--fs-mul, 1)); font-weight: 700; color: var(--ink); margin-top: 4rpx; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4; }
-.precipe .rm { font-size: var(--fs-cap); color: var(--mut-strong); margin-top: 6rpx; line-height: 1.5; }
-.precipe .rgo {
-  width: 32rpx;
-  height: 88rpx;
-  border-radius: 50%;
-  background: transparent;
-  flex: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.rgo-arrow {
-  width: 16rpx;
-  height: 16rpx;
-  border-top: 3rpx solid var(--mut);
-  border-right: 3rpx solid var(--mut);
-  transform: rotate(45deg) translate(-2rpx, 2rpx);
-}
-
-/* 标签 */
-.ptags { display: flex; flex-wrap: wrap; gap: 14rpx; margin-top: 16rpx; }
-.p-tag {
-  font-size: calc(23rpx * var(--fs-mul, 1));
-  font-weight: 700;
-  color: var(--gold-deep);
-  background: transparent;
-  padding: 4rpx 0;
-  border-radius: var(--r-pill);
-}
+.precipe .rthumb { width: var(--tile-chip); height: var(--tile-chip); border-radius: var(--r-sm); flex: none; background: var(--paper-2); }
+.precipe .rn { flex: 1; min-width: 0; font-size: var(--fs-sub); font-weight: 700; color: var(--ink); }
+.precipe .rk { margin-right: 10rpx; font-weight: 600; color: var(--mut-strong); }
+.precipe .rm { font-weight: 400; color: var(--mut-strong); }
+.precipe .rgo { width: 28rpx; height: 28rpx; flex: none; filter: brightness(0); opacity: 0.35; }
 
 /* 操作栏 */
 .pactions {
@@ -173,7 +145,7 @@
   border-top: 0.16em solid currentColor;
 }
 .ico-warn::before { content: "\26A0\FE0E"; }
-.pa-report { flex: none; min-width: 88rpx; min-height: 88rpx; font-size: var(--fs-lg); color: var(--mut-strong); font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.pa-report { flex: none; min-width: 88rpx; min-height: 88rpx; font-size: var(--fs-body); color: var(--mut); font-weight: 400; display: flex; align-items: center; justify-content: center; }
 
 /* ===================== 加载骨架（与 .pcard 同形状，加载完不跳版） ===================== */
 /* 内边距/间距/头像与真卡 .pcard、.pavatar 同值（原来 28/34/84rpx 是旧版卡片的规格） */
@@ -189,28 +161,31 @@
 .cf-skel-line--short { width: 55%; }
 
 /* ===================== 热门话题 ===================== */
-.topics { margin: 0 0 14rpx; }
-.thead { display: flex; align-items: center; gap: 14rpx; margin-bottom: 26rpx; }
-.thead .th-title { font-size: calc(32rpx * var(--fs-mul, 1)); font-weight: 900; color: var(--ink); letter-spacing: -1rpx; }
+/* 轻筛选条：视觉 56rpx 细描边胶囊，命中区由上下 padding 撑到 --tap-min；去掉 # 前缀 */
+.topics { margin: 0 0 8rpx; }
 .topic-scroll { white-space: nowrap; }
-.tchips { display: inline-flex; gap: 12rpx; padding: 4rpx 0; }
+.tchips { display: inline-flex; gap: 0; }
 .tchip {
   display: flex;
   align-items: center;
-  gap: 12rpx;
-  background: var(--paper-2);
-  border-radius: var(--r-pill);
-  min-height: 88rpx;
+  min-height: var(--tap-min);
   box-sizing: border-box;
-  padding: 8rpx 20rpx;
+  padding: 0 6rpx;
   flex: none;
-  font-size: var(--fs-sub);
-  font-weight: 700;
-  color: var(--ink);
 }
-.tchip.on { background: var(--anchor); color: var(--anchor-contrast); }   /* 单选筛选与全局 .chip.on 一致：深底白字 */
-.tchip.on .tt { color: inherit; }
-.tchip .tt { font-size: var(--fs-sub); font-weight: 800; color: var(--ink); letter-spacing: -0.4rpx; }
+.tchip .tt {
+  display: block;
+  line-height: 52rpx;
+  padding: 0 22rpx;
+  border-radius: var(--r-pill);
+  border: 2rpx solid var(--line);
+  background: var(--c-surface);
+  font-size: var(--fs-sub);
+  font-weight: 500;
+  color: var(--mut-strong);
+}
+.tchip:first-child { padding-left: 0; }
+.tchip.on .tt { background: var(--anchor); border-color: var(--anchor); color: var(--anchor-contrast); font-weight: 700; }   /* 单选筛选与全局 .chip.on 一致：深底白字 */
 
 /* ===================== 流末 ===================== */
 .feed-end { display: flex; align-items: center; justify-content: center; gap: 22rpx; margin: 40rpx 0 8rpx; }
@@ -394,32 +369,6 @@
   color: var(--mut);
 }
 
-/* —— 话题过滤提示条 —— */
-.tag-filter {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14rpx;
-  margin-top: 16rpx;
-  padding: 0 22rpx;   /* 高度由 .tag-filter-x 的 88rpx 命中区撑开 */
-  border-radius: var(--r-pill);
-  background: var(--pop-soft);   /* 走 token，深色档跟着翻 */
-}
-.tag-filter-t {
-  font-size: var(--fs-cap);
-  font-weight: 700;
-  color: var(--pop);
-}
-.tag-filter-x {
-  flex: none;
-  min-height: var(--tap-min);
-  display: flex;
-  align-items: center;
-  font-size: var(--fs-cap);
-  color: var(--mut-strong);
-  font-weight: 700;
-}
-
 /* —— 待审核角标（仅作者本人可见的帖子） —— */
 .ptitle-row {
   display: flex;
@@ -435,4 +384,8 @@
   background: rgba(176, 137, 73, 0.14);
   padding: 4rpx 14rpx;
   border-radius: var(--r-pill);
+}
+
+@media (prefers-color-scheme: dark) {
+  .precipe .rgo { filter: brightness(0) invert(1); }
 }
