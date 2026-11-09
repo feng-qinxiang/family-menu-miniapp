@@ -81,7 +81,7 @@
       <view class="btn btn-pop btn-block tap-scale {{activating ? 'disabled' : ''}}" bindtap="goCheckout">
         {{isVip ? '已开通 · ' + planName : '开通家庭同步 · ' + (selectedPlan === 'yearly' ? priceMeta.yearly : priceMeta.monthly)}}
       </view>
-      <view class="vip-note">连续包{{selectedPlan === 'yearly' ? '年' : '月'}}，可在微信「我 → 服务 → 钱包 → 支付设置 → 自动续费」中关闭</view>
+      <view class="vip-note">单次付费，到期不会自动扣费，需要时再续费</view>
     </view>
   </view>
 </view>
