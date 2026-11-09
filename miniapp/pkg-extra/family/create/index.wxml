@@ -1,10 +1,6 @@
 <view class="fc-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
     <nav-bar title="创建家庭" status-bar-height="{{statusBarHeight}}" />
-    <view class="cpt-head">
-      <view class="cpt-eyebrow">把家人聚在一张餐桌</view>
-      <view class="cpt-title">建一个小家</view>
-      <view class="cpt-sub">一起点菜、轮流掌勺，留下每一餐的味道。</view>
-    </view>
+    <view class="fc-hint">建好后把邀请码发给家人，一起点菜。</view>
 
     <!-- ===== Sheet 内容 ===== -->
     <view class="fc-sheet">

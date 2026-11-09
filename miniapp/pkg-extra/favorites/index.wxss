@@ -20,22 +20,11 @@
   padding: 0 46rpx 40rpx;
 }
 
-/* ============ Hero ============ */
-.fav-head {
-  padding: 24rpx 0 0;
-}
-.fav-count {
-  margin-top: 0;
-  font-size: var(--fs-sub);
-  font-weight: 600;
-  color: var(--mut-strong);
-}
-
 /* ============ Tabs ============ */
 .fav-tabs {
   display: flex;
   gap: 54rpx;
-  margin-top: 26rpx;   /* 与 .fav-tab 的 padding-top 合计仍是 42rpx：tab 文字位置不变，命中区够 88rpx */
+  margin-top: 0;   /* 计数行已删（与 tab 角标重复），tab 直接贴导航栏 */
   padding-bottom: 0;
   border-bottom: 2rpx solid var(--paper-2);
 }

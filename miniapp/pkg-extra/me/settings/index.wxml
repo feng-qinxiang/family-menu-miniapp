@@ -14,7 +14,6 @@
         data-key="{{item.key}}"
         bindtap="onAccountTap"
       >
-        <view class="set-ic"><text class="set-glyph">{{item.icon === 'phone' ? '手' : '微'}}</text></view>
         <view class="set-mid"><view class="set-name">{{item.name}}</view></view>
         <text wx:if="{{item.value}}" class="set-val">{{item.value}}</text>
         <view class="set-chev"></view>
@@ -27,7 +26,6 @@
     <view class="set-gtitle">通知</view>
     <view class="card set-card">
       <view class="set-item tap-scale" bindtap="onToggleNotify" aria-role="switch" aria-checked="{{subscribeEnabled}}">
-        <view class="set-ic"><text class="set-glyph">铃</text></view>
         <view class="set-mid">
           <view class="set-name">消息通知</view>
           <view class="set-desc">家人点菜、开饭与食材临期提醒。微信每次订阅可接收一条对应提醒，临期也可在冰箱页单独订阅。</view>
@@ -50,7 +48,6 @@
         data-key="{{item.key}}"
         bindtap="onGeneralTap"
       >
-        <view class="set-ic"><text class="set-glyph">{{item.key === 'font' ? 'A' : '清'}}</text></view>
         <view class="set-mid"><view class="set-name">{{item.name}}</view></view>
         <text wx:if="{{item.value}}" class="set-val">{{item.value}}</text>
         <view class="set-chev"></view>
@@ -69,7 +66,6 @@
         data-key="{{item.key}}"
         bindtap="onAboutTap"
       >
-        <view class="set-ic"><text class="set-glyph">{{item.icon === 'doc' ? '约' : item.icon === 'shield' ? '隐' : item.icon === 'del' ? '销' : item.icon === 'info' ? '关' : '馈'}}</text></view>
         <view class="set-mid"><view class="set-name">{{item.name}}</view></view>
         <text wx:if="{{item.value}}" class="set-val">{{item.value}}</text>
         <view class="set-chev"></view>

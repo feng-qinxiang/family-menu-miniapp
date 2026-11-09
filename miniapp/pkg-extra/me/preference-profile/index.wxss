@@ -75,12 +75,15 @@
   font-weight: 600;
 }
 
+/* ===== 整页还没数据 ===== */
+.pp-empty { padding-top: 24rpx; }
+
 /* ===== 空态小提示 ===== */
 .empty-mini {
   text-align: center;
   color: var(--mut);
-  font-size: calc(25rpx * var(--fs-mul, 1));
-  padding: 48rpx 28rpx;
+  font-size: var(--fs-sub);
+  padding: 28rpx var(--pad-card-sm);
 }
 
 /* ===== 菜系分布条形图 ===== */

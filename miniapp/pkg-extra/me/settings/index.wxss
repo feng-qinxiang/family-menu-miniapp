@@ -30,29 +30,13 @@
 .set-item {
   display: flex;
   align-items: center;
-  gap: 26rpx;
-  padding: 29rpx 32rpx;
+  gap: 20rpx;
+  min-height: var(--tap-min);
+  padding: 28rpx var(--pad-card-sm);
   border-bottom: 2rpx solid var(--c-border-light);
 }
 .set-item:last-child {
   border-bottom: none;
-}
-
-.set-ic {
-  width: 70rpx;
-  height: 70rpx;
-  border-radius: var(--r-md);
-  background: var(--paper-2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: none;
-  color: var(--ink-deep);
-}
-.set-glyph {
-  font-size: calc(36rpx * var(--fs-mul, 1));
-  font-weight: 800;
-  line-height: 1;
 }
 
 .set-mid {

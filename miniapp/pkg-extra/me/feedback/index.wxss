@@ -3,12 +3,6 @@
 .fb { padding-top: 0; }
 
 /* nav-bar 右侧提交 */
-.nav-submit {
-  font-size: var(--fs-cap);
-  font-weight: 800;
-  color: var(--gold-deep);
-  padding: 8rpx 6rpx;
-}
 
 /* —— Hero —— */
 .fb-head { padding: 16rpx 0 8rpx; }

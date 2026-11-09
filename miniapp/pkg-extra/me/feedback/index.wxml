@@ -1,7 +1,5 @@
 <!-- 意见反馈 · 二级页：类型多选 + 描述(500计数) + 图片上传(≤3) + 联系方式 + 提交占位 -->
-<nav-bar title="意见反馈" show-back="{{true}}" status-bar-height="{{statusBarHeight}}" leave-confirm="{{leaveDirty}}">
-  <view class="nav-submit hit-88 tap-scale" aria-role="button" catchtap="onSubmit">提交</view>
-</nav-bar>
+<nav-bar title="意见反馈" show-back="{{true}}" status-bar-height="{{statusBarHeight}}" leave-confirm="{{leaveDirty}}" />
 
 <view class="container fb {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <!-- Hero -->

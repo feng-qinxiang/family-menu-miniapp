@@ -10,6 +10,7 @@
 
 .imp-sheet { padding: 0 0 calc(env(safe-area-inset-bottom) + 40rpx); }
 .imp-pad { padding: 0 var(--page-gutter); }
+.imp-hint { padding: 8rpx var(--page-gutter) 20rpx; font-size: var(--fs-sub); color: var(--mut-strong); line-height: 1.5; }
 .imp-methods { display: flex; gap: 8rpx; padding: 4rpx; margin: 0 var(--page-gutter); background: var(--paper-2); border-radius: var(--r-md); }
 .imp-method {
   flex: 1;

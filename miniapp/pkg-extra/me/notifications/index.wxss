@@ -10,7 +10,7 @@
   flex: none;
 }
 
-/* 批量已读跟随内容标题，留在微信胶囊下方。 */
+/* 批量已读跟随概况行，留在微信胶囊下方。 */
 .notif-readall { flex: none; display: flex; align-items: center; min-height: var(--tap-min); min-width: var(--tap-min); }   /* 走 token：窄屏由 app.wxss 兜到 44px */
 .notif-readall-label { display: flex; align-items: center; justify-content: center; gap: 8rpx; padding: 14rpx 16rpx; border: var(--bd-card); border-radius: var(--r-sm); background: var(--c-surface); color: var(--mut-strong); font-size: var(--fs-cap); font-weight: 500; white-space: nowrap; }
 .notif-readall-icon { flex: none; width: 26rpx; height: 26rpx; opacity: .7; filter: brightness(0); }
@@ -18,8 +18,8 @@
 @media (prefers-color-scheme: dark) {
   .notif-readall-icon { filter: none; }
 }
-.font-lg .notif-title-row { flex-wrap: nowrap; }
-.font-lg .notif-title-row .cpt-titles { flex-basis: auto; }
+.notif-top { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; min-height: var(--tap-min); padding: 0 var(--page-gutter) 8rpx; }
+.notif-top-sub { flex: 1; min-width: 0; font-size: var(--fs-sub); color: var(--mut-strong); }
 
 .notif-scroll {
   flex: 1;

@@ -34,29 +34,9 @@
   background: linear-gradient(135deg, var(--cat-gold), var(--gold), var(--gold-deep));
   box-shadow: 0 8rpx 22rpx rgba(0, 0, 0, 0.25);
 }
-.fam-emoji-img {
-  width: 100%;
-  height: 100%;
-}
-.fam-emoji-t {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  color: var(--ink-deep);
-  font-size: calc(44rpx * var(--fs-mul, 1));
-  font-weight: 900;
-}
-.fam-feyebrow {
-  font-family: var(--serif);
-  font-size: var(--fs-cap);
-  letter-spacing: 2rpx;
-  color: var(--gold-on-dark);
-  font-weight: 700;
-}
+.fam-emoji { display: flex; align-items: center; justify-content: center; }
+.fam-emoji-ic { width: 52rpx; height: 52rpx; }
 .fam-name {
-  margin-top: 6rpx;
   font-size: calc(50rpx * var(--fs-mul, 1));
   font-weight: 900;
   letter-spacing: -1rpx;

@@ -1,15 +1,12 @@
 <!-- pages/me/profile-edit · 编辑资料（二级页）文字头像 + 表单 -->
 <view class="pe-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
-  <nav-bar title="编辑资料" show-back="{{true}}" leave-confirm="{{leaveDirty}}">
-    <text class="pe-navsave hit-88 tap-scale" aria-role="button" catchtap="onSave">保存</text>
-  </nav-bar>
+  <nav-bar title="编辑资料" show-back="{{true}}" leave-confirm="{{leaveDirty}}" />
 
   <scroll-view class="pe-scroll" scroll-y enhanced show-scrollbar="{{false}}">
     <!-- 原资料没拉到：保存已拦住，这里给常驻的重试入口（同 recipe-edit） -->
     <view wx:if="{{loadFailed}}" class="pe-loadfail tap-scale" bindtap="retryLoad" aria-role="button">资料没加载出来，点这里重试</view>
     <!-- 文字头像 -->
     <view class="pe-avatar-wrap g-fade-up g-d1">
-      <text class="pe-eyebrow">个人资料</text>
       <view class="pe-avatar tap-scale" catchtap="onChangeAvatar" aria-role="button" aria-label="更换头像">
         <image wx:if="{{form.avatarUrl}}" class="pe-ava-img" src="{{form.avatarUrl}}" mode="aspectFill"></image>
         <view wx:else class="pe-ava-txt">{{avatarInitial}}</view>

@@ -1,12 +1,6 @@
 <!-- 买菜清单 · 当前菜单的备菜工具 -->
 <view class="mkt-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <nav-bar title="买菜清单" show-back="{{true}}" />
-  <view class="cpt-head">
-    <view class="cpt-eyebrow">备好食材，再开火</view>
-    <view class="cpt-title">今天的菜篮子</view>
-    <view class="cpt-sub">跟着今日菜单买，家里已有的食材先用起来。</view>
-  </view>
-
   <!-- SHEET · 内容区 -->
   <view class="mkt-sheet">
     <!-- 顶部 tab：待买 / 家里已有 -->
@@ -43,14 +37,38 @@
     </view>
 
     <block wx:if="{{!loading}}">
+      <!-- 临时加购：一行输入 + 添加，常用食材紧跟其下；数量单位填了名字再出现 -->
+      <view wx:if="{{!loadError}}" class="mkt-addbar g-fade-up">
+        <view class="mkt-add-row">
+          <view class="mkt-add-pic tap-scale" catchtap="editNewItemPhoto" aria-role="button" aria-label="为新食材拍照或从相册添加图片">
+            <image wx:if="{{newItemCover && !newItemCoverBroken}}" class="mkt-add-pic-img" src="{{newItemCover}}" mode="aspectFill" data-err-key="newItemCoverBroken" binderror="onIngredientPhotoError" />
+            <text wx:else class="mkt-add-pic-txt">拍照</text>
+          </view>
+          <input class="mkt-add-input" placeholder="临时加一样，如番茄" placeholder-class="mkt-ph" value="{{newItem.ingredientName}}" data-field="ingredientName" bindinput="onNewItemInput" bindconfirm="addItem" confirm-type="done" maxlength="50" />
+          <view class="btn btn-ghost mkt-addbtn tap-scale {{addItemSubmitting ? 'is-busy' : ''}}" bindtap="addItem" aria-role="button" aria-disabled="{{addItemSubmitting}}">{{addItemSubmitting ? '添加中' : '添加'}}</view>
+        </view>
+        <view wx:if="{{newItem.ingredientName}}" class="mkt-add-quantity">
+          <input class="mkt-add-input sm" placeholder="数量（可不填）" placeholder-class="mkt-ph" value="{{newItem.amount}}" data-field="amount" bindinput="onNewItemInput" />
+          <input class="mkt-add-input sm" placeholder="单位，如个" placeholder-class="mkt-ph" value="{{newItem.unit}}" data-field="unit" bindinput="onNewItemInput" />
+        </view>
+        <scroll-view class="mkt-quicks" scroll-x enhanced show-scrollbar="{{false}}">
+          <view class="mkt-quicks-inner">
+            <view class="mkt-quick tap-scale {{addItemSubmitting ? 'is-busy' : ''}}" wx:for="{{quickItems}}" wx:key="ingredientName" data-name="{{item.ingredientName}}" data-amount="{{item.amount}}" data-unit="{{item.unit}}" bindtap="addQuickItem" aria-role="button" aria-label="加购{{item.ingredientName}}">
+              <text class="plus">＋</text>{{item.ingredientName}}
+            </view>
+          </view>
+        </scroll-view>
+      </view>
+
       <!-- 加载失败态 -->
       <view wx:if="{{loadError}}" class="mkt-pad">
-        <state-empty type="offline" title="清单没加载出来" desc="网络开小差了，检查后再试" cta="重新加载" bind:action="retryLoad" />
+        <state-empty size="compact" type="offline" title="清单没加载出来" desc="网络开小差了，检查后再试" cta="重新加载" bind:action="retryLoad" />
       </view>
 
       <!-- 空态：原因两种（没点菜 / 点了的菜没录用料），文案与出路都由 emptyState 给 -->
       <view wx:elif="{{!shoppingList.items.length}}" class="mkt-pad">
         <state-empty
+          size="compact"
           title="{{emptyState.title}}"
           desc="{{emptyState.desc}}"
           cta="{{emptyState.cta}}"
@@ -104,43 +122,9 @@
         </block>
       </view>
 
-      <!-- 临时加购 -->
-      <view class="mkt-pad">
-        <view class="mkt-shead">
-          <text>临时加购</text><text class="mkt-section-count">顺手再买点</text>
-        </view>
-      </view>
-
-      <view class="mkt-addbar">
-        <view class="mkt-photo mkt-draft-photo tap-scale" catchtap="editNewItemPhoto" aria-role="button" aria-label="为新食材拍照或从相册添加图片">
-          <image wx:if="{{newItemCover && !newItemCoverBroken}}" class="mkt-thumb" src="{{newItemCover}}" mode="aspectFill" data-err-key="newItemCoverBroken" binderror="onIngredientPhotoError" />
-          <view wx:else class="mkt-thumb mkt-thumb--letter"><text class="mkt-draft-name">{{newItem.ingredientName || '添加图片'}}</text></view>
-          <text class="mkt-photo-hint">{{newItemCover && !newItemCoverBroken ? '换图' : '拍照 / 选图'}}</text>
-        </view>
-        <view class="mkt-add-fields">
-          <input class="mkt-add-input" placeholder="食材名，如番茄" placeholder-class="mkt-ph" value="{{newItem.ingredientName}}" data-field="ingredientName" bindinput="onNewItemInput" maxlength="50" />
-          <view class="mkt-add-quantity">
-            <input class="mkt-add-input sm" placeholder="数量" placeholder-class="mkt-ph" value="{{newItem.amount}}" data-field="amount" bindinput="onNewItemInput" />
-            <input class="mkt-add-input sm" placeholder="单位，如个" placeholder-class="mkt-ph" value="{{newItem.unit}}" data-field="unit" bindinput="onNewItemInput" />
-          </view>
-        </view>
-        <view class="mkt-add-footer">
-          <text>清单 {{summary.totalCount}} 样 · 可连续添加</text>
-          <view class="mkt-addbtn tap-scale {{addItemSubmitting ? 'is-busy' : ''}}" bindtap="addItem" aria-role="button" aria-disabled="{{addItemSubmitting}}">{{addItemSubmitting ? '添加中…' : '添加并继续'}}</view>
-        </view>
-      </view>
-
-      <scroll-view class="mkt-quicks" scroll-x enhanced show-scrollbar="{{false}}">
-        <view class="mkt-quicks-inner">
-          <view class="mkt-quick tap-scale {{addItemSubmitting ? 'is-busy' : ''}}" wx:for="{{quickItems}}" wx:key="ingredientName" data-name="{{item.ingredientName}}" data-amount="{{item.amount}}" data-unit="{{item.unit}}" bindtap="addQuickItem" aria-role="button" aria-label="加购{{item.ingredientName}}">
-            <text class="plus">＋</text>{{item.ingredientName}}
-          </view>
-        </view>
-      </scroll-view>
-
       <!-- 重新整理 -->
-      <view class="mkt-pad mkt-refresh-wrap">
-        <view class="btn btn-dark btn-block tap-scale" bindtap="refreshList" aria-role="button">按今日菜单重新整理</view>
+      <view wx:if="{{!loadError && emptyReason !== 'no-menu'}}" class="mkt-pad mkt-refresh-wrap">
+        <view class="btn btn-ghost btn-block tap-scale" bindtap="refreshList" aria-role="button">按今日菜单重新整理</view>
       </view>
     </block>
     </block>
@@ -150,7 +134,7 @@
       <view class="sp-pantry-wrap">
         <!-- 失败态：断网时不能再显示「冰箱还空着」——库存还在，只是没拉到 -->
         <view wx:if="{{pantryError}}" class="sp-pantry-empty">
-          <state-empty type="offline" title="冰箱没加载出来" desc="网络开小差了，检查后再试" cta="重新加载" bind:action="retryPantry" />
+          <state-empty size="compact" type="offline" title="冰箱没加载出来" desc="网络开小差了，检查后再试" cta="重新加载" bind:action="retryPantry" />
         </view>
         <!-- 分类列表 -->
         <view wx:elif="{{pantryCategories.length}}">
@@ -171,11 +155,11 @@
           </view>
         </view>
         <view class="sp-pantry-empty" wx:else>
-          <state-empty title="冰箱还空着" desc="把家里的食材记下来，点菜时可以先用现有的" />
+          <state-empty size="compact" title="冰箱还空着" desc="记下家里有的，点菜时先用现成的" />
         </view>
 
         <!-- 添加入口 -->
-        <view class="sp-pantry-add-btn tap-scale" bindtap="togglePantryForm" aria-role="button" aria-expanded="{{showPantryForm}}">
+        <view class="btn btn-ghost btn-block sp-pantry-add-btn tap-scale" bindtap="togglePantryForm" aria-role="button" aria-expanded="{{showPantryForm}}">
           {{showPantryForm ? '收起' : '+ 添加食材'}}
         </view>
         <view class="sp-pantry-form" wx:if="{{showPantryForm}}">
@@ -185,7 +169,7 @@
             value="{{newPantryItem.amount}}" data-field="amount" bindinput="onPantryInput" />
           <input class="mkt-add-input sm" placeholder="单位" placeholder-class="mkt-ph"
             value="{{newPantryItem.unit}}" data-field="unit" bindinput="onPantryInput" />
-          <view class="mkt-addbtn tap-scale {{pantryAdding ? 'is-busy' : ''}}" bindtap="addPantryEntry" aria-role="button" aria-disabled="{{pantryAdding}}">{{pantryAdding ? '保存中…' : '记入'}}</view>
+          <view class="btn btn-ghost mkt-addbtn tap-scale {{pantryAdding ? 'is-busy' : ''}}" bindtap="addPantryEntry" aria-role="button" aria-disabled="{{pantryAdding}}">{{pantryAdding ? '保存中…' : '记入'}}</view>
         </view>
       </view>
     </block>

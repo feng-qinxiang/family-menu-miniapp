@@ -5,7 +5,6 @@
   "usingComponents": {
     "state-empty": "/components/state-empty/index",
     "state-loading": "/components/state-loading/index",
-    "section-head": "/components/section-head/index",
     "state-sheet": "/components/state-sheet/index",
     "nav-bar": "/components/nav-bar/index"
   }

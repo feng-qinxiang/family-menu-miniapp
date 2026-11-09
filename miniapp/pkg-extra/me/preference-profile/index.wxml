@@ -20,6 +20,15 @@
     bind:action="onRetry"
   ></state-empty>
 
+  <!-- 还没做过菜：不摆一排 0 和「—」，一句话说清怎么长出来 -->
+  <view wx:elif="{{!totalCooks && !bars.length && !cloud.length && !topList.length}}" class="pp-empty">
+    <state-empty
+      size="compact"
+      title="口味还没攒出来"
+      desc="做过几道菜、记下来后，这里会显示全家常做的菜系、口味和菜"
+    ></state-empty>
+  </view>
+
   <block wx:else>
     <!-- Hero 统计卡：深色菜图 + 大数字水印 -->
     <view class="ov g-fade-up">
@@ -27,7 +36,7 @@
       <view class="ov-mask"></view>
       <text class="ov-big">{{totalCooks}}</text>
       <view class="ov-content">
-        <view class="ov-eyebrow">口味画像 · 本月</view>
+        <view class="ov-eyebrow">本月</view>
         <view class="ov-row">
           <view class="ov-stat">
             <view class="ov-n">{{totalCooks}}<text class="ov-u">道</text></view>
@@ -46,7 +55,7 @@
     </view>
 
     <!-- 菜系分布条形图 -->
-    <section-head eyebrow="本月统计" title="菜系" popPart="分布" />
+    <section-head title="菜系" popPart="分布" />
     <view wx:if="{{bars.length}}" class="card g-fade-up g-d1">
       <view class="bar" wx:for="{{bars}}" wx:key="name">
         <view class="bar-top">
@@ -61,7 +70,7 @@
     <view wx:else class="card empty-mini g-fade-up g-d1">还没有足够的做菜记录</view>
 
     <!-- 口味标签云 -->
-    <section-head eyebrow="常出现" title="口味" popPart="标签" />
+    <section-head title="口味" popPart="标签" />
     <view wx:if="{{cloud.length}}" class="card g-fade-up g-d2">
       <view class="cloud">
         <view class="tcl tcl-{{item.size}}" wx:for="{{cloud}}" wx:key="name">
@@ -72,7 +81,7 @@
     <view wx:else class="card empty-mini g-fade-up g-d2">口味标签会随做菜越来越丰富</view>
 
     <!-- 最常做 TOP5 -->
-    <section-head eyebrow="最常做 · Top 5" title="最常做的" popPart="菜" />
+    <section-head title="最常做的" popPart="菜" />
     <view wx:if="{{topList.length}}" class="card g-fade-up g-d3">
       <view
         class="trow tap-scale"
@@ -102,7 +111,7 @@
         <view class="note-star"></view>
       </view>
       <view class="note-p">
-        基于<text class="b">全家做菜记录</text>智能分析，累计 <text class="b">{{historyTotal}}</text> 次烹饪。口味画像会随大家做菜越多越准，常做的菜也会优先推荐。
+        按<text class="b">全家做菜记录</text>统计，累计 <text class="b">{{historyTotal}}</text> 次。做得越多越准，常做的菜也会优先推荐。
       </view>
     </view>
 

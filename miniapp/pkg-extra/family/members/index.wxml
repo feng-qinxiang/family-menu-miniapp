@@ -9,10 +9,9 @@
       <view class="deco-circle"></view>
       <view class="fam-top">
         <view class="fam-emoji">
-          <text class="fam-emoji-t">家</text>
+          <image class="fam-emoji-ic" src="/assets/icons/lucide/users.svg" mode="aspectFit" aria-hidden="true" />
         </view>
         <view class="fam-name-wrap">
-          <text class="fam-feyebrow">我们的厨房</text>
           <view class="fam-name ellipsis">{{familyName}}</view>
         </view>
       </view>
@@ -29,7 +28,7 @@
     </view>
 
     <!-- Section 标题 -->
-    <section-head eyebrow="谁在掌勺" title="成员列表" hint="{{loadFailed ? '暂无数据' : memberCount + ' 位成员'}}" />
+    <section-head title="成员" />
 
     <!-- 成员列表 -->
     <view wx:if="{{members.length}}" class="mlist card g-fade-up g-d2">
@@ -64,11 +63,11 @@
     </view>
 
     <!-- 加载失败：不能写成「还没有家庭成员」，那等于告诉用户家人被移走了 -->
-    <state-empty wx:elif="{{loadFailed}}" type="offline"
+    <state-empty wx:elif="{{loadFailed}}" size="compact" type="offline"
       title="家庭信息没加载出来" desc="检查网络后再试试" cta="重新加载" bindaction="retryLoad" />
 
     <!-- 真空态 -->
-    <state-empty wx:elif="{{loaded}}" type="pop"
+    <state-empty wx:elif="{{loaded}}" size="compact" type="pop"
       title="还没有家庭成员" desc="把家人拉进来，一起点菜、一起忌口" />
 
     <view wx:if="{{members.length}}" class="mend">全家都在这儿了</view>

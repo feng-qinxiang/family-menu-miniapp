@@ -9,7 +9,7 @@
 }
 
 /* 工具页采用紧凑页头，清单直接进入首屏。 */
-.mkt-sheet { padding: 0 0 calc(40rpx + env(safe-area-inset-bottom)); }
+.mkt-sheet { padding: 8rpx 0 calc(40rpx + env(safe-area-inset-bottom)); }
 .mkt-pad { padding: 0 var(--page-gutter); }
 
 /* 进度条卡片 */
@@ -168,73 +168,69 @@
 .mkt-stock { min-height: var(--tap-min); display: flex; align-items: center; padding: 0 24rpx; border-radius: var(--r-pill); border: 2rpx solid var(--line-deep); font-size: var(--fs-cap); font-weight: 600; color: var(--pine-ink); }
 .mkt-stock.is-busy { opacity: .5; }
 
-/* 添加后保留表单，下一样也可单独配图。 */
+/* 临时加购：一行输入 + 次级「添加」，常用食材在下方；配图缩成输入框左侧的小方块 */
 .mkt-addbar {
-  margin: 12rpx var(--page-gutter) 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16rpx;
-  align-items: center;
+  margin: 0 var(--page-gutter) 8rpx;
   background: var(--c-surface);
   border: var(--bd-card);
   border-radius: var(--r-card);
-  padding: 22rpx var(--pad-card-sm);
+  padding: 16rpx var(--pad-card-sm) 12rpx;
 }
-.mkt-add-input {
-  width: 100%;
-  box-sizing: border-box;
-  min-width: 0;
-  min-height: 88rpx;
-  border: none;
-  border-radius: var(--r-sm);
-  background: var(--paper-2);
-  padding: 0 16rpx;
-  font-size: calc(28rpx * var(--fs-mul, 1));
-  font-weight: 600;
-  color: var(--ink);
-}
-.mkt-add-input.sm { flex: 1; width: 0; }
-.mkt-add-fields { flex: 1; min-width: 0; }
-.mkt-add-quantity { display: flex; gap: 12rpx; margin-top: 12rpx; }
-.mkt-add-footer { flex: 1 1 100%; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12rpx; border-top: var(--bd-card); padding-top: 16rpx; }
-.mkt-add-footer > text { font-size: var(--fs-cap); color: var(--mut-strong); line-height: 1.5; }
-.mkt-ph { color: var(--mut); }   /* 与冰箱页 .af-ph 同色；--mut-2 在输入底上只有约 2:1，而这几格没有标签，占位字就是标签 */
-.mkt-addbtn {
+.mkt-add-row { display: flex; align-items: center; gap: 12rpx; }
+.mkt-add-pic {
   flex: none;
-  font-size: calc(25rpx * var(--fs-mul, 1));
-  font-weight: 800;
-  color: var(--anchor-contrast);
-  background: var(--anchor);
   box-sizing: border-box;
-  min-height: 88rpx;
+  width: var(--tap-min);
+  height: var(--tap-min);
+  border-radius: var(--r-sm);
+  border: 2rpx dashed var(--line-deep);
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20rpx 30rpx;   /* 例外：这是按钮不是卡表面，左右留白跟字号走 */
-  border-radius: var(--r-card);   /* 实心主按钮按全站约定用卡片圆角 */
 }
-.mkt-add-footer .mkt-addbtn { padding: 16rpx 22rpx; }
+.mkt-add-pic-img { width: 100%; height: 100%; }
+.mkt-add-pic-txt { font-size: var(--fs-mini); color: var(--mut-strong); }
+.mkt-add-input {
+  flex: 1;
+  width: 0;
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 88rpx;
+  border: var(--bd-card);
+  border-radius: var(--r-sm);
+  background: var(--paper-2);
+  padding: 0 16rpx;
+  font-size: var(--fs-body);
+  font-weight: 600;
+  color: var(--ink);
+}
+.mkt-add-quantity { display: flex; gap: 12rpx; margin-top: 12rpx; }
+.mkt-ph { color: var(--mut); font-weight: 400; }   /* 与冰箱页 .af-ph 同色；--mut-2 在输入底上只有约 2:1，而这几格没有标签，占位字就是标签 */
+/* 次级按钮：.btn .btn-ghost 给底色描边，这里只收窄左右留白 */
+.mkt-addbtn { flex: none; padding: 0 28rpx; }
+.mkt-addbtn.is-busy { opacity: .6; }
 
-/* quick 横滑 */
-.mkt-quicks { width: 100%; white-space: nowrap; padding: 26rpx 0 4rpx; }
-.mkt-quicks-inner { display: inline-flex; gap: 16rpx; padding: 0 var(--page-gutter); }
+/* quick 横滑：在加购卡内，左右贴卡边 */
+.mkt-quicks { width: 100%; white-space: nowrap; padding-top: 12rpx; }
+.mkt-quicks-inner { display: inline-flex; gap: 12rpx; }
 .mkt-quick {
   flex: none;
-  font-size: calc(25rpx * var(--fs-mul, 1));
-  font-weight: 700;
+  font-size: var(--fs-sub);
+  font-weight: 500;
   color: var(--mut-strong);
   background: var(--paper-2);
   box-sizing: border-box;
-  min-height: var(--tap-min);   /* 原 18rpx 上下内边距只有约 70rpx 高 */
+  min-height: var(--tap-min);
   display: inline-flex;
   align-items: center;
-  padding: 0 30rpx;
+  padding: 0 26rpx;
   border-radius: var(--r-pill);
   white-space: nowrap;
 }
 .mkt-quick .plus { color: var(--mut); margin-right: 6rpx; font-weight: 700; }
 
-.mkt-refresh-wrap { margin-top: 50rpx; }
+.mkt-refresh-wrap { margin-top: 40rpx; }
 
 /* 骨架屏：形状对齐真行 .mkt-item（左侧图块 + 右侧文字），加载完不跳版 */
 .mkt-sk {
@@ -268,7 +264,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--fs-cap);
+  font-size: var(--fs-body);   /* 与点菜页 .mn-seg-item 同档 */
   font-weight: 700;
   color: var(--mut-strong);
   border-radius: var(--r-pill);
@@ -317,23 +313,15 @@
   width: 88rpx; height: 88rpx;
   transform: translate(-50%, -50%);
 }
-.sp-pantry-empty { padding: 40rpx 0; }
-.sp-pantry-add-btn {
-  margin-top: 24rpx;
-  height: 88rpx;
-  border-radius: var(--r-card);
-  background: var(--anchor);
-  color: var(--anchor-contrast);
-  font-size: var(--fs-btn);   /* 实心按钮字号对齐 .btn */
-  font-weight: 800;
-  display: flex; align-items: center; justify-content: center;
-}
+.sp-pantry-empty { padding: 8rpx 0; }
+.sp-pantry-add-btn { margin-top: 24rpx; }
 .sp-pantry-form {
   display: flex;
   gap: 14rpx;
   margin-top: 18rpx;
   flex-wrap: wrap;
 }
+.sp-pantry-form > .mkt-add-input:first-child { flex-basis: 100%; }
 /* 内层圆角不大于外层 .mkt-item（--r-card） */
 .mkt-photo { position: relative; flex: none; width: var(--tile-list-wide); height: var(--tile-list-wide); overflow: hidden; border-radius: var(--r-sm); }
 .mkt-photo .mkt-thumb { width: 100%; height: 100%; padding: 0 12rpx; box-sizing: border-box; text-align: center; word-break: break-all; font-size: var(--fs-lg); line-height: 1.4; }

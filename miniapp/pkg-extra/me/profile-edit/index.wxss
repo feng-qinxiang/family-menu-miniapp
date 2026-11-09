@@ -11,13 +11,6 @@
 }
 
 /* nav-bar 右侧保存文字 */
-.pe-navsave {
-  font-size: var(--fs-cap);
-  font-weight: 800;
-  color: var(--gold-deep);
-  letter-spacing: 1rpx;
-  padding: 8rpx 6rpx;
-}
 
 .pe-scroll {
   flex: 1;
@@ -42,14 +35,6 @@
   flex-direction: column;
   align-items: center;
   margin: 30rpx 0 16rpx;
-}
-.pe-eyebrow {
-  font-family: var(--serif);
-  font-size: var(--fs-cap);
-  letter-spacing: 2rpx;
-  color: var(--gold-deep);
-  font-weight: 700;
-  margin-bottom: 24rpx;
 }
 .pe-avatar {
   position: relative;

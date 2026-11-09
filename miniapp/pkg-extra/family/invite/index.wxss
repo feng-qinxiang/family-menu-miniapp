@@ -3,31 +3,9 @@
   padding: 20rpx 46rpx 60rpx;
 }
 
-/* HERO */
-.fi-hero {
-  text-align: center;
-  margin-top: 8rpx;
-}
-.fi-eyebrow {
-  font-family: var(--serif);
-  font-size: var(--fs-cap);
-  letter-spacing: 2rpx;
-  color: var(--gold-deep);
-  font-weight: 700;
-}
-.fi-title {
-  font-size: calc(56rpx * var(--fs-mul, 1));
-  font-weight: 900;
-  color: var(--ink);
-  letter-spacing: -2rpx;
-  line-height: 1;
-  margin-top: 14rpx;
-  font-family: var(--sans);
-}
-
 /* 邀请暗卡（基于 .card-dark） */
 .fi-invite {
-  margin-top: 46rpx;
+  margin-top: 8rpx;
   padding: 58rpx 50rpx 50rpx;   /* 例外：8 格邀请码要按 81rpx 一格排开，左右收到 --pad-card 会把格子撑宽、整卡变样 */
   border-radius: var(--r-card);   /* 原 54rpx：同屏按钮与家庭管理页暗卡都是 --r-card，这张单独圆一大截 */
   text-align: center;

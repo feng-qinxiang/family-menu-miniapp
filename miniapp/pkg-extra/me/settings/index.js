@@ -11,25 +11,25 @@ Page({
     year: 2026,
     // 账号安全分组（手机号项随 PHONE_LOGIN 开关裁剪）
     accountList: [
-      ...(features.PHONE_LOGIN ? [{ key: 'phone', name: '手机号', icon: 'phone', value: '未绑定' }] : []),
-      { key: 'wechat', name: '微信绑定', icon: 'wechat', value: '加载中…' },
+      ...(features.PHONE_LOGIN ? [{ key: 'phone', name: '手机号', value: '未绑定' }] : []),
+      { key: 'wechat', name: '微信绑定', value: '加载中…' },
     ],
     // 消息通知（订阅消息）：available 由后端是否配了模板决定，没配就整组不显示
     subscribeAvailable: false,
     subscribeEnabled: false,
     // 通用分组
     generalList: [
-      { key: 'font', name: '字体大小', icon: 'font', value: '标准' },
-      { key: 'cache', name: '清除缓存', icon: 'cache', value: '计算中…' },
+      { key: 'font', name: '字体大小', value: '标准' },
+      { key: 'cache', name: '清除缓存', value: '计算中…' },
     ],
     // 关于分组
     aboutList: [
-      { key: 'agreement', name: '用户协议', icon: 'doc', value: '' },
-      { key: 'privacy', name: '隐私政策', icon: 'shield', value: '' },
+      { key: 'agreement', name: '用户协议', value: '' },
+      { key: 'privacy', name: '隐私政策', value: '' },
       // 注销入口：隐私政策承诺「15 个工作日内删除或匿名化」，这一行是那条承诺的可执行通道
-      { key: 'deletion', name: '注销账号', icon: 'del', value: '' },
-      { key: 'about', name: '关于我们', icon: 'info', value: 'v1.0.0' },
-      { key: 'feedback', name: '意见反馈', icon: 'msg', value: '' },
+      { key: 'deletion', name: '注销账号', value: '' },
+      { key: 'about', name: '关于我们', value: 'v1.0.0' },
+      { key: 'feedback', name: '意见反馈', value: '' },
     ],
     // 退出确认弹窗
     logoutVisible: false,
@@ -307,7 +307,7 @@ Page({
       } catch (e) {
         // 忽略清理失败
       }
-      wx.showToast({ title: '已退出登录', icon: 'none' });
+      wx.showToast({ title: '已退出登录' });
       setTimeout(() => {
         wx.navigateTo({
           url: '/pkg-extra/auth/login/index',

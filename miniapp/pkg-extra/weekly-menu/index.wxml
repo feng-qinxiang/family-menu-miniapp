@@ -3,18 +3,13 @@
        等数据回来才跳成真实数字——和 R1 修掉的那批"把没加载完说成没有"同一类。 -->
   <state-loading visible="{{loading}}" text="正在排本周的桌…" />
   <nav-bar title="本周菜单" status-bar-height="{{statusBarHeight}}" />
-  <view class="cpt-head">
-    <view class="cpt-row">
-      <view class="cpt-titles">
-        <view class="cpt-eyebrow">给这一周，留点期待</view>
-        <view class="cpt-title">一周吃什么</view>
-      </view>
-      <view class="cpt-action wm-refresh tap-scale" bindtap="regenerate" aria-role="button" aria-label="重新安排本周菜单">
-        <view class="wm-refresh-ic"></view>
-        <text>重新排</text>
-      </view>
+  <!-- 页名只留导航栏；一行概况 + 次级「重新排」 -->
+  <view class="wm-top">
+    <view class="wm-top-sub">{{!loading && !loadError ? heroSub : ''}}</view>
+    <view class="btn btn-ghost wm-refresh tap-scale" bindtap="regenerate" aria-role="button" aria-label="重新安排本周菜单">
+      <image class="wm-refresh-ic" src="/assets/icons/lucide/refresh-cw.svg" mode="aspectFit" aria-hidden="true" />
+      <text>重新排</text>
     </view>
-    <view wx:if="{{!loading && !loadError}}" class="cpt-sub">{{heroSub}}</view>
   </view>
 
   <!-- 内容 sheet -->
@@ -24,6 +19,7 @@
          而真正说明"是网络问题"的那条提示要滚到底才看得到。 -->
     <state-empty
       wx:if="{{loadError}}"
+      size="compact"
       type="offline"
       title="本周菜单没加载出来"
       desc="网络开小差了，检查后再试"
@@ -44,7 +40,7 @@
       </view>
     </view>
     <!-- 统计卡 -->
-    <view class="wm-summary g-fade-up">
+    <view wx:if="{{menuSummary.recipeCount}}" class="wm-summary g-fade-up">
       <view class="wm-scell">
         <view class="wm-num">{{menuSummary.dayCount}}<text class="u">天</text></view>
         <view class="wm-cap">本周安排</view>
@@ -54,7 +50,7 @@
         <view class="wm-cap">已排菜品</view>
       </view>
       <view class="wm-scell">
-        <view class="wm-num pop">{{menuSummary.blankCount}}<text class="u">个</text></view>
+        <view class="wm-num {{menuSummary.blankCount ? 'pop' : ''}}">{{menuSummary.blankCount}}<text class="u">个</text></view>
         <view class="wm-cap">空位待补</view>
       </view>
     </view>
@@ -115,7 +111,7 @@
     </view>
 
     <view wx:if="{{!loading && !weeklyMenu.days.length}}" class="empty-state">
-      <view class="empty-text">本周还没排菜，点右上角重新排</view>
+      <view class="empty-text">本周还没排菜，点上方「重新排」</view>
     </view>
     </block>
 

@@ -6,14 +6,11 @@
   min-height: 100vh;
   background: var(--paper);
 }
-.pantry-heading { padding: 16rpx var(--page-gutter) 20rpx; }   /* 与买菜清单/我的同一页边距（原 24rpx） */
-.pantry-heading-title { font-size: calc(36rpx * var(--fs-mul, 1)); line-height: 1.4; font-weight: 700; color: var(--ink); }
-.pantry-heading-title > text { display: block; margin-top: 8rpx; color: var(--mut-strong); font-size: var(--fs-sub); font-weight: 400; }
 
 /* ============ 内容层 ============ */
 /* 底部留白含 tabBar 实高（--tabbar-h 已带安全区），最后一张卡不会被压住 */
 .psheet {
-  padding: 0 var(--page-gutter) calc(env(safe-area-inset-bottom) + 40rpx);
+  padding: 16rpx var(--page-gutter) calc(env(safe-area-inset-bottom) + 40rpx);
 }
 .psheet .shead { margin-top: 8rpx; }
 .psheet .shead:first-child { margin-top: 0; }
@@ -31,6 +28,8 @@
 .pantry-date-note { margin-top: 14rpx; line-height: 1.5; }
 .pantry-list-head { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; }
 .pantry-list-title { font-size: var(--fs-lg); font-weight: 800; color: var(--ink); }
+.pantry-list-count { margin-left: 12rpx; font-size: var(--fs-sub); font-weight: 400; color: var(--mut-strong); }
+.pantry-match-head { margin: 32rpx 0 12rpx; min-height: 0; }
 .pantry-add { display: flex; align-items: center; justify-content: center; min-height: 88rpx; padding: 0 20rpx; border-radius: var(--r-md); background: var(--pop-soft); color: var(--pop-deep); font-size: var(--fs-sub); font-weight: 700; }
 .pantry-filters { display: flex; gap: 8rpx; margin-top: 12rpx; padding: 4rpx; background: var(--paper-2); border-radius: var(--r-md); }
 .pantry-filter { flex: 1; min-height: 88rpx; display: flex; align-items: center; justify-content: center; border-radius: var(--r-sm); color: var(--mut-strong); font-size: var(--fs-sub); font-weight: 600; }

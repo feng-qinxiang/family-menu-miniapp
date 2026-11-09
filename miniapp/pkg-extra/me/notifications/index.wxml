@@ -3,17 +3,12 @@
   <nav-bar title="消息中心" show-back="{{true}}" />
 
   <scroll-view scroll-y class="notif-scroll" enhanced show-scrollbar="{{false}}">
-    <view class="cpt-head g-fade-up">
-      <view class="cpt-row notif-title-row">
-        <view class="cpt-titles">
-          <view class="cpt-eyebrow">家里的动静</view>
-          <view class="cpt-title">消息通知</view>
-        </view>
-        <view wx:if="{{!loading && !loadError && unreadCount > 0}}" class="notif-readall tap-scale" catchtap="onReadAll" aria-role="button" aria-label="将全部未读消息标为已读">
-          <view class="notif-readall-label"><image class="notif-readall-icon" src="/assets/icons/lucide/check.svg" mode="aspectFit" aria-hidden="true" /><text>全部标为已读</text></view>
-        </view>
+    <!-- 页名只留导航栏；一行未读概况 + 「全部标为已读」 -->
+    <view class="notif-top g-fade-up">
+      <view class="notif-top-sub">{{loading ? '正在加载消息…' : loadError ? '消息暂未同步' : unreadCount ? unreadCount + ' 条未读' : '没有未读消息'}}</view>
+      <view wx:if="{{!loading && !loadError && unreadCount > 0}}" class="notif-readall tap-scale" catchtap="onReadAll" aria-role="button" aria-label="将全部未读消息标为已读">
+        <view class="notif-readall-label"><image class="notif-readall-icon" src="/assets/icons/lucide/check.svg" mode="aspectFit" aria-hidden="true" /><text>全部标为已读</text></view>
       </view>
-      <view class="cpt-sub">{{loading ? '正在加载消息…' : loadError ? '消息暂未同步' : unreadCount ? '你有 ' + unreadCount + ' 条未读消息' : '暂无未读消息'}}</view>
     </view>
 
     <!-- Tab chips -->
@@ -96,6 +91,7 @@
 
       <state-empty
         wx:if="{{loadError}}"
+        size="compact"
         type="offline"
         title="消息没加载出来"
         desc="网络开小差了，检查后再试"
@@ -105,6 +101,7 @@
 
       <state-empty
         wx:elif="{{!loading && visibleCount === 0}}"
+        size="compact"
         title="暂无消息"
         desc="这里会显示家庭、社区与系统的动态"
       />

@@ -1,4 +1,4 @@
-/* pages/kitchen/index.wxss · 厨房总控 */
+/* pkg-extra/kitchen/index.wxss · 做菜进度 */
 .kitchen {
   min-height: 100vh;
   background: var(--paper);
@@ -272,13 +272,16 @@
   box-sizing: border-box;
 }
 .k-act.primary {
-  background: var(--anchor);
-  color: var(--anchor-contrast);
+  background: var(--c-surface);
+  color: var(--ink);
+  border: var(--bd-card);
 }
-/* 同屏只留一颗实心红：只有主灶那张卡的「开做/继续做」用 --pop，其余卡降为深色锚点
-   （与菜单页 .m-act-cook 同一做法）。主灶一定是未上桌的菜，所以有菜可做时恰好一颗红。 */
+/* 同屏只留一颗实心红：只有主灶那张卡的「开做/继续做」用 --pop，其余卡降为次级白底描边
+   （2026-11 规则：浅底页不再用深棕实心当第二主按钮）。主灶一定是未上桌的菜，所以有菜可做时恰好一颗红。 */
 .k-card.main .k-act.primary {
   background: var(--pop-fill);
+  color: #fff;
+  border: none;
 }
 .k-act.ghost {
   border: 2rpx solid var(--line-deep);

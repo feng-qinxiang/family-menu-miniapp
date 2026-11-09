@@ -7,38 +7,12 @@
   background: var(--paper);
 }
 
-.wm-refresh {
-  display: flex;
-  align-items: center;
-  gap: 10rpx;
-  box-sizing: border-box;
-  min-height: 88rpx;
-  padding: 18rpx 24rpx; /* 例外：这是 hero 上的按钮不是卡表面 */
-  border-radius: var(--r-card); /* 实心主按钮统一 --r-card */
-  background: var(--pop-fill);
-  color: var(--anchor-contrast);
-  font-size: var(--fs-sub);
-  font-weight: 800;
-  box-shadow: var(--sh-pop);
-}
-.wm-refresh-ic {
-  width: 26rpx;
-  height: 26rpx;
-  /* 图标与按钮文字同色（恒定浅色）。原来用 --c-surface，深色档翻成 #242424，红底上一枚深灰图标配浅色字 */
-  border: 4rpx solid var(--anchor-contrast);
-  border-top-color: transparent;
-  border-radius: 50%;
-  position: relative;
-}
-.wm-refresh-ic::after {
-  content: "";
-  position: absolute;
-  top: -4rpx;
-  right: -3rpx;
-  border-left: 8rpx solid transparent;
-  border-right: 8rpx solid transparent;
-  border-bottom: 9rpx solid var(--anchor-contrast);
-  transform: rotate(40deg);
+.wm-top { display: flex; align-items: center; gap: 16rpx; padding: 8rpx var(--page-gutter) 20rpx; }
+.wm-top-sub { flex: 1; min-width: 0; font-size: var(--fs-sub); color: var(--mut-strong); line-height: 1.5; }
+.wm-refresh { flex: none; gap: 10rpx; padding: 0 24rpx; font-size: var(--fs-sub); }
+.wm-refresh-ic { width: 28rpx; height: 28rpx; flex: none; }
+@media (prefers-color-scheme: dark) {
+  .wm-refresh-ic { filter: brightness(0) invert(1); }
 }
 
 /* 七日选择紧跟页头；今天与当前选中日各有独立状态。 */

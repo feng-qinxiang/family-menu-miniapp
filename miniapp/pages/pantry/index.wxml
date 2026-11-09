@@ -2,15 +2,6 @@
   <nav-bar title="冰箱库存" show-back="{{true}}" />
   <state-loading visible="{{loading}}" text="冰箱开门中…" />
 
-  <!-- 紧凑页头（只有「今日」保留整幅照片 hero） -->
-  <view class="cpt-head pantry-heading g-fade-up">
-    <view class="cpt-row">
-      <view class="cpt-titles">
-        <view class="pantry-heading-title">先把家里的用起来<text wx:if="{{loaded && !loadError}}">{{pantrySummary.count}} 种在库</text></view>
-      </view>
-    </view>
-  </view>
-
   <!-- 内容层 -->
   <view class="psheet">
     <view class="pantry-overview" wx:if="{{loaded && !loadError}}">
@@ -43,13 +34,14 @@
     </view>
 
     <view class="pantry-list-head" wx:if="{{loaded && !loadError}}">
-      <view class="pantry-list-title">在库食材</view>
-      <view class="pantry-add tap-scale" bindtap="toggleAddForm" aria-role="button" aria-expanded="{{showAddForm}}" aria-label="{{showAddForm ? '收起添加食材' : '添加食材'}}">{{showAddForm ? '收起' : '＋ 添加'}}</view>
+      <view class="pantry-list-title">在库食材<text wx:if="{{pantrySummary.count}}" class="pantry-list-count">{{pantrySummary.count}} 种</text></view>
+      <view wx:if="{{pantrySummary.count || showAddForm}}" class="pantry-add tap-scale" bindtap="toggleAddForm" aria-role="button" aria-expanded="{{showAddForm}}" aria-label="{{showAddForm ? '收起添加食材' : '添加食材'}}">{{showAddForm ? '收起' : '＋ 添加'}}</view>
     </view>
 
     <!-- 加载失败态 -->
     <state-empty
       wx:if="{{loadError}}"
+      size="compact"
       type="offline"
       title="冰箱没打开"
       desc="网络开小差了，检查后再试"
@@ -59,10 +51,13 @@
 
     <!-- 空态 -->
     <state-empty
-      wx:elif="{{loaded && !pantrySummary.count}}"
+      wx:elif="{{loaded && !pantrySummary.count && !showAddForm}}"
       type="pop"
+      size="compact"
       title="冰箱还空着"
-      desc="把家里有的食材记进来，点菜时就能先看能做什么"
+      desc="记下家里有的，点菜时先用现成的"
+      cta="添加食材"
+      bind:action="toggleAddForm"
     />
 
     <!-- 添加入口与库存标题合行，表单按需展开，不挤占食材列表。 -->
@@ -122,18 +117,16 @@
     </view>
 
     <!-- 现在就能做 -->
-    <section-head
-      wx:if="{{showMatch && matchResults.length}}"
-      eyebrow="按库存匹配"
-      title="能做与待补"
-      hint="查看用料"
-    />
+    <view wx:if="{{showMatch && matchResults.length}}" class="pantry-list-head pantry-match-head">
+      <view class="pantry-list-title">能做的菜</view>
+    </view>
 
     <!-- 匹配接口失败 ≠ 一道都做不了：这里原来只判 !matchResults.length，
          网络一抖就显示「还没匹配到菜谱」，把用户往"我家食材不行"上带。
          失败位 JS 里一直在置（matchRecipes 的 catch），只是没人读它。 -->
     <state-empty
       wx:if="{{showMatch && matchFailed}}"
+      size="compact"
       type="offline"
       title="现在能做没算出来"
       desc="匹配失败了，不是家里没食材"

@@ -21,7 +21,6 @@ Page({
     posts: [],
     recipeCount: 0,
     postCount: 0,
-    countText: '',
     loading: true,
     toast: { visible: false, text: '' }
   },
@@ -69,7 +68,6 @@ Page({
         posts,
         recipeCount: recipes.length,
         postCount: posts.length,
-        countText: '已收藏 ' + recipes.length + ' 道菜谱 · ' + posts.length + ' 篇帖子',
         loadError: false,
         loading: false
       });
@@ -85,7 +83,6 @@ Page({
         recipeCount: 0,
         postCount: 0,
         loading: false,
-        countText: '已收藏 0 道菜谱 · 0 篇帖子',
         // 失败不能显示成"还没有收藏"——那会让人以为自己把收藏清光了
         loadError: true
       });

@@ -352,3 +352,6 @@
   border-radius: 0 0 4rpx 4rpx;
   transform: translateX(-50%);
 }
+
+/* 页名只留导航栏，正文顶部一行说明 */
+.fc-hint { padding: 8rpx var(--page-gutter) 12rpx; font-size: var(--fs-sub); color: var(--mut-strong); line-height: 1.5; }
