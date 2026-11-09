@@ -56,12 +56,6 @@
           <text>{{submitting ? '创建中…' : '创建家庭'}}</text>
           <view class="fc-ic fc-ic-arrow"></view>
         </view>
-
-        <!-- Tip 卡片 -->
-        <view class="fc-tipcard">
-          <view class="fc-ic fc-ic-bulb"></view>
-          <view class="fc-tip-tx">建好后，用<text class="fc-tip-b">专属邀请码</text>邀请家人，一起点菜、共享清单。</view>
-        </view>
       </view>
 
       <!-- 加入链接 -->

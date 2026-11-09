@@ -43,9 +43,9 @@
       <view class="rd-ingredients" wx:if="{{recipe.ingredients.length}}">
         <view class="rd-ing-cart" wx:if="{{missCount > 0}}">
           <view class="rd-cart-btn tap-scale" bindtap="addMissingToCart">
-            <text>把</text>
+            <text>缺</text>
             <text class="rd-cnum">{{missCount}}</text>
-            <text>样缺的加入买菜清单</text>
+            <text>样，加入买菜清单</text>
           </view>
         </view>
 

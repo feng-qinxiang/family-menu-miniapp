@@ -115,13 +115,6 @@
   -webkit-text-stroke: 3rpx var(--anchor-contrast);
 }
 .hero-title .br { display: block; height: 0; }
-.slogan {
-  font-size: calc(32rpx * var(--fs-mul, 1));
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.9);
-  letter-spacing: 1rpx;
-}
-.slogan .pop { color: var(--pop); font-weight: 800; }
 
 /* ============ Sheet ============ */
 .sheet {

@@ -136,3 +136,6 @@
 .set-ver-num {
   font-family: var(--serif);
 }
+
+/* 注销账号：危险操作，不进列表、不用红，弱化成底部文字链 */
+.set-delete { display: flex; align-items: center; justify-content: center; min-height: var(--tap-min); margin-top: 16rpx; font-size: var(--fs-sub); color: var(--mut-strong); }

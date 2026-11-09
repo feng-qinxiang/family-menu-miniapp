@@ -80,6 +80,9 @@
     </view>
   </view>
 
+  <!-- 注销入口：隐私政策承诺「15 个工作日内删除或匿名化」，这里是那条承诺的可执行通道；危险操作单独放底部、弱化成文字链 -->
+  <view class="set-delete tap-scale" data-key="deletion" bindtap="onAboutTap" aria-role="button">注销账号</view>
+
   <!-- 版本号 -->
   <view class="set-ver g-fade-in g-d6">
     家庭点菜 <text class="set-ver-num">{{version}}</text> · © {{year}}

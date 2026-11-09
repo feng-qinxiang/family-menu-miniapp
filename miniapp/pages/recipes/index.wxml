@@ -135,7 +135,7 @@
       <!-- 点到下拉：自定义面板替代原生 picker（原生白滚轮与整体风格不符） -->
       <view class="rx-meal-picker">
         <view class="rx-meal-pk-btn tap-scale" catchtap="toggleMealDrop" aria-role="button" aria-label="加入到哪一餐：{{mealOptionLabels[mealIndex]}}">
-          <text class="rx-meal-pk-l">点到</text><text class="rx-meal-pk-v">{{mealOptionLabels[mealIndex]}}</text><view class="rx-meal-caret" aria-hidden="true"></view>
+          <text class="rx-meal-pk-l">加到</text><text class="rx-meal-pk-v">{{mealOptionLabels[mealIndex]}}</text><view class="rx-meal-caret" aria-hidden="true"></view>
         </view>
         <view class="rx-drop-mask" wx:if="{{mealDropOpen}}" catchtap="closeMealDrop"></view>
         <view class="rx-meal-drop" wx:if="{{mealDropOpen}}">

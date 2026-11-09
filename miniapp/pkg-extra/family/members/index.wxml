@@ -70,7 +70,7 @@
     <state-empty wx:elif="{{loaded}}" size="compact" type="pop"
       title="还没有家庭成员" desc="把家人拉进来，一起点菜、一起忌口" />
 
-    <view wx:if="{{members.length}}" class="mend">全家都在这儿了</view>
+    <view wx:if="{{members.length > 1}}" class="mend">全家都在这儿了</view>
 
     <view class="mem-tail"></view>
   </view>

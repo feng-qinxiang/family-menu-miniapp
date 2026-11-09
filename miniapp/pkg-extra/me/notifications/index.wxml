@@ -4,7 +4,7 @@
 
   <scroll-view scroll-y class="notif-scroll" enhanced show-scrollbar="{{false}}">
     <!-- 页名只留导航栏；一行未读概况 + 「全部标为已读」 -->
-    <view class="notif-top g-fade-up">
+    <view class="notif-top g-fade-up" wx:if="{{loading || loadError || unreadCount > 0}}">
       <view class="notif-top-sub">{{loading ? '正在加载消息…' : loadError ? '消息暂未同步' : unreadCount ? unreadCount + ' 条未读' : '没有未读消息'}}</view>
       <view wx:if="{{!loading && !loadError && unreadCount > 0}}" class="notif-readall tap-scale" catchtap="onReadAll" aria-role="button" aria-label="将全部未读消息标为已读">
         <view class="notif-readall-label"><image class="notif-readall-icon" src="/assets/icons/lucide/check.svg" mode="aspectFit" aria-hidden="true" /><text>全部标为已读</text></view>
@@ -12,7 +12,7 @@
     </view>
 
     <!-- Tab chips -->
-    <scroll-view scroll-x class="tabs hscroll" enhanced show-scrollbar="{{false}}">
+    <scroll-view wx:if="{{hasAny}}" scroll-x class="tabs hscroll" enhanced show-scrollbar="{{false}}">
       <view class="tabs-inner">
         <view
           wx:for="{{tabs}}"

@@ -160,27 +160,6 @@
   box-shadow: var(--sh-pop);
 }
 
-/* ===== Tip 卡片 ===== */
-.fc-tipcard {
-  display: flex;
-  align-items: flex-start;
-  gap: 16rpx;
-  margin-top: 20rpx;
-  background: var(--pop-soft);
-  border-radius: var(--r-sm);
-  padding: 18rpx 20rpx;
-}
-.fc-tip-tx {
-  font-size: calc(25rpx * var(--fs-mul, 1));
-  color: var(--ink-deep);
-  line-height: 1.55;
-  font-weight: 500;
-}
-.fc-tip-b {
-  color: var(--pop);
-  font-weight: 800;
-}
-
 /* ===== 加入链接 ===== */
 .fc-joinlink {
   display: flex;
@@ -321,36 +300,6 @@
   border-top: 5rpx solid var(--anchor-contrast);
   border-right: 5rpx solid var(--anchor-contrast);
   transform: rotate(45deg);
-}
-/* 灯泡 */
-.fc-ic-bulb {
-  position: relative;
-  width: 30rpx;
-  height: 34rpx;
-  margin-top: 2rpx;
-}
-.fc-ic-bulb::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 50%;
-  width: 24rpx;
-  height: 24rpx;
-  border: 4rpx solid var(--pop);
-  border-radius: 50%;
-  transform: translateX(-50%);
-}
-.fc-ic-bulb::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  width: 14rpx;
-  height: 8rpx;
-  border: 4rpx solid var(--pop);
-  border-top: none;
-  border-radius: 0 0 4rpx 4rpx;
-  transform: translateX(-50%);
 }
 
 /* 页名只留导航栏，正文顶部一行说明 */

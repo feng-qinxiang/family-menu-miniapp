@@ -73,7 +73,6 @@
   margin-top: 8rpx;
 }
 .wm-listhead { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; margin: 24rpx 0 12rpx; font-size: var(--fs-lg); font-weight: 800; color: var(--ink); }
-.wm-listhint { font-size: var(--fs-cap); color: var(--mut-strong); font-weight: 500; }
 /* 日卡 */
 .wm-daycard {
   background: var(--c-surface);

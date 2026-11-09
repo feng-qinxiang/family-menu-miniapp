@@ -55,7 +55,7 @@
       </view>
     </view>
 
-    <view class="wm-listhead"><text>逐日菜单</text><text class="wm-listhint">点日期直达</text></view>
+    <view class="wm-listhead"><text>逐日菜单</text></view>
 
     <!-- 7 个 daycard -->
     <view

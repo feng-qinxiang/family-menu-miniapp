@@ -25,7 +25,6 @@
       <text>邀请码没拿到，点此重试</text>
     </view>
 
-    <view class="fi-qr-hint" wx:if="{{!codeFailed}}">把邀请码发给家人，在小程序里输入即可加入</view>
   </view>
 
   <!-- 微信分享（失败时渲染禁用态普通节点，避免 open-type=share 泄出无码链接） -->

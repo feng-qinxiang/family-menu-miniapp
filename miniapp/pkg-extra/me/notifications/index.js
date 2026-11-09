@@ -51,6 +51,7 @@ Page({
     activeTab: 'all',
     unreadCount: 0,
     visibleCount: 0,
+    hasAny: false,
     groups: [],
     toast: { visible: false, type: 'top', text: '' },
     loadError: false
@@ -125,7 +126,8 @@ Page({
       tabs,
       groups,
       unreadCount: tabUnread.all,
-      visibleCount: filtered.length
+      visibleCount: filtered.length,
+      hasAny: all.length > 0
     });
   },
 

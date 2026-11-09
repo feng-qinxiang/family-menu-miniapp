@@ -19,7 +19,7 @@
       <image class="rc-cover-img" src="{{form.coverImage === coverFailedUrl ? imagePlaceholder : form.coverImage}}" mode="aspectFill" data-err-key="coverFailedUrl" data-url="{{form.coverImage}}" binderror="onImageError" />
       <view class="tap-scale rc-cover-x" catchtap="removeCover" aria-role="button" aria-label="移除封面">×</view>
     </view>
-    <view class="tap-scale rc-addcover" wx:else bindtap="chooseCover">添加封面</view>
+    <view class="tap-scale rc-addcover" wx:else bindtap="chooseCover" aria-role="button"><image class="rc-addcover-ic" src="/assets/icons/lucide/plus.svg" mode="aspectFit" aria-hidden="true" /><text>添加封面（可选）</text></view>
 
     <input
       class="rc-title"

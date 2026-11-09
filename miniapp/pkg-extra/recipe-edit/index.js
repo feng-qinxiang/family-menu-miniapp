@@ -458,7 +458,7 @@ Page({
     }
     let tipText = '';
     if (!hasTitle) {
-      tipText = '还没写菜名';
+      tipText = '先写个菜名';
     } else if (!hasCuisine) {
       tipText = '选个菜系';
     } else if (!ingredientCount) {

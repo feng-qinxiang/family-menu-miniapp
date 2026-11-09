@@ -2,7 +2,7 @@
 <view class="fav-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <nav-bar title="我的收藏" statusBarHeight="{{statusBarHeight}}"></nav-bar>
 
-  <scroll-view scroll-y class="fav-scroll">
+  <scroll-view scroll-y class="fav-scroll" enhanced show-scrollbar="{{false}}">
   <view class="container">
 
     <!-- Tabs：菜谱 / 帖子 -->
@@ -52,7 +52,7 @@
         <state-empty wx:elif="{{!loading}}"
           type="pop"
           title="还没有收藏"
-          desc="逛逛菜谱，点亮喜欢的那颗心，它们会乖乖待在这里等你"
+          desc="在菜谱详情点心形，就会收在这里"
           cta="去逛菜谱"
           ctaStyle="pop"
           bind:action="goRecipes"

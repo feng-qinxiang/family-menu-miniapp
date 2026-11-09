@@ -29,8 +29,8 @@ page { background: var(--paper); }
 .rc-tip {
   display: block;
   margin-bottom: 12rpx;
-  font-size: calc(25rpx * var(--fs-mul, 1));
-  color: var(--pop);
+  font-size: var(--fs-sub);
+  color: var(--mut-strong);   /* 还没填完是正常状态，不是报错：不用红 */
 }
 
 .rc-cover {
@@ -69,13 +69,23 @@ page { background: var(--paper); }
   line-height: var(--ctl-x);
   text-align: center;
 }
+/* 没封面时给一个看得出能点的占位框（原来只有一行小字，热区一行高） */
 .rc-addcover {
-  display: inline-block;
-  margin-bottom: 8rpx;
-  font-size: calc(25rpx * var(--fs-mul, 1));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10rpx;
+  height: 160rpx;
+  margin-bottom: 16rpx;
+  border: 2rpx dashed var(--line);
+  border-radius: var(--r-md);
+  background: var(--paper-2);
+  font-size: var(--fs-sub);
   font-weight: 600;
-  color: var(--gold-deep);
+  color: var(--mut-strong);
 }
+.rc-addcover-ic { width: 32rpx; height: 32rpx; opacity: .6; }
+@media (prefers-color-scheme: dark) { .rc-addcover-ic { filter: invert(1); } }
 
 .rc-title {
   width: 100%;

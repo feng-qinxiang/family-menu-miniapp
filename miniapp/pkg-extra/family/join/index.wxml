@@ -46,7 +46,7 @@
   <!-- 分隔 -->
   <view class="ln-divider g-fade-up g-d3">
     <view class="ln"></view>
-    <text class="ln-tx">找到家庭</text>
+    <text class="ln-tx">家庭信息</text>
     <view class="ln"></view>
   </view>
 
