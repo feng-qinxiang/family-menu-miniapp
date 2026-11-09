@@ -165,7 +165,7 @@
 /* shead 已入篮 / 加购 */
 .mkt-shead { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; margin: 28rpx 0 14rpx; font-size: calc(32rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--ink); }
 .mkt-section-count { font-size: var(--fs-cap); font-weight: 500; color: var(--mut-strong); }
-.mkt-stock { min-height: var(--tap-min); display: flex; align-items: center; padding: 0 24rpx; border-radius: 999rpx; border: 2rpx solid var(--line-deep); font-size: var(--fs-cap); font-weight: 600; color: var(--pine-ink); }
+.mkt-stock { min-height: var(--tap-min); display: flex; align-items: center; padding: 0 24rpx; border-radius: var(--r-pill); border: 2rpx solid var(--line-deep); font-size: var(--fs-cap); font-weight: 600; color: var(--pine-ink); }
 .mkt-stock.is-busy { opacity: .5; }
 
 /* 添加后保留表单，下一样也可单独配图。 */
