@@ -83,28 +83,6 @@ function getCuisineClass(cuisine) {
   return cuisineLabels[cuisine] || '';
 }
 
-function greetingText() {
-  const h = new Date().getHours();
-  if (h < 6) return '夜深了';
-  if (h < 11) return '早上好';
-  if (h < 14) return '中午好';
-  if (h < 18) return '下午好';
-  return '晚上好';
-}
-
-/**
- * 与 greetingText() 用同一套小时分档，保证「中午好」下面不会跟着「今晚想吃点啥」。
- * 之前 hero 的这句和角标「今晚主打」是写死的，11 点进首页就会上句中午好、下句问今晚。
- */
-function mealWordText() {
-  const h = new Date().getHours();
-  if (h < 6) return '夜里';
-  if (h < 11) return '早上';
-  if (h < 14) return '中午';
-  if (h < 18) return '下午';
-  return '晚上';
-}
-
 /**
  * hero 角标的「哪一餐」跟的是当前选中的餐次，不是墙上时钟：
  * hero 那道菜就是这一餐要上的菜，写死或按时钟都会在切到午餐/晚餐 tab 时说错话。
@@ -134,8 +112,6 @@ function compareRecipes(a, b) {
 Page({
   data: {
     loading: true,
-    greeting: '你好',
-    mealWord: mealWordText(),
     currentUser: {},
 
     // 餐次 & 许愿池（§3 / §5）
@@ -158,8 +134,6 @@ Page({
     menuMoreCount: 0,
     menuProgress: 0,
     menuReady: false,
-    journeySteps: [],
-    journeyProgress: 0,
     role: '',              // 本人在家庭中的角色（owner/admin/member），loadAll 时由后端数据填充
     canConfirm: true,      // owner/admin 可确认菜单；无家庭数据时不阻断（§6）
 
@@ -352,31 +326,6 @@ Page({
         statusLabel: status === 'done' ? '已上桌' : status === 'cooking' ? '制作中' : '待做'
       };
     });
-    const journeyStage = !slotMenu.length ? 'order' : pendingCount === 0 ? 'record' : 'cook';
-    const journeySteps = [
-      {
-        key: 'order', label: '点菜', icon: '/assets/icons/lucide/utensils.svg',
-        caption: slotMenu.length ? `${slotMenu.length} 道已选` : '全家一起选',
-        active: journeyStage === 'order', complete: slotMenu.length > 0
-      },
-      {
-        key: 'cook', label: '做菜', icon: '/assets/icons/lucide/cooking-pot.svg',
-        caption: !slotMenu.length ? '下一步' : cookingCount ? `${cookingCount} 道进行中` : pendingCount ? `${pendingCount} 道待做` : '这一餐做好了',
-        active: journeyStage === 'cook', complete: pendingCount === 0 && slotMenu.length > 0
-      },
-      {
-        key: 'record', label: '记录', icon: '/assets/icons/lucide/book-open.svg',
-        caption: menuReady ? '回看做菜记录' : '留住家常味',
-        active: journeyStage === 'record', complete: false
-      },
-      {
-        key: 'community', label: '社区', icon: '/assets/icons/lucide/users.svg',
-        caption: '分享这一餐', active: false, complete: false
-      }
-    ].filter(step => step.key !== 'community' || features.COMMUNITY);
-    const journeyProgress = journeyStage === 'order' ? 0
-      : journeyStage === 'cook' ? (features.COMMUNITY ? 25 : 33.3333)
-        : (features.COMMUNITY ? 50 : 66.6667);
     return {
       pickedRecipeIds,
       slotMenu,
@@ -385,31 +334,12 @@ Page({
       menuProgress,
       menuReady,
       homeMenuItems,
-      menuMoreCount: Math.max(0, slotMenu.length - homeMenuItems.length),
-      journeySteps,
-      journeyProgress
+      menuMoreCount: Math.max(0, slotMenu.length - homeMenuItems.length)
     };
-  },
-
-  onJourneyStep(e) {
-    const step = e.currentTarget.dataset.step;
-    if (step === 'order') this.goRecipes();
-    else if (step === 'cook') this.data.slotMenu.length ? this.goCook() : this.goRecipes();
-    else if (step === 'record') this.goCookLog();
-    else if (step === 'community') this.goCommunity();
   },
 
   goCookLog() {
     wx.switchTab({ url: '/pages/cook-log/index' });
-  },
-
-  goCommunity() {
-    if (!features.COMMUNITY) return;
-    wx.switchTab({ url: '/pages/community/index' });
-  },
-
-  goWeek() {
-    wx.navigateTo({ url: '/pkg-extra/weekly-menu/index' });
   },
 
   addWish() {
@@ -659,8 +589,6 @@ Page({
       const patch = Object.assign({
         loading: false,
         loadError: '',
-        greeting: greetingText(),
-        mealWord: mealWordText(),
         currentUser: user || {},
         role: myRole || '',
         // owner/admin 是「做饭人」可确认菜单；普通 member 需等待；查不到角色（无家庭）不阻断
@@ -888,10 +816,6 @@ Page({
 
   goPantryPick() {
     wx.navigateTo({ url: `/pages/recipes/index?pick=pantry&meal=${encodeURIComponent(this.data.currentSlot)}` });
-  },
-
-  goPantry() {
-    wx.navigateTo({ url: '/pages/pantry/index' });
   },
 
   onHomeSearchInput(e) {

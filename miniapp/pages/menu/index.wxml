@@ -1,10 +1,10 @@
 <view class="container menu-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <view class="cpt-head" style="padding-top: {{capsuleTop}};">
     <view class="cpt-row">
-      <view class="cpt-titles"><view class="cpt-eyebrow">{{todayLabel}} · 全家一起做</view><view class="cpt-title">今天做什么</view></view>
-      <view class="cpt-action m-add tap-scale" bindtap="goAddRecipe" aria-role="button" aria-label="再点几道菜">+ 再点几道</view>
+      <view class="cpt-titles"><view class="cpt-title">今天做什么</view></view>
+      <view wx:if="{{totalCount}}" class="cpt-action m-add btn-text tap-scale" bindtap="goAddRecipe" aria-role="button" aria-label="加菜">+ 加菜</view>
     </view>
-    <view class="cpt-sub">点好的菜都在这儿，备好食材，按自己的节奏开火。</view>
+    <view class="cpt-sub">{{todayLabel}} · 全家一起做</view>
   </view>
   <view class="m-sheet">
     <view class="mn-seg">
@@ -24,9 +24,8 @@
         <view wx:if="{{doneCount === totalCount}}" class="m-main-action tap-scale" bindtap="goCookLog" aria-role="button">回看记录 ›</view><view wx:else class="m-main-action tap-scale" bindtap="goKitchen" aria-role="button">进入厨房 ›</view>
       </view>
       <view class="m-quick-row">
-        <view class="m-quick-card tap-scale" bindtap="goShopping" aria-role="button" aria-label="买菜清单，{{basketText}}"><view class="m-quick-title">买菜清单 <text class="m-arrow">›</text></view><view class="m-quick-sub">{{basketText}}</view></view>
-        <view class="m-quick-card tap-scale" bindtap="goPantry" aria-role="button" aria-label="我的冰箱"><view class="m-quick-title">我的冰箱 <text class="m-arrow">›</text></view><view class="m-quick-sub">{{pantryReadyCount ? pantryReadyCount + ' 项可用' : '先看看有啥'}}</view></view>
-        <view class="m-quick-card tap-scale" bindtap="goWeekly" aria-role="button" aria-label="周菜单"><view class="m-quick-title">周菜单 <text class="m-arrow">›</text></view><view class="m-quick-sub">{{weeklyDays.length ? '查看本周计划' : '提前安排'}}</view></view>
+        <view class="m-quick-card tap-scale" bindtap="goShopping" aria-role="button" aria-label="买菜清单，{{totalCount ? basketText : '点菜后自动整理'}}"><image class="m-quick-icon" src="/assets/icons/lucide/shopping-basket.svg" mode="aspectFit" aria-hidden="true" /><view class="m-quick-copy"><view class="m-quick-title">买菜清单</view><view class="m-quick-sub">{{totalCount ? basketText : '点菜后自动整理'}}</view></view><text class="m-arrow">›</text></view>
+        <view class="m-quick-card tap-scale" bindtap="goPantry" aria-role="button" aria-label="我的冰箱，{{pantryReadyCount ? pantryReadyCount + ' 样家里已有' : '看看家里有啥'}}"><image class="m-quick-icon" src="/assets/icons/lucide/refrigerator.svg" mode="aspectFit" aria-hidden="true" /><view class="m-quick-copy"><view class="m-quick-title">我的冰箱</view><view class="m-quick-sub">{{pantryReadyCount ? pantryReadyCount + ' 样家里已有' : '看看家里有啥'}}</view></view><text class="m-arrow">›</text></view>
       </view>
       <block wx:if="{{mealGroups.length}}">
         <section-head eyebrow="从待做到上桌" title="点好的菜" hint="共 {{totalCount}} 道" />
@@ -44,7 +43,7 @@
         </view>
         <view class="m-shopping-build tap-scale" bindtap="buildShopping" aria-role="button" aria-label="按菜单生成买菜清单"><view><view class="m-quick-title">按菜单整理食材</view><view class="m-quick-sub">将点好的菜汇总成一份买菜清单</view></view><text class="m-arrow">生成清单 ›</text></view>
       </block>
-      <state-empty wx:else type="pop" title="想吃的菜，先点上" desc="选好菜会带着图片来到这里，备菜、做菜、上桌一步步完成。" cta="去挑几道菜" bind:action="goAddRecipe" />
+      <view wx:else class="m-empty"><state-empty type="pop" title="想吃的菜，先点上" desc="点好的菜会出现在这里，跟着一步步做" cta="去挑几道菜" bind:action="goAddRecipe" /></view>
     </block>
     <block wx:elif="{{view === 'week'}}">
       <view class="m-week-card card" wx:if="{{weeklyDays.length}}"><view class="m-week-head"><view class="m-overview-title">这一周，好好吃饭</view><view class="m-week-link tap-scale" bindtap="goWeekly" aria-role="button">完整计划 ›</view></view><view class="m-wk-item tap-scale" wx:for="{{weeklyDays}}" wx:key="date" bindtap="goWeekly"><view class="m-wk-day"><view>{{item.d1}}</view><text>{{item.d2}}</text></view><view class="m-wk-recipe">{{item.recipeText}}</view><text class="m-wk-count">{{item.recipeCount}} 道</text></view><view class="m-week-regenerate tap-scale" bindtap="genWeekly" aria-role="button">重新生成本周计划</view></view>

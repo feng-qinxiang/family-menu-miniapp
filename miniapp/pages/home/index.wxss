@@ -3,7 +3,7 @@
    全局 token / 工具类见 app.wxss，此处不重复定义配色
    ============================================================ */
 .mag-home {
-  --photo-hero-h: 656rpx;
+  --photo-hero-h: 624rpx;
   min-height: 100vh;
   background: var(--paper);
 }
@@ -36,30 +36,23 @@
   position: absolute;
   inset: 0;
   background: linear-gradient(180deg,
-    rgba(20, 14, 8, 0.62) 0%,
-    rgba(20, 14, 8, 0.38) 36%,
-    rgba(20, 14, 8, 0.5) 62%,
-    rgba(20, 14, 8, 0.88) 100%);
+    rgba(20, 14, 8, 0.55) 0%,
+    rgba(20, 14, 8, 0.12) 26%,
+    rgba(20, 14, 8, 0.45) 42%,
+    rgba(20, 14, 8, 0.86) 64%,
+    rgba(20, 14, 8, 0.94) 100%);
 }
 
 .mh-hero-top {
   position: absolute;
   top: calc(env(safe-area-inset-top) + 90rpx);
   left: 46rpx;
-  /* 首帧兜底要和 utils/capsule.js 的 FALLBACK_RIGHT（96px）一致：
-     JS 把 capsuleRight 塞进来之前，这两枚 88rpx 图标按钮会压在微信胶囊下面。 */
+  /* 首帧兜底与 utils/capsule.js 的 FALLBACK_RIGHT（96px）一致，问候语不伸到胶囊下 */
   right: 96px;
   z-index: 10;
   display: flex;
   align-items: center;
   justify-content: space-between;
-}
-.mh-hi {
-  font-size: var(--fs-sub);
-  letter-spacing: 1rpx;
-  font-weight: 600;
-  color: var(--anchor-contrast);
-  text-shadow: 0 2rpx 10rpx rgba(20, 14, 8, 0.65);
 }
 .mh-greet { flex: 1; min-width: 0; }
 .mh-name {
@@ -72,46 +65,12 @@
   white-space: nowrap;
   text-overflow: ellipsis;
 }
-.mh-iconbtns { flex: none; display: flex; gap: 18rpx; margin-left: 18rpx; }
-.mh-iconbtn {
-  position: relative;
-  box-sizing: border-box;
-  /* 触控 88rpx（原 80rpx，顶部图标按钮偏小） */
-  width: 88rpx;
-  height: 88rpx;
-  min-width: 44px;
-  min-height: 44px;
-  border-radius: 50%;
-  background: rgba(20, 14, 8, 0.48);
-  border: 2rpx solid rgba(255, 255, 255, 0.55);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: visible;
-}
-.mh-cart-dot {
-  position: absolute;
-  top: -4rpx;
-  right: -4rpx;
-  width: 18rpx;
-  height: 18rpx;
-  border-radius: 50%;
-  background: var(--pop-fill);
-  border: 3rpx solid var(--c-surface);
-  z-index: 2;
-}
-.mh-ico-image {
-  width: 34rpx;
-  height: 34rpx;
-  filter: brightness(0) invert(1);
-  opacity: 0.96;
-}
 /* ---- hero body ---- */
 .mh-hero-body {
   position: absolute;
   left: 46rpx;
   right: 46rpx;
-  bottom: 40rpx;
+  bottom: 72rpx;   /* 40rpx + 下方 sheet 上叠的 32rpx */
   z-index: 10;
   color: var(--anchor-contrast);
 }
@@ -121,11 +80,10 @@
   letter-spacing: 1rpx;
   font-weight: 700;
   color: var(--anchor-contrast);
-  background: var(--pop-fill);
-  padding: 8rpx 22rpx;
+  background: rgba(20, 14, 8, 0.4);   /* 角标降为暗色毛玻璃：同屏的红只留给「加入X餐」 */
+  padding: 6rpx 20rpx;
   border-radius: var(--r-pill);
-  border: 2rpx solid rgba(255, 255, 255, 0.65);   /* 白描边：红 pill 叠红汤/暖色菜图时保持辨识度 */
-  box-shadow: 0 4rpx 12rpx rgba(20, 14, 8, 0.3);
+  border: 2rpx solid rgba(255, 255, 255, 0.45);
 }
 .mh-hero-title {
   font-size: calc(66rpx * var(--fs-mul, 1));
@@ -176,24 +134,11 @@
   word-break: break-all;
 }
 .mh-hero-meta {
-  display: flex;
-  gap: 16rpx;
-  margin-top: 14rpx;
-  flex-wrap: wrap;
-}
-.mh-m {
-  display: inline-flex;
-  align-items: center;
-  font-size: var(--fs-cap);
+  margin-top: 10rpx;
+  font-size: var(--fs-sub);
   font-weight: 600;
-  background: rgba(20, 14, 8, .36);
-  padding: 6rpx 12rpx;
-  border-radius: var(--r-xs);
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.95);
   text-shadow: 0 2rpx 8rpx rgba(20, 14, 8, 0.55);
-}
-.mh-m + .mh-m::before {
-  display: none;
 }
 .mh-hero-acts {
   display: flex;
@@ -231,8 +176,8 @@
   justify-content: center;
   gap: 10rpx;
   border-radius: var(--r-card);
-  background: rgba(20, 14, 8, 0.48);
-  border: 2rpx solid rgba(255, 255, 255, 0.55);
+  background: rgba(20, 14, 8, 0.24);
+  border: 2rpx solid rgba(255, 255, 255, 0.4);
 }
 .mh-shuffle-tx {
   font-size: calc(25rpx * var(--fs-mul, 1));
@@ -265,32 +210,27 @@
 /* ============ SHEET ============ */
 .mh-sheet {
   position: relative;
-  margin-top: 0;
+  margin-top: -32rpx;   /* 上叠 hero，圆角接住照片底边，不再一刀切 */
   background: var(--paper);
-  border-radius: var(--r-sheet) var(--r-sheet) 0 0;
+  border-radius: calc(var(--r-sheet) * 2) calc(var(--r-sheet) * 2) 0 0;
   /* 底部留白必须含 tabBar 实高（--tabbar-h 已带安全区）。
      原来写死 186rpx：刘海机上 tabBar 实高 196rpx，最后一张卡被压在下面。 */
   padding: 24rpx 0 calc(var(--tabbar-h) + 40rpx);
   z-index: 20;
 }
 .mh-pad { padding: 0 46rpx; }
-/* 下边距 24rpx：与下方 菜单卡→进度卡→心愿卡 之间的 24rpx 同一节奏（原 20rpx） */
-.hm-pick-tools { display: flex; align-items: center; flex-wrap: wrap; gap: 12rpx; margin: 0 var(--page-gutter) 24rpx; }
-/* 圆角与下方菜单卡、卡内「买食材」次按钮同为 --r-card（原 --r-md 比紧挨着的卡更圆） */
-.hm-pick-tool { flex: 1; display: flex; align-items: center; justify-content: center; gap: 10rpx; min-height: 88rpx; padding: 0 16rpx; /* 例外：并排两颗次按钮，不是卡表面 */ border-radius: var(--r-card); background: var(--c-surface); color: var(--ink); font-size: var(--fs-sub); font-weight: 700; border: var(--bd-card); }
-.hm-pick-tool image { width: 30rpx; height: 30rpx; flex: none; filter: brightness(0); opacity: .8; }
-.hm-pick-stock { display: flex; align-items: center; min-height: 88rpx; color: var(--mut-strong); font-size: var(--fs-cap); }
+/* 今天这一桌卡底部：随机点菜 / 冰箱能做 两个文字按钮，不抢上方主动作 */
+.hm-pick-tools { display: flex; align-items: center; justify-content: space-around; flex-wrap: wrap; gap: 8rpx 32rpx; margin-top: 8rpx; border-top: 1rpx solid var(--c-border-light); }
+.hm-pick-tool { display: flex; align-items: center; gap: 10rpx; color: var(--gold-deep); font-size: var(--fs-sub); }
+.hm-pick-tool image { width: 30rpx; height: 30rpx; flex: none; filter: brightness(0); opacity: .6; }
 .hm-recipe-search { display: flex; align-items: center; gap: 16rpx; margin: 16rpx var(--page-gutter) 8rpx; padding: 0 20rpx; background: var(--c-surface); border: var(--bd-card); border-radius: var(--r-md); }
 .hm-search-icon { width: 30rpx; height: 30rpx; flex: none; }
 .hm-search-input { flex: 1; min-width: 0; min-height: 88rpx; font-size: var(--fs-sub); color: var(--ink); }
 .hm-search-placeholder { color: var(--mut); }
 .hm-search-submit { min-height: 88rpx; min-width: 88rpx; display: flex; align-items: center; justify-content: flex-end; font-size: var(--fs-sub); font-weight: 700; color: var(--pop-deep); }
-.font-lg .hm-pick-stock { flex-basis: 100%; justify-content: flex-end; min-height: 60rpx; position: relative; }
-/* 大字档「看库存」独占一行、视觉只有 60rpx：热区只向下补到 88rpx（伸进下方留白），不向上压到两颗工具按钮 */
-.font-lg .hm-pick-stock::after { content: ''; position: absolute; left: 0; right: 0; top: 0; height: var(--tap-min); }
 
 /* chips */
-.hm-recipes-head { margin-top: 32rpx; }
+.hm-recipes-head { margin-top: 24rpx; }
 .mh-chips { width: 100%; margin: 12rpx 0 18rpx; white-space: nowrap; }
 .mh-chips-inner {
   display: inline-flex;
@@ -513,14 +453,15 @@
   justify-content: center;
   gap: 12rpx;
   border-radius: var(--r-card);
-  background: var(--anchor);   /* 首屏已有 hero「加到菜单」一颗红，这里降为深色锚点，同屏只留一颗红 */
-  color: var(--anchor-contrast);
+  /* 同屏只留 hero 一颗红；浅底页面不用深棕实心当第二主按钮（规范 四点五·1），这里走次按钮 */
+  background: var(--c-surface);
+  color: var(--ink);
+  border: var(--bd-card);
   font-size: var(--fs-btn);
   font-weight: 800;
   line-height: 1.3;
 }
-.hm-menu-action-primary .hm-menu-action-icon { filter: brightness(0) invert(1); }
-.hm-menu-card.is-ready .hm-menu-action-primary { background: var(--pine); }
+.hm-menu-action-primary .hm-menu-action-icon { filter: brightness(0); opacity: 0.6; }
 .hm-menu-empty-note {
   margin-top: 8rpx;
   color: var(--mut-strong);
@@ -529,120 +470,10 @@
 }
 .hm-menu-empty-top { display: flex; align-items: center; gap: 20rpx; }
 .hm-menu-empty-copy { flex: 1; min-width: 0; }
-.hm-menu-empty-plate { width: 140rpx; height: 140rpx; flex: none; opacity: 0.8; }
-.font-lg .hm-menu-empty-plate { width: 100rpx; height: 100rpx; }
+.hm-menu-empty-plate { width: 112rpx; height: 112rpx; flex: none; }
+.font-lg .hm-menu-empty-plate { width: 88rpx; height: 88rpx; }
 .hm-menu-pick { margin-top: 22rpx; }
-/* 同屏只留一个红色主按钮（hero「加到菜单」）；这里降为描边次按钮 */
-.hm-menu-action-primary.hm-menu-pick { background: var(--c-surface); color: var(--ink); border: var(--bd-card); }
-.hm-menu-action-primary.hm-menu-pick .hm-menu-action-icon { filter: brightness(0); opacity: 0.6; }   /* 图标 SVG 是浅色描边，与次按钮同法压暗 */
 
-/* ============ 点菜、做菜、记录、社区 ============ */
-/* 左右与上方菜单卡、下方心愿卡同为 --pad-card-sm：三张卡左缘齐平，里面的标题也要齐（原 --pad-card 错开 4rpx） */
-.hm-journey {
-  box-sizing: border-box;
-  margin: 24rpx 46rpx 0;
-  padding: 28rpx var(--pad-card-sm);
-  border: var(--bd-card);
-  border-radius: var(--r-card);
-  background: var(--c-surface);
-}
-.hm-journey-title {
-  color: var(--ink);
-  font-size: var(--fs-lg);
-  font-weight: 800;
-  line-height: 1.4;
-}
-.hm-journey-track {
-  position: relative;
-  display: flex;
-  margin-top: 24rpx;
-}
-.hm-journey-track::before {
-  content: "";
-  position: absolute;
-  z-index: 0;
-  top: 32rpx;
-  left: 16.6667%;
-  right: 16.6667%;
-  height: 2rpx;
-  background: var(--line-deep);
-}
-.hm-journey-progress {
-  position: absolute;
-  z-index: 0;
-  top: 32rpx;
-  left: 16.6667%;
-  height: 2rpx;
-  border-radius: var(--r-pill);
-  background: var(--pine);
-}
-.hm-journey-track.has-community::before {
-  left: 12.5%;
-  right: 12.5%;
-}
-.hm-journey-track.has-community .hm-journey-progress { left: 12.5%; }
-.hm-journey-step {
-  position: relative;
-  z-index: 1;
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-.hm-journey-icon {
-  box-sizing: border-box;
-  width: 64rpx;
-  height: 64rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2rpx solid var(--c-border);
-  border-radius: 50%;
-  background: var(--c-surface);
-}
-.hm-journey-icon image {
-  width: 30rpx;
-  height: 30rpx;
-  filter: brightness(0);
-  opacity: 0.55;
-}
-.hm-journey-step.is-current .hm-journey-icon {
-  border-color: var(--pop);
-  background: var(--pop-soft);
-}
-.hm-journey-step.is-current .hm-journey-icon image { opacity: 1; }
-.hm-journey-step.is-complete .hm-journey-icon {
-  border-color: var(--pine);
-  background: var(--pine);
-}
-.hm-journey-step.is-complete .hm-journey-icon image {
-  opacity: 1;
-  filter: brightness(0) invert(1);
-}
-.hm-journey-label {
-  display: block;
-  margin-top: 10rpx;
-  color: var(--mut-strong);
-  font-size: var(--fs-cap);
-  font-weight: 700;
-  line-height: 1.4;
-}
-.hm-journey-step.is-current .hm-journey-label { color: var(--pop-deep); }
-.hm-journey-step.is-complete .hm-journey-label { color: var(--pine-ink); }
-.hm-journey-caption {
-  box-sizing: border-box;
-  display: block;
-  max-width: 100%;
-  margin-top: 4rpx;
-  padding: 0 4rpx;
-  color: var(--mut-strong);
-  font-size: var(--fs-cap);
-  line-height: 1.5;
-  white-space: normal;
-  word-break: break-all;
-}
 .font-lg .hm-menu-head { align-items: flex-start; }
 .font-lg .hm-menu-mainline { flex-direction: column; gap: 6rpx; }
 .font-lg .hm-menu-dish-title { flex: none; width: 100%; }
@@ -650,15 +481,12 @@
 @media (prefers-color-scheme: dark) {
   /* 这些 SVG 在浅色档靠 brightness(0) 压成黑色，深色档要翻成白色，否则黑图标落在深卡上看不见 */
   .hm-pick-tool image,
-  .hm-journey-icon image,
   .hm-menu-action-secondary .hm-menu-action-icon,
-  .hm-menu-action-primary.hm-menu-pick .hm-menu-action-icon { filter: brightness(0) invert(1); }
+  .hm-menu-action-primary .hm-menu-action-icon { filter: brightness(0) invert(1); }
   /* 空盘插画是奶油色实底，深卡上会亮成一块白斑；压到 0.3，餐具与卡底的对比和浅色档相当 */
   .hm-menu-empty-plate { opacity: 0.3; }
   .hm-status--done { color: var(--c-success); background: var(--c-success-soft); }
   .hm-menu-progress-fill { background: var(--c-success); }
-  .hm-journey-progress { background: var(--c-success); }
-  .hm-journey-step.is-complete .hm-journey-label { color: var(--c-success); }
 }
 
 /* 首页局部覆盖：section eyebrow 去衬线斜体，中文更亲切（不影响其他页面的全局 .eyebrow）。
@@ -671,37 +499,32 @@
 }
 
 /* ============ 家庭点菜：餐次选择器 + 许愿池 ============ */
+/* 餐次分段：与菜单页 .mn-seg 同一做法（浅轨道 + 白滑块），视觉 64rpx，热区撑到 --tap-min */
 .fp-slotbar {
   display: flex;
-  gap: 14rpx;
-  padding: 24rpx 46rpx 8rpx;
-  background: var(--paper);
+  margin: 4rpx 46rpx 20rpx;
+  padding: 6rpx;
+  background: var(--paper-2);
+  border-radius: var(--r-pill);
 }
 .fp-slot {
+  position: relative;
   flex: 1;
   min-width: 0;
-  min-height: 44px;
+  min-height: 64rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: calc(25rpx * var(--fs-mul, 1));
-  font-weight: 700;
+  font-size: var(--fs-sub);
+  font-weight: 600;
   color: var(--mut-strong);
-  background: var(--paper-2);
-  border: 2rpx solid var(--c-border);
   border-radius: var(--r-pill);
 }
+.fp-slot::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: var(--tap-min); transform: translateY(-50%); }
 .fp-slot.on {
-  color: var(--anchor-contrast);
-  background: var(--anchor);
-  border-color: var(--anchor);
-}
-.fp-slot-week {
-  flex: none;
-  padding: 0 20rpx;
-  color: var(--gold-deep);
-  background: transparent;
-  border: none;   /* 跳转入口弱化为金色文字链，与前三个时段选择器区分语义 */
+  color: var(--ink);
+  background: var(--seg-thumb);
+  box-shadow: var(--sh-card);
   font-weight: 700;
 }
 
@@ -729,7 +552,7 @@
   align-items: center;
   gap: 16rpx;
 }
-.fp-wish-title { flex: 1; min-width: 0; line-height: 1.5; }
+.fp-wish-title { flex: 0 1 auto; min-width: 0; line-height: 1.5; }
 .fp-wish-eyebrow {
   font-size: var(--fs-lg);
   font-weight: 800;
@@ -749,7 +572,7 @@
   border-bottom: 4rpx solid var(--mut);
   transform: rotate(45deg);
   transition: transform 0.2s;
-  margin-right: 8rpx;
+  margin: 0 auto 0 4rpx; /* 紧跟标题，右侧留空给「+ 我想吃」，两者不再挤在一起 */
 }
 .fp-wish-caret.up { transform: rotate(-135deg); }
 .fp-wish-add {
@@ -759,10 +582,10 @@
   display: flex;
   align-items: center;
   border-radius: var(--r-pill);
-  background: var(--pop-soft);
-  color: var(--pop-deep);
-  font-size: calc(25rpx * var(--fs-mul, 1));
-  font-weight: 800;
+  background: transparent;   /* 文字按钮：首屏红色只留给 hero「加入X餐」 */
+  color: var(--gold-deep);
+  font-size: var(--fs-sub);
+  font-weight: 700;
 }
 /* 展开态下头部补 margin-bottom */
 .fp-wish-head { margin-bottom: 0; }
@@ -880,22 +703,10 @@
 .mh-hero--empty .mh-greet {
   margin-bottom: 40rpx;
 }
-.mh-hero--empty .mh-greet .mh-hi {
-  color: var(--gold-on-dark);
-  font-size: calc(25rpx * var(--fs-mul, 1));
-}
 .mh-hero--empty .mh-greet .mh-name {
   color: var(--anchor-contrast);
   font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 700;
-}
-.mh-empty-eyebrow {
-  font-family: var(--serif);
-  font-size: calc(25rpx * var(--fs-mul, 1));
-  color: var(--gold-on-dark);
-  font-weight: 700;
-  letter-spacing: 1rpx;
-  margin-bottom: 12rpx;
 }
 .mh-empty-headline {
   font-size: calc(56rpx * var(--fs-mul, 1));
@@ -935,8 +746,6 @@
   /* 已选菜谱：与「已上桌」同一个完成色（--pine 文字在深底上只有约 2.9:1） */
   .fp-wish-linked { color: var(--c-success); }
   /* 空态 hero 底是 --anchor 锚点色，而 --gold 深色档翻成 #8a6a3a，金字压在锚点底上不到 3:1 */
-  .mh-hero--empty .mh-greet .mh-hi,
-  .mh-empty-eyebrow { color: var(--anchor-contrast); }
 }
 
 /* ============ 许愿弹窗（root-portal 渲染在页面根之外，不保证继承 page 变量；
