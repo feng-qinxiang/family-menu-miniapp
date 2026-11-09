@@ -86,7 +86,9 @@ Page({
     loading: true,
     loadError: false,
     addItemSubmitting: false,
-    pantryAdding: false
+    pantryAdding: false,
+    stocking: false,
+    stockableCount: 0
   },
 
   onShow() {
@@ -119,8 +121,9 @@ Page({
       this._ingredientPhotos = loaded[3] || {};
       this.setData({ ingredientPhotosFailed: loaded[3] === null });
       this._lastContext = { todayMenu, pantryItems };
-      this.applyShoppingList(shoppingList, { todayMenu, pantryItems, loading: false });
+      // 先落库存：buildShoppingState 的「放进冰箱」计数要按 _pantryItems 判重
       this.setPantryView(pantryItems);
+      this.applyShoppingList(shoppingList, { todayMenu, pantryItems, loading: false });
     } catch (err) {
       console.error('shopping load failed', err);
       this.setData({ loading: false, loadError: true });
@@ -464,6 +467,8 @@ Page({
       emptyState: emptyReason === 'no-ingredients'
         ? { title: '还没有要买的', desc: '今天点的菜还没录用料，去菜谱里补上就能自动生成', cta: '去菜谱' }
         : { title: '今天还没点菜', desc: '先去菜谱挑几道，买菜清单会跟着长出来', cta: '去点菜' },
+      // 已买、冰箱里还没有同名食材的：可一键入库（按名字判重，避免来回勾选重复入库）
+      stockableCount: this.stockableItems(purchasedItems).length,
       summary: {
         totalCount,
         pendingCount,
@@ -474,6 +479,34 @@ Page({
           : (emptyReason === 'no-ingredients' ? '这几道菜还没录食材' : '今天还没点菜')
       }
     };
+  },
+
+  stockableItems(purchasedItems) {
+    const have = new Set((this._pantryItems || []).map((it) => String(it.ingredientName || it.name || '').trim()));
+    return purchasedItems.filter((it) => !have.has(String(it.ingredientName || '').trim()));
+  },
+
+  // 已入篮 → 冰箱：逐条 addPantryItem（后端无批量接口），中途失败也刷新，已入的不会再算进按钮
+  async stockPurchased() {
+    const items = this.stockableItems((this.data.shoppingList.items || []).filter((it) => it.purchased));
+    if (!items.length) return;
+    let added = 0;
+    await runGuarded(this, 'stock', async () => {
+      try {
+        for (const it of items) {
+          await addPantryItem({ ingredientName: it.ingredientName, amount: it.amount, unit: it.unit });
+          added += 1;
+        }
+      } finally {
+        await this.loadPantry();
+        this._lastContext = { ...(this._lastContext || {}), pantryItems: this._pantryItems };
+        this.applyShoppingList(this.data.shoppingList, this._lastContext);
+      }
+    }, {
+      onBusyChange: (stocking) => this.setData({ stocking }),
+      success: () => `已放进冰箱 ${added} 样`,
+      fail: () => (added ? `放进 ${added} 样，其余没成功，再点一次` : '没放进去，请重试')
+    });
   },
 
   enrichItems(items, context) {
