@@ -1,5 +1,5 @@
 <!-- components/state-empty · 通用空状态：圆形图标 + 标题 + 描述 + 可选 CTA -->
-<view class="state-empty se--{{theme}} g-fade-up">
+<view class="state-empty se--{{theme}} se--{{size}} g-fade-up">
   <view class="se-illu se-illu--{{type}}">
     <!-- 无菜谱 / 通用（pop） -->
     <image wx:if="{{type === 'pop' || type === 'recipes'}}" class="se-icon"

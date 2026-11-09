@@ -32,6 +32,14 @@
   height: 112rpx;
 }
 
+/* compact：页内空块。图标缩到一半、留白收紧，首屏留给能直接操作的内容 */
+.se--compact { padding: 32rpx 32rpx 28rpx; }
+.se--compact .se-illu { width: 112rpx; height: 112rpx; margin-bottom: 20rpx; }
+.se--compact .se-icon { width: 60rpx; height: 60rpx; }
+.se--compact .se-title { font-size: var(--fs-lg); }
+.se--compact .se-desc { margin-top: 8rpx; }
+.se--compact .se-btn { margin-top: 24rpx; }
+
 /* 文案 */
 .se-title {
   font-size: calc(36rpx * var(--fs-mul, 1));

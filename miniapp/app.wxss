@@ -543,6 +543,10 @@ page.font-lg, .font-lg {
 }
 .btn-dark { background: var(--anchor); color: var(--anchor-contrast); }
 .btn-ghost { background: var(--c-surface); color: var(--ink); border: var(--bd-card); }
+/* 三级按钮（2026-11 统一）：主 = .btn-pop（每屏最多一个红色实心）；
+   次 = .btn-ghost（白底细描边）；文字 = .btn-text（无底无框，用于「查看全部 ›」这类去处）。
+   .btn-dark 仅保留给深底卡片内部，浅底页面不再用深棕实心当第二个主按钮。 */
+.btn-text { min-height: var(--tap-min); padding: 0 8rpx; background: transparent; color: var(--pop); font-weight: 700; }
 .btn-wx { background: var(--wx); color: #fff; }
 .btn-block { width: 100%; }
 

@@ -31,6 +31,11 @@ Component({
     ctaStyle: {
       type: String,
       value: 'pop'
+    },
+    // 尺寸：normal(整页空态) | compact(页内一块空着：小图标、紧凑留白，不抢首屏)
+    size: {
+      type: String,
+      value: 'normal'
     }
   },
   data: {},
