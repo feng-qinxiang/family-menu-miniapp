@@ -12,17 +12,9 @@ const {
 const { runGuarded, guard, release } = require('../../utils/interaction');
 const { recipeDishImg, stepDishImg, dishImageUrl, ingredientImage, onPhotoError: markPhotoBroken } = require('../../utils/image');
 const { editIngredientPhoto } = require('../../utils/ingredient-photo');
-const { sourceLabels: baseSourceLabels } = require('../../utils/constants');
 const features = require('../../utils/features');
 const { composePostWithRecipe } = require('../../utils/post-share');
 const { indexPantry, pantryMatches } = require('../../utils/pantry-match');
-
-// 复用全局来源标签（社区开关关闭时 community 显示"精选"），本页额外支持 link/text
-const sourceLabels = {
-  ...baseSourceLabels,
-  link: '链接',
-  text: '文本'
-};
 
 const difficultyLabels = { easy: '简单', medium: '中等', hard: '困难' };
 
@@ -202,8 +194,7 @@ Page({
           rating: recipe.rating || '',
           summary: recipe.summary || '',
           difficulty: recipe.difficulty || 'medium',
-          difficultyLabel: difficultyLabels[recipe.difficulty] || '中等',
-          sourceLabel: sourceLabels[recipe.sourceType] || ''
+          difficultyLabel: difficultyLabels[recipe.difficulty] || '中等'
         },
         servings: baseServings,
         baseServings,

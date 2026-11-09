@@ -3,7 +3,7 @@
   <!-- sticky 搜索栏：状态栏占位 + 返回 + 输入 + 清除 + 取消 -->
   <view class="searchbar" style="padding-top: {{statusBarHeight}}px;">
     <view class="searchbar-inner" style="padding-right: {{capsuleRight}}px;">
-      <view class="backbtn tap-scale" catchtap="onBack" aria-role="button" aria-label="返回">
+      <view class="backbtn hit-88 tap-scale" catchtap="onBack" aria-role="button" aria-label="返回">
         <view class="backbtn-icon"></view>
       </view>
 
@@ -22,7 +22,6 @@
         </view>
       </view>
 
-      <text class="cancel hit-88 tap-scale" catchtap="onCancel" aria-role="button">取消</text>
     </view>
   </view>
 
@@ -31,11 +30,9 @@
     scroll-top="{{scrollTopTo}}" scroll-with-animation bindscroll="onScrollBody">
     <view class="pad">
       <!-- 结果标题 -->
-      <view class="rhead g-fade-up">
-        <text class="eyebrow-serif">搜索结果</text>
-      </view>
-      <view class="rtitle g-fade-up g-d1">
-        <text class="rtitle-t">找到「</text><text class="rtitle-kw pop">{{keyword || '全部'}}</text><text class="rtitle-t">」</text>
+      <view class="rtitle g-fade-up">
+        <block wx:if="{{keyword}}"><text class="rtitle-t">搜「</text><text class="rtitle-kw pop">{{keyword}}</text><text class="rtitle-t">」</text></block>
+        <text wx:else class="rtitle-t">全部菜谱</text>
       </view>
       <!-- 计数只在拿到数据后出：加载中/失败时原来会先显示「共 0 道菜」，和下面的加载失败态自相矛盾 -->
       <view wx:if="{{loaded && !loading && !loadError}}" class="rcount g-fade-up g-d2">
@@ -82,7 +79,6 @@
         >
           <view class="gc-ph">
             <image class="gc-img" src="{{item.cover}}" mode="aspectFill" lazy-load />
-            <view wx:if="{{item.label}}" class="gc-lbl">{{item.label}}</view>
           </view>
           <view class="gc-info">
             <view class="gc-name ellipsis">
@@ -90,8 +86,7 @@
             </view>
             <view class="gc-meta">
               <text class="gc-meta-i">{{item.cuisine}}</text>
-              <text wx:if="{{item.timeText}}" class="gc-dot"></text>
-              <text wx:if="{{item.timeText}}" class="gc-meta-i">{{item.timeText}}</text>
+              <text wx:if="{{item.timeText}}" class="gc-meta-i">· {{item.timeText}}</text>
             </view>
           </view>
         </view>

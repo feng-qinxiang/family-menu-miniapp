@@ -32,22 +32,13 @@
   background: linear-gradient(180deg, rgba(20, 14, 8, 0.5), transparent 60%);
 }
 
-/* nav-bar 右侧编辑入口（仅自建菜谱）：压在 hero 暗底上，用半透明描边胶囊 */
-.rd-navedit {
-  height: 72rpx;
-  padding: 0 28rpx;
-  display: flex;
-  align-items: center;
-  font-size: var(--fs-cap);
-  font-weight: 700;
-  color: #fff;
-  background: rgba(0, 0, 0, 0.28);
-  border: 2rpx solid rgba(255, 255, 255, 0.45);
-  border-radius: var(--r-pill);
-}
 .rd-intro { padding-bottom: 28rpx; margin-bottom: 16rpx; border-bottom: var(--bd-card); }
+.rd-title-row { display: flex; align-items: flex-start; gap: 16rpx; }
+.rd-title-row .rd-title { flex: 1; min-width: 0; }
+.rd-edit { flex: none; color: var(--mut-strong); }
 .rd-title { font-size: var(--fs-h1); font-weight: 700; line-height: 1.35; word-break: break-all; }
-.rd-meta { display: flex; flex-wrap: wrap; gap: 8rpx 24rpx; font-size: var(--fs-sub); color: var(--mut-strong); line-height: 1.5; margin-top: 16rpx; }
+.rd-meta text + text::before { content: "·"; margin-right: 12rpx; }
+.rd-meta { display: flex; flex-wrap: wrap; gap: 8rpx 12rpx; font-size: var(--fs-sub); color: var(--mut-strong); line-height: 1.5; margin-top: 16rpx; }
 .rd-summary { font-size: var(--fs-body); color: var(--ink); line-height: 1.7; margin-top: 20rpx; }
 .rd-section-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12rpx 20rpx; margin-bottom: 16rpx; }
 .rd-section-head > view:first-child { display: flex; flex-wrap: wrap; align-items: baseline; gap: 16rpx; }
@@ -455,7 +446,9 @@
   display: flex;
   gap: 16rpx;
   padding: 40rpx 30rpx calc(24rpx + env(safe-area-inset-bottom));
-  background: linear-gradient(180deg, var(--glass-clear), var(--paper) 28%);
+  padding-top: 20rpx;
+  background: var(--paper);
+  border-top: 2rpx solid var(--line);
 }
 .rd-ghost-btn {
   flex: none;
@@ -495,8 +488,9 @@
   width: 170rpx;
   height: 104rpx;
   border-radius: var(--r-card);
-  background: var(--anchor);
-  color: var(--gold-on-dark);
+  background: var(--paper-2);
+  color: var(--ink-deep);
+  border: 2rpx solid var(--c-border);
   font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: 800;
   display: flex;
@@ -621,6 +615,5 @@
    深色档提亮后的 #866a50 上约 1:1）。深色档改用恒定浅字 --anchor-contrast（两种 --anchor 上都 ≥4.7:1）；
    浅色档不进这条，金字观感不变。「已在菜单」态自己换了底色和字色，必须排除，否则会被这里盖掉。 */
 @media (prefers-color-scheme: dark) {
-  .rd-gobtn,
-  .rd-secondary-btn:not(.rd-secondary-btn--added) { color: var(--anchor-contrast); }
+  .rd-gobtn { color: var(--anchor-contrast); }
 }

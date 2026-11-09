@@ -42,7 +42,7 @@ Component({
       type: Boolean,
       value: false
     },
-    // 封面角标文案，空则用 cuisine
+    // 封面角标文案；空则不显示
     badge: {
       type: String,
       value: ''
@@ -105,7 +105,7 @@ Component({
         } else if (density === 'home') {
           const parts = [];
           if (timeText) parts.push(timeText);
-          parts.push(tags[0] || r.sourceLabel || '下饭快手');
+          parts.push(tags[0] || '下饭快手');
           metaText = parts.join(' · ');
         } else if (this.data.variant === 'row') {
           const subParts = [];
@@ -121,9 +121,8 @@ Component({
       }
 
       const badgeProp = this.data.badge;
-      const badgeText = badgeProp !== '' && badgeProp != null
-        ? badgeProp
-        : (r.sourceLabel || '');
+      // 只显示调用方明确传入的角标；不再兜底成来源（自建/社区/公共菜谱）——那是内部分类，用户不关心
+      const badgeText = badgeProp != null ? badgeProp : '';
 
       this.setData({
         cover: cover,

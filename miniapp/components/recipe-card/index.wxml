@@ -20,13 +20,16 @@
       <view class="rc-row-summary" wx:if="{{recipe.summary}}">{{recipe.summary}}</view>
     </view>
   </view>
+  <view wx:if="{{density === 'list' && showAdd && !showPantry && !metaOverride}}" class="rc-row-add rc-row-add--inline tap-scale {{selected ? 'is-picked' : ''}}" catchtap="onAdd" aria-role="button" aria-label="{{selected ? '已点' : '点菜'}}：{{title}}">
+    <text class="rc-plus">{{selected ? '✓' : '＋'}}</text><text class="rc-row-add-label">{{selected ? '已点' : '点菜'}}</text>
   </view>
-  <view wx:if="{{density === 'list' && (showPantry || showAdd || metaOverride)}}" class="rc-row-footer">
+  </view>
+  <!-- 底栏只在左边有话可说（冰箱用料 / 挑菜说明）时出现；只剩「点菜」时按钮回到卡片右下角，卡片矮一截 -->
+  <view wx:if="{{density === 'list' && (showPantry || metaOverride)}}" class="rc-row-footer">
     <view class="rc-row-footer-copy">
       <view class="rc-row-stock {{recipe.pantryReady ? 'is-ready' : ''}}" wx:if="{{showPantry}}">
         <text class="rc-stock-label">冰箱用料</text><text class="rc-stock-copy">{{recipe.pantryStatus || '用料待确认'}}</text>
       </view>
-      <view wx:else class="rc-row-detail-link">查看做法 ›</view>
       <view class="rc-row-list-note" wx:if="{{metaOverride}}">{{metaOverride}}</view>
     </view>
     <view wx:if="{{showAdd}}" class="rc-row-add tap-scale {{selected ? 'is-picked' : ''}}" catchtap="onAdd" aria-role="button" aria-label="{{selected ? '已点' : '点菜'}}：{{title}}">

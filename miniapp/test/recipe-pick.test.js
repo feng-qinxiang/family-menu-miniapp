@@ -178,8 +178,6 @@ const event = data => ({ currentTarget: { dataset: data } });
     assert.equal(p.data.pickedRecipe, null, '库存失败时按需挑菜不退回普通随机');
     p.clearFilter();
     assert.equal(p.data.requestMildOnly, false, '重置会清除按需口味条件');
-    p.selectRailMode({ currentTarget: { dataset: {} }, detail: { value: '1' } });
-    assert.equal(p.data.railMode, 'source', '原生 picker 切换分类维度');
 
     const fridge = page('../pages/pantry/index', ['pantryItems', 'ingredientPhotos']);
     fridge.applyPantryFilter();

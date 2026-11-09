@@ -328,10 +328,13 @@
 .rc-row-footer { display: flex; align-items: center; gap: 12rpx; margin-top: 12rpx; padding-top: 8rpx; border-top: var(--bd-card); }
 .rc-row-footer-copy { flex: 1; min-width: 0; }
 .rc-row-origin { position: absolute; left: 10rpx; bottom: 10rpx; max-width: calc(100% - 20rpx); padding: 4rpx 10rpx; box-sizing: border-box; border-radius: var(--r-xs); font-size: var(--fs-mini); line-height: 1.4; color: var(--ink-deep); background: var(--c-surface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.rc-d-list .rc-row-add { gap: 6rpx; width: 128rpx; padding: 0 8rpx; box-sizing: border-box; height: 88rpx; border: 2rpx solid var(--pop-deep); border-radius: var(--r-pill); background: var(--c-surface); box-shadow: none; }
+.rc-d-list .rc-row-add { position: relative; margin-left: auto; gap: 4rpx; width: 116rpx; padding: 0 8rpx; box-sizing: border-box; height: 60rpx; border: 2rpx solid var(--pop-deep); border-radius: var(--r-pill); background: var(--c-surface); box-shadow: none; }
 .rc-row-add-label { font-size: var(--fs-sub); font-weight: 600; color: var(--pop-deep); }
 .rc-d-list .rc-row-add .rc-plus { color: var(--pop-deep); font-size: var(--fs-lg); }
-.rc-d-list .rc-row-add::after { display: none; }
+/* 视觉 60rpx，热区仍撑到 88rpx（同 .rx-create 写法） */
+.rc-d-list .rc-row-add::after { width: 100%; height: var(--tap-min); }
+/* 无底栏时按钮在主区右侧、与信息区底边对齐 */
+.rc-row-add--inline { align-self: center; }
 .rc-d-list .rc-row-add.is-picked { background: var(--c-accent-soft); border-color: var(--pine); }
 .rc-d-list .rc-row-add.is-picked .rc-plus { color: var(--pine-ink); }
 .rc-d-list .rc-row-add.is-picked .rc-row-add-label { color: var(--pine-ink); }
@@ -339,4 +342,3 @@
 .rc-stock-label { display: inline; margin-right: 8rpx; color: var(--mut-strong); font-size: var(--fs-sub); }
 .rc-stock-copy { display: block; }
 .rc-row-stock.is-ready { color: var(--pine-ink); }
-.rc-row-detail-link { color: var(--mut-strong); font-size: var(--fs-cap); line-height: 1.5; }

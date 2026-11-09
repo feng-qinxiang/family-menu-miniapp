@@ -48,8 +48,6 @@ Page({
     // 长列表回顶键（页面级滚动，滚深出现）
     showBackTop: false,
     activeSource: 'all',
-    railMode: 'cuisine',
-    railModes: ['菜系', '来源'],
     searchText: '',
     showPantryDetails: true,
     requestOpen: false,
@@ -341,10 +339,6 @@ Page({
     }, () => this.applyFilter());
   },
 
-  selectRailMode(event) {
-    const mode = event.currentTarget.dataset.mode || (Number(event.detail && event.detail.value) === 1 ? 'source' : 'cuisine');
-    this.setData({ railMode: mode === 'source' ? 'source' : 'cuisine' });
-  },
 
   selectSource(event) {
     const { source } = event.currentTarget.dataset;

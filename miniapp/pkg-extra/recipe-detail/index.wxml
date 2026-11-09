@@ -11,21 +11,21 @@
       <view class="rd-hero-mask"></view>
 
       <!-- 顶部导航：复用 nav-bar，标题留空仅返回；右侧 slot 放编辑（仅自建菜谱） -->
-      <nav-bar title="" status-bar-height="{{statusBarHeight}}">
-        <view wx:if="{{recipe.sourceType === 'owned'}}" class="rd-navedit hit-88 tap-scale" bindtap="goEdit" aria-role="button">编辑</view>
-      </nav-bar>
+      <nav-bar title="" status-bar-height="{{statusBarHeight}}"></nav-bar>
 
     </view>
 
     <!-- ===== Sheet ===== -->
     <view class="rd-sheet">
       <view class="rd-intro">
-        <view class="rd-title">{{recipe.title}}</view>
+        <view class="rd-title-row">
+          <view class="rd-title">{{recipe.title}}</view>
+          <view wx:if="{{recipe.sourceType === 'owned'}}" class="btn-text rd-edit tap-scale" bindtap="goEdit" aria-role="button">编辑</view>
+        </view>
         <view class="rd-meta">
           <text wx:if="{{recipe.timeCost}}">{{recipe.timeCost}} 分钟</text>
           <text wx:if="{{recipe.cuisine}}">{{recipe.cuisine}}</text>
           <text wx:if="{{recipe.tasteTags.length}}">{{recipe.tasteTags[0]}}</text>
-          <text wx:if="{{recipe.sourceLabel}}">{{recipe.sourceLabel}}</text>
         </view>
         <view class="rd-summary" wx:if="{{recipe.summary}}">{{recipe.summary}}</view>
       </view>
@@ -49,7 +49,7 @@
           </view>
         </view>
 
-        <view class="rd-photo-hint">{{ingredientPhotosFailed ? '图片暂未更新，先用已有图片或名称。' : '点左侧可添食材照片，完整名称在右侧。'}}</view>
+        <view class="rd-photo-hint" wx:if="{{ingredientPhotosFailed}}">图片暂未更新，先用已有图片或名称。</view>
         <view class="rd-ing" wx:for="{{recipe.ingredients}}" wx:key="index">
           <view class="rd-ingredient-photo tap-scale" data-name="{{item.name}}" bindtap="onIngredientPhoto" aria-role="button" aria-label="设置{{item.name}}的食材图片">
             <image wx:if="{{item.cover && !item.coverBroken}}" src="{{item.cover}}" mode="aspectFill" lazy-load class="rd-ingredient-image tap-scale" data-err-key="{{'recipe.ingredients[' + index + '].coverBroken'}}" binderror="onPhotoError" />
@@ -58,7 +58,7 @@
           </view>
           <view class="rd-iname">
             <view class="rd-ingredient-top"><view class="rd-iname-h">{{item.name}}</view><view class="rd-amt">{{item.amountText}} {{item.unit}}</view></view>
-            <view class="rd-note {{item.inStock ? '' : 'miss'}}"><text class="rd-dot {{item.inStock ? 'have' : 'miss'}}"></text>{{item.inStock ? '冰箱够用' : '用量待备齐'}}</view>
+            <view wx:if="{{item.inStock}}" class="rd-note"><text class="rd-dot have"></text>冰箱有</view>
           </view>
         </view>
       </view>

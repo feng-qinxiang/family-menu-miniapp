@@ -19,13 +19,15 @@
   display: flex;
   align-items: center;
   gap: 23rpx;
-  padding: 15rpx 46rpx 27rpx;
+  padding: 8rpx 46rpx 24rpx; /* 64rpx 控件中心对齐胶囊（状态栏下 ~40rpx） */
 }
 .backbtn {
-  width: 88rpx;
-  height: 88rpx;
+  width: 64rpx;
+  height: 64rpx;
   border-radius: 50%;
-  background: var(--anchor);
+  background: var(--c-surface);
+  border: 2rpx solid var(--line);
+  box-sizing: border-box;
   flex: none;
   display: flex;
   align-items: center;
@@ -34,9 +36,9 @@
 .backbtn-icon {
   width: 20rpx;
   height: 20rpx;
-  /* 底是 --anchor：箭头用恒定浅字。原来用 --paper，深色档翻成近黑，深底上画深箭头（旧 --anchor 上约 1.3:1） */
-  border-left: 5rpx solid var(--anchor-contrast);
-  border-bottom: 5rpx solid var(--anchor-contrast);
+  /* 浅底胶囊（同 nav-bar 返回键），箭头用正文色 */
+  border-left: 4rpx solid var(--ink);
+  border-bottom: 4rpx solid var(--ink);
   transform: rotate(45deg);
   margin-left: 6rpx;
 }
@@ -46,7 +48,7 @@
   display: flex;
   align-items: center;
   gap: 17rpx;
-  height: 88rpx;
+  height: 64rpx;
   padding: 0 31rpx;
   background: var(--paper-2);
   border-radius: var(--r-chip);
@@ -110,12 +112,6 @@
 .clr-x::before { transform: translate(-50%, -50%) rotate(45deg); }
 .clr-x::after { transform: translate(-50%, -50%) rotate(-45deg); }
 
-.cancel {
-  flex: none;
-  font-size: calc(28rpx * var(--fs-mul, 1));
-  font-weight: 700;
-  color: var(--gold-deep);
-}
 
 /* ============ 滚动结果区 ============ */
 .scroll {
@@ -125,9 +121,8 @@
 .pad { padding: 0 46rpx; }
 
 /* 结果标题 */
-.rhead { margin: 35rpx 0 0; }
 .rtitle {
-  margin-top: 8rpx;
+  margin-top: 32rpx;
   font-size: calc(50rpx * var(--fs-mul, 1));
   font-weight: 900;
   letter-spacing: -2rpx;
@@ -236,18 +231,6 @@
   height: 100%;
   display: block;
 }
-.gc-lbl {
-  position: absolute;
-  top: 17rpx;
-  left: 17rpx;
-  font-size: var(--fs-tiny);
-  letter-spacing: 2rpx;
-  font-weight: 800;
-  color: var(--anchor-contrast);
-  background: rgba(40, 30, 20, 0.55);
-  padding: 8rpx 15rpx;
-  border-radius: var(--r-xs);
-}
 .gc-info { padding: 23rpx 25rpx 27rpx; }
 .gc-name {
   font-size: calc(32rpx * var(--fs-mul, 1));
@@ -267,11 +250,4 @@
   font-size: calc(23rpx * var(--fs-mul, 1));
   font-weight: 500;
   color: var(--mut-strong);
-}
-.gc-dot {
-  width: 6rpx;
-  height: 6rpx;
-  border-radius: 50%;
-  background: var(--mut-2);
-  flex: none;
 }

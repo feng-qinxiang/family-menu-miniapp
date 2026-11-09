@@ -13,20 +13,9 @@
    再留 32rpx 缝 → 安全区 + 184rpx；.rx-sheet 另有 24rpx 底边距，最后一张卡停在浮条上方约 56rpx */
 .recipes-mag.rx-has-tray { padding-bottom: calc(env(safe-area-inset-bottom) + 184rpx); }
 
-/* 新建是辅助入口，主注意力留给菜卡与点菜动作。 */
-.rx-create {
-  display: flex; align-items: center; gap: 6rpx;
-  background: transparent; color: var(--ink);
-  border: 2rpx solid var(--line-deep);
-  font-size: var(--fs-sub); font-weight: 800;
-  padding: 14rpx 26rpx;   /* 例外：按钮不是卡，左右留白跟字号走 */
-  border-radius: var(--r-card);
-}
-.rx-create-plus { font-size: var(--fs-lg); font-weight: 700; line-height: 1; }
-.rx-heading { padding: 8rpx 24rpx 12rpx; }
-.rx-heading-title { font-size: calc(36rpx * var(--fs-mul, 1)); line-height: 1.4; font-weight: 700; color: var(--ink); }
-.rx-heading-count { display: inline-block; margin-left: 16rpx; font-size: var(--fs-sub); font-weight: 400; color: var(--mut-strong); }
-.rx-heading .rx-create { min-height: var(--tap-min); box-sizing: border-box; padding: 0 22rpx; font-weight: 600; box-shadow: none; }
+/* 新建：结果条里的文字按钮（.btn-text），只配一枚加号图标 */
+.rx-create { display: flex; align-items: center; gap: 6rpx; font-size: var(--fs-sub); color: var(--ink-deep); }
+.rx-create-ico { width: 28rpx; height: 28rpx; flex: none; filter: brightness(0); opacity: .75; }
 
 /* ===== 视觉小、热区 88rpx（宽度沿用元素自身，只纵向撑开，避免横向相邻元素互抢） ===== */
 .rx-create, .rx-meal-pk-btn { position: relative; }
@@ -85,32 +74,24 @@
   font-size: var(--fs-sub); font-weight: 500;
 }
 
-/* 来源放左侧，右侧使用紧凑行卡。 */
-.rx-browser { display: flex; align-items: flex-start; gap: 12rpx; margin: 12rpx 24rpx 0; }
-.rx-source-rail { width: 104rpx; flex: none; position: sticky; top: calc(env(safe-area-inset-top) + 88rpx); background: var(--paper-2); border-radius: var(--r-md); overflow: hidden; }
-.rx-rail-scroll { height: 464rpx; max-height: 62vh; }
-.rx-rail-cuisine { height: 744rpx; }
-.rx-rail-mode { min-height: var(--tap-min); display: flex; align-items: center; justify-content: center; gap: 6rpx; border-bottom: var(--bd-card); font-size: var(--fs-sub); font-weight: 600; color: var(--mut-strong); }
+/* 一条横滑：两个挑菜动作 + 菜系（原来是挑菜行 + 左侧菜系栏两层，卡片只剩 2/3 宽） */
+.rx-chiprow { margin: 16rpx 0 8rpx; white-space: nowrap; }
+.rx-chiprow-in { display: inline-flex; align-items: center; gap: 12rpx; padding: 0 24rpx; }
+.rx-chip { flex: none; display: flex; align-items: center; min-height: var(--tap-min); }
+.rx-chip-t { display: flex; align-items: center; gap: 8rpx; box-sizing: border-box; min-height: 56rpx; padding: 0 22rpx; border-radius: var(--r-pill); border: 2rpx solid var(--line); background: var(--c-surface); color: var(--mut-strong); font-size: var(--fs-sub); font-weight: 600; }
+.rx-chip.on .rx-chip-t { background: var(--anchor); border-color: var(--anchor); color: var(--anchor-contrast); }
+.rx-chip-act .rx-chip-t { color: var(--ink); }
+.rx-chip-act.on .rx-chip-t { background: var(--pop-soft); border-color: var(--pop-soft); color: var(--pop-deep); }
+.rx-chip.on .rx-pick-icon { filter: brightness(0) invert(1); opacity: 1; }
+.rx-chip-act.on .rx-pick-icon { filter: brightness(0); opacity: 1; }
+.rx-chip-sep { flex: none; width: 2rpx; height: 36rpx; background: var(--line-deep); }
 .rx-current-filter { display: flex; flex-wrap: wrap; align-items: center; gap: 0 16rpx; margin: 0 24rpx; color: var(--mut-strong); font-size: var(--fs-sub); line-height: 1.5; word-break: break-all; }
 .rx-filter-caption { color: var(--mut); }
 .rx-filter-selected { display: flex; align-items: center; min-height: var(--tap-min); min-width: 88rpx; color: var(--pop-deep); font-weight: 700; }
-.rx-source + .rx-source { margin-top: 4rpx; }
-.rx-source { position: relative; box-sizing: border-box; min-height: var(--tap-min); padding: 12rpx 10rpx; display: flex; align-items: center; justify-content: center; font-size: var(--fs-sub); font-weight: 600; color: var(--mut-strong); word-break: break-all; text-align: center; }
-.rx-source.on { background: var(--pop-soft); color: var(--pop-deep); font-weight: 800; }
-.rx-source.on::before { content: ''; position: absolute; left: 0; top: 24rpx; bottom: 24rpx; width: 6rpx; border-radius: var(--r-xs); background: var(--pop-fill); }
-.rx-avoid { min-height: var(--tap-min); border-top: var(--bd-card); margin-top: 8rpx; padding-top: 12rpx; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: var(--fs-cap); color: var(--mut-strong); }
-.rx-avoid text { font-size: var(--fs-mini); margin-top: 4rpx; }
-.rx-avoid.on { color: var(--pine-ink); }
-.rx-results { flex: 1; min-width: 0; }
+.rx-results { margin: 8rpx 24rpx 0; }
 
 /* 随机挑菜与库存匹配共用一张结果卡，先预览再加入菜单。 */
-.rx-pickbar { display: flex; align-items: center; gap: 16rpx; margin: 0 24rpx; border-bottom: var(--bd-card); }
-.rx-pick-option { display: flex; align-items: center; justify-content: flex-start; gap: 10rpx; min-height: var(--tap-min); flex: none; padding: 0 8rpx; color: var(--mut-strong); font-size: var(--fs-sub); font-weight: 500; white-space: nowrap; }
-.rx-pick-option.on { color: var(--pop-deep); }
 .rx-pick-icon { width: 28rpx; height: 28rpx; flex: none; filter: brightness(0); opacity: .65; }
-/* 选中只提亮、不去掉滤镜：这两枚 SVG 原色是给深色按钮用的浅描边，去掉 brightness(0) 后在米白底上直接消失 */
-.rx-pick-option.on .rx-pick-icon { opacity: 1; }
-.rx-pick-stock { min-height: var(--tap-min); min-width: 88rpx; display: flex; align-items: center; justify-content: flex-end; margin-left: auto; font-size: var(--fs-sub); color: var(--pine-ink); white-space: nowrap; }
 /* 左右 24rpx 与本页搜索条、挑菜栏、列表同一条边（原 --page-gutter 46rpx 让这张卡比上下都窄一圈） */
 .rx-picker { margin: 0 24rpx 16rpx; padding: 0 var(--pad-card-sm) 24rpx; border-radius: var(--r-card); background: var(--c-surface); border: var(--bd-card); box-shadow: none; }
 .rx-picker-head { display: flex; align-items: center; gap: 12rpx; }
@@ -148,7 +129,6 @@
 .rx-picker-empty { font-size: var(--fs-sub); color: var(--mut-strong); line-height: 1.6; padding: 12rpx 0 8rpx; }
 .rx-picker-note { font-size: var(--fs-cap); margin-top: 8rpx; }
 .rx-picker-retry { display: flex; align-items: center; min-height: var(--tap-min); color: var(--pop-deep); font-weight: 700; }
-.font-lg .rx-pickbar { gap: 20rpx; }
 
 /* 筛选紧接搜索，用两行选项；小色块放在完整触控区内。 */
 .rx-quickfilters { margin: 0 24rpx; padding: 4rpx 12rpx 8rpx; background: var(--paper-2); border-radius: 0 0 var(--r-md) var(--r-md); }
@@ -160,14 +140,14 @@
 .rx-qf-text { display: flex; align-items: center; justify-content: center; box-sizing: border-box; min-height: 52rpx; padding: 0 10rpx; border-radius: var(--r-xs); white-space: nowrap; }
 .rx-qf-chip.on .rx-qf-text { background: var(--pop-soft); color: var(--pop-deep); font-weight: 700; }
 .rx-qf-reset .rx-qf-text { color: var(--mut); }
+.rx-qf-more { display: flex; align-items: center; min-height: var(--tap-min); padding-left: 8rpx; font-size: var(--fs-sub); color: var(--pine-ink); }
 
 /* ===== 结果条：N 道可点 + 点到下拉 同一行 ===== */
 .rx-listbar {
   display: flex; align-items: center; justify-content: space-between; gap: 16rpx;
   margin: 0 0 12rpx; min-height: var(--tap-min); flex-wrap: wrap;
 }
-.rx-listbar-l { display: flex; align-items: baseline; gap: 14rpx; min-width: 0; }
-.rx-listbar-n { font-size: var(--fs-sub); font-weight: 800; color: var(--ink); line-height: 1.2; }
+.rx-listbar-n { flex: 1; min-width: 0; font-size: var(--fs-sub); font-weight: 700; color: var(--mut-strong); line-height: 1.2; }
 
 .rx-meal-picker { position: relative; flex: none; }
 .rx-meal-pk-btn {
@@ -176,6 +156,7 @@
   background: var(--paper-2); border-radius: var(--r-pill); border: 2rpx solid var(--line-deep);
 }
 .rx-meal-pk-l { font-size: var(--fs-mini); color: var(--mut-strong); font-weight: 700; }
+.rx-meal-caret { width: 12rpx; height: 12rpx; border-right: 3rpx solid var(--mut-strong); border-bottom: 3rpx solid var(--mut-strong); transform: translateY(-3rpx) rotate(45deg); }
 .rx-meal-pk-v { font-size: var(--fs-sub); color: var(--ink); font-weight: 800; }
 /* 透明全屏遮罩：点外部收起；z 压过餐盘浮条（z52） */
 .rx-drop-mask { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 53; }
@@ -284,10 +265,9 @@
 /* 深色档覆盖放在文件末尾：@media 不加权重，写在被覆盖的规则之前会被盖回去 */
 @media (prefers-color-scheme: dark) {
   /* 两枚 SVG 被 brightness(0) 压成黑色，深底上看不见：翻成白色（选中态的 opacity: 1 照常生效） */
-  .rx-pick-icon { filter: brightness(0) invert(1); }
+  .rx-pick-icon, .rx-create-ico { filter: brightness(0) invert(1); }
+  .rx-qf-more { color: var(--c-success); }
   /* --pine 当文字在深底上只有约 2.9:1：与首页「已上桌」一样改用完成色 */
-  .rx-pick-stock,
-  .rx-avoid.on,
   .rx-picked-ready,
   .rx-request-labels > view { color: var(--c-success); }
   /* 浮条底是 --anchor 锚点色，--gold 深色档翻成 #8a6a3a，「买 N」压在上面不到 3:1 */

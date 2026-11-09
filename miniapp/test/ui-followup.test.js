@@ -86,9 +86,9 @@ const settled = () => new Promise(resolve => setImmediate(resolve));
     await new Promise(resolve => setTimeout(resolve, 350));
     assert.equal(applies, 2, '确认和清空都取消待执行防抖，不重复筛选');
     recipePage.applyFilter = realApply;
-    recipePage.selectRailMode(event({ mode: 'source' }));
-    assert.equal(recipePage.data.advFilter.cuisine, '主食', '切换左侧分类保留另一维条件');
+    // 左侧「菜系/来源」切换栏已并入横滑菜系 + 筛选面板：选来源时菜系条件照旧保留
     recipePage.selectSource(event({ source: 'community' }));
+    assert.equal(recipePage.data.advFilter.cuisine, '主食', '选来源保留菜系条件');
     assert.deepEqual(recipePage._filteredRecipes.map(r => r.id), [2]);
     let reloads = 0;
     recipePage.loadRecipes = async () => { reloads++; };
