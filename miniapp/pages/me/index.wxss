@@ -37,7 +37,7 @@
   border: 4rpx solid var(--paper);   /* 堆叠描边取纸色，深色模式随 token 翻转 */
 }
 .mag-ava:first-child { margin-left: 0; }
-.mavt-a { background: linear-gradient(135deg, var(--cat-gold), var(--gold-deep)); color: var(--ink-deep); }
+.mavt-a { background: var(--cat-gold); color: var(--ink-deep); }   /* 深字压亮金 5.98:1；--gold-deep 已加深，不能再当深字的底 */
 .mavt-b { background: var(--cat-brown); }
 .mavt-c { background: var(--pine); }
 .mavt-d { background: var(--cat-purple); }

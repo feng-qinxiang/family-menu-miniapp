@@ -50,7 +50,7 @@
         <view class="vu-ptop">
           <view class="vu-pname">{{planMap.monthly.planName}}</view>
           <view class="vu-pprice"><text class="vu-yuan">¥</text>{{planMap.monthly.price}}<text class="vu-per">{{planMap.monthly.unit}}</text></view>
-          <view class="vu-pnote">随时取消 · 灵活体验</view>
+          <view class="vu-pnote">按月付费 · 灵活体验</view>
         </view>
       </view>
     </view>
@@ -74,7 +74,7 @@
         <view class="vu-drow total"><text class="vu-k">实付金额</text><text class="vu-v-big"><text class="vu-yuan">¥</text>{{plan.priceFull}}</text></view>
         <view class="vu-savetip">
           <view class="vu-star-mark"></view>
-          随时取消，灵活体验家庭同步
+          按月付费，先体验家庭同步
         </view>
       </block>
     </view>

@@ -16,7 +16,7 @@ page {
   --mut-2: var(--themeMut2, #b3a795);
   --mut-strong: var(--themeMutStrong, #6b5f50);    /* 强调次要文字（比 --mut 更深一档） */
   --gold: var(--themeGold, #f4d9a8);
-  --gold-deep: var(--themeGoldDeep, #a58145);
+  --gold-deep: var(--themeGoldDeep, #806230);   /* 浅底小字用：纸色上 5.35:1（原 #a58145 仅 3.4:1）；深色档见 media 块 */
   --pop: var(--themePop, #c8381f);
   --pop-soft: var(--themePopSoft, #fdece6);
   --pine: var(--themePine, #2f4a3a);

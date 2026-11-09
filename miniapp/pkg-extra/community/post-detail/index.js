@@ -170,7 +170,8 @@ Page({
         this.setData({
           loading: false,
           loadError: !post,
-          loadErrorDesc: (err && err.message) || '',
+          // 只有 404（已删/下架/未过审）才是不可重试的「返回」；断网、5xx 等仍给「重新加载」
+          loadErrorDesc: (err && err.status === 404 && err.message) || '',
           post,
           comments: cmts,
           commentsError: comments === null,
