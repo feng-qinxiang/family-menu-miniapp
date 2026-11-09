@@ -4,8 +4,6 @@
 <view class="container fi-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <!-- 邀请暗卡 -->
   <view class="card-dark fi-invite g-fade-up g-d1">
-    <view class="deco-circle"></view>
-
     <view class="fi-iv-cap">家庭邀请码</view>
 
     <!-- 8 位邀请码（拉取失败时格子留空，不显示任何伪码） -->

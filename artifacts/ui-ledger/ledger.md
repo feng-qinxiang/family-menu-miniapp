@@ -59,7 +59,7 @@
 | `pkg-extra/auth/login` | — | --r-card / --r-sheet / --r-xs / 12rpx / 25rpx | 无 | 无 | 63 | 0 | 0 | 0 | — | — |
 | `pkg-extra/auth/login-phone` | — | --r-card / --r-sm / --r-xs / 2rpx / 50% / 6rpx / 7rpx | 无 | 无 | 80 | 0 | 0 | 8 | — | — |
 | `pkg-extra/family/create` | 104rpx / 40rpx / 56rpx | --r-card / --r-md / --r-sm / --r-xs / 0 0 4rpx 4rpx / 2rpx / 4rpx 0 0 0 / 4rpx 4rpx 0 0 / 50% / 50% 50% 50% 0 | 无 | 无 | 97 | 0 | 0 | 6 | — | — |
-| `pkg-extra/family/invite` | — | --r-card / --r-xs / 23rpx | 无 | 无 | 41 | 0 | 0 | 2 | — | — |
+| `pkg-extra/family/invite` | — | --r-card / --r-xs / 23rpx | 无 | 无 | 40 | 0 | 0 | 2 | — | — |
 | `pkg-extra/family/join` | --ava-cmt / 116rpx / 46rpx | --r-ava / --r-card / --r-md / --r-xs / 2rpx / 50% | 无 | state-empty | 90 | 0 | 0 | 0 | — | — |
 | `pkg-extra/family/members` | — | --r-pill / --r-sm / --r-xs / 0 0 7rpx 7rpx / 2rpx / 50% | 无 | state-empty | 69 | 0 | 0 | 0 | — | — |
 | `pkg-extra/import` | --tile-row-sm / 160rpx / 200rpx / 36rpx / 40rpx / 88rpx | --r-card / --r-md / --r-pill / --r-sm / --r-xs / 20rpx / 50% / 6rpx 6rpx 14rpx 14rpx | 无 | 自绘 | 120 | 0 | 0 | 6 | — | — |
@@ -92,5 +92,5 @@
 
 ## 已接受的债务（不是待办）
 
-- 全站裸 rpx 共 **3167** 处。本轮**不做 `--sp-*` 全量替换**：现有 spacing token 只有 6 档，而各页众数值（20/28/36rpx 等）压根没有对应 token，全量替换等于在零视觉断言的 CI 下重做 1.3 万行样式——与当初放弃 `--fs-*` 改名同形。**只在某一轮已经要改那个块时顺手用 token**。
+- 全站裸 rpx 共 **3166** 处。本轮**不做 `--sp-*` 全量替换**：现有 spacing token 只有 6 档，而各页众数值（20/28/36rpx 等）压根没有对应 token，全量替换等于在零视觉断言的 CI 下重做 1.3 万行样式——与当初放弃 `--fs-*` 改名同形。**只在某一轮已经要改那个块时顺手用 token**。
 - 裸 px 1 处：px 在小程序里不随屏宽缩放，出现即应逐个确认（不是批量替换对象）。

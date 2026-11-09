@@ -66,12 +66,13 @@
   box-shadow: var(--sh-card);
   background: var(--paper-2);
 }
+/* 角标往外挪、缩到 60rpx：原 74rpx 贴在右下角，会压住头像里那个字的笔画 */
 .pe-cam {
   position: absolute;
-  right: -4rpx;
-  bottom: -4rpx;
-  width: 74rpx;
-  height: 74rpx;
+  right: -16rpx;
+  bottom: -16rpx;
+  width: 60rpx;
+  height: 60rpx;
   border-radius: 50%;
   background: var(--pop-fill);
   display: flex;
@@ -81,8 +82,8 @@
   box-shadow: var(--sh-pop);
 }
 .pe-cam-icon {
-  width: 30rpx;
-  height: 24rpx;
+  width: 26rpx;
+  height: 20rpx;
   border: 4rpx solid var(--anchor-contrast);   /* 红底白图标：恒浅 */
   border-radius: 6rpx;
   position: relative;

@@ -39,7 +39,7 @@
   align-items: center;
   justify-content: center;
   font-family: var(--serif);
-  font-size: calc(62rpx * var(--fs-mul, 1));
+  font-size: var(--fs-h1);   /* 原 62rpx 裸值，W、Q 贴到格子边；收到刻度上的 50rpx */
   font-weight: 700;
   color: var(--anchor-contrast);
 }
