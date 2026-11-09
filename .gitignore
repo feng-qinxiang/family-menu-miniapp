@@ -63,3 +63,4 @@ artifacts/ui-audit/phase2/
 
 # ZCode/Cursor 会话本地探测脚本与启动日志（一次性调试产物，可能含本机令牌，不入库）
 /.cursor/
+/server/sql/backup-*.sql
