@@ -34,6 +34,9 @@ async function load(postResult) {
 
     const removed = await load(() => fail(404, '该分享因违规已被下架'));
     assert.equal(removed.loadErrorDesc, '该分享因违规已被下架', '真下架才只给返回');
+
+    const missing = await load(() => fail(404, 'community post not found'));
+    assert.equal(missing.loadErrorDesc, '这条分享已删除，或暂时不对外显示', '英文调试文案不能直出给用户');
   } finally {
     delete global.Page;
     delete global.wx;

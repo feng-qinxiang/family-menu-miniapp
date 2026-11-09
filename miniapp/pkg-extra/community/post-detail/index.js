@@ -171,7 +171,10 @@ Page({
           loading: false,
           loadError: !post,
           // 只有 404（已删/下架/未过审）才是不可重试的「返回」；断网、5xx 等仍给「重新加载」
-          loadErrorDesc: (err && err.status === 404 && err.message) || '',
+          // 服务端只有「下架」那句是中文给用户看的；其余 404 是英文调试文案，换成中文
+          loadErrorDesc: err && err.status === 404
+            ? (/[\u4e00-\u9fa5]/.test(err.message) ? err.message : '这条分享已删除，或暂时不对外显示')
+            : '',
           post,
           comments: cmts,
           commentsError: comments === null,
