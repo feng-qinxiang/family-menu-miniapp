@@ -5,7 +5,7 @@
 /* nav-bar 右侧提交 */
 
 /* —— Hero —— */
-.fb-head { padding: 16rpx 0 8rpx; }
+.fb-head { padding: 24rpx 0 8rpx; }
 .fb-desc {
   margin-top: 0;
   font-size: var(--fs-sub);
