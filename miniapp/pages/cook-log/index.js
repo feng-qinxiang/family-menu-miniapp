@@ -48,8 +48,7 @@ Page({
     showBackTop: false,
     scrollTopTo: -1,
     loading: true,
-    stats: { dishes: 0, fireDays: 0, praise: 0 },
-    hasMonthStats: false, // 本月一条都没有时不放大三个 0
+    statsLine: '',
     week: [],            // 本周 7 天：done(有记录) / today / future
     weekDoneText: '',
     cooks: [],           // chip 用厨师列表
@@ -192,12 +191,9 @@ Page({
 
     this.setData({
       loading: false,
-      hasMonthStats: monthItems.length > 0,
-      stats: {
-        dishes: monthItems.length,
-        fireDays: Object.keys(fireDaySet).length,
-        praise
-      },
+      statsLine: monthItems.length
+        ? ['本月做了 ' + monthItems.length + ' 道菜', '开火 ' + Object.keys(fireDaySet).length + ' 天', praise ? praise + ' 道得了四星以上' : ''].filter(Boolean).join(' · ')
+        : '本月还没有做菜记录',
       week,
       weekDoneText: doneCount ? '开火 ' + doneCount + ' 天' : '这周还没记录',
       cooks,
