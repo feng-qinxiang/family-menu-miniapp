@@ -158,7 +158,7 @@ Page({
     const monday = new Date(todayStart);
     monday.setDate(todayStart.getDate() + mondayOffset);
     const doneSet = {};
-    enriched.forEach((e) => { doneSet[e.dayKey] = true; });
+    enriched.forEach((e) => { if (!doneSet[e.dayKey]) doneSet[e.dayKey] = e.cover || true; });   // 存当天最新一道菜的图（enriched 已按时间倒序）
     const week = [];
     let doneCount = 0;
     for (let i = 0; i < 7; i++) {
@@ -176,6 +176,7 @@ Page({
         dw: WEEK_LABELS[d.getDay()],
         dd: d.getDate(),
         state,
+        cover: typeof doneSet[key] === 'string' ? doneSet[key] : '',
         key
       });
     }

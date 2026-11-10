@@ -8,7 +8,8 @@
   <view class="mag-sheet">
     <!-- 身份卡：左边是我（点进编辑资料），下面一行是家庭（点进成员管理），末行一句统计。
          首屏加载中/失败时成员数不可信，不显示「0 位成员」，骨架占位防跳动 -->
-    <view class="mag-id card g-fade-up">
+    <view class="mag-id card-dark g-fade-up">
+      <view class="deco-circle"></view>
       <view class="mag-id-me tap-scale" bindtap="goProfileEdit" aria-role="button" aria-label="编辑我的资料">
         <image wx:if="{{profile.avatarUrl && !profilePhotoBroken}}" class="mag-id-ava" src="{{profile.avatarUrl}}" mode="aspectFill" data-err-key="profilePhotoBroken" binderror="onPhotoError" />
         <view wx:else class="mag-id-ava mag-id-letter {{loading ? 'shimmer' : ''}}">{{loading ? '' : profile.initial}}</view>

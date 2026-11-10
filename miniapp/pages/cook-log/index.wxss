@@ -12,6 +12,10 @@
 .dd { width: 60rpx; height: 60rpx; display: flex; align-items: center; justify-content: center; margin: 10rpx auto 0; border-radius: 50%; color: var(--mut); font-size: var(--fs-body); }
 /* 周历三态：有记录 = 数字下一颗小点；今天 = 深色实心圆；未来 = 淡掉。过去没记录保持普通灰字 */
 .cal-day.done .dd { color: var(--ink); font-weight: 700; }
+/* 做过饭的那天不写日期数字，直接放那道菜：一周吃了什么一眼看得见（图坏了退回数字 + 小点） */
+.dd-img { display: block; box-sizing: border-box; width: 72rpx; height: 72rpx; margin-top: 4rpx; border: 4rpx solid var(--c-surface); box-shadow: 0 0 0 3rpx var(--pop-fill); }
+.cal-day.today .dd-img { box-shadow: 0 0 0 3rpx var(--anchor); }
+.dd-img + .cal-dot { visibility: hidden; }   /* 有图就不再点小红点：同一件事不说两遍（占位留着，七列底边对齐） */
 .cal-day.today .dd { background: var(--anchor); color: var(--anchor-contrast); font-weight: 700; }
 .cal-day.today .dw { color: var(--ink); font-weight: 700; }
 .cal-day.future { opacity: 0.4; }

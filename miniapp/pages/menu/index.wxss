@@ -16,6 +16,13 @@
 .m-overview .m-progress-track { margin: 8rpx 0 0; }
 .m-overview .m-main-action { flex: none; padding: 0 24rpx; font-size: var(--fs-sub); }
 .font-lg .m-overview .m-main-action { flex: 1; }
+/* 这页的视觉重点：点了菜之后，总览卡是深色锚点卡（app.wxss .card-dark），进度条走浅金。字色恒浅，不跟主题翻转 */
+.m-overview > .m-overview-copy, .m-overview > .m-main-action { position: relative; z-index: 1; }   /* 压在装饰圆上面 */
+.m-overview .m-overview-title { color: var(--anchor-contrast); }
+.m-overview .m-overview-sub { color: var(--anchor-contrast); opacity: 0.78; }
+.m-overview .m-overview-progress { color: var(--gold-on-dark); }
+.m-overview .m-progress-track { background: rgba(255, 255, 255, 0.16); }
+.m-overview .m-progress-fill { background: var(--gold-on-dark); }
 .m-overview-top, .m-overview-bottom, .m-week-head { display: flex; align-items: center; justify-content: space-between; gap: 20rpx; }
 .m-overview-top > view { min-width: 0; }
 /* 卡片标题一档：今日总览卡、本周计划卡、首页「这一餐的进度」都是 --fs-lg / 800（周卡原来单独大一档 --fs-h2） */

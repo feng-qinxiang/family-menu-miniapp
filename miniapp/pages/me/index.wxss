@@ -246,6 +246,16 @@
 .mag-id-fam-cnt { flex: none; font-size: var(--fs-cap); color: var(--mut-strong); }
 .mag-id-stats { padding: 0 0 20rpx 60rpx; font-size: var(--fs-cap); color: var(--mut); line-height: 1.5; }
 .mag-id .mag-skel-line.strong { height: 30rpx; width: 45%; }
+/* 这页的视觉重点：身份卡是全站「深色锚点卡」（app.wxss .card-dark），其余卡保持白底。
+   卡底 --anchor 两档都是深色，所以卡里的字和图标用恒定浅色，不跟主题翻转 */
+.mag-id .mag-id-me, .mag-id .mag-id-fam, .mag-id .mag-id-stats { position: relative; z-index: 1; }   /* 压在装饰圆上面 */
+.mag-id .mag-id-me { border-bottom-color: rgba(255, 255, 255, 0.12); }
+.mag-id .mag-id-ava { background: var(--gold-on-dark); }
+.mag-id .mag-id-letter { color: var(--anchor); }
+.mag-id .mag-id-name, .mag-id .mag-id-fam-name { color: var(--anchor-contrast); }
+.mag-id .mag-id-edit, .mag-id .mag-id-fam-cnt { color: var(--anchor-contrast); opacity: 0.85; }
+.mag-id .mag-id-stats { color: var(--gold-on-dark); }
+.mag-id .mag-skel-line { background: rgba(255, 255, 255, 0.14); }
 
 /* ---------- 常用入口：三列线性图标，单一暖中性底 ---------- */
 .mag-shortcuts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4rpx; margin: 16rpx 0 20rpx; padding: 12rpx var(--pad-card-sm); background: var(--c-surface); border: var(--bd-card); border-radius: var(--r-card); }
@@ -260,3 +270,5 @@
 @media (prefers-color-scheme: dark) {
   .mag-sic image, .mag-chev, .mag-id-fam-ic, .mag-phone-ic image { filter: brightness(0) invert(1); }
 }
+.mag-id .mag-chev, .mag-id .mag-id-fam-ic { filter: brightness(0) invert(1); }
+.mag-id .mag-chev { opacity: 0.6; }   /* 白底上 .35 够用，深底上要亮一档才看得出能点 */   /* 深色卡上两档都是浅色线条 */
