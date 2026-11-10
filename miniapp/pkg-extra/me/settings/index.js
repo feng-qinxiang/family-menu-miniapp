@@ -27,6 +27,7 @@ Page({
       { key: 'agreement', name: '用户协议', value: '' },
       { key: 'privacy', name: '隐私政策', value: '' },
       { key: 'about', name: '关于我们', value: 'v1.0.0' },
+      { key: 'help', name: '帮助中心', value: '' },
       { key: 'feedback', name: '意见反馈', value: '' },
     ],
     // 退出确认弹窗
@@ -262,6 +263,7 @@ Page({
       privacy: '/pkg-extra/legal/privacy/index',
       deletion: '/pkg-extra/legal/deletion/index',
       about: '/pkg-extra/me/about/index',
+      help: '/pkg-extra/me/help-faq/index',
       feedback: '/pkg-extra/me/feedback/index',
     };
     const url = routes[key];

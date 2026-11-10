@@ -52,7 +52,7 @@
   <view wx:else class="no-result">
     <text class="nr-emoji serif">?</text>
     <text class="nr-txt">没找到「{{keyword}}」相关的问题</text>
-    <text class="nr-sub">换个关键词，或直接联系客服小厨</text>
+    <text class="nr-sub">换个关键词，或在下面联系我们</text>
   </view>
 
   <!-- 客服暗卡 -->
@@ -61,10 +61,10 @@
     <view class="contact-body">
       <view class="eyebrow2">还是搞不定？</view>
       <view class="contact-h">没找到答案？</view>
-      <text class="contact-p">客服小厨在线时间 9:00 - 21:00，有问题随时找我们聊聊。</text>
+      <text class="contact-p">在「意见反馈」里给我们留言，通常 1–2 个工作日内回复。</text>
       <view class="csbtn btn btn-pop tap-scale" catchtap="onContact">
         <view class="cs-icon"></view>
-        <text>联系客服</text>
+        <text>联系我们</text>
       </view>
     </view>
   </view>
