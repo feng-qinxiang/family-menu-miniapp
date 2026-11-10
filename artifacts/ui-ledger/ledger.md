@@ -20,7 +20,7 @@
 | 页面 | 图块尺寸 | 圆角取值 | 加载态 | 空态 | 裸 rpx | 裸 px | emoji | CSS 图标 | 未声明组件 | 置了没人读的状态位 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | `pages/home` | --tile-row-sm / 30rpx / 56rpx | --r-card / --r-chip / --r-md / --r-pill / --r-sheet / --r-sm / 0 0 36rpx 36rpx / 12rpx / 2rpx / 3rpx / 40rpx / 50% / inherit | 骨架屏 | state-empty | 223 | 1 | 0 | 3 | — | — |
-| `pages/menu` | --dish-thumb | --r-card / --r-pill / --r-sm / --r-xs | 骨架屏 | state-empty | 57 | 0 | 0 | 0 | — | — |
+| `pages/menu` | --dish-thumb | --r-card / --r-pill / --r-sm / --r-xs | 骨架屏 | state-empty | 54 | 0 | 0 | 0 | — | — |
 | `pages/recipes` | 28rpx | --r-card / --r-md / --r-pill / --r-sm / --r-xs / 26rpx / 38rpx / 50% | 骨架屏 | state-empty | 163 | 0 | 0 | 0 | — | — |
 | `pages/shopping` | --tap-min / --tile-chip | --r-card / --r-pill / --r-sm / --r-xs / 12rpx / 18rpx / 50% | 骨架屏 | state-empty | 103 | 0 | 0 | 0 | — | — |
 | `pkg-extra/favorites` | --tile-grid | --r-card / --r-sm / 12rpx / 50% / 6rpx | 骨架屏 | state-empty | 31 | 0 | 0 | 0 | — | — |
@@ -34,7 +34,7 @@
 | `pkg-extra/cook-log` | — | — | 无 | state-empty | 0 | 0 | 0 | 0 | — | — |
 | `pkg-extra/cook-mode` | — | --r-card / --r-md / --r-pill / --r-sm / 2rpx / 4rpx / 50% / 6rpx | 手写 spinner | state-empty | 99 | 0 | 0 | 8 | — | — |
 | `pkg-extra/kitchen` | — | --r-card / --r-pill / --r-sm / --r-xs / 50% | 手写 spinner | state-empty | 55 | 0 | 0 | 0 | — | — |
-| `pkg-extra/recipe-detail` | --dish-thumb | --r-card / --r-chip / --r-md / --r-sm / 20rpx / 21rpx / 24rpx / 26rpx / 2rpx / 3rpx / 50% | 骨架屏 | state-empty | 163 | 0 | 0 | 5 | — | — |
+| `pkg-extra/recipe-detail` | --dish-thumb | --r-card / --r-chip / --r-md / --r-sm / 20rpx / 21rpx / 24rpx / 26rpx / 2rpx / 3rpx / 50% | 骨架屏 | state-empty | 161 | 0 | 0 | 5 | — | — |
 | `pkg-extra/recipe-edit` | --ctl-x / --tap-min / --tile-pick / 32rpx | --r-card / --r-md / --r-pill / 50% | state-loading | 无 | 106 | 0 | 0 | 0 | — | — |
 
 ### 社区
@@ -92,5 +92,5 @@
 
 ## 已接受的债务（不是待办）
 
-- 全站裸 rpx 共 **3140** 处。本轮**不做 `--sp-*` 全量替换**：现有 spacing token 只有 6 档，而各页众数值（20/28/36rpx 等）压根没有对应 token，全量替换等于在零视觉断言的 CI 下重做 1.3 万行样式——与当初放弃 `--fs-*` 改名同形。**只在某一轮已经要改那个块时顺手用 token**。
+- 全站裸 rpx 共 **3135** 处。本轮**不做 `--sp-*` 全量替换**：现有 spacing token 只有 6 档，而各页众数值（20/28/36rpx 等）压根没有对应 token，全量替换等于在零视觉断言的 CI 下重做 1.3 万行样式——与当初放弃 `--fs-*` 改名同形。**只在某一轮已经要改那个块时顺手用 token**。
 - 裸 px 1 处：px 在小程序里不随屏宽缩放，出现即应逐个确认（不是批量替换对象）。

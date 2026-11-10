@@ -116,7 +116,7 @@
           </view>
         </view>
         <view class="hm-menu-actions">
-          <view class="hm-menu-action-secondary tap-scale" bindtap="goShopping" aria-role="button" aria-label="买食材，购物清单待买 {{shoppingPending || 0}} 样">
+          <view class="hm-menu-action-secondary tap-scale" bindtap="goShopping" aria-role="button" aria-label="买食材，买菜清单待买 {{shoppingPending || 0}} 样">
             <image class="hm-menu-action-icon" src="/assets/icons/lucide/shopping-basket.svg" mode="aspectFit" aria-hidden="true" />
             <text>买食材</text>
             <text class="hm-menu-shopping-count" wx:if="{{shoppingPending > 0}}">{{shoppingPending}}</text>

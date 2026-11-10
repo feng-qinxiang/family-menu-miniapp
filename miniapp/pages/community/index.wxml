@@ -21,11 +21,12 @@
           <scroll-view scroll-x class="topic-scroll" show-scrollbar="{{false}}">
             <view class="tchips">
               <view class="tchip tap-scale {{!currentTag ? 'on' : ''}}" bindtap="clearTopic" aria-role="button" aria-selected="{{!currentTag}}"><text class="tt">全部</text></view>
-              <view class="tchip tap-scale {{currentTag === item.tag ? 'on' : ''}}" wx:for="{{hotTopics}}" wx:key="tag" data-tag="{{item.tag}}" bindtap="onTopicTap" aria-role="button" aria-selected="{{currentTag === item.tag}}"><text class="tt">{{item.tag}}</text></view>
+              <view class="tchip tap-scale {{currentTag === item.tag ? 'on' : ''}}" wx:for="{{hotTopics}}" wx:key="tag" data-tag="{{item.tag}}" bindtap="onTopicTap" aria-role="button" aria-selected="{{currentTag === item.tag}}"><text class="tt">#{{item.tag}}</text></view>
             </view>
           </scroll-view>
         </view>
-        <view class="cm-feed-head"><text>今日餐桌</text><text wx:if="{{posts.length}}" class="cm-feed-count">{{communitySummary.postCount}} 篇分享</text></view>
+        <!-- 标题跟着筛选走（原来选哪个话题都写「今日餐桌」，而且帖子并不限今天）；还有下一页时不报篇数，那只是已加载的条数 -->
+        <view class="cm-feed-head"><text>{{currentTag ? '#' + currentTag : '全部分享'}}</text><text wx:if="{{posts.length && !hasMore}}" class="cm-feed-count">{{communitySummary.postCount}} 篇</text></view>
 
           <!-- 加载态：与菜谱/买菜清单同一套骨架语言，不用一行文字占位 -->
           <view wx:if="{{loading && !posts.length}}" class="cf-skel">

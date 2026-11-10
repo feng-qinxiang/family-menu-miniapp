@@ -5,7 +5,6 @@ const {
   getTodayMenu,
   getWeeklyMenu,
   generateWeeklyMenu,
-  rebuildShoppingList,
   addCookHistory,
   removeTodayMenuRecipe,
   updateMenuItemStatus,
@@ -247,7 +246,7 @@ Page({
     if (!id) return;
     const res = await wx.showModal({
       title: '撤掉这道菜？',
-      content: '撤掉后会重算购物清单',
+      content: '撤掉后会重算买菜清单',
       confirmText: '撤掉',
       cancelText: '保留'
     });
@@ -387,38 +386,7 @@ Page({
     });
   },
 
-  async buildShopping() {
-    if (!this.data.totalCount) {
-      wx.showToast({ title: '菜单还是空的', icon: 'none' });
-      return;
-    }
-    // 实测（2026-09-19）：重建会按「食材名+单位」把上一版的已买勾选恢复回去，手动条目也保留，
-    // 所以这里原先写"已勾的买好了会清掉"是把真相说反了（服务端 loadPreviousPurchasedMap 就是为留住它）。
-    const res = await wx.showModal({
-      title: '按今日菜单重新生成清单？',
-      content: '自动条目按当前菜单重算用量；已勾的「买好了」和你手动加的条目都会保留。',
-      confirmText: '重新生成',
-      cancelText: '取消'
-    });
-    if (!res.confirm) return;
-    const ok = await runGuarded(this, 'rebuild-shopping', () => rebuildShoppingList(), {
-      loading: '生成中',
-      success: '已生成',
-      fail: '生成失败'
-    });
-    if (ok === undefined) return;
-    if (this._navTimer) clearTimeout(this._navTimer);
-    this._navTimer = setTimeout(() => wx.navigateTo({ url: '/pages/shopping/index' }), 400);
-  },
-
-  onUnload() {
-    if (this._navTimer) {
-      clearTimeout(this._navTimer);
-      this._navTimer = null;
-    }
-  },
-
-  // 「重新生成本周计划」会整份覆盖：已有计划时先确认（同 weekly-menu 的 regenerate）；
+  // 「重新生成本周菜单」会整份覆盖：已有计划时先确认（同 weekly-menu 的 regenerate）；
   // 空态里的「生成本周菜单」没东西可覆盖，不确认。_genWeekly 挡连点。
   async genWeekly() {
     if (this._genWeekly) return;
@@ -426,7 +394,7 @@ Page({
     try {
       if ((this.data.weeklyDays || []).length) {
         const res = await wx.showModal({
-          title: '重新排一版本周计划？',
+          title: '重新排一版本周菜单？',
           content: '会按全家口味重新生成七天安排，覆盖当前这一版。',
           confirmText: '重新排',
           cancelText: '取消'

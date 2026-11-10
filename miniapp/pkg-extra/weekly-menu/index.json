@@ -1,6 +1,6 @@
 {
   "navigationStyle": "custom",
-  "navigationBarTitleText": "周菜单",
+  "navigationBarTitleText": "本周菜单",
   "usingComponents": {
     "nav-bar": "/components/nav-bar/index",
     "state-empty": "/components/state-empty/index",

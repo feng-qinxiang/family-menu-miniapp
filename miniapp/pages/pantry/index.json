@@ -1,5 +1,5 @@
 {
-  "navigationBarTitleText": "食材库存",
+  "navigationBarTitleText": "冰箱库存",
   "navigationStyle": "custom",
   "enablePullDownRefresh": true,
   "usingComponents": {

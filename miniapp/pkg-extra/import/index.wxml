@@ -127,7 +127,7 @@
         </view>
 
         <view class="res-cta">
-          <button class="btn btn-pop btn-block tap-scale" bindtap="saveImport" loading="{{saving}}">存入我的菜谱</button>
+          <button class="btn btn-pop btn-block tap-scale" bindtap="saveImport" loading="{{saving}}">存入菜谱库</button>
         </view>
       </view>
 

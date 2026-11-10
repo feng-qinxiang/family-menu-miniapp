@@ -63,9 +63,6 @@
 .m-act-cook { background: var(--anchor); color: var(--anchor-contrast); }   /* 每道菜一颗：降为深色锚点，同屏只留顶部「进入厨房」一颗红 */
 .m-act-done { color: var(--ink); background: var(--paper-2); }
 .m-done-note { color: var(--pine-ink); font-size: var(--fs-sub); }
-.m-shopping-build { display: flex; align-items: center; justify-content: space-between; gap: 24rpx; padding: 28rpx 0; border-top: 1rpx solid var(--line); }
-.m-shopping-build > view { min-width: 0; }
-.m-shopping-build > text { flex: none; }
 .m-week-card { margin-top: 24rpx; }
 .m-week-link { display: flex; align-items: center; min-height: var(--tap-min); color: var(--pop); font-size: var(--fs-cap); flex: none; }
 .m-wk-item { display: flex; align-items: center; gap: 20rpx; padding: 26rpx 0; border-bottom: 1rpx solid var(--line); }

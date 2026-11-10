@@ -1,5 +1,5 @@
 {
-  "navigationBarTitleText": "购物清单",
+  "navigationBarTitleText": "买菜清单",
   "navigationStyle": "custom",
   "enablePullDownRefresh": true,
   "usingComponents": {

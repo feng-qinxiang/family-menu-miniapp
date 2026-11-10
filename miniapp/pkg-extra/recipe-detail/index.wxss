@@ -99,8 +99,6 @@
   padding: 32rpx 32rpx calc(240rpx + env(safe-area-inset-bottom));
   z-index: 5;
 }
-.rd-sheet .shead { margin: 0 0 30rpx; }
-.rd-sheet .shead:not(:first-child) { margin-top: 36rpx; }
 .rd-card { margin: 0; }
 
 .rd-empty-mini {
@@ -162,13 +160,12 @@
   word-break: break-all;
 }
 .rd-photo-hint { font-size: var(--fs-cap); color: var(--mut-strong); line-height: 1.5; padding-bottom: 8rpx; }
+.rd-photo-hint--foot { padding: 16rpx 0 0; }
 .rd-ingredient-photo { position: relative; flex: none; width: var(--tile-row-sm); height: var(--tile-row-sm); background: var(--paper-2); border-radius: var(--r-sm); overflow: hidden; }
 .rd-ingredient-image { display: block; width: 100%; height: 100%; }
-/* 无照片时只露首字，不与右侧全名重复；下方留出「加图/换图」。 */
-.rd-ingredient-text { box-sizing: border-box; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 4rpx 8rpx 32rpx; font-size: var(--fs-lg); font-weight: 700; color: var(--pine-ink); line-height: 1.2; }
+/* 无照片时只露首字，不与右侧全名重复 */
+.rd-ingredient-text { box-sizing: border-box; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 4rpx 8rpx; font-size: var(--fs-lg); font-weight: 700; color: var(--pine-ink); line-height: 1.2; }
 .rd-ingredient-label { overflow: hidden; }
-/* 底条走 --glass：原来写死白 .88，深色档 --mut-strong 翻成浅灰压在白条上，「换图/加图」只剩约 1.8:1 */
-.rd-photo-edit { position: absolute; bottom: 0; left: 0; right: 0; padding: 4rpx 0; line-height: 1.3; text-align: center; background: var(--glass); color: var(--mut-strong); font-size: var(--fs-mini); }
 
 /* 加入买菜清单按钮：同屏只留一颗实心红（底栏「开始做菜」），这里降为浅红底次按钮。
    保留红系是因为它说的是「缺料/待采购」（与 .rd-note.miss 同义）。 */
@@ -355,6 +352,8 @@
   margin-top: 6rpx;
 }
 .rd-rev-entry.no-top { border-top: none; margin-top: 0; padding-top: 8rpx; }
+/* 上一行（评价/作品）自带底线，入口再画顶线就是两条线叠着 */
+.rd-rev + .rd-rev-entry, .rd-work + .rd-rev-entry { border-top: none; margin-top: 0; }
 .rd-meav {
   width: 80rpx;
   height: 80rpx;
@@ -404,7 +403,6 @@
   padding: 22rpx 0;
   border-bottom: 2rpx solid var(--paper-2);
 }
-.rd-work:last-child { border-bottom: none; }
 .rd-work-thumb {
   flex: none;
   width: var(--dish-thumb);
