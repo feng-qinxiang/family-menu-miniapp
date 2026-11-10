@@ -251,41 +251,6 @@
   width: 404rpx;
 }
 
-/* 查看全部卡 */
-.mh-seeall-card {
-  flex: none;
-  width: 250rpx;
-  border-radius: var(--r-card);
-  background: var(--paper-2);
-  border: none;   /* 实底与旁边菜卡同层级，不再用虚线 */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 18rpx;
-}
-.mh-sa-circle {
-  width: 100rpx;
-  height: 100rpx;
-  border-radius: 50%;
-  background: var(--c-surface);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: var(--sh-soft);
-}
-.mh-sa-t { font-size: calc(28rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--ink); }
-.mh-sa-s { font-size: calc(23rpx * var(--fs-mul, 1)); color: var(--mut-strong); font-weight: 600; }
-
-/* 金色箭头 / hero 箭头 */
-.mh-ico-arrow-gold {
-  width: 22rpx;
-  height: 22rpx;
-  border-top: 4rpx solid var(--gold-deep);
-  border-right: 4rpx solid var(--gold-deep);
-  transform: rotate(45deg);
-  border-radius: 2rpx;
-}
 /* ============ 家庭菜单 ============ */
 .hm-menu-card {
   box-sizing: border-box;
