@@ -2,7 +2,7 @@ page { background: var(--paper); }
 
 .rc-seg {
   display: flex;
-  margin: 8rpx 46rpx 0;
+  margin: 24rpx 46rpx 0;
   background: var(--paper-2);
   border-radius: var(--r-pill);
   padding: 6rpx;
@@ -24,13 +24,13 @@ page { background: var(--paper); }
   color: var(--anchor-contrast);
 }
 
-.rc-body { padding: 20rpx 46rpx calc(240rpx + env(safe-area-inset-bottom)); }
+.rc-body { padding: 24rpx 46rpx calc(240rpx + env(safe-area-inset-bottom)); }
 
 .rc-tip {
   display: block;
   margin-bottom: 12rpx;
   font-size: var(--fs-sub);
-  color: var(--mut-strong);   /* 还没填完是正常状态，不是报错：不用红 */
+  color: var(--mut-strong);
 }
 
 .rc-cover {
@@ -109,25 +109,32 @@ page { background: var(--paper); }
 }
 .rc-ph { color: var(--mut-2); }
 
-.rc-picks { margin-top: 20rpx; }
+.rc-picks { margin-top: 8rpx; border-top: 2rpx solid var(--line); }
+/* 整行可点：行高补到触控下限，右侧带箭头——原来只有「菜系 未选」两个词，看不出能点 */
 .rc-pickline {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 20rpx;
-  padding: 14rpx 0;
+  min-height: var(--tap-min);
+  border-bottom: 2rpx solid var(--line);
 }
+.rc-pickline-chev { flex: none; width: 32rpx; height: 32rpx; margin-left: auto; filter: brightness(0); opacity: .35; }
+@media (prefers-color-scheme: dark) { .rc-pickline-chev { filter: brightness(0) invert(1); } }
 .rc-pickline-k { flex: none; font-size: calc(25rpx * var(--fs-mul, 1)); color: var(--mut); }
 .rc-pickline-v { font-size: calc(28rpx * var(--fs-mul, 1)); font-weight: 700; color: var(--ink); }
+/* .rc-ph 写在前面、同权重，会被上一行的 --ink 盖掉：「未选」一直是黑粗体，看着像已经选了值 */
+.rc-pickline-v.rc-ph { font-weight: 400; color: var(--mut-2); }
 
 .rc-facts {
   display: flex;
   gap: 16rpx;
-  margin-top: 12rpx;
+  margin-top: 32rpx;
 }
 .rc-fact {
   flex: 1;
   background: var(--paper-2);
-  padding: 20rpx 12rpx 22rpx;
+  border-radius: var(--r-card);
+  padding: 20rpx var(--pad-card-sm) 22rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -160,9 +167,10 @@ page { background: var(--paper); }
 }
 .rc-fact-u { margin-top: 6rpx; font-size: calc(23rpx * var(--fs-mul, 1)); color: var(--mut); }
 
+/* 上面两格都有「耗时」「几人份」小标题，难度这条原来没有 */
+.rc-dseg-k { display: block; margin: 32rpx 0 12rpx; font-size: var(--fs-cap); color: var(--mut); }
 .rc-dseg {
   display: flex;
-  margin-top: 16rpx;
   background: var(--paper-2);
   border-radius: var(--r-pill);
   padding: 6rpx;
@@ -378,3 +386,4 @@ page { background: var(--paper); }
   padding: 20rpx 46rpx calc(20rpx + env(safe-area-inset-bottom));
   background: var(--paper);
 }
+.rc-foot-tip { display: block; margin-bottom: 12rpx; text-align: center; font-size: var(--fs-cap); color: var(--mut-strong); }

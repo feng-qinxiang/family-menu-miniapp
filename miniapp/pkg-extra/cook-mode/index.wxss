@@ -242,17 +242,6 @@
   inset: 0;
   background: linear-gradient(180deg, rgba(20, 14, 8, 0.1) 40%, rgba(20, 14, 8, 0.85) 100%);
 }
-.stepimg .bignum {
-  position: absolute;
-  bottom: 22rpx;
-  left: 24rpx;
-  z-index: 2;
-  font-family: var(--serif);
-  font-size: calc(116rpx * var(--fs-mul, 1));
-  font-weight: 700;
-  line-height: 0.8;
-  -webkit-text-stroke: 3rpx rgba(255, 255, 255, 0.85);
-}
 
 /* 步骤文本滚动区：左右留白放在内层 .stepwrap-pad，不放 scroll-view 本身。
    放在 scroll-view 上时滚动条画在内容盒右缘、正好压在文字最后一列上（长步骤 + 大字档截图可见）；
@@ -262,13 +251,6 @@
   min-height: 0;
 }
 .stepwrap-pad { padding: 0 46rpx; }
-.stepeyebrow {
-  font-family: var(--serif);
-  font-size: var(--fs-sub);
-  color: var(--gold-deep);
-  font-weight: 700;
-  letter-spacing: 1rpx;
-}
 .steptext {
   /* 厨房场景手机放得远、手上有油：字号行高放大一档，扫读不费劲（对齐懒饭大字风格） */
   font-size: calc(44rpx * var(--fs-mul, 1));
@@ -279,6 +261,8 @@
   margin-top: 16rpx;
   font-family: var(--sans);
 }
+/* 这一步没有配图：正文就是整屏唯一的主角，再放大一档（灶台边隔着一臂远也能看清） */
+.steptext--solo { margin-top: 8rpx; font-size: calc(var(--fs-h1) * var(--fs-mul, 1)); line-height: 1.5; }
 
 /* 食材 tags */
 .ings {

@@ -515,6 +515,8 @@
 }
 
 /* ===== 悬浮快捷键（回顶/退出）：右侧竖排，避开底部操作栏 ===== */
+.rd-topbar { position: fixed; top: 0; left: 0; right: 0; z-index: 50; }
+.rd-topbar.solid { background: var(--paper); box-shadow: 0 2rpx 0 var(--line); }
 .rd-quicknav {
   position: fixed;
   right: 20rpx;
@@ -545,25 +547,6 @@
   transform: rotate(45deg) translate(4rpx, 4rpx);
   border-radius: 2rpx;
 }
-/* × 退出 */
-.rd-qic-x {
-  position: relative;
-  width: 30rpx;
-  height: 30rpx;
-}
-.rd-qic-x::before, .rd-qic-x::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 34rpx;
-  height: 5rpx;
-  background: var(--mut);
-  border-radius: 3rpx;
-}
-.rd-qic-x::before { transform: translate(-50%, -50%) rotate(45deg); }
-.rd-qic-x::after { transform: translate(-50%, -50%) rotate(-45deg); }
-
 /* ===== 纯 CSS 图标 ===== */
 .rd-ic { position: relative; flex: none; }
 /* 加号 */

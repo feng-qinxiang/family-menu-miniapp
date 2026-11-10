@@ -64,7 +64,7 @@
   letter-spacing: 1rpx;
 }
 .slogan {
-  max-width: 500rpx;
+  white-space: pre-line;   /* 在逗号处断成两行：原来限宽 500rpx，折行后第二行只剩「道。」 */
   margin-top: 30rpx;
   color: var(--mut-strong);
   font-size: var(--fs-cap);
@@ -120,7 +120,7 @@
 }
 .story-qm {
   position: absolute;
-  top: 28rpx;
+  top: 48rpx;   /* line-height .6 让字形往上溢出约 20rpx，原 28rpx 时引号顶到卡片上边 */
   right: 34rpx;
   font-family: var(--serif);
   font-size: calc(116rpx * var(--fs-mul, 1));

@@ -252,7 +252,6 @@ Page({
         index: i,
         text,
         image,
-        num: pad2(i + 1),
         cn: cnStep(i + 1),
         seconds: detectSeconds(text)
       };

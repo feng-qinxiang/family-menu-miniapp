@@ -99,9 +99,10 @@ function recipeDishImg(recipe) {
   return fallbackDishImg(recipe.id || title);
 }
 
+// 步骤没有自己的图就返回空串，调用方（菜谱详情、做菜模式）按 wx:if 不画图。
+// 原来回退到成品图：五个步骤挂五张一模一样的成品照，「鸡蛋打散」旁边是一盘炒好的番茄炒蛋。
 function stepDishImg(recipe, index, explicit) {
-  if (explicit) return dishImageUrl(explicit);
-  return recipeDishImg(recipe);
+  return explicit ? dishImageUrl(explicit) : '';
 }
 
 function onImgError(e, pageCtx, dataPath) {

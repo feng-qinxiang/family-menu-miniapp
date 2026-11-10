@@ -12,7 +12,6 @@
 <view class="rc-body {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <!-- 编辑模式原菜谱没拉到：空表单保存会覆盖原菜谱，submit 已拦住，这里给常驻的重试入口 -->
   <view class="rc-tip tap-scale" wx:if="{{loadFailed}}" bindtap="retryLoad" aria-role="button">原菜谱没加载出来，点这里重试</view>
-  <text class="rc-tip" wx:elif="{{tipText}}">{{tipText}}</text>
 
   <block wx:if="{{editTab === 'info'}}">
     <view class="tap-scale rc-cover" wx:if="{{form.coverImage}}" bindtap="chooseCover">
@@ -40,13 +39,15 @@
     />
 
     <view class="rc-picks">
-      <view class="rc-pickline tap-scale" bindtap="openCuisineSheet">
+      <view class="rc-pickline tap-scale" bindtap="openCuisineSheet" aria-role="button">
         <text class="rc-pickline-k">菜系</text>
-        <text class="rc-pickline-v">{{form.cuisine || '未选'}}</text>
+        <text class="rc-pickline-v {{form.cuisine ? '' : 'rc-ph'}}">{{form.cuisine || '未选'}}</text>
+        <image class="rc-pickline-chev" src="/assets/icons/lucide/chevron-right.svg" mode="aspectFit" aria-hidden="true" />
       </view>
-      <view class="rc-pickline tap-scale" bindtap="openTagSheet">
+      <view class="rc-pickline tap-scale" bindtap="openTagSheet" aria-role="button">
         <text class="rc-pickline-k">标签</text>
         <text class="rc-pickline-v {{tagsLabel === '未选' ? 'rc-ph' : ''}}">{{tagsLabel}}</text>
+        <image class="rc-pickline-chev" src="/assets/icons/lucide/chevron-right.svg" mode="aspectFit" aria-hidden="true" />
       </view>
     </view>
 
@@ -71,6 +72,7 @@
       </view>
     </view>
 
+    <text class="rc-dseg-k">难度</text>
     <view class="rc-dseg">
       <view
         class="tap-scale rc-dseg-i {{form.difficulty === item.key ? 'on' : ''}}"
@@ -134,6 +136,8 @@
 </view>
 
 <view class="rc-footbar {{fontScale === 'lg' ? 'font-lg' : ''}}">
+  <!-- 还差什么才能保存：贴着保存按钮说，三个分段里都看得到（原来挂在封面框上面，离菜名输入框隔了一块） -->
+  <text class="rc-foot-tip" wx:if="{{!loadFailed && tipText}}">{{tipText}}</text>
   <view class="btn btn-pop btn-block tap-scale {{saving ? 'is-busy' : ''}}" bindtap="submit">{{saving ? '保存中…' : '保存'}}</view>
 </view>
 

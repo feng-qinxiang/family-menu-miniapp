@@ -8,7 +8,7 @@
 }
 
 .wm-top { display: flex; align-items: center; gap: 16rpx; padding: 8rpx var(--page-gutter) 20rpx; }
-.wm-top-sub { flex: 1; min-width: 0; font-size: var(--fs-sub); color: var(--mut-strong); line-height: 1.5; }
+.wm-top-sub { flex: 1; min-width: 0; white-space: pre-line; font-size: var(--fs-sub); color: var(--mut-strong); line-height: 1.5; }
 .wm-refresh { flex: none; gap: 10rpx; padding: 0 24rpx; font-size: var(--fs-sub); }
 .wm-refresh-ic { width: 28rpx; height: 28rpx; flex: none; }
 @media (prefers-color-scheme: dark) {
@@ -39,39 +39,6 @@
 .wm-wb.on .wm-wb-dot.empty { opacity: 0.35; }
 .wm-sheet { padding: 0 var(--page-gutter) calc(40rpx + env(safe-area-inset-bottom)); }
 
-/* 统计卡 */
-.wm-summary {
-  display: flex;
-  background: var(--c-surface);
-  border: var(--bd-card);
-  border-radius: var(--r-card);   /* 与下面的日卡同一种卡表面：原来 24 对 16，上下挨着圆角不一 */
-  padding: 18rpx 0;
-}
-.wm-scell {
-  flex: 1;
-  min-width: 0;
-  padding: 0 20rpx;
-}
-.wm-scell + .wm-scell { border-left: 2rpx solid var(--c-border-light); }
-.wm-num {
-  font-size: calc(36rpx * var(--fs-mul, 1));
-  font-weight: 900;
-  color: var(--ink);
-  line-height: 1.2;
-}
-.wm-num.pop { color: var(--pop); }
-.wm-num .u {
-  font-size: var(--fs-cap);
-  font-weight: 700;
-  color: var(--mut);
-  margin-left: 4rpx;
-}
-.wm-cap {
-  font-size: var(--fs-cap);
-  color: var(--mut-strong);
-  font-weight: 600;
-  margin-top: 8rpx;
-}
 .wm-listhead { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; margin: 24rpx 0 12rpx; font-size: var(--fs-lg); font-weight: 800; color: var(--ink); }
 /* 日卡 */
 .wm-daycard {

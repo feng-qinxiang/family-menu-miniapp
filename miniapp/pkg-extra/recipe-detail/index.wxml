@@ -10,9 +10,6 @@
       <image class="rd-hero-img {{recipe.coverBroken ? 'img-broken' : ''}}" src="{{recipe.cover}}" mode="aspectFill" data-err-key="recipe.coverBroken" binderror="onPhotoError" />
       <view class="rd-hero-mask"></view>
 
-      <!-- 顶部导航：复用 nav-bar，标题留空仅返回；右侧 slot 放编辑（仅自建菜谱） -->
-      <nav-bar title="" status-bar-height="{{statusBarHeight}}"></nav-bar>
-
     </view>
 
     <!-- ===== Sheet ===== -->
@@ -163,13 +160,14 @@
     </view>
   </scroll-view>
 
-  <!-- 悬浮快捷键：长菜谱滚深后一键回顶 / 直接退出（滚动超一屏出现） -->
+  <!-- 顶部导航固定在屏幕上：压在头图上时透明、只有返回；头图滚走后换实底并带菜名。
+       原来它跟着头图一起滚走——正文直接滚到状态栏底下和时间电量叠在一起，返回键也没了 -->
+  <view class="rd-topbar {{showTopbar ? 'solid' : ''}}"><nav-bar title="{{showTopbar ? recipe.title : ''}}" status-bar-height="{{statusBarHeight}}"></nav-bar></view>
+
+  <!-- 悬浮快捷键：长菜谱滚深后一键回顶（滚动超一屏出现）。原来还有一颗「退出」，顶栏固定后返回键一直在，不用再放一颗 -->
   <view class="rd-quicknav" wx:if="{{showQuickNav}}">
     <view class="rd-qbtn tap-scale" bindtap="backToTop" aria-role="button" aria-label="回到顶部">
       <view class="rd-qic-up"></view>
-    </view>
-    <view class="rd-qbtn rd-qbtn-exit tap-scale" bindtap="goBack" aria-role="button" aria-label="退出">
-      <view class="rd-qic-x"></view>
     </view>
   </view>
 

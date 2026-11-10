@@ -39,22 +39,6 @@
         <view class="wm-wb-dot {{item.filled ? '' : 'empty'}}"></view>
       </view>
     </view>
-    <!-- 统计卡 -->
-    <view wx:if="{{menuSummary.recipeCount}}" class="wm-summary g-fade-up">
-      <view class="wm-scell">
-        <view class="wm-num">{{menuSummary.dayCount}}<text class="u">天</text></view>
-        <view class="wm-cap">本周安排</view>
-      </view>
-      <view class="wm-scell">
-        <view class="wm-num">{{menuSummary.recipeCount}}<text class="u">道</text></view>
-        <view class="wm-cap">已排菜品</view>
-      </view>
-      <view class="wm-scell">
-        <view class="wm-num {{menuSummary.blankCount ? 'pop' : ''}}">{{menuSummary.blankCount}}<text class="u">个</text></view>
-        <view class="wm-cap">空位待补</view>
-      </view>
-    </view>
-
     <view class="wm-listhead"><text>逐日菜单</text></view>
 
     <!-- 7 个 daycard -->

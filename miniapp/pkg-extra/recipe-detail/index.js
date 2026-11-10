@@ -57,6 +57,7 @@ Page({
     addingToday: false,
     // 长页快捷导航：滚动超一屏显示"回顶/退出"悬浮键
     showQuickNav: false,
+    showTopbar: false,
     // 「大家晒的」：这道菜的社区作品（最多 3 条；社区接口挂了就是空数组，不当错误处理）
     works: [],
     // COMMUNITY 关闭（个人主体）时：整块「大家晒的 + 晒我的作品」隐藏
@@ -70,14 +71,18 @@ Page({
     if (fontScale !== this.data.fontScale) this.setData({ fontScale });
     let sbh = 0;
     let winH = 0;
+    let winW = 375;
     try {
       const win = wx.getWindowInfo ? wx.getWindowInfo() : wx.getSystemInfoSync();
       sbh = win.statusBarHeight || 0;
       winH = win.windowHeight || 0;
+      winW = win.windowWidth || 375;
     } catch (e) {
       sbh = 0;
       winH = 0;
     }
+    // 头图（430rpx）快滚出导航栏那一带时，换上实底顶栏：否则正文直接滚到状态栏底下，和时间、电量叠在一起
+    this._topbarAt = 430 * winW / 750 - sbh - 44;
     // 滚动区就是 100vh 的 scroll-view，窗口高度即它的高度（悬浮键的收起判据要用）
     this._viewHeight = winH;
     const recipeId = options.id || options.recipeId;
@@ -433,8 +438,9 @@ Page({
     const nearBottom = d.scrollHeight > 0 && this._viewHeight > 0
       && top + this._viewHeight >= d.scrollHeight - 40;
     const show = top > 600 && !nearBottom;
-    if (show !== this.data.showQuickNav) {
-      this.setData({ showQuickNav: show });
+    const showTopbar = top > this._topbarAt;
+    if (show !== this.data.showQuickNav || showTopbar !== this.data.showTopbar) {
+      this.setData({ showQuickNav: show, showTopbar });
     }
   },
 

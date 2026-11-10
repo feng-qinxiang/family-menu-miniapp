@@ -33,6 +33,7 @@ assert.equal(recipeDishImg({ title: '番茄炒蛋', coverImage: uploaded }), upl
 assert.equal(recipeDishImg({ coverImage: stock }), base + stock);
 assert.equal(recipeDishImg({ title: '番茄炒蛋' }), base + stock);
 assert.equal(stepDishImg({}, 0, stock), base + stock);
+assert.equal(stepDishImg({ title: '番茄炒蛋', coverImage: stock }, 0, ''), '', '步骤没图就不画，不能拿成品图顶替');
 assert.equal(stepDishImg({}, 0, uploaded), uploaded);
 assert.equal(dishImageUrl(relativeUpload), base + relativeUpload, '真实上传回包补域名但保留签名');
 assert.equal(recipeDishImg({ title: '番茄炒蛋', coverImage: relativeUpload }), base + relativeUpload);

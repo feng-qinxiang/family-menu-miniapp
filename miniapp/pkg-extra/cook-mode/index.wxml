@@ -47,17 +47,15 @@
     <text wx:if="{{dotsHint}}" class="dots-hint">轻点进度条，可直接跳到那一步</text>
 
     <!-- 图文一起滚动，长步骤也给底部操作留足空间。 -->
-    <scroll-view class="stepwrap" scroll-y scroll-with-animation scroll-top="{{stepTop}}">
+    <scroll-view class="stepwrap" scroll-y enhanced show-scrollbar="{{false}}" scroll-with-animation scroll-top="{{stepTop}}">
     <view class="stepwrap-pad">
-    <view class="stepimg g-fade-in">
+    <view wx:if="{{steps[current].image}}" class="stepimg g-fade-in">
       <image class="stepimg-pic {{steps[current].imgBroken ? 'img-broken' : ''}}" src="{{steps[current].image}}" mode="aspectFill"
         data-err-key="{{'steps[' + current + '].imgBroken'}}" binderror="onPhotoError" />
       <view class="stepimg-mask"></view>
-      <view class="bignum title-stroke"><text>{{steps[current].num}}</text></view>
     </view>
 
-      <view class="stepeyebrow">正在烹饪</view>
-      <view class="steptext">{{steps[current].text}}</view>
+      <view class="steptext {{steps[current].image ? '' : 'steptext--solo'}}">{{steps[current].text}}</view>
 
       <!-- 食材 tags（点一下勾选：备齐一样勾一样）。当前步骤正文里点到名的料会高亮：
            服务端步骤与配料之间没有结构化关联，靠 utils/dish-logic.js 的文本匹配挑出来，
@@ -120,7 +118,7 @@
       <view class="btn next tap-scale" catchtap="onNext" aria-role="button" aria-disabled="{{finishing}}">
         <text wx:if="{{finishing}}">正在记录…</text>
         <text wx:elif="{{finished}}">已记录 · 查看记录</text>
-        <text wx:elif="{{current < total - 1}}">下一步：{{steps[current + 1].cn}}</text>
+        <text wx:elif="{{current < total - 1}}">下一步</text>
         <text wx:else>完成 · 记一笔</text>
         <view class="ic-arrow-r"></view>
       </view>
