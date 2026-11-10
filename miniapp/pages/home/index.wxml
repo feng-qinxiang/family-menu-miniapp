@@ -40,7 +40,8 @@
 
   <!-- ============ HERO ============ -->
   <view class="mh-hero g-fade-in" wx:if="{{!loading && !(loadError && !hasHomeData) && heroRecipe}}">
-    <image class="mh-hero-img" src="{{heroRecipe.dishImg}}" mode="aspectFill" data-id="{{heroRecipe.id}}" bindtap="goDetail" binderror="onHeroImgError" />
+    <!-- 大图和文字区各包一层「只有一项、以菜谱 id 为 key」的列表：点「换一道」换了 id，节点重建，入场动画重播 -->
+    <image wx:for="{{[heroRecipe.id]}}" wx:key="*this" class="g-fade-in mh-hero-img" src="{{heroRecipe.dishImg}}" mode="aspectFill" data-id="{{heroRecipe.id}}" bindtap="goDetail" binderror="onHeroImgError" />
     <view class="mh-hero-shade"></view>
     <view class="mh-hero-glow"></view>
 
@@ -48,7 +49,7 @@
       <view class="mh-name">{{currentUser.nickname || '家人'}}，今天想吃点啥</view>
     </view>
 
-    <view class="tap-scale mh-hero-body g-fade-up g-d2" data-id="{{heroRecipe.id}}" bindtap="goDetail">
+    <view wx:for="{{[heroRecipe.id]}}" wx:key="*this" class="tap-scale mh-hero-body g-fade-up g-d2" data-id="{{heroRecipe.id}}" bindtap="goDetail">
       <text class="mh-pill-tag">今日推荐</text>
       <view class="mh-hero-title title-stroke {{heroRecipe.titleClass}}">
         {{heroRecipe.title}}
@@ -112,7 +113,7 @@
 
         <view class="hm-menu-summary">
           <view class="hm-menu-progress" aria-role="progressbar" aria-label="上桌进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{menuProgress}}">
-            <view class="hm-menu-progress-fill" style="width: {{menuProgress}}%;"></view>
+            <view class="hm-menu-progress-fill g-grow-x" style="width: {{menuProgress}}%;"></view>
           </view>
         </view>
         <view class="hm-menu-actions">

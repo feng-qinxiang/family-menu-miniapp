@@ -21,7 +21,7 @@
     </view>
   </view>
   <view wx:if="{{density === 'list' && showAdd && !showPantry && !metaOverride}}" class="rc-row-add rc-row-add--inline tap-scale {{selected ? 'is-picked' : ''}}" catchtap="onAdd" aria-role="button" aria-label="{{selected ? '已点' : '点菜'}}：{{title}}">
-    <text class="rc-plus">{{selected ? '✓' : '＋'}}</text><text class="rc-row-add-label">{{selected ? '已点' : '点菜'}}</text>
+    <text class="rc-plus {{selected ? 'g-pop' : ''}}">{{selected ? '✓' : '＋'}}</text><text class="rc-row-add-label">{{selected ? '已点' : '点菜'}}</text>
   </view>
   </view>
   <!-- 底栏只在左边有话可说（冰箱用料 / 挑菜说明）时出现；只剩「点菜」时按钮回到卡片右下角，卡片矮一截 -->
@@ -33,10 +33,10 @@
       <view class="rc-row-list-note" wx:if="{{metaOverride}}">{{metaOverride}}</view>
     </view>
     <view wx:if="{{showAdd}}" class="rc-row-add tap-scale {{selected ? 'is-picked' : ''}}" catchtap="onAdd" aria-role="button" aria-label="{{selected ? '已点' : '点菜'}}：{{title}}">
-      <text class="rc-plus">{{selected ? '✓' : '＋'}}</text><text class="rc-row-add-label">{{selected ? '已点' : '点菜'}}</text>
+      <text class="rc-plus {{selected ? 'g-pop' : ''}}">{{selected ? '✓' : '＋'}}</text><text class="rc-row-add-label">{{selected ? '已点' : '点菜'}}</text>
     </view>
   </view>
-  <view wx:if="{{density !== 'list' && showAdd}}" class="rc-row-add tap-scale {{selected ? 'is-picked' : ''}}" catchtap="onAdd" aria-role="button" aria-label="{{selected ? '已点' : '点菜'}}：{{title}}"><text class="rc-plus">{{selected ? '✓' : '＋'}}</text></view>
+  <view wx:if="{{density !== 'list' && showAdd}}" class="rc-row-add tap-scale {{selected ? 'is-picked' : ''}}" catchtap="onAdd" aria-role="button" aria-label="{{selected ? '已点' : '点菜'}}：{{title}}"><text class="rc-plus {{selected ? 'g-pop' : ''}}">{{selected ? '✓' : '＋'}}</text></view>
 </view>
 
 <!-- 纵向大卡 -->
@@ -51,7 +51,7 @@
     <view wx:if="{{label}}" class="rc-lbl">{{label}}</view>
     <view wx:if="{{badgeText && !showFav}}" class="rc-badge {{selected ? 'is-hot' : ''}}">{{badgeText}}</view>
     <view wx:if="{{showFav}}" class="rc-fav tap-scale {{favorited ? 'on' : ''}}" catchtap="onFav" aria-role="button" aria-label="{{favorited ? '取消收藏' : '收藏'}}">
-      <image class="rc-fav-icon" src="/assets/icons/lucide/{{favorited ? 'heart-filled' : 'heart'}}.svg" mode="aspectFit" aria-hidden="true" />
+      <image class="rc-fav-icon {{favorited ? 'g-pop' : ''}}" src="/assets/icons/lucide/{{favorited ? 'heart-filled' : 'heart'}}.svg" mode="aspectFit" aria-hidden="true" />
     </view>
     <view
       wx:if="{{showAdd && addPlacement === 'corner' && !showFav}}"
@@ -60,7 +60,7 @@
       aria-role="button"
       aria-label="{{selected ? '已点' : '点菜'}}：{{title}}"
     >
-      <text wx:if="{{selected}}" class="rc-picked-mark">✓</text>
+      <text wx:if="{{selected}}" class="rc-picked-mark g-pop">✓</text>
       <view wx:else class="rc-add-plus"></view>
     </view>
   </view>

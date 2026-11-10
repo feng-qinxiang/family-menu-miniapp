@@ -21,7 +21,7 @@
         <text class="r">{{summary.purchasedCount}} / {{summary.totalCount}} 样</text>
       </view>
       <view class="mkt-ptrack">
-        <view class="mkt-pfill" style="width: {{summary.progressPercent}}%;"></view>
+        <view class="mkt-pfill g-grow-x" style="width: {{summary.progressPercent}}%;"></view>
       </view>
     </view>
 

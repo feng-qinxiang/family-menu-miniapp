@@ -33,7 +33,6 @@
   border-radius: 12rpx;
   background: linear-gradient(90deg, var(--orange), var(--pop-fill));
   box-shadow: 0 2rpx 8rpx rgba(200, 56, 31, 0.4);
-  transition: width 0.4s var(--g-power3-out);
 }
 
 /* 分组标题 ghead 彩 dot */

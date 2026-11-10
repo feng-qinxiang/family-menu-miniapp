@@ -160,7 +160,7 @@
         </view>
       </view>
       <view class="mc-bar">
-        <view class="mc-bar-i {{item.full ? 'full' : ''}}" style="width: {{item.percentWidth}}%;"></view>
+        <view class="mc-bar-i g-grow-x {{item.full ? 'full' : ''}}" style="width: {{item.percentWidth}}%;"></view>
       </view>
     </view>
 

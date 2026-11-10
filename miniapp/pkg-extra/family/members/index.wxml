@@ -39,7 +39,7 @@
         data-id="{{item.userId}}"
         bindtap="onMemberTap"
       >
-        <view class="mavt mavt-{{item.tone}}">{{item.initial}}</view>
+        <view class="mavt ava-{{item.tone}}">{{item.initial}}</view>
         <view class="mmid">
           <view class="mname">
             <text class="mname-txt ellipsis">{{item.nickname}}</text>

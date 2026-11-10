@@ -3,6 +3,7 @@ const features = require('../../../utils/features');
 const api = require('../../../utils/api');
 const { dishImageUrl, onPhotoError: markPhotoBroken } = require('../../../utils/image');
 const { guard, release } = require('../../../utils/interaction');
+const { avaTone } = require('../../../utils/constants');
 
 function avaText(name) {
   return name ? String(name).slice(0, 1) : '匿';
@@ -28,6 +29,7 @@ function normalizePost(post) {
     // 没有时间就不写占位语（原「家常分享」是凑数的副标题）
     authorMeta: post.timeText || post.createdAt || '',
     avaText: avaText(post.author),
+    avaTone: avaTone(post.author),
     paragraphs: paragraphs.length ? paragraphs : [post.content || '暂无正文'],
     cover,
     images,
@@ -52,6 +54,7 @@ function normalizeComment(c) {
     commentId: c.commentId || ('c-' + Math.random().toString(36).slice(2)),
     author: c.author || '匿名厨友',
     avaText: avaText(c.author),
+    avaTone: avaTone(c.author),
     content: c.content || '',
     createdAt: c.createdAt || '刚刚',
     mine: !!c.mine,

@@ -81,7 +81,19 @@ const SLOTS = [
   { key: 'dinner', label: '晚' }
 ];
 
+// 文字头像配色：按名字取色，同一个人在哪儿都是同一个色（样式见 app.wxss .ava-*）
+const AVA_TONES = ['pine', 'gold', 'inkdeep'];
+function avaTone(name) {
+  const s = String(name || '');
+  // FNV-1a：逐字相加的话，常见的两字昵称大片撞在同一个色上（演示数据里三位作者全是金色）
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619) >>> 0;
+  return AVA_TONES[h % AVA_TONES.length];
+}
+
 module.exports = {
+  AVA_TONES,
+  avaTone,
   mealTypeLabels,
   sourceLabels,
   cuisineLabels,

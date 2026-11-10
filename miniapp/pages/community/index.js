@@ -14,6 +14,7 @@ const { withTabSelect } = require('../../behaviors/tab-select');
 const { withScrollReveal } = require('../../behaviors/scroll-reveal');
 const { dishImageUrl, onPhotoError: markPhotoBroken } = require('../../utils/image');
 const { takePendingRecipe } = require('../../utils/post-share');
+const { avaTone } = require('../../utils/constants');
 
 const reportReasons = ['内容不实', '步骤不全', '疑似搬运', '其他'];
 // 信息流分页：后端 /api/community/posts 已支持 page/size（上限 50）
@@ -202,6 +203,7 @@ Page({
       return {
         ...post,
         authorInitial: post.author ? post.author.slice(0, 1) : '匿',
+        authorTone: avaTone(post.author),
         photo: images[0] || '',
         imageCount: images.length,
         recipeThumb: recipeImg,

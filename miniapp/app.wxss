@@ -521,6 +521,24 @@ page.font-lg, .font-lg {
   background: rgba(200, 56, 31, 0.16);
 }
 
+/* ============ 文字头像配色 ============
+   社区里按名字取色（utils/constants.js#avaTone），同一个人在列表、详情、评论里是同一个色；
+   红色那档只给家庭成员页按顺序轮用——社区里红色是「点赞 / 发帖」的颜色，头像不抢。
+   金色档是浅金底配深字：深色档的 --gold-deep 是亮金，上面放白字只有约 2:1。 */
+.ava-pine, .ava-inkdeep, .ava-pop { color: var(--anchor-contrast); }
+.ava-pine { background: var(--pine); }
+.ava-gold { background: var(--gold-on-dark); color: var(--anchor); }
+.ava-inkdeep { background: var(--anchor); }
+.ava-pop { background: var(--pop-fill); }
+
+/* ============ 功能入口图标的浅色底 ============
+   同一个功能在哪个页面都是同一个色：菜谱 / 收藏 = 红，冰箱 = 蓝，买菜 / 导入 = 绿，周菜单 = 金。
+   四个 soft token 深色档各有对应暗色，不用另写。挂在图标外面那层方块上，覆盖它原来的中性底 */
+.tint-pop { background: var(--pop-soft); }
+.tint-info { background: var(--c-info-soft); }
+.tint-pine { background: var(--c-accent-soft); }
+.tint-gold { background: var(--c-gold-soft); }
+
 /* ============ 按钮 ============ */
 .btn {
   box-sizing: border-box;
@@ -701,7 +719,10 @@ page {
 }
 .g-fade-up, .g-fade-in, .g-fade-down, .g-fade-left, .g-fade-right, .g-scale-in {
   animation-duration: var(--g-dur);
-  animation-fill-mode: both;
+  /* backwards 而不是 both：只在「延迟等待 + 播放」期间占住样式，播完交还给元素自己。
+     原来用 both，播完后 transform / opacity 被动画永久占着——同一元素上的 .tap-scale 按下缩放
+     （社区帖子卡、清单行、首页大图文字区等 13 处）和禁用态的半透明都被盖掉，按了没反应。 */
+  animation-fill-mode: backwards;
   animation-timing-function: var(--g-power3-out);
 }
 .g-fade-up { animation-name: gFadeUp; }
@@ -717,6 +738,15 @@ page {
 @keyframes gFadeLeft { from { opacity: 0; transform: translateX(48rpx); } to { opacity: 1; transform: translateX(0); } }
 @keyframes gFadeRight { from { opacity: 0; transform: translateX(-48rpx); } to { opacity: 1; transform: translateX(0); } }
 @keyframes gScaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+/* 状态切换的回应：点赞 / 收藏 / 点菜成功时图标弹一下。挂在「已选中」的选择器上，状态一变就播一次 */
+.g-pop { animation: gPop var(--g-dur-fast) var(--g-back-out); }
+@keyframes gPop { 0% { transform: scale(0.6); } 60% { transform: scale(1.25); } 100% { transform: scale(1); } }
+/* 进度条：进页面时从左长出来，之后数值变化时平滑伸缩 */
+.g-grow-x { transform-origin: left center; animation: gGrowX var(--g-dur-slow) var(--g-power3-out) backwards; transition: width var(--g-dur) var(--g-power3-out); }
+@keyframes gGrowX { from { transform: scaleX(0); } }
+/* 空态插画轻轻浮动，页面不至于完全静止 */
+.g-float { animation: gFloat 3.2s ease-in-out infinite; }
+@keyframes gFloat { 50% { transform: translateY(-10rpx); } }
 .g-d1 { animation-delay: 0.06s; }
 .g-d2 { animation-delay: 0.12s; }
 .g-d3 { animation-delay: 0.18s; }
@@ -735,6 +765,13 @@ page {
   animation: shimmer 1.2s ease-in-out infinite;
 }
 @keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+/* 系统开了「减弱动态效果」：时长归零，内容直接到位；循环类动画停掉 */
+@media (prefers-reduced-motion: reduce) {
+  page { --g-dur-fast: 0.01s; --g-dur: 0.01s; --g-dur-slow: 0.01s; }
+  .g-d1, .g-d2, .g-d3, .g-d4, .g-d5, .g-d6, .g-d7, .g-d8 { animation-delay: 0s; }
+  .g-float, .shimmer::after { animation: none; }
+  .rv-hold { opacity: 1; transform: none; }
+}
 @keyframes blink { 50% { opacity: 0; } }
 
 /* —— 图片加载失败兜底（.img-broken，由 binderror 确认后才会挂上）—— */

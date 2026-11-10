@@ -113,15 +113,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--anchor-contrast);
   font-size: calc(36rpx * var(--fs-mul, 1));
   font-weight: 800;
   font-family: var(--sans);
 }
-.mavt-pine { background: var(--pine); }
-.mavt-gold { background: var(--gold-deep); }
-.mavt-inkdeep { background: var(--anchor); }
-.mavt-pop { background: var(--pop-fill); }
 
 .mmid {
   flex: 1;

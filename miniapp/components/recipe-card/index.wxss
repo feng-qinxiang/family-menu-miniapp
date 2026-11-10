@@ -140,6 +140,8 @@
 }
 .rc-add-corner.is-picked { background: var(--pine); }
 .rc-picked-mark { color: var(--anchor-contrast); font-size: var(--fs-lg); font-weight: 800; }
+/* 点菜成功对勾要弹一下（wxml 里挂全局 .g-pop）：<text> 是行内元素，不改成 inline-block 缩放不生效 */
+.rc-picked-mark, .rc-row-add .rc-plus { display: inline-block; }
 
 .rc-add-plus {
   position: relative;

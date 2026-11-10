@@ -28,8 +28,7 @@
   border-radius: calc(var(--ava-head) * var(--r-ava));
   font-weight: 700;
   font-size: calc(var(--ava-head) * var(--ava-glyph) * var(--fs-mul, 1));
-  color: var(--ink);
-  background: var(--paper-2);
+  /* 底色和字色走全站 .ava-*（按名字取色） */
 }
 .ava-sm { width: var(--ava-cmt); height: var(--ava-cmt); border-radius: calc(var(--ava-cmt) * var(--r-ava)); font-size: calc(var(--ava-cmt) * var(--ava-glyph) * var(--fs-mul, 1)); }
 
@@ -181,7 +180,7 @@
   flex: none;
 }
 .reaction-icon { filter: brightness(0); opacity: .55; }
-.react.liked .reaction-icon, .react.fav-on .reaction-icon { filter: none; opacity: 1; }
+.react.liked .reaction-icon, .react.fav-on .reaction-icon { filter: none; opacity: 1; animation: gPop var(--g-dur-fast) var(--g-back-out); }
 .react .n { font-weight: 500; word-break: break-all; line-height: 1.3; }
 .react.liked, .react.fav-on { color: var(--pop); }
 

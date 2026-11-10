@@ -57,7 +57,7 @@
             bindtap="openPost"
           >
             <view class="ptop">
-              <view class="pavatar">{{item.authorInitial}}</view>
+              <view class="pavatar ava-{{item.authorTone}}">{{item.authorInitial}}</view>
               <view class="pmeta"><view class="pname">{{item.author}}</view></view>
               <view class="tap-scale pa-report" catchtap="openReportSheet" data-id="{{item.id}}" aria-role="button" aria-label="举报{{item.title}}">···</view>
             </view>

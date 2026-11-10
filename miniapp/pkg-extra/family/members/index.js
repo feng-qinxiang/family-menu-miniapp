@@ -18,7 +18,7 @@ function memberSub(tags, isOwner) {
 // 忌口标签池（唯一定义在 utils/constants.js，与菜谱页的关键词映射同源）
 const AVOID_OPTIONS = AVOID_TAGS;
 
-// 文字头像配色循环（复用 token 配色，见 wxss .mavt-*）
+// 文字头像配色循环（样式见 app.wxss .ava-*）
 const AVT_TONES = ['pine', 'gold', 'inkdeep', 'pop'];
 
 Page({

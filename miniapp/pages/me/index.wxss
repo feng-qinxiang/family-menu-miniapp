@@ -257,10 +257,10 @@
 .mag-id .mag-id-stats { color: var(--gold-on-dark); }
 .mag-id .mag-skel-line { background: rgba(255, 255, 255, 0.14); }
 
-/* ---------- 常用入口：三列线性图标，单一暖中性底 ---------- */
+/* ---------- 常用入口：三列线性图标，图标底按用途分四种浅色（app.wxss .tint-*） ---------- */
 .mag-shortcuts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4rpx; margin: 16rpx 0 20rpx; padding: 12rpx var(--pad-card-sm); background: var(--c-surface); border: var(--bd-card); border-radius: var(--r-card); }
 .mag-shortcut { display: flex; flex-direction: column; align-items: center; gap: 10rpx; padding: 16rpx 0; min-width: 0; min-height: var(--tap-min); }
-.mag-sic { width: 80rpx; height: 80rpx; display: flex; align-items: center; justify-content: center; border-radius: var(--r-md); background: var(--paper-2); }
+.mag-sic { width: 80rpx; height: 80rpx; display: flex; align-items: center; justify-content: center; border-radius: var(--r-md); }   /* 底色由 wxml 里的 tint-* 给 */
 .mag-sic image { width: 44rpx; height: 44rpx; }
 .mag-scname { font-size: var(--fs-sub); font-weight: 600; color: var(--ink); line-height: 1.4; text-align: center; }
 

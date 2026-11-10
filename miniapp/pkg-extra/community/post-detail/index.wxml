@@ -25,7 +25,7 @@
     <view class="body">
       <!-- 作者块 -->
       <view class="author g-fade-up">
-        <view class="ava">{{post.avaText}}</view>
+        <view class="ava ava-{{post.avaTone}}">{{post.avaText}}</view>
         <view class="acol">
           <view class="aname ellipsis">{{post.author}}</view>
           <view wx:if="{{post.authorMeta}}" class="atime">{{post.authorMeta}}</view>
@@ -98,7 +98,7 @@
         <view wx:if="{{commentsError}}" class="comment-retry"><text>评论暂时没加载出来</text><view class="tap-scale" bindtap="retryComments" aria-role="button">{{commentsLoading ? '加载中' : '重新加载'}}</view></view>
         <view wx:if="{{comments.length}}" class="cmt-list">
           <view wx:for="{{comments}}" wx:key="commentId" class="cmt">
-            <view class="ava ava-sm">{{item.avaText}}</view>
+            <view class="ava ava-sm ava-{{item.avaTone}}">{{item.avaText}}</view>
             <view class="ccol">
               <view class="crow">
                 <view class="cmeta"><text class="cname">{{item.author}}</text><text class="ctime">{{item.createdAt}}</text></view>

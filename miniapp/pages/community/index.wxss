@@ -61,15 +61,13 @@
 .pavatar {
   width: var(--ava-cmt);
   height: var(--ava-cmt);
-  border-radius: calc(var(--ava-cmt) * var(--r-ava));   /* 人名头像：暖中性底；红色只留给操作，头像不再像按钮。形状走全站 --r-ava */
+  border-radius: calc(var(--ava-cmt) * var(--r-ava));   /* 人名头像：底色和字色走全站 .ava-*（按名字取色，不含红——红色只留给操作）。形状走全站 --r-ava */
   flex: none;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: calc(var(--ava-cmt) * var(--ava-glyph) * var(--fs-mul, 1));
   font-weight: 700;
-  color: var(--ink);
-  background: var(--paper-2);
 }
 .pmeta { flex: 1; min-width: 0; }
 .pname { font-size: calc(28rpx * var(--fs-mul, 1)); font-weight: 700; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -122,6 +120,7 @@
 }
 .pa-btn.on { color: var(--pop); }
 .pa-ico { font-size: calc(28rpx * var(--fs-mul, 1)); line-height: 1; }
+.pa-ico.on { animation: gPop var(--g-dur-fast) var(--g-back-out); }   /* 点了赞 / 收藏，图标弹一下 */
 /* 图标一律要求「单色、可被 CSS color 着色」。CSS 里追加的 FE0E 是
    variation selector-15（文字呈现）：不追加时 ☆★♡⚠ 在 iOS/Android 上常被渲染成彩色 emoji，
    既吃不到 currentColor（也就跟着不翻深色档），又把系统风格混进品牌界面。

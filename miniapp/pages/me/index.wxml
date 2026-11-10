@@ -58,12 +58,12 @@
 
     <!-- 常用入口：线性图标 + 一行名字，三列 -->
     <view class="mag-shortcuts g-fade-up g-d1">
-      <view class="mag-shortcut tap-scale" bindtap="goRecipes" aria-role="button"><view class="mag-sic"><image src="/assets/icons/lucide/book-open.svg" mode="aspectFit" aria-hidden="true" /></view><view class="mag-scname">菜谱库</view></view>
-      <view class="mag-shortcut tap-scale" bindtap="goPantry" aria-role="button"><view class="mag-sic"><image src="/assets/icons/lucide/refrigerator.svg" mode="aspectFit" aria-hidden="true" /></view><view class="mag-scname">冰箱库存</view></view>
-      <view class="mag-shortcut tap-scale" bindtap="goShopping" aria-role="button"><view class="mag-sic"><image src="/assets/icons/lucide/shopping-basket.svg" mode="aspectFit" aria-hidden="true" /></view><view class="mag-scname">买菜清单</view></view>
-      <view class="mag-shortcut tap-scale" bindtap="goWeekly" aria-role="button"><view class="mag-sic"><image src="/assets/icons/lucide/calendar-days.svg" mode="aspectFit" aria-hidden="true" /></view><view class="mag-scname">本周菜单</view></view>
-      <view class="mag-shortcut tap-scale" bindtap="goImport" aria-role="button"><view class="mag-sic"><image src="/assets/icons/lucide/download.svg" mode="aspectFit" aria-hidden="true" /></view><view class="mag-scname">导入菜谱</view></view>
-      <view wx:if="{{features.COMMUNITY}}" class="mag-shortcut tap-scale" bindtap="goFavorites" aria-role="button"><view class="mag-sic"><image src="/assets/icons/lucide/bookmark.svg" mode="aspectFit" aria-hidden="true" /></view><view class="mag-scname">我的收藏</view></view>
+      <view class="mag-shortcut tap-scale" bindtap="goRecipes" aria-role="button"><view class="mag-sic tint-pop"><image src="/assets/icons/lucide/book-open.svg" mode="aspectFit" aria-hidden="true" /></view><view class="mag-scname">菜谱库</view></view>
+      <view class="mag-shortcut tap-scale" bindtap="goPantry" aria-role="button"><view class="mag-sic tint-info"><image src="/assets/icons/lucide/refrigerator.svg" mode="aspectFit" aria-hidden="true" /></view><view class="mag-scname">冰箱库存</view></view>
+      <view class="mag-shortcut tap-scale" bindtap="goShopping" aria-role="button"><view class="mag-sic tint-pine"><image src="/assets/icons/lucide/shopping-basket.svg" mode="aspectFit" aria-hidden="true" /></view><view class="mag-scname">买菜清单</view></view>
+      <view class="mag-shortcut tap-scale" bindtap="goWeekly" aria-role="button"><view class="mag-sic tint-gold"><image src="/assets/icons/lucide/calendar-days.svg" mode="aspectFit" aria-hidden="true" /></view><view class="mag-scname">本周菜单</view></view>
+      <view class="mag-shortcut tap-scale" bindtap="goImport" aria-role="button"><view class="mag-sic tint-pine"><image src="/assets/icons/lucide/download.svg" mode="aspectFit" aria-hidden="true" /></view><view class="mag-scname">导入菜谱</view></view>
+      <view wx:if="{{features.COMMUNITY}}" class="mag-shortcut tap-scale" bindtap="goFavorites" aria-role="button"><view class="mag-sic tint-pop"><image src="/assets/icons/lucide/bookmark.svg" mode="aspectFit" aria-hidden="true" /></view><view class="mag-scname">我的收藏</view></view>
     </view>
     <!-- 最近上桌 -->
     <view class="g-fade-up g-d2" wx:if="{{cookHistory.length}}">

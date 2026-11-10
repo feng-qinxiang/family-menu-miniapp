@@ -36,6 +36,7 @@
 .m-quick-row { display: flex; gap: 16rpx; margin: 24rpx 0 8rpx; }
 /* 两张并排入口卡：图标 + 名称 + 真实状态 + ›；圆角与上方总览卡同为 --r-card */
 .m-quick-card { flex: 1; min-width: 0; min-height: var(--tap-min); box-sizing: border-box; display: flex; align-items: center; gap: 16rpx; background: var(--c-surface); padding: 20rpx var(--pad-card-sm); border: var(--bd-card); border-radius: var(--r-card); }
+.m-quick-ic { flex: none; width: 68rpx; height: 68rpx; display: flex; align-items: center; justify-content: center; border-radius: var(--r-sm); }
 .m-quick-icon { flex: none; width: 40rpx; height: 40rpx; filter: brightness(0); opacity: .7; }
 .m-quick-copy { flex: 1; min-width: 0; }
 .m-quick-card .m-quick-sub { margin-top: 2rpx; color: var(--mut-strong); }

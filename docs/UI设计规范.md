@@ -113,6 +113,14 @@
 | 骨架屏 | `.skeleton` 底 + `.shimmer` 扫光 |
 | 数字变化 | 统计数字用 count-up（600ms cubic-out，参考 me 页实现） |
 | 弹层 | `state-sheet` 自带 g-fade-up 滑入 |
+| 状态切换 | 点赞 / 收藏 / 点菜成功，图标挂 `g-pop` 弹一下（挂在「已选中」状态上，状态一变就播一次） |
+| 进度条 | 填充条挂 `g-grow-x`：进页面从左长出，数值变化平滑伸缩 |
+| 空态 | `state-empty` 插画自带 `g-float` 轻浮动，页面不用再加 |
+| 内容替换 | 同一位置换内容要重播入场时，用单项列表按 id 做 key（参考首页「换一道」） |
+
+- 入场动画的 `animation-fill-mode` 一律 `backwards`，不要写 `both`：`both` 会让动画一直占着 transform / opacity，同一元素上的 `tap-scale` 和置灰都会失效
+- 系统开了「减弱动态效果」时，全部入场时长归零、浮动和扫光停掉（`app.wxss` 里统一处理，页面不用管）
+- 文字头像的底色用 `.ava-pine / .ava-gold / .ava-inkdeep`，按名字取色走 `utils/constants.js` 的 `avaTone()`；功能入口图标的浅色底用 `.tint-pop / .tint-info / .tint-pine / .tint-gold`。红色实底（`.ava-pop`）只给家庭成员页的固定排位用，不进按名字取色的池子
 
 - 微信小程序无 GSAP；设计稿中的滚动浮现/视差如需落地，用 `IntersectionObserver`（列表渲染完成后创建，onUnload disconnect）
 

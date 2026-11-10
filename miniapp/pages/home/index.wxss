@@ -25,6 +25,7 @@
   position: relative;
   height: var(--photo-hero-h);
   overflow: hidden;
+  background: var(--anchor);   /* 换一道时大图是淡入的：底下垫深棕，不会先闪一下白纸色 */
 }
 .mh-hero-img {
   position: absolute;
