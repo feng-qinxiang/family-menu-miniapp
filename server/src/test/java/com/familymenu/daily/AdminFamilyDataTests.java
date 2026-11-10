@@ -188,6 +188,12 @@ class AdminFamilyDataTests {
                         .contains("spreadsheetml");
                 assertThat(result.getResponse().getContentAsByteArray().length).isGreaterThan(500);
             }
+            // 文件名跟着小程序里的叫法走：运营下载到的是「买菜清单」「冰箱库存」，不是旧名
+            for (String[] kn : new String[][]{{"shopping", "买菜清单"}, {"pantry", "冰箱库存"}}) {
+                String disposition = mockMvc.perform(get("/api/admin/export/" + kn[0]).header("X-Auth-Token", token))
+                        .andReturn().getResponse().getHeader("Content-Disposition");
+                assertThat(java.net.URLDecoder.decode(disposition, StandardCharsets.UTF_8)).contains(kn[1]);
+            }
         } finally {
             demote(adminId[0]);
         }

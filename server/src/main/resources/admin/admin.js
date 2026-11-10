@@ -981,7 +981,7 @@
 
     var kpis = '<div class="kpi-grid">' +
       kpi('用户总数', fmtNum(d.userCount), 'newUsers', 'newUsers', false, 'users') +
-      kpi('家庭总数', fmtNum(d.familyCount), '', '', false, 'families') +
+      kpi('家庭总数', fmtNum(d.familyCount), 'newFamilies', 'newFamilies', false, 'families') +
       kpi('已发布帖子', fmtNum(d.postCount), 'newPosts', 'newPosts', false, 'posts', 'APPROVED') +
       kpi('已支付订单', fmtNum(d.paidOrderCount), 'paidOrders', 'paidOrders', false, 'orders', 'PAID') +
       kpi('累计收入', fmtMoney(d.paidRevenueFen), 'revenueFen', 'revenueFen', true, 'orders', 'PAID') +

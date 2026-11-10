@@ -52,7 +52,7 @@
     <!-- 空态 -->
     <state-empty
       wx:elif="{{loaded && !pantrySummary.count && !showAddForm}}"
-      type="pop"
+      type="fridge"
       size="compact"
       title="冰箱还空着"
       desc="记下家里有的，点菜时先用现成的"

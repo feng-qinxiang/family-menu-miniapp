@@ -489,6 +489,16 @@ class AdminModulesTests {
                 }
                 assertThat(series.get(i).get("revenueFen").asLong()).isGreaterThanOrEqualTo(0L);
             }
+            // 看板「家庭总数」卡的近 7 天增量读的就是这一列：新建一个家庭，今天这格必须跟着 +1
+            long before = series.get(13).get("newFamilies").asLong();
+            jdbcTemplate.update("INSERT INTO family (name, owner_user_id) VALUES ('metrics-probe', ?)", id[0]);
+            try {
+                JsonNode again = objectMapper.readTree(mockMvc.perform(get("/api/admin/metrics?days=14")
+                        .header("X-Auth-Token", admin)).andReturn().getResponse().getContentAsString()).get("series");
+                assertThat(again.get(13).get("newFamilies").asLong()).isEqualTo(before + 1);
+            } finally {
+                jdbcTemplate.update("DELETE FROM family WHERE name = 'metrics-probe' AND owner_user_id = ?", id[0]);
+            }
 
             mockMvc.perform(get("/api/admin/metrics").header("X-Auth-Token", guestLogin()))
                     .andExpect(status().isForbidden());

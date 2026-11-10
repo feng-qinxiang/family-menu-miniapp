@@ -10,6 +10,14 @@
     <image wx:elif="{{type === 'gray'}}" class="se-icon"
       src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc1OCcgaGVpZ2h0PSc1OCcgdmlld0JveD0nMCAwIDY0IDY0JyBmaWxsPSdub25lJyBzdHJva2U9JyM3YTZlNWQnIHN0cm9rZS13aWR0aD0nMi42JyBzdHJva2UtbGluZWNhcD0ncm91bmQnIHN0cm9rZS1saW5lam9pbj0ncm91bmQnPjxlbGxpcHNlIGN4PSczMicgY3k9JzQwJyByeD0nMjInIHJ5PSc5Jy8+PGVsbGlwc2UgY3g9JzMyJyBjeT0nNDAnIHJ4PScxMScgcnk9JzQuMicgc3Ryb2tlLXdpZHRoPScyLjInIG9wYWNpdHk9Jy41NScvPjxwYXRoIGQ9J00xNiA0MGMwLTIgNC00IDE2LTRzMTYgMiAxNiA0JyBvcGFjaXR5PScuMzUnLz48cGF0aCBkPSdNNDQgMTZsLTMgOU01MCAxNmwtMS41IDknIG9wYWNpdHk9Jy43Jy8+PC9zdmc+"
       mode="aspectFit" />
+    <!-- 冰箱空着（fridge）/ 清单空着（basket）：形状取自 lucide 的 refrigerator、shopping-basket，
+         描边换成番茄红——原来这两处和「没有菜谱」共用一只空盘，看不出空的是什么 -->
+    <image wx:elif="{{type === 'fridge'}}" class="se-icon"
+      src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc1OCcgaGVpZ2h0PSc1OCcgdmlld0JveD0nLTMgLTMgMzAgMzAnIGZpbGw9J25vbmUnIHN0cm9rZT0nI2U4NDcyYScgc3Ryb2tlLXdpZHRoPScxLjInIHN0cm9rZS1saW5lY2FwPSdyb3VuZCcgc3Ryb2tlLWxpbmVqb2luPSdyb3VuZCc+PHBhdGggZD0nTTUgNmE0IDQgMCAwIDEgNC00aDZhNCA0IDAgMCAxIDQgNHYxNGEyIDIgMCAwIDEtMiAySDdhMiAyIDAgMCAxLTItMlY2WicvPjxwYXRoIGQ9J001IDEwaDE0Jy8+PHBhdGggZD0nTTE1IDd2NicvPjwvc3ZnPg=="
+      mode="aspectFit" />
+    <image wx:elif="{{type === 'basket'}}" class="se-icon"
+      src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc1OCcgaGVpZ2h0PSc1OCcgdmlld0JveD0nLTMgLTMgMzAgMzAnIGZpbGw9J25vbmUnIHN0cm9rZT0nI2U4NDcyYScgc3Ryb2tlLXdpZHRoPScxLjInIHN0cm9rZS1saW5lY2FwPSdyb3VuZCcgc3Ryb2tlLWxpbmVqb2luPSdyb3VuZCc+PHBhdGggZD0nbTE1IDExLTEgOScvPjxwYXRoIGQ9J20xOSAxMS00LTcnLz48cGF0aCBkPSdNMiAxMWgyMCcvPjxwYXRoIGQ9J20zLjUgMTEgMS42IDcuNGEyIDIgMCAwIDAgMiAxLjZoOS44YTIgMiAwIDAgMCAyLTEuNmwxLjctNy40Jy8+PHBhdGggZD0nTTQuNSAxNS41aDE1Jy8+PHBhdGggZD0nbTUgMTEgNC03Jy8+PHBhdGggZD0nbTkgMTEgMSA5Jy8+PC9zdmc+"
+      mode="aspectFit" />
     <!-- 无网络（offline） -->
     <image wx:elif="{{type === 'offline'}}" class="se-icon"
       src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc1OCcgaGVpZ2h0PSc1OCcgdmlld0JveD0nMCAwIDY0IDY0JyBmaWxsPSdub25lJyBzdHJva2U9JyM3YTZlNWQnIHN0cm9rZS13aWR0aD0nMi42JyBzdHJva2UtbGluZWNhcD0ncm91bmQnIHN0cm9rZS1saW5lam9pbj0ncm91bmQnPjxwYXRoIGQ9J00xMCAyNmMxMi41LTExIDMxLjUtMTEgNDQgMCcgb3BhY2l0eT0nLjQnLz48cGF0aCBkPSdNMTggMzRjOC03IDIwLTcgMjggMCcgb3BhY2l0eT0nLjY1Jy8+PHBhdGggZD0nTTI2IDQyYzMuNS0zIDguNS0zIDEyIDAnLz48Y2lyY2xlIGN4PSczMicgY3k9JzUwJyByPScxLjYnIGZpbGw9JyM3YTZlNWQnIHN0cm9rZT0nbm9uZScvPjxwYXRoIGQ9J001MCAxNkwxNCA1Micgc3Ryb2tlPScjZTg0NzJhJyBzdHJva2Utd2lkdGg9JzMnLz48L3N2Zz4="

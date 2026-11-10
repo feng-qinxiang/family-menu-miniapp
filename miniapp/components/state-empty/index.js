@@ -4,7 +4,7 @@ Component({
     addGlobalClass: true
   },
   properties: {
-    // 图标主题：pop(番茄红柔色) | gold(金) | gray(灰) | offline(无网络) | search(无结果)
+    // 图标主题：pop(番茄红柔色) | gold(金) | gray(灰) | offline(无网络) | search(无结果) | fridge(冰箱空) | basket(清单空)
     type: {
       type: String,
       value: 'pop'

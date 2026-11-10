@@ -293,7 +293,8 @@ public final class AdminModels {
             long newComments,
             long paidOrders,
             /** 当日已支付订单金额（分），避免浮点误差 */
-            long revenueFen
+            long revenueFen,
+            long newFamilies
     ) {
     }
 

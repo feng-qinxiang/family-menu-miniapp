@@ -1,5 +1,7 @@
 {
   "light": {
+    "navTextStyle": "black",
+    "bgTextStyle": "dark",
     "themePaper": "#fbf8f3",
     "themePaper2": "#f0ebe2",
     "themeInk": "#2c241b",
@@ -31,6 +33,8 @@
     "themeGlassClear": "rgba(251, 248, 243, 0)"
   },
   "dark": {
+    "navTextStyle": "white",
+    "bgTextStyle": "light",
     "themePaper": "#1c1c1c",
     "themePaper2": "#2e2e2e",
     "themeInk": "#efefef",

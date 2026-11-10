@@ -63,10 +63,10 @@
   },
   "window": {
     "navigationBarTitleText": "家庭点菜",
-    "navigationBarBackgroundColor": "#fbf8f3",
-    "navigationBarTextStyle": "black",
-    "backgroundTextStyle": "dark",
-    "backgroundColor": "#fbf8f3"
+    "navigationBarBackgroundColor": "@themePaper",
+    "navigationBarTextStyle": "@navTextStyle",
+    "backgroundTextStyle": "@bgTextStyle",
+    "backgroundColor": "@themePaper"
   },
   "tabBar": {
     "custom": true,

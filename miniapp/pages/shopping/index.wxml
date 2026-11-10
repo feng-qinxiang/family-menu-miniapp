@@ -69,6 +69,7 @@
       <view wx:elif="{{!shoppingList.items.length}}" class="mkt-pad">
         <state-empty
           size="compact"
+          type="basket"
           title="{{emptyState.title}}"
           desc="{{emptyState.desc}}"
           cta="{{emptyState.cta}}"
@@ -155,7 +156,7 @@
           </view>
         </view>
         <view class="sp-pantry-empty" wx:else>
-          <state-empty size="compact" title="冰箱还空着" desc="记下家里有的，点菜时先用现成的" />
+          <state-empty size="compact" type="fridge" title="冰箱还空着" desc="记下家里有的，点菜时先用现成的" />
         </view>
 
         <!-- 添加入口 -->
