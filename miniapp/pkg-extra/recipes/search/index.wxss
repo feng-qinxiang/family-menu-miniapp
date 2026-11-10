@@ -243,7 +243,7 @@
 .gc-meta {
   display: flex;
   align-items: center;
-  gap: 17rpx;
+  gap: 8rpx;   /* 分隔点自带空格，原来再叠 17rpx 就成了双倍空隙 */
   margin-top: 15rpx;
 }
 .gc-meta-i {

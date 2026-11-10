@@ -22,7 +22,6 @@
   <!-- 这一餐还没点菜 -->
   <state-empty
     wx:elif="{{!groups.length}}"
-    type="gray"
     title="今天还没点菜"
     desc="先去菜谱里挑几道，再回来开火"
     cta="去点菜"

@@ -47,7 +47,7 @@
 
       <view class="trust">
         <view class="ti" wx:for="{{trustList}}" wx:key="h">
-          <view class="tic"><text class="tic-glyph">{{item.icon}}</text></view>
+          <view class="tic"><image class="tic-ic" src="/assets/icons/lucide/{{item.icon}}.svg" mode="aspectFit" aria-hidden="true" /></view>
           <view class="ttx">
             <text class="th">{{item.h}}</text>
             <text class="ts">{{item.s}}</text>

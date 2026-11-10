@@ -724,7 +724,7 @@ public class AdminController {
                         m.itemCount(), nz(m.dishes()), nz(m.updatedAt()))).toList();
             }
             case "shopping" -> {
-                sheetName = "购物清单";
+                sheetName = "买菜清单";
                 headers = List.of("ID", "家庭", "菜单日期", "状态", "已购", "总项数", "创建时间");
                 List<AdminShoppingRow> all = collectAll((page, size) ->
                         adminService.listShoppingLists(date, status, null, page, size));
@@ -734,7 +734,7 @@ public class AdminController {
                         s.purchasedCount(), s.totalCount(), nz(s.createdAt()))).toList();
             }
             case "pantry" -> {
-                sheetName = "库存";
+                sheetName = "冰箱库存";
                 headers = List.of("ID", "家庭", "食材", "数量", "单位", "保质期至", "登记时间");
                 List<AdminPantryRow> all = collectAll((page, size) ->
                         adminService.listPantry(keyword, null, page, size));

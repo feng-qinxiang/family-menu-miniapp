@@ -750,8 +750,9 @@ td.actions .btn.danger:hover { background: var(--danger-soft); border-color: tra
   margin: 7px 0 0;
   font-size: var(--fs-12);
   color: var(--mut);
-  max-width: 42ch;
+  max-width: 56ch;
   line-height: 1.7;
+  text-wrap: balance;   /* 不留「里。」这种一两个字的孤行 */
 }
 .empty-actions { display: flex; gap: 8px; margin-top: 16px; }
 td > .empty-state { padding: 40px 24px 44px; }
@@ -820,10 +821,11 @@ tr.empty-row > td {
   font-variant-numeric: tabular-nums;
 }
 .kpi-foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; margin-top: 2px; }
-.kpi-delta { font-size: 12px; color: var(--mut); }
+.kpi-delta { font-size: 12px; color: var(--mut); white-space: nowrap; }
 .kpi-delta b { color: var(--ok); font-weight: 600; }
 .kpi-delta.down b { color: var(--danger); }
-.spark { flex: none; }
+/* 金额那张卡的说明更长：让小折线让位（缩窄），而不是把说明挤成两行 */
+.spark { flex: 0 1 96px; min-width: 0; }
 
 .todo-grid {
   display: grid;
@@ -897,7 +899,7 @@ thead th { position: sticky; top: var(--topbar-h); z-index: 2; box-shadow: inset
 tbody tr { transition: background .1s; }
 tbody tr:hover { background: var(--hover); }
 tbody tr:last-child td { border-bottom: none; }
-td.actions { white-space: nowrap; text-align: right; }
+td.actions, th.actions { white-space: nowrap; text-align: right; }
 td.actions .btn + .btn { margin-left: 6px; }
 /* 数字列右对齐 + 不折行：日期/时间/ID 折成两行会把行高从 48px 顶到 61px */
 td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
@@ -1270,6 +1272,7 @@ td.clamp { max-width: var(--cell-clamp); overflow: hidden; text-overflow: ellips
   .card { padding: 14px; border-radius: var(--radius); }
   .kpi-grid { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
   .kpi-num { font-size: 22px; }
+  .kpi-delta { white-space: normal; }
   .todo-grid { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
   .page-head { flex-direction: column; align-items: stretch; }
   .page-actions { width: 100%; }

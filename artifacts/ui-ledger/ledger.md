@@ -7,7 +7,7 @@
 | 角色 | 四条主线 | 全站（含未归类） |
 | --- | --- | --- |
 | 图块尺寸 | 4 | 14 |
-| 圆角 | 18 | 35 |
+| 圆角 | 18 | 36 |
 | 加载态 | 4 | 4 |
 | 空态 | 2 | 3 |
 
@@ -56,7 +56,7 @@
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | `pages/cook-log` | — | --r-card / --r-sm / 50% | 骨架屏 | state-empty | 33 | 0 | 0 | 0 | — | — |
 | `pages/me` | --ava-head / --dish-thumb / --tile-row-sm | --r-ava / --r-card / --r-md / --r-pill / --r-sm / 11rpx / 12rpx / 50% | 骨架屏 | 自绘 | 81 | 0 | 0 | 0 | — | — |
-| `pkg-extra/auth/login` | — | --r-card / --r-sheet / --r-xs / 12rpx / 25rpx | 无 | 无 | 61 | 0 | 0 | 0 | — | — |
+| `pkg-extra/auth/login` | — | --r-card / --r-sheet / --r-xs / 10rpx / 25rpx | 无 | 无 | 61 | 0 | 0 | 0 | — | — |
 | `pkg-extra/auth/login-phone` | — | --r-card / --r-sm / --r-xs / 2rpx / 50% / 6rpx / 7rpx | 无 | 无 | 80 | 0 | 0 | 8 | — | — |
 | `pkg-extra/family/create` | 104rpx / 40rpx / 56rpx | --r-card / --r-md / --r-sm / --r-xs / 2rpx / 4rpx 0 0 0 / 4rpx 4rpx 0 0 / 50% / 50% 50% 50% 0 | 无 | 无 | 83 | 0 | 0 | 5 | — | — |
 | `pkg-extra/family/invite` | — | --r-card / --r-xs / 23rpx | 无 | 无 | 37 | 0 | 0 | 2 | — | — |

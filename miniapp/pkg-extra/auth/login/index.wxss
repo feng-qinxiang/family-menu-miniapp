@@ -208,7 +208,9 @@
   justify-content: center;
   background: var(--pop-soft);
 }
-.trust .tic-glyph { font-size: calc(36rpx * var(--fs-mul, 1)); }
+/* 图标文件的描边色不统一（浅米 / 深棕），先压成纯黑再靠透明度落到墨色 */
+.trust .tic-ic { width: 38rpx; height: 38rpx; filter: brightness(0); opacity: .72; }
+@media (prefers-color-scheme: dark) { .trust .tic-ic { filter: brightness(0) invert(1); } }
 .trust .ttx { display: flex; flex-direction: column; }
 .trust .ttx .th {
   font-size: calc(28rpx * var(--fs-mul, 1));
@@ -230,12 +232,13 @@
   margin-top: 50rpx;
   padding: 0 8rpx;
 }
+/* 整行都能点（.agree 上有 bindtap），方框只负责「看得出勾没勾」：原 64rpx 比旁边两行小字还高 */
 .agree .box {
-  width: 64rpx;
-  height: 64rpx;
+  width: 40rpx;
+  height: 40rpx;
   flex: none;
-  margin-top: 2rpx;
-  border-radius: 12rpx;
+  margin-top: 0;
+  border-radius: 10rpx;
   border: 3rpx solid var(--line-deep);
   background: transparent;
   display: flex;

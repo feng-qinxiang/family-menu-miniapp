@@ -86,7 +86,7 @@
             </view>
             <view class="gc-meta">
               <text class="gc-meta-i">{{item.cuisine}}</text>
-              <text wx:if="{{item.timeText}}" class="gc-meta-i">· {{item.timeText}}</text>
+              <text wx:if="{{item.timeText}}" class="gc-meta-i">{{item.cuisine ? '· ' : ''}}{{item.timeText}}</text>
             </view>
           </view>
         </view>
