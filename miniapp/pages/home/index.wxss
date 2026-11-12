@@ -555,6 +555,13 @@
   font-size: var(--fs-sub);
   font-weight: 700;
 }
+/* 没人许愿时的一行：去掉卡片外框，标题和说明并排；可点区域仍是 44px，靠负边距不撑高这一行 */
+.fp-wish--bare { padding: 0; background: transparent; border: 0; box-shadow: none; }
+.fp-wish--bare .fp-wish-head--toggle,
+.fp-wish--bare .fp-wish-add { margin-top: -6px; margin-bottom: -6px; }
+.fp-wish--bare .fp-wish-add { margin-right: -22rpx; }
+.fp-wish--bare .fp-wish-title { display: flex; align-items: baseline; gap: 16rpx; white-space: nowrap; }
+.fp-wish--bare .fp-wish-meta { margin-top: 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 /* 展开态下头部补 margin-bottom */
 .fp-wish-head { margin-bottom: 0; }
 .fp-wish.expanded .fp-wish-head { margin-bottom: 18rpx; }

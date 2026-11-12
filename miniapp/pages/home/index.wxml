@@ -235,8 +235,8 @@
       </view>
     </view>
 
-    <!-- 家人许愿：默认保持紧凑 -->
-    <view class="fp-wish {{wishExpanded ? 'expanded' : ''}}">
+    <!-- 家人许愿：没人许愿且没展开时只占一行（fp-wish--bare），有心愿才撑成卡片 -->
+    <view class="fp-wish {{wishExpanded ? 'expanded' : ''}} {{!wishes.length && !wishExpanded ? 'fp-wish--bare' : ''}}">
       <view class="fp-wish-head">
         <view class="tap-scale fp-wish-head--toggle" bindtap="toggleWishExpand" aria-role="button" aria-expanded="{{wishExpanded}}" aria-label="家人心愿，{{wishExpanded ? '收起' : '展开'}}">
           <view class="fp-wish-title">
