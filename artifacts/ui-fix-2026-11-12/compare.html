@@ -1,0 +1,81 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>界面小修 · 改前改后</title>
+<style>
+  body { margin: 0; padding: 24px 32px 48px; background: #fbf8f3; color: #2b2520; font: 16px/1.5 -apple-system, "PingFang SC", sans-serif; }
+  h1 { font-size: 26px; margin: 0 0 4px; }
+  .lead { color: #7a6e5d; margin: 0 0 24px; }
+  section { background: #fff; border-radius: 12px; padding: 20px 24px; margin-bottom: 20px; }
+  h2 { font-size: 20px; margin: 0 0 4px; }
+  h2 small { font-size: 13px; font-weight: normal; color: #a39684; margin-left: 8px; }
+  p { margin: 0 0 14px; color: #5c5246; }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  figure { margin: 0; text-align: center; }
+  figcaption { font-weight: 600; margin-bottom: 6px; }
+  figcaption.before { color: #9b8f80; }
+  figcaption.after { color: #b8432a; }
+  img { max-width: 100%; max-height: 640px; border-radius: 10px; border: 1px solid #ece4d8; }
+  ul { margin: 0; padding-left: 20px; color: #5c5246; }
+  li { margin: 4px 0; }
+</style>
+
+<h1>界面小修 · 改前改后</h1>
+<p class="lead">以 meal-journey 那版为底，风格、配色、底栏都没动。每处改动单独提交，不喜欢哪一处可以单独退回。</p>
+
+<section>
+  <h2>1. 菜图和菜名对上了<small>提交 3e0d141</small></h2>
+  <p>红烧肉、可乐鸡翅、蒜蓉西兰花、糖醋排骨原来配的照片拍的是别的菜。现在没有对得上的照片就显示一个统一的碗，不再拿别的菜冒充。</p>
+  <div class="pair">
+    <figure><figcaption class="before">改前</figcaption><img src="dish-check-before.jpg" alt="改前：16 道菜的配图"></figure>
+    <figure><figcaption class="after">改后</figcaption><img src="dish-check.jpg" alt="改后：16 道菜的配图"></figure>
+  </div>
+</section>
+
+<section>
+  <h2>2. 首页第一屏就能看到菜<small>提交 2f73ba2</small></h2>
+  <p>「家里常做的菜」挪到了早中晚下面，打开首页不用滑就能看到菜的照片和名字；「今天这一桌」挪到了菜的下面。</p>
+  <div class="pair">
+    <figure><figcaption class="before">改前</figcaption><img src="screens/home-r1.jpg" alt="改前：首页第一屏"></figure>
+    <figure><figcaption class="after">改后</figcaption><img src="screens/home-r2.jpg" alt="改后：首页第一屏"></figure>
+  </div>
+</section>
+
+<section>
+  <h2>3. 「家人心愿」没人许愿时只占一行<small>提交 b130f9c</small></h2>
+  <p>没人许愿时不再是一整张空卡片，只留一行，「+ 我想吃」照常能点。有人许愿后还是原来的卡片。</p>
+  <div class="pair">
+    <figure><figcaption class="before">改前</figcaption><img src="screens/home-r2-lower.jpg" alt="改前：首页往下滑，家人心愿卡片"></figure>
+    <figure><figcaption class="after">改后</figcaption><img src="screens/home-r3-lower.jpg" alt="改后：首页往下滑，家人心愿一行"></figure>
+  </div>
+</section>
+
+<section>
+  <h2>4. 没照片的菜，详情页顶上显示完整的碗<small>提交 083bd11</small></h2>
+  <p>原来碗被放大到半屏，热气钻到了手机顶上，看着像图坏了。现在完整摆在中间。有照片的菜不变。</p>
+  <div class="pair">
+    <figure><figcaption class="before">改前</figcaption><img src="screens/recipe-detail-r4-nophoto.jpg" alt="改前：红烧肉详情页"></figure>
+    <figure><figcaption class="after">改后</figcaption><img src="screens/recipe-detail-r5-nophoto.jpg" alt="改后：红烧肉详情页"></figure>
+  </div>
+</section>
+
+<section>
+  <h2>5. 做菜页「家人 想吃」改成「家人 点的」<small>提交 88bc13d</small></h2>
+  <p>这一行写的是谁把菜加进了今天的菜单。首页写「点的」，做菜页写「想吃」，现在统一成「点的」，也不会和家人心愿弄混。</p>
+  <div class="pair">
+    <figure><figcaption class="before">改前</figcaption><img src="screens/menu-r4-picked.jpg" alt="改前：做菜页"></figure>
+    <figure><figcaption class="after">改后</figcaption><img src="screens/menu-r5-picked.jpg" alt="改后：做菜页"></figure>
+  </div>
+</section>
+
+<section>
+  <h2>这几处没改，等你定</h2>
+  <ul>
+    <li>红烧肉、可乐鸡翅、蒜蓉西兰花、糖醋排骨缺照片：你给照片，或者同意我去找可以商用的图。</li>
+    <li>家常拌面的照片主体是牛肉和芦笋；鲜肉馄饨的照片更像蒸饺；紫菜蛋花汤的照片看不到紫菜。要不要也先换成碗。</li>
+    <li>没照片的四道菜在首页那一排排到了最后，现在看不到（菜谱库里都在）。补上照片会自动回来。</li>
+    <li>买菜清单每样食材占一大块，一屏只看得到两样半。</li>
+    <li>买菜清单的「✓ 买好了」按钮是绿底带对勾，没点的时候看着也像已经买好了。</li>
+    <li>做菜步骤每一步下面都列着整道菜的全部用料。</li>
+    <li>「我的」写「11 道菜谱」，首页写「全部 16」：一个数自家存的，一个数能看到的全部。</li>
+  </ul>
+</section>
