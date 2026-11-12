@@ -1,6 +1,6 @@
 const { getRecipeDetail, saveRecipe, updateRecipe } = require('../../utils/api');
 const { chooseImage, chooseVideo, uploadFile } = require('../../utils/upload');
-const { LOCAL_DISHES, recipeDishImg, localPath, dishImageUrl, dishImagePath, DISH_PLACEHOLDER } = require('../../utils/image');
+const { LOCAL_DISHES, localPath, dishImageUrl, dishImagePath, DISH_PLACEHOLDER } = require('../../utils/image');
 const { cuisineList } = require('../../utils/constants');
 const { setLeaveGuard } = require('../../utils/interaction');
 
@@ -127,7 +127,8 @@ Page({
       timeCost: recipe.timeCost || 15,
       servings: recipe.servings || 2,
       difficulty: recipe.difficulty || 'medium',
-      coverImage: dishImageUrl(recipe.coverImage) || recipeDishImg(recipe) || '',
+      // 只放真存着的封面：表单值会原样存回去，按菜名配的图或占位图放进来就成了假封面
+      coverImage: dishImageUrl(recipe.coverImage) || '',
       tasteTags: recipe.tasteTags || [],
       summary: recipe.summary || '',
       ingredients: (recipe.ingredients && recipe.ingredients.length)

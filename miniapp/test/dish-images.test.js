@@ -183,6 +183,18 @@ async function main() {
     assert.equal(payload.coverImage, stock, '保存仍是可跨环境的路径');
     assert.equal(payload.steps[0].image, stock);
     assert.notEqual(payload.coverImage, DISH_PLACEHOLDER);
+    for (const title of ['我家红烧肉', '番茄炒蛋']) {
+      api.getRecipeDetail = async () => ({ ...structuredClone(source), title, coverImage: '' });
+      const bare = page('../pkg-extra/recipe-edit/index');
+      bare.data.isEdit = true;
+      bare.data.recipeId = 1;
+      await bare.loadRecipe(1);
+      assert.equal(bare.data.form.coverImage, '', `${title}：没封面时编辑页不放假封面，露出「添加封面」`);
+      await bare.submit();
+      bare.onUnload();
+      assert.equal(payload.coverImage, '', `${title}：没封面的菜保存后封面还是空的`);
+    }
+    api.getRecipeDetail = async () => structuredClone(source);
     edit.chooseCover();
     edit.pickLocalImage(event({ url: base + stock }));
     assert.equal(edit.data.coverFailedUrl, '', '重新选择同一封面必须恢复请求');
