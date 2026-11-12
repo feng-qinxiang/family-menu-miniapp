@@ -6,8 +6,8 @@
     scroll-top="{{scrollTopTo}}" scroll-with-animation bindscroll="onScrollBody">
 
     <!-- ===== Hero 大图 ===== -->
-    <view class="rd-hero">
-      <image class="rd-hero-img {{recipe.coverBroken ? 'img-broken' : ''}}" src="{{recipe.cover}}" mode="aspectFill" data-err-key="recipe.coverBroken" binderror="onPhotoError" />
+    <view class="rd-hero {{recipe.coverPlain ? 'rd-hero--plain' : ''}}">
+      <image class="rd-hero-img {{recipe.coverBroken ? 'img-broken' : ''}}" src="{{recipe.cover}}" mode="{{recipe.coverPlain ? 'aspectFit' : 'aspectFill'}}" data-err-key="recipe.coverBroken" binderror="onPhotoError" />
       <view class="rd-hero-mask"></view>
 
     </view>

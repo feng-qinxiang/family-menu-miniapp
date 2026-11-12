@@ -10,7 +10,7 @@ const {
   removeWish
 } = require('../../utils/api');
 const { runGuarded, guard, release } = require('../../utils/interaction');
-const { recipeDishImg, stepDishImg, dishImageUrl, ingredientImage, onPhotoError: markPhotoBroken } = require('../../utils/image');
+const { recipeDishImg, stepDishImg, dishImageUrl, ingredientImage, DISH_PLACEHOLDER, onPhotoError: markPhotoBroken } = require('../../utils/image');
 const { editIngredientPhoto } = require('../../utils/ingredient-photo');
 const features = require('../../utils/features');
 const { composePostWithRecipe } = require('../../utils/post-share');
@@ -188,6 +188,8 @@ Page({
           title: recipe.title || '未命名菜谱',
           heroChar,
           cover: pickCover(recipe),
+          // 没照片：顶上大图位置完整摆一个占位碗，不按「填满」放大（见 wxml 的 mode）
+          coverPlain: pickCover(recipe) === DISH_PLACEHOLDER,
           tasteTags: Array.isArray(recipe.tasteTags) ? recipe.tasteTags : [],
           ingredients,
           haveCount,

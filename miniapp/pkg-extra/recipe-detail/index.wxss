@@ -20,6 +20,8 @@
   flex-direction: column;
   overflow: hidden;
 }
+/* 没照片：占位图是方的，完整摆在中间，两边用占位图自己的底色补齐 */
+.rd-hero--plain { background: #e5e1da; }
 .rd-hero-img {
   position: absolute;
   inset: 0;
