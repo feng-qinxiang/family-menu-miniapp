@@ -117,9 +117,9 @@ VALUES
   (103, '香菇滑鸡', 'owned', 1, 1, '粤菜', '["鲜香","蒸菜","少油"]', 28, 3, 4.7, '电饭煲蒸格也能完成的嫩滑鸡肉', '/assets/dishes/mushroom-chicken.jpg', 'ACTIVE'),
   (104, '酸辣汤', 'community', 1, NULL, '川菜', '["酸辣","开胃","汤羹"]', 18, 4, 4.6, '下雨天最适合的一碗酸辣热汤', '/assets/dishes/hot-sour-soup.jpg', 'ACTIVE'),
   (105, '牛肉炒西兰花', 'community', 1, NULL, '家常', '["高蛋白","清爽","便当"]', 20, 3, 4.8, '肉菜均衡的工作日晚餐', '/assets/dishes/beef-broccoli.jpg', 'ACTIVE'),
-  (106, '鲜肉馄饨', 'owned', 1, 1, '面点', '["早餐","孩子爱吃","可冷冻"]', 38, 4, 4.5, '周末包好冷冻，早晨十分钟上桌', '/assets/dishes/wontons.jpg', 'ACTIVE'),
+  (106, '鲜肉馄饨', 'owned', 1, 1, '面点', '["早餐","孩子爱吃","可冷冻"]', 38, 4, 4.5, '周末包好冷冻，早晨十分钟上桌', NULL, 'ACTIVE'),
   (107, '扬州炒饭', 'owned', 1, 1, '主食', '["快手","剩饭改造","孩子爱吃"]', 14, 2, 4.5, '剩米饭和鸡蛋的稳定发挥', '/assets/dishes/fried-rice.jpg', 'ACTIVE'),
-  (108, '家常拌面', 'community', 1, NULL, '面食', '["快手","香辣","夜宵"]', 12, 2, 4.3, '不想开大火时的拌面方案', '/assets/dishes/lo-mein.jpg', 'ACTIVE');
+  (108, '家常拌面', 'community', 1, NULL, '面食', '["快手","香辣","夜宵"]', 12, 2, 4.3, '不想开大火时的拌面方案', NULL, 'ACTIVE');
 
 -- 种子菜谱对全部家庭可见：用显式 is_public 标记，取代历史上按 family_id = 1 判断的做法
 -- （那会让"第一个真实家庭"的私有菜谱意外全球可见）。
@@ -198,3 +198,6 @@ UPDATE recipe SET cover_image = NULL WHERE id = 2 AND title = '红烧肉' AND fa
 UPDATE recipe SET cover_image = NULL WHERE id = 5 AND title = '可乐鸡翅' AND family_id = 1 AND cover_image = '/assets/dishes/orange-chicken.jpg';
 UPDATE recipe SET cover_image = NULL WHERE id = 7 AND title = '蒜蓉西兰花' AND family_id = 1 AND cover_image = '/assets/dishes/stir-fry-veg.jpg';
 UPDATE recipe SET cover_image = NULL WHERE id = 8 AND title = '糖醋排骨' AND family_id = 1 AND cover_image = '/assets/dishes/sweet-sour-chicken.jpg';
+-- 同上（2026-11-12 补）：鲜肉馄饨配的 wontons.jpg 是一盘蒸饺，家常拌面配的 lo-mein.jpg 主体是牛肉芦笋。
+UPDATE recipe SET cover_image = NULL WHERE id = 106 AND title = '鲜肉馄饨' AND family_id = 1 AND cover_image = '/assets/dishes/wontons.jpg';
+UPDATE recipe SET cover_image = NULL WHERE id = 108 AND title = '家常拌面' AND family_id IS NULL AND cover_image = '/assets/dishes/lo-mein.jpg';
