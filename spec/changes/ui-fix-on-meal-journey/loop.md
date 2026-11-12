@@ -101,6 +101,28 @@ started: 2026-11-12
 - 对比页（A-6）里 A-3 的改前图用 `screens/home-r2-lower.jpg`（同一位置、旧卡片），比 L-8 写的 home-r1.jpg 更好对照；改后用 `screens/home-r3-lower.jpg`。
 - 下一轮：做 A-4 的前一半——把做菜、记录、社区、我的、菜谱详情、做菜步骤、买菜清单、冰箱 8 个页面截图存到 screens/，逐张看，把明显毛病记进 findings.md（先只记不修；顺便补第 2 轮欠的「今天这一桌里已经点了菜」的样子）。要修的毛病放到再下一轮，一处一提交。
 
+### Round 4
+
+#### Plan
+做 A-4 的前一半：8 个页面截图、逐张看、把毛病记进 findings.md。这轮只记不修，要修的放下一轮，一处一提交。
+
+#### Act
+- 截图存到 `artifacts/ui-fix-2026-11-12/screens/`：menu-r4（做菜·空）、menu-r4-picked（做菜·有菜）、cook-log-r4（记录）、community-r4（社区）、me-r4（我的）、recipe-detail-r4 / recipe-detail-r4-nophoto（菜谱详情，有照片 / 没照片）、cook-mode-r4（做菜步骤）、shopping-r4（买菜清单·有 12 样）、pantry-r4（冰箱）、recipes-r4（菜谱库，额外看的）、home-r4-picked-lower（首页今天这一桌有菜）。
+- 为了看「有菜」的样子，用首页自己的 `addToToday` 往今晚加了番茄炒蛋（有照片）、红烧肉（没照片）；加菜这条后端不发通知（只有喊开饭、许愿、社区互动会发）。看完用 `removeTodayMenuRecipe` 撤掉，查过菜单 0 道、买菜清单 0 样。
+- `findings.md` 加「其余页面」一节：1 条待修（菜谱详情没照片时顶上占位图被放大裁切）、1 条待定（「点的」/「想吃」说法不一）、4 条留给用户定（买菜清单太占地方、「买好了」按钮像已完成、做菜步骤每步都列全部用料、「11 道菜谱」和「全部 16」对不上）。
+- 没改代码。
+
+#### Verify
+- 12 张截图逐张用 Read 看过；`ls artifacts/ui-fix-2026-11-12/screens/` 里 8 个页面都有。
+- 控制台 grep error/fail：走完这些页面后无输出。
+- 撤菜后 `getTodayMenu` items=0、`getShoppingList` items=0。
+- A-4 **不打勾**：还有 1 条待修、1 条待定，没到「每条都标已修或留给用户定」。
+
+#### Retrospect
+- 教训：第 1 轮换占位图时只在小图位置看过（首页、对照页），没看大图位置——详情页顶上把方形占位图按「填满」裁切，就成了半截碗。换一张图要把它出现的所有尺寸都看一遍。→ L-11
+- 教训：要看「有数据」的页面，先查这个操作后端发不发通知（grep `notifyFamily|notifyUser`），不发的才用页面自己的方法加，看完撤掉并查一次确实回到原样。→ L-11
+- 下一轮：修菜谱详情顶上的占位图（没照片时完整显示一个碗，不裁切；先 grep `rd-hero-img` 和其它用 aspectFill 放大图的地方，如首页大图、做菜步骤、视频封面，看占位图会不会也被裁）。修完截改后图。再看「点的 / 想吃」两处文案的来历，决定统一还是留给用户定。两件各自单独提交。然后 A-4 可以打勾。
+
 ## Lessons
 
 - L-1 内置菜图的文件名和照片内容对不上的有三张（hongshao-pork / orange-chicken / sweet-sour-chicken），判断「图对不对」要看图不能看文件名；对照页：`node artifacts/ui-fix-2026-11-12/build-dish-check.js` 后用无头 Chrome 截图。
@@ -113,3 +135,5 @@ started: 2026-11-12
 - L-8 对比页（A-6）的「改前」图：A-2、A-3 的改前就是 `artifacts/ui-fix-2026-11-12/screens/home-r1.jpg`（第 1 轮改完菜图后的首页）；A-1 的改前要到旧工作区 `/Users/xx/.codex/worktrees/meal-journey-ui/家庭点菜小程序`（停在 cda20a7，旧规则按菜名仍会给红烧肉配错图）里截。动手改某一页之前先截一张留底。
 - L-9 说「哪一块占了地方」之前先量：automation_evaluate 里用 `wx.createSelectorQuery().select(sel).boundingClientRect()` 包成 Promise 返回；默认机型 390×844，自定义底栏上沿约 y=745。滚动截图用 `wx.pageScrollTo({scrollTop, duration: 0})`，拍完滚回 0。
 - L-10 模拟器探针：往页面塞数据用 automation_page_action 的 setData（会重画）；automation_evaluate 里调 `p.setData` 数据会变但画面可能不重画。evaluate 里别用 `fields({computedStyle})`，会超时，只用 boundingClientRect。不要为了测试真的提交心愿——后端会给家里人发通知。
+- L-11 换图或占位图要把它出现的每种尺寸都看一遍（小图、详情顶上大图、首页大图）。要看「有数据」的页面：加今日菜单不发通知，可以用首页 `addToToday({detail:{id}})` 加、`require('utils/api').removeTodayMenuRecipe(id,'dinner')` 撤（evaluate 里 require 路径写 `utils/api`，不带 `./`）；许愿、喊开饭、社区互动会发通知，不拿来测。
+
