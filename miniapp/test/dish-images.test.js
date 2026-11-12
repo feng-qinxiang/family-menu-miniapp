@@ -96,6 +96,21 @@ assert.equal(home.data.homeMenuItems[0].dishImg, base + stock, '升级前首页�
 home.data.heroRecipe = { title: '番茄炒蛋', dishImg: base + stock };
 home.onHeroImgError();
 assert.equal(home.data.heroRecipe.dishImg, DISH_PLACEHOLDER);
+// 首页推荐：大图只挑有照片的菜；下面那排有照片的在前、没照片的在后，且不重复大图那道。
+const mixed = ['红烧肉', '番茄炒蛋', '可乐鸡翅', '麻婆豆腐'].map((title, i) => ({ id: i + 1, title, dishImg: recipeDishImg({ title }) }));
+for (let turn = 0; turn < 3; turn++) {
+  home._heroOffset = turn;
+  const picked = home._filterPatch('all', mixed);
+  assert.notEqual(picked.heroRecipe.dishImg, DISH_PLACEHOLDER, '大图推荐不能是占位图');
+  const row = picked.visibleRecipes.map(r => r.dishImg === DISH_PLACEHOLDER);
+  assert.deepEqual(row, [false, true, true], '有照片的排前面');
+  assert.ok(picked.visibleRecipes.every(r => r.id !== picked.heroRecipe.id));
+}
+home._heroOffset = 1;
+const bare = home._filterPatch('all', mixed.filter(r => r.dishImg === DISH_PLACEHOLDER));
+assert.equal(bare.visibleRecipes.length, 1, '全都没照片时照常轮换，不丢菜');
+assert.notEqual(bare.heroRecipe.id, bare.visibleRecipes[0].id);
+home._heroOffset = 0;
 
 // 直接核对模板绑定并执行真实页面处理器，防止只测 helper 却漏掉页面接线。
 for (const [module, className, expectedPath] of [

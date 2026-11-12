@@ -100,6 +100,64 @@
       >{{item.label}}餐</view>
     </view>
 
+    <!-- 推荐区紧跟餐次：第一屏就要露出一排菜，「今天这一桌」和家人心愿排在它后面 -->
+    <view class="mh-pad hm-recipes-head">
+      <section-head
+        title="家里"
+        popPart="常做"
+        titleTail="的菜"
+        hint="全部"
+        more="{{true}}"
+        bind:tapmore="goRecipes"
+      />
+    </view>
+
+    <view class="hm-recipe-search">
+      <image class="hm-search-icon" src="/assets/icons/lucide/search.svg" mode="aspectFit" aria-hidden="true" />
+      <input class="hm-search-input" value="{{homeSearchText}}" bindinput="onHomeSearchInput" bindconfirm="searchRecipes" confirm-type="search" placeholder="搜菜名、菜系、口味" placeholder-class="hm-search-placeholder" aria-label="搜索家常菜谱" />
+      <view class="hm-search-submit tap-scale" bindtap="searchRecipes" aria-role="button" aria-label="搜索菜谱">搜索</view>
+    </view>
+
+    <!-- 菜系 chips -->
+    <scroll-view scroll-x class="mh-chips" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="mh-chips-inner">
+        <view
+          wx:for="{{cuisineTiles}}"
+          wx:key="key"
+          class="chip tap-scale {{activeCuisine === item.key ? 'on' : ''}}"
+          data-cuisine="{{item.key}}"
+          bindtap="selectCuisine"
+          aria-role="button"
+          aria-label="筛选{{item.label}}菜谱"
+          aria-pressed="{{activeCuisine === item.key}}"
+        >{{item.label}}</view>
+      </view>
+    </scroll-view>
+
+    <scroll-view scroll-x class="mh-hcards" enhanced="{{true}}" show-scrollbar="{{false}}" wx:if="{{visibleRecipes.length}}">
+      <view class="mh-hcards-inner">
+        <view
+          class="mh-rcard-slot {{revealOn ? (reveal[index] ? 'g-fade-up' : 'rv-hold') : 'g-fade-up g-d' + (index % 4 + 1)}}"
+          data-rv="{{index}}"
+          wx:for="{{visibleRecipes}}"
+          wx:key="id"
+        >
+          <recipe-card
+            recipe="{{item}}"
+            variant="card"
+            density="home"
+            showAdd="{{true}}"
+            showFav="{{false}}"
+            addPlacement="corner"
+            selected="{{!!pickedRecipeIds[item.id]}}"
+            bind:tap="goDetail"
+            bind:add="addToToday"
+          />
+        </view>
+
+      </view>
+    </scroll-view>
+
     <!-- 当前餐次：家庭菜单与厨房动作 -->
     <view class="mh-pad hm-menu-wrap">
       <view class="hm-menu-card {{menuReady ? 'is-ready' : ''}}" wx:if="{{slotMenu.length}}">
@@ -177,7 +235,7 @@
       </view>
     </view>
 
-    <!-- 家人许愿：放在菜单与流程之后，默认保持紧凑 -->
+    <!-- 家人许愿：默认保持紧凑 -->
     <view class="fp-wish {{wishExpanded ? 'expanded' : ''}}">
       <view class="fp-wish-head">
         <view class="tap-scale fp-wish-head--toggle" bindtap="toggleWishExpand" aria-role="button" aria-expanded="{{wishExpanded}}" aria-label="家人心愿，{{wishExpanded ? '收起' : '展开'}}">
@@ -226,64 +284,6 @@
         </view>
       </block>
     </view>
-
-    <!-- 推荐区：先标题，再筛选与菜谱 -->
-    <view class="mh-pad hm-recipes-head">
-      <section-head
-        title="家里"
-        popPart="常做"
-        titleTail="的菜"
-        hint="全部"
-        more="{{true}}"
-        bind:tapmore="goRecipes"
-      />
-    </view>
-
-    <view class="hm-recipe-search">
-      <image class="hm-search-icon" src="/assets/icons/lucide/search.svg" mode="aspectFit" aria-hidden="true" />
-      <input class="hm-search-input" value="{{homeSearchText}}" bindinput="onHomeSearchInput" bindconfirm="searchRecipes" confirm-type="search" placeholder="搜菜名、菜系、口味" placeholder-class="hm-search-placeholder" aria-label="搜索家常菜谱" />
-      <view class="hm-search-submit tap-scale" bindtap="searchRecipes" aria-role="button" aria-label="搜索菜谱">搜索</view>
-    </view>
-
-    <!-- 菜系 chips -->
-    <scroll-view scroll-x class="mh-chips" enhanced="{{true}}" show-scrollbar="{{false}}">
-      <view class="mh-chips-inner">
-        <view
-          wx:for="{{cuisineTiles}}"
-          wx:key="key"
-          class="chip tap-scale {{activeCuisine === item.key ? 'on' : ''}}"
-          data-cuisine="{{item.key}}"
-          bindtap="selectCuisine"
-          aria-role="button"
-          aria-label="筛选{{item.label}}菜谱"
-          aria-pressed="{{activeCuisine === item.key}}"
-        >{{item.label}}</view>
-      </view>
-    </scroll-view>
-
-    <scroll-view scroll-x class="mh-hcards" enhanced="{{true}}" show-scrollbar="{{false}}" wx:if="{{visibleRecipes.length}}">
-      <view class="mh-hcards-inner">
-        <view
-          class="mh-rcard-slot {{revealOn ? (reveal[index] ? 'g-fade-up' : 'rv-hold') : 'g-fade-up g-d' + (index % 4 + 1)}}"
-          data-rv="{{index}}"
-          wx:for="{{visibleRecipes}}"
-          wx:key="id"
-        >
-          <recipe-card
-            recipe="{{item}}"
-            variant="card"
-            density="home"
-            showAdd="{{true}}"
-            showFav="{{false}}"
-            addPlacement="corner"
-            selected="{{!!pickedRecipeIds[item.id]}}"
-            bind:tap="goDetail"
-            bind:add="addToToday"
-          />
-        </view>
-
-      </view>
-    </scroll-view>
 
     <!-- 全空兜底 -->
     <state-empty

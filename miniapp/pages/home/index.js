@@ -736,13 +736,16 @@ Page({
       .slice()
       .sort(compareRecipes);
 
-    const total = filtered.length;
-    const offset = total ? ((this._heroOffset || 0) % total) : 0;
-    const list = total ? filtered.slice(offset).concat(filtered.slice(0, offset)) : [];
-    // 大图推荐只在有照片的菜里轮转：占位图铺满半屏等于首屏开天窗。一张照片都没有时才退回第一道。
-    const withPhoto = filtered.filter(r => r.dishImg !== DISH_PLACEHOLDER);
-    const hero = (withPhoto.length ? withPhoto[(this._heroOffset || 0) % withPhoto.length] : list[0]) || null;
-    const visible = list.filter(r => r !== hero).slice(0, 10);
+    // 大图推荐只在有照片的菜里轮转：占位图铺满半屏等于首屏开天窗。一张照片都没有时才在全部菜里轮。
+    const hasPhoto = r => r.dishImg !== DISH_PLACEHOLDER;
+    const withPhoto = filtered.filter(hasPhoto);
+    const pool = withPhoto.length ? withPhoto : filtered;
+    const at = pool.length ? (this._heroOffset || 0) % pool.length : 0;
+    const hero = pool[at] || null;
+    // 下面这排接着大图往后排；没照片的菜跟在有照片的后面，第一屏露出来的不是一排占位图。
+    const visible = pool.slice(at + 1)
+      .concat(pool.slice(0, at), withPhoto.length ? filtered.filter(r => !hasPhoto(r)) : [])
+      .slice(0, 10);
 
     return {
       activeCuisine: cuisine,

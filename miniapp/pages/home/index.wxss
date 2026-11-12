@@ -231,7 +231,9 @@
 .hm-search-submit { min-height: 88rpx; min-width: 88rpx; display: flex; align-items: center; justify-content: flex-end; font-size: var(--fs-sub); font-weight: 700; color: var(--pop-deep); }
 
 /* chips */
-.hm-recipes-head { margin-top: 24rpx; }
+.hm-recipes-head { margin-top: 8rpx; }
+/* 「今天这一桌」排在横滑菜卡后面，和上一排拉开一个卡间距 */
+.hm-menu-wrap { margin-top: 24rpx; }
 .mh-chips { width: 100%; margin: 12rpx 0 18rpx; white-space: nowrap; }
 .mh-chips-inner {
   display: inline-flex;
