@@ -15,7 +15,7 @@ started: 2026-11-12
 - [x] A-2 首页第一屏能看到菜 (verify: 模拟器默认机型打开首页不滑动截图，「家里常做的菜」下至少露出完整一排菜的图和名字)
 - [x] A-3 「家人心愿」卡变矮 (verify: 没人许愿时该卡只占一行、高度不超过改前的一半——改前改后各量一次 boundingClientRect；点「+ 我想吃」仍能打开许愿输入)
 - [x] A-4 其余页面过一遍 (verify: 做菜、记录、社区、我的、菜谱详情、做菜步骤、买菜清单、冰箱的截图存到 artifacts/ui-fix-2026-11-12/screens/；artifacts/ui-fix-2026-11-12/findings.md 列出发现的明显毛病，每条标「已修」或「留给用户定」，已修的有改后截图)
-- [ ] A-5 没改坏 (verify: `for t in miniapp/test/*.test.js miniapp/test/static-check.js; do node $t; done` 全部 EXIT=0；模拟器控制台在首页、点菜、做菜、记录、社区、我的各页无 error)
+- [x] A-5 没改坏 (verify: `for t in miniapp/test/*.test.js miniapp/test/static-check.js; do node $t; done` 全部 EXIT=0；模拟器控制台在首页、点菜、做菜、记录、社区、我的各页无 error)
 - [ ] A-6 给用户一页前后对比 (verify: artifacts/ui-fix-2026-11-12/compare.html 存在，每处改动一行、左改前右改后，用无头浏览器打开截图确认图片都加载出来)
 
 ## Rounds
@@ -145,6 +145,32 @@ started: 2026-11-12
 - 没修、留给用户的 4 条（买菜清单太占地方、「买好了」按钮像已完成、做菜步骤每步都列全部用料、「11 道菜谱」和「全部 16」对不上）最后汇报要逐条列出来。
 - 下一轮：做 A-5（没改坏）——跑全部测试；模拟器依次打开首页、点菜（菜谱库）、做菜、记录、社区、我的，每页查控制台没有 error。顺手核对 compare.html 要用的改前图是否齐全（A-1 的改前要去旧工作区截，见 L-8）。
 
+### Round 6
+
+#### Plan
+做 A-5（没改坏）：上一轮复盘定的。全部测试照验收原文从仓库根目录跑一遍；模拟器挨个打开首页、点菜、做菜、记录、社区、我的，每页查控制台。
+
+#### Act
+- 没改代码，只做检查。
+- 「点菜」在底栏上就是首页那一格，为了不漏，菜谱库（pages/recipes）也算进去，一共看 6 个页面。
+
+#### Verify
+- 仓库根目录 `for t in miniapp/test/*.test.js miniapp/test/static-check.js; do node $t; done` → 23 个测试文件 + static-check，pass=24 fail=0，每个 EXIT=0。
+- **先证明控制台检查真能看到报错**：控制台缓存一开始只有 3 行系统信息，「grep 不到 error」也可能是根本没收到日志。在页面里打一条 `console.error('LOOP-PROBE-ERROR r6')`，grep 能看到 `[error] LOOP-PROBE-ERROR r6`；换页重新编译后这条消失——说明每页查到的是这一页自己的干净缓存。
+- 每页打开等 2 秒，读页面数据再 grep `error|fail|exception|uncaught`：
+  - 首页 pages/home：loading=false、loadError 空；控制台只有系统信息，无 error。
+  - 菜谱库 pages/recipes：显示 16 道；无 error。
+  - 做菜 pages/menu：loadError 空；无 error。
+  - 记录 pages/cook-log：loadError 空；无 error。
+  - 社区 pages/community：3 篇帖子；无 error。
+  - 我的 pages/me：loadError 空；无 error。
+- A-5 打勾。
+
+#### Retrospect
+- 教训：「grep 不到报错」要先证明 grep 能看到报错。往控制台打一条已知的 error 再 grep，看得到才算数；还要确认换页后缓存会清，不然后一页查到的是前一页的残留。→ L-12
+- 给 A-6 准备的改前改后图，已有的：首页第一屏 home-r1 → home-r2；家人心愿 home-r2-lower → home-r3-lower；菜谱详情 recipe-detail-r4-nophoto → recipe-detail-r5-nophoto；做菜页 menu-r4-picked → menu-r5-picked。**缺**：菜图对不上（A-1）的改前图。旧工作区 `/Users/xx/.codex/worktrees/meal-journey-ui/家庭点菜小程序` 还停在 cda20a7，可以用它的 image.js 和 data.sql 生成一张改前对照页。
+- 下一轮：做 A-6。先补 A-1 的改前图（让 build-dish-check.js 指向旧工作区生成 dish-check-before，或者直接在旧工作区跑一份），再写 `artifacts/ui-fix-2026-11-12/compare.html`：一处改动一行，左改前右改后，每行一句大白话说改了什么；用无头 Chrome 截图，确认图片都加载出来。
+
 ## Lessons
 
 - L-1 内置菜图的文件名和照片内容对不上的有三张（hongshao-pork / orange-chicken / sweet-sour-chicken），判断「图对不对」要看图不能看文件名；对照页：`node artifacts/ui-fix-2026-11-12/build-dish-check.js` 后用无头 Chrome 截图。
@@ -158,4 +184,5 @@ started: 2026-11-12
 - L-9 说「哪一块占了地方」之前先量：automation_evaluate 里用 `wx.createSelectorQuery().select(sel).boundingClientRect()` 包成 Promise 返回；默认机型 390×844，自定义底栏上沿约 y=745。滚动截图用 `wx.pageScrollTo({scrollTop, duration: 0})`，拍完滚回 0。
 - L-10 模拟器探针：往页面塞数据用 automation_page_action 的 setData（会重画）；automation_evaluate 里调 `p.setData` 数据会变但画面可能不重画。evaluate 里别用 `fields({computedStyle})`，会超时，只用 boundingClientRect。不要为了测试真的提交心愿——后端会给家里人发通知。
 - L-11 换图或占位图要把它出现的每种尺寸都看一遍（小图、详情顶上大图、首页大图）。要看「有数据」的页面：加今日菜单不发通知，可以用首页 `addToToday({detail:{id}})` 加、`require('utils/api').removeTodayMenuRecipe(id,'dinner')` 撤（evaluate 里 require 路径写 `utils/api`，不带 `./`）；许愿、喊开饭、社区互动会发通知，不拿来测。
+- L-12 控制台查报错：`get_simulator_console` 缓存在每次 `simulator_open_page` 重新编译时清空，所以每页打开后各查一次。先打一条 `console.error` 证明 grep 看得到，再相信「grep 不到 = 没报错」。
 
