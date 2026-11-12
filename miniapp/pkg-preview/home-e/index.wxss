@@ -1,189 +1,203 @@
 /* ============================================================
    首页风格预览 · 方案 E「家庭点菜单」
-   一屏一张主卡：这顿的点菜单（家人进度 + 已点 + 做菜顺序 + 开始做菜），
-   下面是两列新手菜，点「+」直接进单子。不再有悬浮底栏（正式版有 tabbar，会叠两层）。
-   尺寸沿用 TDesign 规格（间距 16/24/32/48，圆角 12/18/24，字重 400/600）。
-   主色只给：餐次角标、「+」、「开始做菜」。状态三色：待做灰 / 在做橙 / 做好绿。
+   一屏一张主卡：这顿的点菜单（问句标题 + 家人进度 + 已点 + 下锅顺序），
+   底部一道撕口，存根上是这顿要多久和「开始做菜」；下面几排横滑推荐（新手 / 常做 / 当季），点「+」直接进单子。
+   不放悬浮底栏（正式版有 tabbar，会叠两层）。
+   颜色、圆角、阴影、字号全走 app.wxss 的全站 token（米纸底 + 墨色字，番茄红只给行动点），
+   深色模式跟着 token 翻转，本页不再自带一套色表。
    ============================================================ */
-page {
-  --e-bg: #f5f5f5;
-  --e-card: #ffffff;
-  --e-fill: #f2f2f2;
-  --e-ink: rgba(0, 0, 0, 0.9);
-  --e-ink-2: rgba(0, 0, 0, 0.6);
-  --e-ink-3: rgba(0, 0, 0, 0.4);
-  --e-line: rgba(0, 0, 0, 0.06);
-  --e-chip-on: #1f1f1f;
-  --e-chip-on-ink: #ffffff;
-  --e-brand: var(--pop);
-  --e-brand-soft: #fff1ed;
-  --e-orange: #e37318;
-  --e-orange-soft: #fff3e6;
-  --e-green: #2ba471;
-  --e-green-soft: #e8f8f0;
-  --e-gutter: 32rpx;
-  --e-r-sm: 12rpx;
-  --e-r-md: 18rpx;
-  --e-r-lg: 24rpx;
-  --e-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
-  background: var(--e-bg);
-}
-.pe { min-height: 100vh; background: var(--e-bg); color: var(--e-ink); font-size: var(--fs-body); }
+page { --e-gutter: var(--sp-lg); background: var(--paper); }
+.pe { min-height: 100vh; background: var(--paper); color: var(--ink); font-size: var(--fs-body); }
 .pe-wrap { padding: 0 var(--e-gutter); }
 .pe-press { opacity: 0.7; }
 
-/* 1. 顶栏：小字日期 → 大字问句 → 餐次 chips */
+/* 1. 顶栏：和胶囊同高的一行小字，下面餐次分段（每段就是 88rpx 热区） */
 .pe-top { padding: 0 var(--e-gutter) 32rpx; }
-.pe-date { min-height: 64rpx; display: flex; align-items: center; font-size: var(--fs-cap); color: var(--e-ink-3); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-.pe-ask { margin-top: 8rpx; font-size: var(--fs-hero-sm); font-weight: 600; line-height: 1.25; letter-spacing: 1rpx; }
-.pe-chips { display: flex; gap: 16rpx; margin-top: 12rpx; }
-/* 外层 88rpx 热区，里层画 64rpx 胶囊 */
-.pe-chip { height: 88rpx; display: flex; align-items: center; }
-.pe-chip-in {
-  height: 64rpx; padding: 0 28rpx; display: flex; align-items: center; gap: 8rpx;
-  border-radius: 999rpx; background: var(--e-card); color: var(--e-ink-2); font-size: var(--fs-body);
+.pe-date {
+  height: 64rpx; line-height: 64rpx; font-size: var(--fs-cap); font-weight: 600; letter-spacing: 2rpx; color: var(--mut-strong);
+  overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
 }
-.pe-chip.is-on .pe-chip-in { background: var(--e-chip-on); color: var(--e-chip-on-ink); font-weight: 600; }
-.pe-chip-badge {
-  min-width: 32rpx; height: 32rpx; padding: 0 8rpx; box-sizing: border-box; border-radius: 16rpx;
-  background: var(--e-brand); color: #fff; font-size: var(--fs-mini); font-weight: 600; line-height: 32rpx; text-align: center;
+.pe-seg { display: flex; gap: 8rpx; margin-top: 20rpx; padding: 6rpx; border-radius: var(--r-pill); background: var(--paper-2); }
+.pe-seg-tab {
+  flex: 1; height: 88rpx; display: flex; align-items: center; justify-content: center; gap: 8rpx;
+  border-radius: var(--r-pill); color: var(--mut-strong); font-size: var(--fs-body); font-weight: 600;
 }
-.pe-tip { display: flex; align-items: center; justify-content: space-between; margin: 0 var(--e-gutter) 16rpx; padding: 0 24rpx; border-radius: var(--e-r-md); background: var(--e-brand-soft); }
-.pe-tip-text { font-size: var(--fs-cap); color: var(--e-brand); }
-.pe-tip-retry { min-height: 88rpx; min-width: 88rpx; display: flex; align-items: center; justify-content: center; font-weight: 600; color: var(--e-brand); }
+/* 选中反色：浅色档墨底米字，深色档跟着 token 翻成浅底深字 */
+.pe-seg-tab.is-on { background: var(--ink); color: var(--paper); font-weight: 800; box-shadow: var(--sh-card); }
+.pe-seg-badge {
+  min-width: 36rpx; height: 36rpx; padding: 0 10rpx; box-sizing: border-box; border-radius: var(--r-pill);
+  background: var(--pop); color: var(--anchor-contrast); font-size: var(--fs-mini); font-weight: 800; line-height: 36rpx; text-align: center;
+}
+.pe-tip {
+  display: flex; align-items: center; justify-content: space-between; gap: 16rpx; margin: 0 var(--e-gutter) 24rpx;
+  padding: 0 var(--pad-card-sm); border-radius: var(--r-card); background: var(--pop-soft);
+}
+.pe-tip-text { font-size: var(--fs-cap); color: var(--pop); }
+.pe-tip-retry { min-height: 88rpx; min-width: 88rpx; display: flex; align-items: center; justify-content: flex-end; font-size: var(--fs-cap); font-weight: 700; color: var(--pop); }
 
-/* 2. 主卡：点菜单 */
-.pe-ticket { padding: 0 28rpx 28rpx; border-radius: var(--e-r-lg); background: var(--e-card); box-shadow: var(--e-shadow); }
-.pe-ticket-head { display: flex; align-items: baseline; justify-content: space-between; padding: 32rpx 0 8rpx; }
-.pe-ticket-title { font-size: var(--fs-h2); font-weight: 600; }
-.pe-ticket-sum { font-size: var(--fs-cap); color: var(--e-ink-3); }
-
-/* 家人进度 */
-.pe-family { display: flex; align-items: center; gap: 16rpx; min-height: 88rpx; border-bottom: 1rpx solid var(--e-line); }
-.pe-avas { display: flex; align-items: center; flex-shrink: 0; }
+/* 2. 主卡：这顿的点菜单 */
+.pe-ticket { position: relative; padding: 32rpx var(--pad-card) 0; border-radius: var(--r-card); background: var(--c-surface); box-shadow: var(--sh-raised); }
+/* 标题就是问句，餐次那个词用番茄红点一下（杂志标题的撞色字） */
+.pe-ask { font-size: var(--fs-h1); font-weight: 800; line-height: 1.2; letter-spacing: -1rpx; color: var(--ink); }
+.pe-ask-meal { color: var(--pop); }
+.pe-fam { display: flex; align-items: center; gap: 20rpx; min-height: 88rpx; margin-top: 12rpx; }
+.pe-avas { display: flex; flex-shrink: 0; }
 .pe-ava {
-  width: 52rpx; height: 52rpx; margin-left: -12rpx; box-sizing: border-box; border-radius: 50%; border: 4rpx solid var(--e-card);
-  display: flex; align-items: center; justify-content: center; font-size: var(--fs-mini); font-weight: 600; color: #fff;
+  width: var(--ava-cmt); height: var(--ava-cmt); margin-left: -16rpx; box-sizing: border-box;
+  border-radius: calc(var(--ava-cmt) * var(--r-ava)); border: 4rpx solid var(--c-surface);
+  display: flex; align-items: center; justify-content: center;
+  font-size: calc(var(--ava-cmt) * var(--ava-glyph) * var(--fs-mul, 1)); font-weight: 800; color: var(--anchor-contrast);
 }
 .pe-ava:first-child { margin-left: 0; }
-.pe-ava.is-off { background: var(--e-fill); color: var(--e-ink-3); }
-.tone-0 { background: #e8472a; }
-.tone-1 { background: #e37318; }
-.tone-2 { background: #2ba471; }
-.tone-3 { background: #0052d9; }
-.tone-x { background: #a6a6a6; }
-.pe-family-text { flex: 1; min-width: 0; font-size: var(--fs-cap); color: var(--e-ink-2); }
-.pe-family-go { flex-shrink: 0; font-size: var(--fs-cap); color: var(--e-brand); font-weight: 600; }
+/* 家人五色和「我的」页同一套（按成员顺序轮）；金色底上的字用恒定深棕，深色档也看得清。
+   蓝色深色档会翻成浅蓝，米白字看不清，字改取卡面色（浅色档白、深色档深灰，两档都是镂空字） */
+.tone-0 { background: linear-gradient(135deg, var(--cat-gold), var(--gold-deep)); color: var(--anchor); }
+.tone-1 { background: var(--cat-brown); }
+.tone-2 { background: var(--pine); }
+.tone-3 { background: var(--cat-purple); }
+.tone-4 { background: var(--c-info); color: var(--c-surface); }
+.pe-ava.is-off { background: var(--paper-2); color: var(--mut-strong); }
+.pe-ava.is-add { background: var(--pop-soft); color: var(--pop); }
+.pe-fam-note { flex: 1; min-width: 0; font-size: var(--fs-sub); color: var(--mut-strong); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 
-/* 已点 */
-.pe-order { display: flex; align-items: center; gap: 24rpx; padding: 24rpx 0; border-bottom: 1rpx solid var(--e-line); }
+/* 已点：菜图走全站行内缩略图规格，序号压在图的左上角 */
+.pe-seq-tip { margin-top: 8rpx; font-size: var(--fs-cap); color: var(--mut); }
+.pe-order { display: flex; align-items: center; gap: 24rpx; padding: 24rpx 0; border-bottom: 2rpx solid var(--line); }
 .pe-order-pic { position: relative; flex-shrink: 0; }
-.pe-order-img { width: 120rpx; height: 120rpx; display: block; border-radius: var(--e-r-md); background: var(--e-fill); }
-.pe-order-ava {
-  position: absolute; right: -8rpx; bottom: -8rpx; width: 40rpx; height: 40rpx; box-sizing: border-box;
-  border-radius: 50%; border: 3rpx solid var(--e-card);
-  display: flex; align-items: center; justify-content: center; font-size: var(--fs-tiny); font-weight: 600; color: #fff;
+.pe-order-thumb { width: var(--dish-thumb); height: var(--dish-thumb); display: block; border-radius: var(--r-card); background: var(--paper-2); }
+/* 下锅序号：恒定深棕底（两档都不翻转），描边取卡面色，像从图上抠出来 */
+.pe-order-seq {
+  position: absolute; left: -10rpx; top: -10rpx; width: 48rpx; height: 48rpx; box-sizing: border-box;
+  border-radius: 50%; border: 4rpx solid var(--c-surface); background: var(--anchor); color: var(--anchor-contrast);
+  display: flex; align-items: center; justify-content: center; font-size: var(--fs-mini); font-weight: 800;
 }
 .pe-order-info { flex: 1; min-width: 0; }
-.pe-order-name { font-size: var(--fs-lg); font-weight: 600; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-.pe-order-name.is-done { color: var(--e-ink-3); text-decoration: line-through; }
-.pe-order-meta { display: flex; flex-wrap: wrap; gap: 16rpx; margin-top: 8rpx; font-size: var(--fs-cap); color: var(--e-ink-3); }
-.pe-who { color: var(--e-ink-2); }
-.pe-status { flex-shrink: 0; padding: 4rpx 16rpx; border-radius: 8rpx; font-size: var(--fs-cap); }
-.pe-status.is-todo { background: var(--e-fill); color: var(--e-ink-2); }
-.pe-status.is-cooking { background: var(--e-orange-soft); color: var(--e-orange); }
-.pe-status.is-done { background: var(--e-green-soft); color: var(--e-green); }
-/* 做菜顺序 */
-.pe-steps { margin-top: 24rpx; padding: 20rpx 24rpx; border-radius: var(--e-r-md); background: var(--e-orange-soft); }
-.pe-steps-title { font-size: var(--fs-cap); color: var(--e-orange); }
-.pe-steps-row { display: flex; flex-wrap: wrap; gap: 12rpx 24rpx; margin-top: 12rpx; }
-.pe-step { display: flex; align-items: center; gap: 8rpx; min-width: 0; }
-.pe-step-no {
-  width: 32rpx; height: 32rpx; flex-shrink: 0; border-radius: 50%; background: var(--e-orange); color: #fff;
-  font-size: var(--fs-mini); font-weight: 600; line-height: 32rpx; text-align: center;
-}
-.pe-step-name { font-size: var(--fs-cap); font-weight: 600; color: var(--e-ink); }
+.pe-order-name { font-size: var(--fs-lg); font-weight: 800; color: var(--ink); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.pe-order-name.is-done { color: var(--mut); text-decoration: line-through; }
+.pe-order-meta { margin-top: 10rpx; font-size: var(--fs-cap); color: var(--mut); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+/* 右栏：用时数字放大右对齐，和左边的菜名一左一右 */
+.pe-order-side { flex-shrink: 0; display: flex; align-items: center; gap: 12rpx; }
+.pe-order-sidecol { display: flex; flex-direction: column; align-items: flex-end; gap: 8rpx; }
+.pe-order-time { font-size: var(--fs-h2); font-weight: 800; color: var(--ink); line-height: 1.2; }
+.pe-order-time.is-done { color: var(--mut); }
+.pe-order-unit { margin-left: 4rpx; font-size: var(--fs-cap); font-weight: 400; color: var(--mut); }
+.pe-order-arrow { font-size: var(--fs-h2); color: var(--mut-2); line-height: 1; }
+.pe-status { padding: 4rpx 16rpx; border-radius: var(--r-pill); font-size: var(--fs-cap); font-weight: 700; }
+.pe-status.is-cooking { background: var(--c-gold-soft); color: var(--gold-deep); }
+.pe-status.is-done { background: var(--c-success-soft); color: var(--c-success); }
 
-/* 开始做菜：主卡里的主按钮，取代悬浮底栏 */
+/* 再点一道：安静的一行字，虚线留给下面的撕口 */
+.pe-again { display: flex; align-items: center; gap: 12rpx; min-height: 96rpx; }
+.pe-again-plus { font-size: var(--fs-h2); color: var(--pop); line-height: 1; }
+.pe-again-text { flex: 1; font-size: var(--fs-body); font-weight: 700; color: var(--pop); }
+.pe-again-hint { font-size: var(--fs-cap); color: var(--mut); }
+
+/* 撕口存根：一道虚线 + 两侧半圆缺口（圆取页面纸色，压在卡边上就是咬进去的口子） */
+.pe-stub {
+  position: relative; display: flex; align-items: center; justify-content: space-between; gap: 24rpx;
+  margin: 0 calc(-1 * var(--pad-card)); padding: 32rpx var(--pad-card) var(--pad-card);
+  border-top: 2rpx dashed var(--line-deep);
+}
+.pe-stub::before, .pe-stub::after {
+  content: ''; position: absolute; top: -21rpx; width: 40rpx; height: 40rpx; border-radius: 50%; background: var(--paper);
+}
+.pe-stub::before { left: -20rpx; }
+.pe-stub::after { right: -20rpx; }
+.pe-stub-sum { flex: 1; min-width: 0; }
+.pe-stub-big { display: flex; align-items: baseline; gap: 6rpx; font-size: var(--fs-sub); color: var(--mut-strong); }
+.pe-stub-num { font-size: var(--fs-h1); font-weight: 800; color: var(--ink); line-height: 1.1; letter-spacing: -1rpx; }
+.pe-stub-sub { margin-top: 6rpx; font-size: var(--fs-cap); color: var(--mut); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .pe-cta {
-  margin-top: 24rpx; height: 104rpx; display: flex; flex-direction: column; align-items: center; justify-content: center;
-  border-radius: var(--e-r-md); background: var(--e-brand); color: #fff; font-size: var(--fs-lg); font-weight: 600; line-height: 1.3;
+  flex-shrink: 0; min-height: 96rpx; padding: 0 56rpx; display: flex; align-items: center; justify-content: center;
+  border-radius: var(--r-pill); background: var(--pop); color: var(--anchor-contrast);
+  font-size: var(--fs-lg); font-weight: 800; letter-spacing: 2rpx; box-shadow: var(--sh-pop);
 }
-.pe-start-note { font-size: var(--fs-mini); font-weight: 400; opacity: 0.85; }
+/* 微信内置 button:not([size=mini]) 固定 184px 宽，单类名压不过，带上父级提高优先级撑满 */
+.pe-stub .pe-share {
+  flex: 1; width: 100%; max-width: none; margin: 0; padding: 0; min-height: 88rpx;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: var(--r-pill); background: var(--pop-soft); color: var(--pop);
+  font-size: var(--fs-btn); font-weight: 700; line-height: 1;
+}
+.pe-share::after { border: 0; }
 
-/* 空单 */
-.pe-ticket-empty { padding: 40rpx 0 8rpx; text-align: center; }
-.pe-empty-text { font-size: var(--fs-lg); font-weight: 600; color: var(--e-ink); }
-.pe-empty-sub { margin-top: 8rpx; font-size: var(--fs-cap); color: var(--e-ink-3); }
-.pe-empty-acts { display: flex; gap: 16rpx; margin-top: 32rpx; }
-.pe-act {
-  flex: 1; height: 88rpx; margin: 0; padding: 0; display: flex; align-items: center; justify-content: center;
-  border-radius: var(--e-r-md); font-size: var(--fs-btn); font-weight: 600; line-height: 1;
+/* 空单：一个「等着放菜」的虚线空位 */
+.pe-slot {
+  display: flex; align-items: center; gap: 24rpx; margin: 16rpx 0 32rpx; padding: var(--pad-card-sm);
+  border: 2rpx dashed var(--line-deep); border-radius: var(--r-card); background: var(--paper);
 }
-.pe-act::after { border: 0; }
-.pe-act-ghost { background: var(--e-fill); color: var(--e-ink); }
-.pe-act-share { background: var(--e-brand-soft); color: var(--e-brand); }
+.pe-slot-plus {
+  flex-shrink: 0; width: 112rpx; height: 112rpx; border-radius: var(--r-card); background: var(--c-surface);
+  display: flex; align-items: center; justify-content: center;
+  font-size: calc(56rpx * var(--fs-mul, 1)); font-weight: 300; color: var(--pop);
+}
+.pe-slot-info { flex: 1; min-width: 0; }
+.pe-slot-title { font-size: var(--fs-lg); font-weight: 800; color: var(--ink); }
+.pe-slot-sub { margin-top: 8rpx; font-size: var(--fs-cap); color: var(--mut); }
 
-/* 3. 新手也能做：两列网格 */
-.pe-sec { margin-top: 48rpx; }
-.pe-sec-head { display: flex; align-items: baseline; gap: 16rpx; margin-bottom: 16rpx; }
-.pe-sec-title { font-size: var(--fs-h2); font-weight: 600; }
-.pe-sec-sub { font-size: var(--fs-cap); color: var(--e-ink-3); }
-.pe-grid { display: flex; flex-wrap: wrap; gap: 16rpx; }
-.pe-easy {
-  position: relative; width: calc((100% - 16rpx) / 2); box-sizing: border-box; border: 3rpx solid transparent;
-  border-radius: var(--e-r-md); background: var(--e-card); overflow: hidden; box-shadow: var(--e-shadow); transform: translateZ(0);
+/* 3. 推荐几排：每排横滑，露出第三张的一角提示能滑 */
+.pe-sec { margin-top: 56rpx; }
+/* 上一排滚动区底下已经留了 20rpx 给卡片阴影，这里扣掉，排与排的间距和主卡到第一排一样 */
+.pe-sec + .pe-sec { margin-top: 36rpx; }
+.pe-sec-head { display: flex; align-items: baseline; gap: 16rpx; margin-bottom: 20rpx; }
+.pe-sec-title { flex-shrink: 0; font-size: var(--fs-h2); font-weight: 800; color: var(--ink); }
+.pe-sec-sub { flex: 1; min-width: 0; font-size: var(--fs-cap); color: var(--mut); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.pe-sec-more {
+  flex-shrink: 0; align-self: center; min-height: 88rpx; margin: -24rpx 0; padding-left: 16rpx;
+  display: flex; align-items: center; font-size: var(--fs-cap); font-weight: 600; color: var(--mut-strong);
 }
-.pe-easy.is-picked { border-color: var(--e-brand); }
-.pe-easy-img { width: 100%; height: 250rpx; display: block; background: var(--e-fill); }
-.pe-easy-body { padding: 16rpx 20rpx 20rpx; }
-.pe-easy-name { font-size: var(--fs-body); font-weight: 600; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-.pe-easy-meta { margin-top: 4rpx; font-size: var(--fs-cap); color: var(--e-ink-3); }
-/* 「+」压在图片右下角（外卖小程序同款），视觉 56rpx，热区 88rpx */
-.pe-easy .pe-plus { position: absolute; right: 4rpx; top: 180rpx; }
-.pe-plus { width: 88rpx; height: 88rpx; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+/* 滚动区贴到屏幕两边，卡片仍和上面内容左对齐 */
+.pe-hscroll { margin: 0 calc(-1 * var(--e-gutter)); width: auto; white-space: nowrap; }
+.pe-hrow { display: inline-flex; gap: 20rpx; padding: 4rpx 0 20rpx var(--e-gutter); }
+.pe-hrow-end { flex-shrink: 0; width: calc(var(--e-gutter) - 20rpx); }
+.pe-card {
+  position: relative; flex-shrink: 0; width: 264rpx; box-sizing: border-box; white-space: normal;
+  border-radius: var(--r-card); border: var(--bd-card); background: var(--c-surface); box-shadow: var(--sh-card);
+  overflow: hidden; transform: translateZ(0);
+}
+.pe-card.is-picked { border-color: var(--pop); box-shadow: 0 0 0 4rpx var(--pop-soft), var(--sh-card); }
+.pe-card-img { display: block; width: 100%; height: 220rpx; background: var(--paper-2); }
+.pe-card-body { padding: 20rpx var(--pad-card-sm) 24rpx; }
+.pe-card-name { font-size: var(--fs-body); font-weight: 800; color: var(--ink); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+/* 卡片窄，大字模式下「60分钟 · 费点功夫」会折行把整排撑高，一律单行截断 */
+.pe-card-meta { margin-top: 6rpx; font-size: var(--fs-cap); color: var(--mut); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+/* 「+」压在图片右下角：视觉 56rpx，热区 88rpx。没点是白底红「+」，点了反成红底白勾，一排里点过哪几道一眼分出来 */
+.pe-plus { position: absolute; right: 4rpx; top: 140rpx; width: 88rpx; height: 88rpx; display: flex; align-items: center; justify-content: center; }
 .pe-plus-dot {
-  width: 56rpx; height: 56rpx; border-radius: 50%; background: var(--e-brand); color: #fff;
-  font-size: var(--fs-h2); line-height: 52rpx; text-align: center; box-shadow: 0 4rpx 12rpx rgba(232, 71, 42, 0.3);
+  width: 56rpx; height: 56rpx; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  background: var(--c-surface); color: var(--pop); box-shadow: var(--sh-card); font-size: var(--fs-h2); font-weight: 700; line-height: 1;
 }
-.pe-plus-dot.is-on { background: var(--e-card); color: var(--e-brand); font-size: var(--fs-body); line-height: 56rpx; font-weight: 600; }
+.pe-plus-dot.is-on { background: var(--pop); color: var(--anchor-contrast); font-size: var(--fs-body); box-shadow: var(--sh-pop); }
+/* 末尾一张「查看全部」，滑到头有去处 */
+.pe-card-all {
+  width: 168rpx; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12rpx;
+  background: var(--paper-2); border-color: transparent; box-shadow: none;
+}
+.pe-card-all-icon {
+  width: 64rpx; height: 64rpx; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  background: var(--c-surface); color: var(--ink); font-size: var(--fs-h2); line-height: 1;
+}
+.pe-card-all-text { font-size: var(--fs-cap); font-weight: 600; color: var(--mut-strong); }
 
-/* 4. 家里常做 */
-.pe-list { padding: 0 8rpx 0 24rpx; border-radius: var(--e-r-lg); background: var(--e-card); box-shadow: var(--e-shadow); }
-.pe-row { display: flex; align-items: center; gap: 24rpx; padding: 16rpx 0; border-bottom: 1rpx solid var(--e-line); }
-.pe-row:last-child { border-bottom: 0; }
-.pe-row-img { width: 96rpx; height: 96rpx; flex-shrink: 0; border-radius: var(--e-r-sm); background: var(--e-fill); }
-.pe-row-info { flex: 1; min-width: 0; }
-.pe-row-name { font-size: var(--fs-body); font-weight: 600; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-.pe-row-meta { margin-top: 4rpx; font-size: var(--fs-cap); color: var(--e-ink-3); }
+/* 当季那排换成杂志式大图宽卡，菜名压在图上。
+   遮罩是照片上的固定暗色、两档都不翻转，所以按全站 hero 遮罩的写法直接给 rgba */
+.pe-sec--season .pe-card { width: 520rpx; }
+.pe-sec--season .pe-card-img { height: 340rpx; }
+.pe-sec--season .pe-card-body {
+  position: absolute; left: 0; right: 0; bottom: 0; padding: 96rpx var(--pad-card) 24rpx;
+  background: linear-gradient(180deg, rgba(20, 14, 8, 0) 0%, rgba(20, 14, 8, 0.72) 100%);
+}
+.pe-sec--season .pe-card-name { font-size: var(--fs-lg); color: var(--anchor-contrast); }
+.pe-sec--season .pe-card-meta { color: var(--anchor-contrast); opacity: 0.85; }
+.pe-sec--season .pe-plus { top: 4rpx; }
+.pe-sec--season .pe-card-all { width: 168rpx; }
 
-.pe-fail { padding: 160rpx 48rpx; text-align: center; }
-.pe-fail-title { font-size: var(--fs-h2); font-weight: 600; }
-.pe-fail-desc { margin: 16rpx 0 48rpx; color: var(--e-ink-2); }
-.pe-btn { display: inline-flex; align-items: center; height: 88rpx; padding: 0 64rpx; border-radius: var(--e-r-md); background: var(--e-brand); color: #fff; font-weight: 600; }
-
-.pe-sk { background: #ebebeb; border-radius: var(--e-r-lg); }
-.pe-sk-ticket { height: 480rpx; }
-.pe-sk-row { height: 360rpx; margin-top: 48rpx; }
+.pe-fail { padding-top: 80rpx; }
+.pe-sk-ticket { height: 560rpx; }
+.pe-sk-head { width: 240rpx; height: 44rpx; margin-top: 56rpx; }
+/* 骨架那排也贴到屏幕右边，和加载完的横滑排一样露半张 */
+.pe-sk-row { display: flex; gap: 20rpx; margin: 20rpx calc(-1 * var(--e-gutter)) 0 0; overflow: hidden; }
+.pe-sk-card { flex-shrink: 0; width: 264rpx; height: 320rpx; }
 
 /* 正式版底部是 tabbar，留出它的高度（token 已含安全区） */
 .pe-bottom-space { height: calc(var(--tabbar-h) + 32rpx); }
-
-@media (prefers-color-scheme: dark) {
-  page {
-    --e-bg: #141414;
-    --e-card: #242424;
-    --e-fill: #2c2c2c;
-    --e-ink: rgba(255, 255, 255, 0.9);
-    --e-ink-2: rgba(255, 255, 255, 0.55);
-    --e-ink-3: rgba(255, 255, 255, 0.35);
-    --e-line: rgba(255, 255, 255, 0.08);
-    --e-chip-on: #f2f2f2;
-    --e-chip-on-ink: #141414;
-    --e-brand-soft: #3a2420;
-    --e-orange-soft: #3a2a1a;
-    --e-green-soft: #16302a;
-    --e-shadow: none;
-  }
-  .pe-sk { background: #2c2c2c; }
-}

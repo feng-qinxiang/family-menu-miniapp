@@ -1,0 +1,16 @@
+{
+  "isolatedDatabases": [
+    "fmenu_cookfix_20261008_84dc93_mig",
+    "fmenu_cookfix_20261008_84dc93_dup"
+  ],
+  "runs": 2,
+  "existingRowsUnchanged": true,
+  "uniqueIndexes": [
+    "cook_history\tuk_cook_completion\t0\tfamily_id,user_id,completion_id",
+    "daily_menu_item\tuk_menu_recipe_meal\t0\tdaily_menu_id,recipe_id,meal_type"
+  ],
+  "legacyNullIdsAllowed": true,
+  "duplicateCompletionRejected": true,
+  "legacyDuplicateMigrationRejected": true,
+  "legacyDuplicateRowsPreserved": true
+}

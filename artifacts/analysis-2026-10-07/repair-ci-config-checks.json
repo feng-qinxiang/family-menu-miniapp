@@ -1,0 +1,8 @@
+{
+  "yamlParsed": true,
+  "setupShellSyntaxPassed": true,
+  "setupEnvironmentAndSqlCheckedWithStubs": true,
+  "githubMaskRegistered": true,
+  "actualDockerServiceExecuted": false,
+  "remoteCiExecuted": false
+}

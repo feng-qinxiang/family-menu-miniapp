@@ -2,5 +2,7 @@
   "navigationBarTitleText": "首页预览 E",
   "navigationStyle": "custom",
   "enablePullDownRefresh": true,
-  "usingComponents": {}
+  "usingComponents": {
+    "state-empty": "/components/state-empty/index"
+  }
 }

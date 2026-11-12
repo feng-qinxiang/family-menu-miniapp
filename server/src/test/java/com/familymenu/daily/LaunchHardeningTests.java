@@ -278,7 +278,7 @@ class LaunchHardeningTests {
             yaml = r.lines().collect(Collectors.joining("\n"));
         }
         assertThat(yaml)
-                .as("生产数据源必须无默认值：漏注入时要启动失败，而不是带着 root/123456 连到别处")
+                .as("生产数据源必须无默认值：漏注入时要启动失败，避免继承本地默认账号连到错误的库")
                 .contains("${DB_USERNAME}")
                 .doesNotContain("${DB_USERNAME:");
         assertThat(yaml).doesNotContain("${DB_PASSWORD:").doesNotContain("${DB_HOST:");

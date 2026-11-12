@@ -1,0 +1,20 @@
+{
+  "exitCode": 0,
+  "testDatabase": "fmenu_cookfix_20261008_84dc93",
+  "classes": [
+    {
+      "class": "AdminBootstrapLoginTests",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "LaunchHardeningTests",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ]
+}

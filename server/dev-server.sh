@@ -10,7 +10,7 @@
 # 为什么存在：真机开发版连的是电脑的局域网后端（miniapp/utils/env.js 的
 # DEV_LAN_BASE），手机测试成败完全取决于这个进程活没活着——重启电脑后
 # 手机连不上，九成是它死了，`start` 一条命令拉回来。
-# 数据库密码走 application.yml 的默认值（root/123456，仅本机开发库）。
+# 数据库口令必须通过 DB_PASSWORD 环境变量注入。
 # ============================================================================
 set -euo pipefail
 cd "$(dirname "$0")"
@@ -28,6 +28,15 @@ case "${1:-status}" in
   start)
     R="$(alive)"
     if [ -n "$R" ]; then echo "已在运行：$R"; exit 0; fi
+    # 没注入就从钥匙串取（服务名 family-menu-db），口令不落盘、不打印
+    if [ -z "${DB_PASSWORD:-}" ]; then
+      DB_PASSWORD="$(security find-generic-password -a "$USER" -s family-menu-db -w 2>/dev/null || true)"
+      if [ -z "$DB_PASSWORD" ]; then
+        echo "缺少 DB_PASSWORD：先执行 security add-generic-password -a \"\$USER\" -s family-menu-db -w" >&2
+        exit 1
+      fi
+      export DB_PASSWORD
+    fi
     echo "启动中（日志 ${LOG}）"
     nohup ./mvnw -B spring-boot:run > "$LOG" 2>&1 &
     for _ in $(seq 1 30); do

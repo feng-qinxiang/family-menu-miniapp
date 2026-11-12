@@ -29,11 +29,11 @@ S.DL = "/tmp/fm-be-admin-downloads-387f91"
 S.PORT = 9224                      # CDP 调试端口，避开前任的 9223
 DB = "fm_be_launch_db"
 
-MYSQL = ["mysql", "-h127.0.0.1", "-uroot", "-p123456", DB, "-e"]
+MYSQL = ["mysql", "-h127.0.0.1", "-uroot", DB, "-e"]
 
 
 def sql(stmt):
-    return subprocess.run(MYSQL + [stmt], capture_output=True, text=True).stdout
+    return subprocess.run(MYSQL + [stmt], capture_output=True, text=True, env={**os.environ, "MYSQL_PWD": os.environ["DB_PASSWORD"]}).stdout
 
 
 def do_401(cdp):

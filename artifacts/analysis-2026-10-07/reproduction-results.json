@@ -1,0 +1,89 @@
+{
+  "generatedAt": "2026-10-07T12:35:37.144Z",
+  "purpose": "Reproduce current defects; assertions describe the observed broken behavior, not acceptance criteria.",
+  "observations": [
+    {
+      "id": "F02-clear-cache-session",
+      "actual": {
+        "kindRemoved": true,
+        "renewEndpoint": "/api/auth/guest"
+      },
+      "expected": "Keep login provider and renew the same account."
+    },
+    {
+      "id": "F11-otp-renew",
+      "actual": {
+        "kind": "login",
+        "renewEndpoint": "/api/auth/login"
+      },
+      "expected": "OTP expiry must not silently switch to a WeChat identity."
+    },
+    {
+      "id": "F06-client-stock-quantity",
+      "actual": {
+        "stock": 1,
+        "need": 8,
+        "available": true
+      },
+      "expected": "available=false; deficit=7"
+    },
+    {
+      "id": "F06-server-stock-quantity",
+      "actual": {
+        "stock": 1,
+        "need": 2,
+        "matchRate": 1,
+        "missing": []
+      },
+      "expected": "matchRate < 1; deficit=1"
+    },
+    {
+      "id": "F04-serving-deduction",
+      "actual": {
+        "recipeServings": 4,
+        "requestedServings": 8,
+        "initialStock": 20,
+        "actualStock": 18,
+        "deducted": 2
+      },
+      "expected": "stock=16; deduct 4 for eight servings"
+    },
+    {
+      "id": "F05-scored-retry",
+      "actual": {
+        "separateRecords": true,
+        "stockBefore": 18,
+        "stockAfter": 14,
+        "deducted": 4
+      },
+      "expected": "Retry one completion request only once; additional review should not consume stock."
+    },
+    {
+      "id": "F07-meal-overwrite",
+      "actual": {
+        "remainingMeals": [
+          "dinner"
+        ],
+        "lunchDoneRemoved": true,
+        "itemIdChanged": true
+      },
+      "expected": "Preserve lunch and dinner independently, including status."
+    },
+    {
+      "id": "F09-weekly-regeneration",
+      "actual": {
+        "identicalResponse": true
+      },
+      "expected": "Explicit regenerate should replace the cached plan. Code confirms immediate cache return."
+    },
+    {
+      "id": "F08-profile-renew",
+      "actual": {
+        "sameUser": true,
+        "nicknameOverwritten": true,
+        "avatarOverwritten": true
+      },
+      "expected": "Preserve edited profile during silent renewal."
+    }
+  ]
+}

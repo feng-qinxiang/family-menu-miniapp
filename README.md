@@ -43,7 +43,7 @@ cd server
 | `SERVER_PORT` | `9088` | 服务端口 |
 | `DB_HOST` / `DB_PORT` | `127.0.0.1` / `3306` | MySQL 地址 |
 | `DB_NAME` | `family_menu_daily_db` | 库名 |
-| `DB_USERNAME` / `DB_PASSWORD` | `root` / `123456` | 数据库账号（仅本地默认，生产必须覆盖，见下方安全须知） |
+| `DB_USERNAME` / `DB_PASSWORD` | `root` / 无默认值 | 数据库密码必须从环境变量注入；生产使用专用账号 |
 | `WECHAT_APP_ID` / `WECHAT_APP_SECRET` | 空 | 微信登录凭据，留空则微信登录不可用并引导手机验证码 |
 | `AUTH_DEV_OTP_ENABLED` | `false` | 开发态固定验证码 `246810` 并回显 devCode，仅供本地联调；**默认关闭**，生产严禁开启 |
 | `APP_SEED_DEMO_DATA` | `true` | 演示数据总开关：启动播种（种子用户/社区帖子）+ 新账号首登补演示菜单/清单/记录/通知。生产由 `application-prod.yml` 固定 `false`，否则真实用户第一屏会出现别人的假数据 |
@@ -51,7 +51,7 @@ cd server
 | `UPLOAD_ACCESS_SECRET` | 空 | 上传链接的 HMAC 签名密钥。**本地留空即整体关闭签名（零配置可跑）；但 `prod` profile 下留空会在启动时直接抛异常** —— 生成：`openssl rand -hex 32`。`docker-compose.yml` 与 `.env.example` 已把它设为必填，缺了 compose 会当场报错而不是无限重启 |
 
 > ⚠️ **生产安全须知**
-> - `DB_USERNAME` / `DB_PASSWORD` 默认 `root` / `123456` 仅为本地零配置启动方便。**上线前必须用环境变量覆盖为最小权限的专用数据库账号，禁用 root 直连**，切勿沿用默认弱口令。
+> - `DB_PASSWORD` 没有默认值，启动和测试前必须通过环境变量或本机凭据配置注入。**生产必须使用最小权限的专用数据库账号，禁用 root 直连**。
 > - `AUTH_DEV_OTP_ENABLED` 默认已为 `false`。开启后任意手机号请求验证码会拿到固定码 `246810` 且明文回显，等同任意账号接管，**仅限本地联调临时开启**。生产/测试环境务必保持关闭并接入真实短信网关。
 > - `ADMIN_BOOTSTRAP_TOKEN` 一旦设置就是**长期有效的单因子后台入口**（跳过验证码，只认服务端配的 `ADMIN_BOOTSTRAP_PHONE`）。只在"登不进后台"时临时用，用完删掉并重启。
 

@@ -1,0 +1,23 @@
+{
+  "scannedCurrentFiles": 769,
+  "historicalCredentialMatches": [
+    {
+      "credentialLabel": "formerDatabaseDefault",
+      "remainingMatches": []
+    },
+    {
+      "credentialLabel": "formerCiDatabasePassword",
+      "remainingMatches": []
+    },
+    {
+      "credentialLabel": "formerBootstrapTestToken",
+      "remainingMatches": []
+    }
+  ],
+  "scopedDiffCheckPassed": true,
+  "scopedDiffCheckFileCount": 34,
+  "localEnvPathsIgnored": true,
+  "databaseCredentialRotated": false,
+  "gitHistoryRewritten": false,
+  "scope": "Current tracked files, new repair test files, and analysis artifacts; local credential files were not opened or changed."
+}

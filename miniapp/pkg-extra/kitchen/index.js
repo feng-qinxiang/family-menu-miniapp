@@ -345,24 +345,21 @@ Page({
     });
     if (!res.confirm) return;
     let ok = false;
-    let cookLogFailed = false;
+    let recorded = false;
     let pantryDeducted = 0;
     await runGuarded(this, `cooked-${item.id}`, async () => {
-      await Promise.all([
-        item.id ? api.updateMenuItemStatus(item.id, 'done') : Promise.resolve(),
-        api.addCookHistory({ recipeId: id })
-          .then((r) => { pantryDeducted = (r && r.pantryDeducted) || 0; })
-          .catch(() => { cookLogFailed = true; })
-      ]);
+      const r = await api.addCookHistory({ recipeId: id,
+        servings: Number(item.servings) > 0 ? Number(item.servings) : 2,
+        completionId: item.id ? `menu-${item.id}` : undefined },
+      { completionKey: item.id ? `menu-${item.id}` : `kitchen-${id}` });
+      pantryDeducted = (r && r.pantryDeducted) || 0;
+      recorded = true;
+      if (item.id) await api.updateMenuItemStatus(item.id, 'done');
       ok = true;
     }, {
       loading: '处理中',
-      // 与 pages/menu 的「上桌」一致：记录写失败必须让人看见，不能静默缺一笔。
-      // 冰箱被扣了也要说一句——数字自己变小却不解释，像被人删了东西
-      success: () => (cookLogFailed
-        ? '已上桌，但做菜记录没保存'
-        : (pantryDeducted ? `已上桌 · 冰箱扣了 ${pantryDeducted} 项` : '已上桌')),
-      fail: '操作失败'
+      success: () => (pantryDeducted ? `已上桌 · 冰箱扣了 ${pantryDeducted} 项` : '已上桌'),
+      fail: () => (recorded ? '已记录，上桌状态未同步，请重试' : '记录未确认，请重试')
     });
     if (!ok) return;
     try { if (item.id) wx.removeStorageSync(timerKey(item.id)); } catch (err) { /* 忽略 */ }

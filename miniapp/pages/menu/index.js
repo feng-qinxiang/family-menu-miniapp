@@ -241,7 +241,7 @@ Page({
   },
 
   async removeItem(e) {
-    const { id } = e.currentTarget.dataset;
+    const { id, meal } = e.currentTarget.dataset;
     if (!id) return;
     const res = await wx.showModal({
       title: '撤掉这道菜？',
@@ -252,8 +252,8 @@ Page({
     if (!res.confirm) return;
     // 防重 + 反馈：确认后到结果之间此前完全没有反馈，慢网络下像没点上
     let removed = false;
-    await runGuarded(this, `remove-${id}`, async () => {
-      await removeTodayMenuRecipe(id);
+    await runGuarded(this, `remove-${id}-${meal}`, async () => {
+      await removeTodayMenuRecipe(id, meal);
       removed = true;
     }, {
       loading: '撤菜中',
@@ -333,24 +333,21 @@ Page({
     });
     if (!res.confirm) return;
     let done = false;
-    let cookLogFailed = false;
+    let recorded = false;
     let pantryDeducted = 0;
-    await runGuarded(this, `cooked-${id}`, async () => {
-      await Promise.all([
-        item ? updateMenuItemStatus(item, 'done') : Promise.resolve(),
-        addCookHistory({ recipeId: id })
-          .then((r) => { pantryDeducted = (r && r.pantryDeducted) || 0; })
-          .catch(() => { cookLogFailed = true; })
-      ]);
+    const menuItem = this.data.todayMenu.find((it) => String(it.itemId) === String(item));
+    await runGuarded(this, `cooked-${item || id}`, async () => {
+      const r = await addCookHistory({ recipeId: id,
+        servings: Number(menuItem && menuItem.recipe && menuItem.recipe.servings) > 0 ? Number(menuItem.recipe.servings) : 2,
+        completionId: item ? `menu-${item}` : undefined }, { completionKey: item ? `menu-${item}` : `menu-recipe-${id}` });
+      pantryDeducted = (r && r.pantryDeducted) || 0;
+      recorded = true;
+      if (item) await updateMenuItemStatus(item, 'done');
       done = true;
     }, {
       loading: '处理中',
-      // 之前 .catch(() => {}) 把失败吞成"已上桌"，用户的做菜历史会静默缺一笔。
-      // 冰箱被扣了也要说一句：库存数字自己变小却不解释，像被人删了东西
-      success: () => (cookLogFailed
-        ? '已上桌，但做菜记录没保存'
-        : (pantryDeducted ? `已上桌 · 冰箱扣了 ${pantryDeducted} 项` : '已上桌')),
-      fail: '操作失败'
+      success: () => (pantryDeducted ? `已上桌 · 冰箱扣了 ${pantryDeducted} 项` : '已上桌'),
+      fail: () => (recorded ? '已记录，上桌状态未同步，请重试' : '记录未确认，请重试')
     });
     if (!done) return;
     await this.loadData();

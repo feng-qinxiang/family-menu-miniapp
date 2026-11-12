@@ -238,7 +238,7 @@
 | `WECHAT_APP_ID` | 小程序 AppID | 是（微信登录依赖） |
 | `WECHAT_APP_SECRET` | 小程序 AppSecret | 是 |
 | `DB_HOST` / `DB_PORT` / `DB_NAME` | MySQL 连接 | 是 |
-| `DB_USERNAME` / `DB_PASSWORD` | MySQL 账号（**改掉默认 123456**） | 是 |
+| `DB_USERNAME` / `DB_PASSWORD` | MySQL 账号（**专用账号，密码从环境变量注入**） | 是 |
 | `UPLOAD_DIR` | 上传文件目录（建议绝对路径） | 建议 |
 | `UPLOAD_ACCESS_SECRET` | 上传文件访问签名密钥。**prod 留空会启动失败**（否则 `/uploads/**` 等于公开可长期访问的家庭实拍）；本地留空则整套签名自动关闭 | prod 必填 |
 | `UPLOAD_LINK_TTL_SECONDS` | 图片链接有效期，默认 604800（7 天）。设太短会让用户停留在旧页面时图片成片裂开 | 否 |

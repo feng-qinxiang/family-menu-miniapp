@@ -13,7 +13,7 @@ const { recipeDishImg, stepDishImg, onPhotoError: markPhotoBroken } = require('.
 const { sourceLabels: baseSourceLabels } = require('../../utils/constants');
 const features = require('../../utils/features');
 const { composePostWithRecipe } = require('../../utils/post-share');
-const { indexPantry, pantryHas } = require('../../utils/pantry-match');
+const { indexPantry, pantryMatches } = require('../../utils/pantry-match');
 
 // 复用全局来源标签（社区开关关闭时 community 显示"精选"），本页额外支持 link/text
 const sourceLabels = {
@@ -126,8 +126,10 @@ Page({
         return;
       }
       const pantryIndex = indexPantry(pantryItems);
+      this._pantryIndex = pantryIndex;
       const rawIngredients = Array.isArray(recipe.ingredients) ? recipe.ingredients : [];
-      const ingredients = rawIngredients.map((ing) => {
+      const stockMatches = pantryMatches(pantryIndex, rawIngredients);
+      const ingredients = rawIngredients.map((ing, i) => {
         const name = String(ing.name || '').trim();
         return {
           ...ing,
@@ -136,7 +138,7 @@ Page({
           amountText: scaleAmount(ing.amount, 1),
           // 与服务端扣库存同一口径（utils/pantry-match）：名称+单位都对得上、用量能解析出数字才算"有"。
           // 只比名字会出现"页面说齐了、做完菜一项没扣"
-          inStock: pantryHas(pantryIndex, name, ing.unit, ing.amount)
+          inStock: stockMatches[i]
         };
       });
       const haveCount = ingredients.filter((ing) => ing.inStock).length;
@@ -217,13 +219,18 @@ Page({
     const next = Math.max(1, Math.min(20, this.data.servings + delta));
     if (next === this.data.servings) return;
     const ratio = next / this.data.baseServings;
-    const ingredients = this.data.recipe.ingredients.map((ing) => ({
+    const stockMatches = pantryMatches(this._pantryIndex, this.data.recipe.ingredients, ratio);
+    const ingredients = this.data.recipe.ingredients.map((ing, i) => ({
       ...ing,
-      amountText: scaleAmount(ing.baseAmount, ratio)
+      amountText: scaleAmount(ing.baseAmount, ratio),
+      inStock: stockMatches[i]
     }));
+    const haveCount = ingredients.filter((ing) => ing.inStock).length;
     this.setData({
       servings: next,
-      'recipe.ingredients': ingredients
+      'recipe.ingredients': ingredients,
+      'recipe.haveCount': haveCount,
+      missCount: ingredients.length - haveCount
     });
   },
 
@@ -342,7 +349,8 @@ Page({
             let published = false;
             let pantryDeducted = 0;
             // 与菜单页/厨房页同一套：runGuarded 挡连点，冰箱被扣了要说一句
-            await runGuarded(this, 'review', () => addCookHistory({ recipeId: recipe.id, score, remark: content })
+            await runGuarded(this, 'review', () => addCookHistory({ recipeId: recipe.id, score, remark: content,
+              servings: this.data.servings }, { completionKey: `review-${recipe.id}` })
               .then((r) => {
                 pantryDeducted = (r && r.pantryDeducted) || 0;
                 published = true;
@@ -427,7 +435,8 @@ Page({
           let pantryDeducted = 0;
           // 连点模态框的「确定」原来会落两条做菜历史、扣两遍冰箱：这里挡页面级重复，
           // 服务端另有幂等兜底（MysqlKitchenStore.addCookHistory）
-          await runGuarded(this, 'cooked', () => addCookHistory({ recipeId: recipe.id, remark: '' })
+          await runGuarded(this, 'cooked', () => addCookHistory({ recipeId: recipe.id, remark: '',
+            servings: this.data.servings }, { completionKey: `record-${recipe.id}` })
             .then((r) => {
               pantryDeducted = (r && r.pantryDeducted) || 0;
               recorded = true;

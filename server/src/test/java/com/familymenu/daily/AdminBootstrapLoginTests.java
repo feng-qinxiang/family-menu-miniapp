@@ -9,6 +9,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -32,13 +34,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestPropertySource(properties = {
-        "admin.bootstrap-token=bootstrap-test-token-2f8a91",
         "admin.bootstrap-phone=13900000001"
 })
 class AdminBootstrapLoginTests {
 
-    private static final String TOKEN = "bootstrap-test-token-2f8a91";
+    private static final String TOKEN = java.util.UUID.randomUUID().toString();
     private static final String PHONE = "13900000001";
+
+    @DynamicPropertySource
+    static void bootstrapToken(DynamicPropertyRegistry registry) {
+        registry.add("admin.bootstrap-token", () -> TOKEN);
+    }
 
     @Autowired
     private MockMvc mockMvc;
@@ -140,7 +146,7 @@ class AdminBootstrapLoginTests {
     @Test
     void nearMissTokenIsRejected() throws Exception {
         prepareAccount(true);
-        assertThat(bootstrap(TOKEN.substring(0, TOKEN.length() - 1) + "0").getResponse().getStatus())
+        assertThat(bootstrap(TOKEN.substring(0, TOKEN.length() - 1) + "x").getResponse().getStatus())
                 .isEqualTo(401);
         assertThat(bootstrap(TOKEN + "x").getResponse().getStatus()).isEqualTo(401);
     }

@@ -988,26 +988,21 @@ public class MysqlKitchenStore {
         if (request == null || request.recipeId() == null) {
             throw new IllegalArgumentException("recipeId required");
         }
-        Boolean accessible = jdbcTemplate.query(
-                "SELECT 1 FROM recipe WHERE id = ? AND status = 'ACTIVE' AND (owner_user_id = ? OR family_id = ? OR is_public = 1 OR source_type = 'community')",
-                rs -> rs.next() ? Boolean.TRUE : null,
+        // 锁定菜谱行，让评分聚合与同菜的完成记录按提交顺序计算。
+        Integer baseServings = jdbcTemplate.query(
+                "SELECT servings FROM recipe WHERE id = ? AND status = 'ACTIVE' AND (owner_user_id = ? OR family_id = ? OR is_public = 1 OR source_type = 'community') FOR UPDATE",
+                rs -> rs.next() ? rs.getInt("servings") : null,
                 request.recipeId(), userId, familyId
         );
-        if (accessible == null) {
+        if (baseServings == null) {
             throw new org.springframework.web.server.ResponseStatusException(
                     org.springframework.http.HttpStatus.FORBIDDEN, "recipe not accessible");
         }
-        // 幂等：同一个人在同一分钟里对同一道菜的「纯记录」只落一条。
-        // 连点模态框「确定」会 22ms 内发两次请求（实测两条 cook_history + 冰箱扣两遍），
-        // 页面级防重（runGuarded）挡不住已发出/重试的请求，所以这里再兜一层。
-        // FOR UPDATE 先锁住 (family_id, recipe_id) 这段索引：并发的那一次会等前者提交后
-        // 才做判断，避免两边都探到"没记过"。
-        // 带评分的记录不参与去重——那是用户主动写的一条新评价。
-        // ponytail: 去重窗口是固定 60s；要做到请求级精确，得让客户端带幂等键并落唯一索引。
-        if (request.score() == null) {
+        // 新客户端按 completion_id 精确去重；无标识的旧客户端保留 60 秒兼容保护。
+        if (request.completionId() == null && request.score() == null) {
             Long duplicateId = jdbcTemplate.query(
                     "SELECT id FROM cook_history WHERE family_id = ? AND recipe_id = ? AND user_id = ?"
-                            + " AND score IS NULL AND cooked_at >= NOW() - INTERVAL 60 SECOND"
+                            + " AND completion_id IS NULL AND score IS NULL AND cooked_at >= NOW() - INTERVAL 60 SECOND"
                             + " ORDER BY id DESC LIMIT 1 FOR UPDATE",
                     rs -> rs.next() ? rs.getLong(1) : null,
                     familyId, request.recipeId(), userId
@@ -1019,22 +1014,37 @@ public class MysqlKitchenStore {
             }
         }
         var keyHolder = new org.springframework.jdbc.support.GeneratedKeyHolder();
-        jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement("""
-                    INSERT INTO cook_history(recipe_id, user_id, family_id, score, remark)
-                    VALUES (?, ?, ?, ?, ?)
-                    """, Statement.RETURN_GENERATED_KEYS);
-            ps.setLong(1, request.recipeId());
-            ps.setLong(2, userId);
-            ps.setLong(3, familyId);
-            if (request.score() == null) {
-                ps.setNull(4, java.sql.Types.INTEGER);
-            } else {
-                ps.setInt(4, request.score());
+        try {
+            jdbcTemplate.update(connection -> {
+                PreparedStatement ps = connection.prepareStatement("""
+                        INSERT INTO cook_history(recipe_id, user_id, family_id, score, remark, completion_id)
+                        VALUES (?, ?, ?, ?, ?, ?)
+                        """, Statement.RETURN_GENERATED_KEYS);
+                ps.setLong(1, request.recipeId());
+                ps.setLong(2, userId);
+                ps.setLong(3, familyId);
+                if (request.score() == null) {
+                    ps.setNull(4, java.sql.Types.INTEGER);
+                } else {
+                    ps.setInt(4, request.score());
+                }
+                ps.setString(5, request.remark());
+                ps.setString(6, request.completionId());
+                return ps;
+            }, keyHolder);
+        } catch (org.springframework.dao.DuplicateKeyException ex) {
+            if (request.completionId() == null) throw ex;
+            long[] existing = jdbcTemplate.query(
+                    "SELECT id, recipe_id FROM cook_history WHERE family_id = ? AND user_id = ? AND completion_id = ? FOR UPDATE",
+                    rs -> rs.next() ? new long[]{rs.getLong("id"), rs.getLong("recipe_id")} : null,
+                    familyId, userId, request.completionId());
+            if (existing == null) throw ex;
+            if (existing[1] != request.recipeId()) {
+                throw new org.springframework.web.server.ResponseStatusException(
+                        org.springframework.http.HttpStatus.CONFLICT, "completionId belongs to another recipe");
             }
-            ps.setString(5, request.remark());
-            return ps;
-        }, keyHolder);
+            return cookHistoryById(existing[0], 0);
+        }
         Number key = keyHolder.getKey();
         if (key == null) {
             throw new IllegalStateException("cook history insert failed");
@@ -1052,9 +1062,11 @@ public class MysqlKitchenStore {
                     request.recipeId(), request.recipeId()
             );
         }
-        // 做完菜 → 按菜谱标准用量回写冰箱（ADR-0009 方案 A）。与上面同一事务：
+        // 做完菜 → 按实际份数回写冰箱。与上面同一事务：
         // 扣错了不能只留下一条做菜历史，而库存悄悄少了。
-        int pantryDeducted = deductPantryForRecipe(familyId, request.recipeId());
+        double ratio = request.servings() == null ? 1.0
+                : (double) request.servings() / (baseServings > 0 ? baseServings : 2);
+        int pantryDeducted = deductPantryForRecipe(familyId, request.recipeId(), ratio);
         return cookHistoryById(key.longValue(), pantryDeducted);
     }
 
@@ -1102,7 +1114,7 @@ public class MysqlKitchenStore {
      * 按菜谱用量扣减本家庭冰箱库存，返回被改动的行数（0 = 什么都没扣，前端据此决定要不要提这句）。
      * 规则见 {@link PantryDeduction}：名称与单位都要对得上、两边都是可解析的数字才扣。
      */
-    private int deductPantryForRecipe(long familyId, long recipeId) {
+    private int deductPantryForRecipe(long familyId, long recipeId, double servingRatio) {
         if (familyId <= 0) {
             return 0;
         }
@@ -1110,58 +1122,25 @@ public class MysqlKitchenStore {
                 "SELECT ingredient_name, unit, amount FROM recipe_ingredient WHERE recipe_id = ?",
                 (rs, n) -> new String[]{rs.getString("ingredient_name"), rs.getString("unit"), rs.getString("amount")},
                 recipeId);
-        List<PantryDeduction.Needed> needed = PantryDeduction.mergeNeeded(needRows);
+        List<PantryDeduction.Needed> needed = PantryDeduction.mergeNeeded(needRows, servingRatio);
         if (needed.isEmpty()) {
             return 0;
         }
         // 临期优先消耗；没写保质期的排在最后（宁可先吃有日期的）
         List<PantryDeduction.Stock> stock = jdbcTemplate.query(
                 "SELECT id, ingredient_name, unit, amount FROM pantry_item WHERE family_id = ?"
-                        + " ORDER BY (expires_at IS NULL), expires_at ASC, id ASC",
+                        + " ORDER BY (expires_at IS NULL), expires_at ASC, id ASC FOR UPDATE",
                 (rs, n) -> new PantryDeduction.Stock(rs.getLong("id"), rs.getString("ingredient_name"),
                         rs.getString("unit"), rs.getString("amount")),
                 familyId);
-        // 读-改-写之间必须防"两个人同时做完同一道菜"：
-        // 原来把库存读进 Java、算完再写**绝对值**，两个家人同时上桌就都按"8 个"扣 2，
-        // 结果都是写 6，第二次的扣减凭空消失。改成把读到的原始字符串放进 WHERE
-        // （乐观条件），0 行说明有人先改了 → 重新读一遍库存再规划一次。
+        // 锁定读取得当前库存；并发扣减等前一次提交后再规划，事务冲突由外层整体重试。
         int changed = 0;
-        boolean conflicted = false;
-        for (int attempt = 0; attempt < 2; attempt++) {
-            Map<Long, String> readAmount = new java.util.HashMap<>();
-            for (PantryDeduction.Stock s : stock) {
-                readAmount.put(s.id(), s.amount());
-            }
-            conflicted = false;
-            for (PantryDeduction.Change c : PantryDeduction.plan(needed, stock)) {
-                String was = readAmount.get(c.stockId());
-                int n = c.after() <= 0
-                        ? jdbcTemplate.update("DELETE FROM pantry_item WHERE id = ? AND family_id = ? AND amount <=> ?",
-                                c.stockId(), familyId, was)
-                        : jdbcTemplate.update("UPDATE pantry_item SET amount = ? WHERE id = ? AND family_id = ? AND amount <=> ?",
-                                formatPantryAmount(c.after()), c.stockId(), familyId, was);
-                if (n == 0) {
-                    conflicted = true;
-                    continue;
-                }
-                changed += n;
-            }
-            if (!conflicted) {
-                return changed;
-            }
-            // 有人同时改过这一行。**在同一事务里重读是没用的**：REPEATABLE READ 的快照
-            // 停在第一次读的那一刻，重读还是旧值（实测这样只会连着两次都算出 6）。
-            // 所以直接抛乐观锁冲突，让外层 inTxWithDeadlockRetry 开一个**新事务**（新快照）重来。
-            stock = jdbcTemplate.query(
-                    "SELECT id, ingredient_name, unit, amount FROM pantry_item WHERE family_id = ?"
-                            + " ORDER BY (expires_at IS NULL), expires_at ASC, id ASC",
-                    (rs, n) -> new PantryDeduction.Stock(rs.getLong("id"), rs.getString("ingredient_name"),
-                            rs.getString("unit"), rs.getString("amount")),
-                    familyId);
-        }
-        if (conflicted) {
-            throw new org.springframework.dao.OptimisticLockingFailureException(
-                    "冰箱库存被同时改动，本次扣减需要重试");
+        for (PantryDeduction.Change c : PantryDeduction.plan(needed, stock)) {
+            changed += c.after() <= 0
+                    ? jdbcTemplate.update("DELETE FROM pantry_item WHERE id = ? AND family_id = ?",
+                            c.stockId(), familyId)
+                    : jdbcTemplate.update("UPDATE pantry_item SET amount = ? WHERE id = ? AND family_id = ?",
+                            formatPantryAmount(c.after()), c.stockId(), familyId);
         }
         return changed;
     }

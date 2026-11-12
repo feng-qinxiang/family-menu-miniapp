@@ -253,8 +253,8 @@ Page({
     });
 
     // 详情页带入了人数时按比例缩放用量（与详情页 scaleAmount 同一规则）
-    const baseServings = Number(recipe.servings) || 0;
-    const ratio = (this._servings > 0 && baseServings > 0) ? this._servings / baseServings : 1;
+    const baseServings = Number(recipe.servings) > 0 ? Number(recipe.servings) : 2;
+    const ratio = this._servings > 0 ? this._servings / baseServings : 1;
     const ingredients = (Array.isArray(recipe.ingredients) ? recipe.ingredients : []).map((it) => {
       if (typeof it === 'string') return { name: it, label: it, checked: false };
       const name = it.name || '';
@@ -553,18 +553,22 @@ Page({
       gotoLog(); // 跳转失败后仅重试查看记录，不再写第二笔。
       return;
     }
-    // ponytail: 防重限定本页实例；提交成功但回包丢失的重试，还需服务端幂等键。
     await runGuarded(this, 'finish', async () => {
-      const score = await new Promise((resolve) => {
-        wx.showActionSheet({
-          itemList: ['⭐⭐⭐⭐⭐ 超好吃', '⭐⭐⭐⭐ 不错', '⭐⭐⭐ 一般', '先不评分'],
-          success: (sheet) => resolve([5, 4, 3, null][sheet.tapIndex]),
-          fail: () => resolve(null) // 保留原语义：取消评分也记一笔，不带分。
+      if (!this._finishPayload) {
+        const score = await new Promise((resolve) => {
+          wx.showActionSheet({
+            itemList: ['⭐⭐⭐⭐⭐ 超好吃', '⭐⭐⭐⭐ 不错', '⭐⭐⭐ 一般', '先不评分'],
+            success: (sheet) => resolve([5, 4, 3, null][sheet.tapIndex]),
+            fail: () => resolve(null) // 保留原语义：取消评分也记一笔，不带分。
+          });
         });
-      });
-      const payload = { recipeId, remark: '' };
-      if (score != null) payload.score = score;
-      const record = await api.addCookHistory(payload);
+        this._finishPayload = { recipeId, remark: '', servings: this._servings > 0
+          ? this._servings : (Number(recipe && recipe.servings) > 0 ? Number(recipe.servings) : 2) };
+        if (score != null) this._finishPayload.score = score;
+        if (this._menuItemId) this._finishPayload.completionId = `menu-${this._menuItemId}`;
+      }
+      const completionKey = this._menuItemId ? `menu-${this._menuItemId}` : `mode-${recipeId}`;
+      const record = await api.addCookHistory(this._finishPayload, { completionKey });
       this.setData({ finished: true });
       this.stopTicker();
       this._slots = {};

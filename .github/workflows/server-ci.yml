@@ -18,12 +18,13 @@ jobs:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_ROOT_PASSWORD: test-password
+          MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+          MYSQL_ROOT_HOST: '%'
           MYSQL_DATABASE: family_menu_daily_db
         ports:
           - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping -h 127.0.0.1 -ptest-password"
+          --health-cmd="mysqladmin ping -h 127.0.0.1"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=10
@@ -33,7 +34,6 @@ jobs:
       DB_PORT: '3306'
       DB_NAME: family_menu_daily_db
       DB_USERNAME: root
-      DB_PASSWORD: test-password
       # 故意让 JVM 时区 ≠ MySQL 时区（上面的 mysql:8.0 服务是 SYSTEM=UTC）。
       # 曾经 user_session/phone_otp 的 expires_at 用 JVM 时钟写入、却用 SQL 的 NOW() 校验，
       # 两边差 8 小时时会话与验证码"一建立就过期"——本地两边都是 +08:00 所以看不出来，
@@ -59,6 +59,18 @@ jobs:
           distribution: temurin
           java-version: '17'
           cache: maven
+
+      - name: Set a temporary database password
+        run: |
+          export DB_PASSWORD="$(openssl rand -hex 32)"
+          echo "::add-mask::$DB_PASSWORD"
+          echo "DB_PASSWORD=$DB_PASSWORD" >> "$GITHUB_ENV"
+          docker exec -i -e DB_PASSWORD "${{ job.services.mysql.id }}" sh <<'SH'
+          mysql -uroot <<SQL
+          ALTER USER 'root'@'%' IDENTIFIED BY '$DB_PASSWORD';
+          ALTER USER 'root'@'localhost' IDENTIFIED BY '$DB_PASSWORD';
+          SQL
+          SH
 
       - name: Build and run tests
         run: mvn -B clean verify

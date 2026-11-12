@@ -418,9 +418,14 @@ public final class ApiModels {
 
     public record AddCookHistoryRequest(
             @NotNull Long recipeId,
-            Integer score,
-            String remark
+            @Min(1) @Max(5) Integer score,
+            @Size(max = 255) String remark,
+            @Min(1) @Max(99) Integer servings,
+            @jakarta.validation.constraints.Pattern(regexp = "[A-Za-z0-9_-]{1,64}") String completionId
     ) {
+        public AddCookHistoryRequest(Long recipeId, Integer score, String remark) {
+            this(recipeId, score, remark, null, null);
+        }
     }
 
     public record AddShoppingItemRequest(

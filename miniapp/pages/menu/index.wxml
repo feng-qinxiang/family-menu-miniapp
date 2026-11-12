@@ -150,7 +150,7 @@
               <text class="m-rby" wx:if="{{dish.addedByName}}">{{dish.addedByName}} 点的</text>
             </view>
           </view>
-          <view class="tap-scale m-remove" data-id="{{dish.recipeId}}" catchtap="removeItem">撤</view>
+          <view class="tap-scale m-remove" data-id="{{dish.recipeId}}" data-meal="{{dish.mealType}}" catchtap="removeItem">撤</view>
           <view class="tap-scale m-acts" wx:if="{{dish.status !== 'done'}}">
             <view class="m-act m-act-cook tap-scale" data-id="{{dish.recipeId}}" data-item="{{dish.itemId}}" catchtap="startCook">{{dish.status === 'cooking' ? '继续做' : '开始做'}}</view>
             <view class="m-act m-act-done tap-scale" data-id="{{dish.recipeId}}" data-item="{{dish.itemId}}" catchtap="markCooked">上桌</view>

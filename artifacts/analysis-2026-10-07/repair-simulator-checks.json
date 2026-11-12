@@ -1,0 +1,33 @@
+{
+  "checkedAt": "2026-10-08T12:49:37+08:00",
+  "projectRoot": "/Users/xx/cx/家庭点菜小程序",
+  "compileWxml": {
+    "file": "pages/menu/index.wxml",
+    "success": true,
+    "codeLength": 33293
+  },
+  "simulatorRefreshTriggered": true,
+  "currentPage": {
+    "pageId": 95,
+    "path": "pages/menu/index",
+    "title": "菜单"
+  },
+  "screenshot": {
+    "file": "repair-menu.jpg",
+    "imageWidth": 591,
+    "imageHeight": 1280,
+    "visuallyChecked": true,
+    "visibleState": "菜单没加载出来；网络请求失败，请稍后重试"
+  },
+  "consoleErrorFilter": {
+    "command": "grep -i error",
+    "observed": [
+      "menu loadData failed",
+      "网络请求失败，请稍后重试"
+    ]
+  },
+  "backendListener9088": false,
+  "backendListener19088": false,
+  "endToEndWithRunningBackendVerified": false,
+  "boundary": "Template compiled and modified menu page rendered. Network actions were unavailable because the local API service was not listening; no service was started or restarted."
+}

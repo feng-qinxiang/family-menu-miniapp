@@ -1,23 +1,23 @@
 # 安全政策
 
-这个仓库同时包含一个微信小程序（`miniapp/`）和一个连着真实家庭数据的后端服务（`server/`）。
+这个仓库同时包含一个微信小程序（`miniapp/`）和一个连着真实家庭数据的后端服务（`server/`）。  
 **发现安全问题请不要直接开公开 Issue** —— 仓库是 public 的，一条公开 Issue 等于把利用方式发给所有人。
 
 ## 怎么报告（只走私密渠道）
 
-1. 首选：GitHub 安全公告 —— 打开本仓库的 **Security → Report a vulnerability**
-   （<https://github.com/feng-qinxiang/family-menu-miniapp/security/advisories/new>），
+1. 首选：GitHub 安全公告 —— 打开本仓库的 **Security → Report a vulnerability**  
+   （<https://github.com/feng-qinxiang/family-menu-miniapp/security/advisories/new>），  
    填写复现步骤。这会创建一条只有维护者能看到的私密会话。
-2. 或者：先开一个**只写标题不含细节**的 Issue（例如"疑似越权访问问题，请私下联系"），
+2. 或者：先开一个**只写标题不含细节**的 Issue（例如"疑似越权访问问题，请私下联系"），  
    我会通过 GitHub 私信回你一条私密渠道。
 
 请不要在 Issue / PR / commit message / 讨论区里贴出漏洞细节、PoC、真实 token 或真实用户数据。
 
 ## 我们特别在意的类别
 
-- **越权（IDOR）**：`/api/**` 全部要求 `X-Auth-Token`，且业务查询都按 `family_id` 限定。
+- **越权（IDOR）**：`/api/**` 全部要求 `X-Auth-Token`，且业务查询都按 `family_id` 限定。  
   任何"换个 id 就能读到/改到别人家数据"的口子都算高危——家庭之间共享的是菜谱，不是数据。
-- **上传与静态资源**：`/uploads/**` 依赖 HMAC 签名（`?e=<过期秒>&k=<签名>`）访问；
+- **上传与静态资源**：`/uploads/**` 依赖 HMAC 签名（`?e=<过期秒>&k=<签名>`）访问；  
   能绕过签名读到他人上传图片、或让签名与路径解绑（换个文件名仍能用）都算问题。
 - **登录与账号绑定**：游客态、手机号绑定、`ADMIN_BOOTSTRAP_TOKEN` 引导登录、会话 token 的签发与失效。
 - **社区内容审核绕过**：发帖/评论应经内容安全检查；先审后发期间只对作者本人可见。
