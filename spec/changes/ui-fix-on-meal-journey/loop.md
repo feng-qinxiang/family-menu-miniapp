@@ -14,7 +14,7 @@ started: 2026-11-12
 - [x] A-1 菜图和菜名对得上：内置菜每道配的图就是这道菜，没有合适照片的用统一占位图，不允许张冠李戴 (verify: `node artifacts/ui-fix-2026-11-12/build-dish-check.js` 生成「菜名—配图」对照页并逐格目检；`node miniapp/test/dish-images.test.js` EXIT=0；模拟器首页大图推荐的菜与图一致、不再出现带青红椒的「红烧肉」)
 - [x] A-2 首页第一屏能看到菜 (verify: 模拟器默认机型打开首页不滑动截图，「家里常做的菜」下至少露出完整一排菜的图和名字)
 - [x] A-3 「家人心愿」卡变矮 (verify: 没人许愿时该卡只占一行、高度不超过改前的一半——改前改后各量一次 boundingClientRect；点「+ 我想吃」仍能打开许愿输入)
-- [ ] A-4 其余页面过一遍 (verify: 做菜、记录、社区、我的、菜谱详情、做菜步骤、买菜清单、冰箱的截图存到 artifacts/ui-fix-2026-11-12/screens/；artifacts/ui-fix-2026-11-12/findings.md 列出发现的明显毛病，每条标「已修」或「留给用户定」，已修的有改后截图)
+- [x] A-4 其余页面过一遍 (verify: 做菜、记录、社区、我的、菜谱详情、做菜步骤、买菜清单、冰箱的截图存到 artifacts/ui-fix-2026-11-12/screens/；artifacts/ui-fix-2026-11-12/findings.md 列出发现的明显毛病，每条标「已修」或「留给用户定」，已修的有改后截图)
 - [ ] A-5 没改坏 (verify: `for t in miniapp/test/*.test.js miniapp/test/static-check.js; do node $t; done` 全部 EXIT=0；模拟器控制台在首页、点菜、做菜、记录、社区、我的各页无 error)
 - [ ] A-6 给用户一页前后对比 (verify: artifacts/ui-fix-2026-11-12/compare.html 存在，每处改动一行、左改前右改后，用无头浏览器打开截图确认图片都加载出来)
 
@@ -122,6 +122,28 @@ started: 2026-11-12
 - 教训：第 1 轮换占位图时只在小图位置看过（首页、对照页），没看大图位置——详情页顶上把方形占位图按「填满」裁切，就成了半截碗。换一张图要把它出现的所有尺寸都看一遍。→ L-11
 - 教训：要看「有数据」的页面，先查这个操作后端发不发通知（grep `notifyFamily|notifyUser`），不发的才用页面自己的方法加，看完撤掉并查一次确实回到原样。→ L-11
 - 下一轮：修菜谱详情顶上的占位图（没照片时完整显示一个碗，不裁切；先 grep `rd-hero-img` 和其它用 aspectFill 放大图的地方，如首页大图、做菜步骤、视频封面，看占位图会不会也被裁）。修完截改后图。再看「点的 / 想吃」两处文案的来历，决定统一还是留给用户定。两件各自单独提交。然后 A-4 可以打勾。
+
+### Round 5
+
+#### Plan
+按上一轮复盘：把 A-4 剩下的两条处理掉——菜谱详情没照片时顶上占位图被放大裁切（待修）、「点的 / 想吃」说法不一（待定）。两件各自单独提交，然后 A-4 打勾。
+
+#### Act
+- 先查占位图还会出现在哪些大图位置：grep `recipeDishImg|fallbackDishImg|DISH_PLACEHOLDER` 的调用方。首页大图（第 1 轮已改成只轮有照片的菜）、做菜步骤（步骤没图就不画）、视频封面（只在有视频时出现）都不会把占位图放大到半屏；只有菜谱详情顶上这一处。
+- `miniapp/pkg-extra/recipe-detail/index.js`：多一个 `coverPlain`（封面就是占位图时为真）。`index.wxml`：`coverPlain` 时图片用 `aspectFit` 完整显示，外层挂 `rd-hero--plain`。`index.wxss`：`rd-hero--plain` 底色用占位图自己的底色 #e5e1da，两边补齐。提交 083bd11。
+- 「点的 / 想吃」：两处显示的都是后端的 `addedByName`（谁把菜加进今天的菜单，`TodayService.addMenuItem`），不是谁许的愿。`miniapp/pages/menu/index.wxml` 的「想吃」改成「点的」，和首页一致。提交 88bc13d。两个提交都已推送。
+
+#### Verify
+- 红烧肉（没照片）详情页截图 `screens/recipe-detail-r5-nophoto.jpg`：顶上一个完整的碗，热气在刘海下面露全，没被裁。番茄炒蛋（有照片）：`coverPlain: false`、没挂 `rd-hero--plain`、大图 390×223 和原来一样铺满。
+- 做菜页：临时往今晚加番茄炒蛋，截图 `screens/menu-r5-picked.jpg` 显示「家人 点的」；看完撤掉，查过 `getTodayMenu` items=0、`getShoppingList` items=0。
+- `cd miniapp && for t in test/*.test.js test/static-check.js; do node $t; done` → pass=24 fail=0（两处改动后各跑一次）。
+- 控制台 grep error/fail 无输出。
+- findings.md 现在每条都是「已修」或「留给用户定」，已修的都写了改前改后截图；8 个页面截图都在 screens/。A-4 打勾。
+
+#### Retrospect
+- 教训：文案不一致先查两处显示的是不是同一份数据（这次都是 `addedByName`），是同一份才统一；要是不同数据，就该改得更不一样，而不是改成一样。
+- 没修、留给用户的 4 条（买菜清单太占地方、「买好了」按钮像已完成、做菜步骤每步都列全部用料、「11 道菜谱」和「全部 16」对不上）最后汇报要逐条列出来。
+- 下一轮：做 A-5（没改坏）——跑全部测试；模拟器依次打开首页、点菜（菜谱库）、做菜、记录、社区、我的，每页查控制台没有 error。顺手核对 compare.html 要用的改前图是否齐全（A-1 的改前要去旧工作区截，见 L-8）。
 
 ## Lessons
 
