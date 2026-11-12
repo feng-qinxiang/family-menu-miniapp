@@ -16,7 +16,7 @@ started: 2026-11-12
 - [x] A-3 「家人心愿」卡变矮 (verify: 没人许愿时该卡只占一行、高度不超过改前的一半——改前改后各量一次 boundingClientRect；点「+ 我想吃」仍能打开许愿输入)
 - [x] A-4 其余页面过一遍 (verify: 做菜、记录、社区、我的、菜谱详情、做菜步骤、买菜清单、冰箱的截图存到 artifacts/ui-fix-2026-11-12/screens/；artifacts/ui-fix-2026-11-12/findings.md 列出发现的明显毛病，每条标「已修」或「留给用户定」，已修的有改后截图)
 - [x] A-5 没改坏 (verify: `for t in miniapp/test/*.test.js miniapp/test/static-check.js; do node $t; done` 全部 EXIT=0；模拟器控制台在首页、点菜、做菜、记录、社区、我的各页无 error)
-- [ ] A-6 给用户一页前后对比 (verify: artifacts/ui-fix-2026-11-12/compare.html 存在，每处改动一行、左改前右改后，用无头浏览器打开截图确认图片都加载出来)
+- [x] A-6 给用户一页前后对比 (verify: artifacts/ui-fix-2026-11-12/compare.html 存在，每处改动一行、左改前右改后，用无头浏览器打开截图确认图片都加载出来)
 
 ## Rounds
 
@@ -171,6 +171,36 @@ started: 2026-11-12
 - 给 A-6 准备的改前改后图，已有的：首页第一屏 home-r1 → home-r2；家人心愿 home-r2-lower → home-r3-lower；菜谱详情 recipe-detail-r4-nophoto → recipe-detail-r5-nophoto；做菜页 menu-r4-picked → menu-r5-picked。**缺**：菜图对不上（A-1）的改前图。旧工作区 `/Users/xx/.codex/worktrees/meal-journey-ui/家庭点菜小程序` 还停在 cda20a7，可以用它的 image.js 和 data.sql 生成一张改前对照页。
 - 下一轮：做 A-6。先补 A-1 的改前图（让 build-dish-check.js 指向旧工作区生成 dish-check-before，或者直接在旧工作区跑一份），再写 `artifacts/ui-fix-2026-11-12/compare.html`：一处改动一行，左改前右改后，每行一句大白话说改了什么；用无头 Chrome 截图，确认图片都加载出来。
 
+### Round 7
+
+#### Plan
+做 A-6（给用户一页前后对比）：上一轮复盘定的，也是最后一条没打勾的。先补上缺的 A-1 改前图，再写 compare.html。
+
+#### Act
+- `artifacts/ui-fix-2026-11-12/build-dish-check.js`：可以传工作区根目录和输出文件名（`node build-dish-check.js [根目录] [输出名]`），图片路径改成相对脚本目录算，换了根目录也找得到图。不传参数时行为不变。
+- 用旧工作区（cda20a7）生成改前对照：`node artifacts/ui-fix-2026-11-12/build-dish-check.js /Users/xx/.codex/worktrees/meal-journey-ui/家庭点菜小程序 dish-check-before.html` → 「16 道；缺照片：」（旧规则给每道菜都配了图）；无头 Chrome 截成 `dish-check-before.jpg`（1100×1500，和 dish-check.jpg 同尺寸）。截完删掉了这份 html——里面的图片路径指向本机旧工作区，不该推到公开仓库；要重看就重跑上面这条命令。
+- 新增 `artifacts/ui-fix-2026-11-12/compare.html`：5 行，每行一处改动（标题 + 一句大白话 + 提交号），左改前右改后：
+  1. 菜图 3e0d141：dish-check-before.jpg → dish-check.jpg
+  2. 首页第一屏 2f73ba2：screens/home-r1.jpg → screens/home-r2.jpg
+  3. 家人心愿 b130f9c：screens/home-r2-lower.jpg → screens/home-r3-lower.jpg
+  4. 详情页占位碗 083bd11：screens/recipe-detail-r4-nophoto.jpg → screens/recipe-detail-r5-nophoto.jpg
+  5. 做菜页「点的」88bc13d：screens/menu-r4-picked.jpg → screens/menu-r5-picked.jpg
+  末尾一节「这几处没改，等你定」，和 findings.md 里「留给用户定」的几条对应。
+- `findings.md`：看改前对照时发现鲜肉馄饨的照片更像蒸饺、紫菜蛋花汤的照片看不到紫菜，记为「留给用户定」；顶上加一行指向 compare.html。
+- 提交 042ef1e，已推送。
+
+#### Verify
+- 当前工作区跑 `node artifacts/ui-fix-2026-11-12/build-dish-check.js`，输出的 dish-check.html 和改脚本前那份 `diff -q` 一字不差。
+- **图片真的加载出来**（不只是文件在）：给 compare.html 的一份临时副本加一段读每张图实际像素的脚本，用无头 Chrome `--dump-dom` 打开：10 张全部有尺寸（dish-check-before / dish-check 1100x1500，8 张截图 591x1280），没有 0x0 的。副本用完删了。
+- 无头 Chrome 截整页 `compare.jpg`（1200×4700，只在本机），用 Read 看过：5 行左右两张图都在、是同一个位置的改前改后；末尾「等你定」列表完整。
+- 一处如实说明：第 5 行改前图今晚菜单里是两道菜（番茄炒蛋、红烧肉），改后是一道（番茄炒蛋）——两次临时加的菜不一样；要看的那行字（「家人 想吃」→「家人 点的」）两边都在。
+- A-6 打勾。六条验收都打了勾，下一步是最终验收。
+
+#### Retrospect
+- 教训：要检查「图片加载出来」，文件存在不够，得在浏览器里读每张图的实际像素，0x0 就是没加载。→ L-13
+- 教训：生成给本机看的页面时，留意里面有没有指向本机私人目录的路径，这种文件不推到公开仓库。
+- 下一步：六条验收都打勾了，等驱动注入最终验收——派一个全新的 spec-verifier 逐条复核，按结果给用户逐条汇报，全部通过后把 status 改成 done。
+
 ## Lessons
 
 - L-1 内置菜图的文件名和照片内容对不上的有三张（hongshao-pork / orange-chicken / sweet-sour-chicken），判断「图对不对」要看图不能看文件名；对照页：`node artifacts/ui-fix-2026-11-12/build-dish-check.js` 后用无头 Chrome 截图。
@@ -185,4 +215,5 @@ started: 2026-11-12
 - L-10 模拟器探针：往页面塞数据用 automation_page_action 的 setData（会重画）；automation_evaluate 里调 `p.setData` 数据会变但画面可能不重画。evaluate 里别用 `fields({computedStyle})`，会超时，只用 boundingClientRect。不要为了测试真的提交心愿——后端会给家里人发通知。
 - L-11 换图或占位图要把它出现的每种尺寸都看一遍（小图、详情顶上大图、首页大图）。要看「有数据」的页面：加今日菜单不发通知，可以用首页 `addToToday({detail:{id}})` 加、`require('utils/api').removeTodayMenuRecipe(id,'dinner')` 撤（evaluate 里 require 路径写 `utils/api`，不带 `./`）；许愿、喊开饭、社区互动会发通知，不拿来测。
 - L-12 控制台查报错：`get_simulator_console` 缓存在每次 `simulator_open_page` 重新编译时清空，所以每页打开后各查一次。先打一条 `console.error` 证明 grep 看得到，再相信「grep 不到 = 没报错」。
+- L-13 检查网页里的图片加载：临时副本加 `addEventListener("load", …)` 把每张图的 `naturalWidth x naturalHeight` 写进 body 属性，无头 Chrome 加 `--allow-file-access-from-files --virtual-time-budget=5000 --dump-dom` 打开读出来；0x0 = 没加载。整页截图要把 `--window-size` 的高度给够，不然下面会被截掉。
 
