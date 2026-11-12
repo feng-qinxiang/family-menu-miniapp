@@ -11,7 +11,7 @@ started: 2026-11-12
 不在范围：换风格或配色、改底栏、后端功能和管理后台、新拍或新找菜的照片（缺图的菜列清单给用户）。
 
 ## Acceptance
-- [x] A-1 菜图和菜名对得上：内置菜每道配的图就是这道菜，没有合适照片的用统一占位图，不允许张冠李戴 (verify: `node artifacts/ui-fix-2026-11-12/build-dish-check.js` 生成「菜名—配图」对照页并逐格目检；`node miniapp/test/dish-images.test.js` EXIT=0；模拟器首页大图推荐的菜与图一致、不再出现带青红椒的「红烧肉」)
+- [ ] A-1 菜图和菜名对得上：内置菜每道配的图就是这道菜，没有合适照片的用统一占位图，不允许张冠李戴 (verify: `node artifacts/ui-fix-2026-11-12/build-dish-check.js` 生成「菜名—配图」对照页并逐格目检；`node miniapp/test/dish-images.test.js` EXIT=0；模拟器首页大图推荐的菜与图一致、不再出现带青红椒的「红烧肉」)
 - [x] A-2 首页第一屏能看到菜 (verify: 模拟器默认机型打开首页不滑动截图，「家里常做的菜」下至少露出完整一排菜的图和名字)
 - [x] A-3 「家人心愿」卡变矮 (verify: 没人许愿时该卡只占一行、高度不超过改前的一半——改前改后各量一次 boundingClientRect；点「+ 我想吃」仍能打开许愿输入)
 - [x] A-4 其余页面过一遍 (verify: 做菜、记录、社区、我的、菜谱详情、做菜步骤、买菜清单、冰箱的截图存到 artifacts/ui-fix-2026-11-12/screens/；artifacts/ui-fix-2026-11-12/findings.md 列出发现的明显毛病，每条标「已修」或「留给用户定」，已修的有改后截图)
@@ -201,6 +201,29 @@ started: 2026-11-12
 - 教训：生成给本机看的页面时，留意里面有没有指向本机私人目录的路径，这种文件不推到公开仓库。
 - 下一步：六条验收都打勾了，等驱动注入最终验收——派一个全新的 spec-verifier 逐条复核，按结果给用户逐条汇报，全部通过后把 status 改成 done。
 
+### Round 8（最终验收第 1 次：没通过）
+
+#### Plan
+六条都打了勾，按驱动要求派一个全新的 spec-verifier 逐条按 verify 复核。
+
+#### Act
+- 派 spec:spec-verifier（全新上下文，只读，不能用模拟器），逐条复核 A-1…A-6，并检查提交里有没有凭据残留、有没有改出新毛病。
+
+#### Verify（审计结果）
+- **A-1 不通过**：对照页 16 格逐格看，两格张冠李戴——「鲜肉馄饨」配的 wontons.jpg 是一盘带褶的蒸饺加蘸料；「家常拌面」配的 lo-mein.jpg 主体是牛肉和芦笋，菜谱用料是面条、花生酱、黄瓜。A-1 写的是「没有合适照片的用统一占位图，不允许张冠李戴」，账本里没有任何地方把勉强的图豁免。我第 1 轮写的「12 张照片都是这道菜」不对，当时就自己写了拌面「勉强」，却照样打了勾；第 7 轮又看出馄饨像蒸饺，也没回头取消勾。→ 取消 A-1 的勾。
+- **新发现的改坏（major，算 A-1 改动带出来的）**：`miniapp/pkg-extra/recipe-edit/index.js:130` `coverImage: dishImageUrl(recipe.coverImage) || recipeDishImg(recipe) || ''`。第 1 轮之后 `recipeDishImg` 会返回占位图，所以编辑一道没封面、菜名对不上照片的菜再保存，会把 `/assets/dish-placeholder.svg` 存进数据库的封面字段；编辑页还把占位碗当成真封面显示（带 ×），藏掉「添加封面」。审计员用测试里的页面夹具实际跑过：保存内容里 coverImage 就是占位图路径（改前是借别的菜的 hongshao-pork.jpg，也不对，但现在是写进库的脏数据）。我自己看代码确认属实。
+- A-2 通过（按截图和代码，没法重跑模拟器）；A-3 通过（按 CSS 算出 66→32px，点击区仍是 44px，`addWish` 绑定没动）；A-4 通过（8 个页面截图都在，findings 每条有标记）；A-5 通过（审计员自己按原文跑了 24 个，全部 EXIT=0；控制台部分采信第 6 轮的方法）；A-6 通过（审计员自己用无头 Chrome 读出 10 张图都有尺寸，整页截图看过）。
+- 凭据扫描：这批提交新增的行 0 命中。
+- 小问题（不影响判定）：① 青椒土豆丝和酸辣土豆丝共用 potato-shreds.jpg，照片是干辣椒花椒的酸辣版，findings 里没记。② compare.html 末尾「等你定」漏了 findings 里「今天这一桌挪到菜下面」那条（第 2 行的说明里提了）。
+
+#### Retrospect
+- 教训：自己在 Verify 里写了「勉强」就不能打勾。验收原文没有给「勉强」留口子，拿不准的要么按原文处理（这里就是换占位图），要么先问用户改验收，不能挂在「留给用户定」下面同时打勾。→ L-14
+- 教训：把一个共享函数的返回值从「总有一张照片」改成「可能是占位图」时，要查所有**把它存回去**的地方，不只是显示的地方。第 1 轮 grep 了调用方，但只看了显示，漏了编辑页把它当表单初值再保存回库。→ L-14
+- 下一轮（第 9 轮）：一起把 A-1 修到位，分两个提交：
+  1. 编辑页：`recipe-edit/index.js:130` 改成 `dishImageUrl(recipe.coverImage) || ''`（表单只显示真存着的封面），在 `miniapp/test/dish-images.test.js` 补一条「没封面的菜编辑保存后 coverImage 是空串」的断言。再 grep 一遍还有没有别的地方把 `recipeDishImg` 的结果存回去（`saveRecipe|updateRecipe|coverImage:`）。
+  2. 鲜肉馄饨、家常拌面：data.sql 种子 106、108 封面留空，末尾加两条只清原值的 UPDATE；`image.js` 去掉 `馄饨`、`拌面/捞面` 两条按菜名配图的规则；测试补断言；重跑对照页和 dish-check.jpg 逐格看；重启本机后端查库。compare.html 第 1 行说明和「等你定」同步改，补上漏的那条，再加青椒土豆丝那条。
+  然后 A-1 重新打勾，第 10 轮是最终验收复核。只剩两轮，第 9 轮要一次做完。
+
 ## Lessons
 
 - L-1 内置菜图的文件名和照片内容对不上的有三张（hongshao-pork / orange-chicken / sweet-sour-chicken），判断「图对不对」要看图不能看文件名；对照页：`node artifacts/ui-fix-2026-11-12/build-dish-check.js` 后用无头 Chrome 截图。
@@ -216,4 +239,5 @@ started: 2026-11-12
 - L-11 换图或占位图要把它出现的每种尺寸都看一遍（小图、详情顶上大图、首页大图）。要看「有数据」的页面：加今日菜单不发通知，可以用首页 `addToToday({detail:{id}})` 加、`require('utils/api').removeTodayMenuRecipe(id,'dinner')` 撤（evaluate 里 require 路径写 `utils/api`，不带 `./`）；许愿、喊开饭、社区互动会发通知，不拿来测。
 - L-12 控制台查报错：`get_simulator_console` 缓存在每次 `simulator_open_page` 重新编译时清空，所以每页打开后各查一次。先打一条 `console.error` 证明 grep 看得到，再相信「grep 不到 = 没报错」。
 - L-13 检查网页里的图片加载：临时副本加 `addEventListener("load", …)` 把每张图的 `naturalWidth x naturalHeight` 写进 body 属性，无头 Chrome 加 `--allow-file-access-from-files --virtual-time-budget=5000 --dump-dom` 打开读出来；0x0 = 没加载。整页截图要把 `--window-size` 的高度给够，不然下面会被截掉。
+- L-14 打勾前把自己 Verify 里写的「勉强 / 没验 / 像是」逐条对一遍验收原文：原文不允许的，要么按原文修，要么先改验收（问用户），不能留着它打勾。改共享函数的返回值时，grep 所有调用方后要分清「只显示」和「会存回去」两种，存回去的要单独测。
 
