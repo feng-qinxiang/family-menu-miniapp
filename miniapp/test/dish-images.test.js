@@ -32,6 +32,17 @@ assert.equal(dishImageUrl(''), '');
 assert.equal(recipeDishImg({ title: '番茄炒蛋', coverImage: uploaded }), uploaded, '用户实拍始终优先');
 assert.equal(recipeDishImg({ coverImage: stock }), base + stock);
 assert.equal(recipeDishImg({ title: '番茄炒蛋' }), base + stock);
+// 没有对得上的内置照片就给占位图：文件名像、内容不是这道菜的照片不算（hongshao-pork 拍的是青红椒咕咾肉）。
+for (const title of ['红烧肉', '可乐鸡翅', '蒜蓉西兰花', '糖醋排骨', '谁也没听过的菜']) {
+  assert.equal(recipeDishImg({ id: 7, title }), DISH_PLACEHOLDER, title + ' 没有照片时不能借别的菜的图');
+}
+assert.equal(recipeDishImg({ title: '牛肉炒西兰花' }), base + '/assets/dishes/beef-broccoli.jpg', '带「西兰花」的菜只认整道菜对得上的照片');
+assert.equal(image.fallbackDishImg(42), DISH_PLACEHOLDER, '按编号兜底不再轮着挑别的菜');
+const seedSql = fs.readFileSync(path.join(root, 'server/src/main/resources/data.sql'), 'utf8');
+for (const [id, title] of [[2, '红烧肉'], [5, '可乐鸡翅'], [7, '蒜蓉西兰花'], [8, '糖醋排骨']]) {
+  assert.match(seedSql, new RegExp(`^\\(${id}, '${title}', .*, NULL, 'ACTIVE'\\)[,;]$`, 'm'), title + ' 的种子封面必须留空');
+  assert.match(seedSql, new RegExp(`UPDATE recipe SET cover_image = NULL WHERE id = ${id} AND title = '${title}'`), title + ' 的老库封面也要清掉');
+}
 assert.equal(stepDishImg({}, 0, stock), base + stock);
 assert.equal(stepDishImg({ title: '番茄炒蛋', coverImage: stock }, 0, ''), '', '步骤没图就不画，不能拿成品图顶替');
 assert.equal(stepDishImg({}, 0, uploaded), uploaded);

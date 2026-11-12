@@ -26,25 +26,25 @@ const LOCAL_DISHES = [
   'mushroom-chicken'
 ];
 
+// 菜名 → 内置照片。一条规则只在「名字里带这个词的菜，端上来就长照片里这样」时才成立：
+// 文件名不等于照片内容——hongshao-pork 拍的是青红椒咕咾肉，orange-chicken 是盖饭上的橙子鸡块，
+// sweet-sour-chicken 是芝麻鸡块，所以红烧肉、可乐鸡翅、糖醋排骨、西兰花都没有可用的照片，不设规则。
 const TITLE_RULES = [
   { kw: ['番茄炒蛋', '西红柿炒鸡', '西红柿炒蛋'], file: 'tomato-egg' },
-  { kw: ['红烧肉'], file: 'hongshao-pork' },
-  { kw: ['麻婆'], file: 'mapo-tofu' },
-  { kw: ['宫保'], file: 'kungpao-chicken' },
-  { kw: ['糖醋'], file: 'sweet-sour-chicken' },
-  { kw: ['西兰花', '清炒时蔬', '空心菜', '青菜', '蒜蓉'], file: 'stir-fry-veg' },
+  { kw: ['麻婆豆腐'], file: 'mapo-tofu' },
+  { kw: ['宫保鸡'], file: 'kungpao-chicken' },
+  { kw: ['清炒时蔬', '炒青菜', '蒜蓉青菜', '菜心'], file: 'stir-fry-veg' },
   { kw: ['香菇滑鸡'], file: 'mushroom-chicken' },
   { kw: ['炒饭'], file: 'fried-rice' },
   { kw: ['拌面', '捞面'], file: 'lo-mein' },
   { kw: ['馄饨'], file: 'wontons' },
   { kw: ['酸辣汤'], file: 'hot-sour-soup' },
-  { kw: ['紫菜', '蛋花'], file: 'egg-drop-soup' },
-  { kw: ['可乐鸡', '鸡翅'], file: 'orange-chicken' },
-  { kw: ['豆角'], file: 'long-beans' },
-  { kw: ['土豆丝', '酸辣土豆', '青椒土豆'], file: 'potato-shreds' },
-  { kw: ['茄子'], file: 'sichuan-eggplant' },
-  { kw: ['牛肉炒'], file: 'beef-broccoli' },
-  { kw: ['虾', '豌豆'], file: 'shrimp-peas' }
+  { kw: ['紫菜蛋花', '蛋花汤'], file: 'egg-drop-soup' },
+  { kw: ['干煸豆角', '干煸四季豆'], file: 'long-beans' },
+  { kw: ['土豆丝'], file: 'potato-shreds' },
+  { kw: ['鱼香茄子', '红烧茄子', '烧茄子'], file: 'sichuan-eggplant' },
+  { kw: ['牛肉炒西兰花', '西兰花炒牛肉'], file: 'beef-broccoli' },
+  { kw: ['荷兰豆炒虾', '虾仁荷兰豆'], file: 'shrimp-peas' }
 ];
 
 function localPath(file) {
@@ -72,15 +72,9 @@ function ingredientImage(item, photos) {
   return photos && Object.prototype.hasOwnProperty.call(photos, name) ? photos[name] || '' : '';
 }
 
+// 没有封面、菜名也对不上任何一张内置照片时给中性占位图——随便挑一张别的菜的照片等于张冠李戴。
 function fallbackDishImg(seed) {
-  const byTitle = localDishByTitle(seed);
-  if (byTitle) return byTitle;
-  let h = 0;
-  const s = String(seed || '');
-  for (let i = 0; i < s.length; i++) {
-    h = (h * 31 + s.charCodeAt(i)) >>> 0;
-  }
-  return localPath(LOCAL_DISHES[h % LOCAL_DISHES.length]);
+  return localDishByTitle(seed) || DISH_PLACEHOLDER;
 }
 
 function isRemoteStock(url) {
@@ -94,9 +88,7 @@ function recipeDishImg(recipe) {
   // 真实封面优先。以前"按菜名匹配本地图"排在它前面，结果是：用户传了自家实拍，
   // 只要菜名里带"番茄/紫菜/土豆"这类词，页面永远显示一张库存图而不是他传的那张。
   if (cover && !isRemoteStock(cover)) return dishImageUrl(cover);
-  const byTitle = localDishByTitle(title);
-  if (byTitle) return byTitle;
-  return fallbackDishImg(recipe.id || title);
+  return fallbackDishImg(title);
 }
 
 // 步骤没有自己的图就返回空串，调用方（菜谱详情、做菜模式）按 wx:if 不画图。

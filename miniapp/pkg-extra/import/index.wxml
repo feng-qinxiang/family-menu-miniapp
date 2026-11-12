@@ -52,7 +52,7 @@
         <view class="res-top">
           <view class="res-cover">
             <image wx:if="{{preview.coverImage}}" class="res-cover-img" src="{{preview.coverImage === coverFailedUrl ? imagePlaceholder : preview.coverImage}}" mode="aspectFill" data-err-key="coverFailedUrl" data-url="{{preview.coverImage}}" binderror="onPreviewImageError" />
-            <image wx:else class="res-cover-img" src="{{fallbackCover}}" mode="aspectFill" data-image-path="fallbackCover" binderror="onImageError" />
+            <image wx:else class="res-cover-img" src="{{imagePlaceholder}}" mode="aspectFill" />
             <view wx:if="{{!preview.coverImage}}" class="tap-scale res-cover-add" bindtap="chooseCover">+ 封面</view>
             <view wx:else class="tap-scale res-cover-del" catchtap="removeCover" aria-role="button" aria-label="移除封面">×</view>
           </view>

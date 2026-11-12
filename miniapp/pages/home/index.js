@@ -17,7 +17,7 @@ const { runGuarded } = require('../../utils/interaction');
 const { animateNumber, stopNumberAnim } = require('../../utils/count-up');
 const { sourceLabels, mealTypeLabels, SLOTS, cuisineLabels } = require('../../utils/constants');
 const features = require('../../utils/features');
-const { fallbackDishImg, recipeDishImg, dishImageUrl, onImgError } = require('../../utils/image');
+const { recipeDishImg, dishImageUrl, onImgError, DISH_PLACEHOLDER } = require('../../utils/image');
 const { decorateHero, filterBySlot, todayDateKey } = require('../../utils/dish-logic');
 const { withTabSelect } = require('../../behaviors/tab-select');
 const { openTodayMenu } = require('../../utils/tabs');
@@ -739,8 +739,10 @@ Page({
     const total = filtered.length;
     const offset = total ? ((this._heroOffset || 0) % total) : 0;
     const list = total ? filtered.slice(offset).concat(filtered.slice(0, offset)) : [];
-    const hero = list[0] || null;
-    const visible = list.slice(1, 11);
+    // 大图推荐只在有照片的菜里轮转：占位图铺满半屏等于首屏开天窗。一张照片都没有时才退回第一道。
+    const withPhoto = filtered.filter(r => r.dishImg !== DISH_PLACEHOLDER);
+    const hero = (withPhoto.length ? withPhoto[(this._heroOffset || 0) % withPhoto.length] : list[0]) || null;
+    const visible = list.filter(r => r !== hero).slice(0, 10);
 
     return {
       activeCuisine: cuisine,

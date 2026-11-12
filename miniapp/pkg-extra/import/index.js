@@ -2,13 +2,7 @@ const { previewImport, saveRecipe, getRecipes } = require('../../utils/api');
 const { parseRecipeText, DIFFICULTY_LABELS } = require('../../utils/parser');
 const { chooseAndUpload } = require('../../utils/upload');
 const { setLeaveGuard } = require('../../utils/interaction');
-const { localPath, dishImageUrl, dishImagePath, onImgError, DISH_PLACEHOLDER } = require('../../utils/image');
-
-// 内置菜图兜底池（由后端提供）
-const FALLBACK_DISHES = [
-  'sweet-sour-chicken', 'sichuan-eggplant', 'hot-sour-soup', 'kungpao-chicken',
-  'mapo-tofu', 'tomato-egg', 'hongshao-pork', 'beef-broccoli'
-];
+const { dishImageUrl, dishImagePath, onImgError, DISH_PLACEHOLDER } = require('../../utils/image');
 
 Page({
   onImageError(e) { onImgError(e, this, e.currentTarget.dataset.imagePath); },
@@ -17,7 +11,6 @@ Page({
     imagePlaceholder: DISH_PLACEHOLDER,
     coverFailedUrl: '',
     stepImageErrors: [],
-    fallbackCover: localPath('orange-chicken'),
     // 大字模式：档位由设置页写进 storage，根节点挂 .font-lg 才会吃到 --fs-mul
     fontScale: 'normal',
     statusBarHeight: 0,
@@ -62,7 +55,7 @@ Page({
         return {
           id: r.id,
           title: r.title || '未命名菜谱',
-          cover: dishImageUrl(r.coverImage) || localPath(FALLBACK_DISHES[i % FALLBACK_DISHES.length]),
+          cover: dishImageUrl(r.coverImage) || DISH_PLACEHOLDER,
           srcLabel: isXhs ? '小红书' : (url ? '链接' : '纯文本'),
           srcType: isXhs ? 'link' : (url ? 'link' : 'text')
         };

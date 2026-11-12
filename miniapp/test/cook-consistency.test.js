@@ -192,8 +192,7 @@ async function checkPages() {
   todayMenuItems = [{ itemId: 10, recipeId: 7, mealType: 'dinner' }];
   await menu.loadData();
   require('../utils/count-up').stopNumberAnim(menu);
-  const { LOCAL_DISHES, localPath } = require('../utils/image');
-  assert.ok(LOCAL_DISHES.map(localPath).includes(menu.data.mealGroups[0].items[0].dishImage), '无菜谱详情的菜单项也通过共享函数补图片域名');
+  assert.strictEqual(menu.data.mealGroups[0].items[0].dishImage, '/assets/dish-placeholder.svg', '无菜谱详情的菜单项给占位图，不借别的菜的照片');
   const imagePatches = [];
   menu.onImgError.call({ setData: patch => imagePatches.push(patch) }, { currentTarget: { dataset: { group: 0, dish: 0, seed: 7 } } });
   assert.deepStrictEqual(imagePatches, [{ 'mealGroups[0].items[0].dishImage': '/assets/dish-placeholder.svg' }], '坏图只替换目标项为包内占位，不再重试网络菜图');

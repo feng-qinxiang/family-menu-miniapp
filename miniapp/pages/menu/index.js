@@ -12,7 +12,7 @@ const {
 } = require('../../utils/api');
 const { mealTypeLabels, mealOrder } = require('../../utils/constants');
 const { animateNumber, stopNumberAnim } = require('../../utils/count-up');
-const { localPath, recipeDishImg, LOCAL_DISHES, onImgError: handleImgError } = require('../../utils/image');
+const { recipeDishImg, onImgError: handleImgError } = require('../../utils/image');
 const { runGuarded } = require('../../utils/interaction');
 const { shoppingEmptyReason } = require('../../utils/kitchen');
 const { indexPantry, pantryHas } = require('../../utils/pantry-match');
@@ -33,24 +33,6 @@ function mealTimeLabel() {
   if (h < 15) return '午餐时间';
   if (h < 21) return '晚餐时间';
   return '夜宵时间';
-}
-
-function hashIndex(seed, mod) {
-  const s = (seed || '').toString();
-  let h = 0;
-  for (let i = 0; i < s.length; i += 1) {
-    h = (h * 31 + s.charCodeAt(i)) % 1000000;
-  }
-  return Math.abs(h) % mod;
-}
-
-function localDishImage(seed) {
-  return localPath(LOCAL_DISHES[hashIndex(seed, LOCAL_DISHES.length)]);
-}
-
-function resolveImage(recipe, seed) {
-  if (recipe) return recipeDishImg(recipe);
-  return localDishImage(seed);
 }
 
 // 做菜顺序建议（轻量统筹）：同一餐 ≥2 道待做菜时，按耗时倒排——
@@ -163,7 +145,7 @@ Page({
         ...it,
         status: it.status || 'todo',
         mealTypeLabel: mealLabel,
-        dishImage: resolveImage(it.recipe, it.recipeId || (it.recipe && it.recipe.title))
+        dishImage: recipeDishImg(it.recipe)
       });
 
       const groups = mealOrder
