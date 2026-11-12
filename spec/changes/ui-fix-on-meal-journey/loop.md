@@ -58,3 +58,4 @@ started: 2026-11-12
 - L-5 本机后端：`bash server/dev-server.sh stop|start`（口令自己从钥匙串取，start 前 PATH 要带 /usr/sbin）；现在是从主工作区起的，data.sql 每次启动都会跑。
 - L-6 `artifacts/**/*.png|jpg` 被 .gitignore 挡着，截图只留本机；对比页 compare.html 引用本机截图即可。
 - L-7 提交信息结尾带 `Co-Authored-By: BaoCode <noreply@baocode.dev>`；每处改动单独提交，账本单独提交；提交后 `git push origin design/ui-remodel`（动了 .github/workflows 才需要借 gh 凭据）。
+- L-8 对比页（A-6）的「改前」图：A-2、A-3 的改前就是 `artifacts/ui-fix-2026-11-12/screens/home-r1.jpg`（第 1 轮改完菜图后的首页）；A-1 的改前要到旧工作区 `/Users/xx/.codex/worktrees/meal-journey-ui/家庭点菜小程序`（停在 cda20a7，旧规则按菜名仍会给红烧肉配错图）里截。动手改某一页之前先截一张留底。
