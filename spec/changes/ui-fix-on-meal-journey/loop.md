@@ -13,7 +13,7 @@ started: 2026-11-12
 ## Acceptance
 - [x] A-1 菜图和菜名对得上：内置菜每道配的图就是这道菜，没有合适照片的用统一占位图，不允许张冠李戴 (verify: `node artifacts/ui-fix-2026-11-12/build-dish-check.js` 生成「菜名—配图」对照页并逐格目检；`node miniapp/test/dish-images.test.js` EXIT=0；模拟器首页大图推荐的菜与图一致、不再出现带青红椒的「红烧肉」)
 - [x] A-2 首页第一屏能看到菜 (verify: 模拟器默认机型打开首页不滑动截图，「家里常做的菜」下至少露出完整一排菜的图和名字)
-- [ ] A-3 「家人心愿」卡变矮 (verify: 没人许愿时该卡只占一行、高度不超过改前的一半——改前改后各量一次 boundingClientRect；点「+ 我想吃」仍能打开许愿输入)
+- [x] A-3 「家人心愿」卡变矮 (verify: 没人许愿时该卡只占一行、高度不超过改前的一半——改前改后各量一次 boundingClientRect；点「+ 我想吃」仍能打开许愿输入)
 - [ ] A-4 其余页面过一遍 (verify: 做菜、记录、社区、我的、菜谱详情、做菜步骤、买菜清单、冰箱的截图存到 artifacts/ui-fix-2026-11-12/screens/；artifacts/ui-fix-2026-11-12/findings.md 列出发现的明显毛病，每条标「已修」或「留给用户定」，已修的有改后截图)
 - [ ] A-5 没改坏 (verify: `for t in miniapp/test/*.test.js miniapp/test/static-check.js; do node $t; done` 全部 EXIT=0；模拟器控制台在首页、点菜、做菜、记录、社区、我的各页无 error)
 - [ ] A-6 给用户一页前后对比 (verify: artifacts/ui-fix-2026-11-12/compare.html 存在，每处改动一行、左改前右改后，用无头浏览器打开截图确认图片都加载出来)
@@ -75,6 +75,32 @@ started: 2026-11-12
 - 这轮有两处是我替用户拿的主意，最后汇报要说清楚、对比页要能看出来：① 「今天这一桌」从第一屏挪到了菜卡下面；② 没照片的四道菜在首页这排排到最后，目前 11 道有照片的占满 10 格，它们在首页这排看不到了（「全部」里还在）。
 - 下一轮：做 A-3（家人心愿卡变矮）。改前高度已量：66px（572→638 / 现在 972→1038）。目标 ≤33px、没人许愿时一行；点「+ 我想吃」仍能打开输入。只动没人许愿时的排法（「家人心愿」和「一起决定吃什么」并成一行），有心愿时的预览和展开不动。
 
+### Round 3
+
+#### Plan
+做 A-3（家人心愿卡变矮）：上一轮复盘定的下一步，也是用户看图时点名的第三个毛病。
+
+#### Act
+- `miniapp/pages/home/index.wxml`：没人许愿且没点开时，给心愿那块加一个 `fp-wish--bare`。
+- `miniapp/pages/home/index.wxss`：`fp-wish--bare` 去掉卡片外框和内边距，「家人心愿」和「一起决定吃什么」并排成一行；标题和「+ 我想吃」的可点高度仍是 44px，用负边距不撑高这一行。
+- 有心愿、或者点开之后，这个类不挂，样子和原来一样。没动 js。
+- 提交 b130f9c，已推到 origin/design/ui-remodel。
+
+#### Verify
+- 高度：改前 66px（第 2 轮量的，972→1038），改后 32px（`.fp-wish` boundingClientRect，挂着 `fp-wish--bare`），不到一半。截图 `screens/home-r3-lower.jpg`：一行「家人心愿　一起决定吃什么　……　+ 我想吃」。
+- 点「+ 我想吃」（automation_element_action tap `.fp-wish-add`）：页面数据 `showWishModal: true`，弹出许愿输入框，截图 `screens/home-r3-wish-modal.jpg`。「+ 我想吃」量得高 44px。
+- 其它状态没被带坏：没心愿时点标题展开 = 卡片 135px、带「先许个愿」按钮（`screens/home-r3-wish-expanded.jpg`）；有 1 个心愿收起 = 卡片 133px、带预览（`screens/home-r3-wish-has-one.jpg`）；有心愿展开 = 卡片 232px、带列表；心愿清空后回到 32px 一行。
+- 24 个测试脚本全部通过（pass=24 fail=0）；控制台 grep error/fail 无输出。
+- **没验的**：「有心愿」的状态是用工具往页面里塞的假数据，没有真的走一遍「写心愿 → 提交」——真提交会给家里人发通知，不拿真通知做测试。提交那段 js 这轮没动。
+- 中途的弯路：在 automation_evaluate 里调 `p.setData({wishes:[…]})`，数据变了画面不变。把改动收起来在旧代码上重做，一样不变——是探针的毛病，不是这次改动造成的。换成 automation_page_action 的 setData 就正常重画。
+- A-3 打勾。
+
+#### Retrospect
+- 教训：画面没跟着数据变时，先在没改的代码上重做一次，分清是自己改坏的还是工具的毛病，再决定要不要改代码。→ L-10
+- 一处要让用户知道的：一行状态下点「家人心愿」这几个字，还是会展开成卡片（原来就这样，没动）。
+- 对比页（A-6）里 A-3 的改前图用 `screens/home-r2-lower.jpg`（同一位置、旧卡片），比 L-8 写的 home-r1.jpg 更好对照；改后用 `screens/home-r3-lower.jpg`。
+- 下一轮：做 A-4 的前一半——把做菜、记录、社区、我的、菜谱详情、做菜步骤、买菜清单、冰箱 8 个页面截图存到 screens/，逐张看，把明显毛病记进 findings.md（先只记不修；顺便补第 2 轮欠的「今天这一桌里已经点了菜」的样子）。要修的毛病放到再下一轮，一处一提交。
+
 ## Lessons
 
 - L-1 内置菜图的文件名和照片内容对不上的有三张（hongshao-pork / orange-chicken / sweet-sour-chicken），判断「图对不对」要看图不能看文件名；对照页：`node artifacts/ui-fix-2026-11-12/build-dish-check.js` 后用无头 Chrome 截图。
@@ -86,3 +112,4 @@ started: 2026-11-12
 - L-7 提交信息结尾带 `Co-Authored-By: BaoCode <noreply@baocode.dev>`；每处改动单独提交，账本单独提交；提交后 `git push origin design/ui-remodel`（动了 .github/workflows 才需要借 gh 凭据）。
 - L-8 对比页（A-6）的「改前」图：A-2、A-3 的改前就是 `artifacts/ui-fix-2026-11-12/screens/home-r1.jpg`（第 1 轮改完菜图后的首页）；A-1 的改前要到旧工作区 `/Users/xx/.codex/worktrees/meal-journey-ui/家庭点菜小程序`（停在 cda20a7，旧规则按菜名仍会给红烧肉配错图）里截。动手改某一页之前先截一张留底。
 - L-9 说「哪一块占了地方」之前先量：automation_evaluate 里用 `wx.createSelectorQuery().select(sel).boundingClientRect()` 包成 Promise 返回；默认机型 390×844，自定义底栏上沿约 y=745。滚动截图用 `wx.pageScrollTo({scrollTop, duration: 0})`，拍完滚回 0。
+- L-10 模拟器探针：往页面塞数据用 automation_page_action 的 setData（会重画）；automation_evaluate 里调 `p.setData` 数据会变但画面可能不重画。evaluate 里别用 `fields({computedStyle})`，会超时，只用 boundingClientRect。不要为了测试真的提交心愿——后端会给家里人发通知。
