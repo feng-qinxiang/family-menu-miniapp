@@ -12,7 +12,7 @@ started: 2026-11-12
 
 ## Acceptance
 - [x] A-1 菜图和菜名对得上：内置菜每道配的图就是这道菜，没有合适照片的用统一占位图，不允许张冠李戴 (verify: `node artifacts/ui-fix-2026-11-12/build-dish-check.js` 生成「菜名—配图」对照页并逐格目检；`node miniapp/test/dish-images.test.js` EXIT=0；模拟器首页大图推荐的菜与图一致、不再出现带青红椒的「红烧肉」)
-- [ ] A-2 首页第一屏能看到菜 (verify: 模拟器默认机型打开首页不滑动截图，「家里常做的菜」下至少露出完整一排菜的图和名字)
+- [x] A-2 首页第一屏能看到菜 (verify: 模拟器默认机型打开首页不滑动截图，「家里常做的菜」下至少露出完整一排菜的图和名字)
 - [ ] A-3 「家人心愿」卡变矮 (verify: 没人许愿时该卡只占一行、高度不超过改前的一半——改前改后各量一次 boundingClientRect；点「+ 我想吃」仍能打开许愿输入)
 - [ ] A-4 其余页面过一遍 (verify: 做菜、记录、社区、我的、菜谱详情、做菜步骤、买菜清单、冰箱的截图存到 artifacts/ui-fix-2026-11-12/screens/；artifacts/ui-fix-2026-11-12/findings.md 列出发现的明显毛病，每条标「已修」或「留给用户定」，已修的有改后截图)
 - [ ] A-5 没改坏 (verify: `for t in miniapp/test/*.test.js miniapp/test/static-check.js; do node $t; done` 全部 EXIT=0；模拟器控制台在首页、点菜、做菜、记录、社区、我的各页无 error)
@@ -49,6 +49,32 @@ started: 2026-11-12
 - 新发现（影响下一轮）：首页「家里常做的菜」列表头两格现在正好是红烧肉、可乐鸡翅——两个占位图。A-2 把这一排露到第一屏时，露出来的会是两个灰碗。
 - 下一轮：做 A-2（首页第一屏能看到菜）。先量现在第一屏的高度都被谁占了（搜索框、家人心愿卡、今天这一桌），把「家里常做的菜」这排提上来；同时让有照片的菜排在这排前面，避免头一排是两个占位图。只动位置和间距，不动风格配色。
 
+### Round 2
+
+#### Plan
+做 A-2（首页第一屏能看到菜），连同上一轮发现的「这排头两格是占位图」。
+
+#### Act
+- 先量了改前的位置（390×844，底栏上沿约 745）：大图 0→324，餐次 322→361，今天这一桌 371→560（189 高），家人心愿 572→638，标题 662，搜索 696→743，菜系 749→798，菜卡 809→1031。菜卡要上移近 290 才能进第一屏——**搜索框只占 58，不是主因**（我之前跟用户说是搜索框挤的，说轻了），真正占地方的是「还没点菜」那张 189 高的空卡。
+- 取舍：原顺序下把空卡、心愿卡、搜索、菜系全部压扁也凑不够；所以改先后——`miniapp/pages/home/index.wxml` 把推荐区整块（标题、搜索、菜系、横滑菜卡）移到餐次分段下面，「今天这一桌」和家人心愿排到它后面。每一块的样子都没动。
+- `miniapp/pages/home/index.wxss`：`.hm-recipes-head` 上边距 24rpx→8rpx，新增 `.hm-menu-wrap { margin-top: 24rpx }`。
+- `miniapp/pages/home/index.js` `_filterPatch`：这排有照片的排前面、没照片的跟在后面；全都没照片时大图照常在全部菜里轮换（上一轮的写法在这种情况下「换一道」会卡住不动，这轮一并改对）。
+- `miniapp/test/dish-images.test.js` 加这段逻辑的断言。
+- 提交 2f73ba2，已推到 origin/design/ui-remodel。
+
+#### Verify
+- 模拟器首页不滑动截图 `screens/home-r2.jpg`：「家里常做的菜」下露出番茄炒蛋、香菇滑鸡两张卡的图、菜名和「10 分钟 · 鲜」那行；量得菜卡 533→754，卡片最底下的边被底栏压住约 9px（图和名字完整）。改前同一位置是「今天这一桌」空卡和搜索框（`screens/home-r1.jpg`）。
+- 往下滑的截图 `screens/home-r2-lower.jpg`：菜卡、今天这一桌、家人心愿依次排开，间距正常，底部没被底栏压住。
+- 连点 13 次「换一道」：每次这排占位图 0 张、不含大图那道。
+- 24 个测试脚本全部 EXIT=0；控制台 grep error/fail/warn 无输出。
+- **没验的**：今天这一桌里已经点了菜的状态只看了代码（卡片内部没动），没在模拟器里点一道菜实际看。留到 A-4 过页面时补。
+- A-2 打勾。
+
+#### Retrospect
+- 教训：先量再下结论。我凭截图跟用户说「搜索框把菜挤下去了」，量了才知道主因是空卡。以后说「谁占了地方」之前先跑一次 boundingClientRect。→ L-9
+- 这轮有两处是我替用户拿的主意，最后汇报要说清楚、对比页要能看出来：① 「今天这一桌」从第一屏挪到了菜卡下面；② 没照片的四道菜在首页这排排到最后，目前 11 道有照片的占满 10 格，它们在首页这排看不到了（「全部」里还在）。
+- 下一轮：做 A-3（家人心愿卡变矮）。改前高度已量：66px（572→638 / 现在 972→1038）。目标 ≤33px、没人许愿时一行；点「+ 我想吃」仍能打开输入。只动没人许愿时的排法（「家人心愿」和「一起决定吃什么」并成一行），有心愿时的预览和展开不动。
+
 ## Lessons
 
 - L-1 内置菜图的文件名和照片内容对不上的有三张（hongshao-pork / orange-chicken / sweet-sour-chicken），判断「图对不对」要看图不能看文件名；对照页：`node artifacts/ui-fix-2026-11-12/build-dish-check.js` 后用无头 Chrome 截图。
@@ -59,3 +85,4 @@ started: 2026-11-12
 - L-6 `artifacts/**/*.png|jpg` 被 .gitignore 挡着，截图只留本机；对比页 compare.html 引用本机截图即可。
 - L-7 提交信息结尾带 `Co-Authored-By: BaoCode <noreply@baocode.dev>`；每处改动单独提交，账本单独提交；提交后 `git push origin design/ui-remodel`（动了 .github/workflows 才需要借 gh 凭据）。
 - L-8 对比页（A-6）的「改前」图：A-2、A-3 的改前就是 `artifacts/ui-fix-2026-11-12/screens/home-r1.jpg`（第 1 轮改完菜图后的首页）；A-1 的改前要到旧工作区 `/Users/xx/.codex/worktrees/meal-journey-ui/家庭点菜小程序`（停在 cda20a7，旧规则按菜名仍会给红烧肉配错图）里截。动手改某一页之前先截一张留底。
+- L-9 说「哪一块占了地方」之前先量：automation_evaluate 里用 `wx.createSelectorQuery().select(sel).boundingClientRect()` 包成 Promise 返回；默认机型 390×844，自定义底栏上沿约 y=745。滚动截图用 `wx.pageScrollTo({scrollTop, duration: 0})`，拍完滚回 0。
