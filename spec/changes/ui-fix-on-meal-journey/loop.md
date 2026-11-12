@@ -11,7 +11,7 @@ started: 2026-11-12
 不在范围：换风格或配色、改底栏、后端功能和管理后台、新拍或新找菜的照片（缺图的菜列清单给用户）。
 
 ## Acceptance
-- [ ] A-1 菜图和菜名对得上：内置菜每道配的图就是这道菜，没有合适照片的用统一占位图，不允许张冠李戴 (verify: `node artifacts/ui-fix-2026-11-12/build-dish-check.js` 生成「菜名—配图」对照页并逐格目检；`node miniapp/test/dish-images.test.js` EXIT=0；模拟器首页大图推荐的菜与图一致、不再出现带青红椒的「红烧肉」)
+- [x] A-1 菜图和菜名对得上：内置菜每道配的图就是这道菜，没有合适照片的用统一占位图，不允许张冠李戴 (verify: `node artifacts/ui-fix-2026-11-12/build-dish-check.js` 生成「菜名—配图」对照页并逐格目检；`node miniapp/test/dish-images.test.js` EXIT=0；模拟器首页大图推荐的菜与图一致、不再出现带青红椒的「红烧肉」)
 - [x] A-2 首页第一屏能看到菜 (verify: 模拟器默认机型打开首页不滑动截图，「家里常做的菜」下至少露出完整一排菜的图和名字)
 - [x] A-3 「家人心愿」卡变矮 (verify: 没人许愿时该卡只占一行、高度不超过改前的一半——改前改后各量一次 boundingClientRect；点「+ 我想吃」仍能打开许愿输入)
 - [x] A-4 其余页面过一遍 (verify: 做菜、记录、社区、我的、菜谱详情、做菜步骤、买菜清单、冰箱的截图存到 artifacts/ui-fix-2026-11-12/screens/；artifacts/ui-fix-2026-11-12/findings.md 列出发现的明显毛病，每条标「已修」或「留给用户定」，已修的有改后截图)
@@ -224,6 +224,33 @@ started: 2026-11-12
   2. 鲜肉馄饨、家常拌面：data.sql 种子 106、108 封面留空，末尾加两条只清原值的 UPDATE；`image.js` 去掉 `馄饨`、`拌面/捞面` 两条按菜名配图的规则；测试补断言；重跑对照页和 dish-check.jpg 逐格看；重启本机后端查库。compare.html 第 1 行说明和「等你定」同步改，补上漏的那条，再加青椒土豆丝那条。
   然后 A-1 重新打勾，第 10 轮是最终验收复核。只剩两轮，第 9 轮要一次做完。
 
+### Round 9
+
+#### Plan
+按第 8 轮复盘：把最终验收指出的两件事一起修掉，让 A-1 真正成立——① 编辑页把占位图当封面存回库（A-1 改动带出来的）；② 鲜肉馄饨、家常拌面的照片是别的菜。分两个提交。只剩两轮，这轮做完，第 10 轮留给复核。
+
+#### Act
+- **编辑页（提交 00c9543）**：`miniapp/pkg-extra/recipe-edit/index.js:131` 表单封面初值改成 `dishImageUrl(recipe.coverImage) || ''`，只放真存着的封面；`recipeDishImg` 在这个文件里不再用，去掉引用。先 grep 了所有 `coverImage:` 赋值和 `recipeDishImg` 调用方，分清只显示和会存回去：只有编辑页会存回去（`pantry-match` 给冰箱/菜谱列表显示，做菜完成的提交内容不带图，帖子详情只显示）。
+- `miniapp/test/dish-images.test.js`：补两道没封面的菜（「我家红烧肉」没有对得上的照片、「番茄炒蛋」有），断言编辑页表单封面为空、保存出去的 coverImage 是空串；测完把 `getRecipeDetail` 的替身恢复，后面的老断言要靠它（第一次没恢复，后面一条老断言红了，就是这个原因）。
+- **两张错图（提交 fb9283e）**：`miniapp/utils/image.js` 去掉 `拌面/捞面 → lo-mein`、`馄饨 → wontons` 两条按菜名配图的规则，注释写明原因；`server/src/main/resources/data.sql` 种子 106、108 封面留空，末尾修正区加两条只清原值的 UPDATE（106 带 `family_id = 1`，108 种子本来是 `family_id IS NULL`）。测试把这两道加进「没照片给占位图」和「种子封面留空 + 老库要清」的断言（种子第二批有缩进，正则改成 `^\s*\(`）。
+- 对比页 `compare.html`：第 1 行说明和提交号补上馄饨、拌面；新增第 6 行编辑页改前改后（`screens/recipe-edit-r9-before.jpg` / `-after.jpg`）；「等你定」补上漏掉的「今天这一桌挪到菜下面」和青椒土豆丝，改掉已经不对的两条。`findings.md` 同步。提交 fd9fac5。全部已推送。
+
+#### Verify
+- **新测试真能抓到毛病**：两处改动各自先只留新测试、把改动收起来跑一遍——编辑页那条 EXIT=1（「我家红烧肉：没封面时编辑页不放假封面」），两张图那条 EXIT=1（「鲜肉馄饨 没有照片时不能借别的菜的图」）；放回改动后 EXIT=0。
+- `for t in miniapp/test/*.test.js miniapp/test/static-check.js; do node $t; done`（仓库根目录）→ pass=24 fail=0，两处改动后各跑一次。
+- `node artifacts/ui-fix-2026-11-12/build-dish-check.js` → 「16 道；缺照片： 红烧肉、可乐鸡翅、蒜蓉西兰花、糖醋排骨、鲜肉馄饨、家常拌面」；无头 Chrome 截成 dish-check.jpg，16 格逐格看：10 张照片拍的都是这道菜，6 格是碗。
+  - **两格是我的判断，写在这里让复核看见**：紫菜蛋花汤（照片是蛋花汤，看不到紫菜）、青椒土豆丝（用的是酸辣土豆丝那张：干辣椒花椒，几乎没有青椒）。我按「照片拍的是别的菜 → 换碗；拍的是这道菜、只是配料或口味不同 → 留着」来分：馄饨拍成蒸饺、拌面拍成牛肉芦笋是别的菜；蛋花汤、土豆丝是这道菜。这两条记在 findings 和对比页「等你定」里，要换就是一行。
+- 本机后端：第一次重启没成功（stop 之后紧接着 start，旧进程还没退，start 以为「已在运行」就没起新的；我等端口的循环没写超时，挂了 120 秒）。改成先 stop、等 9088 端口真空了再 start。重启前库里 106/108 是 wontons.jpg / lo-mein.jpg，重启后都是 NULL；2/5/7/8 仍是 NULL，101/102 没动。后端进程的当前目录是主工作区 `server/`。
+- 模拟器首页：连点 12 次「换一道」，大图轮到的 10 道全是有照片的、图名一致，没有馄饨、拌面、碗；这排最后一格是红烧肉的碗。控制台无 error。
+- 编辑页：把改前的文件临时放回去打开「编辑红烧肉」，表单封面是 `/assets/dish-placeholder.svg`、封面位置是碗带 ×（`screens/recipe-edit-r9-before.jpg`）；`git checkout` 还原后表单封面为空、显示「+ 添加封面（可选）」（`screens/recipe-edit-r9-after.jpg`）。`git diff` 确认还原后和提交的一样。只打开没保存，库里没写东西。控制台无 error。
+- 对比页：无头 Chrome 读出 12 张图都有尺寸（2 张 1100x1500、10 张 591x1280）；整页截图（1200×5700）看过，6 行加「等你定」都在。
+- A-1 重新打勾。
+
+#### Retrospect
+- 教训：「stop 后马上 start」会撞上还没退干净的旧进程，脚本的 start 会误报「已在运行」。要先等端口真空再 start；任何等待循环都要有超时。→ L-15
+- 教训：测试里临时换掉的替身（mock）用完要还原，后面的断言可能正靠着它。
+- 下一轮（第 10 轮，最后一轮）：六条都打勾了，驱动会注入最终验收——再派一个全新的 spec-verifier 逐条复核。通过就逐条汇报、改 status: done；不通过就如实汇报还差什么，round 用完时交给用户定。
+
 ## Lessons
 
 - L-1 内置菜图的文件名和照片内容对不上的有三张（hongshao-pork / orange-chicken / sweet-sour-chicken），判断「图对不对」要看图不能看文件名；对照页：`node artifacts/ui-fix-2026-11-12/build-dish-check.js` 后用无头 Chrome 截图。
@@ -240,4 +267,5 @@ started: 2026-11-12
 - L-12 控制台查报错：`get_simulator_console` 缓存在每次 `simulator_open_page` 重新编译时清空，所以每页打开后各查一次。先打一条 `console.error` 证明 grep 看得到，再相信「grep 不到 = 没报错」。
 - L-13 检查网页里的图片加载：临时副本加 `addEventListener("load", …)` 把每张图的 `naturalWidth x naturalHeight` 写进 body 属性，无头 Chrome 加 `--allow-file-access-from-files --virtual-time-budget=5000 --dump-dom` 打开读出来；0x0 = 没加载。整页截图要把 `--window-size` 的高度给够，不然下面会被截掉。
 - L-14 打勾前把自己 Verify 里写的「勉强 / 没验 / 像是」逐条对一遍验收原文：原文不允许的，要么按原文修，要么先改验收（问用户），不能留着它打勾。改共享函数的返回值时，grep 所有调用方后要分清「只显示」和「会存回去」两种，存回去的要单独测。
+- L-15 本机后端重启：`bash server/dev-server.sh stop` 后循环等 `lsof -nP -iTCP:9088 -sTCP:LISTEN -t` 为空（带次数上限）再 `start`；start 自己会等健康检查。重启后用 `lsof -p <pid> -a -d cwd` 确认是从主工作区起的。
 
