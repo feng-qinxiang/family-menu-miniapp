@@ -19,13 +19,15 @@
   display: flex;
   align-items: center;
   gap: 23rpx;
-  padding: 15rpx 46rpx 27rpx;
+  padding: 8rpx 46rpx 24rpx; /* 64rpx 控件中心对齐胶囊（状态栏下 ~40rpx） */
 }
 .backbtn {
-  width: 88rpx;
-  height: 88rpx;
+  width: 64rpx;
+  height: 64rpx;
   border-radius: 50%;
-  background: var(--anchor);
+  background: var(--c-surface);
+  border: 2rpx solid var(--line);
+  box-sizing: border-box;
   flex: none;
   display: flex;
   align-items: center;
@@ -34,8 +36,9 @@
 .backbtn-icon {
   width: 20rpx;
   height: 20rpx;
-  border-left: 5rpx solid var(--paper);
-  border-bottom: 5rpx solid var(--paper);
+  /* 浅底胶囊（同 nav-bar 返回键），箭头用正文色 */
+  border-left: 4rpx solid var(--ink);
+  border-bottom: 4rpx solid var(--ink);
   transform: rotate(45deg);
   margin-left: 6rpx;
 }
@@ -45,38 +48,18 @@
   display: flex;
   align-items: center;
   gap: 17rpx;
-  height: 88rpx;
+  height: 64rpx;
   padding: 0 31rpx;
   background: var(--paper-2);
   border-radius: var(--r-chip);
   border: 3rpx solid var(--c-border);
 }
+/* 放大镜与菜谱库 .rx-search-ico 同一张 SVG */
 .sbox-ic {
-  position: relative;
-  width: 35rpx;
-  height: 35rpx;
+  width: 32rpx;
+  height: 32rpx;
   flex: none;
-}
-.ic-ring {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 25rpx;
-  height: 25rpx;
-  border: 4rpx solid var(--mut);
-  border-radius: 50%;
-  box-sizing: border-box;
-}
-.ic-handle {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 13rpx;
-  height: 4rpx;
-  background: var(--mut);
-  border-radius: 4rpx;
-  transform: rotate(45deg);
-  transform-origin: right bottom;
+  background: no-repeat center/contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%239a8e7d' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-3-3'/%3E%3C/svg%3E");
 }
 .sbox-input {
   flex: 1;
@@ -129,12 +112,6 @@
 .clr-x::before { transform: translate(-50%, -50%) rotate(45deg); }
 .clr-x::after { transform: translate(-50%, -50%) rotate(-45deg); }
 
-.cancel {
-  flex: none;
-  font-size: calc(28rpx * var(--fs-mul, 1));
-  font-weight: 700;
-  color: var(--gold-deep);
-}
 
 /* ============ 滚动结果区 ============ */
 .scroll {
@@ -144,9 +121,8 @@
 .pad { padding: 0 46rpx; }
 
 /* 结果标题 */
-.rhead { margin: 35rpx 0 0; }
 .rtitle {
-  margin-top: 8rpx;
+  margin-top: 32rpx;
   font-size: calc(50rpx * var(--fs-mul, 1));
   font-weight: 900;
   letter-spacing: -2rpx;
@@ -202,6 +178,10 @@
   margin-top: 22rpx;
 }
 .nohit-act {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  min-height: var(--tap-min);
   padding: 16rpx 26rpx;
   border-radius: var(--r-pill);
   background: var(--paper);
@@ -251,18 +231,6 @@
   height: 100%;
   display: block;
 }
-.gc-lbl {
-  position: absolute;
-  top: 17rpx;
-  left: 17rpx;
-  font-size: var(--fs-tiny);
-  letter-spacing: 2rpx;
-  font-weight: 800;
-  color: var(--anchor-contrast);
-  background: rgba(40, 30, 20, 0.55);
-  padding: 8rpx 15rpx;
-  border-radius: var(--r-xs);
-}
 .gc-info { padding: 23rpx 25rpx 27rpx; }
 .gc-name {
   font-size: calc(32rpx * var(--fs-mul, 1));
@@ -275,18 +243,11 @@
 .gc-meta {
   display: flex;
   align-items: center;
-  gap: 17rpx;
+  gap: 8rpx;   /* 分隔点自带空格，原来再叠 17rpx 就成了双倍空隙 */
   margin-top: 15rpx;
 }
 .gc-meta-i {
   font-size: calc(23rpx * var(--fs-mul, 1));
   font-weight: 500;
   color: var(--mut-strong);
-}
-.gc-dot {
-  width: 6rpx;
-  height: 6rpx;
-  border-radius: 50%;
-  background: var(--mut-2);
-  flex: none;
 }

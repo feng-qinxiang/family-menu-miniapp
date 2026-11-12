@@ -1,17 +1,20 @@
 // pages/auth/login/index · 登录落地页逻辑
 const api = require('../../../utils/api');
 const features = require('../../../utils/features');
+const { localPath, onImgError } = require('../../../utils/image');
 
 Page({
+  onHeroImageError(e) { onImgError(e, this, 'heroImage'); },
   data: {
+    heroImage: localPath('chicken-congee'),
     features,
     agreed: false,
     submitting: false,
     toast: { visible: false, text: '' },
     trustList: [
-      { icon: '♡', h: '一家人共享同一份菜单', s: '今晚吃什么，全家一起说了算' },
-      { icon: '✚', h: '点完菜自动生成买菜清单', s: '缺什么一键加入，照着买不漏项' },
-      { icon: '▤', h: '记下家里每道拿手菜', s: '做过几次、谁掌勺，都帮你存好' }
+      { icon: 'users', h: '一家人共享同一份菜单', s: '谁想吃什么都能点，做菜的人一眼看到' },
+      { icon: 'shopping-basket', h: '点完菜自动生成买菜清单', s: '缺什么一键加入，照着买不漏项' },
+      { icon: 'notebook-pen', h: '记下家里每道拿手菜', s: '做过几次、谁掌勺，都帮你存好' }
     ]
   },
 
@@ -49,6 +52,8 @@ Page({
       success: (loginRes) => {
         const code = loginRes && loginRes.code;
         if (!code) {
+          // 上面开的是 mask:true 的 loading，这里不关，全屏遮罩会一直卡着
+          wx.hideLoading();
           this.setData({ submitting: false });
           this.toast('微信登录失败，请重试');
           return;

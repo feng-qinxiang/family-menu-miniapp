@@ -1,0 +1,195 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="390" height="844" viewBox="0 0 390 844">
+<title>消息中心 · 临期通知</title>
+<rect width="100%" height="100%" fill="#fbf8f3"/>
+<g id="layer-0" data-name="9:41" data-x="20" data-y="7" data-w="62" data-h="23">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="13" font-weight="600" text-anchor="start">
+<tspan x="20" y="21.75">9:41</tspan>
+</text>
+</g>
+<g id="layer-1" data-name="•••" data-x="312" data-y="7" data-w="29" data-h="23">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="13" font-weight="600" text-anchor="start">
+<tspan x="312" y="21.75">•••</tspan>
+</text>
+</g>
+<g id="layer-2" data-name="电池" data-x="347" data-y="15" data-w="24" data-h="11">
+<rect x="347" y="15" width="24" height="11" rx="3" fill="#2c241b" opacity="0.8"/>
+</g>
+<g id="layer-3" data-name="图标 / arrow-left" data-x="19" data-y="48" data-w="23" data-h="23">
+<g transform="translate(19 48) scale(0.9583333333333334 0.9583333333333334)" fill="none" stroke="#2c241b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="m12 19-7-7 7-7" />
+  <path d="M19 12H5" />
+</g>
+</g>
+<g id="layer-4" data-name="消息中心" data-x="74" data-y="39" data-w="210" data-h="44">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="16" font-weight="600" text-anchor="middle">
+<tspan x="179.0" y="65.0">消息中心</tspan>
+</text>
+</g>
+<g id="layer-5" data-name="微信胶囊" data-x="311" data-y="45" data-w="62" data-h="31">
+<rect x="311" y="45" width="62" height="31" rx="16" fill="#f0ebe2" opacity="0.94"/>
+</g>
+<g id="layer-6" data-name="•••  ⊙" data-x="315" data-y="45" data-w="54" data-h="31">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="14" font-weight="600" text-anchor="middle">
+<tspan x="342.0" y="64.0">•••  ⊙</tspan>
+</text>
+</g>
+<g id="layer-7" data-name="消息通知" data-x="16" data-y="103" data-w="280" data-h="40.5">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="27" font-weight="700" text-anchor="start">
+<tspan x="16" y="130.0">消息通知</tspan>
+</text>
+</g>
+<g id="layer-8" data-name="你有 1 条未读消息" data-x="16" data-y="145" data-w="358" data-h="18.75">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="12.5" font-weight="400" text-anchor="start">
+<tspan x="16" y="157.5">你有 1 条未读消息</tspan>
+</text>
+</g>
+<g id="layer-9" data-name="批量已读按钮" data-x="251" data-y="108" data-w="123" data-h="32">
+<rect x="251" y="108" width="123" height="32" rx="6" fill="#ffffff" stroke="#e8e2d8"/>
+</g>
+<g id="layer-10" data-name="图标 / check" data-x="258" data-y="116" data-w="15" data-h="15">
+<g transform="translate(258 116) scale(0.625 0.625)" fill="none" stroke="#716555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M20 6 9 17l-5-5" />
+</g>
+</g>
+<g id="layer-11" data-name="全部标为已读" data-x="278" data-y="108" data-w="91" data-h="32">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="12" font-weight="400" text-anchor="middle">
+<tspan x="323.5" y="127.0">全部标为已读</tspan>
+</text>
+</g>
+<g id="layer-12" data-name="消息分类 / 全部" data-x="16" data-y="180" data-w="63" data-h="34">
+<rect x="16" y="180" width="63" height="34" rx="8" fill="#2c241b"/>
+</g>
+<g id="layer-13" data-name="全部" data-x="16" data-y="180" data-w="63" data-h="34">
+<text fill="#ffffff" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="12.5" font-weight="400" text-anchor="middle">
+<tspan x="47.5" y="200.125">全部</tspan>
+</text>
+</g>
+<g id="layer-14" data-name="消息分类 / 家庭" data-x="89" data-y="180" data-w="63" data-h="34">
+<rect x="89" y="180" width="63" height="34" rx="8" fill="#f0ebe2"/>
+</g>
+<g id="layer-15" data-name="家庭" data-x="89" data-y="180" data-w="63" data-h="34">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="12.5" font-weight="400" text-anchor="middle">
+<tspan x="120.5" y="200.125">家庭</tspan>
+</text>
+</g>
+<g id="layer-16" data-name="消息分类 / 社区" data-x="162" data-y="180" data-w="63" data-h="34">
+<rect x="162" y="180" width="63" height="34" rx="8" fill="#f0ebe2"/>
+</g>
+<g id="layer-17" data-name="社区" data-x="162" data-y="180" data-w="63" data-h="34">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="12.5" font-weight="400" text-anchor="middle">
+<tspan x="193.5" y="200.125">社区</tspan>
+</text>
+</g>
+<g id="layer-18" data-name="消息分类 / 系统" data-x="235" data-y="180" data-w="63" data-h="34">
+<rect x="235" y="180" width="63" height="34" rx="8" fill="#f0ebe2"/>
+</g>
+<g id="layer-19" data-name="系统" data-x="235" data-y="180" data-w="63" data-h="34">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="12.5" font-weight="400" text-anchor="middle">
+<tspan x="266.5" y="200.125">系统</tspan>
+</text>
+</g>
+<g id="layer-20" data-name="临期消息" data-x="16" data-y="228" data-w="358" data-h="216">
+<rect x="16" y="228" width="358" height="216" rx="9" fill="#ffffff"/>
+</g>
+<g id="layer-21" data-name="图标 / tab-fridge" data-x="30" data-y="244" data-w="22" data-h="22">
+<g transform="translate(30 244) scale(0.4583333333333333 0.4583333333333333)" fill="none">
+  <rect x="9" y="6" width="30" height="36" rx="3" stroke="#c8381f" stroke-width="3"/>
+  <path d="M9 20H39" stroke="#c8381f" stroke-width="3"/>
+  <path d="M15 13V26" stroke="#c8381f" stroke-width="3" stroke-linecap="round"/>
+  <path d="M15 31v5" stroke="#c8381f" stroke-width="3" stroke-linecap="round" opacity=".55"/>
+</g>
+</g>
+<g id="layer-22" data-name="2 项食材快到期了" data-x="64" data-y="243" data-w="204" data-h="25.5">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="17" font-weight="600" text-anchor="start">
+<tspan x="64" y="260.0">2 项食材快到期了</tspan>
+</text>
+</g>
+<g id="layer-23" data-name="临期提醒" data-x="64" data-y="275" data-w="204" data-h="17.25">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="11.5" font-weight="400" text-anchor="start">
+<tspan x="64" y="286.5">临期提醒</tspan>
+</text>
+</g>
+<g id="layer-24" data-name="今天 09:00" data-x="278" data-y="245" data-w="82" data-h="17.25">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="11.5" font-weight="400" text-anchor="end">
+<tspan x="360" y="256.5">今天 09:00</tspan>
+</text>
+</g>
+<g id="layer-25" data-name="番茄：还有 2 天，剩余 2 个。 / 鸡蛋：还有 3 天，剩余 6 个。 / 先看看冰箱能做什么，及时用起来。" data-x="30" data-y="314" data-w="330" data-h="63.0">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="14" font-weight="400" text-anchor="start">
+<tspan x="30" y="328.0">番茄：还有 2 天，剩余 2 个。</tspan>
+<tspan x="30" y="349.0">鸡蛋：还有 3 天，剩余 6 个。</tspan>
+<tspan x="30" y="370.0">先看看冰箱能做什么，及时用起来。</tspan>
+</text>
+</g>
+<g id="layer-26" data-name="消息分隔线" data-x="30" data-y="389" data-w="330" data-h="1">
+<rect x="30" y="389" width="330" height="1" rx="0" fill="#e8e2d8"/>
+</g>
+<g id="layer-27" data-name="● 未读" data-x="30" data-y="405" data-w="126" data-h="17.25">
+<text fill="#c8381f" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="11.5" font-weight="400" text-anchor="start">
+<tspan x="30" y="416.5">● 未读</tspan>
+</text>
+</g>
+<g id="layer-28" data-name="查看冰箱 ›" data-x="222" data-y="405" data-w="138" data-h="19.5">
+<text fill="#c8381f" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="13" font-weight="400" text-anchor="end">
+<tspan x="360" y="418.0">查看冰箱 ›</tspan>
+</text>
+</g>
+<g id="layer-29" data-name="家庭消息" data-x="16" data-y="461" data-w="358" data-h="148">
+<rect x="16" y="461" width="358" height="148" rx="9" fill="#ffffff"/>
+</g>
+<g id="layer-30" data-name="图标 / users" data-x="30" data-y="477" data-w="22" data-h="22">
+<g transform="translate(30 477) scale(0.9166666666666666 0.9166666666666666)" fill="none" stroke="#716555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+  <path d="M16 3.128a4 4 0 0 1 0 7.744" />
+  <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+  <circle cx="9" cy="7" r="4" />
+</g>
+</g>
+<g id="layer-31" data-name="晚餐又添了一道菜" data-x="64" data-y="477" data-w="204" data-h="25.5">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="17" font-weight="600" text-anchor="start">
+<tspan x="64" y="494.0">晚餐又添了一道菜</tspan>
+</text>
+</g>
+<g id="layer-32" data-name="家庭动态" data-x="64" data-y="509" data-w="204" data-h="17.25">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="11.5" font-weight="400" text-anchor="start">
+<tspan x="64" y="520.5">家庭动态</tspan>
+</text>
+</g>
+<g id="layer-33" data-name="昨天 18:15" data-x="278" data-y="479" data-w="82" data-h="17.25">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="11.5" font-weight="400" text-anchor="end">
+<tspan x="360" y="490.5">昨天 18:15</tspan>
+</text>
+</g>
+<g id="layer-34" data-name="妈妈点了番茄炒蛋，看看今晚的菜单。" data-x="30" data-y="546" data-w="330" data-h="19.5">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="13" font-weight="400" text-anchor="start">
+<tspan x="30" y="559.0">妈妈点了番茄炒蛋，看看今晚的菜单。</tspan>
+</text>
+</g>
+<g id="layer-35" data-name="已读" data-x="30" data-y="580" data-w="100" data-h="17.25">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="11.5" font-weight="400" text-anchor="start">
+<tspan x="30" y="591.5">已读</tspan>
+</text>
+</g>
+<g id="layer-36" data-name="查看菜单 ›" data-x="239" data-y="578" data-w="121" data-h="18.75">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="12.5" font-weight="400" text-anchor="end">
+<tspan x="360" y="590.5">查看菜单 ›</tspan>
+</text>
+</g>
+<g id="layer-37" data-name="提醒状态说明" data-x="16" data-y="635" data-w="358" data-h="94">
+<rect x="16" y="635" width="358" height="94" rx="8" fill="#f0ebe2"/>
+</g>
+<g id="layer-38" data-name="微信提醒暂未开放" data-x="30" data-y="648" data-w="330" data-h="21.0">
+<text fill="#2c241b" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="14" font-weight="600" text-anchor="start">
+<tspan x="30" y="662.0">微信提醒暂未开放</tspan>
+</text>
+</g>
+<g id="layer-39" data-name="配置模板后，每次订阅可接收一条提醒。 / 站内临期消息可从这里查看。" data-x="30" data-y="678" data-w="330" data-h="36.0">
+<text fill="#716555" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="12" font-weight="400" text-anchor="start">
+<tspan x="30" y="690.0">配置模板后，每次订阅可接收一条提醒。</tspan>
+<tspan x="30" y="708.0">站内临期消息可从这里查看。</tspan>
+</text>
+</g>
+<g id="layer-40" data-name="安全区指示条" data-x="133" data-y="833" data-w="124" data-h="4">
+<rect x="133" y="833" width="124" height="4" rx="2" fill="#2c241b"/>
+</g>
+</svg>

@@ -1,0 +1,13 @@
+{
+  "checkedAt": "2026-10-09T14:38:16.521Z",
+  "passed": true,
+  "cart": "3 道菜 · 展示最近点的 2 道",
+  "relatedRecipeNavigation": true,
+  "mobile": {
+    "width": 375,
+    "documentWidth": 360,
+    "svg": 320
+  },
+  "realBusinessWrites": false,
+  "nativeFigmaImportVerified": false
+}

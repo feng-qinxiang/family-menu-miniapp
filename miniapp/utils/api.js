@@ -646,6 +646,18 @@ function getPantryItems() {
   return request('/api/pantry', { silent: true });
 }
 
+function getIngredientPhotos() {
+  return request('/api/ingredient-photos', { silent: true }).then(ingredientPhotoUrls);
+}
+
+function saveIngredientPhoto(ingredientName, coverImage) {
+  return requestStrict('/api/ingredient-photos', { method: 'PUT', data: { ingredientName, coverImage }, silent: true }).then(ingredientPhotoUrls);
+}
+
+function ingredientPhotoUrls(photos) {
+  return Object.fromEntries(Object.entries(photos || {}).map(entry => [entry[0], entry[1] && entry[1].startsWith('/uploads/') ? resolveBaseUrl() + entry[1] : entry[1]]));
+}
+
 function addPantryItem(payload) {
   return requestStrict('/api/pantry', {
     method: 'POST',
@@ -804,6 +816,8 @@ module.exports = {
   getCurrentUser,
   getNotifications,
   getPantryItems,
+  getIngredientPhotos,
+  saveIngredientPhoto,
   getPantryMatch,
   updatePantryItem,
   getPreferenceProfile,

@@ -7,18 +7,20 @@
   min-height: 100vh;
   background: var(--paper);
 }
+.community-page .cpt-head { padding-bottom: 20rpx; }
 
-/* 页头唯一主操作：番茄红只给它。视觉 64rpx，::after 把热区撑到 88rpx */
+/* 页头唯一主操作：番茄红只给它。视觉 72rpx，::after 把热区撑到 88rpx；
+   实心主按钮按全站约定用卡片圆角（不再是胶囊），字号对齐 .btn */
 .cm-post-btn {
   position: relative;
   display: flex;
   align-items: center;
-  min-height: 64rpx;
+  min-height: 72rpx;
   padding: 0 28rpx;
-  border-radius: var(--r-pill);
-  background: var(--pop);
+  border-radius: var(--r-card);
+  background: var(--pop-fill);
   color: var(--anchor-contrast);
-  font-size: var(--fs-sub);
+  font-size: var(--fs-btn);
   font-weight: 800;
 }
 .cm-post-btn::after {
@@ -27,127 +29,87 @@
   left: 0;
   right: 0;
   top: 50%;
-  height: 88rpx;
+  height: var(--tap-min);
   transform: translateY(-50%);
-}
-
-/* 统计：页头下一行安静小字 */
-.cm-stats {
-  margin-top: 8rpx;
-  font-size: var(--fs-cap);
-  color: var(--mut);
 }
 
 .community-scroll {
   height: 100vh;
   box-sizing: border-box;
-  padding-bottom: calc(var(--tabbar-h) + 40rpx);
+  padding-bottom: var(--tabbar-h);
 }
 
 /* ===================== 内容区 ===================== */
 /* 不再压在 hero 上：去掉负 margin 与顶部圆角，只留底部留白 */
 .sheet { padding-bottom: 40rpx; }
-.pad { padding: 0 46rpx; }
+.pad { padding: 0 var(--page-gutter); }
 /* 页头已给出页名，区块标题贴近页头，首屏多露帖子（全局 .shead 上边距 56rpx） */
-.sheet .shead { margin: 12rpx 0 24rpx; }
+.cm-feed-head { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; margin: 4rpx 0 12rpx; font-size: var(--fs-lg); font-weight: 800; color: var(--ink); }
+.cm-feed-count { font-size: var(--fs-cap); color: var(--mut-strong); font-weight: 500; }
 
 /* ===================== 帖子卡 ===================== */
 .post-list { display: block; }
 .pcard {
   background: var(--c-surface);
   border-radius: var(--r-card);
-  padding: var(--pad-card) var(--pad-card) 30rpx;
-  margin-bottom: 34rpx;
-  box-shadow: var(--sh-card);
+  padding: 20rpx var(--pad-card-sm) 4rpx;
+  margin-bottom: 20rpx;
+  box-shadow: none;
   border: var(--bd-card);
 }
-.ptop { display: flex; align-items: center; gap: 22rpx; }
+.ptop { display: flex; align-items: center; gap: 16rpx; }
 .pavatar {
-  width: var(--ava-row);
-  height: var(--ava-row);
-  border-radius: calc(var(--ava-row) * var(--r-ava));
+  width: var(--ava-cmt);
+  height: var(--ava-cmt);
+  border-radius: calc(var(--ava-cmt) * var(--r-ava));   /* 人名头像：底色和字色走全站 .ava-*（按名字取色，不含红——红色只留给操作）。形状走全站 --r-ava */
   flex: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: calc(var(--ava-row) * var(--ava-glyph) * var(--fs-mul, 1));
-  font-weight: 900;
-  color: var(--anchor-contrast);
-  font-family: var(--serif);
+  font-size: calc(var(--ava-cmt) * var(--ava-glyph) * var(--fs-mul, 1));
+  font-weight: 700;
 }
 .pmeta { flex: 1; min-width: 0; }
-.pname { font-size: calc(29rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--ink); letter-spacing: -0.4rpx; }
-.pstats {
-  font-size: calc(23rpx * var(--fs-mul, 1));
-  color: var(--mut);
-  margin-top: 6rpx;
-  display: flex;
-  align-items: center;
-  gap: 10rpx;
-}
-.pstats-heart::before { content: "\2665\FE0E"; color: var(--pop); font-size: calc(25rpx * var(--fs-mul, 1)); line-height: 1; }
-.ptime { font-size: calc(23rpx * var(--fs-mul, 1)); color: var(--mut-2); flex: none; }
-.ptitle { font-size: calc(36rpx * var(--fs-mul, 1)); font-weight: 900; color: var(--ink); letter-spacing: -1rpx; margin: 26rpx 0 13rpx; line-height: 1.25; }
-.pcontent { font-size: calc(25rpx * var(--fs-mul, 1)); color: var(--mut-strong); line-height: 1.6; }
-.pphoto { display: block; width: 100%; height: var(--photo-feed-h); border-radius: var(--r-chip); margin-top: var(--r-md); }
+.pname { font-size: calc(28rpx * var(--fs-mul, 1)); font-weight: 700; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ptitle { font-size: calc(32rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--ink); letter-spacing: 0; margin: 14rpx 0 8rpx; line-height: 1.45; }
+.pcontent { font-size: calc(28rpx * var(--fs-mul, 1)); color: var(--mut-strong); line-height: 1.6; }
+/* 内层圆角不大于外层 .pcard（--r-card） */
+.pphoto { display: block; width: 100%; height: var(--photo-feed-h); border-radius: var(--r-sm); margin-top: 16rpx; background: var(--paper-2); }
 
-/* 关联菜谱 */
+/* 关联菜谱：一行小卡 */
 .precipe {
   display: flex;
   align-items: center;
-  gap: 24rpx;
-  margin-top: 26rpx;
-  padding: 20rpx;
+  gap: 14rpx;
+  min-height: var(--tap-min);
+  box-sizing: border-box;
+  margin-top: 16rpx;
+  padding: 0 12rpx 0 0;
+  overflow: hidden;
   background: var(--paper);
-  border-radius: 28rpx;
-  border: 2rpx solid var(--paper-2);
+  border-radius: var(--r-sm);
 }
-.precipe .rthumb { width: var(--tile-row-sm); height: var(--tile-row-sm); border-radius: 22rpx; flex: none; }
-.precipe .rmid { flex: 1; min-width: 0; }
-.precipe .rk { font-size: calc(21rpx * var(--fs-mul, 1)); color: var(--gold-deep); font-weight: 700; }
-.precipe .rn { font-size: calc(28rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--ink); margin-top: 2rpx; }
-.precipe .rm { font-size: calc(23rpx * var(--fs-mul, 1)); color: var(--mut); margin-top: 6rpx; }
-.precipe .rgo {
-  width: 58rpx;
-  height: 58rpx;
-  border-radius: 50%;
-  background: var(--anchor);
-  flex: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.rgo-arrow {
-  width: 16rpx;
-  height: 16rpx;
-  border-top: 4rpx solid var(--anchor-contrast);
-  border-right: 4rpx solid var(--anchor-contrast);
-  transform: rotate(45deg) translate(-2rpx, 2rpx);
-}
-
-/* 标签 */
-.ptags { display: flex; flex-wrap: wrap; gap: 14rpx; margin-top: 24rpx; }
-.p-tag {
-  font-size: calc(23rpx * var(--fs-mul, 1));
-  font-weight: 700;
-  color: var(--gold-deep);
-  background: var(--paper-2);
-  padding: 10rpx 22rpx;
-  border-radius: var(--r-pill);
-}
+.precipe .rthumb { width: var(--tile-chip); height: var(--tile-chip); border-radius: var(--r-sm); flex: none; background: var(--paper-2); }
+.precipe .rn { flex: 1; min-width: 0; font-size: var(--fs-sub); font-weight: 700; color: var(--ink); }
+.precipe .rk { margin-right: 10rpx; font-weight: 600; color: var(--mut-strong); }
+.precipe .rm { font-weight: 400; color: var(--mut-strong); }
+.precipe .rgo { width: 28rpx; height: 28rpx; flex: none; filter: brightness(0); opacity: 0.35; }
 
 /* 操作栏 */
 .pactions {
   display: flex;
   align-items: center;
-  gap: 16rpx;
-  margin-top: 28rpx;
-  padding-top: 26rpx;
+  gap: 8rpx;
+  margin-top: 12rpx;
+  padding-top: 4rpx;
   border-top: 2rpx solid var(--paper-2);
 }
 .pa-btn {
+  flex: 1;
+  min-width: 0;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 10rpx;
   font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: 700;
@@ -158,6 +120,7 @@
 }
 .pa-btn.on { color: var(--pop); }
 .pa-ico { font-size: calc(28rpx * var(--fs-mul, 1)); line-height: 1; }
+.pa-ico.on { animation: gPop var(--g-dur-fast) var(--g-back-out); }   /* 点了赞 / 收藏，图标弹一下 */
 /* 图标一律要求「单色、可被 CSS color 着色」。CSS 里追加的 FE0E 是
    variation selector-15（文字呈现）：不追加时 ☆★♡⚠ 在 iOS/Android 上常被渲染成彩色 emoji，
    既吃不到 currentColor（也就跟着不翻深色档），又把系统风格混进品牌界面。
@@ -181,40 +144,55 @@
   border-top: 0.16em solid currentColor;
 }
 .ico-warn::before { content: "\26A0\FE0E"; }
-.pa-spacer { flex: 1; }
-.pa-report { font-size: calc(23rpx * var(--fs-mul, 1)); color: var(--mut-2); font-weight: 600; display: flex; align-items: center; gap: 8rpx; }
+.pa-report { flex: none; min-width: 88rpx; min-height: 88rpx; font-size: var(--fs-body); color: var(--mut); font-weight: 400; display: flex; align-items: center; justify-content: center; }
 
 /* ===================== 加载骨架（与 .pcard 同形状，加载完不跳版） ===================== */
+/* 内边距/间距/头像与真卡 .pcard、.pavatar 同值（原来 28/34/84rpx 是旧版卡片的规格） */
 .cf-skel-card {
   background: var(--c-surface);
   border: var(--bd-card);
   border-radius: var(--r-card);
-  padding: var(--pad-card);
-  margin-bottom: 34rpx;
+  padding: 20rpx var(--pad-card-sm);
+  margin-bottom: 20rpx;
 }
-.cf-skel-head { width: 84rpx; height: 84rpx; border-radius: 26rpx; background: var(--skeleton); }
+.cf-skel-head { width: var(--ava-cmt); height: var(--ava-cmt); border-radius: calc(var(--ava-cmt) * var(--r-ava)); background: var(--skeleton); }
 .cf-skel-line { height: 26rpx; margin-top: 26rpx; border-radius: var(--r-xs); background: var(--skeleton); }
 .cf-skel-line--short { width: 55%; }
 
 /* ===================== 热门话题 ===================== */
-.topics { margin: 46rpx 46rpx 0; }
-.thead { display: flex; align-items: center; gap: 14rpx; margin-bottom: 26rpx; }
-.thead .th-title { font-size: calc(32rpx * var(--fs-mul, 1)); font-weight: 900; color: var(--ink); letter-spacing: -1rpx; }
-.tchips { display: flex; flex-wrap: wrap; gap: 18rpx; }
+/* 轻筛选条：视觉 56rpx 细描边胶囊，命中区由上下 padding 撑到 --tap-min；去掉 # 前缀 */
+.topics { margin: 0 0 8rpx; }
+.topic-scroll { white-space: nowrap; }
+.tchips { display: inline-flex; gap: 0; }
 .tchip {
   display: flex;
   align-items: center;
-  gap: 12rpx;
-  background: var(--paper-2);
-  border-radius: var(--r-pill);
-  padding: 8rpx 20rpx;
+  min-height: var(--tap-min);
+  box-sizing: border-box;
+  padding: 0 6rpx;
+  flex: none;
 }
-.tchip .tt { font-size: var(--fs-sub); font-weight: 800; color: var(--ink); letter-spacing: -0.4rpx; }
+.tchip .tt {
+  display: block;
+  line-height: 52rpx;
+  padding: 0 22rpx;
+  border-radius: var(--r-pill);
+  border: 2rpx solid var(--line);
+  background: var(--c-surface);
+  font-size: var(--fs-sub);
+  font-weight: 500;
+  color: var(--mut-strong);
+}
+.tchip:first-child { padding-left: 0; }
+.tchip.on .tt { background: var(--anchor); border-color: var(--anchor); color: var(--anchor-contrast); font-weight: 700; }   /* 单选筛选与全局 .chip.on 一致：深底白字 */
 
 /* ===================== 流末 ===================== */
 .feed-end { display: flex; align-items: center; justify-content: center; gap: 22rpx; margin: 40rpx 0 8rpx; }
 .feed-end::before, .feed-end::after { content: ""; height: 2rpx; width: 88rpx; background: var(--c-border); }
 .feed-end text { font-size: calc(23rpx * var(--fs-mul, 1)); color: var(--mut-strong); letter-spacing: 2rpx; font-weight: 600; }
+/* 翻页失败的重试行：整行是热区，最小命中高度走 token；字色换成可点的强调色 */
+.feed-end--retry { min-height: var(--tap-min); margin-top: 20rpx; }
+.feed-end--retry text { color: var(--pop); }
 
 /* ===================== 发帖弹层（容器由 state-sheet 组件提供，页面只留表单样式） ===================== */
 .pf-input {
@@ -242,7 +220,7 @@
   font-size: calc(28rpx * var(--fs-mul, 1));
   line-height: 1.5;
 }
-.pf-ph { color: var(--mut-2); }
+.pf-ph { color: var(--mut); }   /* --mut-2 在白底上约 2.4:1，三格没有标签，占位字就是标签 */
 
 /* 关联的菜（「晒一晒」带过来的那道）：与输入框同一套描边圆角，
    读作「这条帖子会带出这张菜卡」，与普通发帖区分开。 */
@@ -276,7 +254,7 @@
   flex-shrink: 0;
   width: 88rpx;   /* 触控热区按 88rpx 标准走：这是「取消关联」，误点代价小但也不能点不中 */
   text-align: right;
-  color: var(--mut-2);
+  color: var(--mut);   /* 这一行唯一的可点标记，--mut-2 在白底上只有约 2.4:1 */
   font-size: calc(32rpx * var(--fs-mul, 1));
 }
 
@@ -298,7 +276,11 @@
   padding: 8rpx 40rpx 4rpx;
 }
 .rp-reason {
-  padding: 12rpx 30rpx;
+  box-sizing: border-box;
+  min-height: var(--tap-min);
+  display: flex;
+  align-items: center;
+  padding: 0 30rpx;
   border-radius: var(--r-pill);
   background: var(--paper-2);
   color: var(--mut-strong);
@@ -319,14 +301,6 @@
 
 /* —— 帖子配图（信息流角标 + 发帖选择器） —— */
 .pphoto-wrap { position: relative; }
-/* 无配图帖子的占位：只说明"还没配图"，不再拿本地菜品图冒充邻居实拍 */
-.pphoto-none {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--paper);
-}
-.pphoto-none-t { color: var(--mut-2); font-size: var(--fs-mini); }
 .pphoto-count {
   position: absolute;
   right: 12rpx;
@@ -362,7 +336,7 @@
   width: calc(44rpx * var(--fs-mul, 1));
   height: calc(44rpx * var(--fs-mul, 1));
   border-radius: 50%;
-  /* --anchor / --anchor-contrast 是"两主题都不翻转"的恒定色对；
+  /* --anchor / --anchor-contrast 是恒定深底浅字的色对（深色档 --anchor 只提亮一档，浅字仍 4.7:1）；
      原先用 --ink，深色档它翻成 #efefef，白底白字等于看不见删除按钮 */
   background: var(--anchor);
   color: var(--anchor-contrast);
@@ -394,28 +368,6 @@
   color: var(--mut);
 }
 
-/* —— 话题过滤提示条 —— */
-.tag-filter {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14rpx;
-  margin-top: 16rpx;
-  padding: 14rpx 22rpx;
-  border-radius: var(--r-pill);
-  background: rgba(232, 71, 42, 0.08);
-}
-.tag-filter-t {
-  font-size: var(--fs-cap);
-  font-weight: 700;
-  color: var(--pop);
-}
-.tag-filter-x {
-  font-size: var(--fs-cap);
-  color: var(--mut-strong);
-  font-weight: 700;
-}
-
 /* —— 待审核角标（仅作者本人可见的帖子） —— */
 .ptitle-row {
   display: flex;
@@ -431,4 +383,8 @@
   background: rgba(176, 137, 73, 0.14);
   padding: 4rpx 14rpx;
   border-radius: var(--r-pill);
+}
+
+@media (prefers-color-scheme: dark) {
+  .precipe .rgo { filter: brightness(0) invert(1); }
 }

@@ -20,39 +20,17 @@
   padding: 0 46rpx 40rpx;
 }
 
-/* ============ Hero ============ */
-.fav-head {
-  padding: 24rpx 0 0;
-}
-.fav-title {
-  margin-top: 8rpx;
-  font-family: var(--sans);
-  font-size: var(--fs-hero-lg);
-  font-weight: 900;
-  line-height: 0.95;
-  letter-spacing: -4rpx;
-  color: var(--ink);
-}
-.fav-title .pop {
-  color: var(--pop);
-}
-.fav-count {
-  margin-top: 22rpx;
-  font-size: var(--fs-sub);
-  font-weight: 600;
-  color: var(--mut-strong);
-}
-
 /* ============ Tabs ============ */
 .fav-tabs {
   display: flex;
   gap: 54rpx;
-  margin-top: 42rpx;
+  margin-top: 0;   /* 计数行已删（与 tab 角标重复），tab 直接贴导航栏 */
   padding-bottom: 0;
   border-bottom: 2rpx solid var(--paper-2);
 }
 .fav-tab {
   position: relative;
+  padding-top: var(--sp-sm);
   padding-bottom: 24rpx;
   font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
@@ -70,7 +48,7 @@
   bottom: -2rpx;
   height: 6rpx;
   border-radius: 6rpx;
-  background: var(--pop);
+  background: var(--pop-fill);
 }
 .fav-tab-badge {
   margin-left: 8rpx;
@@ -112,7 +90,7 @@
 .fav-pthumb {
   width: var(--tile-grid);
   height: var(--tile-grid);
-  border-radius: var(--r-md);
+  border-radius: var(--r-sm);   /* 嵌在 --r-card 卡里，圆角不能比外卡大 */
   flex: none;
   background: var(--paper-2);
 }
@@ -125,7 +103,6 @@
 .fav-ptag {
   align-self: flex-start;
   font-family: var(--serif);
-  font-style: italic;
   font-size: var(--fs-mini);
   letter-spacing: 1rpx;
   font-weight: 700;
@@ -178,7 +155,7 @@
   width: 16rpx;
   height: 16rpx;
   border-radius: 50%;
-  background: var(--pop);
+  background: var(--pop-fill);
   flex: none;
 }
 /* 加载骨架 */
@@ -196,9 +173,11 @@
   width: 80%;
 }
 .fav-skel-line.strong { width: 60%; }
-.fav-pane-skel { display: flex; flex-direction: column; gap: 20rpx; }
+/* 骨架与真卡同高同间距：真卡 = 封面 --tile-grid + 上下 --pad-card-sm + 2rpx 边框×2，间距 = .fav-pcard 的 27rpx。
+   原来 180rpx / 20rpx，加载完每张卡长 49rpx、整列往下跳 */
+.fav-pane-skel { display: flex; flex-direction: column; gap: 27rpx; }
 .fav-pcard-skel {
-  height: 180rpx;
+  height: calc(var(--tile-grid) + var(--pad-card-sm) * 2 + 4rpx);
   border-radius: var(--r-card);
   background: var(--paper-2);
 }

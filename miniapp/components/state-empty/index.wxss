@@ -32,6 +32,14 @@
   height: 112rpx;
 }
 
+/* compact：页内空块。图标缩到一半、留白收紧，首屏留给能直接操作的内容 */
+.se--compact { padding: 32rpx 32rpx 28rpx; }
+.se--compact .se-illu { width: 112rpx; height: 112rpx; margin-bottom: 20rpx; }
+.se--compact .se-icon { width: 60rpx; height: 60rpx; }
+.se--compact .se-title { font-size: var(--fs-lg); }
+.se--compact .se-desc { margin-top: 8rpx; }
+.se--compact .se-btn { margin-top: 24rpx; }
+
 /* 文案 */
 .se-title {
   font-size: calc(36rpx * var(--fs-mul, 1));
@@ -56,14 +64,14 @@
   justify-content: center;
   margin-top: 38rpx;
   min-height: 88rpx;
-  padding: 0 50rpx;
-  border-radius: var(--r-pill);
+  padding: 0 50rpx;   /* 例外：这是实心按钮不是卡表面，左右留白跟字号走 */
+  border-radius: var(--r-card);   /* 实心主按钮统一小圆角，与 .primary-btn 一致 */
   font-size: calc(28rpx * var(--fs-mul, 1));
   font-weight: 800;
   letter-spacing: 0.4rpx;
 }
 .se-btn--pop {
-  background: var(--pop);
+  background: var(--pop-fill);
   color: var(--anchor-contrast);
   box-shadow: var(--sh-pop);
 }
@@ -84,6 +92,6 @@
   color: rgba(241, 236, 226, 0.62);
 }
 .se--dark .se-btn--ghost {
-  color: var(--gold);
+  color: var(--gold-on-dark);
   border-color: rgba(241, 236, 226, 0.24);
 }

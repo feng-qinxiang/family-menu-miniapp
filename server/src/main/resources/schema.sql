@@ -310,6 +310,14 @@ CREATE TABLE IF NOT EXISTS pantry_item (
     INDEX idx_pantry_family (family_id, created_at DESC)
 );
 
+-- 同一家里的冰箱与买菜清单复用食材照片；未设置的食材由客户端显示名称。
+CREATE TABLE IF NOT EXISTS ingredient_photo (
+    family_id BIGINT NOT NULL,
+    ingredient_name VARCHAR(128) NOT NULL,
+    cover_image VARCHAR(512) NOT NULL,
+    PRIMARY KEY (family_id, ingredient_name)
+);
+
 CREATE TABLE IF NOT EXISTS phone_otp (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     phone VARCHAR(20) NOT NULL,
@@ -346,9 +354,12 @@ CREATE TABLE IF NOT EXISTS notification_message (
     title VARCHAR(128) NOT NULL,
     body_text VARCHAR(500) NOT NULL,
     action_type VARCHAR(32) NULL,
+    -- 普通通知为 NULL；临期汇总用事件键确保同一人同一家每天最多一条。
+    event_key VARCHAR(96) NULL,
     unread TINYINT(1) NOT NULL DEFAULT 1,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    INDEX idx_notification_user (user_id, unread, created_at DESC)
+    INDEX idx_notification_user (user_id, unread, created_at DESC),
+    UNIQUE KEY uk_notification_event (user_id, event_key)
 );
 
 CREATE TABLE IF NOT EXISTS uploaded_file (

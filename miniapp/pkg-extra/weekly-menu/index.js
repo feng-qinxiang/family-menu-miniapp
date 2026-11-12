@@ -1,6 +1,6 @@
 const { generateWeeklyMenu, getWeeklyMenu } = require('../../utils/api');
-const { recipeDishImg } = require('../../utils/image');
-const { todayDateKey } = require('../../utils/dish-logic');
+const { recipeDishImg, onPhotoError: markPhotoBroken } = require('../../utils/image');
+const { todayDateKey, parseLocalDate } = require('../../utils/dish-logic');
 
 const WK_SHORT = ['日', '一', '二', '三', '四', '五', '六'];
 const WK_FULL = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
@@ -10,9 +10,7 @@ function dishImageFor(recipe) {
 }
 
 function parseDate(str) {
-  if (!str) return null;
-  const d = new Date(String(str).replace(' ', 'T'));
-  return isNaN(d.getTime()) ? null : d;
+  return parseLocalDate(str);
 }
 
 function mdLabel(d) {
@@ -26,14 +24,7 @@ Page({
     statusBarHeight: 0,
     weeklyMenu: { weekStart: '', weekEnd: '', days: [] },
     weekbar: [],
-    rangeText: '',
     heroSub: '',
-    heroImage: '/assets/dishes/fried-rice.jpg',
-    menuSummary: {
-      dayCount: 0,
-      recipeCount: 0,
-      blankCount: 0
-    },
     activeIndex: -1,
     loading: true,
     loadError: false
@@ -101,9 +92,7 @@ Page({
     const todayIdx = weeklyMenu.days.findIndex((d) => d.isToday);
     this.setData({
       weeklyMenu,
-      menuSummary: summary,
       weekbar: this.buildWeekbar(weeklyMenu),
-      rangeText: summary.rangeText,
       heroSub: this.buildHeroSub(weeklyMenu, summary),
       activeIndex: todayIdx >= 0 ? todayIdx : -1,
       loading: false
@@ -148,6 +137,7 @@ Page({
       return {
         index,
         short: WK_SHORT[wkIndex] || String(index + 1),
+        dateNumber: d ? d.getDate() : '',
         filled: day.recipeCount > 0,
         isToday: day.isToday
       };
@@ -166,10 +156,12 @@ Page({
 
   buildHeroSub(weeklyMenu, summary) {
     const fullDays = weeklyMenu.days.filter((d) => d.lunch && d.dinner).length;
+    // 原来下面还有一张「7 天 / 14 道 / 0 个」统计卡，和这行说的是同一组数；卡删了，道数并到这行
+    if (!summary.recipeCount) return `${summary.rangeText}\n这周还没排菜`;
     const tail = summary.blankCount > 0
-      ? `已排好 ${fullDays} 天，还差 ${summary.blankCount} 个空位`
-      : `${weeklyMenu.days.length} 天都排满啦`;
-    return `${summary.rangeText} · ${tail}`;
+      ? `排好 ${fullDays} 天，还差 ${summary.blankCount} 个空位`
+      : `${weeklyMenu.days.length} 天都排满了`;
+    return `${summary.rangeText}\n共 ${summary.recipeCount} 道 · ${tail}`;
   },
 
   onWeekTap(e) {
@@ -184,8 +176,10 @@ Page({
     wx.navigateTo({ url: `/pkg-extra/recipe-detail/index?id=${encodeURIComponent(id)}` });
   },
 
+  onPhotoError(e) { markPhotoBroken(e, this); },
+
   onAddTap() {
-    wx.switchTab({ url: '/pages/recipes/index' });
+    wx.navigateTo({ url: '/pages/recipes/index' });
   },
   onShareAppMessage() {
     return {

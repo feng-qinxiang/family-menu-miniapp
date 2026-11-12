@@ -1,5 +1,5 @@
 /* components/section-head/index.js
- * 区块标题组件：左红竖线 + Georgia 斜体金色 eyebrow + 大标题(可含 .pop 红字) + 右侧 hint/更多链接
+ * 区块标题组件：小字 eyebrow + 区块标题（popPart 仅拼接文字，不再染红） + 右侧 hint/更多链接
  * 复用 app.wxss 的 .shead 体系与全局 token。
  */
 Component({

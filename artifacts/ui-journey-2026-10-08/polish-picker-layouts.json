@@ -1,0 +1,1033 @@
+{
+  "screens": [
+    {
+      "name": "home",
+      "image": "screens/app-home.jpg"
+    },
+    {
+      "name": "home-menu",
+      "image": "screens/picker-home-menu.jpg"
+    },
+    {
+      "name": "home-menu-large",
+      "image": "screens/picker-home-menu-large.jpg"
+    },
+    {
+      "name": "home-wish-preview",
+      "image": "screens/picker-home-wish-preview.jpg"
+    },
+    {
+      "name": "home-wish-preview-large",
+      "image": "screens/picker-home-wish-preview-large.jpg"
+    },
+    {
+      "name": "home-wishes",
+      "image": "screens/picker-home-wishes.jpg"
+    },
+    {
+      "name": "home-wishes-large",
+      "image": "screens/picker-home-wishes-large.jpg"
+    },
+    {
+      "name": "home-search",
+      "image": "screens/picker-home-search.jpg"
+    },
+    {
+      "name": "recipes",
+      "image": "screens/app-recipes.jpg"
+    },
+    {
+      "name": "recipes-large",
+      "image": "screens/picker-recipes-large.jpg"
+    },
+    {
+      "name": "random",
+      "image": "screens/picker-random.jpg"
+    },
+    {
+      "name": "pantry-pick",
+      "image": "screens/picker-pantry-pick.jpg"
+    },
+    {
+      "name": "pantry-pick-large",
+      "image": "screens/picker-pantry-pick-large.jpg"
+    },
+    {
+      "name": "pantry-pick-empty",
+      "image": "screens/picker-pantry-pick-empty.jpg"
+    },
+    {
+      "name": "pantry-pick-failed",
+      "image": "screens/picker-pantry-pick-failed.jpg"
+    },
+    {
+      "name": "pantry",
+      "image": "screens/app-pantry.jpg"
+    },
+    {
+      "name": "pantry-large",
+      "image": "screens/picker-pantry-large.jpg"
+    },
+    {
+      "name": "pantry-image-fallback",
+      "image": "screens/picker-pantry-image-fallback.jpg"
+    },
+    {
+      "name": "pantry-add",
+      "image": "screens/picker-pantry-add.jpg"
+    },
+    {
+      "name": "pantry-edit-date",
+      "image": "screens/picker-pantry-edit-date.jpg"
+    },
+    {
+      "name": "pantry-expired",
+      "image": "screens/picker-pantry-expired.jpg"
+    },
+    {
+      "name": "shopping",
+      "image": "screens/app-shopping.jpg"
+    },
+    {
+      "name": "shopping-large",
+      "image": "screens/app-shopping-large.jpg"
+    }
+  ],
+  "checks": [
+    {
+      "name": "home-tools",
+      "child": ".hm-pick-tool",
+      "parent": ".hm-pick-tools",
+      "a": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 168.5546875,
+        "top": 415,
+        "bottom": 462,
+        "width": 145.5546875,
+        "height": 47
+      },
+      "b": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 415,
+        "bottom": 462,
+        "width": 344,
+        "height": 47
+      },
+      "passed": true
+    },
+    {
+      "name": "home-compact-menu",
+      "child": ".hm-menu-open",
+      "parent": ".hm-menu-card",
+      "a": {
+        "id": "",
+        "dataset": {},
+        "left": 302.1015625,
+        "right": 354,
+        "top": 106,
+        "bottom": 150,
+        "width": 51.8984375,
+        "height": 44
+      },
+      "b": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 95,
+        "bottom": 357,
+        "width": 344,
+        "height": 262
+      },
+      "passed": true
+    },
+    {
+      "name": "home-compact-menu-large",
+      "child": ".hm-menu-open",
+      "parent": ".hm-menu-card",
+      "a": {
+        "id": "",
+        "dataset": {},
+        "left": 287.9453125,
+        "right": 354,
+        "top": 144,
+        "bottom": 188,
+        "width": 66.0546875,
+        "height": 44
+      },
+      "b": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 133,
+        "bottom": 429.4609375,
+        "width": 344,
+        "height": 296.4609375
+      },
+      "passed": true
+    },
+    {
+      "name": "home-wish-preview",
+      "child": ".fp-wish-preview-dish",
+      "parent": ".fp-wish-preview",
+      "a": {
+        "id": "",
+        "dataset": {},
+        "left": 81,
+        "right": 326.9296875,
+        "top": 163.796875,
+        "bottom": 210.1875,
+        "width": 245.9296875,
+        "height": 46.390625
+      },
+      "b": {
+        "id": "",
+        "dataset": {},
+        "left": 36,
+        "right": 354,
+        "top": 155.796875,
+        "bottom": 238.234375,
+        "width": 318,
+        "height": 82.4375
+      },
+      "passed": true
+    },
+    {
+      "name": "home-wish-preview-large",
+      "child": ".fp-wish-preview-dish",
+      "parent": ".fp-wish-preview",
+      "a": {
+        "id": "",
+        "dataset": {},
+        "left": 81,
+        "right": 323.9140625,
+        "top": 178.75,
+        "bottom": 232.09375,
+        "width": 242.9140625,
+        "height": 53.34375
+      },
+      "b": {
+        "id": "",
+        "dataset": {},
+        "left": 36,
+        "right": 354,
+        "top": 170.75,
+        "bottom": 264.7890625,
+        "width": 318,
+        "height": 94.0390625
+      },
+      "passed": true
+    },
+    {
+      "name": "home-wish",
+      "child": ".fp-wish-more",
+      "parent": ".fp-wish-item",
+      "a": {
+        "id": "",
+        "dataset": {
+          "id": 1
+        },
+        "left": 310,
+        "right": 354,
+        "top": 1000.296875,
+        "bottom": 1044.296875,
+        "width": 44,
+        "height": 44
+      },
+      "b": {
+        "id": "",
+        "dataset": {},
+        "left": 36,
+        "right": 354,
+        "top": 958.296875,
+        "bottom": 1049.296875,
+        "width": 318,
+        "height": 91
+      },
+      "passed": true
+    },
+    {
+      "name": "home-wish-large",
+      "child": ".fp-wish-more",
+      "parent": ".fp-wish-item",
+      "a": {
+        "id": "",
+        "dataset": {
+          "id": 1
+        },
+        "left": 310,
+        "right": 354,
+        "top": 1160.9375,
+        "bottom": 1204.9375,
+        "width": 44,
+        "height": 44
+      },
+      "b": {
+        "id": "",
+        "dataset": {},
+        "left": 36,
+        "right": 354,
+        "top": 1101.25,
+        "bottom": 1209.9375,
+        "width": 318,
+        "height": 108.6875
+      },
+      "passed": true
+    },
+    {
+      "name": "home-search",
+      "child": ".hm-search-submit",
+      "parent": ".hm-recipe-search",
+      "a": {
+        "id": "",
+        "dataset": {},
+        "left": 311,
+        "right": 356,
+        "top": 343.0234375,
+        "bottom": 388.0234375,
+        "width": 45,
+        "height": 45
+      },
+      "b": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 342.0234375,
+        "bottom": 389.0234375,
+        "width": 344,
+        "height": 47
+      },
+      "passed": true
+    },
+    {
+      "name": "source-left",
+      "rail": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 72,
+        "top": 291.34375,
+        "bottom": 536.34375,
+        "width": 49,
+        "height": 245
+      },
+      "results": {
+        "id": "",
+        "dataset": {},
+        "left": 78,
+        "right": 367,
+        "top": 291.34375,
+        "bottom": 665.640625,
+        "width": 289,
+        "height": 374.296875
+      },
+      "passed": true
+    },
+    {
+      "name": "source-row-add",
+      "rows": [
+        [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 78,
+            "right": 367,
+            "top": 342.34375,
+            "bottom": 414.34375,
+            "width": 289,
+            "height": 72
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 314,
+            "right": 359,
+            "top": 355.84375,
+            "bottom": 400.84375,
+            "width": 45,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 146,
+            "right": 308,
+            "top": 356.890625,
+            "bottom": 379.2890625,
+            "width": 162,
+            "height": 22.3984375
+          },
+          {
+            "id": "",
+            "dataset": {
+              "errKey": "coverBroken"
+            },
+            "left": 86,
+            "right": 140,
+            "top": 351.34375,
+            "bottom": 405.34375,
+            "width": 54,
+            "height": 54
+          }
+        ],
+        [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 78,
+            "right": 367,
+            "top": 422.34375,
+            "bottom": 505.640625,
+            "width": 289,
+            "height": 83.296875
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 314,
+            "right": 359,
+            "top": 441.4921875,
+            "bottom": 486.4921875,
+            "width": 45,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 146,
+            "right": 308,
+            "top": 431.34375,
+            "bottom": 476.140625,
+            "width": 162,
+            "height": 44.796875
+          },
+          {
+            "id": "",
+            "dataset": {
+              "errKey": "coverBroken"
+            },
+            "left": 86,
+            "right": 140,
+            "top": 436.9921875,
+            "bottom": 490.9921875,
+            "width": 54,
+            "height": 54
+          }
+        ],
+        [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 78,
+            "right": 367,
+            "top": 513.640625,
+            "bottom": 585.640625,
+            "width": 289,
+            "height": 72
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 314,
+            "right": 359,
+            "top": 527.140625,
+            "bottom": 572.140625,
+            "width": 45,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 146,
+            "right": 308,
+            "top": 528.1875,
+            "bottom": 550.5859375,
+            "width": 162,
+            "height": 22.3984375
+          },
+          {
+            "id": "",
+            "dataset": {
+              "errKey": "coverBroken"
+            },
+            "left": 86,
+            "right": 140,
+            "top": 522.640625,
+            "bottom": 576.640625,
+            "width": 54,
+            "height": 54
+          }
+        ],
+        [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 78,
+            "right": 367,
+            "top": 593.640625,
+            "bottom": 665.640625,
+            "width": 289,
+            "height": 72
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 314,
+            "right": 359,
+            "top": 607.140625,
+            "bottom": 652.140625,
+            "width": 45,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 146,
+            "right": 308,
+            "top": 608.1875,
+            "bottom": 630.5859375,
+            "width": 162,
+            "height": 22.3984375
+          },
+          {
+            "id": "",
+            "dataset": {
+              "errKey": "coverBroken"
+            },
+            "left": 86,
+            "right": 140,
+            "top": 602.640625,
+            "bottom": 656.640625,
+            "width": 54,
+            "height": 54
+          }
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "name": "source-row-add-large",
+      "rows": [
+        [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 78,
+            "right": 367,
+            "top": 389.390625,
+            "bottom": 461.390625,
+            "width": 289,
+            "height": 72
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 314,
+            "right": 359,
+            "top": 402.890625,
+            "bottom": 447.890625,
+            "width": 45,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 146,
+            "right": 308,
+            "top": 400.0078125,
+            "bottom": 425.765625,
+            "width": 162,
+            "height": 25.7578125
+          },
+          {
+            "id": "",
+            "dataset": {
+              "errKey": "coverBroken"
+            },
+            "left": 86,
+            "right": 140,
+            "top": 398.390625,
+            "bottom": 452.390625,
+            "width": 54,
+            "height": 54
+          }
+        ],
+        [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 78,
+            "right": 367,
+            "top": 469.390625,
+            "bottom": 563.90625,
+            "width": 289,
+            "height": 94.515625
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 314,
+            "right": 359,
+            "top": 494.1484375,
+            "bottom": 539.1484375,
+            "width": 45,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 146,
+            "right": 308,
+            "top": 478.390625,
+            "bottom": 529.90625,
+            "width": 162,
+            "height": 51.515625
+          },
+          {
+            "id": "",
+            "dataset": {
+              "errKey": "coverBroken"
+            },
+            "left": 86,
+            "right": 140,
+            "top": 489.6484375,
+            "bottom": 543.6484375,
+            "width": 54,
+            "height": 54
+          }
+        ],
+        [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 78,
+            "right": 367,
+            "top": 571.90625,
+            "bottom": 643.90625,
+            "width": 289,
+            "height": 72
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 314,
+            "right": 359,
+            "top": 585.40625,
+            "bottom": 630.40625,
+            "width": 45,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 146,
+            "right": 308,
+            "top": 582.5234375,
+            "bottom": 608.28125,
+            "width": 162,
+            "height": 25.7578125
+          },
+          {
+            "id": "",
+            "dataset": {
+              "errKey": "coverBroken"
+            },
+            "left": 86,
+            "right": 140,
+            "top": 580.90625,
+            "bottom": 634.90625,
+            "width": 54,
+            "height": 54
+          }
+        ],
+        [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 78,
+            "right": 367,
+            "top": 651.90625,
+            "bottom": 723.90625,
+            "width": 289,
+            "height": 72
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 314,
+            "right": 359,
+            "top": 665.40625,
+            "bottom": 710.40625,
+            "width": 45,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 146,
+            "right": 308,
+            "top": 662.5234375,
+            "bottom": 688.28125,
+            "width": 162,
+            "height": 25.7578125
+          },
+          {
+            "id": "",
+            "dataset": {
+              "errKey": "coverBroken"
+            },
+            "left": 86,
+            "right": 140,
+            "top": 660.90625,
+            "bottom": 714.90625,
+            "width": 54,
+            "height": 54
+          }
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "name": "pantry-picker",
+      "child": ".rx-picker-add",
+      "parent": ".rx-picker",
+      "a": {
+        "id": "",
+        "dataset": {},
+        "left": 199,
+        "right": 354,
+        "top": 460.828125,
+        "bottom": 515.828125,
+        "width": 155,
+        "height": 55
+      },
+      "b": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 291.34375,
+        "bottom": 528.828125,
+        "width": 344,
+        "height": 237.484375
+      },
+      "passed": true
+    },
+    {
+      "name": "pantry-picker-large",
+      "child": ".rx-picker-add",
+      "parent": ".rx-picker",
+      "a": {
+        "id": "",
+        "dataset": {},
+        "left": 199,
+        "right": 354,
+        "top": 528.96875,
+        "bottom": 583.96875,
+        "width": 155,
+        "height": 55
+      },
+      "b": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 338.390625,
+        "bottom": 596.96875,
+        "width": 344,
+        "height": 258.578125
+      },
+      "passed": true
+    },
+    {
+      "name": "pantry-pick-button",
+      "child": ".pantry-pick-btn",
+      "parent": ".pantry-pick",
+      "a": {
+        "id": "",
+        "dataset": {},
+        "left": 271.6640625,
+        "right": 353,
+        "top": 202.34375,
+        "bottom": 247.34375,
+        "width": 81.3359375,
+        "height": 45
+      },
+      "b": {
+        "id": "",
+        "dataset": {},
+        "left": 24,
+        "right": 366,
+        "top": 189.34375,
+        "bottom": 293.84375,
+        "width": 342,
+        "height": 104.5
+      },
+      "passed": true
+    },
+    {
+      "name": "pantry-add-button",
+      "child": ".pantry-add",
+      "parent": ".pantry-list-head",
+      "a": {
+        "id": "",
+        "dataset": {},
+        "left": 302.6640625,
+        "right": 366,
+        "top": 303.84375,
+        "bottom": 348.84375,
+        "width": 63.3359375,
+        "height": 45
+      },
+      "b": {
+        "id": "",
+        "dataset": {},
+        "left": 24,
+        "right": 366,
+        "top": 303.84375,
+        "bottom": 348.84375,
+        "width": 342,
+        "height": 45
+      },
+      "passed": true
+    },
+    {
+      "name": "pantry-edit",
+      "child": ".pi-edit",
+      "parent": ".pitem",
+      "a": {
+        "id": "",
+        "dataset": {
+          "id": 1
+        },
+        "left": 308,
+        "right": 353,
+        "top": 484.5390625,
+        "bottom": 529.5390625,
+        "width": 45,
+        "height": 45
+      },
+      "b": {
+        "id": "",
+        "dataset": {},
+        "left": 37,
+        "right": 353,
+        "top": 470.0390625,
+        "bottom": 545.0390625,
+        "width": 316,
+        "height": 75
+      },
+      "passed": true
+    },
+    {
+      "name": "pantry-large",
+      "child": ".pi-edit",
+      "parent": ".pitem",
+      "a": {
+        "id": "",
+        "dataset": {
+          "id": 1
+        },
+        "left": 308,
+        "right": 353,
+        "top": 513.296875,
+        "bottom": 558.296875,
+        "width": 45,
+        "height": 45
+      },
+      "b": {
+        "id": "",
+        "dataset": {},
+        "left": 37,
+        "right": 353,
+        "top": 498.796875,
+        "bottom": 573.796875,
+        "width": 316,
+        "height": 75
+      },
+      "passed": true
+    },
+    {
+      "name": "pantry-add-date",
+      "child": ".af-date",
+      "parent": ".add-form",
+      "a": {
+        "id": "",
+        "dataset": {},
+        "left": 39,
+        "right": 351,
+        "top": 475.84375,
+        "bottom": 518.84375,
+        "width": 312,
+        "height": 43
+      },
+      "b": {
+        "id": "",
+        "dataset": {},
+        "left": 24,
+        "right": 366,
+        "top": 358.84375,
+        "bottom": 590.84375,
+        "width": 342,
+        "height": 232
+      },
+      "passed": true
+    },
+    {
+      "name": "pantry-edit-date",
+      "child": ".af-date-clear",
+      "parent": ".af-date-row",
+      "a": {
+        "id": "",
+        "dataset": {},
+        "left": 325,
+        "right": 370,
+        "top": 694,
+        "bottom": 739,
+        "width": 45,
+        "height": 45
+      },
+      "b": {
+        "id": "",
+        "dataset": {},
+        "left": 20,
+        "right": 370,
+        "top": 686,
+        "bottom": 739,
+        "width": 350,
+        "height": 53
+      },
+      "passed": true
+    },
+    {
+      "name": "shopping",
+      "child": ".mkt-del",
+      "parent": ".mkt-item",
+      "a": {
+        "id": "",
+        "dataset": {
+          "id": 1
+        },
+        "left": 309,
+        "right": 354,
+        "top": 359.1875,
+        "bottom": 404.1875,
+        "width": 45,
+        "height": 45
+      },
+      "b": {
+        "id": "",
+        "dataset": {
+          "id": 1,
+          "rv": "veg-0"
+        },
+        "left": 23,
+        "right": 367,
+        "top": 350.1875,
+        "bottom": 434.6875,
+        "width": 344,
+        "height": 84.5
+      },
+      "passed": true
+    },
+    {
+      "name": "shopping-source",
+      "child": ".mkt-tags",
+      "parent": ".mkt-item",
+      "a": {
+        "id": "",
+        "dataset": {},
+        "left": 70,
+        "right": 354,
+        "top": 409.1875,
+        "bottom": 425.6875,
+        "width": 284,
+        "height": 16.5
+      },
+      "b": {
+        "id": "",
+        "dataset": {
+          "id": 1,
+          "rv": "veg-0"
+        },
+        "left": 23,
+        "right": 367,
+        "top": 350.1875,
+        "bottom": 434.6875,
+        "width": 344,
+        "height": 84.5
+      },
+      "passed": true
+    },
+    {
+      "name": "shopping-large",
+      "child": ".mkt-del",
+      "parent": ".mkt-item",
+      "a": {
+        "id": "",
+        "dataset": {
+          "id": 1
+        },
+        "left": 309,
+        "right": 354,
+        "top": 377.6015625,
+        "bottom": 422.6015625,
+        "width": 45,
+        "height": 45
+      },
+      "b": {
+        "id": "",
+        "dataset": {
+          "id": 1,
+          "rv": "veg-0"
+        },
+        "left": 23,
+        "right": 367,
+        "top": 368.6015625,
+        "bottom": 481.6015625,
+        "width": 344,
+        "height": 113
+      },
+      "passed": true
+    },
+    {
+      "name": "shopping-source-large",
+      "child": ".mkt-tags",
+      "parent": ".mkt-item",
+      "a": {
+        "id": "",
+        "dataset": {},
+        "left": 70,
+        "right": 354,
+        "top": 427.6015625,
+        "bottom": 472.6015625,
+        "width": 284,
+        "height": 45
+      },
+      "b": {
+        "id": "",
+        "dataset": {
+          "id": 1,
+          "rv": "veg-0"
+        },
+        "left": 23,
+        "right": 367,
+        "top": 368.6015625,
+        "bottom": 481.6015625,
+        "width": 344,
+        "height": 113
+      },
+      "passed": true
+    }
+  ],
+  "checkedAt": "2026-10-08T23:51:14.163Z",
+  "source": "Native pages with temporary sample data; no write APIs; Page data restored.",
+  "passed": true
+}

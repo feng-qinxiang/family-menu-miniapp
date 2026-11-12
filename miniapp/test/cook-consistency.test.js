@@ -92,6 +92,13 @@ async function checkPages() {
     if (menuError) throw new Error('status failed');
   };
   api.removeTodayMenuRecipe = async (...args) => { calls.removed.push(args); };
+  let todayMenuItems = [], menuLoadFails = false;
+  Object.assign(api, {
+    getTodayMenu: async () => { if (menuLoadFails) throw new Error('offline'); return { items: todayMenuItems }; },
+    getShoppingList: async () => ({ items: [] }),
+    getWeeklyMenu: async () => ({ days: [] }),
+    getPantryItems: async () => []
+  });
   Object.assign(wx, {
     showModal: async () => ({ confirm: true }),
     showLoading() {}, hideLoading() {},
@@ -114,7 +121,7 @@ async function checkPages() {
       setData(patch) { Object.assign(this.data, patch); }
     };
     const raw = { itemId: 9, mealType: 'dinner', recipe: { id: 2, title: '测试菜', servings: 4 } };
-    page.data.todayMenu = [raw];
+    page._todayMenu = [raw];
     page.data.items = name === 'kitchen' ? [page.decorate(raw, '晚餐')] : [];
     storage.set('kitchen_timer_9', { running: true });
     const event = { currentTarget: { dataset: { id: 2, item: 9, index: 0 } } };
@@ -161,7 +168,41 @@ async function checkPages() {
     assert.strictEqual(refreshes, 1);
   }
 
-  const menu = { ...definitions.menu, loadData: async () => {} };
+  assert.ok(!Object.hasOwn(definitions.menu.data, 'todayMenu'));
+  assert.ok(!Object.hasOwn(definitions.menu.data, '_todayMenu'));
+  const menu = { ...definitions.menu, data: structuredClone(definitions.menu.data), setData(patch) {
+    assert.ok(!Object.keys(patch).some(key => /^_?todayMenu(?:[.\[]|$)/.test(key)), '原始菜单不通过 setData 发送');
+    Object.assign(this.data, patch);
+  } };
+  assert.strictEqual(menu.onShareAppMessage().title, '今天的菜单，来看看吗', '尚未加载时分享安全回退');
+  todayMenuItems = [{ itemId: 9, mealType: 'dinner', recipe: { id: 2, title: '测试菜', servings: 4 } }];
+  await menu.loadData();
+  require('../utils/count-up').stopNumberAnim(menu);
+  assert.deepStrictEqual(menu._todayMenu, todayMenuItems);
+  assert.strictEqual(menu.data.mealGroups[0].items[0].recipe.servings, 4);
+  assert.strictEqual(menu.onShareAppMessage().title, '今天家里吃这些（1 道）');
+  menuLoadFails = true;
+  const originalError = console.error;
+  console.error = () => {};
+  try { await menu.loadData(); } finally { console.error = originalError; }
+  assert.strictEqual(menu.data.loadError, 'offline');
+  assert.deepStrictEqual(menu._todayMenu, todayMenuItems, '刷新失败保留上次原始菜单');
+  assert.strictEqual(menu.data.mealGroups.length, 1);
+  menuLoadFails = false;
+  todayMenuItems = [{ itemId: 10, recipeId: 7, mealType: 'dinner' }];
+  await menu.loadData();
+  require('../utils/count-up').stopNumberAnim(menu);
+  const { LOCAL_DISHES, localPath } = require('../utils/image');
+  assert.ok(LOCAL_DISHES.map(localPath).includes(menu.data.mealGroups[0].items[0].dishImage), '无菜谱详情的菜单项也通过共享函数补图片域名');
+  const imagePatches = [];
+  menu.onImgError.call({ setData: patch => imagePatches.push(patch) }, { currentTarget: { dataset: { group: 0, dish: 0, seed: 7 } } });
+  assert.deepStrictEqual(imagePatches, [{ 'mealGroups[0].items[0].dishImage': '/assets/dish-placeholder.svg' }], '坏图只替换目标项为包内占位，不再重试网络菜图');
+  todayMenuItems = [];
+  await menu.loadData();
+  assert.deepStrictEqual(menu._todayMenu, []);
+  assert.deepStrictEqual(menu.data.mealGroups, []);
+  assert.strictEqual(menu.onShareAppMessage().title, '今天的菜单，来看看吗', '成功返回空菜单时不分享旧计数');
+  menu.loadData = async () => {};
   await menu.removeItem({ currentTarget: { dataset: { id: 2, meal: 'dinner' } } });
   assert.deepStrictEqual(calls.removed, [[2, 'dinner']], '撤菜只撤当前餐次');
 }

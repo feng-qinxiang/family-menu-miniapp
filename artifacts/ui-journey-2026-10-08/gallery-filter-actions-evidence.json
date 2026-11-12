@@ -1,0 +1,36 @@
+{
+  "checkedAt": "2026-10-11T13:45:32.462Z",
+  "catalog": 39,
+  "viewports": [
+    {
+      "width": 1344,
+      "scrollWidth": 1329
+    },
+    {
+      "width": 375,
+      "scrollWidth": 360
+    },
+    {
+      "width": 320,
+      "scrollWidth": 305
+    }
+  ],
+  "images": [
+    {
+      "src": "screens/picker-recipes-filters.jpg?v=20261011-filter-actions",
+      "loaded": true
+    },
+    {
+      "src": "screens/all-pkg-extra-me-notifications-index.jpg?v=20261011-filter-actions",
+      "loaded": true
+    },
+    {
+      "src": "screens/app-recipes.jpg?v=20261011-filter-actions",
+      "loaded": true
+    }
+  ],
+  "resourceCount": 100,
+  "failedResources": [],
+  "prototypeNotice": "这里展示批量已读入口；真实消息在小程序中修改。",
+  "passed": true
+}

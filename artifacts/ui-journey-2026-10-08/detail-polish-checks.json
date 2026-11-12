@@ -1,0 +1,17 @@
+{
+  "checkedAt": "2026-10-09T11:43:09.626Z",
+  "passed": true,
+  "compiledFiles": 10,
+  "nativeScreenshotStates": 40,
+  "pickerLayoutChecks": 34,
+  "detailLayoutStates": 9,
+  "scannedTextFiles": 22,
+  "credentialPatternMatches": 0,
+  "galleryResponsiveWidths": [
+    1344,
+    375,
+    320
+  ],
+  "nativeFigmaImportVerified": false,
+  "businessWriteAPIsCalled": false
+}

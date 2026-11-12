@@ -1,0 +1,198 @@
+{
+  "checkedAt": "2026-10-09T01:34:37.758Z",
+  "pages": [
+    {
+      "page": "components/recipe-card/index",
+      "wxml": {
+        "success": true,
+        "codeLength": 33293
+      },
+      "wxss": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38994
+      }
+    },
+    {
+      "page": "pages/recipes/index",
+      "wxml": {
+        "success": true,
+        "codeLength": 33293
+      },
+      "wxss": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38994
+      }
+    },
+    {
+      "page": "pages/cook-log/index",
+      "wxml": {
+        "success": true,
+        "codeLength": 33293
+      },
+      "wxss": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38994
+      }
+    },
+    {
+      "page": "pages/community/index",
+      "wxml": {
+        "success": true,
+        "codeLength": 33293
+      },
+      "wxss": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38994
+      }
+    },
+    {
+      "page": "pages/menu/index",
+      "wxml": {
+        "success": true,
+        "codeLength": 33293
+      },
+      "wxss": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38994
+      }
+    },
+    {
+      "page": "pages/me/index",
+      "wxml": {
+        "success": true,
+        "codeLength": 33293
+      },
+      "wxss": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38994
+      }
+    },
+    {
+      "page": "pages/shopping/index",
+      "wxml": {
+        "success": true,
+        "codeLength": 33293
+      },
+      "wxss": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38994
+      }
+    },
+    {
+      "page": "pages/pantry/index",
+      "wxml": {
+        "success": true,
+        "codeLength": 33293
+      },
+      "wxss": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38994
+      }
+    },
+    {
+      "page": "pkg-extra/community/post-detail/index",
+      "wxml": {
+        "success": true,
+        "codeLength": 33293
+      },
+      "wxss": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38994
+      }
+    },
+    {
+      "page": "pkg-extra/kitchen/index",
+      "wxml": {
+        "success": true,
+        "codeLength": 33293
+      },
+      "wxss": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38994
+      }
+    },
+    {
+      "page": "pkg-extra/payment/checkout/index",
+      "wxml": {
+        "success": true,
+        "codeLength": 33293
+      },
+      "wxss": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38994
+      }
+    },
+    {
+      "page": "pkg-extra/recipe-detail/index",
+      "wxml": {
+        "success": true,
+        "codeLength": 33293
+      },
+      "wxss": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38994
+      }
+    }
+  ],
+  "passed": true
+}

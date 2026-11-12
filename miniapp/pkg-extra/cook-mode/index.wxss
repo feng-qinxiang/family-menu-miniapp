@@ -34,34 +34,10 @@
   background: rgba(255, 255, 255, 0.1);
   border: 2rpx solid rgba(255, 255, 255, 0.1);
 }
-.nbtn.keep {
-  /* 计时按钮：圆钮改胶囊，图标+「计时」文字，语义可读（CSS 小图标单独看不懂） */
-  width: auto;
-  padding: 0 24rpx;
-  border-radius: 44rpx;
-  gap: 10rpx;
-  background: rgba(232, 71, 42, 0.16);
-  border-color: rgba(232, 71, 42, 0.4);
-}
-.nbtn.keep.on {
-  background: var(--cook-pop);
-  border-color: var(--cook-pop);
-}
-.nbtn.keep .keep-ic { border-color: var(--pop); }
-.nbtn.keep .keep-ic::after { background: var(--pop); }
-.nbtn.keep.on .keep-ic { border-color: var(--anchor-contrast); }
-.nbtn.keep.on .keep-ic::after { background: var(--cook-mark); }
-.keep-tx {
-  font-size: calc(25rpx * var(--fs-mul, 1));
-  font-weight: 800;
-  color: var(--pop);
-  letter-spacing: 1rpx;
-}
-.nbtn.keep.on .keep-tx { color: var(--anchor-contrast); }
 .dishbar {
   flex: 1;
   min-width: 0;
-  text-align: center;
+  text-align: left;
 }
 .dishbar .dn {
   font-size: calc(36rpx * var(--fs-mul, 1));
@@ -72,7 +48,6 @@
 }
 .dishbar .prog {
   font-family: var(--serif);
-  font-style: italic;
   font-size: var(--fs-cap);
   color: var(--gold-deep);
   font-weight: 700;
@@ -81,8 +56,7 @@
 }
 
 /* —— icons（纯 CSS 描边）—— */
-.ic-x, .ic-clock, .ic-clock-sm,
-.ic-play, .ic-pause, .ic-reset,
+.ic-x, .ic-clock-sm,
 .ic-arrow-l, .ic-arrow-r {
   position: relative;
   display: block;
@@ -104,25 +78,23 @@
 .ic-x::before { transform: translateY(-50%) rotate(45deg); }
 .ic-x::after { transform: translateY(-50%) rotate(-45deg); }
 
-.ic-clock, .ic-clock-sm {
+.ic-clock-sm {
   border-radius: 50%;
-  border: 4rpx solid var(--pop);
+  border: 3rpx solid var(--cook-pop);
+  width: 24rpx;
+  height: 24rpx;
+  flex: none;
 }
-.ic-clock { width: 34rpx; height: 34rpx; }
-.ic-clock-sm { width: 22rpx; height: 22rpx; border-width: 3rpx; border-color: var(--anchor-contrast); }
-.nbtn.keep.on .ic-clock { border-color: var(--anchor-contrast); }
-.ic-clock::after, .ic-clock-sm::after {
+.ic-clock-sm::after {
   content: "";
   position: absolute;
   left: 50%;
   top: 22%;
   width: 3rpx;
   height: 32%;
-  background: var(--pop);
+  background: var(--cook-pop);
   transform-origin: bottom center;
 }
-.nbtn.keep.on .ic-clock::after { background: var(--cook-mark); }
-.ic-clock-sm::after { background: var(--cook-mark); height: 30%; }
 
 /* ============ 加载/空态 ============ */
 .loading {
@@ -146,7 +118,6 @@
   font-size: calc(25rpx * var(--fs-mul, 1));
   color: var(--cook-ink-mut);
   font-family: var(--serif);
-  font-style: italic;
 }
 .empty-wrap {
   flex: 1;
@@ -208,7 +179,7 @@
   margin-top: -44rpx;
 }
 .dot.done { background: var(--gold-deep); }
-.dot.now { background: var(--pop); }
+.dot.now { background: var(--pop-fill); }
 
 /* 离开的那一步还在倒数时的小条（本页是恒定暗底：只用 --cook-* 常量，勿用会翻转的 token） */
 .bgchip {
@@ -216,9 +187,11 @@
   display: flex;
   align-items: center;
   gap: 12rpx;
-  margin: 0 46rpx 18rpx;
-  padding: 14rpx 24rpx;
-  border-radius: var(--r-pill);
+  min-height: 88rpx;
+  box-sizing: border-box;
+  margin-bottom: 12rpx;
+  padding: 12rpx 18rpx;
+  border-radius: var(--r-md);
   background: var(--cook-surface);
   border: 2rpx solid rgba(255, 255, 255, 0.12);
 }
@@ -230,17 +203,22 @@
   flex: none;
 }
 .bgchip-tx {
-  font-size: calc(25rpx * var(--fs-mul, 1));
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: var(--fs-cap);
   font-weight: 700;
   color: var(--cook-ink);
 }
 .bgchip-more {
-  font-size: var(--fs-mini);
+  font-size: var(--fs-cap);
   color: var(--cook-ink-mut);
 }
 .bgchip-go {
-  margin-left: auto;
-  font-size: calc(25rpx * var(--fs-mul, 1));
+  flex: none;
+  font-size: var(--fs-cap);
   font-weight: 800;
   color: var(--cook-pop);
 }
@@ -249,11 +227,10 @@
 .stepimg {
   position: relative;
   flex: none;
-  margin: 0 46rpx 30rpx;
+  margin: 0 0 24rpx;
   height: var(--photo-focus-h);
-  border-radius: 46rpx;
+  border-radius: var(--r-card);
   overflow: hidden;
-  box-shadow: 0 14rpx 36rpx rgba(0, 0, 0, 0.5);
 }
 .stepimg-pic {
   width: 100%;
@@ -265,65 +242,18 @@
   inset: 0;
   background: linear-gradient(180deg, rgba(20, 14, 8, 0.1) 40%, rgba(20, 14, 8, 0.85) 100%);
 }
-.stepimg .bignum {
-  position: absolute;
-  bottom: 22rpx;
-  left: 34rpx;
-  z-index: 2;
-  font-family: var(--serif);
-  font-size: calc(150rpx * var(--fs-mul, 1));
-  font-weight: 700;
-  line-height: 0.8;
-  -webkit-text-stroke: 3rpx rgba(255, 255, 255, 0.85);
-}
-.stepimg .small {
-  position: absolute;
-  bottom: 40rpx;
-  left: 220rpx;
-  right: 30rpx;
-  z-index: 2;
-}
-.stepimg .small .t {
-  font-size: var(--fs-cap);
-  font-weight: 800;
-  color: var(--anchor-contrast);
-  margin-top: 6rpx;
-}
-.stepimg .timetag {
-  position: absolute;
-  top: 26rpx;
-  right: 26rpx;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  gap: 10rpx;
-  font-size: var(--fs-cap);
-  font-weight: 700;
-  color: var(--anchor-contrast);
-  background: rgba(232, 71, 42, 0.85);
-  padding: 12rpx 22rpx;
-  border-radius: var(--r-pill);
-}
 
-/* 步骤文本滚动区 */
+/* 步骤文本滚动区：左右留白放在内层 .stepwrap-pad，不放 scroll-view 本身。
+   放在 scroll-view 上时滚动条画在内容盒右缘、正好压在文字最后一列上（长步骤 + 大字档截图可见）；
+   挪进内层后滚动条回到屏幕边，scroll-view 也不再有 content-box 撑宽的问题。 */
 .stepwrap {
   flex: 1;
   min-height: 0;
-  padding: 0 46rpx;
-  /* scroll-view 原生默认 width:100% + content-box，padding 会把总宽撑出视口导致文字被裁 */
-  box-sizing: border-box;
 }
-.stepeyebrow {
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: var(--fs-sub);
-  color: var(--gold-deep);
-  font-weight: 700;
-  letter-spacing: 1rpx;
-}
+.stepwrap-pad { padding: 0 46rpx; }
 .steptext {
   /* 厨房场景手机放得远、手上有油：字号行高放大一档，扫读不费劲（对齐懒饭大字风格） */
-  font-size: calc(50rpx * var(--fs-mul, 1));
+  font-size: calc(44rpx * var(--fs-mul, 1));
   line-height: 1.6;
   font-weight: 800;
   color: var(--cook-ink);
@@ -331,13 +261,15 @@
   margin-top: 16rpx;
   font-family: var(--sans);
 }
+/* 这一步没有配图：正文就是整屏唯一的主角，再放大一档（灶台边隔着一臂远也能看清） */
+.steptext--solo { margin-top: 8rpx; font-size: calc(var(--fs-h1) * var(--fs-mul, 1)); line-height: 1.5; }
 
 /* 食材 tags */
 .ings {
   display: flex;
   flex-wrap: wrap;
-  gap: 18rpx;
-  margin-top: 38rpx;
+  gap: 12rpx;
+  margin-top: 24rpx;
 }
 .ing {
   display: flex;
@@ -349,7 +281,9 @@
   color: var(--cook-ink);
   background: var(--cook-surface);
   border: 2rpx solid rgba(255, 255, 255, 0.1);
-  padding: 18rpx 30rpx;
+  min-height: 88rpx;
+  box-sizing: border-box;
+  padding: 14rpx 24rpx;
   border-radius: var(--r-pill);
 }
 /* 未勾选态用中性空心圈：--pop 在本项目里是「待采购」的语义色
@@ -384,8 +318,8 @@
   opacity: 0.45;
 }
 .ing.on {
-  background: rgba(232, 71, 42, 0.18);
-  border-color: rgba(232, 71, 42, 0.55);
+  background: rgba(200, 56, 31, 0.18);
+  border-color: rgba(200, 56, 31, 0.55);
   font-weight: 800;
 }
 .ing.on .dotmark {
@@ -397,20 +331,26 @@
   opacity: 1;
 }
 
-/* 计时卡 */
+/* 计时与翻步常驻底部，长图文只在上方滚动。 */
+.cook-dock {
+  flex: none;
+  padding: 16rpx 46rpx calc(env(safe-area-inset-bottom) + 20rpx);
+  border-top: 2rpx solid rgba(255, 255, 255, 0.1);
+  background: var(--cook-bg);
+}
 .timer {
-  margin-top: 38rpx;
   background: var(--cook-surface);
   border: 2rpx solid rgba(255, 255, 255, 0.1);
-  border-radius: 38rpx;
-  padding: 34rpx 38rpx;
+  border-radius: var(--r-md);
+  padding: 10rpx 16rpx;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 12rpx;
 }
+.timer .tl { flex: 1; min-width: 0; min-height: 88rpx; display: flex; flex-direction: column; justify-content: center; }
 .timer .tl .cap {
-  font-size: var(--fs-mini);
-  letter-spacing: 3rpx;
+  font-size: var(--fs-cap);
+  line-height: 1.5;
   color: var(--cook-ink-mut);
   font-weight: 700;
 }
@@ -418,94 +358,47 @@
 .timer .tl .cap .cap-pick {
   margin-left: 10rpx;
   color: var(--gold-deep);
-  letter-spacing: 1rpx;
 }
 .timer .tl .num {
-  font-family: var(--serif);
-  font-size: calc(88rpx * var(--fs-mul, 1));
-  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  font-size: calc(50rpx * var(--fs-mul, 1));
+  font-weight: 800;
   color: var(--cook-ink);
   line-height: 1;
-  margin-top: 8rpx;
-  letter-spacing: 2rpx;
+  margin-top: 4rpx;
 }
-.timer .tl .num .pop { color: var(--pop); }
+.timer.is-running .num { color: var(--cook-pop); }
 .timer-acts {
   display: flex;
+  flex: none;
   align-items: center;
-  gap: 18rpx;
+  gap: 8rpx;
 }
 .tbtn {
-  width: 96rpx;
-  height: 96rpx;
-  border-radius: 50%;
+  min-width: 96rpx;
+  min-height: 88rpx;
+  box-sizing: border-box;
+  border-radius: var(--r-sm);
   flex: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(232, 71, 42, 0.16);
-  border: 2rpx solid rgba(232, 71, 42, 0.4);
+  padding: 0 12rpx;
+  /* 同屏只留一颗实心红（底部「下一步」）：计时键降为浅红底 + 红描边，与 .ing.on 同一组色 */
+  background: rgba(200, 56, 31, 0.18);
+  border: 2rpx solid rgba(200, 56, 31, 0.55);
+  color: var(--cook-ink);
+  font-size: var(--fs-sub);
+  font-weight: 800;
 }
 .tbtn.ghost {
-  position: relative;
-  width: 80rpx;
-  height: 80rpx;
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.12);
+  min-width: 88rpx;
+  background: transparent;
+  border-color: transparent;
+  color: var(--cook-ink-mut);
 }
-/* 「上一步」是做菜中途最常按的键，视觉 80rpx 不变、命中区补到 88rpx */
-.tbtn.ghost::after {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 88rpx;
-  height: 88rpx;
-  content: "";
-  transform: translate(-50%, -50%);
-}
-
-/* play / pause / reset icons */
-.ic-play {
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 18rpx 0 18rpx 30rpx;
-  border-color: transparent transparent transparent var(--pop);
-  margin-left: 6rpx;
-}
-.ic-pause {
-  width: 30rpx;
-  height: 34rpx;
-  position: relative;
-}
-.ic-pause::before, .ic-pause::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  width: 10rpx;
-  height: 100%;
-  border-radius: 3rpx;
-  background: var(--pop);
-}
-.ic-pause::before { left: 2rpx; }
-.ic-pause::after { right: 2rpx; }
-.ic-reset {
-  width: 32rpx;
-  height: 32rpx;
-  border-radius: 50%;
-  border: 4rpx solid var(--cook-line);
-  border-top-color: transparent;
-  position: relative;
-}
-.ic-reset::after {
-  content: "";
-  position: absolute;
-  top: -4rpx;
-  right: -2rpx;
-  border-style: solid;
-  border-width: 6rpx 0 0 8rpx;
-  border-color: transparent transparent transparent var(--cook-line);
-}
+.timer-add { display: flex; align-items: center; flex-wrap: wrap; gap: 12rpx; min-height: 88rpx; padding: 8rpx 18rpx; box-sizing: border-box; border-radius: var(--r-md); background: var(--cook-surface); font-size: var(--fs-cap); color: var(--cook-ink-mut); }
+.timer-add-action { margin-left: auto; color: var(--cook-pop); font-weight: 800; }
 
 .scroll-pad { height: 24rpx; }
 
@@ -513,14 +406,13 @@
 .footer {
   flex: none;
   display: flex;
-  gap: 22rpx;
-  padding: 24rpx 46rpx calc(env(safe-area-inset-bottom) + 28rpx);
-  background: linear-gradient(180deg, rgba(26, 20, 16, 0), var(--cook-bg) 30%);
+  gap: 16rpx;
+  padding-top: 14rpx;
 }
 .btn {
   box-sizing: border-box;
   height: 100rpx;
-  border-radius: 32rpx;
+  border-radius: var(--r-card);   /* 实心主按钮统一 --r-card（与厨房总控/导入同一约定） */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -530,12 +422,14 @@
 }
 .btn.prev {
   flex: none;
-  width: 220rpx;
-  font-size: calc(29rpx * var(--fs-mul, 1));
+  width: 180rpx;
+  padding: 0 16rpx;
+  font-size: calc(28rpx * var(--fs-mul, 1));
   color: var(--cook-ink);
   background: var(--cook-surface);
   border: 2rpx solid rgba(255, 255, 255, 0.1);
 }
+.btn.prev text { white-space: nowrap; }
 .btn.prev.disabled {
   opacity: 0.4;
 }
@@ -545,7 +439,7 @@
   font-size: calc(32rpx * var(--fs-mul, 1));
   color: var(--anchor-contrast);
   background: var(--cook-pop);
-  box-shadow: 0 2rpx 4rpx rgba(180, 40, 20, 0.3), 0 12rpx 26rpx rgba(232, 71, 42, 0.4);
+  box-shadow: 0 2rpx 4rpx rgba(180, 40, 20, 0.3), 0 12rpx 26rpx rgba(200, 56, 31, 0.4);
 }
 .btn.next text {
   overflow: hidden;

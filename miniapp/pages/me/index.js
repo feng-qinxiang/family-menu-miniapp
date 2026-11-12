@@ -5,16 +5,13 @@ const {
   getDashboard,
   getFamilyProfile,
   getPreferenceProfile,
-  getTodayMenu,
   getVipStatus
 } = require('../../utils/api');
 
-const { recipeDishImg } = require('../../utils/image');
+const { recipeDishImg, onPhotoError: markPhotoBroken } = require('../../utils/image');
 const { withTabSelect } = require('../../behaviors/tab-select');
 const { withScrollReveal } = require('../../behaviors/scroll-reveal');
 const features = require('../../utils/features');
-
-const memberTones = ['mavt-a', 'mavt-b', 'mavt-c', 'mavt-d', 'mavt-e'];
 
 function formatCookedLabel(item) {
   const dateStr = item.cookedAt;
@@ -62,14 +59,15 @@ function buildBindCard(user) {
   }
   return {
     show: true,
-    title: '微信登录，内容立刻公开',
-    desc: '游客发的帖子要人工审核；登录后经机器审核即时发布，换设备也不丢数据',
+    title: '微信登录',
+    desc: '换手机也不丢数据，发帖不用等审核',
     cta: '去登录',
     target: '/pkg-extra/auth/login/index'
   };
 }
 
 Page({
+  onPhotoError(e) { markPhotoBroken(e, this); },
   data: {
     features,
     bindCard: { show: false },
@@ -79,18 +77,19 @@ Page({
     monthCookCount: 0,
     savedCount: 0,
     cookHistory: [],
+    profile: { nickname: '', avatarUrl: '', initial: '我' },
     prefBars: [],
     appVersion: 'v1.0.0',
     loading: true,
     loadError: '',
     // 兜底必须含安全区：写死 51px 在刘海机上会让标题顶进状态栏
-    capsuleTop: 'calc(env(safe-area-inset-top) + 90rpx)',
+    capsuleTop: 'calc(env(safe-area-inset-top) + 178rpx)',
     capsuleRight: '96px'
   },
 
   onLoad() {
     const capsule = getCapsule();
-    this.setData({ capsuleTop: capsule.top, capsuleRight: capsule.right });
+    this.setData({ capsuleTop: capsule.bottom, capsuleRight: capsule.right });
   },
 
   onShow() {
@@ -111,21 +110,14 @@ Page({
         // 支付关闭时跳过会员状态请求
         features.PAYMENT ? getVipStatus() : Promise.resolve({ vip: false }),
         getFamilyProfile(),
-        getTodayMenu(),
         getCookHistory(),
         getPreferenceProfile(),
         getDashboard()
       ]);
       const currentUser = loaded[0], vipStatus = loaded[1], familyProfile = loaded[2];
-      const todayMenu = loaded[3], cookHistory = loaded[4];
-      const preference = loaded[5], dashboard = loaded[6];
+      const cookHistory = loaded[3], preference = loaded[4], dashboard = loaded[5];
 
-      const rawMembers = (familyProfile && Array.isArray(familyProfile.members)) ? familyProfile.members : [];
-      const members = rawMembers.map((m, i) => ({
-        ...m,
-        initial: (m.nickname || '家').slice(0, 1),
-        tone: memberTones[i % memberTones.length]
-      }));
+      const members = (familyProfile && Array.isArray(familyProfile.members)) ? familyProfile.members : [];
 
       const history = Array.isArray(cookHistory) ? cookHistory : [];
       const enrichedHistory = history.slice(0, 3).map((h, i) => ({
@@ -142,7 +134,11 @@ Page({
           + (Array.isArray(dashboard.importedRecipes) ? dashboard.importedRecipes.length : 0);
       }
 
-      const monthCookCount = (preference && preference.totalCooks) || history.length;
+      const now = new Date();
+      const monthCookCount = history.filter(item => {
+        const date = new Date(String(item.cookedAt || '').replace(' ', 'T'));
+        return date.getFullYear() === now.getFullYear() && date.getMonth() === now.getMonth();
+      }).length;
 
       // 口味偏好进度条：菜系偏好 + 口味标签偏好合并取前 3
       const cuisineBars = (preference && Array.isArray(preference.cuisinePrefs) ? preference.cuisinePrefs : [])
@@ -174,6 +170,8 @@ Page({
         monthCookCount,
         savedCount,
         cookHistory: enrichedHistory,
+        profile: { nickname: (currentUser && currentUser.nickname) || '家人', avatarUrl: (currentUser && currentUser.avatarUrl) || '', initial: ((currentUser && currentUser.nickname) || '我').slice(0, 1) },
+        profilePhotoBroken: false,
         prefBars,
         loading: false,
         loadError: ''
@@ -189,22 +187,20 @@ Page({
     this.loadProfile();
   },
 
-  goMemberManage() {
-    wx.navigateTo({ url: '/pkg-extra/family/members/index' });
-  },
-
   goVip() { wx.navigateTo({ url: '/pkg-extra/vip/index' }); },
   goBind() {
     const target = this.data.bindCard && this.data.bindCard.target;
     if (target) wx.navigateTo({ url: target, fail: () => {} });
   },
   goWeekly() { wx.navigateTo({ url: '/pkg-extra/weekly-menu/index' }); },
+  goPantry() { wx.navigateTo({ url: '/pages/pantry/index' }); },
+  goShopping() { wx.navigateTo({ url: '/pages/shopping/index' }); },
   goImport() { wx.navigateTo({ url: '/pkg-extra/import/index' }); },
   goFavorites() { wx.navigateTo({ url: '/pkg-extra/favorites/index' }); },
-  goRecipes() { wx.switchTab({ url: '/pages/recipes/index' }); },
+  goRecipes() { wx.navigateTo({ url: '/pages/recipes/index' }); },
   goPreference() { wx.navigateTo({ url: '/pkg-extra/me/preference-profile/index' }); },
   goSettings() { wx.navigateTo({ url: '/pkg-extra/me/settings/index' }); },
-  goCookLog() { wx.navigateTo({ url: '/pkg-extra/cook-log/index' }); },
+  goCookLog() { wx.switchTab({ url: '/pages/cook-log/index' }); },
   goProfileEdit() { wx.navigateTo({ url: '/pkg-extra/me/profile-edit/index' }); },
   goNotifications() { wx.navigateTo({ url: '/pkg-extra/me/notifications/index' }); },
   goFeedback() { wx.navigateTo({ url: '/pkg-extra/me/feedback/index' }); },

@@ -22,7 +22,8 @@ function setup() {
   api.updateMenuItemStatus = async (...args) => { calls.menus.push(args); };
   const page = {
     ...definition,
-    data: { ...structuredClone(definition.data), recipeId: '2', recipe: { title: '红烧肉', servings: 4 }, current: 1, total: 2 },
+    data: { ...structuredClone(definition.data), recipeId: '2', current: 1, total: 2 },
+    _recipe: { title: '红烧肉', servings: 4 },
     _servings: 8,
     _menuItemId: '9',
     _slots: { 1: { total: 60, baseAt: Date.now(), baseLeft: 60, running: true } },

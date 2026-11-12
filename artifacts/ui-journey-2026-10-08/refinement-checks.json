@@ -1,0 +1,54 @@
+{
+  "checkedAt": "2026-10-09T01:41:09.869Z",
+  "passed": true,
+  "checks": [
+    {
+      "name": "static",
+      "passed": true,
+      "output": "包体积：主包 1.5MB / 2MB · 分包 pkg-extra 0.54MB / 2MB · 分包 pkg-preview 0.2MB / 2MB\n检查了 343 个文件（其中 100 个 .js 过了语法解析）\n\n⚠ 提审前需部署方填写（不阻断 CI，但缺了就等着被驳回）：\n  · utils/legal-config.js -> operatorName: 【请填写运营者名称】（带占位符提交会被审核驳回）\n  · utils/legal-config.js -> operatorContact: 【请填写联系方式】（带占位符提交会被审核驳回）\n  · utils/env.js -> trial: https://test-api.example.com（换成已备案 HTTPS 域名，并同步小程序后台的服务器域名白名单）\n  · utils/env.js -> release: https://api.example.com（换成已备案 HTTPS 域名，并同步小程序后台的服务器域名白名单）\n✔ 小程序静态检查通过"
+    },
+    {
+      "name": "interaction",
+      "passed": true,
+      "output": "交互体检：56 个页面模板 / 343 个文件\n\nA. 有事件但缺按下反馈：0 处\n\nB. 疑似「可点但无事件」（已剔除 0 处已确认误报）：7 处\n   · pkg-extra/cook-mode/index.wxml:106  <text class=\"timer-add-action\">\n   · pkg-extra/cook-mode/index.wxml:116  <text class=\"btn-prev-label\">\n   · pkg-extra/import/index.wxml:121  <view class=\"ic-link ic-link-pop\">\n   · pkg-extra/import/index.wxml:133  <view class=\"res-cta\">\n   · pkg-extra/vip/index.wxml:80  <view class=\"vip-cta safe-bottom\">\n   · pkg-preview/journey/index.wxml:25  <view class=\"meal-switch\">\n   · pkg-preview/journey/index.wxml:64  <view class=\"cook-switch\">\n\nC. 声明尺寸小于 88rpx 的可点类（已剔除 2 处刻意尺寸）：1 处\n   · pkg-extra/recipe-edit/index.wxss  .rc-retry-btn  height: 64rpx\n\n（B / C 只报告不判定：靠类名与尺寸启发式识别，文本链接类小热区属正常，需按元素性质人工判断）"
+    },
+    {
+      "name": "diff",
+      "passed": true,
+      "output": ""
+    }
+  ],
+  "regressionsPassedEarlier": [
+    "pantry-match",
+    "recipe-pick",
+    "ingredient-photo",
+    "ui-refinement",
+    "journey-navigation",
+    "cook-finish",
+    "cook-consistency",
+    "favorites-cover",
+    "home-journey",
+    "post-share"
+  ],
+  "native": {
+    "screens": 43,
+    "checks": 63,
+    "evidence": [
+      "refinement-layouts.json",
+      "refinement-picker-layouts.json",
+      "refinement-all-pages.json"
+    ]
+  },
+  "compile": {
+    "pages": 12,
+    "evidence": "refinement-compile.json"
+  },
+  "browser": {
+    "evidence": "gallery-refinement-evidence.json",
+    "passed": true
+  },
+  "credentials": {
+    "files": 127,
+    "matches": 0
+  }
+}

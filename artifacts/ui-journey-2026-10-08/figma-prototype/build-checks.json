@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "screens": 17,
+  "boards": 2,
+  "textNodes": 594,
+  "hotspots": 167,
+  "images": 5,
+  "nativeFigmaImportVerified": false,
+  "checks": [
+    "unique screen ids",
+    "all targets exist",
+    "all nodes and hotspots within frame",
+    "valid SVG XML"
+  ]
+}

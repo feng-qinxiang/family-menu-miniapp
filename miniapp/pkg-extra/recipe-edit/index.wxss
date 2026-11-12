@@ -2,7 +2,7 @@ page { background: var(--paper); }
 
 .rc-seg {
   display: flex;
-  margin: 8rpx 46rpx 0;
+  margin: 24rpx 46rpx 0;
   background: var(--paper-2);
   border-radius: var(--r-pill);
   padding: 6rpx;
@@ -14,7 +14,7 @@ page { background: var(--paper); }
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--fs-cap);
+  font-size: var(--fs-sub);   /* 与同页难度分段 .rc-dseg-i 同档：两条同样的胶囊分段原来字号 23 对 25 */
   font-weight: 700;
   color: var(--mut-strong);
   border-radius: var(--r-pill);
@@ -24,13 +24,13 @@ page { background: var(--paper); }
   color: var(--anchor-contrast);
 }
 
-.rc-body { padding: 20rpx 46rpx calc(240rpx + env(safe-area-inset-bottom)); }
+.rc-body { padding: 24rpx 46rpx calc(240rpx + env(safe-area-inset-bottom)); }
 
 .rc-tip {
   display: block;
   margin-bottom: 12rpx;
-  font-size: calc(25rpx * var(--fs-mul, 1));
-  color: var(--pop);
+  font-size: var(--fs-sub);
+  color: var(--mut-strong);
 }
 
 .rc-cover {
@@ -57,9 +57,10 @@ page { background: var(--paper); }
   justify-content: center;
   background: transparent;
   color: #fff;
-  font-size: calc(28rpx * var(--fs-mul, 1));
+  font-size: 0;   /* 节点里的 × 只留给读屏；视觉 × 由 ::before 画，否则两个 × 并排 */
 }
 .rc-cover-x::before {
+  font-size: calc(28rpx * var(--fs-mul, 1));
   content: '×';
   width: var(--ctl-x);
   height: var(--ctl-x);
@@ -68,13 +69,23 @@ page { background: var(--paper); }
   line-height: var(--ctl-x);
   text-align: center;
 }
+/* 没封面时给一个看得出能点的占位框（原来只有一行小字，热区一行高） */
 .rc-addcover {
-  display: inline-block;
-  margin-bottom: 8rpx;
-  font-size: calc(25rpx * var(--fs-mul, 1));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10rpx;
+  height: 160rpx;
+  margin-bottom: 16rpx;
+  border: 2rpx dashed var(--line);
+  border-radius: var(--r-md);
+  background: var(--paper-2);
+  font-size: var(--fs-sub);
   font-weight: 600;
-  color: var(--gold-deep);
+  color: var(--mut-strong);
 }
+.rc-addcover-ic { width: 32rpx; height: 32rpx; opacity: .6; }
+@media (prefers-color-scheme: dark) { .rc-addcover-ic { filter: invert(1); } }
 
 .rc-title {
   width: 100%;
@@ -98,25 +109,32 @@ page { background: var(--paper); }
 }
 .rc-ph { color: var(--mut-2); }
 
-.rc-picks { margin-top: 20rpx; }
+.rc-picks { margin-top: 8rpx; border-top: 2rpx solid var(--line); }
+/* 整行可点：行高补到触控下限，右侧带箭头——原来只有「菜系 未选」两个词，看不出能点 */
 .rc-pickline {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 20rpx;
-  padding: 14rpx 0;
+  min-height: var(--tap-min);
+  border-bottom: 2rpx solid var(--line);
 }
+.rc-pickline-chev { flex: none; width: 32rpx; height: 32rpx; margin-left: auto; filter: brightness(0); opacity: .35; }
+@media (prefers-color-scheme: dark) { .rc-pickline-chev { filter: brightness(0) invert(1); } }
 .rc-pickline-k { flex: none; font-size: calc(25rpx * var(--fs-mul, 1)); color: var(--mut); }
 .rc-pickline-v { font-size: calc(28rpx * var(--fs-mul, 1)); font-weight: 700; color: var(--ink); }
+/* .rc-ph 写在前面、同权重，会被上一行的 --ink 盖掉：「未选」一直是黑粗体，看着像已经选了值 */
+.rc-pickline-v.rc-ph { font-weight: 400; color: var(--mut-2); }
 
 .rc-facts {
   display: flex;
   gap: 16rpx;
-  margin-top: 12rpx;
+  margin-top: 32rpx;
 }
 .rc-fact {
   flex: 1;
   background: var(--paper-2);
-  padding: 20rpx 12rpx 22rpx;
+  border-radius: var(--r-card);
+  padding: 20rpx var(--pad-card-sm) 22rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -132,7 +150,9 @@ page { background: var(--paper); }
   width: 72rpx;
   height: 72rpx;
   border-radius: 50%;
-  background: var(--c-surface);
+  /* 嵌在 --paper-2 的耗时/人份卡里：深色档卡面 #242424 对 #2e2e2e 只有 1.14:1，± 圆钮看不见。
+     --seg-thumb 是同一角色（井里的凸起控件）：浅色档 = --c-surface，观感不变 */
+  background: var(--seg-thumb);
   color: var(--ink);
   font-size: calc(32rpx * var(--fs-mul, 1));
   line-height: 70rpx;
@@ -147,9 +167,10 @@ page { background: var(--paper); }
 }
 .rc-fact-u { margin-top: 6rpx; font-size: calc(23rpx * var(--fs-mul, 1)); color: var(--mut); }
 
+/* 上面两格都有「耗时」「几人份」小标题，难度这条原来没有 */
+.rc-dseg-k { display: block; margin: 32rpx 0 12rpx; font-size: var(--fs-cap); color: var(--mut); }
 .rc-dseg {
   display: flex;
-  margin-top: 16rpx;
   background: var(--paper-2);
   border-radius: var(--r-pill);
   padding: 6rpx;
@@ -220,12 +241,14 @@ page { background: var(--paper); }
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--mut-2);
+  color: var(--mut);   /* 可点的删除键不用 --mut-2（约 2.2:1，规范里只给装饰） */
   font-size: calc(28rpx * var(--fs-mul, 1));
   text-align: center;
 }
 
 .rc-more {
+  box-sizing: border-box;
+  min-height: var(--tap-min);   /* 文字位置不变（仍是上 28rpx），只把下方空白算进热区 */
   padding: 28rpx 0 8rpx;
   font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: 600;
@@ -260,7 +283,7 @@ page { background: var(--paper); }
   font-weight: 800;
   color: var(--ink);
 }
-.rc-step-del { font-size: calc(25rpx * var(--fs-mul, 1)); color: var(--mut-2); }
+.rc-step-del { font-size: calc(25rpx * var(--fs-mul, 1)); color: var(--mut); }   /* 同 .rc-ing-x：可点文字不用 --mut-2 */
 
 .rc-shot {
   height: 168rpx;
@@ -317,8 +340,8 @@ page { background: var(--paper); }
   height: 64rpx;
   line-height: 64rpx;
   text-align: center;
-  border-radius: var(--r-pill);
-  background: var(--pop);
+  border-radius: var(--r-card);
+  background: var(--pop-fill);
   color: var(--anchor-contrast);
   font-size: calc(var(--fs-btn) * var(--fs-mul, 1));
   font-weight: 700;
@@ -338,7 +361,7 @@ page { background: var(--paper); }
   height: 88rpx;
   border-radius: var(--r-card);
   background: var(--anchor);
-  color: var(--gold);
+  color: var(--gold-on-dark);   /* 深色档见文末 @media */
   font-size: calc(28rpx * var(--fs-mul, 1));
   font-weight: 700;
   display: flex;
@@ -347,6 +370,12 @@ page { background: var(--paper); }
 }
 .rc-pick-grid { display: flex; flex-wrap: wrap; gap: 12rpx; margin-top: 20rpx; }
 .rc-pick-cell { width: var(--tile-pick); height: var(--tile-pick); background: var(--paper-2); }
+
+/* 深色档：--gold 翻成 #8a6a3a，压在 --anchor 上看不清（旧 #3a2e23 上约 2.6:1，提亮后的 #866a50 上约 1:1）；
+   改用恒定浅字 --anchor-contrast（两种 --anchor 上都 ≥4.7:1） */
+@media (prefers-color-scheme: dark) {
+  .rc-pick-btn { color: var(--anchor-contrast); }
+}
 
 .rc-footbar {
   position: fixed;
@@ -357,3 +386,4 @@ page { background: var(--paper); }
   padding: 20rpx 46rpx calc(20rpx + env(safe-area-inset-bottom));
   background: var(--paper);
 }
+.rc-foot-tip { display: block; margin-bottom: 12rpx; text-align: center; font-size: var(--fs-cap); color: var(--mut-strong); }

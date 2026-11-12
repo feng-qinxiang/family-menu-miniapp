@@ -25,7 +25,6 @@ Page({
     activeSort: 'all',
     // 副文案要能如实说出「现在这屏是按什么排的」，见 _apply 里的说明
     sortLabel: '综合',
-    allRecipes: [],
     list: [],
     total: 0,
     // 关键词一条都没字面命中（用于决定是否显示「库里没有」出口区块，以及计数文案口径）
@@ -67,12 +66,13 @@ Page({
     this.setData({ loading: true, loadError: false });
     api.getRecipes('all')
       .then((res) => {
-        const all = Array.isArray(res) ? res : (res && res.list) || [];
-        this.setData({ allRecipes: all, loaded: true, loading: false });
+        this._allRecipes = Array.isArray(res) ? res : (res && res.list) || [];
+        this.setData({ loaded: true, loading: false });
         this._apply(kw, this.data.activeSort);
       })
       .catch(() => {
-        this.setData({ allRecipes: [], loaded: true, loading: false, loadError: true, list: [], total: 0 });
+        this._allRecipes = [];
+        this.setData({ loaded: true, loading: false, loadError: true, list: [], total: 0 });
       });
   },
 
@@ -88,7 +88,7 @@ Page({
     // 这是「页面对用户撒的小谎」那一类（同邀请码的「24 小时内有效」），改成如实报当前标签。
     const hit = SORTS.filter((x) => x.key === sortKey)[0];
     this.setData({ sortLabel: hit ? hit.label : '综合' });
-    let list = this.data.allRecipes.slice();
+    let list = (this._allRecipes || []).slice();
     let exactTotal = list.length;
     let nearbyMode = false;
 
@@ -150,7 +150,7 @@ Page({
       if (grams.indexOf(g) === -1) grams.push(g);
     }
     const scored = [];
-    (this.data.allRecipes || []).forEach((r) => {
+    (this._allRecipes || []).forEach((r) => {
       const hay = this._haystack(r);
       let hits = 0;
       grams.forEach((g) => {

@@ -18,7 +18,7 @@ Component({
       type: String,
       value: 'card'
     },
-    // home 横滑宽卡 | grid 双列 | default(favorites)
+    // home 横滑宽卡 | grid 双列 | list 紧凑行 | default(favorites)
     density: {
       type: String,
       value: 'default'
@@ -32,7 +32,7 @@ Component({
       type: Boolean,
       value: true
     },
-    // card 加菜位置：corner 右上(home) | float 右下(recipes)
+    // card 加菜位置：corner 图片右下 | float 卡片右下
     addPlacement: {
       type: String,
       value: 'corner'
@@ -42,7 +42,7 @@ Component({
       type: Boolean,
       value: false
     },
-    // 封面角标文案，空则用 cuisine
+    // 封面角标文案；空则不显示
     badge: {
       type: String,
       value: ''
@@ -51,6 +51,10 @@ Component({
     metaOverride: {
       type: String,
       value: ''
+    },
+    showPantry: {
+      type: Boolean,
+      value: false
     }
   },
 
@@ -101,7 +105,7 @@ Component({
         } else if (density === 'home') {
           const parts = [];
           if (timeText) parts.push(timeText);
-          parts.push(tags[0] || r.sourceLabel || '下饭快手');
+          parts.push(tags[0] || '下饭快手');
           metaText = parts.join(' · ');
         } else if (this.data.variant === 'row') {
           const subParts = [];
@@ -117,9 +121,8 @@ Component({
       }
 
       const badgeProp = this.data.badge;
-      const badgeText = badgeProp !== '' && badgeProp != null
-        ? badgeProp
-        : (r.sourceLabel || '');
+      // 只显示调用方明确传入的角标；不再兜底成来源（自建/社区/公共菜谱）——那是内部分类，用户不关心
+      const badgeText = badgeProp != null ? badgeProp : '';
 
       this.setData({
         cover: cover,
@@ -128,8 +131,11 @@ Component({
         badgeText: badgeText,
         timeText: timeText,
         metaText: metaText,
+        detailTags: Array.from(new Set([r.cuisine].concat(tags).filter(Boolean))).slice(0, 3),
+        ingredientText: (Array.isArray(r.ingredients) ? r.ingredients : []).map(item => item.name || item.ingredientName).filter(Boolean).slice(0, 4).join('、'),
         favorited: !!r.favorited,
-        addMark: this.data.selected ? '✓' : '+'
+        addMark: this.data.selected ? '✓' : '+',
+        coverBroken: cover === this.data.cover && this.data.coverBroken === true
       });
     },
 

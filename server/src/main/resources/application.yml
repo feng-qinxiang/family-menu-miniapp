@@ -64,6 +64,7 @@ wechat:
     # 若后台给的字段名不同，改 SubscribeMessageService 里的 FIELD_SUBJECT / FIELD_DETAIL。
     template-wish: ${WECHAT_SUBSCRIBE_TEMPLATE_WISH:}   # 家人许愿（"XX 想吃糖醋排骨"）
     template-meal: ${WECHAT_SUBSCRIBE_TEMPLATE_MEAL:}   # 开饭提醒（"今天的菜都做好了"）
+    template-pantry: ${WECHAT_SUBSCRIBE_TEMPLATE_PANTRY:} # 食材临期汇总；仍须用户一次性订阅授权
     # 消息里跳转的小程序版本：formal=正式版，trial=体验版，developer=开发版。
     # 上线后用 formal；只有体验版时可临时改 trial，否则用户点消息会跳不动。
     miniprogram-state: ${WECHAT_SUBSCRIBE_STATE:formal}
@@ -100,6 +101,10 @@ auth:
   dev-otp-enabled: ${AUTH_DEV_OTP_ENABLED:false}
 
 app:
+  pantry-reminders:
+    enabled: ${PANTRY_REMINDERS_ENABLED:true}
+    # 中国时间每天 9:00；有到期日、未过期且数量未用完的食材，提前 3 天提醒。
+    cron: ${PANTRY_REMINDERS_CRON:0 0 9 * * *}
   # 演示数据总开关（默认关）：种子账号、演示家庭、演示会员/订单、菜单、购物清单、库存、
   # 做菜记录、通知、社区帖子，以及 data-demo.sql 的整份脚本。
   #

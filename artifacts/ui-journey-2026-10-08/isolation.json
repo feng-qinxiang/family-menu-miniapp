@@ -1,0 +1,12 @@
+{
+  "unchanged": true,
+  "sourceFileCount": 766,
+  "sourceHead": "7c001e1ecafbf15bba51776fd086fffd4e5bcb89",
+  "snapshotSha256": "144785d0a707e6f34b4ec2fb44f7e9c5b46b92af7a68497f064edb705fb4def4",
+  "checks": {
+    "recordedFileHashesMatch": true,
+    "headMatches": true,
+    "gitStatusMatches": true
+  },
+  "checkedAt": "2026-10-08T05:52:53.154931+00:00"
+}

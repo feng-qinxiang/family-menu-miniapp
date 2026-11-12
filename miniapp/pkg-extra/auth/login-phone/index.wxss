@@ -6,7 +6,6 @@
 
 .lp-help {
   font-family: var(--serif);
-  font-style: italic;
   font-size: var(--fs-sub);
   font-weight: 700;
   color: var(--gold-deep);
@@ -21,7 +20,6 @@
 .lp-eyebrow {
   display: block;
   font-family: var(--serif);
-  font-style: italic;
   font-size: var(--fs-sub);
   letter-spacing: 3rpx;
   font-weight: 700;
@@ -67,7 +65,7 @@
 }
 .lp-inp.is-focus {
   border-color: var(--pop);
-  box-shadow: 0 4rpx 18rpx rgba(232, 71, 42, 0.15);
+  box-shadow: 0 4rpx 18rpx rgba(200, 56, 31, 0.15);
 }
 .lp-ic { flex: none; width: 36rpx; height: 36rpx; }
 
@@ -89,7 +87,7 @@
   width: 8rpx;
   height: 4rpx;
   border-radius: 2rpx;
-  background: var(--pop);
+  background: var(--pop-fill);
 }
 /* mail 图标 */
 .ic-mail {
@@ -132,11 +130,18 @@
 
 .lp-codebtn {
   flex: none;
+  /* 撑满输入框内高：负外边距吃掉 .lp-inp 的上下右内边距（28rpx / 30rpx，两处要一起改），
+     按钮成为贴边的一段，与输入框同高（原 14rpx 内边距只有约 64rpx 高，还把这一栏撑得比手机号栏高） */
+  align-self: stretch;
+  margin: -28rpx -30rpx -28rpx 0;
+  display: flex;
+  align-items: center;
   font-size: var(--fs-sub);
   font-weight: 800;
   color: var(--pop);
-  padding: 14rpx 22rpx;
-  border-radius: var(--r-xs);
+  padding: 0 var(--pad-card-sm);
+  /* 贴着外框的那两个角：外框圆角减去 3rpx 边框，才与外框内缘同心 */
+  border-radius: 0 calc(var(--r-sm) - 3rpx) calc(var(--r-sm) - 3rpx) 0;
   background: var(--pop-soft);
 }
 .lp-codebtn.is-wait {
@@ -153,8 +158,8 @@
   align-items: center;
   justify-content: center;
   gap: 18rpx;
-  padding: 32rpx;
-  border-radius: var(--r-md);
+  padding: 32rpx 0;
+  border-radius: var(--r-card);
   font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
   letter-spacing: 1rpx;
@@ -197,8 +202,8 @@
   transform: translate(-50%, -50%);
 }
 .lp-box.is-on {
-  border-color: var(--pop);
-  background: var(--pop);
+  border-color: var(--pop-fill);
+  background: var(--pop-fill);
 }
 .lp-check {
   width: 16rpx;
@@ -224,7 +229,6 @@
 .lp-ln { flex: 1; height: 2rpx; background: var(--c-border); }
 .lp-or {
   font-family: var(--serif);
-  font-style: italic;
   font-size: var(--fs-cap);
   letter-spacing: 2rpx;
   font-weight: 700;
@@ -239,8 +243,8 @@
   align-items: center;
   justify-content: center;
   gap: 18rpx;
-  padding: 30rpx;
-  border-radius: var(--r-md);
+  padding: 30rpx 0;
+  border-radius: var(--r-card);
   font-size: calc(28rpx * var(--fs-mul, 1));
   font-weight: 800;
   letter-spacing: 1rpx;

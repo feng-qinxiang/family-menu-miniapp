@@ -1,0 +1,1901 @@
+{
+  "screens": [
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-community-post-detail-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "多图",
+      "image": "screens/all-pkg-extra-community-post-detail-index-多图.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "多图第三张",
+      "image": "screens/all-pkg-extra-community-post-detail-index-多图第三张.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "评论",
+      "image": "screens/all-pkg-extra-community-post-detail-index-评论.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "评论大字",
+      "image": "screens/all-pkg-extra-community-post-detail-index-评论大字.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "大字",
+      "image": "screens/all-pkg-extra-community-post-detail-index-大字.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "写评论",
+      "image": "screens/all-pkg-extra-community-post-detail-index-写评论.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "发送中",
+      "image": "screens/all-pkg-extra-community-post-detail-index-发送中.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "无图",
+      "image": "screens/all-pkg-extra-community-post-detail-index-无图.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "图片失效",
+      "image": "screens/all-pkg-extra-community-post-detail-index-图片失效.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "无评论",
+      "image": "screens/all-pkg-extra-community-post-detail-index-无评论.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "评论加载失败",
+      "image": "screens/all-pkg-extra-community-post-detail-index-评论加载失败.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/me/notifications/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-me-notifications-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/me/notifications/index",
+      "state": "大字",
+      "image": "screens/all-pkg-extra-me-notifications-index-大字.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/me/notifications/index",
+      "state": "已读",
+      "image": "screens/all-pkg-extra-me-notifications-index-已读.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    }
+  ],
+  "routes": [
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "actualRoute": "pkg-extra/community/post-detail/index",
+      "gated": false,
+      "temporarySample": true,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/me/notifications/index",
+      "actualRoute": "pkg-extra/me/notifications/index",
+      "gated": false,
+      "temporarySample": true,
+      "passed": true
+    }
+  ],
+  "layouts": [
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "normal",
+      "rects": {
+        ".page": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 0,
+          "bottom": 844,
+          "width": 390,
+          "height": 844
+        },
+        ".body": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 87,
+          "bottom": 931.984375,
+          "width": 390,
+          "height": 844.984375
+        },
+        ".recipe-card": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 570.59375,
+          "bottom": 667.59375,
+          "width": 358,
+          "height": 97
+        },
+        ".rc-img": {
+          "id": "",
+          "dataset": {
+            "errKey": "post.recipeCoverBroken"
+          },
+          "left": 29,
+          "right": 100,
+          "top": 583.59375,
+          "bottom": 654.59375,
+          "width": 71,
+          "height": 71
+        },
+        ".rc-mid": {
+          "id": "",
+          "dataset": {},
+          "left": 109,
+          "right": 336,
+          "top": 586.3203125,
+          "bottom": 651.8671875,
+          "width": 227,
+          "height": 65.546875
+        },
+        ".react-bar": {
+          "id": "",
+          "dataset": {},
+          "left": 239,
+          "right": 378,
+          "top": 758,
+          "bottom": 803,
+          "width": 139,
+          "height": 45
+        },
+        ".inputbar": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 750,
+          "bottom": 844,
+          "width": 390,
+          "height": 94
+        },
+        ".field": {
+          "id": "",
+          "dataset": {},
+          "left": 40,
+          "right": 225,
+          "top": 758,
+          "bottom": 803,
+          "width": 185,
+          "height": 45
+        },
+        ".send": null,
+        ".scroll": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 87,
+          "bottom": 750,
+          "width": 390,
+          "height": 663
+        },
+        ".cmt": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 719.390625,
+          "bottom": 814.1875,
+          "width": 358,
+          "height": 94.796875
+        },
+        ".cmeta": {
+          "id": "",
+          "dataset": {},
+          "left": 64,
+          "right": 374,
+          "top": 734.390625,
+          "bottom": 772.390625,
+          "width": 310,
+          "height": 38
+        },
+        ".pimgs": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 149,
+          "bottom": 389,
+          "width": 358,
+          "height": 240
+        },
+        ".post-title": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 400,
+          "bottom": 426.09375,
+          "width": 358,
+          "height": 26.09375
+        },
+        ".react-share": {
+          "id": "",
+          "dataset": {},
+          "left": 305,
+          "right": 374,
+          "top": 94,
+          "bottom": 139,
+          "width": 69,
+          "height": 45
+        },
+        ".author": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 93,
+          "bottom": 140,
+          "width": 358,
+          "height": 47
+        },
+        ".acol": {
+          "id": "",
+          "dataset": {},
+          "left": 72,
+          "right": 296,
+          "top": 94.3515625,
+          "bottom": 138.6484375,
+          "width": 224,
+          "height": 44.296875
+        },
+        ".atime": {
+          "id": "",
+          "dataset": {},
+          "left": 72,
+          "right": 296,
+          "top": 122.1484375,
+          "bottom": 138.6484375,
+          "width": 224,
+          "height": 16.5
+        },
+        ".aname": {
+          "id": "",
+          "dataset": {},
+          "left": 72,
+          "right": 296,
+          "top": 94.3515625,
+          "bottom": 119.1484375,
+          "width": 224,
+          "height": 24.796875
+        },
+        ".post-copy": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 389,
+          "bottom": 564.59375,
+          "width": 358,
+          "height": 175.59375
+        },
+        ".post-text": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 433.09375,
+          "bottom": 515.59375,
+          "width": 358,
+          "height": 82.5
+        },
+        ".post-footer": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 519.59375,
+          "bottom": 564.59375,
+          "width": 358,
+          "height": 45
+        },
+        ".ptags": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 321,
+          "top": 533.84375,
+          "bottom": 550.34375,
+          "width": 305,
+          "height": 16.5
+        },
+        ".react-report": {
+          "id": "",
+          "dataset": {},
+          "left": 329,
+          "right": 374,
+          "top": 519.59375,
+          "bottom": 564.59375,
+          "width": 45,
+          "height": 45
+        }
+      },
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "large-long-text",
+      "rects": {
+        ".page": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 0,
+          "bottom": 844,
+          "width": 390,
+          "height": 844
+        },
+        ".body": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": -100.5,
+          "bottom": 845.640625,
+          "width": 390,
+          "height": 946.140625
+        },
+        ".recipe-card": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 403.9921875,
+          "bottom": 508.28125,
+          "width": 358,
+          "height": 104.2890625
+        },
+        ".rc-img": {
+          "id": "",
+          "dataset": {
+            "errKey": "post.recipeCoverBroken"
+          },
+          "left": 29,
+          "right": 100,
+          "top": 420.6328125,
+          "bottom": 491.6328125,
+          "width": 71,
+          "height": 71
+        },
+        ".rc-mid": {
+          "id": "",
+          "dataset": {},
+          "left": 109,
+          "right": 336,
+          "top": 416.9921875,
+          "bottom": 495.28125,
+          "width": 227,
+          "height": 78.2890625
+        },
+        ".react-bar": {
+          "id": "",
+          "dataset": {},
+          "left": 239,
+          "right": 378,
+          "top": 756.9140625,
+          "bottom": 801.9140625,
+          "width": 139,
+          "height": 45
+        },
+        ".inputbar": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 747.828125,
+          "bottom": 844,
+          "width": 390,
+          "height": 96.171875
+        },
+        ".field": {
+          "id": "",
+          "dataset": {},
+          "left": 40,
+          "right": 225,
+          "top": 755.828125,
+          "bottom": 803,
+          "width": 185,
+          "height": 47.171875
+        },
+        ".send": null,
+        ".scroll": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 87,
+          "bottom": 747.828125,
+          "width": 390,
+          "height": 660.828125
+        },
+        ".cmt": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 563.796875,
+          "bottom": 717.140625,
+          "width": 358,
+          "height": 153.34375
+        },
+        ".cmeta": {
+          "id": "",
+          "dataset": {},
+          "left": 64,
+          "right": 374,
+          "top": 578.796875,
+          "bottom": 624.375,
+          "width": 310,
+          "height": 45.578125
+        },
+        ".pimgs": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": -32.984375,
+          "bottom": 207.015625,
+          "width": 358,
+          "height": 240
+        },
+        ".post-title": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 218.015625,
+          "bottom": 248.03125,
+          "width": 358,
+          "height": 30.015625
+        },
+        ".react-share": {
+          "id": "",
+          "dataset": {},
+          "left": 304,
+          "right": 374,
+          "top": -90.7421875,
+          "bottom": -45.7421875,
+          "width": 70,
+          "height": 45
+        },
+        ".author": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": -94.5,
+          "bottom": -41.984375,
+          "width": 358,
+          "height": 52.515625
+        },
+        ".acol": {
+          "id": "",
+          "dataset": {},
+          "left": 72,
+          "right": 295,
+          "top": -94.5,
+          "bottom": -41.984375,
+          "width": 223,
+          "height": 52.515625
+        },
+        ".atime": {
+          "id": "",
+          "dataset": {},
+          "left": 72,
+          "right": 295,
+          "top": -62.984375,
+          "bottom": -41.984375,
+          "width": 223,
+          "height": 21
+        },
+        ".aname": {
+          "id": "",
+          "dataset": {},
+          "left": 72,
+          "right": 295,
+          "top": -94.5,
+          "bottom": -65.984375,
+          "width": 223,
+          "height": 28.515625
+        },
+        ".post-copy": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 207.015625,
+          "bottom": 397.9921875,
+          "width": 358,
+          "height": 190.9765625
+        },
+        ".post-text": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 255.03125,
+          "bottom": 348.9921875,
+          "width": 358,
+          "height": 93.9609375
+        },
+        ".post-footer": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 352.9921875,
+          "bottom": 397.9921875,
+          "width": 358,
+          "height": 45
+        },
+        ".ptags": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 321,
+          "top": 364.9921875,
+          "bottom": 385.9921875,
+          "width": 305,
+          "height": 21
+        },
+        ".react-report": {
+          "id": "",
+          "dataset": {},
+          "left": 329,
+          "right": 374,
+          "top": 352.9921875,
+          "bottom": 397.9921875,
+          "width": 45,
+          "height": 45
+        }
+      },
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "composing-large",
+      "rects": {
+        ".page": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 0,
+          "bottom": 844,
+          "width": 390,
+          "height": 844
+        },
+        ".body": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 87,
+          "bottom": 1033.140625,
+          "width": 390,
+          "height": 946.140625
+        },
+        ".recipe-card": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 591.4921875,
+          "bottom": 695.78125,
+          "width": 358,
+          "height": 104.2890625
+        },
+        ".rc-img": {
+          "id": "",
+          "dataset": {
+            "errKey": "post.recipeCoverBroken"
+          },
+          "left": 29,
+          "right": 100,
+          "top": 608.1328125,
+          "bottom": 679.1328125,
+          "width": 71,
+          "height": 71
+        },
+        ".rc-mid": {
+          "id": "",
+          "dataset": {},
+          "left": 109,
+          "right": 336,
+          "top": 604.4921875,
+          "bottom": 682.78125,
+          "width": 227,
+          "height": 78.2890625
+        },
+        ".react-bar": null,
+        ".inputbar": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 725,
+          "bottom": 844,
+          "width": 390,
+          "height": 119
+        },
+        ".field": {
+          "id": "",
+          "dataset": {},
+          "left": 21,
+          "right": 310,
+          "top": 733,
+          "bottom": 803,
+          "width": 289,
+          "height": 70
+        },
+        ".send": {
+          "id": "",
+          "dataset": {},
+          "left": 324,
+          "right": 378,
+          "top": 745.5,
+          "bottom": 790.5,
+          "width": 54,
+          "height": 45
+        },
+        ".scroll": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 87,
+          "bottom": 725,
+          "width": 390,
+          "height": 638
+        },
+        ".cmt": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 751.296875,
+          "bottom": 904.640625,
+          "width": 358,
+          "height": 153.34375
+        },
+        ".cmeta": {
+          "id": "",
+          "dataset": {},
+          "left": 64,
+          "right": 374,
+          "top": 766.296875,
+          "bottom": 811.875,
+          "width": 310,
+          "height": 45.578125
+        },
+        ".pimgs": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 154.515625,
+          "bottom": 394.515625,
+          "width": 358,
+          "height": 240
+        },
+        ".post-title": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 405.515625,
+          "bottom": 435.53125,
+          "width": 358,
+          "height": 30.015625
+        },
+        ".react-share": {
+          "id": "",
+          "dataset": {},
+          "left": 304,
+          "right": 374,
+          "top": 96.7578125,
+          "bottom": 141.7578125,
+          "width": 70,
+          "height": 45
+        },
+        ".author": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 93,
+          "bottom": 145.515625,
+          "width": 358,
+          "height": 52.515625
+        },
+        ".acol": {
+          "id": "",
+          "dataset": {},
+          "left": 72,
+          "right": 295,
+          "top": 93,
+          "bottom": 145.515625,
+          "width": 223,
+          "height": 52.515625
+        },
+        ".atime": {
+          "id": "",
+          "dataset": {},
+          "left": 72,
+          "right": 295,
+          "top": 124.515625,
+          "bottom": 145.515625,
+          "width": 223,
+          "height": 21
+        },
+        ".aname": {
+          "id": "",
+          "dataset": {},
+          "left": 72,
+          "right": 295,
+          "top": 93,
+          "bottom": 121.515625,
+          "width": 223,
+          "height": 28.515625
+        },
+        ".post-copy": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 394.515625,
+          "bottom": 585.4921875,
+          "width": 358,
+          "height": 190.9765625
+        },
+        ".post-text": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 442.53125,
+          "bottom": 536.4921875,
+          "width": 358,
+          "height": 93.9609375
+        },
+        ".post-footer": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 540.4921875,
+          "bottom": 585.4921875,
+          "width": 358,
+          "height": 45
+        },
+        ".ptags": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 321,
+          "top": 552.4921875,
+          "bottom": 573.4921875,
+          "width": 305,
+          "height": 21
+        },
+        ".react-report": {
+          "id": "",
+          "dataset": {},
+          "left": 329,
+          "right": 374,
+          "top": 540.4921875,
+          "bottom": 585.4921875,
+          "width": 45,
+          "height": 45
+        }
+      },
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "submitting",
+      "rects": {
+        ".page": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 0,
+          "bottom": 844,
+          "width": 390,
+          "height": 844
+        },
+        ".body": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 87,
+          "bottom": 1033.140625,
+          "width": 390,
+          "height": 946.140625
+        },
+        ".recipe-card": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 591.4921875,
+          "bottom": 695.78125,
+          "width": 358,
+          "height": 104.2890625
+        },
+        ".rc-img": {
+          "id": "",
+          "dataset": {
+            "errKey": "post.recipeCoverBroken"
+          },
+          "left": 29,
+          "right": 100,
+          "top": 608.1328125,
+          "bottom": 679.1328125,
+          "width": 71,
+          "height": 71
+        },
+        ".rc-mid": {
+          "id": "",
+          "dataset": {},
+          "left": 109,
+          "right": 336,
+          "top": 604.4921875,
+          "bottom": 682.78125,
+          "width": 227,
+          "height": 78.2890625
+        },
+        ".react-bar": null,
+        ".inputbar": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 725,
+          "bottom": 844,
+          "width": 390,
+          "height": 119
+        },
+        ".field": {
+          "id": "",
+          "dataset": {},
+          "left": 21,
+          "right": 308,
+          "top": 733,
+          "bottom": 803,
+          "width": 287,
+          "height": 70
+        },
+        ".send": {
+          "id": "",
+          "dataset": {},
+          "left": 322,
+          "right": 378,
+          "top": 745.5,
+          "bottom": 790.5,
+          "width": 56,
+          "height": 45
+        },
+        ".scroll": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 87,
+          "bottom": 725,
+          "width": 390,
+          "height": 638
+        },
+        ".cmt": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 751.296875,
+          "bottom": 904.640625,
+          "width": 358,
+          "height": 153.34375
+        },
+        ".cmeta": {
+          "id": "",
+          "dataset": {},
+          "left": 64,
+          "right": 374,
+          "top": 766.296875,
+          "bottom": 811.875,
+          "width": 310,
+          "height": 45.578125
+        },
+        ".pimgs": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 154.515625,
+          "bottom": 394.515625,
+          "width": 358,
+          "height": 240
+        },
+        ".post-title": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 405.515625,
+          "bottom": 435.53125,
+          "width": 358,
+          "height": 30.015625
+        },
+        ".react-share": {
+          "id": "",
+          "dataset": {},
+          "left": 304,
+          "right": 374,
+          "top": 96.7578125,
+          "bottom": 141.7578125,
+          "width": 70,
+          "height": 45
+        },
+        ".author": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 93,
+          "bottom": 145.515625,
+          "width": 358,
+          "height": 52.515625
+        },
+        ".acol": {
+          "id": "",
+          "dataset": {},
+          "left": 72,
+          "right": 295,
+          "top": 93,
+          "bottom": 145.515625,
+          "width": 223,
+          "height": 52.515625
+        },
+        ".atime": {
+          "id": "",
+          "dataset": {},
+          "left": 72,
+          "right": 295,
+          "top": 124.515625,
+          "bottom": 145.515625,
+          "width": 223,
+          "height": 21
+        },
+        ".aname": {
+          "id": "",
+          "dataset": {},
+          "left": 72,
+          "right": 295,
+          "top": 93,
+          "bottom": 121.515625,
+          "width": 223,
+          "height": 28.515625
+        },
+        ".post-copy": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 394.515625,
+          "bottom": 585.4921875,
+          "width": 358,
+          "height": 190.9765625
+        },
+        ".post-text": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 442.53125,
+          "bottom": 536.4921875,
+          "width": 358,
+          "height": 93.9609375
+        },
+        ".post-footer": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 540.4921875,
+          "bottom": 585.4921875,
+          "width": 358,
+          "height": 45
+        },
+        ".ptags": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 321,
+          "top": 552.4921875,
+          "bottom": 573.4921875,
+          "width": 305,
+          "height": 21
+        },
+        ".react-report": {
+          "id": "",
+          "dataset": {},
+          "left": 329,
+          "right": 374,
+          "top": 540.4921875,
+          "bottom": 585.4921875,
+          "width": 45,
+          "height": 45
+        }
+      },
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "reading-after-clear",
+      "rects": {
+        ".page": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 0,
+          "bottom": 844,
+          "width": 390,
+          "height": 844
+        },
+        ".body": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 87,
+          "bottom": 1033.140625,
+          "width": 390,
+          "height": 946.140625
+        },
+        ".recipe-card": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 591.4921875,
+          "bottom": 695.78125,
+          "width": 358,
+          "height": 104.2890625
+        },
+        ".rc-img": {
+          "id": "",
+          "dataset": {
+            "errKey": "post.recipeCoverBroken"
+          },
+          "left": 29,
+          "right": 100,
+          "top": 608.1328125,
+          "bottom": 679.1328125,
+          "width": 71,
+          "height": 71
+        },
+        ".rc-mid": {
+          "id": "",
+          "dataset": {},
+          "left": 109,
+          "right": 336,
+          "top": 604.4921875,
+          "bottom": 682.78125,
+          "width": 227,
+          "height": 78.2890625
+        },
+        ".react-bar": {
+          "id": "",
+          "dataset": {},
+          "left": 239,
+          "right": 378,
+          "top": 756.9140625,
+          "bottom": 801.9140625,
+          "width": 139,
+          "height": 45
+        },
+        ".inputbar": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 747.828125,
+          "bottom": 844,
+          "width": 390,
+          "height": 96.171875
+        },
+        ".field": {
+          "id": "",
+          "dataset": {},
+          "left": 40,
+          "right": 225,
+          "top": 755.828125,
+          "bottom": 803,
+          "width": 185,
+          "height": 47.171875
+        },
+        ".send": null,
+        ".scroll": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 87,
+          "bottom": 747.828125,
+          "width": 390,
+          "height": 660.828125
+        },
+        ".cmt": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 751.296875,
+          "bottom": 904.640625,
+          "width": 358,
+          "height": 153.34375
+        },
+        ".cmeta": {
+          "id": "",
+          "dataset": {},
+          "left": 64,
+          "right": 374,
+          "top": 766.296875,
+          "bottom": 811.875,
+          "width": 310,
+          "height": 45.578125
+        },
+        ".pimgs": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 154.515625,
+          "bottom": 394.515625,
+          "width": 358,
+          "height": 240
+        },
+        ".post-title": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 405.515625,
+          "bottom": 435.53125,
+          "width": 358,
+          "height": 30.015625
+        },
+        ".react-share": {
+          "id": "",
+          "dataset": {},
+          "left": 304,
+          "right": 374,
+          "top": 96.7578125,
+          "bottom": 141.7578125,
+          "width": 70,
+          "height": 45
+        },
+        ".author": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 93,
+          "bottom": 145.515625,
+          "width": 358,
+          "height": 52.515625
+        },
+        ".acol": {
+          "id": "",
+          "dataset": {},
+          "left": 72,
+          "right": 295,
+          "top": 93,
+          "bottom": 145.515625,
+          "width": 223,
+          "height": 52.515625
+        },
+        ".atime": {
+          "id": "",
+          "dataset": {},
+          "left": 72,
+          "right": 295,
+          "top": 124.515625,
+          "bottom": 145.515625,
+          "width": 223,
+          "height": 21
+        },
+        ".aname": {
+          "id": "",
+          "dataset": {},
+          "left": 72,
+          "right": 295,
+          "top": 93,
+          "bottom": 121.515625,
+          "width": 223,
+          "height": 28.515625
+        },
+        ".post-copy": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 394.515625,
+          "bottom": 585.4921875,
+          "width": 358,
+          "height": 190.9765625
+        },
+        ".post-text": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 442.53125,
+          "bottom": 536.4921875,
+          "width": 358,
+          "height": 93.9609375
+        },
+        ".post-footer": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 540.4921875,
+          "bottom": 585.4921875,
+          "width": 358,
+          "height": 45
+        },
+        ".ptags": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 321,
+          "top": 552.4921875,
+          "bottom": 573.4921875,
+          "width": 305,
+          "height": 21
+        },
+        ".react-report": {
+          "id": "",
+          "dataset": {},
+          "left": 329,
+          "right": 374,
+          "top": 540.4921875,
+          "bottom": 585.4921875,
+          "width": 45,
+          "height": 45
+        }
+      },
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "text-only",
+      "rects": {
+        ".page": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 0,
+          "bottom": 844,
+          "width": 390,
+          "height": 844
+        },
+        ".body": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 87,
+          "bottom": 703.78125,
+          "width": 390,
+          "height": 616.78125
+        },
+        ".recipe-card": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 321.59375,
+          "bottom": 418.59375,
+          "width": 358,
+          "height": 97
+        },
+        ".rc-img": {
+          "id": "",
+          "dataset": {
+            "errKey": "post.recipeCoverBroken"
+          },
+          "left": 29,
+          "right": 100,
+          "top": 334.59375,
+          "bottom": 405.59375,
+          "width": 71,
+          "height": 71
+        },
+        ".rc-mid": {
+          "id": "",
+          "dataset": {},
+          "left": 109,
+          "right": 336,
+          "top": 337.3203125,
+          "bottom": 402.8671875,
+          "width": 227,
+          "height": 65.546875
+        },
+        ".react-bar": {
+          "id": "",
+          "dataset": {},
+          "left": 239,
+          "right": 378,
+          "top": 758,
+          "bottom": 803,
+          "width": 139,
+          "height": 45
+        },
+        ".inputbar": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 750,
+          "bottom": 844,
+          "width": 390,
+          "height": 94
+        },
+        ".field": {
+          "id": "",
+          "dataset": {},
+          "left": 40,
+          "right": 225,
+          "top": 758,
+          "bottom": 803,
+          "width": 185,
+          "height": 45
+        },
+        ".send": null,
+        ".scroll": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 87,
+          "bottom": 750,
+          "width": 390,
+          "height": 663
+        },
+        ".cmt": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 470.390625,
+          "bottom": 585.984375,
+          "width": 358,
+          "height": 115.59375
+        },
+        ".cmeta": {
+          "id": "",
+          "dataset": {},
+          "left": 64,
+          "right": 374,
+          "top": 485.390625,
+          "bottom": 523.390625,
+          "width": 310,
+          "height": 38
+        },
+        ".pimgs": null,
+        ".post-title": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 151,
+          "bottom": 177.09375,
+          "width": 358,
+          "height": 26.09375
+        },
+        ".react-share": {
+          "id": "",
+          "dataset": {},
+          "left": 305,
+          "right": 374,
+          "top": 94,
+          "bottom": 139,
+          "width": 69,
+          "height": 45
+        },
+        ".author": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 93,
+          "bottom": 140,
+          "width": 358,
+          "height": 47
+        },
+        ".acol": {
+          "id": "",
+          "dataset": {},
+          "left": 72,
+          "right": 296,
+          "top": 94.3515625,
+          "bottom": 138.6484375,
+          "width": 224,
+          "height": 44.296875
+        },
+        ".atime": {
+          "id": "",
+          "dataset": {},
+          "left": 72,
+          "right": 296,
+          "top": 122.1484375,
+          "bottom": 138.6484375,
+          "width": 224,
+          "height": 16.5
+        },
+        ".aname": {
+          "id": "",
+          "dataset": {},
+          "left": 72,
+          "right": 296,
+          "top": 94.3515625,
+          "bottom": 119.1484375,
+          "width": 224,
+          "height": 24.796875
+        },
+        ".post-copy": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 140,
+          "bottom": 315.59375,
+          "width": 358,
+          "height": 175.59375
+        },
+        ".post-text": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 184.09375,
+          "bottom": 266.59375,
+          "width": 358,
+          "height": 82.5
+        },
+        ".post-footer": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 270.59375,
+          "bottom": 315.59375,
+          "width": 358,
+          "height": 45
+        },
+        ".ptags": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 321,
+          "top": 284.84375,
+          "bottom": 301.34375,
+          "width": 305,
+          "height": 16.5
+        },
+        ".react-report": {
+          "id": "",
+          "dataset": {},
+          "left": 329,
+          "right": 374,
+          "top": 270.59375,
+          "bottom": 315.59375,
+          "width": 45,
+          "height": 45
+        }
+      },
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/me/notifications/index",
+      "state": "pantry-reminder",
+      "rects": {
+        ".ncard": {
+          "id": "",
+          "dataset": {
+            "id": 9001
+          },
+          "left": 23,
+          "right": 367,
+          "top": 301.390625,
+          "bottom": 459.140625,
+          "width": 344,
+          "height": 157.75
+        },
+        ".nhead": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 354,
+          "top": 314.390625,
+          "bottom": 353.140625,
+          "width": 318,
+          "height": 38.75
+        },
+        ".nt-h3": {
+          "id": "",
+          "dataset": {},
+          "left": 76,
+          "right": 296.9140625,
+          "top": 314.390625,
+          "bottom": 336.140625,
+          "width": 220.9140625,
+          "height": 21.75
+        },
+        ".nt-body": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 354,
+          "top": 361.140625,
+          "bottom": 400.140625,
+          "width": 318,
+          "height": 39
+        },
+        ".nfoot": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 354,
+          "top": 406.140625,
+          "bottom": 452.140625,
+          "width": 318,
+          "height": 46
+        },
+        ".nbtn": {
+          "id": "",
+          "dataset": {
+            "id": 9001
+          },
+          "left": 289,
+          "right": 354,
+          "top": 407.140625,
+          "bottom": 452.140625,
+          "width": 65,
+          "height": 45
+        },
+        ".nread-state": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 65,
+          "top": 421.890625,
+          "bottom": 437.390625,
+          "width": 29,
+          "height": 15.5
+        },
+        ".reddot": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 41,
+          "top": 427.140625,
+          "bottom": 432.140625,
+          "width": 5,
+          "height": 5
+        },
+        ".nt-time": {
+          "id": "",
+          "dataset": {},
+          "left": 303.9140625,
+          "right": 354,
+          "top": 314.390625,
+          "bottom": 331.390625,
+          "width": 50.0859375,
+          "height": 17
+        },
+        ".nt": {
+          "id": "",
+          "dataset": {},
+          "left": 76,
+          "right": 296.9140625,
+          "top": 314.390625,
+          "bottom": 353.140625,
+          "width": 220.9140625,
+          "height": 38.75
+        }
+      },
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/me/notifications/index",
+      "state": "large-long-text",
+      "rects": {
+        ".ncard": {
+          "id": "",
+          "dataset": {
+            "id": 9001
+          },
+          "left": 23,
+          "right": 367,
+          "top": 316.0859375,
+          "bottom": 530.6015625,
+          "width": 344,
+          "height": 214.515625
+        },
+        ".nhead": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 354,
+          "top": 329.0859375,
+          "bottom": 400.6015625,
+          "width": 318,
+          "height": 71.515625
+        },
+        ".nt-h3": {
+          "id": "",
+          "dataset": {},
+          "left": 76,
+          "right": 281.890625,
+          "top": 329.0859375,
+          "bottom": 379.1015625,
+          "width": 205.890625,
+          "height": 50.015625
+        },
+        ".nt-body": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 354,
+          "top": 408.6015625,
+          "bottom": 471.6015625,
+          "width": 318,
+          "height": 63
+        },
+        ".nfoot": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 354,
+          "top": 477.6015625,
+          "bottom": 523.6015625,
+          "width": 318,
+          "height": 46
+        },
+        ".nbtn": {
+          "id": "",
+          "dataset": {
+            "id": 9001
+          },
+          "left": 277,
+          "right": 354,
+          "top": 478.6015625,
+          "bottom": 523.6015625,
+          "width": 77,
+          "height": 45
+        },
+        ".nread-state": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 71,
+          "top": 491.0234375,
+          "bottom": 511.171875,
+          "width": 35,
+          "height": 20.1484375
+        },
+        ".reddot": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 41,
+          "top": 498.59375,
+          "bottom": 503.59375,
+          "width": 5,
+          "height": 5
+        },
+        ".nt-time": {
+          "id": "",
+          "dataset": {},
+          "left": 288.890625,
+          "right": 354,
+          "top": 329.0859375,
+          "bottom": 350.5859375,
+          "width": 65.109375,
+          "height": 21.5
+        },
+        ".nt": {
+          "id": "",
+          "dataset": {},
+          "left": 76,
+          "right": 281.890625,
+          "top": 329.0859375,
+          "bottom": 400.6015625,
+          "width": 205.890625,
+          "height": 71.515625
+        }
+      },
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/me/notifications/index",
+      "state": "read",
+      "rects": {
+        ".ncard": {
+          "id": "",
+          "dataset": {
+            "id": 9001
+          },
+          "left": 23,
+          "right": 367,
+          "top": 301.390625,
+          "bottom": 500.390625,
+          "width": 344,
+          "height": 199
+        },
+        ".nhead": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 354,
+          "top": 314.390625,
+          "bottom": 374.890625,
+          "width": 318,
+          "height": 60.5
+        },
+        ".nt-h3": {
+          "id": "",
+          "dataset": {},
+          "left": 76,
+          "right": 296.9140625,
+          "top": 314.390625,
+          "bottom": 357.890625,
+          "width": 220.9140625,
+          "height": 43.5
+        },
+        ".nt-body": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 354,
+          "top": 382.890625,
+          "bottom": 441.390625,
+          "width": 318,
+          "height": 58.5
+        },
+        ".nfoot": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 354,
+          "top": 447.390625,
+          "bottom": 493.390625,
+          "width": 318,
+          "height": 46
+        },
+        ".nbtn": {
+          "id": "",
+          "dataset": {
+            "id": 9001
+          },
+          "left": 289,
+          "right": 354,
+          "top": 448.390625,
+          "bottom": 493.390625,
+          "width": 65,
+          "height": 45
+        },
+        ".nread-state": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 56,
+          "top": 463.140625,
+          "bottom": 478.640625,
+          "width": 20,
+          "height": 15.5
+        },
+        ".reddot": null,
+        ".nt-time": {
+          "id": "",
+          "dataset": {},
+          "left": 303.9140625,
+          "right": 354,
+          "top": 314.390625,
+          "bottom": 331.390625,
+          "width": 50.0859375,
+          "height": 17
+        },
+        ".nt": {
+          "id": "",
+          "dataset": {},
+          "left": 76,
+          "right": 296.9140625,
+          "top": 314.390625,
+          "bottom": 374.890625,
+          "width": 220.9140625,
+          "height": 60.5
+        }
+      },
+      "passed": true
+    }
+  ],
+  "checkedAt": "2026-10-09T12:50:24.820Z",
+  "passed": true,
+  "source": "Native formal pages; temporary sample data restored; closed features kept closed; no business write APIs.",
+  "formalRoutes": 39
+}

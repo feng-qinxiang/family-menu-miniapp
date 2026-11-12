@@ -21,15 +21,8 @@
 .head {
   padding: 34rpx 0 12rpx;
 }
-.head .hero-ttl {
-  margin-top: 12rpx;
-  font-size: var(--fs-hero-lg);
-  line-height: 0.94;
-  letter-spacing: -4rpx;
-  font-weight: 900;
-}
 .head .lead {
-  margin-top: 22rpx;
+  margin-top: 16rpx;
   font-size: var(--fs-sub);
   line-height: 1.5;
   color: var(--mut-strong);
@@ -45,11 +38,10 @@
 }
 .strip .strip-e {
   font-family: var(--serif);
-  font-style: italic;
   font-size: var(--fs-mini);
   letter-spacing: 2rpx;
   font-weight: 700;
-  color: var(--gold);
+  color: var(--gold-on-dark);
 }
 .strip .strip-n {
   margin-top: 8rpx;
@@ -108,11 +100,13 @@
   border-radius: 50%;
 }
 .badge--live {
-  color: var(--pine);
+  color: var(--pine-ink);
   background: rgba(47, 74, 58, 0.1);
 }
 .badge--live .badge-dot {
-  background: var(--pine);
+  /* 跟徽章字同色：浅色档就是 --pine（不变）；lead 把字色换成 --pine-ink 后点自动跟上，
+     不用再单独追一处 background（按 color: 扫描替换时找不到它） */
+  background: currentColor;
   box-shadow: 0 0 0 5rpx rgba(47, 74, 58, 0.16);
 }
 .badge--warn {
@@ -120,7 +114,7 @@
   background: var(--pop-soft);
 }
 .badge--warn .badge-dot {
-  background: var(--pop);
+  background: var(--pop-fill);
 }
 .badge--gray {
   color: var(--mut-strong);
@@ -177,12 +171,23 @@
   bottom: -4rpx;
   width: 4rpx;
   margin-left: -2rpx;
-  background: var(--pop);
+  background: var(--pop-fill);
 }
 /* 生效中的订单：深色图标压在浅金底上 */
 .ocard-ic--gold .ocard-gift,
 .ocard-ic--gold .ocard-gift::before { border-color: var(--anchor); }
 .ocard-ic--gold .ocard-gift::after { background: var(--anchor); }
+/* 深色档：
+   1) 金底礼盒：--gold 翻成深金 #8a6a3a，--anchor 描边（深色档 #735a44）压上去只有 1.3:1。
+      改成跟着翻的浅色 --ink-deep（3.9:1），不依赖 --anchor 的深色取值
+   2) 「生效中」徽章底：写死的 10% 墨绿压在深色卡面上几乎看不出，换成会翻转的 --c-accent-soft。
+      徽章字色归 lead 的 --pine → --pine-ink 统一替换，这里不动 */
+@media (prefers-color-scheme: dark) {
+  .ocard-ic--gold .ocard-gift,
+  .ocard-ic--gold .ocard-gift::before { border-color: var(--ink-deep); }
+  .ocard-ic--gold .ocard-gift::after { background: var(--ink-deep); }
+  .badge--live { background: var(--c-accent-soft); }
+}
 .ocard-mid {
   flex: 1;
   min-width: 0;

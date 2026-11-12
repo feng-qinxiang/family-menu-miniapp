@@ -9,18 +9,17 @@ const {
   toggleCommunityLike
 } = require('../../utils/api');
 const { runGuarded, guard, release } = require('../../utils/interaction');
-const { chooseAndUpload } = require('../../utils/upload');
+const { chooseImage, uploadFile } = require('../../utils/upload');
 const { withTabSelect } = require('../../behaviors/tab-select');
 const { withScrollReveal } = require('../../behaviors/scroll-reveal');
-const { onPhotoError: markPhotoBroken } = require('../../utils/image');
+const { dishImageUrl, onPhotoError: markPhotoBroken } = require('../../utils/image');
 const { takePendingRecipe } = require('../../utils/post-share');
+const { avaTone } = require('../../utils/constants');
 
 const reportReasons = ['内容不实', '步骤不全', '疑似搬运', '其他'];
 // 信息流分页：后端 /api/community/posts 已支持 page/size（上限 50）
 const FEED_PAGE_SIZE = 20;
 
-// 头像撞色轮转（番茄红 / 深墨 / 松绿）
-const AVATAR_COLORS = ['#e8472a', '#3a2e23', '#2f4a3a', '#b08949'];
 // 热门话题：后端暂无话题接口，点击直接带关键词跳菜谱搜索（复用搜索页 keyword 参数）
 const HOT_TOPICS = [
   { tag: '今天吃什么' },
@@ -34,7 +33,7 @@ Page({
   onPhotoError(e) { markPhotoBroken(e, this); },
   data: {
     // 紧凑页头避让胶囊；兜底值与 utils/capsule.js 一致，量到真实值前不偏位
-    capsuleTop: 'calc(env(safe-area-inset-top) + 90rpx)',
+    capsuleTop: 'calc(env(safe-area-inset-top) + 178rpx)',
     capsuleRight: '96px',
     fontScale: 'normal',
     // 信息流回顶键（滚深出现）
@@ -47,7 +46,8 @@ Page({
     communitySummary: { postCount: 0, commentCount: 0, favoriteCount: 0 },
     postSubmitting: false,
     reportSubmitting: false,
-    favoriting: false,
+    // 翻页失败：页脚给重试（不再一直显示「上拉加载更多…」）
+    loadMoreFailed: false,
     reportReasons,
     activeReportReason: '内容不实',
     showReportSheet: false,
@@ -66,7 +66,7 @@ Page({
     // 入口（tabBar/首页/我的）已隐藏，但审核员可用页面路径直达，所以这里守一道。
     if (!features.COMMUNITY) { features.leaveToHome(); return; }
     const capsule = getCapsule();
-    this.setData({ capsuleTop: capsule.top, capsuleRight: capsule.right });
+    this.setData({ capsuleTop: capsule.bottom, capsuleRight: capsule.right });
     this.loadTopics();
   },
 
@@ -144,6 +144,7 @@ Page({
     this.setData({
       loadError: false,
       loading: false,
+      loadMoreFailed: false,
       posts,
       hasMore: posts.length >= FEED_PAGE_SIZE,
       communitySummary: this.buildCommunitySummary(posts)
@@ -154,6 +155,7 @@ Page({
   async loadMorePosts() {
     if (!this.data.hasMore || this._loadingMore || this.data.loading) return;
     this._loadingMore = true;
+    if (this.data.loadMoreFailed) this.setData({ loadMoreFailed: false });
     const next = (this._page || 1) + 1;
     try {
       const batch = this.normalizePosts(await getCommunityPosts(this.data.currentTag, next, FEED_PAGE_SIZE) || []);
@@ -161,17 +163,23 @@ Page({
         this.setData({ hasMore: false });
         return;
       }
-      const seen = new Set((this.data.posts || []).map((p) => p.id));
-      const merged = (this.data.posts || []).concat(batch.filter((p) => !seen.has(p.id)));
+      const current = this.data.posts || [];
+      const seen = new Set(current.map((p) => p.id));
+      const fresh = batch.filter((p) => !seen.has(p.id));
       this._page = next;
-      this.setData({
-        posts: merged,
+      // 只追加新的几条（posts[n+k]），不把已加载的整份列表再发一遍：翻到第 3 页时整份约 76KB
+      const patch = {
         hasMore: batch.length >= FEED_PAGE_SIZE,
-        communitySummary: this.buildCommunitySummary(merged)
-      });
+        communitySummary: this.buildCommunitySummary(current.concat(fresh))
+      };
+      fresh.forEach((p, k) => { patch[`posts[${current.length + k}]`] = p; });
+      // 新卡片要重新挂一次浮现监听（同 recipes 的 loadMore）：observeAll 只认挂监听时已在的节点，
+      // 不重挂的话第 2 页起的卡片一直停在 rv-hold（透明），看着像一片空白
+      this.setData(patch, () => withScrollReveal(this, { item: '.pcard' }));
     } catch (err) {
-      // 保留 hasMore，用户再滚一次即可重试
+      // 保留 hasMore；页脚改成「加载失败，点这里重试」，不再一直显示「上拉加载更多…」
       console.warn('community loadMore failed', err);
+      this.setData({ loadMoreFailed: true });
     } finally {
       this._loadingMore = false;
     }
@@ -186,17 +194,17 @@ Page({
   },
 
   normalizePosts(posts) {
-    return (posts || []).map((post, index) => {
+    return (posts || []).map((post) => {
       const recipe = post.recipe || null;
-      const recipeImg = recipe && recipe.coverImage ? recipe.coverImage : '';
-      const images = Array.isArray(post.images) ? post.images.filter(Boolean) : [];
+      const recipeImg = dishImageUrl(recipe && recipe.coverImage ? recipe.coverImage : '');
+      const images = Array.isArray(post.images) ? post.images.filter(Boolean).map(dishImageUrl) : [];
       // 以前这里按 index 轮播本地菜品图：用户会把它当成邻居家的实拍，属于伪造内容。
-      // 无图就交给 wxml 的占位块，只保留「本帖关联菜谱」自己的封面。
+      // 实拍只展示帖图；关联菜谱封面只在菜谱卡里展示，避免冒充作者作品。
       return {
         ...post,
         authorInitial: post.author ? post.author.slice(0, 1) : '匿',
-        avatarColor: AVATAR_COLORS[index % AVATAR_COLORS.length],
-        photo: images[0] || recipeImg || '',
+        authorTone: avaTone(post.author),
+        photo: images[0] || '',
         imageCount: images.length,
         recipeThumb: recipeImg,
         tags: Array.isArray(post.tags) ? post.tags : [],
@@ -262,70 +270,75 @@ Page({
     wx.navigateTo({ url: `/pkg-extra/recipe-detail/index?id=${recipeId}` });
   },
 
+  // 按 id 现找下标：请求在途时列表可能被刷新/翻页过，不能用点击那一刻的下标
+  postIndex(id) {
+    return (this.data.posts || []).findIndex((p) => String(p.id) === String(id));
+  },
+
+  // 用服务端回来的一条换掉本地那条，只发 posts[i]（原来整份列表重发，翻到第 3 页一次约 150KB）。
+  replacePost(updated) {
+    const i = this.postIndex(updated && updated.id);
+    if (i < 0) return;
+    const next = this.normalizePosts([updated])[0];
+    this.setData({ [`posts[${i}]`]: next });
+  },
+
   // 点赞：先本地乐观翻转（跟手），失败回滚；在途期间忽略重复点击
   async toggleLike(event) {
     const { id } = event.currentTarget.dataset;
     if (!id) return;
     const key = `like-${id}`;
     if (!guard(this, key)) return;
-    const before = this.data.posts;
-    const target = before.find((p) => String(p.id) === String(id));
-    if (!target) {
+    const i = this.postIndex(id);
+    if (i < 0) {
       release(this, key);
       return;
     }
-    const optimistic = before.map((p) => (
-      String(p.id) === String(id)
-        ? {
-          ...p,
-          liked: !p.liked,
-          likeCount: Math.max(0, (p.likeCount || 0) + (p.liked ? -1 : 1))
-        }
-        : p
-    ));
-    this.setData({ posts: optimistic });
+    const { liked, likeCount } = this.data.posts[i];
+    this.setData({
+      [`posts[${i}].liked`]: !liked,
+      [`posts[${i}].likeCount`]: Math.max(0, (likeCount || 0) + (liked ? -1 : 1))
+    });
+    // 只回滚这一条的赞：整份列表回滚会把期间别的帖子的操作一起冲掉
+    const rollback = () => {
+      const j = this.postIndex(id);
+      if (j >= 0) this.setData({ [`posts[${j}].liked`]: liked, [`posts[${j}].likeCount`]: likeCount });
+    };
     try {
       const updated = await toggleCommunityLike(id);
       if (!updated) {
         // 服务端没返回可用数据时同样要回滚，否则本地与服务端不一致
-        this.setData({ posts: before });
+        rollback();
         return;
       }
-      const normalizedUpdated = this.normalizePosts([updated])[0];
-      this.setData({
-        posts: this.data.posts.map((p) => (
-          String(p.id) === String(normalizedUpdated.id) ? normalizedUpdated : p
-        ))
-      });
+      this.replacePost(updated);
     } catch (err) {
-      this.setData({ posts: before });
+      rollback();
       wx.showToast({ title: '点赞失败，请重试', icon: 'none' });
     } finally {
       release(this, key);
     }
   },
 
+  // 按帖子分开防重：原来全页共用一个 favoriting，A 帖在途时点 B 帖会被静默忽略
   async toggleFavorite(event) {
-    if (this.data.favoriting) return;
     const { id } = event.currentTarget.dataset;
+    if (!id) return;
+    const key = `fav-${id}`;
+    if (!guard(this, key)) return;
     let updated;
     try {
-      this.setData({ favoriting: true });
       updated = await toggleCommunityFavorite(id);
     } catch (err) {
-      this.setData({ favoriting: false });
       wx.showToast({ title: '操作失败，请重试', icon: 'none' });
       return;
+    } finally {
+      release(this, key);
     }
-    this.setData({ favoriting: false });
     if (!updated) {
       return;
     }
-    const normalizedUpdated = this.normalizePosts([updated])[0];
-    const posts = this.data.posts.map((post) => (
-      String(post.id) === String(normalizedUpdated.id) ? normalizedUpdated : post
-    ));
-    this.setData({ posts });
+    this.replacePost(updated);
     wx.showToast({ title: updated.favorited ? '已收藏' : '已取消收藏', icon: 'none' });
   },
 
@@ -341,7 +354,13 @@ Page({
     if (!id) {
       return;
     }
-    this.setData({ reportTargetId: id, showReportSheet: true });
+    // 换了一篇帖子就清掉上一篇没提交的举报理由和说明；同一篇关了再开，保留刚才写的
+    const patch = { reportTargetId: id, showReportSheet: true };
+    if (String(id) !== String(this.data.reportTargetId)) {
+      patch.reportDesc = '';
+      patch.activeReportReason = '内容不实';
+    }
+    this.setData(patch);
   },
 
   closeReportSheet() {
@@ -395,23 +414,33 @@ Page({
     this.setData({ [`postForm.${field}`]: e.detail.value });
   },
 
-  // 配图：最多 6 张，走全站上传通道（/api/upload，已压缩），传完存绝对 URL
+  // 配图：最多 6 张，走全站上传通道（/api/upload，已压缩），传完存绝对 URL。
+  // 整段（选图+上传）防重：两批并发时都拿旧数组去拼，后完成的会覆盖先完成的。
+  // loading 只罩上传那一段（同 recipe-edit 的 _uploadTemp），不压在相册和隐私弹窗上。
   async addPostImages() {
-    const current = this.data.postForm.images || [];
-    const left = 6 - current.length;
+    if (this._uploadingImages) return;
+    const left = 6 - (this.data.postForm.images || []).length;
     if (left <= 0) {
       wx.showToast({ title: '最多 6 张图片', icon: 'none' });
       return;
     }
-    const uploaded = await chooseAndUpload(left);
-    const picked = uploaded || [];
-    const added = picked.filter(Boolean);
-    if (!added.length) {
-      // picked 非空说明用户确实选了图却一张都没传上去；空数组才是取消选图
-      if (picked.length) wx.showToast({ title: '图片上传失败，请重试', icon: 'none' });
-      return;
+    this._uploadingImages = true;
+    try {
+      const paths = await chooseImage(left);
+      if (!paths.length) return; // 用户取消选图，不提示
+      wx.showLoading({ title: '上传中', mask: true });
+      const added = (await Promise.all(paths.map((p) => uploadFile(p)))).filter(Boolean);
+      wx.hideLoading();
+      if (!added.length) {
+        wx.showToast({ title: '图片上传失败，请重试', icon: 'none' });
+        return;
+      }
+      // 上传完再读一次当前图片，不用选图前的快照
+      const current = this.data.postForm.images || [];
+      this.setData({ 'postForm.images': current.concat(added).slice(0, 6) });
+    } finally {
+      this._uploadingImages = false;
     }
-    this.setData({ 'postForm.images': current.concat(added).slice(0, 6) });
   },
 
   removePostImage(e) {
@@ -425,6 +454,11 @@ Page({
 
   async submitPost() {
     if (this.data.postSubmitting) return;
+    // 配图还在传：现在发出去会丢掉这批图
+    if (this._uploadingImages) {
+      wx.showToast({ title: '图片还在上传，请稍候', icon: 'none' });
+      return;
+    }
     const { title, content, tagsText, recipeId } = this.data.postForm;
     if (!title.trim()) {
       wx.showToast({ title: '请输入标题', icon: 'none' });
@@ -448,7 +482,8 @@ Page({
       });
     } catch (err) {
       this.setData({ postSubmitting: false });
-      wx.showToast({ title: '发布失败，请重试', icon: 'none' });
+      // api 层已经弹过服务端原文（如「标题含违规词」），用同一句，不拿通用文案盖掉
+      wx.showToast({ title: (err && err.message) || '发布失败，请重试', icon: 'none' });
       return;
     }
     this.setData({ showPostForm: false, postForm: { title: '', content: '', tagsText: '', images: [], recipeId: 0, recipeTitle: '' }, postSubmitting: false });

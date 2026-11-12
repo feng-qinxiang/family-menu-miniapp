@@ -1,0 +1,39 @@
+{
+  "checkedAt": "2026-10-11T13:08:51.925710+00:00",
+  "passed": true,
+  "checks": [
+    {
+      "tool": "compile_wxml",
+      "file": "pages/recipes/index.wxml",
+      "sha256": "d759eedd750f01a952bb6f46658327cb2da8c147166c38eaf99e816e70f75eb2",
+      "result": {
+        "ok": true,
+        "tool": "compile_wxml",
+        "clientName": "Codex",
+        "result": {
+          "success": true,
+          "codeLength": 33293
+        }
+      }
+    },
+    {
+      "tool": "compile_wxss",
+      "file": "pages/recipes/index.wxss",
+      "sha256": "fa406b5fa935da65b820c78fcee1f47216b3c4c28012fe65735eeb4f729cd370",
+      "result": {
+        "ok": true,
+        "tool": "compile_wxss",
+        "clientName": "Codex",
+        "result": {
+          "success": true,
+          "files": 2,
+          "fileList": [
+            "comm",
+            "page"
+          ],
+          "totalCodeLength": 38994
+        }
+      }
+    }
+  ]
+}

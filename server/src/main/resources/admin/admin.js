@@ -221,12 +221,16 @@
 
   // ==================== 手写图表 ====================
 
+  /**
+   * 纵轴顶值：永远是「整数刻度 × 4」。图上固定画 4 格，顶值不是 4 的倍数时
+   * 每格是小数，四舍五入后刻度就成了 5 / 4 / 3 / 1 / 0 —— 间距相等、数字不等。
+   */
   function niceCeil(v) {
-    if (v <= 5) return 5;
-    var mag = Math.pow(10, Math.floor(Math.log(v) / Math.LN10));
-    var norm = v / mag;
-    var step = norm <= 1 ? 1 : norm <= 2 ? 2 : norm <= 5 ? 5 : 10;
-    return step * mag;
+    var raw = Math.max(1, v / 4);
+    var mag = Math.pow(10, Math.floor(Math.log(raw) / Math.LN10));
+    var norm = raw / mag;
+    var step = norm <= 1 ? 1 : norm <= 2 ? 2 : (norm <= 2.5 && mag >= 10) ? 2.5 : norm <= 5 ? 5 : 10;
+    return step * mag * 4;
   }
 
   function sparkline(values, color, w, h) {
@@ -576,8 +580,8 @@
       items: [
         { key: 'families', label: '家庭与成员', icon: 'home', perm: 'USER_VIEW', desc: '家庭、成员、菜单与库存总览（只读）' },
         { key: 'menus', label: '今日菜单', icon: 'book', perm: 'USER_VIEW', desc: '各家庭每天点了什么菜（只读）' },
-        { key: 'shopping', label: '购物清单', icon: 'cart', perm: 'USER_VIEW', desc: '各家庭买菜进度（只读）' },
-        { key: 'pantry', label: '家庭库存', icon: 'box', perm: 'USER_VIEW', desc: '各家庭现有食材' }
+        { key: 'shopping', label: '买菜清单', icon: 'cart', perm: 'USER_VIEW', desc: '各家庭买菜进度（只读）' },
+        { key: 'pantry', label: '冰箱库存', icon: 'box', perm: 'USER_VIEW', desc: '各家庭现有食材' }
       ]
     },
     {
@@ -977,7 +981,7 @@
 
     var kpis = '<div class="kpi-grid">' +
       kpi('用户总数', fmtNum(d.userCount), 'newUsers', 'newUsers', false, 'users') +
-      kpi('家庭总数', fmtNum(d.familyCount), '', '', false, 'families') +
+      kpi('家庭总数', fmtNum(d.familyCount), 'newFamilies', 'newFamilies', false, 'families') +
       kpi('已发布帖子', fmtNum(d.postCount), 'newPosts', 'newPosts', false, 'posts', 'APPROVED') +
       kpi('已支付订单', fmtNum(d.paidOrderCount), 'paidOrders', 'paidOrders', false, 'orders', 'PAID') +
       kpi('累计收入', fmtMoney(d.paidRevenueFen), 'revenueFen', 'revenueFen', true, 'orders', 'PAID') +
@@ -1105,7 +1109,7 @@
       bulkBarHtml('reports', pickedCount) + '</div>' +
       '<table><thead><tr><th class="pick"><input type="checkbox" data-checkall="reports" aria-label="全选本页" /></th>' +
       '<th class="num">举报 ID</th><th>帖子（含作者）</th><th>原因</th><th>说明</th><th>举报人</th>' +
-      '<th>状态</th><th>时间</th><th>操作</th></tr></thead><tbody>' + body + '</tbody></table></div>';
+      '<th>状态</th><th>时间</th><th class="actions">操作</th></tr></thead><tbody>' + body + '</tbody></table></div>';
   }
 
   function reviewReport(reportId, status) {
@@ -1181,7 +1185,7 @@
       bulkBarHtml('posts', pickedCount) + '</div>' +
       '<table><thead><tr><th class="pick"><input type="checkbox" data-checkall="posts" aria-label="全选本页" /></th>' +
       '<th class="num">帖子 ID</th><th>标题</th><th>作者</th><th>状态</th><th class="num">赞</th>' +
-      '<th class="num">评论</th><th>时间</th><th>操作</th></tr></thead><tbody>' + body + '</tbody></table></div>';
+      '<th class="num">评论</th><th>时间</th><th class="actions">操作</th></tr></thead><tbody>' + body + '</tbody></table></div>';
   }
 
   function setPostStatus(postId, status) {
@@ -1265,7 +1269,7 @@
       bulkBarHtml('comments', pickedCount) + '</div>' +
       '<table><thead><tr><th class="pick"><input type="checkbox" data-checkall="comments" aria-label="全选本页" /></th>' +
       '<th class="num">评论 ID</th><th>帖子</th><th>作者</th><th>内容</th><th>状态</th>' +
-      '<th>时间</th><th>操作</th></tr></thead><tbody>' + body + '</tbody></table>' +
+      '<th>时间</th><th class="actions">操作</th></tr></thead><tbody>' + body + '</tbody></table>' +
       pagerHtml('comments', state.commentPage, state.commentSize, state.commentTotal) + '</div>';
   }
 
@@ -1333,7 +1337,7 @@
     setPageHeader(rows.length + ' 条');
     $('panelRoot').innerHTML = '<div class="card">' + head +
       '<table><thead><tr><th class="num">菜谱 ID</th><th>标题</th><th>作者</th><th>菜系</th><th class="num">耗时</th>' +
-      '<th>状态</th><th>创建时间</th><th>操作</th></tr></thead><tbody>' + body + '</tbody></table></div>';
+      '<th>状态</th><th>创建时间</th><th class="actions">操作</th></tr></thead><tbody>' + body + '</tbody></table></div>';
   }
 
   /** 菜谱详情弹窗：运营下架前核对完整食材与步骤（之前只能看到列表摘要） */
@@ -1490,7 +1494,7 @@
     setPageHeader('共 ' + fmtNum(state.feedbackTotal) + ' 条');
     $('panelRoot').innerHTML = '<div class="card">' + head +
       '<table><thead><tr><th class="num">工单号</th><th>用户</th><th>类型</th><th>内容</th><th>联系方式</th>' +
-      '<th>状态</th><th>时间</th><th>操作</th></tr></thead><tbody>' + body + '</tbody></table>' +
+      '<th>状态</th><th>时间</th><th class="actions">操作</th></tr></thead><tbody>' + body + '</tbody></table>' +
       pagerHtml('feedback', state.feedbackPage, state.feedbackSize, state.feedbackTotal) + '</div>';
   }
 
@@ -1551,7 +1555,7 @@
     setPageHeader(rows.length + ' 条');
     $('panelRoot').innerHTML = '<div class="card">' + head +
       '<table><thead><tr><th class="num">导入 ID</th><th>类型</th><th>来源链接</th><th>内容摘要</th><th>状态</th>' +
-      '<th>时间</th><th>操作</th></tr></thead><tbody>' + body + '</tbody></table></div>';
+      '<th>时间</th><th class="actions">操作</th></tr></thead><tbody>' + body + '</tbody></table></div>';
   }
 
   function reviewImport(id, status) {
@@ -1650,7 +1654,7 @@
     setPageHeader('共 ' + fmtNum(p.total) + ' 个家庭');
     $('panelRoot').innerHTML = '<div class="card">' + head +
       '<table><thead><tr><th class="num">家庭 ID</th><th>家庭</th><th>创建者</th><th class="num">成员</th>' +
-      '<th class="num">菜谱</th><th class="num">菜单</th><th>创建时间</th><th>操作</th></tr></thead><tbody>' + body +
+      '<th class="num">菜谱</th><th class="num">菜单</th><th>创建时间</th><th class="actions">操作</th></tr></thead><tbody>' + body +
       '</tbody></table>' + pagerHtml('families', p.page, p.size, p.total) + '</div>';
   }
 
@@ -1702,7 +1706,7 @@
             '<div class="grow"><div class="title">' + escapeHtml(String(s.menuDate || '未关联菜单')) + ' 的清单</div>' +
             '<div class="sub">已购 ' + fmtNum(s.purchasedCount) + ' / ' + fmtNum(s.totalCount) + ' 项</div></div>' +
             '<div class="side">' + escapeHtml(LIST_STATUS[s.status] || s.status || '') + '<br>' + fmtTime(s.createdAt) + '</div></div>';
-        }).join('') || '<div class="empty">还没有购物清单</div>';
+        }).join('') || '<div class="empty">还没有买菜清单</div>';
 
         var pantry = (d.pantry || []).map(function (i) {
           var exp = pantryExpiry(i.expiresAt);
@@ -1721,8 +1725,8 @@
           body:
             '<div class="rd-sec"><h4>成员（' + fmtNum(groups) + '）</h4><div class="row-list">' + members + '</div></div>' +
             '<div class="rd-sec"><h4>最近菜单</h4><div class="row-list">' + menus + '</div></div>' +
-            '<div class="rd-sec"><h4>购物清单</h4><div class="row-list">' + shopping + '</div></div>' +
-            '<div class="rd-sec"><h4>库存</h4><div class="row-list">' + pantry + '</div></div>' +
+            '<div class="rd-sec"><h4>买菜清单</h4><div class="row-list">' + shopping + '</div></div>' +
+            '<div class="rd-sec"><h4>冰箱库存</h4><div class="row-list">' + pantry + '</div></div>' +
             '<p class="muted" style="margin-top:16px">本页只读：需要改动请让用户在小程序里操作。</p>'
         });
       })
@@ -1824,15 +1828,16 @@
         '<td><button class="btn small" data-famdetail="' + escapeHtml(String(s.familyId)) + '">' +
           escapeHtml(s.familyName || ('家庭 #' + s.familyId)) + '</button></td>' +
         '<td class="num">' + escapeHtml(String(s.menuDate || '—')) + '</td>' +
-        '<td><span class="pill ' + (done ? 'ok' : 'pending') + '">' + (done ? '已买齐' : '待购买') + '</span></td>' +
+        '<td><span class="pill ' + (done ? 'ok' : (total ? 'pending' : '')) + '">' +
+          (done ? '已买齐' : (total ? '待购买' : '空清单')) + '</span></td>' +
         '<td class="num">' + fmtNum(bought) + ' / ' + fmtNum(total) + '</td>' +
         '<td><span class="pill ' + (s.status === 'OPEN' ? 'info' : '') + '">' +
           escapeHtml(LIST_STATUS[s.status] || s.status || '') + '</span></td>' +
         '<td class="nowrap" title="' + escapeHtml(s.createdAt || '') + '">' + fmtTime(s.createdAt) + '</td></tr>';
     }).join('') : tableEmpty(7, {
       icon: 'cart',
-      title: '没有购物清单',
-      desc: '家庭在小程序「今天买菜」页里生成清单后会出现在这里。清除日期筛选可以看全部。'
+      title: '没有买菜清单',
+      desc: '家庭在小程序「买菜清单」页里生成清单后会出现在这里。清除日期筛选可以看全部。'
     });
     setPageHeader('共 ' + fmtNum(p.total) + ' 张清单');
     $('panelRoot').innerHTML = '<div class="card">' + head +
@@ -1857,7 +1862,7 @@
   function renderPantry() {
     var p = state.pantry;
     var rows = p.items || [];
-    var head = pageHead('家庭现有食材与保质期；过期的会标红，方便解释"为什么推荐里没有这道菜"',
+    var head = pageHead('家庭现有食材与保质期；过期的会标红，方便解释「为什么推荐里没有这道菜」',
       '<button class="btn small" id="exportPantry">导出 Excel</button>') +
       toolbar(searchBoxHtml('pantrySearch', '搜食材 / 家庭名', state.pantryKeyword, 'pantrySearchBtn'));
     var body = rows.length ? rows.map(function (i) {
@@ -1881,7 +1886,7 @@
     setPageHeader('共 ' + fmtNum(p.total) + ' 项食材');
     $('panelRoot').innerHTML = '<div class="card">' + head +
       '<table><thead><tr><th class="num">库存 ID</th><th>家庭</th><th>食材</th><th class="num">数量</th>' +
-      '<th class="num">保质期至</th><th>状态</th><th>登记时间</th><th>操作</th></tr></thead><tbody>' + body + '</tbody></table>' +
+      '<th class="num">保质期至</th><th>状态</th><th>登记时间</th><th class="actions">操作</th></tr></thead><tbody>' + body + '</tbody></table>' +
       pagerHtml('pantry', p.page, p.size, p.total) + '</div>';
   }
 
@@ -1944,7 +1949,7 @@
         '<td>' + (banned ? '<span class="pill bad">已封禁</span>' : '<span class="pill ok">正常</span>') + '</td>' +
         '<td class="nowrap" title="' + escapeHtml(u.createdAt || '') + '">' + fmtTime(u.createdAt) + '</td><td class="actions">' +
         (can('USER_MANAGE')
-          ? '<button class="btn small' + (u.admin ? ' danger' : '') + '" data-role="' + escapeHtml(String(u.userId)) + '"' +
+          ? '<button class="btn small" data-role="' + escapeHtml(String(u.userId)) + '"' +
               (self ? ' disabled title="不能修改自己的角色"' : '') + '>' +
               (u.admin ? '调整角色' : '设为管理员') + '</button>' +
             '<button class="btn small" data-vip="' + escapeHtml(String(u.userId)) + '">开通会员</button>' +
@@ -1957,7 +1962,7 @@
     setPageHeader('共 ' + fmtNum(p.total) + ' 个账号');
     $('panelRoot').innerHTML = '<div class="card">' + head +
       '<table><thead><tr>' + thSort('用户 ID', 'id', 'user', 'num') + '<th>用户</th><th>手机号</th><th>角色</th><th>状态</th>' +
-      thSort('注册时间', 'createdAt', 'user') + '<th>操作</th></tr></thead><tbody>' + body + '</tbody></table>' +
+      thSort('注册时间', 'createdAt', 'user') + '<th class="actions">操作</th></tr></thead><tbody>' + body + '</tbody></table>' +
       pagerHtml('users', p.page, p.size, p.total) + '</div>';
   }
 
@@ -2092,7 +2097,7 @@
     $('panelRoot').innerHTML = '<div class="card">' + head +
       '<table><thead><tr>' + thSort('订单 ID', 'id', 'order', 'num') + '<th>商户单号</th><th>用户</th><th>套餐</th>' +
       thSort('金额', 'amount', 'order', 'num') + '<th>状态</th><th>方式</th>' +
-      thSort('时间', 'createdAt', 'order') + '<th>操作</th></tr></thead><tbody>' + body + '</tbody></table>' +
+      thSort('时间', 'createdAt', 'order') + '<th class="actions">操作</th></tr></thead><tbody>' + body + '</tbody></table>' +
       pagerHtml('orders', state.orderPage, state.orderSize, state.orderTotal) + '</div>';
   }
 
@@ -2285,7 +2290,7 @@
             '<div class="modal-body">' + (cfg.body || '') + '</div>' +
             '<div class="modal-foot">' +
               (cfg.singleAction ? '' : '<button type="button" class="btn" data-modal-cancel>' + escapeHtml(cfg.cancelText || '取消') + '</button>') +
-              '<button type="button" class="btn ' + (cfg.danger ? 'danger-solid' : 'primary') + '" data-modal-confirm>' +
+              '<button type="button" class="btn ' + (cfg.danger ? 'danger-solid' : (cfg.singleAction ? '' : 'primary')) + '" data-modal-confirm>' +
                 escapeHtml(cfg.confirmText || '确定') + '</button>' +
             '</div>' +
           '</div>' +

@@ -1,0 +1,95 @@
+{
+  "checkedAt": "2026-10-08T23:54:24.303561+00:00",
+  "checks": [
+    {
+      "file": "static-check.js",
+      "passed": true,
+      "exitCode": 0,
+      "checkedAt": "2026-10-08T23:53:24.036049+00:00"
+    },
+    {
+      "file": "interaction-audit.js",
+      "passed": true,
+      "exitCode": 0,
+      "checkedAt": "2026-10-08T23:53:24.036049+00:00"
+    },
+    {
+      "file": "home-journey.test.js",
+      "passed": true,
+      "exitCode": 0
+    },
+    {
+      "file": "journey-navigation.test.js",
+      "passed": true,
+      "exitCode": 0
+    },
+    {
+      "file": "recipe-pick.test.js",
+      "passed": true,
+      "exitCode": 0,
+      "checkedAt": "2026-10-08T23:53:24.036049+00:00"
+    },
+    {
+      "file": "pantry-delete.test.js",
+      "passed": true,
+      "exitCode": 0
+    },
+    {
+      "file": "pantry-match.test.js",
+      "passed": true,
+      "exitCode": 0
+    },
+    {
+      "file": "cook-finish.test.js",
+      "passed": true,
+      "exitCode": 0
+    },
+    {
+      "file": "cook-consistency.test.js",
+      "passed": true,
+      "exitCode": 0
+    },
+    {
+      "file": "kitchen-logic.test.js",
+      "passed": true,
+      "exitCode": 0
+    }
+  ],
+  "passed": true,
+  "compile": {
+    "file": "polish-compile.json",
+    "passed": true,
+    "files": 21
+  },
+  "credentialScan": {
+    "sourcesChecked": 31,
+    "patternMatches": 0,
+    "matchedFiles": []
+  },
+  "gitDiffCheck": {
+    "passed": true
+  },
+  "nativeLayouts": {
+    "passed": true,
+    "screens": 40,
+    "checks": 67,
+    "evidence": [
+      {
+        "file": "polish-layouts.json",
+        "passed": true,
+        "screens": 17,
+        "checks": 44
+      },
+      {
+        "file": "polish-picker-layouts.json",
+        "passed": true,
+        "screens": 23,
+        "checks": 23
+      }
+    ]
+  },
+  "gallery": {
+    "file": "gallery-polish-evidence.json",
+    "passed": true
+  }
+}

@@ -1,16 +1,10 @@
 // pages/community/post-detail · 帖子详情（全新页）
 const features = require('../../../utils/features');
 const api = require('../../../utils/api');
-const { onPhotoError: markPhotoBroken } = require('../../../utils/image');
+const { dishImageUrl, onPhotoError: markPhotoBroken } = require('../../../utils/image');
+const { guard, release } = require('../../../utils/interaction');
+const { avaTone } = require('../../../utils/constants');
 
-// 头像底色循环（与设计稿一致的撞色梯度）
-const AVA_THEMES = ['lin', 'lan', 'zhao', 'gold', 'pine'];
-function avaTheme(seed) {
-  const s = String(seed || '');
-  let sum = 0;
-  for (let i = 0; i < s.length; i++) sum += s.charCodeAt(i);
-  return AVA_THEMES[sum % AVA_THEMES.length];
-}
 function avaText(name) {
   return name ? String(name).slice(0, 1) : '匿';
 }
@@ -22,29 +16,31 @@ function normalizePost(post) {
   // 邻居的分享就被显示成了不相干的一道菜——列表页已因同样的理由去掉过这个兜底
   // （见 pages/community/index.js 的 photo 注释），详情页漏改了。
   // 帖子自己上传的实拍图走 images 画廊渲染，不在这里冒充。
-  const cover = (post.recipe && post.recipe.coverImage) || '';
+  const cover = dishImageUrl((post.recipe && post.recipe.coverImage) || '');
   const paragraphs = String(post.content || '')
     .split(/\n+/)
     .map((t) => t.trim())
     .filter(Boolean);
-  const images = Array.isArray(post.images) ? post.images.filter(Boolean) : [];
+  const images = Array.isArray(post.images) ? post.images.filter(Boolean).map(dishImageUrl) : [];
   return {
     id: post.id,
     title: post.title || '未命名分享',
     author: post.author || '匿名厨友',
-    authorMeta: ((post.tags && post.tags[0]) ? post.tags[0] + ' · ' : '') + '美食分享',
-    avaTheme: avaTheme(post.author),
+    // 没有时间就不写占位语（原「家常分享」是凑数的副标题）
+    authorMeta: post.timeText || post.createdAt || '',
     avaText: avaText(post.author),
+    avaTone: avaTone(post.author),
     paragraphs: paragraphs.length ? paragraphs : [post.content || '暂无正文'],
     cover,
     images,
+    imageErrors: [],
     likeCount: post.likeCount || 0,
     liked: !!post.liked,
     favoriteCount: post.favoriteCount || 0,
     commentCount: post.commentCount || 0,
     favorited: !!post.favorited,
     tags: Array.isArray(post.tags) ? post.tags : [],
-    recipe: post.recipe || null,
+    recipe: post.recipe ? { ...post.recipe, coverImage: cover } : null,
     // 是否作者本人（作者才显示删帖入口）
     mine: !!post.mine,
     // 待审核中（仅作者本人可见阶段），标题旁加角标
@@ -57,8 +53,8 @@ function normalizeComment(c) {
     // 无真实 commentId 的兜底数据不可删（mine 也不会为 true）
     commentId: c.commentId || ('c-' + Math.random().toString(36).slice(2)),
     author: c.author || '匿名厨友',
-    avaTheme: avaTheme(c.author),
     avaText: avaText(c.author),
+    avaTone: avaTone(c.author),
     content: c.content || '',
     createdAt: c.createdAt || '刚刚',
     mine: !!c.mine,
@@ -74,11 +70,15 @@ Page({
     // 评论区回顶键（滚深出现）
     showBackTop: false,
     scrollTopTo: -1,
+    scrollIntoView: '',
+    photoIndex: 0,
     loading: true,
     loadError: false,
     loadErrorDesc: '',
     post: null,
     comments: [],
+    commentsError: false,
+    commentsLoading: false,
     commentText: '',
     submitting: false,
     favoriting: false,
@@ -136,8 +136,8 @@ Page({
         const patch = {};
         // 帖子恰好被下架/删除时不清空整屏——用户可能正看着它，
         // 交给下一次显式操作（回复/点赞）的失败回执处理。
-        if (raw) patch.post = normalizePost(raw);
-        if (Array.isArray(comments)) patch.comments = comments.map(normalizeComment);
+        if (raw) { patch.post = normalizePost(raw); patch.photoIndex = 0; }
+        if (Array.isArray(comments)) { patch.comments = comments.map(normalizeComment); patch.commentsError = false; }
         if (Object.keys(patch).length) this.setData(patch);
       })
       .catch(() => {});
@@ -150,7 +150,7 @@ Page({
       // 详情端点直取单帖；拉不到（已删/未过审/失效）与列表兜底失败同语义 → loadError。
       // 服务端对"作者看自己被下架的帖"会给出明确原因（该分享因违规已被下架），透传展示
       postId ? api.getCommunityPost(postId).catch((err) => ({ _err: err })) : Promise.resolve(null),
-      postId ? api.getCommunityComments(postId).catch(() => []) : Promise.resolve([])
+      postId ? api.getCommunityComments(postId).catch(() => null) : Promise.resolve([])
     ])
       // 禁用回调参数数组解构：编译依赖 @babel/runtime 辅助模块，未打包会整页白屏
       .then((loaded) => {
@@ -164,9 +164,15 @@ Page({
         this.setData({
           loading: false,
           loadError: !post,
-          loadErrorDesc: (err && err.message) || '',
+          // 只有 404（已删/下架/未过审）才是不可重试的「返回」；断网、5xx 等仍给「重新加载」
+          // 服务端只有「下架」那句是中文给用户看的；其余 404 是英文调试文案，换成中文
+          loadErrorDesc: err && err.status === 404
+            ? (/[\u4e00-\u9fa5]/.test(err.message) ? err.message : '这条分享已删除，或暂时不对外显示')
+            : '',
           post,
           comments: cmts,
+          commentsError: comments === null,
+          photoIndex: 0,
           postId: post ? post.id : postId
         });
       })
@@ -187,7 +193,7 @@ Page({
 
   backToTop() {
     // scroll-top 同值不触发滚动：0 与 0.1 交替，视觉无差
-    this.setData({ scrollTopTo: this.data.scrollTopTo === 0 ? 0.1 : 0 });
+    this.setData({ scrollIntoView: '', scrollTopTo: this.data.scrollTopTo === 0 ? 0.1 : 0 });
   },
 
   // 详情页可被分享出去，必须自带举报入口（微信对 UGC 页面的硬性要求）；
@@ -223,6 +229,27 @@ Page({
     this.setData({ commentText: e.detail.value });
   },
 
+  onPhotoChange(e) {
+    this.setData({ photoIndex: e.detail.current || 0 });
+  },
+
+  goComments() {
+    this.setData({ scrollIntoView: '' }, () => this.setData({ scrollIntoView: 'post-comments' }));
+  },
+
+  async retryComments() {
+    if (this.data.commentsLoading || !this.data.postId) return;
+    this.setData({ commentsLoading: true });
+    try {
+      const comments = await api.getCommunityComments(this.data.postId);
+      this.setData({ comments: (Array.isArray(comments) ? comments : []).map(normalizeComment), commentsError: false });
+    } catch (err) {
+      this.setData({ commentsError: true });
+    } finally {
+      this.setData({ commentsLoading: false });
+    }
+  },
+
   // 提交评论
   onSubmitComment() {
     const text = (this.data.commentText || '').trim();
@@ -254,9 +281,11 @@ Page({
   },
 
   // 收藏切换
-  // 点赞：先本地翻转，失败回滚（与列表页一致）
+  // 点赞：先本地翻转，失败回滚（与列表页一致）；在途期间忽略重复点击——
+  // 接口是切换语义，连点两次服务端回到原状，界面却会按两次响应来回跳
   onToggleLike() {
     if (!this.data.postId || !this.data.post) return;
+    if (!guard(this, 'like')) return;
     const before = this.data.post;
     const liked = !before.liked;
     const likeCount = Math.max(0, (before.likeCount || 0) + (liked ? 1 : -1));
@@ -276,7 +305,8 @@ Page({
       .catch(() => {
         this.setData({ post: before });
         this.showToast('点赞失败，请重试', 'error');
-      });
+      })
+      .finally(() => release(this, 'like'));
   },
 
   onToggleFavorite() {
@@ -318,7 +348,7 @@ Page({
     return {
       title: `${post.author || '厨友'}：${post.title || '家常分享'}`,
       path: `/pkg-extra/community/post-detail/index?postId=${this.data.postId || post.id || ''}`,
-      imageUrl: post.cover || ''
+      imageUrl: (post.images && post.images[0]) || post.cover || ''
     };
   },
 
@@ -336,20 +366,24 @@ Page({
   },
 
   // 作者删自己的帖子：确认后软删，返回上一页（列表页 onShow 会自动刷新）
+  // _deleting 挡连点（确认框弹两次会删两遍、各起一个返回计时器）；成功后不放，页面马上要走
   onDeletePost() {
-    if (!this.data.postId) return;
+    if (!this.data.postId || this._deleting) return;
+    this._deleting = true;
     wx.showModal({
       title: '删除这篇分享？',
       content: '删除后其他人将无法看到，自己也不能恢复',
       confirmText: '删除',
-      confirmColor: '#e8472a',
+      confirmColor: '#c8381f',
+      fail: () => { this._deleting = false; },
       success: (res) => {
-        if (!res.confirm) return;
+        if (!res.confirm) { this._deleting = false; return; }
         api
           .deleteCommunityPost(this.data.postId)
           .then(() => {
             this.showToast('已删除', 'top');
-            setTimeout(() => {
+            // 存起来、onUnload 清：用户这 600ms 里自己点了返回，计时器不能在上一页再退一层
+            this._navTimer = setTimeout(() => {
               const pages = getCurrentPages();
               if (pages && pages.length > 1) {
                 wx.navigateBack({ delta: 1, fail: () => {} });
@@ -358,9 +392,19 @@ Page({
               }
             }, 600);
           })
-          .catch(() => this.showToast('删除失败，请重试', 'error'));
+          .catch(() => {
+            this._deleting = false;
+            this.showToast('删除失败，请重试', 'error');
+          });
       }
     });
+  },
+
+  onUnload() {
+    if (this._navTimer) {
+      clearTimeout(this._navTimer);
+      this._navTimer = null;
+    }
   },
 
   // 评论者删自己的评论：确认后软删，本地同步移除并回补计数
@@ -371,7 +415,7 @@ Page({
       title: '删除这条评论？',
       content: '删除后不可恢复',
       confirmText: '删除',
-      confirmColor: '#e8472a',
+      confirmColor: '#c8381f',
       success: (res) => {
         if (!res.confirm) return;
         api

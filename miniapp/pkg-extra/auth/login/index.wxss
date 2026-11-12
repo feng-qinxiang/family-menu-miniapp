@@ -57,7 +57,7 @@
   width: 77rpx;
   height: 77rpx;
   border-radius: 25rpx;
-  background: var(--pop);
+  background: var(--pop-fill);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -71,7 +71,6 @@
 .brandbar .bt { color: var(--anchor-contrast); display: flex; flex-direction: column; }
 .brandbar .bt .en {
   font-family: var(--serif);
-  font-style: italic;
   font-size: var(--fs-mini);
   letter-spacing: 3rpx;
   opacity: 0.85;
@@ -95,12 +94,11 @@
 .hero-body .tag {
   display: inline-block;
   font-family: var(--serif);
-  font-style: italic;
   font-size: var(--fs-cap);
   letter-spacing: 3rpx;
   font-weight: 700;
   color: var(--anchor-contrast);
-  background: var(--pop);
+  background: var(--pop-fill);
   padding: 11rpx 27rpx;
   border-radius: var(--r-xs);
 }
@@ -113,16 +111,10 @@
   line-height: 1.06;
   letter-spacing: -6rpx;
   margin: 30rpx 0 26rpx;
-  -webkit-text-stroke: 3rpx var(--c-surface);
+  /* 照片上的浅色字：描边要恒浅，--c-surface 深色档会变成深灰边 */
+  -webkit-text-stroke: 3rpx var(--anchor-contrast);
 }
 .hero-title .br { display: block; height: 0; }
-.slogan {
-  font-size: calc(32rpx * var(--fs-mul, 1));
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.9);
-  letter-spacing: 1rpx;
-}
-.slogan .pop { color: var(--pop); font-weight: 800; }
 
 /* ============ Sheet ============ */
 .sheet {
@@ -135,10 +127,16 @@
 }
 
 /* 微信登录主按钮（复用 .btn-wx 全局基色，本页扩展尺寸/阴影） */
-.login-wx {
+/* 微信内置 button:not([size=mini]) 固定 184px 宽，单类名压不过（实测只有 184px、居中，
+   比下面的手机号按钮窄一截）：带上父级提高优先级才能撑满 */
+.sheet .login-wx {
   width: 100%;
-  border-radius: 35rpx;
-  padding: 33rpx;
+  margin-left: 0;
+  margin-right: 0;
+}
+.login-wx {
+  border-radius: var(--r-card);
+  padding: 33rpx 0;
   font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
   letter-spacing: 1rpx;
@@ -159,8 +157,8 @@
   background: var(--c-surface);
   color: var(--ink-deep);
   border: 3rpx solid var(--paper-2);
-  border-radius: 35rpx;
-  padding: 31rpx;
+  border-radius: var(--r-card);
+  padding: 31rpx 0;
   font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
   display: flex;
@@ -191,7 +189,6 @@
 .divider-deco .ln { flex: 1; height: 2rpx; background: var(--c-border); }
 .divider-deco .dt {
   font-family: var(--serif);
-  font-style: italic;
   font-size: var(--fs-cap);
   letter-spacing: 2rpx;
   color: var(--gold-deep);
@@ -211,7 +208,9 @@
   justify-content: center;
   background: var(--pop-soft);
 }
-.trust .tic-glyph { font-size: calc(36rpx * var(--fs-mul, 1)); }
+/* 图标文件的描边色不统一（浅米 / 深棕），先压成纯黑再靠透明度落到墨色 */
+.trust .tic-ic { width: 38rpx; height: 38rpx; filter: brightness(0); opacity: .72; }
+@media (prefers-color-scheme: dark) { .trust .tic-ic { filter: brightness(0) invert(1); } }
 .trust .ttx { display: flex; flex-direction: column; }
 .trust .ttx .th {
   font-size: calc(28rpx * var(--fs-mul, 1));
@@ -233,12 +232,13 @@
   margin-top: 50rpx;
   padding: 0 8rpx;
 }
+/* 整行都能点（.agree 上有 bindtap），方框只负责「看得出勾没勾」：原 64rpx 比旁边两行小字还高 */
 .agree .box {
-  width: 64rpx;
-  height: 64rpx;
+  width: 40rpx;
+  height: 40rpx;
   flex: none;
-  margin-top: 2rpx;
-  border-radius: 12rpx;
+  margin-top: 0;
+  border-radius: 10rpx;
   border: 3rpx solid var(--line-deep);
   background: transparent;
   display: flex;
@@ -246,8 +246,8 @@
   justify-content: center;
 }
 .agree .box.on {
-  background: var(--pop);
-  border-color: var(--pop);
+  background: var(--pop-fill);
+  border-color: var(--pop-fill);
 }
 .agree .box .check { color: var(--anchor-contrast); font-size: calc(25rpx * var(--fs-mul, 1)); font-weight: 900; }
 .agree .tx {

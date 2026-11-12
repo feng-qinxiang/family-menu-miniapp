@@ -47,10 +47,9 @@
 .ov-content { position: relative; z-index: 3; }
 .ov-eyebrow {
   font-family: var(--serif);
-  font-style: italic;
   font-size: var(--fs-cap);
   letter-spacing: 1rpx;
-  color: var(--gold);
+  color: var(--gold-on-dark);
   font-weight: 700;
 }
 .ov-row { display: flex; margin-top: 24rpx; }
@@ -76,12 +75,15 @@
   font-weight: 600;
 }
 
+/* ===== 整页还没数据 ===== */
+.pp-empty { padding-top: 24rpx; }
+
 /* ===== 空态小提示 ===== */
 .empty-mini {
   text-align: center;
   color: var(--mut);
-  font-size: calc(25rpx * var(--fs-mul, 1));
-  padding: 48rpx 28rpx;
+  font-size: var(--fs-sub);
+  padding: 28rpx var(--pad-card-sm);
 }
 
 /* ===== 菜系分布条形图 ===== */
@@ -131,7 +133,7 @@
 .tcl-xl {
   font-size: calc(50rpx * var(--fs-mul, 1));
   padding: 25rpx 38rpx;
-  background: var(--pop);
+  background: var(--pop-fill);
   color: var(--anchor-contrast);
   box-shadow: var(--sh-pop);
 }
@@ -214,7 +216,7 @@
   width: 58rpx;
   height: 58rpx;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--pop), var(--pop-deep));
+  background: linear-gradient(135deg, var(--pop-fill), var(--pop-deep-fill));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -223,7 +225,7 @@
 .note-star {
   width: 28rpx;
   height: 28rpx;
-  background: var(--anchor);
+  background: var(--anchor-contrast);   /* 红圆上的浅色星，与支付成功页徽章同法：原深棕星浅色档 2.6:1、深色档 1.2:1 */
   /* 五角星 clip-path 兜底为菱形也可读 */
   clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
 }

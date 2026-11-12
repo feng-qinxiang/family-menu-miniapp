@@ -11,25 +11,24 @@ Page({
     year: 2026,
     // 账号安全分组（手机号项随 PHONE_LOGIN 开关裁剪）
     accountList: [
-      ...(features.PHONE_LOGIN ? [{ key: 'phone', name: '手机号', icon: 'phone', value: '未绑定' }] : []),
-      { key: 'wechat', name: '微信绑定', icon: 'wechat', value: '加载中…' },
+      ...(features.PHONE_LOGIN ? [{ key: 'phone', name: '手机号', value: '未绑定' }] : []),
+      { key: 'wechat', name: '微信绑定', value: '加载中…' },
     ],
     // 消息通知（订阅消息）：available 由后端是否配了模板决定，没配就整组不显示
     subscribeAvailable: false,
     subscribeEnabled: false,
     // 通用分组
     generalList: [
-      { key: 'font', name: '字体大小', icon: 'font', value: '标准' },
-      { key: 'cache', name: '清除缓存', icon: 'cache', value: '计算中…' },
+      { key: 'font', name: '字体大小', value: '标准' },
+      { key: 'cache', name: '清除缓存', value: '计算中…' },
     ],
     // 关于分组
     aboutList: [
-      { key: 'agreement', name: '用户协议', icon: 'doc', value: '' },
-      { key: 'privacy', name: '隐私政策', icon: 'shield', value: '' },
-      // 注销入口：隐私政策承诺「15 个工作日内删除或匿名化」，这一行是那条承诺的可执行通道
-      { key: 'deletion', name: '注销账号', icon: 'del', value: '' },
-      { key: 'about', name: '关于我们', icon: 'info', value: 'v1.0.0' },
-      { key: 'feedback', name: '意见反馈', icon: 'msg', value: '' },
+      { key: 'agreement', name: '用户协议', value: '' },
+      { key: 'privacy', name: '隐私政策', value: '' },
+      { key: 'about', name: '关于我们', value: 'v1.0.0' },
+      { key: 'help', name: '帮助中心', value: '' },
+      { key: 'feedback', name: '意见反馈', value: '' },
     ],
     // 退出确认弹窗
     logoutVisible: false,
@@ -222,7 +221,15 @@ Page({
     // 需要保留的本地键：身份锚点、登录态、显示偏好、口味偏好、心愿缓存、待补发许愿
     // wish_pending_v1 必须留下：那是离线期间还没发出去的许愿，
     // 清掉就等于用户以为"联网后自动同步"的心愿被静默销毁（队列存在的意义就是扛住网络失败）。
-    const KEEP_KEYS = ['device_id', 'auth_token', 'font_scale', 'profile_prefs_v1', 'family_wishes_v1', 'wish_pending_v1'];
+    // session_kind 必须跟 auth_token 一起留：401 续期靠它分辨微信用户和游客（utils/api.js renewSession），
+    // 丢了它，微信用户的 token 一到期就会被静默续成本机游客，家庭、菜单、收藏全"消失"。
+    const KEEP_KEYS = ['device_id', 'auth_token', 'session_kind', 'font_scale', 'profile_prefs_v1', 'family_wishes_v1', 'wish_pending_v1'];
+    // cook_completion_* 是还没确认落库的做菜记录（utils/api.js addCookHistory）：
+    // 清掉的话重试会换一个新 completionId，服务端就认作另一次做菜（双记录、双扣冰箱）
+    try {
+      const info = wx.getStorageInfoSync();
+      (info.keys || []).forEach((k) => { if (k.indexOf('cook_completion_') === 0) KEEP_KEYS.push(k); });
+    } catch (e) { /* 拿不到键列表就只保留固定的那几个 */ }
     try {
       const kept = {};
       KEEP_KEYS.forEach((key) => {
@@ -256,6 +263,7 @@ Page({
       privacy: '/pkg-extra/legal/privacy/index',
       deletion: '/pkg-extra/legal/deletion/index',
       about: '/pkg-extra/me/about/index',
+      help: '/pkg-extra/me/help-faq/index',
       feedback: '/pkg-extra/me/feedback/index',
     };
     const url = routes[key];
@@ -299,7 +307,7 @@ Page({
       } catch (e) {
         // 忽略清理失败
       }
-      wx.showToast({ title: '已退出登录', icon: 'none' });
+      wx.showToast({ title: '已退出登录' });
       setTimeout(() => {
         wx.navigateTo({
           url: '/pkg-extra/auth/login/index',

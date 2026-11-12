@@ -1,0 +1,2701 @@
+{
+  "screens": [
+    {
+      "name": "recipes",
+      "image": "screens/app-recipes.jpg"
+    },
+    {
+      "name": "recipes-filters",
+      "image": "screens/picker-recipes-filters.jpg"
+    },
+    {
+      "name": "recipes-filter-selected",
+      "image": "screens/picker-recipes-filter-selected.jpg"
+    },
+    {
+      "name": "recipes-list",
+      "image": "screens/picker-recipes-list.jpg"
+    },
+    {
+      "name": "recipes-cuisine",
+      "image": "screens/picker-recipes-cuisine.jpg"
+    },
+    {
+      "name": "recipes-source",
+      "image": "screens/picker-recipes-source.jpg"
+    },
+    {
+      "name": "recipes-large",
+      "image": "screens/picker-recipes-large.jpg"
+    },
+    {
+      "name": "recipes-filters-large",
+      "image": "screens/picker-recipes-filters-large.jpg"
+    },
+    {
+      "name": "recipes-no-stock",
+      "image": "screens/picker-recipes-no-stock.jpg"
+    },
+    {
+      "name": "random",
+      "image": "screens/picker-random.jpg"
+    },
+    {
+      "name": "random-empty-fridge",
+      "image": "screens/picker-random-empty-fridge.jpg"
+    },
+    {
+      "name": "random-stock-failed",
+      "image": "screens/picker-random-stock-failed.jpg"
+    },
+    {
+      "name": "pantry-pick",
+      "image": "screens/picker-pantry-pick.jpg"
+    },
+    {
+      "name": "pantry-pick-large",
+      "image": "screens/picker-pantry-pick-large.jpg"
+    },
+    {
+      "name": "pantry-pick-empty",
+      "image": "screens/picker-pantry-pick-empty.jpg"
+    },
+    {
+      "name": "pantry-pick-failed",
+      "image": "screens/picker-pantry-pick-failed.jpg"
+    }
+  ],
+  "checks": [
+    {
+      "name": "source-left",
+      "rail": {
+        "id": "",
+        "dataset": {},
+        "left": 12,
+        "right": 66,
+        "top": 333.34375,
+        "bottom": 719.34375,
+        "width": 54,
+        "height": 386
+      },
+      "results": {
+        "id": "",
+        "dataset": {},
+        "left": 72,
+        "right": 378,
+        "top": 333.34375,
+        "bottom": 1198.53125,
+        "width": 306,
+        "height": 865.1875
+      },
+      "passed": true
+    },
+    {
+      "name": "toolbar-normal",
+      "nodes": {
+        ".recipes-mag": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 0,
+            "right": 390,
+            "top": 0,
+            "bottom": 1264.53125,
+            "width": 390,
+            "height": 1264.53125
+          }
+        ],
+        ".rx-searchrow": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 12,
+            "right": 378,
+            "top": 189.34375,
+            "bottom": 234.34375,
+            "width": 366,
+            "height": 45
+          }
+        ],
+        ".rx-search": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 12,
+            "right": 312,
+            "top": 189.34375,
+            "bottom": 234.34375,
+            "width": 300,
+            "height": 45
+          }
+        ],
+        ".rx-search-input": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 43,
+            "right": 302,
+            "top": 200.640625,
+            "bottom": 223.0390625,
+            "width": 259,
+            "height": 22.3984375
+          }
+        ],
+        ".rx-filter-btn": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 312,
+            "right": 378,
+            "top": 189.34375,
+            "bottom": 234.34375,
+            "width": 66,
+            "height": 45
+          }
+        ],
+        ".rx-pickbar": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 12,
+            "right": 378,
+            "top": 236.34375,
+            "bottom": 281.34375,
+            "width": 366,
+            "height": 45
+          }
+        ],
+        ".rx-pick-option": [
+          {
+            "id": "",
+            "dataset": {
+              "mode": "all"
+            },
+            "left": 12,
+            "right": 91,
+            "top": 236.34375,
+            "bottom": 281.34375,
+            "width": 79,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {
+              "mode": "pantry"
+            },
+            "left": 105,
+            "right": 184,
+            "top": 236.34375,
+            "bottom": 281.34375,
+            "width": 79,
+            "height": 45
+          }
+        ],
+        ".rx-pick-stock": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 333,
+            "right": 378,
+            "top": 236.34375,
+            "bottom": 281.34375,
+            "width": 45,
+            "height": 45
+          }
+        ],
+        ".rx-browse-controls": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 12,
+            "right": 378,
+            "top": 281.34375,
+            "bottom": 327.34375,
+            "width": 366,
+            "height": 46
+          }
+        ],
+        ".rx-rail-tab": [
+          {
+            "id": "",
+            "dataset": {
+              "mode": "cuisine"
+            },
+            "left": 12,
+            "right": 72,
+            "top": 281.34375,
+            "bottom": 326.34375,
+            "width": 60,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {
+              "mode": "source"
+            },
+            "left": 86,
+            "right": 146,
+            "top": 281.34375,
+            "bottom": 326.34375,
+            "width": 60,
+            "height": 45
+          }
+        ],
+        ".rx-current-filter": [],
+        ".rx-filter-selected": [],
+        ".rx-quickfilters": [],
+        ".rx-qf-chip": [],
+        ".rx-qf-reset": []
+      },
+      "passed": true
+    },
+    {
+      "name": "source-row-add",
+      "rows": [
+        [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 72,
+            "right": 378,
+            "top": 431.34375,
+            "bottom": 612.34375,
+            "width": 306,
+            "height": 181
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 299,
+            "right": 365,
+            "top": 556.34375,
+            "bottom": 601.34375,
+            "width": 66,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 194,
+            "right": 365,
+            "top": 442.34375,
+            "bottom": 463.9375,
+            "width": 171,
+            "height": 21.59375
+          },
+          {
+            "id": "",
+            "dataset": {
+              "errKey": "coverBroken"
+            },
+            "left": 85,
+            "right": 184,
+            "top": 442.34375,
+            "bottom": 541.34375,
+            "width": 99,
+            "height": 99
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 194,
+            "right": 365,
+            "top": 503.9375,
+            "bottom": 538.9375,
+            "width": 171,
+            "height": 35
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 365,
+            "top": 549.34375,
+            "bottom": 601.34375,
+            "width": 280,
+            "height": 52
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 365,
+            "top": 442.34375,
+            "bottom": 541.34375,
+            "width": 280,
+            "height": 99
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 194,
+            "right": 365,
+            "top": 442.34375,
+            "bottom": 538.9375,
+            "width": 171,
+            "height": 96.59375
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 184,
+            "top": 442.34375,
+            "bottom": 541.34375,
+            "width": 99,
+            "height": 99
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 291,
+            "top": 562.59375,
+            "bottom": 595.09375,
+            "width": 206,
+            "height": 32.5
+          }
+        ],
+        [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 72,
+            "right": 378,
+            "top": 620.34375,
+            "bottom": 820.53125,
+            "width": 306,
+            "height": 200.1875
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 299,
+            "right": 365,
+            "top": 764.53125,
+            "bottom": 809.53125,
+            "width": 66,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 194,
+            "right": 365,
+            "top": 631.34375,
+            "bottom": 674.53125,
+            "width": 171,
+            "height": 43.1875
+          },
+          {
+            "id": "",
+            "dataset": {
+              "errKey": "coverBroken"
+            },
+            "left": 85,
+            "right": 184,
+            "top": 631.34375,
+            "bottom": 730.34375,
+            "width": 99,
+            "height": 99
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 194,
+            "right": 365,
+            "top": 714.53125,
+            "bottom": 749.53125,
+            "width": 171,
+            "height": 35
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 365,
+            "top": 757.53125,
+            "bottom": 809.53125,
+            "width": 280,
+            "height": 52
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 365,
+            "top": 631.34375,
+            "bottom": 749.53125,
+            "width": 280,
+            "height": 118.1875
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 194,
+            "right": 365,
+            "top": 631.34375,
+            "bottom": 749.53125,
+            "width": 171,
+            "height": 118.1875
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 184,
+            "top": 631.34375,
+            "bottom": 730.34375,
+            "width": 99,
+            "height": 99
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 291,
+            "top": 770.78125,
+            "bottom": 803.28125,
+            "width": 206,
+            "height": 32.5
+          }
+        ],
+        [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 72,
+            "right": 378,
+            "top": 828.53125,
+            "bottom": 1009.53125,
+            "width": 306,
+            "height": 181
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 299,
+            "right": 365,
+            "top": 953.53125,
+            "bottom": 998.53125,
+            "width": 66,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 194,
+            "right": 365,
+            "top": 839.53125,
+            "bottom": 861.125,
+            "width": 171,
+            "height": 21.59375
+          },
+          {
+            "id": "",
+            "dataset": {
+              "errKey": "coverBroken"
+            },
+            "left": 85,
+            "right": 184,
+            "top": 839.53125,
+            "bottom": 938.53125,
+            "width": 99,
+            "height": 99
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 194,
+            "right": 365,
+            "top": 901.125,
+            "bottom": 936.125,
+            "width": 171,
+            "height": 35
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 365,
+            "top": 946.53125,
+            "bottom": 998.53125,
+            "width": 280,
+            "height": 52
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 365,
+            "top": 839.53125,
+            "bottom": 938.53125,
+            "width": 280,
+            "height": 99
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 194,
+            "right": 365,
+            "top": 839.53125,
+            "bottom": 936.125,
+            "width": 171,
+            "height": 96.59375
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 184,
+            "top": 839.53125,
+            "bottom": 938.53125,
+            "width": 99,
+            "height": 99
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 291,
+            "top": 959.78125,
+            "bottom": 992.28125,
+            "width": 206,
+            "height": 32.5
+          }
+        ],
+        [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 72,
+            "right": 378,
+            "top": 1034.53125,
+            "bottom": 1215.53125,
+            "width": 306,
+            "height": 181
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 299,
+            "right": 365,
+            "top": 1159.53125,
+            "bottom": 1204.53125,
+            "width": 66,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 194,
+            "right": 365,
+            "top": 1045.53125,
+            "bottom": 1067.125,
+            "width": 171,
+            "height": 21.59375
+          },
+          {
+            "id": "",
+            "dataset": {
+              "errKey": "coverBroken"
+            },
+            "left": 85,
+            "right": 184,
+            "top": 1045.53125,
+            "bottom": 1144.53125,
+            "width": 99,
+            "height": 99
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 194,
+            "right": 365,
+            "top": 1107.125,
+            "bottom": 1142.125,
+            "width": 171,
+            "height": 35
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 365,
+            "top": 1152.53125,
+            "bottom": 1204.53125,
+            "width": 280,
+            "height": 52
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 365,
+            "top": 1045.53125,
+            "bottom": 1144.53125,
+            "width": 280,
+            "height": 99
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 194,
+            "right": 365,
+            "top": 1045.53125,
+            "bottom": 1142.125,
+            "width": 171,
+            "height": 96.59375
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 184,
+            "top": 1045.53125,
+            "bottom": 1144.53125,
+            "width": 99,
+            "height": 99
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 291,
+            "top": 1165.78125,
+            "bottom": 1198.28125,
+            "width": 206,
+            "height": 32.5
+          }
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "name": "toolbar-expanded",
+      "nodes": {
+        ".recipes-mag": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 0,
+            "right": 390,
+            "top": 0,
+            "bottom": 1425.53125,
+            "width": 390,
+            "height": 1425.53125
+          }
+        ],
+        ".rx-searchrow": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 12,
+            "right": 378,
+            "top": 189.34375,
+            "bottom": 234.34375,
+            "width": 366,
+            "height": 45
+          }
+        ],
+        ".rx-search": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 12,
+            "right": 312,
+            "top": 189.34375,
+            "bottom": 234.34375,
+            "width": 300,
+            "height": 45
+          }
+        ],
+        ".rx-search-input": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 43,
+            "right": 302,
+            "top": 200.640625,
+            "bottom": 223.0390625,
+            "width": 259,
+            "height": 22.3984375
+          }
+        ],
+        ".rx-filter-btn": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 312,
+            "right": 378,
+            "top": 189.34375,
+            "bottom": 234.34375,
+            "width": 66,
+            "height": 45
+          }
+        ],
+        ".rx-pickbar": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 12,
+            "right": 378,
+            "top": 236.34375,
+            "bottom": 281.34375,
+            "width": 366,
+            "height": 45
+          }
+        ],
+        ".rx-pick-option": [
+          {
+            "id": "",
+            "dataset": {
+              "mode": "all"
+            },
+            "left": 12,
+            "right": 91,
+            "top": 236.34375,
+            "bottom": 281.34375,
+            "width": 79,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {
+              "mode": "pantry"
+            },
+            "left": 105,
+            "right": 184,
+            "top": 236.34375,
+            "bottom": 281.34375,
+            "width": 79,
+            "height": 45
+          }
+        ],
+        ".rx-pick-stock": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 333,
+            "right": 378,
+            "top": 236.34375,
+            "bottom": 281.34375,
+            "width": 45,
+            "height": 45
+          }
+        ],
+        ".rx-browse-controls": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 12,
+            "right": 378,
+            "top": 442.34375,
+            "bottom": 488.34375,
+            "width": 366,
+            "height": 46
+          }
+        ],
+        ".rx-rail-tab": [
+          {
+            "id": "",
+            "dataset": {
+              "mode": "cuisine"
+            },
+            "left": 12,
+            "right": 72,
+            "top": 442.34375,
+            "bottom": 487.34375,
+            "width": 60,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {
+              "mode": "source"
+            },
+            "left": 86,
+            "right": 146,
+            "top": 442.34375,
+            "bottom": 487.34375,
+            "width": 60,
+            "height": 45
+          }
+        ],
+        ".rx-current-filter": [],
+        ".rx-filter-selected": [],
+        ".rx-quickfilters": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 12,
+            "right": 378,
+            "top": 287.34375,
+            "bottom": 442.34375,
+            "width": 366,
+            "height": 155
+          }
+        ],
+        ".rx-qf-chip": [
+          {
+            "id": "",
+            "dataset": {
+              "val": "0"
+            },
+            "left": 71,
+            "right": 117,
+            "top": 294.34375,
+            "bottom": 339.34375,
+            "width": 46,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {
+              "val": "15"
+            },
+            "left": 124,
+            "right": 181.1171875,
+            "top": 294.34375,
+            "bottom": 339.34375,
+            "width": 57.1171875,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {
+              "val": "30"
+            },
+            "left": 188.1171875,
+            "right": 247.3203125,
+            "top": 294.34375,
+            "bottom": 339.34375,
+            "width": 59.203125,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {
+              "val": "60"
+            },
+            "left": 254.3203125,
+            "right": 313.5234375,
+            "top": 294.34375,
+            "bottom": 339.34375,
+            "width": 59.203125,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {
+              "val": "0"
+            },
+            "left": 71,
+            "right": 117,
+            "top": 345.34375,
+            "bottom": 390.34375,
+            "width": 46,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {
+              "val": "2"
+            },
+            "left": 124,
+            "right": 172.2578125,
+            "top": 345.34375,
+            "bottom": 390.34375,
+            "width": 48.2578125,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {
+              "val": "4"
+            },
+            "left": 179.2578125,
+            "right": 227.515625,
+            "top": 345.34375,
+            "bottom": 390.34375,
+            "width": 48.2578125,
+            "height": 45
+          }
+        ],
+        ".rx-qf-reset": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 25,
+            "right": 365,
+            "top": 390.34375,
+            "bottom": 435.34375,
+            "width": 340,
+            "height": 45
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "toolbar-active",
+      "nodes": {
+        ".recipes-mag": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 0,
+            "right": 390,
+            "top": 0,
+            "bottom": 1122.53125,
+            "width": 390,
+            "height": 1122.53125
+          }
+        ],
+        ".rx-searchrow": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 12,
+            "right": 378,
+            "top": 189.34375,
+            "bottom": 234.34375,
+            "width": 366,
+            "height": 45
+          }
+        ],
+        ".rx-search": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 12,
+            "right": 312,
+            "top": 189.34375,
+            "bottom": 234.34375,
+            "width": 300,
+            "height": 45
+          }
+        ],
+        ".rx-search-input": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 43,
+            "right": 302,
+            "top": 200.640625,
+            "bottom": 223.0390625,
+            "width": 259,
+            "height": 22.3984375
+          }
+        ],
+        ".rx-filter-btn": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 312,
+            "right": 378,
+            "top": 189.34375,
+            "bottom": 234.34375,
+            "width": 66,
+            "height": 45
+          }
+        ],
+        ".rx-pickbar": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 12,
+            "right": 378,
+            "top": 236.34375,
+            "bottom": 281.34375,
+            "width": 366,
+            "height": 45
+          }
+        ],
+        ".rx-pick-option": [
+          {
+            "id": "",
+            "dataset": {
+              "mode": "all"
+            },
+            "left": 12,
+            "right": 91,
+            "top": 236.34375,
+            "bottom": 281.34375,
+            "width": 79,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {
+              "mode": "pantry"
+            },
+            "left": 105,
+            "right": 184,
+            "top": 236.34375,
+            "bottom": 281.34375,
+            "width": 79,
+            "height": 45
+          }
+        ],
+        ".rx-pick-stock": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 333,
+            "right": 378,
+            "top": 236.34375,
+            "bottom": 281.34375,
+            "width": 45,
+            "height": 45
+          }
+        ],
+        ".rx-browse-controls": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 12,
+            "right": 378,
+            "top": 281.34375,
+            "bottom": 327.34375,
+            "width": 366,
+            "height": 46
+          }
+        ],
+        ".rx-rail-tab": [
+          {
+            "id": "",
+            "dataset": {
+              "mode": "cuisine"
+            },
+            "left": 12,
+            "right": 72,
+            "top": 281.34375,
+            "bottom": 326.34375,
+            "width": 60,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {
+              "mode": "source"
+            },
+            "left": 86,
+            "right": 146,
+            "top": 281.34375,
+            "bottom": 326.34375,
+            "width": 60,
+            "height": 45
+          }
+        ],
+        ".rx-current-filter": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 12,
+            "right": 378,
+            "top": 329.34375,
+            "bottom": 374.34375,
+            "width": 366,
+            "height": 45
+          }
+        ],
+        ".rx-filter-selected": [
+          {
+            "id": "",
+            "dataset": {
+              "val": "0"
+            },
+            "left": 42,
+            "right": 102.1875,
+            "top": 329.34375,
+            "bottom": 374.34375,
+            "width": 60.1875,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {
+              "val": "0"
+            },
+            "left": 110.1875,
+            "right": 163.7734375,
+            "top": 329.34375,
+            "bottom": 374.34375,
+            "width": 53.5859375,
+            "height": 45
+          }
+        ],
+        ".rx-quickfilters": [],
+        ".rx-qf-chip": [],
+        ".rx-qf-reset": []
+      },
+      "passed": true
+    },
+    {
+      "name": "toolbar-cleared",
+      "nodes": {
+        ".recipes-mag": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 0,
+            "right": 390,
+            "top": 0,
+            "bottom": 1264.53125,
+            "width": 390,
+            "height": 1264.53125
+          }
+        ],
+        ".rx-searchrow": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 12,
+            "right": 378,
+            "top": 189.34375,
+            "bottom": 234.34375,
+            "width": 366,
+            "height": 45
+          }
+        ],
+        ".rx-search": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 12,
+            "right": 312,
+            "top": 189.34375,
+            "bottom": 234.34375,
+            "width": 300,
+            "height": 45
+          }
+        ],
+        ".rx-search-input": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 43,
+            "right": 302,
+            "top": 200.640625,
+            "bottom": 223.0390625,
+            "width": 259,
+            "height": 22.3984375
+          }
+        ],
+        ".rx-filter-btn": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 312,
+            "right": 378,
+            "top": 189.34375,
+            "bottom": 234.34375,
+            "width": 66,
+            "height": 45
+          }
+        ],
+        ".rx-pickbar": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 12,
+            "right": 378,
+            "top": 236.34375,
+            "bottom": 281.34375,
+            "width": 366,
+            "height": 45
+          }
+        ],
+        ".rx-pick-option": [
+          {
+            "id": "",
+            "dataset": {
+              "mode": "all"
+            },
+            "left": 12,
+            "right": 91,
+            "top": 236.34375,
+            "bottom": 281.34375,
+            "width": 79,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {
+              "mode": "pantry"
+            },
+            "left": 105,
+            "right": 184,
+            "top": 236.34375,
+            "bottom": 281.34375,
+            "width": 79,
+            "height": 45
+          }
+        ],
+        ".rx-pick-stock": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 333,
+            "right": 378,
+            "top": 236.34375,
+            "bottom": 281.34375,
+            "width": 45,
+            "height": 45
+          }
+        ],
+        ".rx-browse-controls": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 12,
+            "right": 378,
+            "top": 281.34375,
+            "bottom": 327.34375,
+            "width": 366,
+            "height": 46
+          }
+        ],
+        ".rx-rail-tab": [
+          {
+            "id": "",
+            "dataset": {
+              "mode": "cuisine"
+            },
+            "left": 12,
+            "right": 72,
+            "top": 281.34375,
+            "bottom": 326.34375,
+            "width": 60,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {
+              "mode": "source"
+            },
+            "left": 86,
+            "right": 146,
+            "top": 281.34375,
+            "bottom": 326.34375,
+            "width": 60,
+            "height": 45
+          }
+        ],
+        ".rx-current-filter": [],
+        ".rx-filter-selected": [],
+        ".rx-quickfilters": [],
+        ".rx-qf-chip": [],
+        ".rx-qf-reset": []
+      },
+      "passed": true
+    },
+    {
+      "name": "selected-cuisine",
+      "child": ".rx-source.on",
+      "parent": ".rx-source-rail",
+      "a": {
+        "id": "",
+        "dataset": {
+          "val": "家常"
+        },
+        "left": 12,
+        "right": 66,
+        "top": 427.34375,
+        "bottom": 472.34375,
+        "width": 54,
+        "height": 45
+      },
+      "b": {
+        "id": "",
+        "dataset": {},
+        "left": 12,
+        "right": 66,
+        "top": 380.34375,
+        "bottom": 766.34375,
+        "width": 54,
+        "height": 386
+      },
+      "passed": true
+    },
+    {
+      "name": "active-filter-clear",
+      "child": ".rx-filter-selected",
+      "parent": ".rx-current-filter",
+      "a": {
+        "id": "",
+        "dataset": {
+          "val": ""
+        },
+        "left": 42,
+        "right": 87,
+        "top": 329.34375,
+        "bottom": 374.34375,
+        "width": 45,
+        "height": 45
+      },
+      "b": {
+        "id": "",
+        "dataset": {},
+        "left": 12,
+        "right": 378,
+        "top": 329.34375,
+        "bottom": 374.34375,
+        "width": 366,
+        "height": 45
+      },
+      "passed": true
+    },
+    {
+      "name": "toolbar-large",
+      "nodes": {
+        ".recipes-mag": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 0,
+            "right": 390,
+            "top": 0,
+            "bottom": 1352.875,
+            "width": 390,
+            "height": 1352.875
+          }
+        ],
+        ".rx-searchrow": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 12,
+            "right": 378,
+            "top": 199.390625,
+            "bottom": 244.390625,
+            "width": 366,
+            "height": 45
+          }
+        ],
+        ".rx-search": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 12,
+            "right": 312,
+            "top": 199.390625,
+            "bottom": 244.390625,
+            "width": 300,
+            "height": 45
+          }
+        ],
+        ".rx-search-input": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 43,
+            "right": 302,
+            "top": 210.6875,
+            "bottom": 233.0859375,
+            "width": 259,
+            "height": 22.3984375
+          }
+        ],
+        ".rx-filter-btn": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 312,
+            "right": 378,
+            "top": 199.390625,
+            "bottom": 244.390625,
+            "width": 66,
+            "height": 45
+          }
+        ],
+        ".rx-pickbar": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 12,
+            "right": 378,
+            "top": 246.390625,
+            "bottom": 291.390625,
+            "width": 366,
+            "height": 45
+          }
+        ],
+        ".rx-pick-option": [
+          {
+            "id": "",
+            "dataset": {
+              "mode": "all"
+            },
+            "left": 12,
+            "right": 95,
+            "top": 246.390625,
+            "bottom": 291.390625,
+            "width": 83,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {
+              "mode": "pantry"
+            },
+            "left": 105,
+            "right": 188,
+            "top": 246.390625,
+            "bottom": 291.390625,
+            "width": 83,
+            "height": 45
+          }
+        ],
+        ".rx-pick-stock": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 325.9453125,
+            "right": 378,
+            "top": 246.390625,
+            "bottom": 291.390625,
+            "width": 52.0546875,
+            "height": 45
+          }
+        ],
+        ".rx-browse-controls": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 12,
+            "right": 378,
+            "top": 291.390625,
+            "bottom": 337.390625,
+            "width": 366,
+            "height": 46
+          }
+        ],
+        ".rx-rail-tab": [
+          {
+            "id": "",
+            "dataset": {
+              "mode": "cuisine"
+            },
+            "left": 12,
+            "right": 72,
+            "top": 291.390625,
+            "bottom": 336.390625,
+            "width": 60,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {
+              "mode": "source"
+            },
+            "left": 86,
+            "right": 146,
+            "top": 291.390625,
+            "bottom": 336.390625,
+            "width": 60,
+            "height": 45
+          }
+        ],
+        ".rx-current-filter": [],
+        ".rx-filter-selected": [],
+        ".rx-quickfilters": [],
+        ".rx-qf-chip": [],
+        ".rx-qf-reset": []
+      },
+      "passed": true
+    },
+    {
+      "name": "source-row-add-large",
+      "rows": [
+        [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 72,
+            "right": 378,
+            "top": 441.390625,
+            "bottom": 640.6875,
+            "width": 306,
+            "height": 199.296875
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 299,
+            "right": 365,
+            "top": 584.6875,
+            "bottom": 629.6875,
+            "width": 66,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 194,
+            "right": 365,
+            "top": 452.390625,
+            "bottom": 476.6875,
+            "width": 171,
+            "height": 24.296875
+          },
+          {
+            "id": "",
+            "dataset": {
+              "errKey": "coverBroken"
+            },
+            "left": 85,
+            "right": 184,
+            "top": 452.390625,
+            "bottom": 551.390625,
+            "width": 99,
+            "height": 99
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 194,
+            "right": 365,
+            "top": 525.6875,
+            "bottom": 569.6875,
+            "width": 171,
+            "height": 44
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 365,
+            "top": 577.6875,
+            "bottom": 629.6875,
+            "width": 280,
+            "height": 52
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 365,
+            "top": 452.390625,
+            "bottom": 569.6875,
+            "width": 280,
+            "height": 117.296875
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 194,
+            "right": 365,
+            "top": 452.390625,
+            "bottom": 569.6875,
+            "width": 171,
+            "height": 117.296875
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 184,
+            "top": 452.390625,
+            "bottom": 551.390625,
+            "width": 99,
+            "height": 99
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 291,
+            "top": 586.4375,
+            "bottom": 627.9375,
+            "width": 206,
+            "height": 41.5
+          }
+        ],
+        [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 72,
+            "right": 378,
+            "top": 648.6875,
+            "bottom": 872.28125,
+            "width": 306,
+            "height": 223.59375
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 299,
+            "right": 365,
+            "top": 816.28125,
+            "bottom": 861.28125,
+            "width": 66,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 194,
+            "right": 365,
+            "top": 659.6875,
+            "bottom": 708.28125,
+            "width": 171,
+            "height": 48.59375
+          },
+          {
+            "id": "",
+            "dataset": {
+              "errKey": "coverBroken"
+            },
+            "left": 85,
+            "right": 184,
+            "top": 659.6875,
+            "bottom": 758.6875,
+            "width": 99,
+            "height": 99
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 194,
+            "right": 365,
+            "top": 757.28125,
+            "bottom": 801.28125,
+            "width": 171,
+            "height": 44
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 365,
+            "top": 809.28125,
+            "bottom": 861.28125,
+            "width": 280,
+            "height": 52
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 365,
+            "top": 659.6875,
+            "bottom": 801.28125,
+            "width": 280,
+            "height": 141.59375
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 194,
+            "right": 365,
+            "top": 659.6875,
+            "bottom": 801.28125,
+            "width": 171,
+            "height": 141.59375
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 184,
+            "top": 659.6875,
+            "bottom": 758.6875,
+            "width": 99,
+            "height": 99
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 291,
+            "top": 818.03125,
+            "bottom": 859.53125,
+            "width": 206,
+            "height": 41.5
+          }
+        ],
+        [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 72,
+            "right": 378,
+            "top": 880.28125,
+            "bottom": 1079.578125,
+            "width": 306,
+            "height": 199.296875
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 299,
+            "right": 365,
+            "top": 1023.578125,
+            "bottom": 1068.578125,
+            "width": 66,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 194,
+            "right": 365,
+            "top": 891.28125,
+            "bottom": 915.578125,
+            "width": 171,
+            "height": 24.296875
+          },
+          {
+            "id": "",
+            "dataset": {
+              "errKey": "coverBroken"
+            },
+            "left": 85,
+            "right": 184,
+            "top": 891.28125,
+            "bottom": 990.28125,
+            "width": 99,
+            "height": 99
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 194,
+            "right": 365,
+            "top": 964.578125,
+            "bottom": 1008.578125,
+            "width": 171,
+            "height": 44
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 365,
+            "top": 1016.578125,
+            "bottom": 1068.578125,
+            "width": 280,
+            "height": 52
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 365,
+            "top": 891.28125,
+            "bottom": 1008.578125,
+            "width": 280,
+            "height": 117.296875
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 194,
+            "right": 365,
+            "top": 891.28125,
+            "bottom": 1008.578125,
+            "width": 171,
+            "height": 117.296875
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 184,
+            "top": 891.28125,
+            "bottom": 990.28125,
+            "width": 99,
+            "height": 99
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 291,
+            "top": 1025.328125,
+            "bottom": 1066.828125,
+            "width": 206,
+            "height": 41.5
+          }
+        ],
+        [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 72,
+            "right": 378,
+            "top": 1087.578125,
+            "bottom": 1286.875,
+            "width": 306,
+            "height": 199.296875
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 299,
+            "right": 365,
+            "top": 1230.875,
+            "bottom": 1275.875,
+            "width": 66,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 194,
+            "right": 365,
+            "top": 1098.578125,
+            "bottom": 1122.875,
+            "width": 171,
+            "height": 24.296875
+          },
+          {
+            "id": "",
+            "dataset": {
+              "errKey": "coverBroken"
+            },
+            "left": 85,
+            "right": 184,
+            "top": 1098.578125,
+            "bottom": 1197.578125,
+            "width": 99,
+            "height": 99
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 194,
+            "right": 365,
+            "top": 1171.875,
+            "bottom": 1215.875,
+            "width": 171,
+            "height": 44
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 365,
+            "top": 1223.875,
+            "bottom": 1275.875,
+            "width": 280,
+            "height": 52
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 365,
+            "top": 1098.578125,
+            "bottom": 1215.875,
+            "width": 280,
+            "height": 117.296875
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 194,
+            "right": 365,
+            "top": 1098.578125,
+            "bottom": 1215.875,
+            "width": 171,
+            "height": 117.296875
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 184,
+            "top": 1098.578125,
+            "bottom": 1197.578125,
+            "width": 99,
+            "height": 99
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 291,
+            "top": 1232.625,
+            "bottom": 1274.125,
+            "width": 206,
+            "height": 41.5
+          }
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "name": "toolbar-expanded-large",
+      "nodes": {
+        ".recipes-mag": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 0,
+            "right": 390,
+            "top": 0,
+            "bottom": 1513.875,
+            "width": 390,
+            "height": 1513.875
+          }
+        ],
+        ".rx-searchrow": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 12,
+            "right": 378,
+            "top": 199.390625,
+            "bottom": 244.390625,
+            "width": 366,
+            "height": 45
+          }
+        ],
+        ".rx-search": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 12,
+            "right": 312,
+            "top": 199.390625,
+            "bottom": 244.390625,
+            "width": 300,
+            "height": 45
+          }
+        ],
+        ".rx-search-input": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 43,
+            "right": 302,
+            "top": 210.6875,
+            "bottom": 233.0859375,
+            "width": 259,
+            "height": 22.3984375
+          }
+        ],
+        ".rx-filter-btn": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 312,
+            "right": 378,
+            "top": 199.390625,
+            "bottom": 244.390625,
+            "width": 66,
+            "height": 45
+          }
+        ],
+        ".rx-pickbar": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 12,
+            "right": 378,
+            "top": 246.390625,
+            "bottom": 291.390625,
+            "width": 366,
+            "height": 45
+          }
+        ],
+        ".rx-pick-option": [
+          {
+            "id": "",
+            "dataset": {
+              "mode": "all"
+            },
+            "left": 12,
+            "right": 95,
+            "top": 246.390625,
+            "bottom": 291.390625,
+            "width": 83,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {
+              "mode": "pantry"
+            },
+            "left": 105,
+            "right": 188,
+            "top": 246.390625,
+            "bottom": 291.390625,
+            "width": 83,
+            "height": 45
+          }
+        ],
+        ".rx-pick-stock": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 325.9453125,
+            "right": 378,
+            "top": 246.390625,
+            "bottom": 291.390625,
+            "width": 52.0546875,
+            "height": 45
+          }
+        ],
+        ".rx-browse-controls": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 12,
+            "right": 378,
+            "top": 452.390625,
+            "bottom": 498.390625,
+            "width": 366,
+            "height": 46
+          }
+        ],
+        ".rx-rail-tab": [
+          {
+            "id": "",
+            "dataset": {
+              "mode": "cuisine"
+            },
+            "left": 12,
+            "right": 72,
+            "top": 452.390625,
+            "bottom": 497.390625,
+            "width": 60,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {
+              "mode": "source"
+            },
+            "left": 86,
+            "right": 146,
+            "top": 452.390625,
+            "bottom": 497.390625,
+            "width": 60,
+            "height": 45
+          }
+        ],
+        ".rx-current-filter": [],
+        ".rx-filter-selected": [],
+        ".rx-quickfilters": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 12,
+            "right": 378,
+            "top": 297.390625,
+            "bottom": 452.390625,
+            "width": 366,
+            "height": 155
+          }
+        ],
+        ".rx-qf-chip": [
+          {
+            "id": "",
+            "dataset": {
+              "val": "0"
+            },
+            "left": 71,
+            "right": 123,
+            "top": 304.390625,
+            "bottom": 349.390625,
+            "width": 52,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {
+              "val": "15"
+            },
+            "left": 130,
+            "right": 196.140625,
+            "top": 304.390625,
+            "bottom": 349.390625,
+            "width": 66.140625,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {
+              "val": "30"
+            },
+            "left": 203.140625,
+            "right": 271.9453125,
+            "top": 304.390625,
+            "bottom": 349.390625,
+            "width": 68.8046875,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {
+              "val": "60"
+            },
+            "left": 278.9453125,
+            "right": 347.75,
+            "top": 304.390625,
+            "bottom": 349.390625,
+            "width": 68.8046875,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {
+              "val": "0"
+            },
+            "left": 71,
+            "right": 123,
+            "top": 355.390625,
+            "bottom": 400.390625,
+            "width": 52,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {
+              "val": "2"
+            },
+            "left": 130,
+            "right": 184.875,
+            "top": 355.390625,
+            "bottom": 400.390625,
+            "width": 54.875,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {
+              "val": "4"
+            },
+            "left": 191.875,
+            "right": 246.75,
+            "top": 355.390625,
+            "bottom": 400.390625,
+            "width": 54.875,
+            "height": 45
+          }
+        ],
+        ".rx-qf-reset": [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 25,
+            "right": 365,
+            "top": 400.390625,
+            "bottom": 445.390625,
+            "width": 340,
+            "height": 45
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "source-row-no-stock",
+      "rows": [
+        [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 72,
+            "right": 378,
+            "top": 431.34375,
+            "bottom": 612.34375,
+            "width": 306,
+            "height": 181
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 299,
+            "right": 365,
+            "top": 556.34375,
+            "bottom": 601.34375,
+            "width": 66,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 194,
+            "right": 365,
+            "top": 442.34375,
+            "bottom": 463.9375,
+            "width": 171,
+            "height": 21.59375
+          },
+          {
+            "id": "",
+            "dataset": {
+              "errKey": "coverBroken"
+            },
+            "left": 85,
+            "right": 184,
+            "top": 442.34375,
+            "bottom": 541.34375,
+            "width": 99,
+            "height": 99
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 194,
+            "right": 365,
+            "top": 503.9375,
+            "bottom": 538.9375,
+            "width": 171,
+            "height": 35
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 365,
+            "top": 549.34375,
+            "bottom": 601.34375,
+            "width": 280,
+            "height": 52
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 365,
+            "top": 442.34375,
+            "bottom": 541.34375,
+            "width": 280,
+            "height": 99
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 194,
+            "right": 365,
+            "top": 442.34375,
+            "bottom": 538.9375,
+            "width": 171,
+            "height": 96.59375
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 184,
+            "top": 442.34375,
+            "bottom": 541.34375,
+            "width": 99,
+            "height": 99
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 291,
+            "top": 570.59375,
+            "bottom": 587.09375,
+            "width": 206,
+            "height": 16.5
+          }
+        ],
+        [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 72,
+            "right": 378,
+            "top": 620.34375,
+            "bottom": 820.53125,
+            "width": 306,
+            "height": 200.1875
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 299,
+            "right": 365,
+            "top": 764.53125,
+            "bottom": 809.53125,
+            "width": 66,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 194,
+            "right": 365,
+            "top": 631.34375,
+            "bottom": 674.53125,
+            "width": 171,
+            "height": 43.1875
+          },
+          {
+            "id": "",
+            "dataset": {
+              "errKey": "coverBroken"
+            },
+            "left": 85,
+            "right": 184,
+            "top": 631.34375,
+            "bottom": 730.34375,
+            "width": 99,
+            "height": 99
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 194,
+            "right": 365,
+            "top": 714.53125,
+            "bottom": 749.53125,
+            "width": 171,
+            "height": 35
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 365,
+            "top": 757.53125,
+            "bottom": 809.53125,
+            "width": 280,
+            "height": 52
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 365,
+            "top": 631.34375,
+            "bottom": 749.53125,
+            "width": 280,
+            "height": 118.1875
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 194,
+            "right": 365,
+            "top": 631.34375,
+            "bottom": 749.53125,
+            "width": 171,
+            "height": 118.1875
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 184,
+            "top": 631.34375,
+            "bottom": 730.34375,
+            "width": 99,
+            "height": 99
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 291,
+            "top": 778.78125,
+            "bottom": 795.28125,
+            "width": 206,
+            "height": 16.5
+          }
+        ],
+        [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 72,
+            "right": 378,
+            "top": 828.53125,
+            "bottom": 1009.53125,
+            "width": 306,
+            "height": 181
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 299,
+            "right": 365,
+            "top": 953.53125,
+            "bottom": 998.53125,
+            "width": 66,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 194,
+            "right": 365,
+            "top": 839.53125,
+            "bottom": 861.125,
+            "width": 171,
+            "height": 21.59375
+          },
+          {
+            "id": "",
+            "dataset": {
+              "errKey": "coverBroken"
+            },
+            "left": 85,
+            "right": 184,
+            "top": 839.53125,
+            "bottom": 938.53125,
+            "width": 99,
+            "height": 99
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 194,
+            "right": 365,
+            "top": 901.125,
+            "bottom": 936.125,
+            "width": 171,
+            "height": 35
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 365,
+            "top": 946.53125,
+            "bottom": 998.53125,
+            "width": 280,
+            "height": 52
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 365,
+            "top": 839.53125,
+            "bottom": 938.53125,
+            "width": 280,
+            "height": 99
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 194,
+            "right": 365,
+            "top": 839.53125,
+            "bottom": 936.125,
+            "width": 171,
+            "height": 96.59375
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 184,
+            "top": 839.53125,
+            "bottom": 938.53125,
+            "width": 99,
+            "height": 99
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 291,
+            "top": 967.78125,
+            "bottom": 984.28125,
+            "width": 206,
+            "height": 16.5
+          }
+        ],
+        [
+          {
+            "id": "",
+            "dataset": {},
+            "left": 72,
+            "right": 378,
+            "top": 1017.53125,
+            "bottom": 1198.53125,
+            "width": 306,
+            "height": 181
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 299,
+            "right": 365,
+            "top": 1142.53125,
+            "bottom": 1187.53125,
+            "width": 66,
+            "height": 45
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 194,
+            "right": 365,
+            "top": 1028.53125,
+            "bottom": 1050.125,
+            "width": 171,
+            "height": 21.59375
+          },
+          {
+            "id": "",
+            "dataset": {
+              "errKey": "coverBroken"
+            },
+            "left": 85,
+            "right": 184,
+            "top": 1028.53125,
+            "bottom": 1127.53125,
+            "width": 99,
+            "height": 99
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 194,
+            "right": 365,
+            "top": 1090.125,
+            "bottom": 1125.125,
+            "width": 171,
+            "height": 35
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 365,
+            "top": 1135.53125,
+            "bottom": 1187.53125,
+            "width": 280,
+            "height": 52
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 365,
+            "top": 1028.53125,
+            "bottom": 1127.53125,
+            "width": 280,
+            "height": 99
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 194,
+            "right": 365,
+            "top": 1028.53125,
+            "bottom": 1125.125,
+            "width": 171,
+            "height": 96.59375
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 184,
+            "top": 1028.53125,
+            "bottom": 1127.53125,
+            "width": 99,
+            "height": 99
+          },
+          {
+            "id": "",
+            "dataset": {},
+            "left": 85,
+            "right": 291,
+            "top": 1156.78125,
+            "bottom": 1173.28125,
+            "width": 206,
+            "height": 16.5
+          }
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "name": "random-picker",
+      "child": ".rx-picker-add",
+      "parent": ".rx-picker",
+      "a": {
+        "id": "",
+        "dataset": {},
+        "left": 199,
+        "right": 354,
+        "top": 502.3359375,
+        "bottom": 557.3359375,
+        "width": 155,
+        "height": 55
+      },
+      "b": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 281.34375,
+        "bottom": 570.3359375,
+        "width": 344,
+        "height": 288.9921875
+      },
+      "passed": true
+    },
+    {
+      "name": "pantry-picker",
+      "child": ".rx-picker-add",
+      "parent": ".rx-picker",
+      "a": {
+        "id": "",
+        "dataset": {},
+        "left": 199,
+        "right": 354,
+        "top": 574.375,
+        "bottom": 629.375,
+        "width": 155,
+        "height": 55
+      },
+      "b": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 281.34375,
+        "bottom": 642.375,
+        "width": 344,
+        "height": 361.03125
+      },
+      "passed": true
+    },
+    {
+      "name": "pantry-picker-large",
+      "child": ".rx-picker-add",
+      "parent": ".rx-picker",
+      "a": {
+        "id": "",
+        "dataset": {},
+        "left": 199,
+        "right": 354,
+        "top": 647.0546875,
+        "bottom": 702.0546875,
+        "width": 155,
+        "height": 55
+      },
+      "b": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 291.390625,
+        "bottom": 715.0546875,
+        "width": 344,
+        "height": 423.6640625
+      },
+      "passed": true
+    }
+  ],
+  "checkedAt": "2026-10-11T13:08:51.972Z",
+  "source": "Native pages with temporary sample data; no write APIs; Page data restored.",
+  "passed": true
+}

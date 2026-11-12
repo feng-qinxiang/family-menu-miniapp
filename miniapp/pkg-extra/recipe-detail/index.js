@@ -4,23 +4,17 @@ const {
   addShoppingItem,
   getCommunityPosts,
   getPantryItems,
+  getIngredientPhotos,
   getRecipeDetail,
   getTodayMenu,
   removeWish
 } = require('../../utils/api');
-const { runGuarded } = require('../../utils/interaction');
-const { recipeDishImg, stepDishImg, onPhotoError: markPhotoBroken } = require('../../utils/image');
-const { sourceLabels: baseSourceLabels } = require('../../utils/constants');
+const { runGuarded, guard, release } = require('../../utils/interaction');
+const { recipeDishImg, stepDishImg, dishImageUrl, ingredientImage, onPhotoError: markPhotoBroken } = require('../../utils/image');
+const { editIngredientPhoto } = require('../../utils/ingredient-photo');
 const features = require('../../utils/features');
 const { composePostWithRecipe } = require('../../utils/post-share');
 const { indexPantry, pantryMatches } = require('../../utils/pantry-match');
-
-// 复用全局来源标签（社区开关关闭时 community 显示"精选"），本页额外支持 link/text
-const sourceLabels = {
-  ...baseSourceLabels,
-  link: '链接',
-  text: '文本'
-};
 
 const difficultyLabels = { easy: '简单', medium: '中等', hard: '困难' };
 
@@ -54,6 +48,7 @@ Page({
     servings: 2,
     baseServings: 2,
     missCount: 0,
+    ingredientPhotosFailed: false,
     skeletonRows: [1, 2, 3],
     loading: true,
     playingVideo: false,
@@ -62,6 +57,7 @@ Page({
     addingToday: false,
     // 长页快捷导航：滚动超一屏显示"回顶/退出"悬浮键
     showQuickNav: false,
+    showTopbar: false,
     // 「大家晒的」：这道菜的社区作品（最多 3 条；社区接口挂了就是空数组，不当错误处理）
     works: [],
     // COMMUNITY 关闭（个人主体）时：整块「大家晒的 + 晒我的作品」隐藏
@@ -75,14 +71,18 @@ Page({
     if (fontScale !== this.data.fontScale) this.setData({ fontScale });
     let sbh = 0;
     let winH = 0;
+    let winW = 375;
     try {
       const win = wx.getWindowInfo ? wx.getWindowInfo() : wx.getSystemInfoSync();
       sbh = win.statusBarHeight || 0;
       winH = win.windowHeight || 0;
+      winW = win.windowWidth || 375;
     } catch (e) {
       sbh = 0;
       winH = 0;
     }
+    // 头图（430rpx）快滚出导航栏那一带时，换上实底顶栏：否则正文直接滚到状态栏底下，和时间、电量叠在一起
+    this._topbarAt = 430 * winW / 750 - sbh - 44;
     // 滚动区就是 100vh 的 scroll-view，窗口高度即它的高度（悬浮键的收起判据要用）
     this._viewHeight = winH;
     const recipeId = options.id || options.recipeId;
@@ -115,10 +115,12 @@ Page({
         getTodayMenu().catch(() => null),
         // 「大家晒的」是锦上添花：社区挂了也只是这块空着，不能把整页拖进错误态
         // COMMUNITY 关闭时不发这个请求，用空数组占位（下游按「空」渲染）
-        features.COMMUNITY ? getCommunityPosts(null, 1, 3, id).catch(() => []) : Promise.resolve([])
+        features.COMMUNITY ? getCommunityPosts(null, 1, 3, id).catch(() => []) : Promise.resolve([]),
+        getIngredientPhotos().catch(() => null)
       ]);
       const recipe = loaded[0], pantryItems = loaded[1], todayMenu = loaded[2];
       const rawWorks = Array.isArray(loaded[3]) ? loaded[3] : [];
+      const ingredientPhotos = loaded[4] || this._ingredientPhotos || {};
       const menuItems = (todayMenu && Array.isArray(todayMenu.items)) ? todayMenu.items : [];
       const inTodayMenu = menuItems.some((it) => String(it.recipeId) === String(id));
       if (!recipe) {
@@ -136,6 +138,8 @@ Page({
           name,
           baseAmount: ing.amount,
           amountText: scaleAmount(ing.amount, 1),
+          cover: ingredientImage(ing, ingredientPhotos),
+          coverBroken: false,
           // 与服务端扣库存同一口径（utils/pantry-match）：名称+单位都对得上、用量能解析出数字才算"有"。
           // 只比名字会出现"页面说齐了、做完菜一项没扣"
           inStock: stockMatches[i]
@@ -172,11 +176,12 @@ Page({
           author,
           initial: author.trim().charAt(0),
           likeCount: p.likeCount || 0,
-          cover: images[0] || '',
+          cover: dishImageUrl(images[0]) || '',
           pending: p.auditStatus === 'PENDING'
         };
       });
 
+      this._ingredientPhotos = ingredientPhotos;
       this.setData({
         recipe: {
           ...recipe,
@@ -194,14 +199,14 @@ Page({
           rating: recipe.rating || '',
           summary: recipe.summary || '',
           difficulty: recipe.difficulty || 'medium',
-          difficultyLabel: difficultyLabels[recipe.difficulty] || '中等',
-          sourceLabel: sourceLabels[recipe.sourceType] || ''
+          difficultyLabel: difficultyLabels[recipe.difficulty] || '中等'
         },
         servings: baseServings,
         baseServings,
         missCount,
         works,
         inTodayMenu,
+        ingredientPhotosFailed: loaded[4] === null,
         playingVideo: false,
         loadError: false,
         loading: false
@@ -211,6 +216,17 @@ Page({
       this.setData({ recipe: null, loadError: true, loading: false });
       wx.showToast({ title: '加载详情失败', icon: 'none' });
     }
+  },
+
+  async onIngredientPhoto(e) {
+    const name = e.currentTarget.dataset.name;
+    const photos = await runGuarded(this, 'ingredientPhoto',
+      () => editIngredientPhoto(name, (this._ingredientPhotos || {})[name]),
+      { success: result => result ? '食材图片已保存' : '', fail: err => err.message || '保存失败，原图片已保留' });
+    if (photos === undefined) return;
+    this._ingredientPhotos = photos;
+    this.setData({ ingredientPhotosFailed: false,
+      'recipe.ingredients': this.data.recipe.ingredients.map(ing => ({ ...ing, cover: ingredientImage(ing, photos), coverBroken: false })) });
   },
 
   // —— 份量 stepper：±1 重算用量 ——
@@ -294,7 +310,8 @@ Page({
         wx.showToast({ title: '已加入今日菜单', icon: 'success' });
       }
     } catch (err) {
-      wx.showToast({ title: '加入失败', icon: 'none' });
+      // api 层已经弹过服务端原文，这里用同一句话（不再用通用文案盖掉它）
+      wx.showToast({ title: (err && err.message) || '加入失败', icon: 'none' });
     } finally {
       this.setData({ addingToday: false });
     }
@@ -317,28 +334,37 @@ Page({
   // —— 开始做菜：进入烹饪模式 ——
   startCook() {
     if (!this.data.recipe) return;
+    // 导航锁：与菜单页同一约定，连点会叠两层烹饪模式（上层退出时关掉常亮）
+    if (this._startingCook) return;
+    this._startingCook = true;
     const recipe = this.data.recipe;
     wx.navigateTo({
       url: `/pkg-extra/cook-mode/index?id=${recipe.id}&servings=${this.data.servings}`,
       fail: () => {
         // 真机导航失败兜底（cook-mode 页面存在，这里只报打开失败，不误报"未开发"）
         wx.showToast({ title: '页面打开失败，请重试', icon: 'none' });
-      }
+      },
+      complete: () => { this._startingCook = false; }
     });
   },
 
   writeReview() {
     if (!this.data.recipe) return;
     const recipe = this.data.recipe;
+    // 选分面板 + 写字弹窗整段只开一份（同 recordCook）：连点会叠两套，各发一条评价
+    if (!guard(this, 'reviewModal')) return;
+    const done = () => release(this, 'reviewModal');
     // 先选真实评分（1~5 星），再写文字；不再默认写死 5 分
     wx.showActionSheet({
       itemList: ['⭐⭐⭐⭐⭐ 5 分', '⭐⭐⭐⭐ 4 分', '⭐⭐⭐ 3 分', '⭐⭐ 2 分', '⭐ 1 分'],
+      fail: done,
       success: (sheet) => {
         const score = 5 - sheet.tapIndex;
         wx.showModal({
           title: `写评价 · ${score} 分`,
           editable: true,
           placeholderText: '我也做了，写两句给家人看看…',
+          complete: done,
           success: async (res) => {
             if (!res.confirm) return;
             const content = (res.content || '').trim();
@@ -397,7 +423,7 @@ Page({
   goBack() {
     wx.navigateBack({
       fail() {
-        wx.switchTab({ url: '/pages/recipes/index' });
+        wx.navigateTo({ url: '/pages/recipes/index' });
       }
     });
   },
@@ -412,8 +438,9 @@ Page({
     const nearBottom = d.scrollHeight > 0 && this._viewHeight > 0
       && top + this._viewHeight >= d.scrollHeight - 40;
     const show = top > 600 && !nearBottom;
-    if (show !== this.data.showQuickNav) {
-      this.setData({ showQuickNav: show });
+    const showTopbar = top > this._topbarAt;
+    if (show !== this.data.showQuickNav || showTopbar !== this.data.showTopbar) {
+      this.setData({ showQuickNav: show, showTopbar });
     }
   },
 
@@ -425,16 +452,19 @@ Page({
   recordCook() {
     if (!this.data.recipe) return;
     const recipe = this.data.recipe;
+    // 确认框只开一份：连点让它弹两次时，第二次带的是新 completionId，服务端认作两次做菜（双记录、双扣冰箱）
+    if (!guard(this, 'recordModal')) return;
     // 「记录做过」不带评分（做了≠满分），评分走「写评价」流程
     wx.showModal({
       title: '记录做菜',
       content: `确认已做了「${recipe.title}」？`,
+      complete: () => release(this, 'recordModal'),
       success: async (res) => {
         if (res.confirm) {
           let recorded = false;
           let pantryDeducted = 0;
-          // 连点模态框的「确定」原来会落两条做菜历史、扣两遍冰箱：这里挡页面级重复，
-          // 服务端另有幂等兜底（MysqlKitchenStore.addCookHistory）
+          // 连点模态框的「确定」原来会落两条做菜历史、扣两遍冰箱：这里挡页面级重复。
+          // 服务端那条 60 秒兜底只管不带 completionId 的请求，而 addCookHistory 每次都带，所以帮不上忙
           await runGuarded(this, 'cooked', () => addCookHistory({ recipeId: recipe.id, remark: '',
             servings: this.data.servings }, { completionKey: `record-${recipe.id}` })
             .then((r) => {

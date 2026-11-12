@@ -9,7 +9,7 @@
       <text class="logo-mark">家</text>
     </view>
     <view class="eyebrow-serif brand-eyebrow">一起下厨</view>
-    <view class="appname title">家庭<text class="t-pop">点菜</text></view>
+    <view class="appname title">家庭点菜</view>
     <view class="ver">{{version}}</view>
     <view class="slogan">{{slogan}}</view>
   </view>

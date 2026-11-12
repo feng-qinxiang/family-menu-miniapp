@@ -9,6 +9,63 @@
  * 结果就是"详情页说冰箱里有、做完菜服务端一项不扣"，用户看到数字不变却没有任何解释。
  * 现在统一按服务端那一套（最严的那套，也是真正会扣的那套）来判定。
  */
+const { parseLocalDate } = require('./dish-logic');
+const { recipeDishImg } = require('./image');
+
+function daysLeft(expiresAt, now = new Date()) {
+  if (!expiresAt) return null;
+  const target = parseLocalDate(expiresAt);
+  if (!target) return null;
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  return Math.round((target.getTime() - today.getTime()) / 86400000);
+}
+
+function expiryText(days) {
+  if (days === null) return '未填到期日';
+  if (days < 0) return `已过期 ${-days} 天`;
+  if (days === 0) return '今天到期 · 先用';
+  if (days <= 3) return `还剩 ${days} 天 · 先用`;
+  return `还剩 ${days} 天`;
+}
+
+function pantrySummary(items) {
+  const list = Array.isArray(items) ? items : [];
+  const dated = list.map(item => ({ name: item.ingredientName || item.name, days: daysLeft(item.expiresAt) }));
+  const expiring = dated.filter(item => item.days !== null && item.days >= 0 && item.days <= 3).sort((a, b) => a.days - b.days);
+  return {
+    count: list.length,
+    expiringCount: expiring.length,
+    expiredCount: dated.filter(item => item.days !== null && item.days < 0).length,
+    undatedCount: dated.filter(item => item.days === null).length,
+    priorityText: expiring.slice(0, 3).map(item => item.name).join('、')
+  };
+}
+
+// 同一份服务端匹配同时用于冰箱与随机挑菜，缺少用料时不能仅凭百分比声称「能做」。
+function normalizeMatches(matches) {
+  return (Array.isArray(matches) ? matches : []).map(item => {
+    const recipe = item.recipe || {};
+    const total = Number(item.totalCount) || 0;
+    const have = Number(item.matchedCount) || 0;
+    const missing = Array.isArray(item.missingIngredients) ? item.missingIngredients.filter(Boolean) : [];
+    const expiring = Array.isArray(item.expiringIngredients) ? item.expiringIngredients.filter(Boolean) : [];
+    const full = total > 0 && have >= total && missing.length === 0;
+    const rate = total > 0 ? Math.min(1, have / total) : 0;
+    return {
+      ...recipe,
+      id: recipe.id || item.recipeId,
+      title: recipe.title || '未命名菜谱',
+      coverImage: recipeDishImg(recipe),
+      metaText: `${recipe.timeCost || '--'} 分钟 · ${recipe.servings || '--'} 人份`,
+      haveText: `${have}/${total}`,
+      percentWidth: Math.round(rate * 100),
+      full,
+      expiringIngredients: expiring,
+      priorityText: expiring.length ? `先用 ${expiring.join('、')}` : '',
+      missingText: full ? '食材齐全 · 按菜谱份量' : (missing.length ? `还差 ${missing.join('、')}` : '用料尚未确认')
+    };
+  }).filter(item => item.id);
+}
 
 /** 归一：去所有空白 + 转小写（与服务端 PantryDeduction.normalize 一致） */
 function normalize(text) {
@@ -37,7 +94,8 @@ function indexPantry(pantryItems) {
   const index = new Map();
   (Array.isArray(pantryItems) ? pantryItems : []).forEach((item) => {
     const name = (item && (item.ingredientName || item.name)) || '';
-    if (!name || parseAmount(item && item.amount) == null) return;
+    const expiry = daysLeft(item && item.expiresAt);
+    if (!name || parseAmount(item && item.amount) == null || (expiry !== null && expiry < 0)) return;
     const key = stockKey(name, item.unit);
     if (!index.has(key)) index.set(key, []);
     index.get(key).push(item);
@@ -81,5 +139,9 @@ module.exports = {
   parseAmount,
   indexPantry,
   pantryHas,
-  pantryMatches
+  pantryMatches,
+  daysLeft,
+  expiryText,
+  pantrySummary,
+  normalizeMatches
 };

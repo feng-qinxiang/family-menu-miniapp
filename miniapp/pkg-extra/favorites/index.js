@@ -5,11 +5,13 @@
 const features = require('../../utils/features');
 const { getMyFavorites, toggleCommunityFavorite } = require('../../utils/api');
 const { recipesFromPosts } = require('../../utils/dish-logic');
+const { dishImageUrl, onPhotoError: markPhotoBroken } = require('../../utils/image');
 
 // 帖子头像撞色轮转
-const AVATAR_COLORS = ['#b08949', '#2f4a3a', '#e8472a', '#3a2e23'];
+const AVATAR_COLORS = ['#b08949', '#2f4a3a', '#c8381f', '#3a2e23'];
 
 Page({
+  onPhotoError(e) { markPhotoBroken(e, this); },
   data: {
     // 大字模式：档位由设置页写进 storage，根节点挂 .font-lg 才会吃到 --fs-mul
     fontScale: 'normal',
@@ -19,7 +21,6 @@ Page({
     posts: [],
     recipeCount: 0,
     postCount: 0,
-    countText: '',
     loading: true,
     toast: { visible: false, text: '' }
   },
@@ -67,7 +68,6 @@ Page({
         posts,
         recipeCount: recipes.length,
         postCount: posts.length,
-        countText: '已收藏 ' + recipes.length + ' 道菜谱 · ' + posts.length + ' 篇帖子',
         loadError: false,
         loading: false
       });
@@ -83,7 +83,6 @@ Page({
         recipeCount: 0,
         postCount: 0,
         loading: false,
-        countText: '已收藏 0 道菜谱 · 0 篇帖子',
         // 失败不能显示成"还没有收藏"——那会让人以为自己把收藏清光了
         loadError: true
       });
@@ -111,7 +110,7 @@ Page({
       // 封面口径与社区信息流一致：帖子自己的图 → 关联菜谱封面 → 没有就不放图。
       // 原来用本地菜图轮转兜底，「周末烤的面包」会被配上扬州炒饭的照片（实测 h5 日志里 picked 是 fried-rice.jpg）
       const images = Array.isArray(p.images) ? p.images.filter(Boolean) : [];
-      const cover = images[0] || recipe.coverImage || '';
+      const cover = dishImageUrl(images[0] || recipe.coverImage || '');
       const author = p.author || '匿名厨友';
       const tag = (Array.isArray(p.tags) && p.tags[0]) || 'Family Kitchen';
       return {
@@ -151,9 +150,11 @@ Page({
     const postId = recipe._postId;
     if (!postId) {
       this._toast('无法定位收藏来源');
+      // 卡片已经在本地翻成「未收藏」了，重拉一次让它和实际对上（同 notifications 失败后 loadData）
+      this.loadData(true);
       return;
     }
-    // 防重：连点会多次切换收藏态，本地状态来回漂
+    // 防重：连点会多次切换收藏态，本地状态来回漂。在途那次成功后会整体刷新，这里不用再拉
     if (this.__favBusy) return;
     this.__favBusy = true;
     wx.showLoading({ title: '处理中', mask: true });
@@ -166,6 +167,7 @@ Page({
       .catch(() => {
         wx.hideLoading();
         this._toast('操作失败，请稍后重试');
+        this.loadData(true);
       })
       .then(() => { this.__favBusy = false; });
   },
@@ -182,7 +184,7 @@ Page({
 
   // 空态 CTA：去逛菜谱（tabbar 页用 switchTab）
   goRecipes() {
-    wx.switchTab({
+    wx.navigateTo({
       url: '/pages/recipes/index',
       fail: () => this._toast('菜谱页暂未开放')
     });

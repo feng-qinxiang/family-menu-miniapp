@@ -1,0 +1,16 @@
+{
+  "source": "Latest native screenshots checked in Playwright",
+  "url": "http://127.0.0.1:8848/?v=20261009-card-reading-final#followup-update",
+  "heading": "本轮 2 处调整 · 菜卡收紧，帖子重排",
+  "catalogPages": 39,
+  "screenshotRefs": 114,
+  "missingScreenshotRefs": [],
+  "viewports": [
+    { "viewport": 1344, "documentWidth": 1329 },
+    { "viewport": 375, "documentWidth": 360 },
+    { "viewport": 320, "documentWidth": 305 }
+  ],
+  "prototype": { "recipesSvgRendered": true, "postSvgRendered": true },
+  "screenshot": "screens/gallery-card-reading-desktop.png",
+  "passed": true
+}

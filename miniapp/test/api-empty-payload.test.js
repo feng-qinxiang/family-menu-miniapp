@@ -46,6 +46,17 @@ const api = require('../utils/api');
   next = { statusCode: 200, data: '' };
   assert.strictEqual(await api.getCurrentUser(), null, 'fallback 优先于新口径');
 
+  // 食材图 map 的站内路径复用 API origin，签名参数原样保留；恢复文字发送空 cover。
+  const signedPhoto = '/uploads/abcdef0123456789abcdef0123456789.jpg?e=1&k=example';
+  next = { statusCode: 200, data: { '番茄': signedPhoto } };
+  const photos = await api.getIngredientPhotos();
+  const photoRequest = calls[calls.length - 1];
+  assert.strictEqual(photos['番茄'], photoRequest.url.replace('/api/ingredient-photos', '') + signedPhoto);
+  next = { statusCode: 200, data: {} };
+  assert.deepStrictEqual(await api.saveIngredientPhoto('番茄', ''), {});
+  assert.strictEqual(calls[calls.length - 1].method, 'PUT');
+  assert.deepStrictEqual(calls[calls.length - 1].data, { ingredientName: '番茄', coverImage: '' });
+
   console.log('api-empty-payload.test: 全部断言通过 ✔');
 })().catch((err) => {
   console.error('api-empty-payload.test 失败:', err && err.message);

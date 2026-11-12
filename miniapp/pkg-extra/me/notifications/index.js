@@ -4,15 +4,16 @@ const { getNotifications, markNotificationsRead } = require('../../../utils/api'
 const features = require('../../../utils/features');
 
 // 通知 kind → tab 归属（wish=家人许愿 / meal=开饭提醒，都算家庭事件）
-const KIND_TAB = { fam: 'family', com: 'community', sys: 'system', wish: 'family', meal: 'family' };
+const KIND_TAB = { fam: 'family', com: 'community', sys: 'system', wish: 'family', meal: 'family', pantry: 'family' };
 
 // kind → 默认图标
-const KIND_ICON = { fam: 'home', com: 'heart', sys: 'bell', wish: 'heart', meal: 'bell' };
+const KIND_ICON = { fam: 'home', com: 'heart', sys: 'bell', wish: 'heart', meal: 'bell', pantry: 'bell' };
 
 // actionType → 按钮文案 + 跳转
 const ACTION_MAP = {
   menu: { label: '去看看', ghost: false, route: '/pages/menu/index' },
   shopping: { label: '查看清单', ghost: true, route: '/pages/shopping/index' },
+  pantry: { label: '查看冰箱', ghost: false, route: '/pages/pantry/index' },
   community: { label: '去社区', ghost: true, route: '/pages/community/index' },
   home: { label: '去看看', ghost: false, route: '/pages/home/index' },
   feedback: { label: '查看', ghost: true, route: '/pkg-extra/me/feedback/index' },
@@ -41,7 +42,6 @@ function adapt(item) {
 Page({
   data: {
     loading: true,
-    all: [],
     tabs: [
       { key: 'all', label: '全部', unread: 0 },
       { key: 'family', label: '家庭', unread: 0 },
@@ -51,6 +51,7 @@ Page({
     activeTab: 'all',
     unreadCount: 0,
     visibleCount: 0,
+    hasAny: false,
     groups: [],
     toast: { visible: false, type: 'top', text: '' },
     loadError: false
@@ -74,11 +75,12 @@ Page({
     getNotifications()
       .then((res) => {
         const items = res && Array.isArray(res.items) ? res.items : [];
-        const all = items.map(adapt);
-        this.setData({ all, loading: false, loadError: false }, () => this.recompute());
+        this._all = items.map(adapt);
+        this.setData({ loading: false, loadError: false }, () => this.recompute());
       })
       .catch(() => {
-        this.setData({ all: [], loading: false, loadError: true }, () => this.recompute());
+        this._all = [];
+        this.setData({ loading: false, loadError: true }, () => this.recompute());
       });
   },
 
@@ -89,7 +91,7 @@ Page({
 
   // 根据当前 tab 计算分组、未读数、tab 角标
   recompute() {
-    const all = this.data.all || [];
+    const all = this._all || [];
     const active = this.data.activeTab;
 
     // tab 未读角标统计（基于全部数据）
@@ -124,7 +126,8 @@ Page({
       tabs,
       groups,
       unreadCount: tabUnread.all,
-      visibleCount: filtered.length
+      visibleCount: filtered.length,
+      hasAny: all.length > 0
     });
   },
 
@@ -139,8 +142,8 @@ Page({
     // 防重：乐观更新 + 请求在途时再点会重复提交
     if (this.__readAllBusy) return;
     this.__readAllBusy = true;
-    const all = (this.data.all || []).map((n) => ({ ...n, unread: false }));
-    this.setData({ all }, () => this.recompute());
+    this._all = (this._all || []).map((n) => ({ ...n, unread: false }));
+    this.recompute();
     markNotificationsRead([])
       .then(() => this.showToast('已全部标记为已读'))
       .catch(() => {
@@ -155,14 +158,14 @@ Page({
   onCardTap(e) {
     const id = e.currentTarget.dataset.id;
     this.markRead(id);
-    const n = (this.data.all || []).find((x) => x.id === id);
+    const n = (this._all || []).find((x) => x.id === id);
     const type = n && n.action ? n.action.type : '';
     this.navigateByType(type, n);
   },
 
   markRead(id) {
     let changed = false;
-    const all = (this.data.all || []).map((n) => {
+    const all = (this._all || []).map((n) => {
       if (n.id === id && n.unread) {
         changed = true;
         return { ...n, unread: false };
@@ -170,21 +173,22 @@ Page({
       return n;
     });
     if (!changed) return;
-    this.setData({ all }, () => this.recompute());
+    this._all = all;
+    this.recompute();
     markNotificationsRead([id]).catch(() => {
       // 失败要回滚本地状态：此前只在下次进页面时才纠正，
       // 用户会看到"已读"却仍收到未读计数，两处不一致
-      const rolled = (this.data.all || []).map((n) => (
+      this._all = (this._all || []).map((n) => (
         n.id === id ? { ...n, unread: true } : n
       ));
-      this.setData({ all: rolled }, () => this.recompute());
+      this.recompute();
     });
   },
 
   // 卡片按钮 → 标记已读 + 真实跳转
   onAction(e) {
     const id = e.currentTarget.dataset.id;
-    const n = (this.data.all || []).find((x) => x.id === id);
+    const n = (this._all || []).find((x) => x.id === id);
     this.markRead(id);
     const type = n && n.action ? n.action.type : '';
     this.navigateByType(type, n);
@@ -193,12 +197,12 @@ Page({
   // tabBar 页用 switchTab，其余普通页用 navigateTo
   navigateByType(type, n) {
     const tabRoutes = {
-      pantry: '/pages/pantry/index',
+      menu: '/pages/menu/index',
       community: '/pages/community/index',
       home: '/pages/home/index'
     };
     const navRoutes = {
-      menu: '/pages/menu/index',
+      pantry: '/pages/pantry/index',
       shopping: '/pages/shopping/index',
       feedback: '/pkg-extra/me/feedback/index'
     };

@@ -1,5 +1,5 @@
 /* ============================================================
-   pages/recipe-detail · 菜谱详情「美食杂志」重做
+   pages/recipe-detail · 头图后连续阅读，用料左图右文
    配色/工具类复用 app.wxss，本文件仅页面特有结构
    ============================================================ */
 .rd-page {
@@ -14,7 +14,8 @@
 /* ===== Hero 大图 ===== */
 .rd-hero {
   position: relative;
-  min-height: var(--photo-hero-h);
+  height: 430rpx;
+  min-height: 320rpx;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -28,113 +29,48 @@
 .rd-hero-mask {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg,
-    rgba(20, 14, 8, 0.55) 0%,
-    rgba(20, 14, 8, 0) 30%,
-    rgba(20, 14, 8, 0.2) 54%,
-    rgba(20, 14, 8, 0.92) 100%);
-}
-.rd-hero-bignum {
-  position: absolute;
-  top: 230rpx;
-  right: 18rpx;
-  font-size: var(--fs-hero-bignum);
-  font-weight: 700;
-  line-height: 1;
-  color: rgba(255, 255, 255, 0.08);
-  pointer-events: none;
+  background: linear-gradient(180deg, rgba(20, 14, 8, 0.5), transparent 60%);
 }
 
-/* Hero 文案 */
-.rd-hero-body {
-  position: relative;
-  margin-top: auto;
-  padding: 0 46rpx var(--hero-body-above-sheet);
-  z-index: 2;
-  color: var(--anchor-contrast);
-}
-.rd-tag {
-  display: inline-block;
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: var(--fs-cap);
-  letter-spacing: 2rpx;
-  font-weight: 700;
-  color: var(--anchor-contrast);
-  background: var(--pop);
-  padding: 10rpx 26rpx;
-  border-radius: var(--r-xs);
-}
-
-/* nav-bar 右侧编辑入口（仅自建菜谱）：压在 hero 暗底上，用半透明描边胶囊 */
-.rd-navedit {
-  height: 72rpx;
-  padding: 0 28rpx;
-  display: flex;
-  align-items: center;
-  font-size: var(--fs-cap);
-  font-weight: 700;
-  color: #fff;
-  background: rgba(0, 0, 0, 0.28);
-  border: 2rpx solid rgba(255, 255, 255, 0.45);
-  border-radius: var(--r-pill);
-}
-.rd-hero-title {
-  font-size: var(--fs-hero-xl);
-  /* 菜名是家里人自己起的，长到一定换行（实测「外婆传下来的红烧肉炖土豆胡萝卜玉米一锅出」
-     19 字换了三行）。0.92 这个行高是按单行展示字定的，一旦换行，上下两行的字直接互压到认不出来。
-     这里按「会换行」定行高，并最多三行——再多就把整张 hero 图吞掉。 */
-  line-height: 1.14;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-  overflow: hidden;
-  letter-spacing: -6rpx;
-  margin: 28rpx 0 26rpx;
-  -webkit-text-stroke: 3rpx var(--c-surface);
-}
-.rd-hero-meta {
-  display: flex;
-  gap: 16rpx;
-  align-items: center;
-  flex-wrap: wrap;
-}
-.rd-m {
-  display: inline-flex;
-  align-items: center;
-  font-size: var(--fs-cap);
-  font-weight: 600;
-  color: var(--anchor-contrast);
-  background: rgba(255, 255, 255, 0.16);
-  padding: 13rpx 24rpx;
-  border-radius: var(--r-chip);
-}
-.rd-m-solid { background: var(--pop); }
+.rd-intro { padding-bottom: 28rpx; margin-bottom: 16rpx; border-bottom: var(--bd-card); }
+.rd-title-row { display: flex; align-items: flex-start; gap: 16rpx; }
+.rd-title-row .rd-title { flex: 1; min-width: 0; }
+.rd-edit { flex: none; color: var(--mut-strong); }
+.rd-title { font-size: var(--fs-h1); font-weight: 700; line-height: 1.35; word-break: break-all; }
+.rd-meta text + text::before { content: "·"; margin-right: 12rpx; }
+.rd-meta { display: flex; flex-wrap: wrap; gap: 8rpx 12rpx; font-size: var(--fs-sub); color: var(--mut-strong); line-height: 1.5; margin-top: 16rpx; }
+.rd-summary { font-size: var(--fs-body); color: var(--ink); line-height: 1.7; margin-top: 20rpx; }
+.rd-section-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12rpx 20rpx; margin-bottom: 16rpx; }
+.rd-section-head > view:first-child { display: flex; flex-wrap: wrap; align-items: baseline; gap: 16rpx; }
+/* 与同页 section-head（家人评价/大家晒的）同一字重：同级标题原来 600 对 800，并排看一轻一重 */
+.rd-section-title { font-size: var(--fs-h2); font-weight: 800; line-height: 1.5; }
+.rd-stock-count, .rd-method-count { font-size: var(--fs-cap); color: var(--mut-strong); }
+.rd-method-head { margin-top: 36rpx; }
 
 /* 圆形份量 stepper */
 .rd-srv {
   display: inline-flex;
   align-items: center;
-  background: rgba(255, 255, 255, 0.16);
-  border-radius: var(--r-chip);
-  padding: 6rpx;
+  flex: none;
+  background: var(--paper-2);
+  border-radius: var(--r-md);
 }
 .rd-sbtn {
-  /* 步进器 ± 按钮放大到 72rpx，便于连续点按 */
-  width: 72rpx;
-  height: 72rpx;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.18);
+  width: var(--tap-min);
+  height: var(--tap-min);
+  border-radius: var(--r-md);
   display: flex;
   align-items: center;
   justify-content: center;
 }
+.rd-sbtn.is-disabled { opacity: 0.35; }
+.rd-sbtn.is-disabled:active { transform: none; }
 .rd-sbtn-minus,
 .rd-sbtn-plus {
   position: relative;
   width: 24rpx;
   height: 5rpx;
-  background: var(--c-surface);
+  background: var(--ink);
   border-radius: 3rpx;
 }
 .rd-sbtn-plus::after {
@@ -145,27 +81,24 @@
   transform: translate(-50%, -50%);
   width: 5rpx;
   height: 24rpx;
-  background: var(--c-surface);
+  background: var(--ink);
   border-radius: 3rpx;
 }
 .rd-sval {
   font-size: var(--fs-cap);
   font-weight: 700;
-  color: var(--anchor-contrast);
-  min-width: 96rpx;
+  color: var(--ink);
+  min-width: 80rpx;
   text-align: center;
 }
 /* ===== Sheet ===== */
 .rd-sheet {
   position: relative;
-  margin-top: -50rpx;
+  margin-top: 0;
   background: var(--paper);
-  border-radius: var(--r-sheet) var(--r-sheet) 0 0;
-  padding: 44rpx 46rpx calc(400rpx + env(safe-area-inset-bottom));
+  padding: 32rpx 32rpx calc(240rpx + env(safe-area-inset-bottom));
   z-index: 5;
 }
-.rd-sheet .shead { margin: 0 0 30rpx; }
-.rd-sheet .shead:not(:first-child) { margin-top: 56rpx; }
 .rd-card { margin: 0; }
 
 .rd-empty-mini {
@@ -185,13 +118,14 @@
 }
 .rd-ing:last-child { border-bottom: none; }
 .rd-dot {
-  width: 18rpx;
-  height: 18rpx;
+  display: inline-block;
+  width: 12rpx;
+  height: 12rpx;
   border-radius: 50%;
   flex: none;
 }
 .rd-dot.have { background: var(--pine); }
-.rd-dot.miss { background: var(--pop); }
+.rd-dot.miss { background: var(--pop-fill); }
 /* flex:1 不给 min-width:0 时，长食材名拒绝收缩，会把右边的用量顶出卡片右缘 */
 .rd-iname { flex: 1; min-width: 0; }
 .rd-iname-h {
@@ -200,24 +134,41 @@
   color: var(--ink);
   /* 原来有 letter-spacing: -0.4rpx——28rpx 的中文上收 0.4rpx 看不出紧凑，
      只让最后一个字的右侧空隙变得不均匀。全站同类微负值一并去掉。 */
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  line-height: 1.5;
+  word-break: break-all;
 }
 .rd-note {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
   font-size: calc(23rpx * var(--fs-mul, 1));
   color: var(--mut-strong);
   margin-top: 4rpx;
 }
 .rd-note.miss { color: var(--pop); font-weight: 600; }
+.rd-ingredient-top { display: flex; align-items: baseline; justify-content: space-between; gap: 20rpx; }
+.rd-ingredient-top .rd-iname-h { flex: 1; min-width: 0; font-weight: 600; }
 .rd-amt {
-  font-size: var(--fs-cap);
-  font-weight: 800;
-  color: var(--ink-deep);
   flex: none;
+  max-width: 45%;
+  font-size: var(--fs-cap);
+  font-weight: 600;
+  color: var(--ink-deep);
+  margin: 0;
+  text-align: right;
+  line-height: 1.5;
+  word-break: break-all;
 }
+.rd-photo-hint { font-size: var(--fs-cap); color: var(--mut-strong); line-height: 1.5; padding-bottom: 8rpx; }
+.rd-photo-hint--foot { padding: 16rpx 0 0; }
+.rd-ingredient-photo { position: relative; flex: none; width: var(--tile-row-sm); height: var(--tile-row-sm); background: var(--paper-2); border-radius: var(--r-sm); overflow: hidden; }
+.rd-ingredient-image { display: block; width: 100%; height: 100%; }
+/* 无照片时只露首字，不与右侧全名重复 */
+.rd-ingredient-text { box-sizing: border-box; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 4rpx 8rpx; font-size: var(--fs-lg); font-weight: 700; color: var(--pine-ink); line-height: 1.2; }
+.rd-ingredient-label { overflow: hidden; }
 
-/* 加入买菜清单按钮 */
+/* 加入买菜清单按钮：同屏只留一颗实心红（底栏「开始做菜」），这里降为浅红底次按钮。
+   保留红系是因为它说的是「缺料/待采购」（与 .rd-note.miss 同义）。 */
 .rd-ing-cart { padding: 0 0 22rpx; }
 .rd-cart-btn {
   display: flex;
@@ -226,12 +177,11 @@
   gap: 12rpx;
   width: 100%;
   min-height: 92rpx;
-  border-radius: 28rpx;
-  background: var(--pop);
-  color: var(--anchor-contrast);
+  border-radius: var(--r-card);
+  background: var(--pop-soft);
+  color: var(--pop-deep);
   font-size: calc(28rpx * var(--fs-mul, 1));
   font-weight: 800;
-  box-shadow: var(--sh-pop);
 }
 .rd-cnum {
   display: inline-flex;
@@ -241,7 +191,7 @@
   height: 42rpx;
   padding: 0 12rpx;
   border-radius: 21rpx;
-  background: rgba(255, 255, 255, 0.25);
+  background: var(--c-surface);   /* 按钮改浅红底后，原来的白 .25 叠在浅底上看不出胶囊 */
   font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: 900;
 }
@@ -308,30 +258,25 @@
 /* —— 做法步骤 —— */
 .rd-step {
   display: flex;
-  gap: 28rpx;
-  padding: 30rpx 0;
+  gap: 24rpx;
+  padding: 24rpx 0;
   border-bottom: 2rpx solid var(--paper-2);
 }
 .rd-step:last-child { border-bottom: none; }
 .rd-sno {
-  width: 66rpx;
-  height: 66rpx;
-  border-radius: 21rpx;
-  background: var(--anchor);
-  color: var(--gold);
-  font-size: calc(32rpx * var(--fs-mul, 1));
-  font-weight: 700;
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: var(--r-sm);
+  background: var(--paper-2);
+  color: var(--pine-ink);
+  font-size: var(--fs-sub);
+  font-weight: 600;
   flex: none;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.rd-sno.hot {
-  background: var(--pop);
-  color: var(--anchor-contrast);
-  box-shadow: 0 12rpx 28rpx rgba(232, 71, 42, 0.35);
-}
-.rd-stx { flex: 1; padding-top: 6rpx; }
+.rd-stx { flex: 1; min-width: 0; padding-top: 2rpx; }
 .rd-stx-p {
   font-size: calc(28rpx * var(--fs-mul, 1));
   line-height: 1.55;
@@ -351,7 +296,8 @@
   margin-top: 16rpx;
   font-size: calc(23rpx * var(--fs-mul, 1));
   font-weight: 700;
-  color: var(--gold-deep);
+  /* 小号提示字用 --mut-strong：--gold-deep 在 --paper-2 上约 3.0:1，偏淡；金色留给左侧星标 */
+  color: var(--mut-strong);
   background: var(--paper-2);
   padding: 10rpx 20rpx;
   border-radius: var(--r-chip);
@@ -393,7 +339,7 @@
   background: var(--c-border);
   clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
 }
-.rd-star.on { background: var(--pop); }
+.rd-star.on { background: var(--pop-fill); }
 .rd-cm { font-size: var(--fs-sub); line-height: 1.5; color: var(--mut); }
 
 /* 写评价入口 */
@@ -406,6 +352,8 @@
   margin-top: 6rpx;
 }
 .rd-rev-entry.no-top { border-top: none; margin-top: 0; padding-top: 8rpx; }
+/* 上一行（评价/作品）自带底线，入口再画顶线就是两条线叠着 */
+.rd-rev + .rd-rev-entry, .rd-work + .rd-rev-entry { border-top: none; margin-top: 0; }
 .rd-meav {
   width: 80rpx;
   height: 80rpx;
@@ -418,16 +366,16 @@
   font-weight: 900;
   color: var(--anchor-contrast);
   font-family: var(--serif);
-  background: var(--pop);
+  background: var(--pop-fill);
 }
 .rd-fakein {
   flex: 1;
   height: 84rpx;
   line-height: 84rpx;
-  border-radius: 26rpx;
+  border-radius: var(--r-card);   /* 嵌在 --r-card 卡里：原来 26rpx 比外卡还圆 */
   background: var(--paper-2);
   border: 2rpx solid var(--c-border);
-  padding: 0 28rpx;
+  padding: 0 var(--pad-card);
   font-size: var(--fs-sub);
   color: var(--mut-strong);
   font-weight: 600;
@@ -436,9 +384,9 @@
   flex: none;
   min-width: 100rpx;
   height: 88rpx;
-  border-radius: 26rpx;
+  border-radius: var(--r-card);
   background: var(--anchor);
-  color: var(--gold);
+  color: var(--gold-on-dark);
   font-size: var(--fs-sub);
   font-weight: 800;
   display: flex;
@@ -455,12 +403,11 @@
   padding: 22rpx 0;
   border-bottom: 2rpx solid var(--paper-2);
 }
-.rd-work:last-child { border-bottom: none; }
 .rd-work-thumb {
   flex: none;
   width: var(--dish-thumb);
   height: var(--dish-thumb);
-  border-radius: var(--r-md);
+  border-radius: var(--r-sm);   /* 嵌在 --r-card 卡里，圆角不能比外卡大 */
 }
 .rd-work-thumb--none {
   display: flex;
@@ -497,13 +444,15 @@
   display: flex;
   gap: 16rpx;
   padding: 40rpx 30rpx calc(24rpx + env(safe-area-inset-bottom));
-  background: linear-gradient(180deg, var(--glass-clear), var(--paper) 28%);
+  padding-top: 20rpx;
+  background: var(--paper);
+  border-top: 2rpx solid var(--line);
 }
 .rd-ghost-btn {
   flex: none;
   width: 156rpx;
   height: 104rpx;
-  border-radius: var(--r-chip);
+  border-radius: var(--r-card);   /* 底栏三键统一 --r-card（实心主按钮约定，同排次按钮跟随） */
   background: var(--paper-2);
   color: var(--ink-deep);
   font-size: calc(25rpx * var(--fs-mul, 1));
@@ -519,8 +468,8 @@
 .rd-primary-btn {
   flex: 1;
   height: 104rpx;
-  border-radius: var(--r-chip);
-  background: var(--pop);
+  border-radius: var(--r-card);
+  background: var(--pop-fill);
   color: var(--anchor-contrast);
   font-size: calc(28rpx * var(--fs-mul, 1));
   font-weight: 900;
@@ -536,9 +485,10 @@
   flex: none;
   width: 170rpx;
   height: 104rpx;
-  border-radius: var(--r-chip);
-  background: var(--anchor);
-  color: var(--gold);
+  border-radius: var(--r-card);
+  background: var(--paper-2);
+  color: var(--ink-deep);
+  border: 2rpx solid var(--c-border);
   font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: 800;
   display: flex;
@@ -554,7 +504,7 @@
 /* 已在今日菜单：松绿描边 + 对勾，与"待加入"深色底区分 */
 .rd-secondary-btn--added {
   background: var(--paper-2);
-  color: var(--pine);
+  color: var(--pine-ink);
   border: 2rpx solid var(--pine);
 }
 .rd-secondary-btn--added .rd-ic-check {
@@ -563,6 +513,8 @@
 }
 
 /* ===== 悬浮快捷键（回顶/退出）：右侧竖排，避开底部操作栏 ===== */
+.rd-topbar { position: fixed; top: 0; left: 0; right: 0; z-index: 50; }
+.rd-topbar.solid { background: var(--paper); box-shadow: 0 2rpx 0 var(--line); }
 .rd-quicknav {
   position: fixed;
   right: 20rpx;
@@ -593,25 +545,6 @@
   transform: rotate(45deg) translate(4rpx, 4rpx);
   border-radius: 2rpx;
 }
-/* × 退出 */
-.rd-qic-x {
-  position: relative;
-  width: 30rpx;
-  height: 30rpx;
-}
-.rd-qic-x::before, .rd-qic-x::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 34rpx;
-  height: 5rpx;
-  background: var(--mut);
-  border-radius: 3rpx;
-}
-.rd-qic-x::before { transform: translate(-50%, -50%) rotate(45deg); }
-.rd-qic-x::after { transform: translate(-50%, -50%) rotate(-45deg); }
-
 /* ===== 纯 CSS 图标 ===== */
 .rd-ic { position: relative; flex: none; }
 /* 加号 */
@@ -647,9 +580,8 @@
 }
 
 /* ===== 加载骨架 ===== */
-/* 高度必须与真实 hero（--photo-hero-h）一致，否则加载完成时页面跳变 */
+/* 高度沿用 rd-hero，加载前后保持一致。 */
 .rd-hero-skel {
-  height: var(--photo-hero-h);
   background: linear-gradient(135deg, var(--paper-2), var(--c-border-light));
 }
 .rd-skel-row { display: flex; align-items: center; gap: 24rpx; padding: 24rpx 0; }
@@ -658,3 +590,11 @@
 
 /* ===== 空态 ===== */
 .rd-empty-page { padding-top: 0; }
+
+/* ===== 深色档 ===== */
+/* --gold 深色档翻成 #8a6a3a，压在 --anchor 上看不清（旧深色 --anchor #3a2e23 上约 2.6:1，
+   深色档提亮后的 #866a50 上约 1:1）。深色档改用恒定浅字 --anchor-contrast（两种 --anchor 上都 ≥4.7:1）；
+   浅色档不进这条，金字观感不变。「已在菜单」态自己换了底色和字色，必须排除，否则会被这里盖掉。 */
+@media (prefers-color-scheme: dark) {
+  .rd-gobtn { color: var(--anchor-contrast); }
+}

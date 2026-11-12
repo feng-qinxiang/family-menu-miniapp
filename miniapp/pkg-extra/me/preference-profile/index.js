@@ -1,16 +1,16 @@
 // 偏好画像页 · 我们家的口味（二级页，游客直进）
 // 数据源：getPreferenceProfile() + getCookHistory()
 const api = require('../../../utils/api');
-const { recipeDishImg } = require('../../../utils/image');
+const { recipeDishImg, localPath, onImgError } = require('../../../utils/image');
 
-const HERO_IMG = '/assets/dishes/hongshao-pork.jpg';
+const HERO_IMG = localPath('hongshao-pork');
 
 // 条形图配色（套用全局 token，渐变收尾用柔色）
 const BAR_GRADIENTS = [
-  'linear-gradient(90deg,#e8472a,#f4794f)',
+  'linear-gradient(90deg,#c8381f,#f4794f)',
   'linear-gradient(90deg,#b08949,#e0c389)',
   'linear-gradient(90deg,#2f4a3a,#5a7d66)',
-  'linear-gradient(90deg,#7a6e5d,#b3a795)'
+  'linear-gradient(90deg,#716555,#b3a795)'
 ];
 
 // 标签云尺寸档位类名
@@ -21,6 +21,7 @@ function pickLocalImage(title) {
 }
 
 Page({
+  onHeroImageError(e) { onImgError(e, this, 'heroImg'); },
   data: {
     statusBarHeight: 0,
     loading: true,

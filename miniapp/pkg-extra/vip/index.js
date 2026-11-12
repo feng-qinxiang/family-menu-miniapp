@@ -21,7 +21,7 @@ Page({
       { icon: '筛', title: '高级筛选', desc: '按忌口、口味、时长多维度找菜' },
       { icon: '净', title: '去除广告', desc: '清清爽爽看菜谱，不再被打断' },
       { icon: '周', title: '智能周菜单', desc: '一键排好一周吃什么，省心' },
-      { icon: '家', title: '成员无限共享', desc: '爸妈伴侣孩子，想加几个加几个' },
+      { icon: '家', title: '最多 8 位家人共享', desc: '爸妈伴侣孩子，一起点菜' },
       { icon: '藏', title: '菜谱无限收藏', desc: '看到喜欢的随手存，不限数量' }
     ],
     compareRows: [
@@ -99,7 +99,7 @@ Page({
     try {
       const family = await getFamilyProfile();
       const members = (family && Array.isArray(family.members)) ? family.members : [];
-      const tones = ['#e8472a', '#b08949', '#2f4a3a', '#3a2e23'];
+      const tones = ['#c8381f', '#b08949', '#2f4a3a', '#3a2e23'];
       const shown = members.slice(0, 3).map((m, i) => ({
         initial: String(m.nickname || '家').slice(0, 1),
         tone: tones[i % tones.length]

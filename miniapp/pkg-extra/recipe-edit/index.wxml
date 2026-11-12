@@ -1,4 +1,4 @@
-<nav-bar title="{{isEdit ? '编辑菜谱' : '新建菜谱'}}"></nav-bar>
+<nav-bar title="{{isEdit ? '编辑菜谱' : '新建菜谱'}}" leave-confirm="{{leaveDirty}}"></nav-bar>
 
 <state-loading wx:if="{{pageLoading}}" text="加载菜谱中…"></state-loading>
 
@@ -10,14 +10,15 @@
 </view>
 
 <view class="rc-body {{fontScale === 'lg' ? 'font-lg' : ''}}">
-  <text class="rc-tip" wx:if="{{tipText}}">{{tipText}}</text>
+  <!-- 编辑模式原菜谱没拉到：空表单保存会覆盖原菜谱，submit 已拦住，这里给常驻的重试入口 -->
+  <view class="rc-tip tap-scale" wx:if="{{loadFailed}}" bindtap="retryLoad" aria-role="button">原菜谱没加载出来，点这里重试</view>
 
   <block wx:if="{{editTab === 'info'}}">
     <view class="tap-scale rc-cover" wx:if="{{form.coverImage}}" bindtap="chooseCover">
-      <image class="rc-cover-img" src="{{form.coverImage}}" mode="aspectFill" />
-      <view class="tap-scale rc-cover-x" catchtap="removeCover">×</view>
+      <image class="rc-cover-img" src="{{form.coverImage === coverFailedUrl ? imagePlaceholder : form.coverImage}}" mode="aspectFill" data-err-key="coverFailedUrl" data-url="{{form.coverImage}}" binderror="onImageError" />
+      <view class="tap-scale rc-cover-x" catchtap="removeCover" aria-role="button" aria-label="移除封面">×</view>
     </view>
-    <view class="tap-scale rc-addcover" wx:else bindtap="chooseCover">添加封面</view>
+    <view class="tap-scale rc-addcover" wx:else bindtap="chooseCover" aria-role="button"><image class="rc-addcover-ic" src="/assets/icons/lucide/plus.svg" mode="aspectFit" aria-hidden="true" /><text>添加封面（可选）</text></view>
 
     <input
       class="rc-title"
@@ -38,13 +39,15 @@
     />
 
     <view class="rc-picks">
-      <view class="rc-pickline tap-scale" bindtap="openCuisineSheet">
+      <view class="rc-pickline tap-scale" bindtap="openCuisineSheet" aria-role="button">
         <text class="rc-pickline-k">菜系</text>
-        <text class="rc-pickline-v">{{form.cuisine || '未选'}}</text>
+        <text class="rc-pickline-v {{form.cuisine ? '' : 'rc-ph'}}">{{form.cuisine || '未选'}}</text>
+        <image class="rc-pickline-chev" src="/assets/icons/lucide/chevron-right.svg" mode="aspectFit" aria-hidden="true" />
       </view>
-      <view class="rc-pickline tap-scale" bindtap="openTagSheet">
+      <view class="rc-pickline tap-scale" bindtap="openTagSheet" aria-role="button">
         <text class="rc-pickline-k">标签</text>
         <text class="rc-pickline-v {{tagsLabel === '未选' ? 'rc-ph' : ''}}">{{tagsLabel}}</text>
+        <image class="rc-pickline-chev" src="/assets/icons/lucide/chevron-right.svg" mode="aspectFit" aria-hidden="true" />
       </view>
     </view>
 
@@ -52,23 +55,24 @@
       <view class="rc-fact">
         <text class="rc-fact-k">耗时</text>
         <view class="rc-stepper">
-          <view class="rc-sbtn tap-scale" data-field="timeCost" data-delta="-1" bindtap="stepperChange">−</view>
+          <view class="rc-sbtn hit-88 tap-scale" data-field="timeCost" data-delta="-1" bindtap="stepperChange" aria-role="button" aria-label="耗时减少">−</view>
           <text class="rc-fact-v">{{form.timeCost}}</text>
-          <view class="rc-sbtn tap-scale" data-field="timeCost" data-delta="1" bindtap="stepperChange">+</view>
+          <view class="rc-sbtn hit-88 tap-scale" data-field="timeCost" data-delta="1" bindtap="stepperChange" aria-role="button" aria-label="耗时增加">+</view>
         </view>
         <text class="rc-fact-u">分钟</text>
       </view>
       <view class="rc-fact">
         <text class="rc-fact-k">几人份</text>
         <view class="rc-stepper">
-          <view class="rc-sbtn tap-scale" data-field="servings" data-delta="-1" bindtap="stepperChange">−</view>
+          <view class="rc-sbtn hit-88 tap-scale" data-field="servings" data-delta="-1" bindtap="stepperChange" aria-role="button" aria-label="减少人份">−</view>
           <text class="rc-fact-v">{{form.servings}}</text>
-          <view class="rc-sbtn tap-scale" data-field="servings" data-delta="1" bindtap="stepperChange">+</view>
+          <view class="rc-sbtn hit-88 tap-scale" data-field="servings" data-delta="1" bindtap="stepperChange" aria-role="button" aria-label="增加人份">+</view>
         </view>
         <text class="rc-fact-u">人</text>
       </view>
     </view>
 
+    <text class="rc-dseg-k">难度</text>
     <view class="rc-dseg">
       <view
         class="tap-scale rc-dseg-i {{form.difficulty === item.key ? 'on' : ''}}"
@@ -85,7 +89,7 @@
       <input class="rc-ing-name" placeholder="食材" placeholder-class="rc-ph" value="{{item.name}}" bindinput="onIngredientInput" data-index="{{index}}" data-field="name" />
       <input class="rc-ing-amt" placeholder="用量" placeholder-class="rc-ph" value="{{item.amount}}" bindinput="onIngredientInput" data-index="{{index}}" data-field="amount" />
       <input class="rc-ing-unit" placeholder=" " placeholder-class="rc-ph" value="{{item.unit}}" bindinput="onIngredientInput" data-index="{{index}}" data-field="unit" />
-      <text class="tap-scale rc-ing-x" data-index="{{index}}" bindtap="removeIngredient">×</text>
+      <text class="tap-scale rc-ing-x" data-index="{{index}}" bindtap="removeIngredient" aria-role="button" aria-label="删除{{item.name || '这一行'}}">×</text>
     </view>
     <view class="rc-more tap-scale" bindtap="addIngredient">再加一行</view>
   </block>
@@ -94,18 +98,18 @@
     <view class="rc-video-line tap-scale" wx:if="{{!form.videoUrl}}" bindtap="chooseLessonVideo">添加教学视频</view>
     <view class="rc-video" wx:else>
       <video class="rc-video-player" src="{{form.videoUrl}}" controls object-fit="cover" />
-      <view class="tap-scale rc-cover-x" catchtap="removeLessonVideo">×</view>
+      <view class="tap-scale rc-cover-x" catchtap="removeLessonVideo" aria-role="button" aria-label="移除教学视频">×</view>
     </view>
 
     <view class="rc-step" wx:for="{{form.steps}}" wx:key="index">
       <view class="rc-step-bar">
         <text class="rc-step-n">{{index + 1}}</text>
-        <text class="tap-scale rc-step-del" data-index="{{index}}" bindtap="removeStep">删除</text>
+        <text class="tap-scale rc-step-del" data-index="{{index}}" bindtap="removeStep" aria-role="button" aria-label="删除第 {{index + 1}} 步">删除</text>
       </view>
       <view class="tap-scale rc-shot" wx:if="{{!item.image}}" data-index="{{index}}" bindtap="chooseStepImage">加一张图</view>
       <view class="tap-scale rc-shot has" wx:else>
-        <image class="rc-shot-img" src="{{item.image}}" mode="aspectFill" data-index="{{index}}" bindtap="chooseStepImage" />
-        <view class="tap-scale rc-cover-x" data-index="{{index}}" catchtap="removeStepImage">×</view>
+        <image class="rc-shot-img" src="{{item.image === stepImageErrors[index] ? imagePlaceholder : item.image}}" mode="aspectFill" lazy-load data-index="{{index}}" bindtap="chooseStepImage" data-err-key="stepImageErrors[{{index}}]" data-url="{{item.image}}" binderror="onImageError" />
+        <view class="tap-scale rc-cover-x" data-index="{{index}}" catchtap="removeStepImage" aria-role="button" aria-label="移除第 {{index + 1}} 步的配图">×</view>
       </view>
       <textarea
         wx:if="{{editingStep === index}}"
@@ -132,6 +136,8 @@
 </view>
 
 <view class="rc-footbar {{fontScale === 'lg' ? 'font-lg' : ''}}">
+  <!-- 还差什么才能保存：贴着保存按钮说，三个分段里都看得到（原来挂在封面框上面，离菜名输入框隔了一块） -->
+  <text class="rc-foot-tip" wx:if="{{!loadFailed && tipText}}">{{tipText}}</text>
   <view class="btn btn-pop btn-block tap-scale {{saving ? 'is-busy' : ''}}" bindtap="submit">{{saving ? '保存中…' : '保存'}}</view>
 </view>
 
@@ -174,9 +180,11 @@
         wx:for="{{pickerImages}}"
         wx:key="*this"
         class="tap-scale rc-pick-cell"
-        src="{{item}}"
+        src="{{item === pickerErrors[index] ? imagePlaceholder : item}}"
         mode="aspectFill"
         data-url="{{item}}"
+        data-err-key="pickerErrors[{{index}}]"
+        binderror="onImageError"
         catchtap="pickLocalImage"
       />
     </view>

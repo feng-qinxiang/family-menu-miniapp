@@ -947,7 +947,7 @@ public class AdminService {
     }
 
     /**
-     * 看板趋势：近 days 天的每日新增（用户/帖子/评论/已支付订单/收入）。
+     * 看板趋势：近 days 天的每日新增（用户/帖子/评论/已支付订单/收入/家庭）。
      * 空日补 0，保证前端 X 轴连续；日期锚点取自数据库 NOW()，避免 JVM 与 DB 时区不一致导致错位。
      */
     public AdminMetrics metrics(int days) {
@@ -960,12 +960,13 @@ public class AdminService {
 
         Map<String, long[]> buckets = new LinkedHashMap<>();
         for (int i = 0; i < span; i++) {
-            buckets.put(from.plusDays(i).toString(), new long[5]);
+            buckets.put(from.plusDays(i).toString(), new long[6]);
         }
         Timestamp fromTs = Timestamp.valueOf(from.atStartOfDay());
         fillDaily(buckets, "SELECT DATE(created_at), COUNT(*) FROM user_account WHERE created_at >= ? GROUP BY 1", fromTs, 0);
         fillDaily(buckets, "SELECT DATE(created_at), COUNT(*) FROM community_post WHERE created_at >= ? GROUP BY 1", fromTs, 1);
         fillDaily(buckets, "SELECT DATE(created_at), COUNT(*) FROM community_post_comment WHERE created_at >= ? GROUP BY 1", fromTs, 2);
+        fillDaily(buckets, "SELECT DATE(created_at), COUNT(*) FROM family WHERE created_at >= ? GROUP BY 1", fromTs, 5);
         jdbcTemplate.query("""
                         SELECT DATE(paid_at), COUNT(*), COALESCE(SUM(amount_fen), 0)
                         FROM payment_order
@@ -983,7 +984,7 @@ public class AdminService {
 
         List<AdminMetricPoint> series = buckets.entrySet().stream()
                 .map(e -> new AdminMetricPoint(e.getKey(),
-                        e.getValue()[0], e.getValue()[1], e.getValue()[2], e.getValue()[3], e.getValue()[4]))
+                        e.getValue()[0], e.getValue()[1], e.getValue()[2], e.getValue()[3], e.getValue()[4], e.getValue()[5]))
                 .collect(Collectors.toList());
 
         List<AdminPostItem> hotPosts = jdbcTemplate.query("""

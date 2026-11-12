@@ -12,32 +12,11 @@
   padding: 0 46rpx calc(220rpx + env(safe-area-inset-bottom));
 }
 
-/* —— Hero 标题 —— */
-.mem-head {
-  padding: 12rpx 0 34rpx;
-}
-.mem-eyebrow {
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: var(--fs-sub);
-  letter-spacing: 2rpx;
-  color: var(--gold-deep);
-  font-weight: 700;
-}
-.mem-h1 {
-  margin-top: 10rpx;
-  font-size: var(--fs-hero-lg);
-  font-weight: 900;
-  color: var(--ink);
-  letter-spacing: -4rpx;
-  line-height: 0.95;
-  font-family: var(--sans);
-}
-
 /* —— 家庭信息暗卡 —— */
+/* 左右走 --pad-card：下面成员白卡原来是 32、这张暗卡 42，两张卡边缘齐平、里面的字却错开 10rpx */
 .famcard {
-  margin: 6rpx 0 8rpx;
-  padding: 42rpx 42rpx 38rpx;
+  margin: 24rpx 0 8rpx;
+  padding: 42rpx var(--pad-card) 38rpx;
 }
 .fam-top {
   position: relative;
@@ -55,30 +34,9 @@
   background: linear-gradient(135deg, var(--cat-gold), var(--gold), var(--gold-deep));
   box-shadow: 0 8rpx 22rpx rgba(0, 0, 0, 0.25);
 }
-.fam-emoji-img {
-  width: 100%;
-  height: 100%;
-}
-.fam-emoji-t {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  color: var(--ink-deep);
-  font-size: calc(44rpx * var(--fs-mul, 1));
-  font-weight: 900;
-}
-.fam-feyebrow {
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: var(--fs-cap);
-  letter-spacing: 2rpx;
-  color: var(--gold);
-  font-weight: 700;
-}
+.fam-emoji { display: flex; align-items: center; justify-content: center; }
+.fam-emoji-ic { width: 52rpx; height: 52rpx; }
 .fam-name {
-  margin-top: 6rpx;
   font-size: calc(50rpx * var(--fs-mul, 1));
   font-weight: 900;
   letter-spacing: -1rpx;
@@ -97,7 +55,6 @@
 }
 .fam-cap {
   font-family: var(--serif);
-  font-style: italic;
   font-size: var(--fs-mini);
   letter-spacing: 1.5rpx;
   text-transform: uppercase;
@@ -110,6 +67,11 @@
   letter-spacing: 8rpx;
   color: var(--anchor-contrast);
   font-family: var(--serif);
+}
+/* 还没拿到码时显示的是「点击重试 / 获取中…」：不是码，不该吃码的大字距 */
+.fam-code--hint {
+  font-size: var(--fs-lg);
+  letter-spacing: 0;
 }
 .fam-count {
   display: flex;
@@ -126,12 +88,12 @@
   width: 16rpx;
   height: 16rpx;
   border-radius: 50%;
-  background: var(--gold);
+  background: var(--gold-on-dark);   /* 暗卡上的金点：深色档 --gold 变暗金，几乎与卡底同色 */
 }
 
 /* —— 成员列表 —— */
 .mlist {
-  padding: 8rpx 32rpx;
+  padding: 8rpx var(--pad-card);
 }
 .mrow {
   display: flex;
@@ -151,15 +113,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--anchor-contrast);
   font-size: calc(36rpx * var(--fs-mul, 1));
   font-weight: 800;
   font-family: var(--sans);
 }
-.mavt-pine { background: var(--pine); }
-.mavt-gold { background: var(--gold-deep); }
-.mavt-inkdeep { background: var(--anchor); }
-.mavt-pop { background: var(--pop); }
 
 .mmid {
   flex: 1;
@@ -179,7 +136,7 @@
 }
 .badge {
   flex: none;
-  font-size: var(--fs-tiny);
+  font-size: var(--fs-mini);   /* 原 --fs-tiny（19rpx，token 表注明「尽量不用」），角色标签要读得清 */
   font-weight: 800;
   padding: 6rpx 17rpx;
   border-radius: var(--r-xs);
@@ -187,10 +144,11 @@
 }
 .badge-admin {
   color: var(--anchor-contrast);
-  background: var(--pop);
+  background: var(--pop-fill);
 }
+/* --gold-deep 压在 --pop-soft 上只有 3.1:1；--c-gold-dark 浅色档 4.6:1、深色档与原值相同 */
 .badge-member {
-  color: var(--gold-deep);
+  color: var(--c-gold-dark);
   background: var(--pop-soft);
 }
 .msub {
@@ -328,28 +286,7 @@
   font-size: calc(32rpx * var(--fs-mul, 1));
 }
 .mem-invbtn-icon {
-  position: relative;
-  width: 34rpx;
-  height: 34rpx;
-}
-.mem-invbtn-icon::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 2rpx;
-  width: 24rpx;
-  height: 24rpx;
-  border: 4rpx solid var(--anchor-contrast);
-  border-radius: 50%;
-}
-.mem-invbtn-icon::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 18rpx;
-  height: 4rpx;
-  background: var(--anchor-contrast);
-  border-radius: 2rpx;
-  box-shadow: -7rpx -7rpx 0 -2rpx var(--anchor-contrast);
+  flex: none;
+  width: 36rpx;
+  height: 36rpx;
 }

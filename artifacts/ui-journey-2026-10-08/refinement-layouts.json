@@ -1,0 +1,1191 @@
+{
+  "screens": [
+    {
+      "state": "cook",
+      "image": "screens/app-cook.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "cook-large",
+      "image": "screens/app-cook-large.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "record",
+      "image": "screens/app-record.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "record-large",
+      "image": "screens/app-record-large.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "community",
+      "image": "screens/app-community.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "community-large",
+      "image": "screens/app-community-large.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "community-text",
+      "image": "screens/app-community-text.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "me",
+      "image": "screens/app-me.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "me-large",
+      "image": "screens/app-me-large.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "kitchen",
+      "image": "screens/app-kitchen.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "kitchen-large",
+      "image": "screens/app-kitchen-large.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "kitchen-running",
+      "image": "screens/app-kitchen-running.jpg",
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "state": "kitchen-paused-large",
+      "image": "screens/app-kitchen-paused-large.jpg",
+      "width": 591,
+      "height": 1280
+    }
+  ],
+  "layouts": [
+    {
+      "state": "cook",
+      "selector": ".m-overview-photo",
+      "parent": ".m-overview",
+      "child": {
+        "id": "",
+        "dataset": {
+          "errKey": "overviewPhotoBroken"
+        },
+        "left": 36,
+        "right": 123,
+        "top": 259.34375,
+        "bottom": 373.34375,
+        "width": 87,
+        "height": 114
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 246.34375,
+        "bottom": 400.3828125,
+        "width": 344,
+        "height": 154.0390625
+      },
+      "passed": true
+    },
+    {
+      "state": "cook",
+      "selector": ".m-overview-copy",
+      "parent": ".m-overview",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 134,
+        "right": 354,
+        "top": 259.34375,
+        "bottom": 387.3828125,
+        "width": 220,
+        "height": 128.0390625
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 246.34375,
+        "bottom": 400.3828125,
+        "width": 344,
+        "height": 154.0390625
+      },
+      "passed": true
+    },
+    {
+      "state": "cook",
+      "selector": ".m-thumb",
+      "parent": ".m-row",
+      "child": {
+        "id": "",
+        "dataset": {
+          "dish": 0,
+          "group": 0,
+          "seed": 101
+        },
+        "left": 36,
+        "right": 111,
+        "top": 665.0625,
+        "bottom": 740.0625,
+        "width": 75,
+        "height": 75
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 652.0625,
+        "bottom": 812.0625,
+        "width": 344,
+        "height": 160
+      },
+      "passed": true
+    },
+    {
+      "state": "cook",
+      "selector": ".m-act-cook",
+      "parent": ".m-row",
+      "child": {
+        "id": "",
+        "dataset": {
+          "id": 101
+        },
+        "left": 280,
+        "right": 354,
+        "top": 759.0625,
+        "bottom": 804.0625,
+        "width": 74,
+        "height": 45
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 652.0625,
+        "bottom": 812.0625,
+        "width": 344,
+        "height": 160
+      },
+      "passed": true
+    },
+    {
+      "state": "cook-large",
+      "selector": ".m-overview-photo",
+      "parent": ".m-overview",
+      "child": {
+        "id": "",
+        "dataset": {
+          "errKey": "overviewPhotoBroken"
+        },
+        "left": 36,
+        "right": 123,
+        "top": 269.390625,
+        "bottom": 383.390625,
+        "width": 87,
+        "height": 114
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 256.390625,
+        "bottom": 422.6796875,
+        "width": 344,
+        "height": 166.2890625
+      },
+      "passed": true
+    },
+    {
+      "state": "cook-large",
+      "selector": ".m-overview-copy",
+      "parent": ".m-overview",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 134,
+        "right": 354,
+        "top": 269.390625,
+        "bottom": 409.6796875,
+        "width": 220,
+        "height": 140.2890625
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 256.390625,
+        "bottom": 422.6796875,
+        "width": 344,
+        "height": 166.2890625
+      },
+      "passed": true
+    },
+    {
+      "state": "cook-large",
+      "selector": ".m-thumb",
+      "parent": ".m-row",
+      "child": {
+        "id": "",
+        "dataset": {
+          "dish": 0,
+          "group": 0,
+          "seed": 101
+        },
+        "left": 36,
+        "right": 111,
+        "top": 705.5546875,
+        "bottom": 780.5546875,
+        "width": 75,
+        "height": 75
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 692.5546875,
+        "bottom": 855.046875,
+        "width": 344,
+        "height": 162.4921875
+      },
+      "passed": true
+    },
+    {
+      "state": "cook-large",
+      "selector": ".m-act-cook",
+      "parent": ".m-row",
+      "child": {
+        "id": "",
+        "dataset": {
+          "id": 101
+        },
+        "left": 276,
+        "right": 354,
+        "top": 802.046875,
+        "bottom": 847.046875,
+        "width": 78,
+        "height": 45
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 692.5546875,
+        "bottom": 855.046875,
+        "width": 344,
+        "height": 162.4921875
+      },
+      "passed": true
+    },
+    {
+      "state": "record",
+      "selector": ".thumb-img",
+      "parent": ".tcard",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 36,
+        "right": 123,
+        "top": 537.8203125,
+        "bottom": 651.8203125,
+        "width": 87,
+        "height": 114
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 524.8203125,
+        "bottom": 717.8203125,
+        "width": 344,
+        "height": 193
+      },
+      "passed": true
+    },
+    {
+      "state": "record",
+      "selector": ".cl-share",
+      "parent": ".tcard",
+      "child": {
+        "id": "",
+        "dataset": {
+          "recipeId": 101,
+          "title": "红烧肉"
+        },
+        "left": 292.6640625,
+        "right": 354,
+        "top": 667.8203125,
+        "bottom": 712.8203125,
+        "width": 61.3359375,
+        "height": 45
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 524.8203125,
+        "bottom": 717.8203125,
+        "width": 344,
+        "height": 193
+      },
+      "passed": true
+    },
+    {
+      "state": "record-large",
+      "selector": ".thumb-img",
+      "parent": ".tcard",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 36,
+        "right": 123,
+        "top": 554.0703125,
+        "bottom": 668.0703125,
+        "width": 87,
+        "height": 114
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 541.0703125,
+        "bottom": 752.4453125,
+        "width": 344,
+        "height": 211.375
+      },
+      "passed": true
+    },
+    {
+      "state": "record-large",
+      "selector": ".cl-share",
+      "parent": ".tcard",
+      "child": {
+        "id": "",
+        "dataset": {
+          "recipeId": 101,
+          "title": "红烧肉"
+        },
+        "left": 287.9453125,
+        "right": 354,
+        "top": 702.4453125,
+        "bottom": 747.4453125,
+        "width": 66.0546875,
+        "height": 45
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 541.0703125,
+        "bottom": 752.4453125,
+        "width": 344,
+        "height": 211.375
+      },
+      "passed": true
+    },
+    {
+      "state": "community",
+      "selector": ".pphoto",
+      "parent": ".pcard",
+      "child": {
+        "id": "",
+        "dataset": {
+          "errKey": "posts[0].photoBroken"
+        },
+        "left": 36,
+        "right": 354,
+        "top": 312.09375,
+        "bottom": 540.09375,
+        "width": 318,
+        "height": 228
+      },
+      "box": {
+        "id": "",
+        "dataset": {
+          "id": 1,
+          "rv": 0
+        },
+        "left": 23,
+        "right": 367,
+        "top": 249.09375,
+        "bottom": 788.7265625,
+        "width": 344,
+        "height": 539.6328125
+      },
+      "passed": true
+    },
+    {
+      "state": "community",
+      "selector": ".pactions",
+      "parent": ".pcard",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 36,
+        "right": 354,
+        "top": 737.7265625,
+        "bottom": 785.7265625,
+        "width": 318,
+        "height": 48
+      },
+      "box": {
+        "id": "",
+        "dataset": {
+          "id": 1,
+          "rv": 0
+        },
+        "left": 23,
+        "right": 367,
+        "top": 249.09375,
+        "bottom": 788.7265625,
+        "width": 344,
+        "height": 539.6328125
+      },
+      "passed": true
+    },
+    {
+      "state": "community",
+      "selector": ".pa-report",
+      "parent": ".ptop",
+      "child": {
+        "id": "",
+        "dataset": {
+          "id": 1
+        },
+        "left": 309,
+        "right": 354,
+        "top": 260.09375,
+        "bottom": 305.09375,
+        "width": 45,
+        "height": 45
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 36,
+        "right": 354,
+        "top": 260.09375,
+        "bottom": 305.09375,
+        "width": 318,
+        "height": 45
+      },
+      "passed": true
+    },
+    {
+      "state": "community-large",
+      "selector": ".pphoto",
+      "parent": ".pcard",
+      "child": {
+        "id": "",
+        "dataset": {
+          "errKey": "posts[0].photoBroken"
+        },
+        "left": 36,
+        "right": 354,
+        "top": 324.2421875,
+        "bottom": 552.2421875,
+        "width": 318,
+        "height": 228
+      },
+      "box": {
+        "id": "",
+        "dataset": {
+          "id": 1,
+          "rv": 0
+        },
+        "left": 23,
+        "right": 367,
+        "top": 257.59375,
+        "bottom": 823.390625,
+        "width": 344,
+        "height": 565.796875
+      },
+      "passed": true
+    },
+    {
+      "state": "community-large",
+      "selector": ".pactions",
+      "parent": ".pcard",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 36,
+        "right": 354,
+        "top": 772.390625,
+        "bottom": 820.390625,
+        "width": 318,
+        "height": 48
+      },
+      "box": {
+        "id": "",
+        "dataset": {
+          "id": 1,
+          "rv": 0
+        },
+        "left": 23,
+        "right": 367,
+        "top": 257.59375,
+        "bottom": 823.390625,
+        "width": 344,
+        "height": 565.796875
+      },
+      "passed": true
+    },
+    {
+      "state": "community-large",
+      "selector": ".pa-report",
+      "parent": ".ptop",
+      "child": {
+        "id": "",
+        "dataset": {
+          "id": 1
+        },
+        "left": 309,
+        "right": 354,
+        "top": 270.4140625,
+        "bottom": 315.4140625,
+        "width": 45,
+        "height": 45
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 36,
+        "right": 354,
+        "top": 268.59375,
+        "bottom": 317.2421875,
+        "width": 318,
+        "height": 48.6484375
+      },
+      "passed": true
+    },
+    {
+      "state": "me",
+      "selector": ".mag-shortcut",
+      "parent": ".mag-shortcuts",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 24,
+        "right": 192,
+        "top": 400.7890625,
+        "bottom": 459.6328125,
+        "width": 168,
+        "height": 58.84375
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 24,
+        "right": 366,
+        "top": 400.7890625,
+        "bottom": 589.3203125,
+        "width": 342,
+        "height": 188.53125
+      },
+      "passed": true
+    },
+    {
+      "state": "me",
+      "selector": ".mag-profile-copy",
+      "parent": ".mag-profile",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 77,
+        "right": 328.1015625,
+        "top": 206.4921875,
+        "bottom": 248.1875,
+        "width": 251.1015625,
+        "height": 41.6953125
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 204.84375,
+        "bottom": 249.84375,
+        "width": 344,
+        "height": 45
+      },
+      "passed": true
+    },
+    {
+      "state": "me-large",
+      "selector": ".mag-shortcut",
+      "parent": ".mag-shortcuts",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 24,
+        "right": 192,
+        "top": 424.2265625,
+        "bottom": 489.0234375,
+        "width": 168,
+        "height": 64.796875
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 24,
+        "right": 366,
+        "top": 424.2265625,
+        "bottom": 630.6171875,
+        "width": 342,
+        "height": 206.390625
+      },
+      "passed": true
+    },
+    {
+      "state": "me-large",
+      "selector": ".mag-profile-copy",
+      "parent": ".mag-profile",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 77,
+        "right": 319.9453125,
+        "top": 213.390625,
+        "bottom": 262.484375,
+        "width": 242.9453125,
+        "height": 49.09375
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 213.390625,
+        "bottom": 262.484375,
+        "width": 344,
+        "height": 49.09375
+      },
+      "passed": true
+    },
+    {
+      "state": "kitchen",
+      "selector": ".k-img",
+      "parent": ".k-card-head",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 36,
+        "right": 123,
+        "top": 217.1484375,
+        "bottom": 331.1484375,
+        "width": 87,
+        "height": 114
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 36,
+        "right": 354,
+        "top": 217.1484375,
+        "bottom": 371.59375,
+        "width": 318,
+        "height": 154.4453125
+      },
+      "passed": true
+    },
+    {
+      "state": "kitchen",
+      "selector": ".k-timer",
+      "parent": ".k-col",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 133,
+        "right": 354,
+        "top": 293.09375,
+        "bottom": 371.59375,
+        "width": 221,
+        "height": 78.5
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 133,
+        "right": 354,
+        "top": 217.1484375,
+        "bottom": 371.59375,
+        "width": 221,
+        "height": 154.4453125
+      },
+      "passed": true
+    },
+    {
+      "state": "kitchen",
+      "selector": ".k-tbtns",
+      "parent": ".k-timer",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 139,
+        "right": 348,
+        "top": 320.59375,
+        "bottom": 365.59375,
+        "width": 209,
+        "height": 45
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 133,
+        "right": 354,
+        "top": 293.09375,
+        "bottom": 371.59375,
+        "width": 221,
+        "height": 78.5
+      },
+      "passed": true
+    },
+    {
+      "state": "kitchen",
+      "selector": ".k-acts",
+      "parent": ".k-card",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 36,
+        "right": 354,
+        "top": 378.59375,
+        "bottom": 423.59375,
+        "width": 318,
+        "height": 45
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 204.1484375,
+        "bottom": 436.59375,
+        "width": 344,
+        "height": 232.4453125
+      },
+      "passed": true
+    },
+    {
+      "state": "kitchen-large",
+      "selector": ".k-img",
+      "parent": ".k-card-head",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 36,
+        "right": 123,
+        "top": 220.171875,
+        "bottom": 334.171875,
+        "width": 87,
+        "height": 114
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 36,
+        "right": 354,
+        "top": 220.171875,
+        "bottom": 391.625,
+        "width": 318,
+        "height": 171.453125
+      },
+      "passed": true
+    },
+    {
+      "state": "kitchen-large",
+      "selector": ".k-timer",
+      "parent": ".k-col",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 133,
+        "right": 354,
+        "top": 308.625,
+        "bottom": 391.625,
+        "width": 221,
+        "height": 83
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 133,
+        "right": 354,
+        "top": 220.171875,
+        "bottom": 391.625,
+        "width": 221,
+        "height": 171.453125
+      },
+      "passed": true
+    },
+    {
+      "state": "kitchen-large",
+      "selector": ".k-tbtns",
+      "parent": ".k-timer",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 139,
+        "right": 348,
+        "top": 340.625,
+        "bottom": 385.625,
+        "width": 209,
+        "height": 45
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 133,
+        "right": 354,
+        "top": 308.625,
+        "bottom": 391.625,
+        "width": 221,
+        "height": 83
+      },
+      "passed": true
+    },
+    {
+      "state": "kitchen-large",
+      "selector": ".k-acts",
+      "parent": ".k-card",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 36,
+        "right": 354,
+        "top": 398.625,
+        "bottom": 443.625,
+        "width": 318,
+        "height": 45
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 207.171875,
+        "bottom": 456.625,
+        "width": 344,
+        "height": 249.453125
+      },
+      "passed": true
+    },
+    {
+      "state": "kitchen-running",
+      "selector": ".k-img",
+      "parent": ".k-card-head",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 36,
+        "right": 123,
+        "top": 217.1484375,
+        "bottom": 331.1484375,
+        "width": 87,
+        "height": 114
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 36,
+        "right": 354,
+        "top": 217.1484375,
+        "bottom": 386.09375,
+        "width": 318,
+        "height": 168.9453125
+      },
+      "passed": true
+    },
+    {
+      "state": "kitchen-running",
+      "selector": ".k-timer",
+      "parent": ".k-col",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 133,
+        "right": 354,
+        "top": 293.09375,
+        "bottom": 386.09375,
+        "width": 221,
+        "height": 93
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 133,
+        "right": 354,
+        "top": 217.1484375,
+        "bottom": 386.09375,
+        "width": 221,
+        "height": 168.9453125
+      },
+      "passed": true
+    },
+    {
+      "state": "kitchen-running",
+      "selector": ".k-tbtns",
+      "parent": ".k-timer",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 139,
+        "right": 348,
+        "top": 335.09375,
+        "bottom": 380.09375,
+        "width": 209,
+        "height": 45
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 133,
+        "right": 354,
+        "top": 293.09375,
+        "bottom": 386.09375,
+        "width": 221,
+        "height": 93
+      },
+      "passed": true
+    },
+    {
+      "state": "kitchen-running",
+      "selector": ".k-acts",
+      "parent": ".k-card",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 36,
+        "right": 354,
+        "top": 393.09375,
+        "bottom": 438.09375,
+        "width": 318,
+        "height": 45
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 204.1484375,
+        "bottom": 451.09375,
+        "width": 344,
+        "height": 246.9453125
+      },
+      "passed": true
+    },
+    {
+      "state": "kitchen-running",
+      "selector": ".k-clock",
+      "parent": ".k-timer",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 289.5,
+        "right": 348,
+        "top": 299.09375,
+        "bottom": 330.09375,
+        "width": 58.5,
+        "height": 31
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 133,
+        "right": 354,
+        "top": 293.09375,
+        "bottom": 386.09375,
+        "width": 221,
+        "height": 93
+      },
+      "passed": true
+    },
+    {
+      "state": "kitchen-paused-large",
+      "selector": ".k-img",
+      "parent": ".k-card-head",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 36,
+        "right": 123,
+        "top": 220.171875,
+        "bottom": 334.171875,
+        "width": 87,
+        "height": 114
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 36,
+        "right": 354,
+        "top": 220.171875,
+        "bottom": 406.2734375,
+        "width": 318,
+        "height": 186.1015625
+      },
+      "passed": true
+    },
+    {
+      "state": "kitchen-paused-large",
+      "selector": ".k-timer",
+      "parent": ".k-col",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 133,
+        "right": 354,
+        "top": 308.625,
+        "bottom": 406.2734375,
+        "width": 221,
+        "height": 97.6484375
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 133,
+        "right": 354,
+        "top": 220.171875,
+        "bottom": 406.2734375,
+        "width": 221,
+        "height": 186.1015625
+      },
+      "passed": true
+    },
+    {
+      "state": "kitchen-paused-large",
+      "selector": ".k-tbtns",
+      "parent": ".k-timer",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 139,
+        "right": 348,
+        "top": 355.2734375,
+        "bottom": 400.2734375,
+        "width": 209,
+        "height": 45
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 133,
+        "right": 354,
+        "top": 308.625,
+        "bottom": 406.2734375,
+        "width": 221,
+        "height": 97.6484375
+      },
+      "passed": true
+    },
+    {
+      "state": "kitchen-paused-large",
+      "selector": ".k-acts",
+      "parent": ".k-card",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 36,
+        "right": 354,
+        "top": 413.2734375,
+        "bottom": 458.2734375,
+        "width": 318,
+        "height": 45
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 23,
+        "right": 367,
+        "top": 207.171875,
+        "bottom": 471.2734375,
+        "width": 344,
+        "height": 264.1015625
+      },
+      "passed": true
+    },
+    {
+      "state": "kitchen-paused-large",
+      "selector": ".k-clock",
+      "parent": ".k-timer",
+      "child": {
+        "id": "",
+        "dataset": {},
+        "left": 281.46875,
+        "right": 348,
+        "top": 314.625,
+        "bottom": 350.2734375,
+        "width": 66.53125,
+        "height": 35.6484375
+      },
+      "box": {
+        "id": "",
+        "dataset": {},
+        "left": 133,
+        "right": 354,
+        "top": 308.625,
+        "bottom": 406.2734375,
+        "width": 221,
+        "height": 97.6484375
+      },
+      "passed": true
+    }
+  ],
+  "runtime": [
+    {
+      "page": "pages/menu/index",
+      "loadError": "网络请求失败，请稍后重试"
+    },
+    {
+      "page": "pages/cook-log/index",
+      "loadError": true
+    },
+    {
+      "page": "pages/community/index",
+      "loadError": true
+    },
+    {
+      "page": "pages/me/index",
+      "loadError": "网络请求失败，请稍后重试"
+    },
+    {
+      "page": "pkg-extra/kitchen/index",
+      "loadError": true
+    }
+  ],
+  "checkedAt": "2026-10-09T01:26:56.855Z",
+  "source": "temporary Page data; existing runtime state restored",
+  "passed": true
+}

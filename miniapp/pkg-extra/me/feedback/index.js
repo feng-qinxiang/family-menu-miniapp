@@ -3,6 +3,7 @@
 const { submitFeedback, getMyFeedbacks } = require('../../../utils/api');
 const { uploadFile } = require('../../../utils/upload');
 const { ensurePrivacy } = require('../../../utils/privacy');
+const { setLeaveGuard } = require('../../../utils/interaction');
 
 Page({
   data: {
@@ -19,6 +20,7 @@ Page({
     images: [],
     contact: '',
     submitting: false,
+    leaveDirty: false,
     toast: { visible: false, type: 'center', text: '' },
     // 我的历史反馈（含运营回复）——让"提交出去的话"有下文
     history: [],
@@ -80,6 +82,12 @@ Page({
   onContentInput(e) {
     const v = e.detail.value || '';
     this.setData({ content: v, contentLen: v.length });
+    this.syncLeave();
+  },
+
+  // 写了描述或加了图才算「有没提交的内容」，返回要确认；提交成功清空后自然撤掉
+  syncLeave() {
+    setLeaveGuard(this, !!(this.data.content.trim() || this.data.images.length));
   },
 
   onContactInput(e) {
@@ -105,6 +113,7 @@ Page({
           if (!paths.length) return;
           const images = that.data.images.concat(paths).slice(0, 3);
           that.setData({ images });
+          that.syncLeave();
         },
         fail(err) {
           if (err && err.errMsg && err.errMsg.indexOf('cancel') !== -1) return;
@@ -119,6 +128,7 @@ Page({
     const images = this.data.images.slice();
     images.splice(index, 1);
     this.setData({ images });
+    this.syncLeave();
   },
 
   // 提交：图片先真上传，URL 随 payload 一起落库
@@ -146,10 +156,16 @@ Page({
       };
       return submitFeedback(payload)
         .then(function () {
+          // 清空已提交的表单：页面上下有两个提交按钮，留着原文再点一次就是一张重复工单
           that.setData({
             submitting: false,
+            content: '',
+            contentLen: 0,
+            images: [],
+            contact: '',
             toast: { visible: true, type: 'center', text: '已收到，感谢反馈' },
           });
+          that.syncLeave();
           // 提交成功后留在本页刷新历史，用户能看到自己刚提的那条
           that.loadHistory();
         })

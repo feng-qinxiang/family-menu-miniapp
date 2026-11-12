@@ -1,0 +1,24 @@
+{
+  "checkedAt": "2026-10-09T14:35:27.302Z",
+  "passed": true,
+  "catalogCount": 39,
+  "resources": 115,
+  "missing": [],
+  "sizes": [
+    {
+      "width": 1344,
+      "documentWidth": 1329,
+      "columns": "376px 376px 376px"
+    },
+    {
+      "width": 375,
+      "documentWidth": 360,
+      "columns": "324px"
+    },
+    {
+      "width": 320,
+      "documentWidth": 305,
+      "columns": "269px"
+    }
+  ]
+}

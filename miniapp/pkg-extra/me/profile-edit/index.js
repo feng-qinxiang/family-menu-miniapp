@@ -4,6 +4,7 @@
 //       忌口 → PUT /api/family/members/{自己}/avoid（与「家庭 → 成员」页改的是同一份数据，不另存一份）。
 const { getCurrentUser, getFamilyProfile, updateProfile, updateMemberAvoidTags } = require('../../../utils/api');
 const { chooseAndUpload } = require('../../../utils/upload');
+const { setLeaveGuard } = require('../../../utils/interaction');
 const { AVOID_TAGS } = require('../../../utils/constants');
 const features = require('../../../utils/features');
 
@@ -43,6 +44,9 @@ Page({
       avoid: []
     },
     loading: true,
+    // 原资料没拉到：保存会用默认值覆盖真实资料，onSave 拦住并给重试
+    loadFailed: false,
+    leaveDirty: false,
     saving: false,
     uploading: false
   },
@@ -93,13 +97,28 @@ Page({
         form,
         avatarInitial: (nickname || '家').slice(0, 1),
         birthdayLabel: birthdayDisplay(form.birthday),
-        loading: false
+        loading: false,
+        loadFailed: false
       });
+      this._baseline = JSON.stringify(form);
     } catch (err) {
       console.error('profile-edit loadUser failed', err);
-      this.setData({ loading: false });
+      // 原资料没拉到时表单是默认值：保存会把头像、生日、口味清空（服务端空串/空数组 = 清空），onSave 里拦住
+      this.setData({ loading: false, loadFailed: true });
       wx.showToast({ title: '加载失败', icon: 'none' });
     }
+  },
+
+  retryLoad() {
+    if (this.data.loading) return;
+    this.setData({ loading: true });
+    this.loadUser();
+  },
+
+  // 和打开时的资料比；没加载出来（_baseline 为空）时保存本来就拦着，不拦返回
+  syncLeave() {
+    if (!this._baseline) return;
+    setLeaveGuard(this, JSON.stringify(this.data.form) !== this._baseline);
   },
 
   onNickname(e) {
@@ -108,12 +127,14 @@ Page({
       'form.nickname': nickname,
       avatarInitial: (nickname || '家').slice(0, 1)
     });
+    this.syncLeave();
   },
 
   onGender(e) {
     const g = e.currentTarget.dataset.g;
     if (g && g !== this.data.form.gender) {
       this.setData({ 'form.gender': g });
+      this.syncLeave();
     }
   },
 
@@ -123,6 +144,7 @@ Page({
       'form.birthday': value,
       birthdayLabel: birthdayDisplay(value)
     });
+    this.syncLeave();
   },
 
   onToggleTaste(e) {
@@ -133,6 +155,7 @@ Page({
     if (idx >= 0) tags.splice(idx, 1);
     else tags.push(tag);
     this.setData({ 'form.tasteTags': tags });
+    this.syncLeave();
   },
 
   onToggleAvoid(e) {
@@ -143,6 +166,7 @@ Page({
     if (idx >= 0) tags.splice(idx, 1);
     else tags.push(tag);
     this.setData({ 'form.avoid': tags });
+    this.syncLeave();
   },
 
   // 手机号由 OTP 登录绑定（当前版本手机号登录未开放），此处仅展示
@@ -157,7 +181,12 @@ Page({
       const urls = await chooseAndUpload(1);
       if (urls && urls[0]) {
         this.setData({ 'form.avatarUrl': urls[0] });
-        wx.showToast({ title: '头像已更新', icon: 'success' });
+        this.syncLeave();
+        // 这时只是传上去了，还没存进资料：说「已更新」会让人以为不用再点保存
+        wx.showToast({ title: '头像已换好，保存后生效', icon: 'none' });
+      } else if (urls && urls.length) {
+        // chooseAndUpload：[] 是用户取消（不提示），[''] 是上传失败（同 pkg-extra/import 的封面）
+        wx.showToast({ title: '头像上传失败，请重试', icon: 'none' });
       }
     } catch (err) {
       console.error('avatar upload failed', err);
@@ -169,6 +198,26 @@ Page({
 
   async onSave() {
     if (this.data.saving) return;
+    // 原资料没加载出来（或还在加载）：表单是默认值，存下去会把真实资料清空
+    if (this.data.loading) {
+      wx.showToast({ title: '资料还在加载，请稍等', icon: 'none' });
+      return;
+    }
+    if (this.data.loadFailed) {
+      const res = await wx.showModal({
+        title: '原资料还没加载出来',
+        content: '现在保存会用默认值覆盖你的头像、生日和口味。先重新加载一次？',
+        confirmText: '重新加载',
+        cancelText: '取消'
+      });
+      if (res.confirm) this.retryLoad();
+      return;
+    }
+    // 上传中保存 = 存下旧头像并离开页面，新头像就丢了
+    if (this.data.uploading) {
+      wx.showToast({ title: '头像还在上传，请稍等', icon: 'none' });
+      return;
+    }
     const nickname = (this.data.form.nickname || '').trim();
     if (!nickname) {
       wx.showToast({ title: '昵称不能为空', icon: 'none' });
@@ -203,22 +252,32 @@ Page({
       wx.hideLoading();
       wx.showToast({ title: avoidFailed ? '资料已保存，忌口未保存' : '已保存', icon: avoidFailed ? 'none' : 'success' });
       if (avoidFailed) {
+        // 忌口没存上：离开确认留着（忌口那部分确实还没保存）
         this.setData({ saving: false });
         return;
       }
-      setTimeout(() => {
+      // 成功路径不复位 saving（同 recipe-edit）：返回前这 700ms 再点会再存一次、两个计时器各退一层
+      this._baseline = '';
+      setLeaveGuard(this, false);
+      this._navTimer = setTimeout(() => {
         const pages = getCurrentPages();
         if (pages && pages.length > 1) {
           wx.navigateBack({ delta: 1 });
         } else {
-          wx.switchTab({ url: '/pages/me/index', fail() {} });
+          wx.switchTab({ url: '/pages/me/index', fail: () => this.setData({ saving: false }) });
         }
       }, 700);
     } catch (err) {
       wx.hideLoading();
-      wx.showToast({ title: (err && err.message) || '保存失败', icon: 'none' });
-    } finally {
       this.setData({ saving: false });
+      wx.showToast({ title: (err && err.message) || '保存失败', icon: 'none' });
+    }
+  },
+
+  onUnload() {
+    if (this._navTimer) {
+      clearTimeout(this._navTimer);
+      this._navTimer = null;
     }
   }
 });

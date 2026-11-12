@@ -1,0 +1,14 @@
+{
+  "checkedAt": "2026-10-09T01:37:13.780Z",
+  "passed": true,
+  "formalRoutes": 39,
+  "imageReferences": 96,
+  "missingImages": [],
+  "nativeScreens": 43,
+  "nativeChecks": 63,
+  "evidence": [
+    "refinement-layouts.json",
+    "refinement-picker-layouts.json",
+    "refinement-all-pages.json"
+  ]
+}

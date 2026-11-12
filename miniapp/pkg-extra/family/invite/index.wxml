@@ -2,16 +2,8 @@
 <nav-bar title="邀请家人" status-bar-height="{{statusBarHeight}}"></nav-bar>
 
 <view class="container fi-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
-  <!-- HERO 标题 -->
-  <view class="fi-hero g-fade-up">
-    <view class="fi-eyebrow">加入家庭</view>
-    <view class="fi-title">把<text class="t-pop">餐桌</text>分享给家人</view>
-  </view>
-
   <!-- 邀请暗卡 -->
   <view class="card-dark fi-invite g-fade-up g-d1">
-    <view class="deco-circle"></view>
-
     <view class="fi-iv-cap">家庭邀请码</view>
 
     <!-- 8 位邀请码（拉取失败时格子留空，不显示任何伪码） -->
@@ -25,15 +17,14 @@
       class="fi-copybtn tap-scale"
       catchtap="onCopyCode"
     >
-      <view class="fi-ic-copy"></view>
+      <image class="fi-ic" src="/assets/icons/lucide/copy.svg" mode="aspectFit" aria-hidden="true" />
       <text>复制邀请码</text>
     </view>
     <view wx:else class="fi-copybtn fi-copybtn--retry tap-scale" catchtap="loadFamily">
-      <view class="fi-ic-copy"></view>
+      <image class="fi-ic fi-ic--ink" src="/assets/icons/lucide/refresh-cw.svg" mode="aspectFit" aria-hidden="true" />
       <text>邀请码没拿到，点此重试</text>
     </view>
 
-    <view class="fi-qr-hint" wx:if="{{!codeFailed}}">把邀请码发给家人，在小程序里输入即可加入</view>
   </view>
 
   <!-- 微信分享（失败时渲染禁用态普通节点，避免 open-type=share 泄出无码链接） -->
@@ -56,11 +47,11 @@
     class="fi-savebtn tap-scale g-fade-up g-d3"
     catchtap="onSaveImage"
   >
-    <view class="fi-ic-save"></view>
+    <image class="fi-ic fi-ic--ink" src="/assets/icons/lucide/copy.svg" mode="aspectFit" aria-hidden="true" />
     <text>复制邀请信息</text>
   </view>
   <view wx:else class="fi-savebtn fi-disabled g-fade-up g-d3" catchtap="loadFamily">
-    <view class="fi-ic-save"></view>
+    <image class="fi-ic fi-ic--ink" src="/assets/icons/lucide/copy.svg" mode="aspectFit" aria-hidden="true" />
     <text>复制邀请信息</text>
   </view>
 
@@ -68,7 +59,7 @@
        所以这里不能说"24 小时内有效"——用户若信了这个说法，可能把它丢进
        后来混进陌生人的群聊或截图外传，而它其实永远不会失效。 -->
   <view class="fi-note g-fade-up g-d4">
-    <view class="fi-note-ic"></view>
+    <image class="fi-ic fi-ic--ink fi-note-ic" src="/assets/icons/lucide/info.svg" mode="aspectFit" aria-hidden="true" />
     <view class="fi-note-text">家人在小程序里<text class="b">输入邀请码</text>即可加入这桌，一起点菜、凑齐今晚的菜单。邀请码<text class="b">长期有效</text>，请只发给自己信任的家人。</view>
   </view>
 

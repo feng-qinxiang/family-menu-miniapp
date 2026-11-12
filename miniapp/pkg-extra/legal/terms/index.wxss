@@ -29,9 +29,11 @@
 }
 
 /* ============ Hero ============ */
+/* font-weight：原先靠 title-stroke 类给 900，去掉那个类时没补，掉成 400（与隐私政策页同一处遗漏） */
 .hero-title {
   margin-top: 12rpx;
   font-size: calc(66rpx * var(--fs-mul, 1));
+  font-weight: 900;
   line-height: 1.05;
   letter-spacing: -3rpx;
   color: var(--ink);
@@ -70,10 +72,11 @@
   background: var(--paper-2);
 }
 
+/* 引言里有同意条款（「点击我已阅读…即表示同意」），不该比正文还小：与 .clause-p 同档 */
 .lead {
   display: block;
   margin-top: 32rpx;
-  font-size: var(--fs-cap);
+  font-size: calc(28rpx * var(--fs-mul, 1));
   line-height: 1.75;
   color: var(--mut-strong);
 }
@@ -119,7 +122,7 @@
   height: 10rpx;
   margin: 18rpx 22rpx 0 0;
   border-radius: 50%;
-  background: var(--pop);
+  background: var(--pop-fill);
 }
 .clause-li-tx {
   flex: 1;
@@ -155,8 +158,8 @@
   justify-content: center;
   gap: 18rpx;
   height: 104rpx;
-  border-radius: var(--r-pill);
-  background: var(--pop);
+  border-radius: var(--r-card);
+  background: var(--pop-fill);
   color: var(--anchor-contrast);
   font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
@@ -171,8 +174,8 @@
   width: 26rpx;
   height: 14rpx;
   margin-top: -6rpx;
-  border-left: 5rpx solid var(--c-surface);
-  border-bottom: 5rpx solid var(--c-surface);
+  border-left: 5rpx solid var(--anchor-contrast);   /* 红底白勾：与按钮文字同色、恒浅 */
+  border-bottom: 5rpx solid var(--anchor-contrast);
   transform: rotate(-45deg);
   border-radius: 2rpx;
 }

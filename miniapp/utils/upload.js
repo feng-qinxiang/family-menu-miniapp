@@ -9,14 +9,14 @@ function isCancel(err) {
   return !!(err && err.errMsg && /cancel/i.test(err.errMsg));
 }
 
-function chooseImage(count) {
+function chooseImage(count, sourceType) {
   return new Promise((resolve) => {
     // 全站相册入口：菜谱封面、头像、反馈截图、导入图片都走这里，授权收在这一处即可
     ensurePrivacy(() => {
       wx.chooseMedia({
         count: count || 1,
         mediaType: ['image'],
-        sourceType: ['album', 'camera'],
+        sourceType: sourceType || ['album', 'camera'],
         sizeType: ['compressed'],
         success(res) {
           const paths = (res.tempFiles || []).map((f) => f.tempFilePath);

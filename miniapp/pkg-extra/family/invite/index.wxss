@@ -3,44 +3,20 @@
   padding: 20rpx 46rpx 60rpx;
 }
 
-/* HERO */
-.fi-hero {
-  text-align: center;
-  margin-top: 8rpx;
-}
-.fi-eyebrow {
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: var(--fs-cap);
-  letter-spacing: 2rpx;
-  color: var(--gold-deep);
-  font-weight: 700;
-}
-.fi-title {
-  font-size: calc(56rpx * var(--fs-mul, 1));
-  font-weight: 900;
-  color: var(--ink);
-  letter-spacing: -2rpx;
-  line-height: 1;
-  margin-top: 14rpx;
-  font-family: var(--sans);
-}
-
 /* 邀请暗卡（基于 .card-dark） */
 .fi-invite {
-  margin-top: 46rpx;
-  padding: 58rpx 50rpx 50rpx;
-  border-radius: 54rpx;
+  margin-top: 8rpx;
+  padding: 58rpx 50rpx 50rpx;   /* 例外：8 格邀请码要按 81rpx 一格排开，左右收到 --pad-card 会把格子撑宽、整卡变样 */
+  border-radius: var(--r-card);   /* 原 54rpx：同屏按钮与家庭管理页暗卡都是 --r-card，这张单独圆一大截 */
   text-align: center;
 }
 .fi-iv-cap {
   position: relative;
   z-index: 2;
   font-family: var(--serif);
-  font-style: italic;
   font-size: var(--fs-cap);
   letter-spacing: 2rpx;
-  color: var(--gold);
+  color: var(--gold-on-dark);
   font-weight: 700;
 }
 
@@ -63,7 +39,7 @@
   align-items: center;
   justify-content: center;
   font-family: var(--serif);
-  font-size: calc(62rpx * var(--fs-mul, 1));
+  font-size: var(--fs-h1);   /* 原 62rpx 裸值，W、Q 贴到格子边；收到刻度上的 50rpx */
   font-weight: 700;
   color: var(--anchor-contrast);
 }
@@ -78,8 +54,10 @@
   justify-content: center;
   gap: 14rpx;
   width: 100%;
+  box-sizing: border-box;
+  min-height: var(--tap-min);   /* 22rpx 上下内边距 + 25rpx 字：截图实测约 84rpx 高 */
   padding: 22rpx 0;
-  border-radius: var(--r-pill);
+  border-radius: var(--r-card);
   background: rgba(255, 255, 255, 0.1);
   border: 2rpx solid rgba(255, 255, 255, 0.2);
   color: var(--anchor-contrast);
@@ -92,36 +70,7 @@
   border-color: var(--gold-deep);
   color: var(--ink-deep);
 }
-.fi-ic-copy {
-  width: 30rpx;
-  height: 30rpx;
-  border: 4rpx solid var(--paper);
-  border-radius: 6rpx;
-  position: relative;
-}
-.fi-ic-copy::after {
-  content: "";
-  position: absolute;
-  left: -12rpx;
-  top: -12rpx;
-  width: 20rpx;
-  height: 20rpx;
-  border: 4rpx solid var(--paper);
-  border-right: none;
-  border-bottom: none;
-  border-radius: 4rpx;
-}
-
 /* 邀请码说明（替代伪二维码：真实邀请走输码/分享路径） */
-.fi-qr-hint {
-  position: relative;
-  z-index: 2;
-  text-align: center;
-  margin-top: 25rpx;
-  font-size: calc(23rpx * var(--fs-mul, 1));
-  letter-spacing: 1rpx;
-  color: rgba(255, 255, 255, 0.6);
-}
 
 /* 微信分享按钮（基于 .btn-wx） */
 .fi-wxbtn {
@@ -129,7 +78,7 @@
   gap: 17rpx;
   font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
-  border-radius: 35rpx;
+  border-radius: var(--r-card);
   box-shadow: 0 20rpx 46rpx rgba(7, 193, 96, 0.32);
   display: flex;
   align-items: center;
@@ -141,11 +90,20 @@
   box-shadow: none;
 }
 .fi-wxbtn::after { border: none; }
+/* 真分享按钮是原生 <button>：微信内置 button:not([size=mini]) 固定 184px 宽，
+   .btn-block 单类名压不过（登录页同款按钮实测就是 184px 居中）。本次截图是拿码失败态、渲染的是 view，
+   拿到码后的 button 态未截到。带上父级提高优先级撑满 */
+.fi-page .fi-wxbtn {
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
+/* 绿底上的白色气泡：恒浅，--c-surface 深色档会变深灰 */
 .fi-ic-wx {
   width: 38rpx;
   height: 32rpx;
   border-radius: 50% 50% 50% var(--r-xs);
-  background: var(--c-surface);
+  background: var(--anchor-contrast);
   position: relative;
 }
 .fi-ic-wx::after {
@@ -156,7 +114,7 @@
   width: 30rpx;
   height: 26rpx;
   border-radius: 50% 50% var(--r-xs) 50%;
-  background: var(--c-surface);
+  background: var(--anchor-contrast);
   box-shadow: 0 0 0 4rpx var(--wx);
 }
 
@@ -170,7 +128,7 @@
   justify-content: center;
   gap: 17rpx;
   padding: 29rpx 0;
-  border-radius: 35rpx;
+  border-radius: var(--r-card);
   background: var(--c-surface);
   color: var(--ink);
   font-size: calc(29rpx * var(--fs-mul, 1));
@@ -178,64 +136,33 @@
   border: var(--bd-card);
   box-shadow: var(--sh-soft);
 }
-.fi-ic-save {
-  width: 30rpx;
-  height: 30rpx;
-  position: relative;
-}
-.fi-ic-save::before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 0;
-  transform: translateX(-50%);
-  width: 4rpx;
-  height: 20rpx;
-  background: var(--ink);
-  border-radius: 2rpx;
-}
-.fi-ic-save::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 9rpx;
-  transform: translateX(-50%) rotate(45deg);
-  width: 14rpx;
-  height: 14rpx;
-  border-right: 4rpx solid var(--ink);
-  border-bottom: 4rpx solid var(--ink);
-}
-
-/* Tip 24h */
+/* 邀请码说明：中性提示，不用警示红 */
 .fi-note {
   display: flex;
   align-items: flex-start;
   gap: 17rpx;
   margin-top: 46rpx;
-  padding: 27rpx 31rpx;
-  background: var(--pop-soft);
-  border-radius: 31rpx;
+  padding: 27rpx var(--pad-card);
+  background: var(--paper-2);
+  border-radius: var(--r-card);
 }
-.fi-note-ic {
+.fi-ic {
   flex: none;
-  margin-top: 2rpx;
   width: 32rpx;
   height: 32rpx;
-  border: 4rpx solid var(--pop);
-  border-radius: 50%;
-  position: relative;
 }
-.fi-note-ic::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 12rpx;
-  transform: translateX(-50%);
-  width: 4rpx;
-  height: 12rpx;
-  background: var(--pop);
-  border-radius: 2rpx;
-  box-shadow: 0 -10rpx 0 var(--pop);
+/* 浅色线框 SVG：浅底上压成墨色，深色模式还原（同 post-detail 的 reaction-icon） */
+.fi-ic--ink {
+  filter: brightness(0);
+  opacity: .7;
+}
+@media (prefers-color-scheme: dark) {
+  .fi-ic--ink { filter: none; }
+  /* 重试按钮的字是 --ink-deep，深色档翻成浅字（金底也翻成深金 #8a6a3a），
+     图标原先强制压黑就成了「深底黑图标 + 浅色字」，跟着字一起还原 */
+}
+.fi-note-ic {
+  margin-top: 4rpx;
 }
 .fi-note-text {
   font-size: calc(25rpx * var(--fs-mul, 1));
@@ -243,6 +170,6 @@
   color: var(--mut-strong);
 }
 .fi-note-text .b {
-  color: var(--pop);
+  color: var(--ink);
   font-weight: 800;
 }

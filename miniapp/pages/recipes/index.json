@@ -4,8 +4,10 @@
   "enablePullDownRefresh": true,
   "onReachBottomDistance": 80,
   "usingComponents": {
+    "state-sheet": "/components/state-sheet/index",
     "state-empty": "/components/state-empty/index",
     "recipe-card": "/components/recipe-card/index",
-    "back-top": "/components/back-top/index"
+    "back-top": "/components/back-top/index",
+    "nav-bar": "/components/nav-bar/index"
   }
 }

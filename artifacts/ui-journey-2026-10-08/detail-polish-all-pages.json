@@ -1,0 +1,1601 @@
+{
+  "screens": [
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-community-post-detail-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "多图",
+      "image": "screens/all-pkg-extra-community-post-detail-index-多图.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "多图第三张",
+      "image": "screens/all-pkg-extra-community-post-detail-index-多图第三张.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "评论",
+      "image": "screens/all-pkg-extra-community-post-detail-index-评论.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "评论大字",
+      "image": "screens/all-pkg-extra-community-post-detail-index-评论大字.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "大字",
+      "image": "screens/all-pkg-extra-community-post-detail-index-大字.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "写评论",
+      "image": "screens/all-pkg-extra-community-post-detail-index-写评论.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "发送中",
+      "image": "screens/all-pkg-extra-community-post-detail-index-发送中.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "无图",
+      "image": "screens/all-pkg-extra-community-post-detail-index-无图.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "图片失效",
+      "image": "screens/all-pkg-extra-community-post-detail-index-图片失效.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "无评论",
+      "image": "screens/all-pkg-extra-community-post-detail-index-无评论.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "评论加载失败",
+      "image": "screens/all-pkg-extra-community-post-detail-index-评论加载失败.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/me/notifications/index",
+      "state": "main",
+      "image": "screens/all-pkg-extra-me-notifications-index.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/me/notifications/index",
+      "state": "大字",
+      "image": "screens/all-pkg-extra-me-notifications-index-大字.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    },
+    {
+      "route": "pkg-extra/me/notifications/index",
+      "state": "已读",
+      "image": "screens/all-pkg-extra-me-notifications-index-已读.jpg",
+      "width": 591,
+      "height": 1280,
+      "gated": false
+    }
+  ],
+  "routes": [
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "actualRoute": "pkg-extra/community/post-detail/index",
+      "gated": false,
+      "temporarySample": true,
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/me/notifications/index",
+      "actualRoute": "pkg-extra/me/notifications/index",
+      "gated": false,
+      "temporarySample": true,
+      "passed": true
+    }
+  ],
+  "layouts": [
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "normal",
+      "rects": {
+        ".page": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 0,
+          "bottom": 844,
+          "width": 390,
+          "height": 844
+        },
+        ".body": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 87,
+          "bottom": 963.4765625,
+          "width": 390,
+          "height": 876.4765625
+        },
+        ".recipe-card": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 565.0859375,
+          "bottom": 662.0859375,
+          "width": 358,
+          "height": 97
+        },
+        ".rc-img": {
+          "id": "",
+          "dataset": {
+            "errKey": "post.recipeCoverBroken"
+          },
+          "left": 29,
+          "right": 100,
+          "top": 578.0859375,
+          "bottom": 649.0859375,
+          "width": 71,
+          "height": 71
+        },
+        ".rc-mid": {
+          "id": "",
+          "dataset": {},
+          "left": 109,
+          "right": 336,
+          "top": 580.8125,
+          "bottom": 646.359375,
+          "width": 227,
+          "height": 65.546875
+        },
+        ".react-bar": {
+          "id": "",
+          "dataset": {},
+          "left": 239,
+          "right": 378,
+          "top": 758,
+          "bottom": 803,
+          "width": 139,
+          "height": 45
+        },
+        ".inputbar": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 750,
+          "bottom": 844,
+          "width": 390,
+          "height": 94
+        },
+        ".field": {
+          "id": "",
+          "dataset": {},
+          "left": 40,
+          "right": 225,
+          "top": 758,
+          "bottom": 803,
+          "width": 185,
+          "height": 45
+        },
+        ".send": null,
+        ".scroll": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 87,
+          "bottom": 750,
+          "width": 390,
+          "height": 663
+        },
+        ".cmt": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 750.8828125,
+          "bottom": 845.6796875,
+          "width": 358,
+          "height": 94.796875
+        },
+        ".cmeta": {
+          "id": "",
+          "dataset": {},
+          "left": 64,
+          "right": 374,
+          "top": 765.8828125,
+          "bottom": 803.8828125,
+          "width": 310,
+          "height": 38
+        },
+        ".pimgs": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 149,
+          "bottom": 389,
+          "width": 358,
+          "height": 240
+        },
+        ".post-title": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 401,
+          "bottom": 428,
+          "width": 358,
+          "height": 27
+        },
+        ".react-share": {
+          "id": "",
+          "dataset": {},
+          "left": 305,
+          "right": 374,
+          "top": 94,
+          "bottom": 139,
+          "width": 69,
+          "height": 45
+        },
+        ".author": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 93,
+          "bottom": 140,
+          "width": 358,
+          "height": 47
+        },
+        ".acol": {
+          "id": "",
+          "dataset": {},
+          "left": 72,
+          "right": 296,
+          "top": 94.3515625,
+          "bottom": 138.6484375,
+          "width": 224,
+          "height": 44.296875
+        },
+        ".atime": {
+          "id": "",
+          "dataset": {},
+          "left": 72,
+          "right": 296,
+          "top": 122.1484375,
+          "bottom": 138.6484375,
+          "width": 224,
+          "height": 16.5
+        },
+        ".aname": {
+          "id": "",
+          "dataset": {},
+          "left": 72,
+          "right": 296,
+          "top": 94.3515625,
+          "bottom": 119.1484375,
+          "width": 224,
+          "height": 24.796875
+        }
+      },
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "large-long-text",
+      "rects": {
+        ".page": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 0,
+          "bottom": 844,
+          "width": 390,
+          "height": 844
+        },
+        ".body": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": -132,
+          "bottom": 848.0390625,
+          "width": 390,
+          "height": 980.0390625
+        },
+        ".recipe-card": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 369.390625,
+          "bottom": 473.6796875,
+          "width": 358,
+          "height": 104.2890625
+        },
+        ".rc-img": {
+          "id": "",
+          "dataset": {
+            "errKey": "post.recipeCoverBroken"
+          },
+          "left": 29,
+          "right": 100,
+          "top": 386.03125,
+          "bottom": 457.03125,
+          "width": 71,
+          "height": 71
+        },
+        ".rc-mid": {
+          "id": "",
+          "dataset": {},
+          "left": 109,
+          "right": 336,
+          "top": 382.390625,
+          "bottom": 460.6796875,
+          "width": 227,
+          "height": 78.2890625
+        },
+        ".react-bar": {
+          "id": "",
+          "dataset": {},
+          "left": 239,
+          "right": 378,
+          "top": 756.9140625,
+          "bottom": 801.9140625,
+          "width": 139,
+          "height": 45
+        },
+        ".inputbar": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 747.828125,
+          "bottom": 844,
+          "width": 390,
+          "height": 96.171875
+        },
+        ".field": {
+          "id": "",
+          "dataset": {},
+          "left": 40,
+          "right": 225,
+          "top": 755.828125,
+          "bottom": 803,
+          "width": 185,
+          "height": 47.171875
+        },
+        ".send": null,
+        ".scroll": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 87,
+          "bottom": 747.828125,
+          "width": 390,
+          "height": 660.828125
+        },
+        ".cmt": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 566.1953125,
+          "bottom": 719.5390625,
+          "width": 358,
+          "height": 153.34375
+        },
+        ".cmeta": {
+          "id": "",
+          "dataset": {},
+          "left": 64,
+          "right": 374,
+          "top": 581.1953125,
+          "bottom": 626.7734375,
+          "width": 310,
+          "height": 45.578125
+        },
+        ".pimgs": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": -64.484375,
+          "bottom": 175.515625,
+          "width": 358,
+          "height": 240
+        },
+        ".post-title": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 187.515625,
+          "bottom": 218.5703125,
+          "width": 358,
+          "height": 31.0546875
+        },
+        ".react-share": {
+          "id": "",
+          "dataset": {},
+          "left": 304,
+          "right": 374,
+          "top": -122.2421875,
+          "bottom": -77.2421875,
+          "width": 70,
+          "height": 45
+        },
+        ".author": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": -126,
+          "bottom": -73.484375,
+          "width": 358,
+          "height": 52.515625
+        },
+        ".acol": {
+          "id": "",
+          "dataset": {},
+          "left": 72,
+          "right": 295,
+          "top": -126,
+          "bottom": -73.484375,
+          "width": 223,
+          "height": 52.515625
+        },
+        ".atime": {
+          "id": "",
+          "dataset": {},
+          "left": 72,
+          "right": 295,
+          "top": -94.484375,
+          "bottom": -73.484375,
+          "width": 223,
+          "height": 21
+        },
+        ".aname": {
+          "id": "",
+          "dataset": {},
+          "left": 72,
+          "right": 295,
+          "top": -126,
+          "bottom": -97.484375,
+          "width": 223,
+          "height": 28.515625
+        }
+      },
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "composing-large",
+      "rects": {
+        ".page": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 0,
+          "bottom": 844,
+          "width": 390,
+          "height": 844
+        },
+        ".body": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 87,
+          "bottom": 1067.0390625,
+          "width": 390,
+          "height": 980.0390625
+        },
+        ".recipe-card": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 588.390625,
+          "bottom": 692.6796875,
+          "width": 358,
+          "height": 104.2890625
+        },
+        ".rc-img": {
+          "id": "",
+          "dataset": {
+            "errKey": "post.recipeCoverBroken"
+          },
+          "left": 29,
+          "right": 100,
+          "top": 605.03125,
+          "bottom": 676.03125,
+          "width": 71,
+          "height": 71
+        },
+        ".rc-mid": {
+          "id": "",
+          "dataset": {},
+          "left": 109,
+          "right": 336,
+          "top": 601.390625,
+          "bottom": 679.6796875,
+          "width": 227,
+          "height": 78.2890625
+        },
+        ".react-bar": null,
+        ".inputbar": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 725,
+          "bottom": 844,
+          "width": 390,
+          "height": 119
+        },
+        ".field": {
+          "id": "",
+          "dataset": {},
+          "left": 21,
+          "right": 310,
+          "top": 733,
+          "bottom": 803,
+          "width": 289,
+          "height": 70
+        },
+        ".send": {
+          "id": "",
+          "dataset": {},
+          "left": 324,
+          "right": 378,
+          "top": 745.5,
+          "bottom": 790.5,
+          "width": 54,
+          "height": 45
+        },
+        ".scroll": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 87,
+          "bottom": 725,
+          "width": 390,
+          "height": 638
+        },
+        ".cmt": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 785.1953125,
+          "bottom": 938.5390625,
+          "width": 358,
+          "height": 153.34375
+        },
+        ".cmeta": {
+          "id": "",
+          "dataset": {},
+          "left": 64,
+          "right": 374,
+          "top": 800.1953125,
+          "bottom": 845.7734375,
+          "width": 310,
+          "height": 45.578125
+        },
+        ".pimgs": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 154.515625,
+          "bottom": 394.515625,
+          "width": 358,
+          "height": 240
+        },
+        ".post-title": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 406.515625,
+          "bottom": 437.5703125,
+          "width": 358,
+          "height": 31.0546875
+        },
+        ".react-share": {
+          "id": "",
+          "dataset": {},
+          "left": 304,
+          "right": 374,
+          "top": 96.7578125,
+          "bottom": 141.7578125,
+          "width": 70,
+          "height": 45
+        },
+        ".author": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 93,
+          "bottom": 145.515625,
+          "width": 358,
+          "height": 52.515625
+        },
+        ".acol": {
+          "id": "",
+          "dataset": {},
+          "left": 72,
+          "right": 295,
+          "top": 93,
+          "bottom": 145.515625,
+          "width": 223,
+          "height": 52.515625
+        },
+        ".atime": {
+          "id": "",
+          "dataset": {},
+          "left": 72,
+          "right": 295,
+          "top": 124.515625,
+          "bottom": 145.515625,
+          "width": 223,
+          "height": 21
+        },
+        ".aname": {
+          "id": "",
+          "dataset": {},
+          "left": 72,
+          "right": 295,
+          "top": 93,
+          "bottom": 121.515625,
+          "width": 223,
+          "height": 28.515625
+        }
+      },
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "submitting",
+      "rects": {
+        ".page": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 0,
+          "bottom": 844,
+          "width": 390,
+          "height": 844
+        },
+        ".body": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 87,
+          "bottom": 1067.0390625,
+          "width": 390,
+          "height": 980.0390625
+        },
+        ".recipe-card": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 588.390625,
+          "bottom": 692.6796875,
+          "width": 358,
+          "height": 104.2890625
+        },
+        ".rc-img": {
+          "id": "",
+          "dataset": {
+            "errKey": "post.recipeCoverBroken"
+          },
+          "left": 29,
+          "right": 100,
+          "top": 605.03125,
+          "bottom": 676.03125,
+          "width": 71,
+          "height": 71
+        },
+        ".rc-mid": {
+          "id": "",
+          "dataset": {},
+          "left": 109,
+          "right": 336,
+          "top": 601.390625,
+          "bottom": 679.6796875,
+          "width": 227,
+          "height": 78.2890625
+        },
+        ".react-bar": null,
+        ".inputbar": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 725,
+          "bottom": 844,
+          "width": 390,
+          "height": 119
+        },
+        ".field": {
+          "id": "",
+          "dataset": {},
+          "left": 21,
+          "right": 308,
+          "top": 733,
+          "bottom": 803,
+          "width": 287,
+          "height": 70
+        },
+        ".send": {
+          "id": "",
+          "dataset": {},
+          "left": 322,
+          "right": 378,
+          "top": 745.5,
+          "bottom": 790.5,
+          "width": 56,
+          "height": 45
+        },
+        ".scroll": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 87,
+          "bottom": 725,
+          "width": 390,
+          "height": 638
+        },
+        ".cmt": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 785.1953125,
+          "bottom": 938.5390625,
+          "width": 358,
+          "height": 153.34375
+        },
+        ".cmeta": {
+          "id": "",
+          "dataset": {},
+          "left": 64,
+          "right": 374,
+          "top": 800.1953125,
+          "bottom": 845.7734375,
+          "width": 310,
+          "height": 45.578125
+        },
+        ".pimgs": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 154.515625,
+          "bottom": 394.515625,
+          "width": 358,
+          "height": 240
+        },
+        ".post-title": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 406.515625,
+          "bottom": 437.5703125,
+          "width": 358,
+          "height": 31.0546875
+        },
+        ".react-share": {
+          "id": "",
+          "dataset": {},
+          "left": 304,
+          "right": 374,
+          "top": 96.7578125,
+          "bottom": 141.7578125,
+          "width": 70,
+          "height": 45
+        },
+        ".author": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 93,
+          "bottom": 145.515625,
+          "width": 358,
+          "height": 52.515625
+        },
+        ".acol": {
+          "id": "",
+          "dataset": {},
+          "left": 72,
+          "right": 295,
+          "top": 93,
+          "bottom": 145.515625,
+          "width": 223,
+          "height": 52.515625
+        },
+        ".atime": {
+          "id": "",
+          "dataset": {},
+          "left": 72,
+          "right": 295,
+          "top": 124.515625,
+          "bottom": 145.515625,
+          "width": 223,
+          "height": 21
+        },
+        ".aname": {
+          "id": "",
+          "dataset": {},
+          "left": 72,
+          "right": 295,
+          "top": 93,
+          "bottom": 121.515625,
+          "width": 223,
+          "height": 28.515625
+        }
+      },
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "reading-after-clear",
+      "rects": {
+        ".page": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 0,
+          "bottom": 844,
+          "width": 390,
+          "height": 844
+        },
+        ".body": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 87,
+          "bottom": 1067.0390625,
+          "width": 390,
+          "height": 980.0390625
+        },
+        ".recipe-card": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 588.390625,
+          "bottom": 692.6796875,
+          "width": 358,
+          "height": 104.2890625
+        },
+        ".rc-img": {
+          "id": "",
+          "dataset": {
+            "errKey": "post.recipeCoverBroken"
+          },
+          "left": 29,
+          "right": 100,
+          "top": 605.03125,
+          "bottom": 676.03125,
+          "width": 71,
+          "height": 71
+        },
+        ".rc-mid": {
+          "id": "",
+          "dataset": {},
+          "left": 109,
+          "right": 336,
+          "top": 601.390625,
+          "bottom": 679.6796875,
+          "width": 227,
+          "height": 78.2890625
+        },
+        ".react-bar": {
+          "id": "",
+          "dataset": {},
+          "left": 239,
+          "right": 378,
+          "top": 756.9140625,
+          "bottom": 801.9140625,
+          "width": 139,
+          "height": 45
+        },
+        ".inputbar": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 747.828125,
+          "bottom": 844,
+          "width": 390,
+          "height": 96.171875
+        },
+        ".field": {
+          "id": "",
+          "dataset": {},
+          "left": 40,
+          "right": 225,
+          "top": 755.828125,
+          "bottom": 803,
+          "width": 185,
+          "height": 47.171875
+        },
+        ".send": null,
+        ".scroll": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 87,
+          "bottom": 747.828125,
+          "width": 390,
+          "height": 660.828125
+        },
+        ".cmt": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 785.1953125,
+          "bottom": 938.5390625,
+          "width": 358,
+          "height": 153.34375
+        },
+        ".cmeta": {
+          "id": "",
+          "dataset": {},
+          "left": 64,
+          "right": 374,
+          "top": 800.1953125,
+          "bottom": 845.7734375,
+          "width": 310,
+          "height": 45.578125
+        },
+        ".pimgs": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 154.515625,
+          "bottom": 394.515625,
+          "width": 358,
+          "height": 240
+        },
+        ".post-title": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 406.515625,
+          "bottom": 437.5703125,
+          "width": 358,
+          "height": 31.0546875
+        },
+        ".react-share": {
+          "id": "",
+          "dataset": {},
+          "left": 304,
+          "right": 374,
+          "top": 96.7578125,
+          "bottom": 141.7578125,
+          "width": 70,
+          "height": 45
+        },
+        ".author": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 93,
+          "bottom": 145.515625,
+          "width": 358,
+          "height": 52.515625
+        },
+        ".acol": {
+          "id": "",
+          "dataset": {},
+          "left": 72,
+          "right": 295,
+          "top": 93,
+          "bottom": 145.515625,
+          "width": 223,
+          "height": 52.515625
+        },
+        ".atime": {
+          "id": "",
+          "dataset": {},
+          "left": 72,
+          "right": 295,
+          "top": 124.515625,
+          "bottom": 145.515625,
+          "width": 223,
+          "height": 21
+        },
+        ".aname": {
+          "id": "",
+          "dataset": {},
+          "left": 72,
+          "right": 295,
+          "top": 93,
+          "bottom": 121.515625,
+          "width": 223,
+          "height": 28.515625
+        }
+      },
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/community/post-detail/index",
+      "state": "text-only",
+      "rects": {
+        ".page": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 0,
+          "bottom": 844,
+          "width": 390,
+          "height": 844
+        },
+        ".body": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 87,
+          "bottom": 735.2734375,
+          "width": 390,
+          "height": 648.2734375
+        },
+        ".recipe-card": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 316.0859375,
+          "bottom": 413.0859375,
+          "width": 358,
+          "height": 97
+        },
+        ".rc-img": {
+          "id": "",
+          "dataset": {
+            "errKey": "post.recipeCoverBroken"
+          },
+          "left": 29,
+          "right": 100,
+          "top": 329.0859375,
+          "bottom": 400.0859375,
+          "width": 71,
+          "height": 71
+        },
+        ".rc-mid": {
+          "id": "",
+          "dataset": {},
+          "left": 109,
+          "right": 336,
+          "top": 331.8125,
+          "bottom": 397.359375,
+          "width": 227,
+          "height": 65.546875
+        },
+        ".react-bar": {
+          "id": "",
+          "dataset": {},
+          "left": 239,
+          "right": 378,
+          "top": 758,
+          "bottom": 803,
+          "width": 139,
+          "height": 45
+        },
+        ".inputbar": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 750,
+          "bottom": 844,
+          "width": 390,
+          "height": 94
+        },
+        ".field": {
+          "id": "",
+          "dataset": {},
+          "left": 40,
+          "right": 225,
+          "top": 758,
+          "bottom": 803,
+          "width": 185,
+          "height": 45
+        },
+        ".send": null,
+        ".scroll": {
+          "id": "",
+          "dataset": {},
+          "left": 0,
+          "right": 390,
+          "top": 87,
+          "bottom": 750,
+          "width": 390,
+          "height": 663
+        },
+        ".cmt": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 501.8828125,
+          "bottom": 617.4765625,
+          "width": 358,
+          "height": 115.59375
+        },
+        ".cmeta": {
+          "id": "",
+          "dataset": {},
+          "left": 64,
+          "right": 374,
+          "top": 516.8828125,
+          "bottom": 554.8828125,
+          "width": 310,
+          "height": 38
+        },
+        ".pimgs": null,
+        ".post-title": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 152,
+          "bottom": 179,
+          "width": 358,
+          "height": 27
+        },
+        ".react-share": {
+          "id": "",
+          "dataset": {},
+          "left": 305,
+          "right": 374,
+          "top": 94,
+          "bottom": 139,
+          "width": 69,
+          "height": 45
+        },
+        ".author": {
+          "id": "",
+          "dataset": {},
+          "left": 16,
+          "right": 374,
+          "top": 93,
+          "bottom": 140,
+          "width": 358,
+          "height": 47
+        },
+        ".acol": {
+          "id": "",
+          "dataset": {},
+          "left": 72,
+          "right": 296,
+          "top": 94.3515625,
+          "bottom": 138.6484375,
+          "width": 224,
+          "height": 44.296875
+        },
+        ".atime": {
+          "id": "",
+          "dataset": {},
+          "left": 72,
+          "right": 296,
+          "top": 122.1484375,
+          "bottom": 138.6484375,
+          "width": 224,
+          "height": 16.5
+        },
+        ".aname": {
+          "id": "",
+          "dataset": {},
+          "left": 72,
+          "right": 296,
+          "top": 94.3515625,
+          "bottom": 119.1484375,
+          "width": 224,
+          "height": 24.796875
+        }
+      },
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/me/notifications/index",
+      "state": "pantry-reminder",
+      "rects": {
+        ".ncard": {
+          "id": "",
+          "dataset": {
+            "id": 9001
+          },
+          "left": 23,
+          "right": 367,
+          "top": 301.390625,
+          "bottom": 459.140625,
+          "width": 344,
+          "height": 157.75
+        },
+        ".nhead": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 354,
+          "top": 314.390625,
+          "bottom": 353.140625,
+          "width": 318,
+          "height": 38.75
+        },
+        ".nt-h3": {
+          "id": "",
+          "dataset": {},
+          "left": 76,
+          "right": 296.9140625,
+          "top": 314.390625,
+          "bottom": 336.140625,
+          "width": 220.9140625,
+          "height": 21.75
+        },
+        ".nt-body": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 354,
+          "top": 361.140625,
+          "bottom": 400.140625,
+          "width": 318,
+          "height": 39
+        },
+        ".nfoot": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 354,
+          "top": 406.140625,
+          "bottom": 452.140625,
+          "width": 318,
+          "height": 46
+        },
+        ".nbtn": {
+          "id": "",
+          "dataset": {
+            "id": 9001
+          },
+          "left": 289,
+          "right": 354,
+          "top": 407.140625,
+          "bottom": 452.140625,
+          "width": 65,
+          "height": 45
+        },
+        ".nread-state": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 65,
+          "top": 421.890625,
+          "bottom": 437.390625,
+          "width": 29,
+          "height": 15.5
+        },
+        ".reddot": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 41,
+          "top": 427.140625,
+          "bottom": 432.140625,
+          "width": 5,
+          "height": 5
+        },
+        ".nt-time": {
+          "id": "",
+          "dataset": {},
+          "left": 303.9140625,
+          "right": 354,
+          "top": 314.390625,
+          "bottom": 331.390625,
+          "width": 50.0859375,
+          "height": 17
+        },
+        ".nt": {
+          "id": "",
+          "dataset": {},
+          "left": 76,
+          "right": 296.9140625,
+          "top": 314.390625,
+          "bottom": 353.140625,
+          "width": 220.9140625,
+          "height": 38.75
+        }
+      },
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/me/notifications/index",
+      "state": "large-long-text",
+      "rects": {
+        ".ncard": {
+          "id": "",
+          "dataset": {
+            "id": 9001
+          },
+          "left": 23,
+          "right": 367,
+          "top": 316.0859375,
+          "bottom": 530.6015625,
+          "width": 344,
+          "height": 214.515625
+        },
+        ".nhead": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 354,
+          "top": 329.0859375,
+          "bottom": 400.6015625,
+          "width": 318,
+          "height": 71.515625
+        },
+        ".nt-h3": {
+          "id": "",
+          "dataset": {},
+          "left": 76,
+          "right": 281.890625,
+          "top": 329.0859375,
+          "bottom": 379.1015625,
+          "width": 205.890625,
+          "height": 50.015625
+        },
+        ".nt-body": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 354,
+          "top": 408.6015625,
+          "bottom": 471.6015625,
+          "width": 318,
+          "height": 63
+        },
+        ".nfoot": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 354,
+          "top": 477.6015625,
+          "bottom": 523.6015625,
+          "width": 318,
+          "height": 46
+        },
+        ".nbtn": {
+          "id": "",
+          "dataset": {
+            "id": 9001
+          },
+          "left": 277,
+          "right": 354,
+          "top": 478.6015625,
+          "bottom": 523.6015625,
+          "width": 77,
+          "height": 45
+        },
+        ".nread-state": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 71,
+          "top": 491.0234375,
+          "bottom": 511.171875,
+          "width": 35,
+          "height": 20.1484375
+        },
+        ".reddot": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 41,
+          "top": 498.59375,
+          "bottom": 503.59375,
+          "width": 5,
+          "height": 5
+        },
+        ".nt-time": {
+          "id": "",
+          "dataset": {},
+          "left": 288.890625,
+          "right": 354,
+          "top": 329.0859375,
+          "bottom": 350.5859375,
+          "width": 65.109375,
+          "height": 21.5
+        },
+        ".nt": {
+          "id": "",
+          "dataset": {},
+          "left": 76,
+          "right": 281.890625,
+          "top": 329.0859375,
+          "bottom": 400.6015625,
+          "width": 205.890625,
+          "height": 71.515625
+        }
+      },
+      "passed": true
+    },
+    {
+      "route": "pkg-extra/me/notifications/index",
+      "state": "read",
+      "rects": {
+        ".ncard": {
+          "id": "",
+          "dataset": {
+            "id": 9001
+          },
+          "left": 23,
+          "right": 367,
+          "top": 301.390625,
+          "bottom": 500.390625,
+          "width": 344,
+          "height": 199
+        },
+        ".nhead": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 354,
+          "top": 314.390625,
+          "bottom": 374.890625,
+          "width": 318,
+          "height": 60.5
+        },
+        ".nt-h3": {
+          "id": "",
+          "dataset": {},
+          "left": 76,
+          "right": 296.9140625,
+          "top": 314.390625,
+          "bottom": 357.890625,
+          "width": 220.9140625,
+          "height": 43.5
+        },
+        ".nt-body": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 354,
+          "top": 382.890625,
+          "bottom": 441.390625,
+          "width": 318,
+          "height": 58.5
+        },
+        ".nfoot": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 354,
+          "top": 447.390625,
+          "bottom": 493.390625,
+          "width": 318,
+          "height": 46
+        },
+        ".nbtn": {
+          "id": "",
+          "dataset": {
+            "id": 9001
+          },
+          "left": 289,
+          "right": 354,
+          "top": 448.390625,
+          "bottom": 493.390625,
+          "width": 65,
+          "height": 45
+        },
+        ".nread-state": {
+          "id": "",
+          "dataset": {},
+          "left": 36,
+          "right": 56,
+          "top": 463.140625,
+          "bottom": 478.640625,
+          "width": 20,
+          "height": 15.5
+        },
+        ".reddot": null,
+        ".nt-time": {
+          "id": "",
+          "dataset": {},
+          "left": 303.9140625,
+          "right": 354,
+          "top": 314.390625,
+          "bottom": 331.390625,
+          "width": 50.0859375,
+          "height": 17
+        },
+        ".nt": {
+          "id": "",
+          "dataset": {},
+          "left": 76,
+          "right": 296.9140625,
+          "top": 314.390625,
+          "bottom": 374.890625,
+          "width": 220.9140625,
+          "height": 60.5
+        }
+      },
+      "passed": true
+    }
+  ],
+  "checkedAt": "2026-10-09T11:22:32.178Z",
+  "passed": true,
+  "source": "Native formal pages; temporary sample data restored; closed features kept closed; no business write APIs.",
+  "formalRoutes": 39
+}

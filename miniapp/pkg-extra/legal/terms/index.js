@@ -10,7 +10,7 @@ const CLAUSES = [
     no: '01',
     title: '服务说明',
     blocks: [
-      { type: 'p', text: '「家庭点菜」是一款面向家庭场景的菜谱收藏与点菜协作工具，帮助你和家人记录常做的菜、规划今日菜单、生成采买清单。' },
+      { type: 'p', text: '「家庭点菜」是一款面向家庭场景的菜谱收藏与点菜协作工具，帮助你和家人记录常做的菜、规划今日菜单、生成买菜清单。' },
       { type: 'p', text: '本服务为个人及家庭非商业用途提供，我们会持续优化功能，部分功能可能随版本更新而调整或下线。' }
     ]
   },
@@ -85,9 +85,12 @@ Page({
   },
 
   // CTA「我已阅读并同意」：提示后返回上一页
+  // 连点（或点完马上自己返回）会有两个计时器各 navigateBack 一次，多退一层：只认第一下，计时器 onUnload 清
   onAgree() {
+    if (this._agreeing) return;
+    this._agreeing = true;
     wx.showToast({ title: '已同意用户协议', icon: 'success' });
-    setTimeout(() => {
+    this._navTimer = setTimeout(() => {
       const pages = getCurrentPages();
       if (pages && pages.length > 1) {
         wx.navigateBack({ delta: 1 });
@@ -100,5 +103,12 @@ Page({
         });
       }
     }, 600);
+  },
+
+  onUnload() {
+    if (this._navTimer) {
+      clearTimeout(this._navTimer);
+      this._navTimer = null;
+    }
   }
 });

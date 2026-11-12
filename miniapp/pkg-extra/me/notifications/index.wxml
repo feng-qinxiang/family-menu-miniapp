@@ -1,25 +1,18 @@
 <!-- pages/me/notifications · 消息中心（二级页） -->
 <view class="notif-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
-  <!-- 标题留空：导航标题是绝对居中的、不会给右侧按钮让位，而「全部已读」带图标共约 190rpx，
-       实测 2 字的「消息」也会被它的对勾压住。页面名由下方 hero「消息通知 / 家里的动静」承担，
-       与社区页（发帖胶囊）、餐桌页（点菜胶囊）同一写法。 -->
-  <nav-bar title="" show-back="{{true}}">
-    <view class="nb-readall tap-scale" catchtap="onReadAll">
-      <view class="nb-check"></view>
-      <text>全部已读</text>
-    </view>
-  </nav-bar>
+  <nav-bar title="消息中心" show-back="{{true}}" />
 
   <scroll-view scroll-y class="notif-scroll" enhanced show-scrollbar="{{false}}">
-    <!-- Hero 标题 -->
-    <view class="hero g-fade-up">
-      <text class="hero-eyebrow">消息通知</text>
-      <view class="hero-h2">家里的<text class="pop">动静</text></view>
-      <view class="hero-unread">你有 <text class="unread-num">{{unreadCount}}</text> 条未读消息</view>
+    <!-- 页名只留导航栏；一行未读概况 + 「全部标为已读」 -->
+    <view class="notif-top g-fade-up" wx:if="{{loading || loadError || unreadCount > 0}}">
+      <view class="notif-top-sub">{{loading ? '正在加载消息…' : loadError ? '消息暂未同步' : unreadCount ? unreadCount + ' 条未读' : '没有未读消息'}}</view>
+      <view wx:if="{{!loading && !loadError && unreadCount > 0}}" class="notif-readall tap-scale" catchtap="onReadAll" aria-role="button" aria-label="将全部未读消息标为已读">
+        <view class="notif-readall-label"><image class="notif-readall-icon" src="/assets/icons/lucide/check.svg" mode="aspectFit" aria-hidden="true" /><text>全部标为已读</text></view>
+      </view>
     </view>
 
     <!-- Tab chips -->
-    <scroll-view scroll-x class="tabs hscroll" enhanced show-scrollbar="{{false}}">
+    <scroll-view wx:if="{{hasAny}}" scroll-x class="tabs hscroll" enhanced show-scrollbar="{{false}}">
       <view class="tabs-inner">
         <view
           wx:for="{{tabs}}"
@@ -48,7 +41,7 @@
             data-id="{{n.id}}"
             catchtap="onCardTap"
           >
-            <!-- icon / 头像 / 菜图 -->
+            <view class="nhead">
             <view class="ic ic-{{n.kind}}">
               <image
                 wx:if="{{n.avatar}}"
@@ -57,19 +50,21 @@
                 mode="aspectFill"
                 lazy-load
               />
+              <image wx:elif="{{n.kind === 'pantry'}}" class="ic-pantry-img" src="/assets/icons/tab-fridge.svg" mode="aspectFit" aria-hidden="true" />
               <view wx:else class="ic-svg ic-{{n.icon}}"></view>
             </view>
-
-            <view class="nmid">
               <view class="nt">
-                <text class="nt-h3 ellipsis">{{n.title}}</text>
-                <text class="nt-time">{{n.time}}</text>
+                <text class="nt-h3">{{n.title}}</text>
+                <view class="nt-meta"><text>{{n.kind === 'com' ? '社区动态' : n.kind === 'sys' ? '系统通知' : '家庭动态'}}</text></view>
               </view>
+              <text class="nt-time">{{n.time}}</text>
+            </view>
+            <view class="nmid">
               <view class="nt-body">
                 <text wx:for="{{n.body}}" wx:key="index" wx:for-item="seg" class="seg seg-{{seg.t}}">{{seg.v}}</text>
               </view>
 
-              <view wx:if="{{n.thumb || n.action}}" class="nfoot">
+              <view class="nfoot">
                 <image
                   wx:if="{{n.thumb}}"
                   class="thumb-dish"
@@ -77,7 +72,7 @@
                   mode="aspectFill"
                   lazy-load
                 />
-                <view wx:else class="nfoot-spacer"></view>
+                <view class="nread-state {{n.unread ? 'is-unread' : ''}}"><view wx:if="{{n.unread}}" class="reddot"></view>{{n.unread ? '未读' : '已读'}}</view>
                 <view
                   wx:if="{{n.action}}"
                   class="nbtn tap-scale {{n.action.ghost ? 'ghost' : ''}}"
@@ -90,13 +85,13 @@
               </view>
             </view>
 
-            <view wx:if="{{n.unread}}" class="reddot"></view>
           </view>
         </view>
       </block>
 
       <state-empty
         wx:if="{{loadError}}"
+        size="compact"
         type="offline"
         title="消息没加载出来"
         desc="网络开小差了，检查后再试"
@@ -106,6 +101,7 @@
 
       <state-empty
         wx:elif="{{!loading && visibleCount === 0}}"
+        size="compact"
         title="暂无消息"
         desc="这里会显示家庭、社区与系统的动态"
       />

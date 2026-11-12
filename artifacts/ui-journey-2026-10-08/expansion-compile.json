@@ -1,0 +1,135 @@
+{
+  "checkedAt": "2026-10-09T00:13:43.483813+00:00",
+  "checks": [
+    {
+      "file": "miniapp/components/recipe-card/index.wxml",
+      "passed": true,
+      "result": {
+        "success": true,
+        "codeLength": 33293
+      },
+      "error": null
+    },
+    {
+      "file": "miniapp/components/recipe-card/index.wxss",
+      "passed": true,
+      "result": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38854
+      },
+      "error": null
+    },
+    {
+      "file": "miniapp/pages/home/index.wxss",
+      "passed": true,
+      "result": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38854
+      },
+      "error": null
+    },
+    {
+      "file": "miniapp/pages/recipes/index.wxml",
+      "passed": true,
+      "result": {
+        "success": true,
+        "codeLength": 33293
+      },
+      "error": null
+    },
+    {
+      "file": "miniapp/pages/recipes/index.wxss",
+      "passed": true,
+      "result": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38854
+      },
+      "error": null
+    },
+    {
+      "file": "miniapp/pages/pantry/index.wxml",
+      "passed": true,
+      "result": {
+        "success": true,
+        "codeLength": 33293
+      },
+      "error": null
+    },
+    {
+      "file": "miniapp/pages/pantry/index.wxss",
+      "passed": true,
+      "result": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38854
+      },
+      "error": null
+    },
+    {
+      "file": "miniapp/pages/shopping/index.wxml",
+      "passed": true,
+      "result": {
+        "success": true,
+        "codeLength": 33293
+      },
+      "error": null
+    },
+    {
+      "file": "miniapp/pages/shopping/index.wxss",
+      "passed": true,
+      "result": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38854
+      },
+      "error": null
+    },
+    {
+      "file": "miniapp/pkg-extra/community/post-detail/index.wxml",
+      "passed": true,
+      "result": {
+        "success": true,
+        "codeLength": 33293
+      },
+      "error": null
+    },
+    {
+      "file": "miniapp/pkg-extra/community/post-detail/index.wxss",
+      "passed": true,
+      "result": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38854
+      },
+      "error": null
+    }
+  ],
+  "passed": true
+}

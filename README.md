@@ -148,6 +148,14 @@ node miniapp/test/interaction-audit.js    # 交互体检：按下反馈、热区
 与仓库里这份分叉，上传时容易带错配置。API 基址由 `miniapp/utils/env.js` 按运行环境解析
 （开发者工具走 `http://localhost:9088`，体验版/正式版走该文件里的域名，**上线前必须替换占位域名**，见 `spec/LAUNCH-CHECKLIST.md`）。
 
+### 内置菜图的发布顺序
+
+19 张内置菜图已移入 `server/src/main/resources/static/assets/dishes/`，随后端 JAR 提供 `/assets/dishes/*.jpg`，公共缓存 7 天；小程序只保留一张中性占位图。数据库仍保存原相对路径，显示时复用 `utils/env.js` 的 API 基址，用户上传照片仍走原有签名访问规则。
+
+先部署新版后端，确认 `GET /assets/dishes/tomato-egg.jpg` 返回 200、`Content-Type: image/jpeg`，再发布新版小程序。体验/正式环境必须先替换示例 HTTPS 域名并配置微信合法域名；本地开发则需启动该 worktree 的后端，不能继续使用未包含图片的旧 JAR。离线或图片加载失败时显示中性占位，不会改掉保存的照片。
+
+`pkg-preview` 风格预览已移除，不影响正式 39 个页面；预览代码和对应的专用测试可以从 Git 历史恢复。
+
 ## 登录体系说明
 
 本项目为**无密码体系**，`user_account` 表无密码字段，登录方式三种：

@@ -1,0 +1,697 @@
+{
+  "passed": true,
+  "date": "2026-11-04",
+  "url": "http://127.0.0.1:8847/?v=20261104-layout-focus#followup-update",
+  "checks": [
+    {
+      "name": "39 official routes retained",
+      "passed": true
+    },
+    {
+      "name": "latest section has three updated screenshots",
+      "passed": true
+    },
+    {
+      "name": "previous prototype retained",
+      "passed": true
+    },
+    {
+      "name": "native and original sections retained",
+      "passed": true
+    },
+    {
+      "name": "unique HTML ids",
+      "passed": true,
+      "data": []
+    },
+    {
+      "name": "all local linked resources respond",
+      "passed": true,
+      "data": {
+        "resources": 125,
+        "failed": []
+      }
+    },
+    {
+      "name": "1344px has no horizontal overflow",
+      "passed": true,
+      "data": {
+        "width": 1344,
+        "documentWidth": 1329,
+        "latestImages": [
+          {
+            "loaded": true,
+            "width": 268,
+            "height": 580.4375
+          },
+          {
+            "loaded": true,
+            "width": 268,
+            "height": 580.4375
+          },
+          {
+            "loaded": true,
+            "width": 268,
+            "height": 580.4375
+          }
+        ]
+      }
+    },
+    {
+      "name": "1344px latest screenshots load",
+      "passed": true
+    },
+    {
+      "name": "375px has no horizontal overflow",
+      "passed": true,
+      "data": {
+        "width": 375,
+        "documentWidth": 360,
+        "latestImages": [
+          {
+            "loaded": true,
+            "width": 268,
+            "height": 580.4375
+          },
+          {
+            "loaded": true,
+            "width": 268,
+            "height": 580.4375
+          },
+          {
+            "loaded": true,
+            "width": 268,
+            "height": 580.4375
+          }
+        ]
+      }
+    },
+    {
+      "name": "375px latest screenshots load",
+      "passed": true
+    },
+    {
+      "name": "320px has no horizontal overflow",
+      "passed": true,
+      "data": {
+        "width": 320,
+        "documentWidth": 305,
+        "latestImages": [
+          {
+            "loaded": true,
+            "width": 257,
+            "height": 556.609375
+          },
+          {
+            "loaded": true,
+            "width": 257,
+            "height": 556.609375
+          },
+          {
+            "loaded": true,
+            "width": 257,
+            "height": 556.609375
+          }
+        ]
+      }
+    },
+    {
+      "name": "320px latest screenshots load",
+      "passed": true
+    },
+    {
+      "name": "no page errors",
+      "passed": true
+    }
+  ],
+  "widths": [
+    {
+      "width": 1344,
+      "documentWidth": 1329,
+      "latestImages": [
+        {
+          "loaded": true,
+          "width": 268,
+          "height": 580.4375
+        },
+        {
+          "loaded": true,
+          "width": 268,
+          "height": 580.4375
+        },
+        {
+          "loaded": true,
+          "width": 268,
+          "height": 580.4375
+        }
+      ]
+    },
+    {
+      "width": 375,
+      "documentWidth": 360,
+      "latestImages": [
+        {
+          "loaded": true,
+          "width": 268,
+          "height": 580.4375
+        },
+        {
+          "loaded": true,
+          "width": 268,
+          "height": 580.4375
+        },
+        {
+          "loaded": true,
+          "width": 268,
+          "height": 580.4375
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "documentWidth": 305,
+      "latestImages": [
+        {
+          "loaded": true,
+          "width": 257,
+          "height": 556.609375
+        },
+        {
+          "loaded": true,
+          "width": 257,
+          "height": 556.609375
+        },
+        {
+          "loaded": true,
+          "width": 257,
+          "height": 556.609375
+        }
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "url": "http://127.0.0.1:8847/screens/layout-focus-request.png",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/layout-focus-request-empty.png",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/layout-focus-picker.png",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/layout-focus-detail.png",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/figma-prototype/family-menu-figma-kit.zip",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/skills-recipes.png",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/app-recipes.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/skills-pantry.png",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/app-pantry.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/skills-request.png",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/picker-recipes-filters.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/filter-panel-before.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/picker-recipes-filters-large.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/picker-recipes-filter-selected.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-me-notifications-index.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/notification-readall-before.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-me-notifications-index-%E5%A4%A7%E5%AD%97.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-me-notifications-index-%E5%B7%B2%E8%AF%BB.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/recipe-toolbar-before.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/picker-recipes-cuisine.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/picker-recipes-source.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/picker-recipes-large.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/app-shopping.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/picker-shopping-add-photo.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/picker-shopping-add-empty.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/picker-shopping-add-large.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/app-shopping-large.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/picker-pantry-reminder-once.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/picker-pantry-reminder-unavailable.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/picker-pantry-large.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-community-post-detail-index.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-community-post-detail-index-%E5%A4%9A%E5%9B%BE.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-community-post-detail-index-%E6%97%A0%E5%9B%BE.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-community-post-detail-index-%E8%AF%84%E8%AE%BA.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-community-post-detail-index-%E5%A4%A7%E5%AD%97.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-community-post-detail-index-%E5%86%99%E8%AF%84%E8%AE%BA.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-community-post-detail-index-%E8%AF%84%E8%AE%BA%E5%8A%A0%E8%BD%BD%E5%A4%B1%E8%B4%A5.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/picker-recipes-list.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/app-record.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/app-record-large.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/app-community.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/app-community-text.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/app-cook.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/app-cook-large.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/app-me.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/app-me-large.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/app-kitchen.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/app-kitchen-running.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/app-kitchen-paused-large.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-payment-checkout-index.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-payment-checkout-index-%E5%A4%A7%E5%AD%97.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-recipe-detail-index-%E9%A3%9F%E6%9D%90.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-recipe-detail-index-%E9%A3%9F%E6%9D%90%E5%A4%A7%E5%AD%97.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/app-home.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/picker-home-wish-preview.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/picker-home-wish-preview-large.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/picker-home-menu.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/picker-home-wishes.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/app-weekly.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/app-weekly-large.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/picker-random.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/picker-random-empty-fridge.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/picker-random-stock-failed.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/picker-pantry-pick.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/picker-pantry-pick-large.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/picker-pantry-candidates.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/picker-pantry-pick-empty.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/picker-pantry-image-fallback.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/picker-pantry-expired.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/picker-pantry-add.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/picker-pantry-edit-date.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/app-import.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/app-import-large.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/app-family.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/app-family-large.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/app-kitchen-large.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/app-cook-mode-running.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/app-cook-mode.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/app-cook-mode-paused-large.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/app-cook-mode-background-large.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/app-cook-mode-long-large.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/app-community-large.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-community-post-detail-index-%E5%A4%9A%E5%9B%BE%E7%AC%AC%E4%B8%89%E5%BC%A0.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-community-post-detail-index-%E8%AF%84%E8%AE%BA%E5%A4%A7%E5%AD%97.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-community-post-detail-index-%E5%8F%91%E9%80%81%E4%B8%AD.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-community-post-detail-index-%E5%9B%BE%E7%89%87%E5%A4%B1%E6%95%88.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-community-post-detail-index-%E6%97%A0%E8%AF%84%E8%AE%BA.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-vip-index.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-vip-upgrade-index.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-vip-orders-index.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-payment-success-index.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-favorites-index.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-favorites-index-%E5%B8%96%E5%AD%90.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-recipe-detail-index.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-recipe-detail-index-%E5%81%9A%E6%B3%95%E4%B8%8E%E8%AF%84%E4%BB%B7.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-recipe-edit-index.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-recipe-edit-index-%E7%94%A8%E6%96%99.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-recipe-edit-index-%E6%AD%A5%E9%AA%A4.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-recipes-search-index.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-auth-login-index.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-auth-login-phone-index.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-family-join-index.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-family-members-index.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-family-invite-index.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-me-settings-index.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-me-preference-profile-index.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-me-feedback-index.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-me-help-faq-index.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-me-about-index.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-legal-terms-index.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-legal-privacy-index.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-legal-deletion-index.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/all-pkg-extra-me-profile-edit-index.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/home-updated-empty.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/home-updated-done.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/picker-home-menu-large.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/home-updated-hero-lg.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/home-updated-hero-normal.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/picker-home-wishes-large.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/picker-home-search.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/d-order.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/a-order.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/b-order.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/c-order.jpg",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8847/screens/original-home.jpg",
+      "status": 200
+    }
+  ],
+  "pageErrors": [],
+  "nativeWechatVerified": false,
+  "nativeFigmaVerified": false
+}

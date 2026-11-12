@@ -1,9 +1,8 @@
 {
   "navigationStyle": "custom",
-  "navigationBarTitleText": "周菜单",
+  "navigationBarTitleText": "本周菜单",
   "usingComponents": {
     "nav-bar": "/components/nav-bar/index",
-    "section-head": "/components/section-head/index",
     "state-empty": "/components/state-empty/index",
     "state-loading": "/components/state-loading/index"
   }

@@ -3,11 +3,8 @@
 
 <view class="page {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <view class="body">
-    <!-- Hero -->
-    <view class="eyebrow eyebrow-serif g-fade-up">注销账号</view>
-    <view class="doctitle g-fade-up g-d1">
-      不用的账号<text class="pop">可以注销</text>
-    </view>
+    <!-- Hero：文字紧贴标签写（共用隐私政策的 .doctitle，white-space: pre-line 会把换行缩进渲染成空行） -->
+    <view class="doctitle g-fade-up g-d1">不用的账号可以注销</view>
     <view class="effective g-fade-up g-d2">
       <text class="effective-dot"></text>处理时限：15 个工作日
     </view>
@@ -33,7 +30,7 @@
       <view class="ft-eb">申请注销</view>
       <view class="ft-text">运营者：{{operatorName}}</view>
       <view class="ft-text">请通过以下方式联系运营者提出注销申请，我们会在 15 个工作日内完成删除或匿名化：</view>
-      <view class="ft-mail tap-scale" catchtap="onCopyContact">{{operatorContact}}</view>
+      <view class="ft-mail hit-88 tap-scale" aria-role="button" aria-label="复制联系方式 {{operatorContact}}" catchtap="onCopyContact">{{operatorContact}}</view>
     </view>
 
     <view class="safe-bottom"></view>

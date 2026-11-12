@@ -7,13 +7,13 @@
     <!-- 引导文案 -->
     <view class="vu-lead g-fade-up g-d1">
       <view class="vu-eyebrow">家庭云同步 · 会员</view>
-      <view class="vu-h1">全家共享<text class="pop">一份菜单</text></view>
+      <view class="vu-h1">全家共享一份菜单</view>
       <view class="vu-lead-p">开通后，家人实时同步今日菜单、买菜清单和菜谱收藏，再也不用反复问"今晚吃啥"。</view>
     </view>
 
     <!-- Hero 图 -->
     <view class="vu-hero card g-fade-up g-d2">
-      <image class="vu-hero-img" src="/assets/dishes/hongshao-pork.jpg" mode="aspectFill"></image>
+      <image class="vu-hero-img" src="{{heroImage}}" mode="aspectFill" binderror="onHeroImageError"></image>
       <view class="vu-hero-mask"></view>
       <view class="vu-hero-ic">
         <view class="vu-hero-et">家庭会员</view>
@@ -37,7 +37,7 @@
           <view class="vu-pprice"><text class="vu-yuan">¥</text>{{planMap.yearly.price}}<text class="vu-per">{{planMap.yearly.unit}}</text></view>
           <view class="vu-pnote">
             <text wx:if="{{planMap.yearly.original}}" class="vu-del">¥{{planMap.yearly.original}}</text>
-            <text wx:if="{{planMap.yearly.perMonth}}">每月仅 {{planMap.yearly.perMonth}} 元</text>
+            <text wx:if="{{planMap.yearly.perMonth}}" class="vu-permo">每月仅 {{planMap.yearly.perMonth}} 元</text>
           </view>
         </view>
       </view>
@@ -50,7 +50,7 @@
         <view class="vu-ptop">
           <view class="vu-pname">{{planMap.monthly.planName}}</view>
           <view class="vu-pprice"><text class="vu-yuan">¥</text>{{planMap.monthly.price}}<text class="vu-per">{{planMap.monthly.unit}}</text></view>
-          <view class="vu-pnote">随时取消 · 灵活体验</view>
+          <view class="vu-pnote">按月付费 · 灵活体验</view>
         </view>
       </view>
     </view>
@@ -74,7 +74,7 @@
         <view class="vu-drow total"><text class="vu-k">实付金额</text><text class="vu-v-big"><text class="vu-yuan">¥</text>{{plan.priceFull}}</text></view>
         <view class="vu-savetip">
           <view class="vu-star-mark"></view>
-          随时取消，灵活体验家庭同步
+          按月付费，先体验家庭同步
         </view>
       </block>
     </view>

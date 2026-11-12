@@ -1,0 +1,42 @@
+{
+  "checkedAt": "2026-10-11T13:07:31.721Z",
+  "url": "http://127.0.0.1:8848/?v=20261011-toolbar#followup-update",
+  "catalog": 39,
+  "viewports": [
+    {
+      "width": 1344,
+      "scrollWidth": 1329
+    },
+    {
+      "width": 375,
+      "scrollWidth": 360
+    },
+    {
+      "width": 320,
+      "scrollWidth": 305
+    }
+  ],
+  "images": [
+    {
+      "src": "screens/app-recipes.jpg?v=20261011-toolbar",
+      "loaded": true,
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "src": "screens/picker-recipes-filters.jpg?v=20261011-toolbar",
+      "loaded": true,
+      "width": 591,
+      "height": 1280
+    },
+    {
+      "src": "screens/picker-recipes-filter-selected.jpg?v=20261011-toolbar",
+      "loaded": true,
+      "width": 591,
+      "height": 1280
+    }
+  ],
+  "resourceCount": 98,
+  "failedResources": [],
+  "passed": true
+}

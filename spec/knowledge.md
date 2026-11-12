@@ -13,7 +13,7 @@ Durable facts for future changes. One line each.
 - 登录 `.agree` 整行勾选、框 64rpx；购物 `.mkt-item` 整行 toggle、「移除」catchtap | evidence: ui-click-display | 2026-08-23
 - 社区仅 `loading && !posts.length` 出加载文案；「热门话题」只留 `.th-title` | evidence: ui-click-display | 2026-08-23
 - 二级页顶栏加按钮学 nav-bar 右侧 slot；失败清列表学 community `loadPosts` catch | evidence: index.md (ui-click-display) E-1/E-2 | 2026-08-23
-- theme.json light 暖奶油（paper #fbf8f3 / mut #7a6e5d）对齐 app.wxss fallback；--r-card 代码与规范均为 16rpx | evidence: ui-visual-polish DEC-3 | 2026-08-17
+- theme.json light 暖奶油（paper #fbf8f3 / mut #716555）对齐 app.wxss fallback；--r-card 代码与规范均为 16rpx | evidence: ui-visual-polish DEC-3 | 2026-08-17
 - 功能图标禁止 emoji 字形；评分装饰 ★ 可保留；弹层 mask 须 catchtouchmove 或 state-sheet | evidence: ui-visual-polish | 2026-08-17
 - 交付验收：`node test/dish-logic.test.js` EXIT=0；无 CI | evidence: both changes | 2026-08-17
 - tab 页 `onShow` 必须 `withTabSelect(this, index)`；`custom-tab-bar` 的 `pageLifetimes.show` 在 switchTab 时常不跑 | evidence: miniapp-full-test R-3 | 2026-08-23

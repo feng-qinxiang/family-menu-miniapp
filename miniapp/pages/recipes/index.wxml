@@ -1,87 +1,125 @@
 <!-- 餐盘为 0 不出浮条；底部留白跟着浮条走（rx-has-tray），两处共用同一个条件 -->
 <view class="recipes-mag {{fontScale === 'lg' ? 'font-lg' : ''}} {{!loading && menuTray.count ? 'rx-has-tray' : ''}}">
-  <!-- ===== 紧凑页头（全站统一 .cpt-head，见 app.wxss） ===== -->
-  <view class="cpt-head" style="padding-top: {{capsuleTop}};">
-    <view class="cpt-row" style="padding-right: {{capsuleRight}};">
-      <view class="cpt-titles">
-        <view class="cpt-eyebrow">家常菜谱库</view>
-        <view class="cpt-title">菜谱</view>
-      </view>
-      <view class="cpt-action rx-create tap-scale" bindtap="goCreate" aria-role="button" aria-label="新建菜谱">
-        <text class="rx-create-plus">+</text>新建
-      </view>
-    </view>
-    <view class="cpt-sub">{{recipes.length ? recipes.length + ' 道菜谱' : '挑一道，今晚就点它'}}<block wx:if="{{cuisineSummary}}"> · {{cuisineSummary}}</block></view>
-  </view>
-
+  <nav-bar title="菜谱库" show-back="{{true}}" />
+  <!-- 一页一个标题：nav-bar 已写「菜谱库」，正文不再重复大标题；道数与「新建」放进结果条 -->
   <view class="rx-sheet">
-    <!-- 搜索 + 筛选开关并成一行（原来「点菜条件」单独占一整行卡片） -->
-    <view class="rx-searchrow">
-      <view class="rx-search {{searchFocused ? 'focus' : ''}}">
+    <!-- 搜索与筛选共用一条工具栏；来源、耗时、人份、忌口都收进「筛选」 -->
+    <view class="rx-searchrow {{searchFocused ? 'focus' : ''}} {{showAdvFilter ? 'expanded' : ''}}">
+      <view class="rx-search">
         <view class="rx-search-ico"></view>
         <input class="rx-search-input" placeholder="搜菜名、菜系、口味" placeholder-class="rx-search-ph"
-          value="{{searchText}}" bindinput="onSearchInput" bindfocus="onSearchFocus" bindblur="onSearchBlur" />
+          value="{{searchText}}" aria-label="搜索菜谱" confirm-type="search" bindconfirm="confirmSearch" bindinput="onSearchInput" bindfocus="onSearchFocus" bindblur="onSearchBlur" />
+        <view wx:if="{{searchText}}" class="rx-search-clear tap-scale" bindtap="clearSearch" aria-role="button" aria-label="清空搜索，保留筛选条件"><view class="rx-clear-icon" aria-hidden="true" /></view>
       </view>
-      <view class="rx-filter-btn tap-scale {{showAdvFilter || advFilter.cuisine || advFilter.maxTime || advFilter.minServings ? 'on' : ''}}"
-        bindtap="toggleAdvFilter" aria-role="button" aria-label="点菜条件：菜系、耗时、人份">
+      <view class="rx-filter-btn tap-scale {{showAdvFilter || advFilter.maxTime || advFilter.minServings || activeSource !== 'all' ? 'on' : ''}}"
+        bindtap="toggleAdvFilter" aria-role="button" aria-expanded="{{showAdvFilter}}" aria-label="筛选：来源、耗时、人份">
         <view class="rx-filter-ico"></view>
-        <text class="rx-filter-t">{{showAdvFilter ? '收起' : (advFilter.cuisine || (advFilter.maxTime ? advFilter.maxTime + '分' : '') || (advFilter.minServings ? advFilter.minServings + '人+' : '') || '筛选')}}</text>
+        <text class="rx-filter-t">{{showAdvFilter ? '收起' : '筛选'}}</text>
+        <view wx:if="{{advFilter.maxTime || advFilter.minServings || activeSource !== 'all'}}" class="rx-filter-dot" aria-hidden="true"></view>
       </view>
     </view>
 
-    <!-- 来源 chips + 忌口开关 -->
-    <view class="rx-srcrow">
-      <scroll-view scroll-x class="rx-chips" enhanced="{{true}}" show-scrollbar="{{false}}">
-        <view class="rx-chips-inner">
-          <view wx:for="{{sourceTabs}}" wx:key="key"
-            class="tap-scale chip rx-chip {{activeSource === item.key ? 'on' : ''}}"
-            data-source="{{item.key}}" bindtap="selectSource">
-            <view class="rx-sdot rx-sdot--{{item.key}}"></view>
-            {{item.label}}
-          </view>
-        </view>
-      </scroll-view>
-      <view wx:if="{{avoidTags.length}}" class="rx-avd-ic tap-scale {{avoidActive ? 'on' : ''}}" catchtap="toggleAvoidFilter" aria-role="button" aria-label="家人忌口过滤：{{avoidActive ? '已开启' : '已关闭'}}">
-        <view class="rx-avd-glyph"></view>
-        <text class="rx-avd-t">{{avoidActive ? '忌口' : '关'}}</text>
-      </view>
-    </view>
-
-    <!-- 点菜条件面板：菜系 + 耗时 + 人份 -->
-    <view class="rx-quickfilters" wx:if="{{showAdvFilter}}">
+    <view class="rx-quickfilters" wx:if="{{showAdvFilter}}" aria-label="来源、耗时和人份筛选">
       <view class="rx-qf-row">
-        <text class="rx-qf-label">菜系</text>
-        <scroll-view scroll-x class="rx-qf-scroll" enhanced="{{true}}" show-scrollbar="{{false}}">
-          <view class="rx-qf-chips">
-            <view class="tap-scale rx-qf-chip {{!advFilter.cuisine ? 'on' : ''}}" data-val="" bindtap="setFilterCuisine">全部</view>
-            <view wx:for="{{cuisineList}}" wx:key="*this"
-              class="tap-scale rx-qf-chip {{advFilter.cuisine === item ? 'on' : ''}}"
-              data-val="{{item}}" bindtap="setFilterCuisine">{{item}}</view>
-          </view>
-        </scroll-view>
+        <text class="rx-qf-label">来源</text>
+        <view class="rx-qf-chips">
+          <view wx:for="{{sourceTabs}}" wx:key="key" class="tap-scale rx-qf-chip {{activeSource === item.key ? 'on' : ''}}" data-source="{{item.key}}" bindtap="selectSource" aria-role="button" aria-pressed="{{activeSource === item.key}}"><text class="rx-qf-text">{{item.key === 'owned' ? '我建的' : item.key === 'favorites' ? '收藏' : item.label}}</text></view>
+        </view>
       </view>
       <view class="rx-qf-row">
         <text class="rx-qf-label">耗时</text>
         <view class="rx-qf-chips">
-          <view class="tap-scale rx-qf-chip {{advFilter.maxTime === 0 ? 'on' : ''}}" data-val="0" bindtap="setFilterTime">不限</view>
-          <view class="tap-scale rx-qf-chip {{advFilter.maxTime === 15 ? 'on' : ''}}" data-val="15" bindtap="setFilterTime">15分钟</view>
-          <view class="tap-scale rx-qf-chip {{advFilter.maxTime === 30 ? 'on' : ''}}" data-val="30" bindtap="setFilterTime">30分钟</view>
-          <view class="tap-scale rx-qf-chip {{advFilter.maxTime === 60 ? 'on' : ''}}" data-val="60" bindtap="setFilterTime">60分钟</view>
+          <view class="tap-scale rx-qf-chip {{advFilter.maxTime === 0 ? 'on' : ''}}" data-val="0" bindtap="setFilterTime" aria-role="button" aria-pressed="{{advFilter.maxTime === 0}}"><text class="rx-qf-text">不限</text></view>
+          <view class="tap-scale rx-qf-chip {{advFilter.maxTime === 15 ? 'on' : ''}}" data-val="15" bindtap="setFilterTime" aria-role="button" aria-pressed="{{advFilter.maxTime === 15}}"><text class="rx-qf-text">15分内</text></view>
+          <view class="tap-scale rx-qf-chip {{advFilter.maxTime === 30 ? 'on' : ''}}" data-val="30" bindtap="setFilterTime" aria-role="button" aria-pressed="{{advFilter.maxTime === 30}}"><text class="rx-qf-text">30分内</text></view>
+          <view class="tap-scale rx-qf-chip {{advFilter.maxTime === 60 ? 'on' : ''}}" data-val="60" bindtap="setFilterTime" aria-role="button" aria-pressed="{{advFilter.maxTime === 60}}"><text class="rx-qf-text">60分内</text></view>
         </view>
       </view>
       <view class="rx-qf-row">
         <text class="rx-qf-label">人份</text>
         <view class="rx-qf-chips">
-          <view class="tap-scale rx-qf-chip {{advFilter.minServings === 0 ? 'on' : ''}}" data-val="0" bindtap="setFilterServings">不限</view>
-          <view class="tap-scale rx-qf-chip {{advFilter.minServings === 2 ? 'on' : ''}}" data-val="2" bindtap="setFilterServings">2人+</view>
-          <view class="tap-scale rx-qf-chip {{advFilter.minServings === 4 ? 'on' : ''}}" data-val="4" bindtap="setFilterServings">4人+</view>
+          <view class="tap-scale rx-qf-chip {{advFilter.minServings === 0 ? 'on' : ''}}" data-val="0" bindtap="setFilterServings" aria-role="button" aria-pressed="{{advFilter.minServings === 0}}"><text class="rx-qf-text">不限</text></view>
+          <view class="tap-scale rx-qf-chip {{advFilter.minServings === 2 ? 'on' : ''}}" data-val="2" bindtap="setFilterServings" aria-role="button" aria-pressed="{{advFilter.minServings === 2}}"><text class="rx-qf-text">2人以上</text></view>
+          <view class="tap-scale rx-qf-chip {{advFilter.minServings === 4 ? 'on' : ''}}" data-val="4" bindtap="setFilterServings" aria-role="button" aria-pressed="{{advFilter.minServings === 4}}"><text class="rx-qf-text">4人以上</text></view>
+          <view class="rx-qf-reset tap-scale" bindtap="clearFilter" aria-role="button" aria-label="重置所有筛选条件"><text class="rx-qf-text">重置</text></view>
         </view>
       </view>
-      <view class="rx-qf-reset tap-scale" bindtap="clearFilter">
-        <text>清空全部条件</text>
+      <view class="rx-stock-toggle" wx:if="{{avoidTags.length}}"><view><text>避开家人忌口</text><text class="rx-filter-hint">{{avoidTagsText}}</text></view><switch class="tap-scale" checked="{{avoidActive}}" color="#436b55" bindchange="toggleAvoidFilter" aria-label="家人忌口过滤" /></view>
+      <view class="rx-stock-toggle"><view><text>显示冰箱用料</text><text class="rx-filter-hint">在菜卡上核对现有食材</text></view><switch class="tap-scale" checked="{{showPantryDetails}}" color="#436b55" bindchange="togglePantryDetails" aria-label="显示冰箱用料状态" /></view>
+      <view class="rx-qf-more tap-scale" bindtap="openMealRequest" aria-role="button" aria-label="输入人数、耗时和口味，按需挑菜">说说想怎么吃，帮我挑 ›</view>
+    </view>
+
+    <!-- 一条横滑：先是两个挑菜动作，再是菜系。原来是挑菜行 + 左侧菜系栏两层，卡片只剩 2/3 宽 -->
+    <scroll-view class="rx-chiprow" scroll-x enhanced="{{true}}" show-scrollbar="{{false}}" wx:if="{{!loadError}}">
+      <view class="rx-chiprow-in">
+        <view class="rx-chip rx-chip-act tap-scale {{pickerOpen && pickMode === 'all' ? 'on' : ''}}" data-mode="all" bindtap="openPicker" aria-role="button" aria-label="从当前筛选结果随机挑一道菜">
+          <view class="rx-chip-t"><image class="rx-pick-icon" src="/assets/icons/lucide/shuffle.svg" mode="aspectFit" aria-hidden="true" />随机一道</view>
+        </view>
+        <view class="rx-chip rx-chip-act tap-scale {{pickerOpen && pickMode === 'pantry' ? 'on' : ''}}" data-mode="pantry" bindtap="openPicker" aria-role="button" aria-label="随机挑选冰箱食材齐全的菜，优先用临期食材">
+          <view class="rx-chip-t"><image class="rx-pick-icon" src="/assets/icons/lucide/refrigerator.svg" mode="aspectFit" aria-hidden="true" />冰箱能做</view>
+        </view>
+        <view class="rx-chip-sep" aria-hidden="true"></view>
+        <view class="rx-chip tap-scale {{!advFilter.cuisine ? 'on' : ''}}" data-val="" bindtap="setFilterCuisine" aria-role="button" aria-pressed="{{!advFilter.cuisine}}"><view class="rx-chip-t">全部</view></view>
+        <view wx:for="{{cuisineList}}" wx:key="*this" class="rx-chip tap-scale {{advFilter.cuisine === item ? 'on' : ''}}" data-val="{{item}}" bindtap="setFilterCuisine" aria-role="button" aria-pressed="{{advFilter.cuisine === item}}"><view class="rx-chip-t">{{item}}</view></view>
+      </view>
+    </scroll-view>
+
+    <view class="rx-picker" wx:if="{{pickerOpen && !loading && !loadError}}">
+      <view class="rx-picker-head">
+        <view class="rx-picker-label">{{pickMode === 'pantry' ? '冰箱里，挑一道' : '今天吃什么'}}</view>
+        <view class="rx-picker-close tap-scale" bindtap="closePicker" aria-role="button" aria-label="收起随机挑菜">×</view>
+      </view>
+      <view class="rx-stock-summary">
+        <view class="rx-stock-head"><text>冰箱现有<text wx:if="{{!pantryStockLoading && !pantryStockFailed && pantryItems.length}}"> · {{pantryItems.length}} 种</text></text><view class="tap-scale rx-stock-link" bindtap="goPantry" aria-role="button">查看全部 ›</view></view>
+        <view class="rx-stock-note" wx:if="{{pantryStockLoading}}">正在看看冰箱里有什么…</view>
+        <view class="rx-stock-note" wx:elif="{{pantryStockFailed}}">库存暂时没加载出来<text class="tap-scale" bindtap="loadPantryChoices" aria-role="button" aria-label="重新加载冰箱库存"> · 重试</text></view>
+        <view class="rx-stock-items" wx:elif="{{pantryItems.length}}">
+          <view class="rx-stock-item" wx:for="{{pantryItems}}" wx:key="id" wx:if="{{index < 6}}"><text class="rx-stock-name">{{item.ingredientName}}</text><text class="rx-stock-amount">{{item.amountText || '数量待补'}}</text></view>
+          <text class="rx-stock-more" wx:if="{{pantryItems.length > 6}}">另有 {{pantryItems.length - 6}} 种，可查看全部</text>
+        </view>
+        <view class="rx-stock-note" wx:else>冰箱还没有食材，先把家里有的记进来。</view>
+        <view class="rx-picker-stock" wx:if="{{pickMode === 'pantry' && !pantryLoading && !pantryFailed && (pantrySummary.expiringCount || pantrySummary.expiredCount)}}">
+          <text wx:if="{{pantrySummary.expiringCount}}">{{pantrySummary.expiringCount}} 种临期优先</text>
+          <text wx:if="{{pantrySummary.expiredCount}}">过期食材已排除</text>
+        </view>
+      </view>
+      <view wx:if="{{pickMode === 'pantry' && pantryLoading}}" class="rx-picker-empty">正在看看冰箱里能做什么…</view>
+      <view wx:elif="{{pickMode === 'pantry' && pantryFailed}}" class="rx-picker-empty">
+        <view>冰箱匹配暂时没加载出来</view>
+        <view class="rx-picker-retry tap-scale" bindtap="loadPantryChoices" aria-role="button">重新匹配</view>
+      </view>
+      <block wx:elif="{{pickedRecipe}}">
+        <view class="rx-picked-main tap-scale" bindtap="goDetail" data-id="{{pickedRecipe.id}}" aria-role="button" aria-label="查看{{pickedRecipe.title}}菜谱">
+          <view class="rx-picked-photo"><image class="rx-picked-thumb" src="{{pickedRecipe.cover}}" mode="aspectFill" binderror="onPickedImgError" /></view>
+          <view class="rx-picked-copy">
+            <view class="rx-picked-name">{{pickedRecipe.title}}</view>
+            <view class="rx-picked-meta">{{pickedRecipe.timeCost || '--'}} 分钟 · {{pickedRecipe.servings || '--'}} 人份</view>
+            <view class="rx-picked-tags">{{pickedRecipe.cuisine}}<block wx:if="{{pickedRecipe.tasteTags.length}}"> · {{pickedRecipe.tasteTags[0]}}</block></view>
+            <view class="rx-picked-ready" wx:if="{{pickMode === 'pantry'}}">食材齐全 · 按菜谱量</view>
+            <view class="rx-picked-summary" wx:if="{{pickedRecipe.summary}}">{{pickedRecipe.summary}}</view>
+            <view class="rx-picked-priority" wx:if="{{pickMode === 'pantry' && pickedRecipe.priorityText}}">{{pickedRecipe.priorityText}}</view>
+          </view>
+        </view>
+        <view class="rx-picker-actions">
+          <view class="rx-picker-next tap-scale" bindtap="pickRandom" aria-role="button">{{pickCount > 1 ? '换一道' : '就这一道'}}<text wx:if="{{pickCount > 1}}">{{pickCount}} 道可选</text></view>
+          <view class="rx-picker-add tap-scale" bindtap="addPickedRecipe" aria-role="button">加入{{mealOptionLabels[mealIndex]}}</view>
+        </view>
+      </block>
+      <view wx:else class="rx-picker-empty">
+        <view>{{pickMode === 'pantry' ? '暂时没有未点过且食材齐全的菜' : '当前条件下没有未点过的菜'}}</view>
+        <view class="rx-picker-note">{{pickMode === 'pantry' ? '查看冰箱补全数量、单位和到期日，或切换「随机一道」。' : '试试调整搜索或筛选条件。'}}</view>
       </view>
     </view>
 
+    <!-- 已选条件：菜系在上面横滑里已经看得到，这里只列收在「筛选」里的 -->
+    <view wx:if="{{activeSource !== 'all' || advFilter.maxTime || advFilter.minServings || requestMildOnly}}" class="rx-current-filter" aria-label="当前筛选条件">
+      <text class="rx-filter-caption">已选</text>
+      <view wx:if="{{activeSource !== 'all'}}" class="rx-filter-selected tap-scale" data-source="all" bindtap="selectSource" aria-role="button" aria-label="清除来源条件">{{activeSource === 'owned' ? '我建的' : activeSource === 'community' ? '社区' : activeSource === 'imported' ? '导入' : '收藏'}} ×</view>
+      <view wx:if="{{advFilter.maxTime}}" class="rx-filter-selected tap-scale" data-val="0" bindtap="setFilterTime" aria-role="button" aria-label="清除耗时条件">{{advFilter.maxTime}} 分钟内 ×</view>
+      <view wx:if="{{advFilter.minServings}}" class="rx-filter-selected tap-scale" data-val="0" bindtap="setFilterServings" aria-role="button" aria-label="清除人份条件">{{advFilter.minServings}} 人以上 ×</view>
+      <view wx:if="{{requestMildOnly}}" class="rx-filter-selected tap-scale" bindtap="clearMildRequest" aria-role="button">不辣标注 ×</view>
+    </view>
+    <view class="rx-results">
     <!-- 骨架 -->
     <view wx:if="{{loading}}" class="rx-grid">
       <view class="rx-skel" wx:for="{{skeletonCards}}" wx:key="*this">
@@ -91,17 +129,13 @@
       </view>
     </view>
 
-    <!-- 结果条：「N 道可点」与「点到 晚餐」并成一行（原来是 section-head 大标题 + 单独一行下拉） -->
+    <!-- 结果条：道数 + 点到哪一餐（小字下拉）+ 新建（文字按钮） -->
     <view class="rx-listbar" wx:if="{{!loading && displayedRecipes.length}}">
-      <view class="rx-listbar-l">
-        <text class="rx-listbar-n">{{filteredRecipes.length}} 道可点</text>
-        <text class="rx-listbar-hint">点 + 加入</text>
-      </view>
+      <text class="rx-listbar-n">{{pickMode === 'pantry' ? '冰箱能做' : '共'}} {{filteredCount}} 道</text>
       <!-- 点到下拉：自定义面板替代原生 picker（原生白滚轮与整体风格不符） -->
       <view class="rx-meal-picker">
         <view class="rx-meal-pk-btn tap-scale" catchtap="toggleMealDrop" aria-role="button" aria-label="加入到哪一餐：{{mealOptionLabels[mealIndex]}}">
-          <text class="rx-meal-pk-l">点到</text>
-          <text class="rx-meal-pk-v">{{mealOptionLabels[mealIndex]}} ▾</text>
+          <text class="rx-meal-pk-l">加到</text><text class="rx-meal-pk-v">{{mealOptionLabels[mealIndex]}}</text><view class="rx-meal-caret" aria-hidden="true"></view>
         </view>
         <view class="rx-drop-mask" wx:if="{{mealDropOpen}}" catchtap="closeMealDrop"></view>
         <view class="rx-meal-drop" wx:if="{{mealDropOpen}}">
@@ -120,6 +154,9 @@
           </view>
         </view>
       </view>
+      <view class="btn-text rx-create tap-scale" bindtap="goCreate" aria-role="button" aria-label="新建菜谱">
+        <image class="rx-create-ico" src="/assets/icons/lucide/plus.svg" mode="aspectFit" aria-hidden="true" />新建
+      </view>
     </view>
 
     <!-- 菜卡网格 -->
@@ -132,12 +169,13 @@
       >
         <recipe-card
           recipe="{{item}}"
-          variant="card"
-          density="grid"
+          variant="row"
+          density="list"
           selected="{{item.selected}}"
-          badge="{{item.sourceLabel}}"
+          metaOverride="{{pickMode === 'pantry' ? (item.priorityText || item.pantryText) : ''}}"
           showAdd="{{true}}"
           showFav="{{false}}"
+          showPantry="{{showPantryDetails && !pantryLoading && pantrySummary.count > 0}}"
           addPlacement="corner"
           bind:tap="goDetail"
           bind:add="addRecipeToToday"
@@ -146,7 +184,7 @@
     </view>
 
     <!-- 上拉加载 -->
-    <view wx:if="{{!loading && hasMore}}" class="tap-scale rx-loadmore" bindtap="loadMore">
+    <view wx:if="{{!loading && hasMore}}" class="tap-scale rx-loadmore" bindtap="loadMore" aria-role="button">
       <view class="rx-loadmore-chev"></view>
       上拉加载更多 · 还有 {{remainCount}} 道
     </view>
@@ -157,26 +195,50 @@
     </view>
 
     <!-- 空状态 -->
-    <view wx:elif="{{!loading && !filteredRecipes.length}}">
+    <view wx:elif="{{!loading && !filteredCount && !pickerOpen}}">
       <state-empty type="search" title="没有符合条件的菜谱" desc="换个来源或菜系，再试试" cta="清空筛选" bindaction="clearFilter">
-        <view class="rx-empty-extra tap-scale" bindtap="goCreate">去新建一道</view>
+        <view class="rx-empty-extra tap-scale" bindtap="goCreate" aria-role="button">去新建一道</view>
       </state-empty>
     </view>
+    </view>
   </view>
+
+  <state-sheet visible="{{requestOpen}}" title="这顿想怎么吃？" bind:close="closeMealRequest">
+    <view class="rx-request-intro">说说人数、耗时和口味，我们来挑一道。</view>
+    <textarea class="rx-request-input" value="{{requestText}}" maxlength="100" placeholder="例如：两人吃，30分钟，不辣，冰箱有的" placeholder-class="rx-search-ph" bindinput="onMealRequestInput" aria-label="这顿饭的条件" />
+    <view class="rx-request-examples" wx:if="{{!requestText}}">
+      <text class="rx-request-caption">试试这样说</text>
+      <view class="rx-request-example-grid"><view wx:for="{{requestExamples}}" wx:key="*this" wx:if="{{index < 2}}" class="rx-request-example tap-scale" data-index="{{index}}" bindtap="useMealRequestExample" aria-role="button"><text class="rx-request-example-title">{{index === 0 ? '两人快手餐' : '先用冰箱'}}</text><text>{{item}}</text></view></view>
+    </view>
+    <view class="rx-request-preview" wx:if="{{requestPreview.labels.length}}">
+      <text class="rx-request-caption">按这些条件筛选</text>
+      <view class="rx-request-labels">
+        <view wx:if="{{requestPreview.minServings}}"><text>人数</text><text>{{requestPreview.minServings}} 人以上</text></view>
+        <view wx:if="{{requestPreview.maxTime}}"><text>耗时</text><text>{{requestPreview.maxTime}} 分钟内</text></view>
+        <view wx:if="{{requestPreview.cuisine}}"><text>菜系</text><text>{{requestPreview.cuisine}}</text></view>
+        <view wx:if="{{requestPreview.mealType}}"><text>餐次</text><text>{{requestPreview.mealType === 'breakfast' ? '早餐' : requestPreview.mealType === 'lunch' ? '午餐' : requestPreview.mealType === 'dinner' ? '晚餐' : '加餐'}}</text></view>
+        <view wx:if="{{requestPreview.mildOnly}}"><text>口味</text><text>有不辣／清淡标注</text></view>
+        <view wx:if="{{requestPreview.pantryOnly}}"><text>食材</text><text>冰箱能做 · 临期优先</text></view>
+      </view>
+    </view>
+    <view class="rx-request-warning" wx:for="{{requestPreview.warnings}}" wx:key="*this">{{item}}</view>
+    <view class="rx-request-note" wx:if="{{requestPreview.mildOnly}}">只选有“不辣／清淡”标注的菜。</view>
+    <button class="rx-request-submit tap-scale" disabled="{{!requestPreview.canApply || loading || loadError}}" bindtap="applyMealRequest">按这些条件挑一道</button>
+  </state-sheet>
 
   <!-- 长菜谱列表滚深后回顶：有浮条时抬高避开它，没浮条时只避开 tabBar -->
   <back-top show="{{showBackTop}}" right="32rpx" bottom="{{!loading && menuTray.count ? '320rpx' : '200rpx'}}" bind:totop="backToTop" />
 
   <!-- ===== 餐盘 tray：有菜才出现 ===== -->
   <view class="rx-tray" wx:if="{{!loading && menuTray.count}}">
-    <view class="tap-scale rx-tray-badge" bindtap="goMenu">{{menuTray.count}}</view>
-    <view class="tap-scale rx-tray-copy" bindtap="goMenu">
+    <view class="tap-scale rx-tray-badge" bindtap="goMenu" aria-role="button" aria-label="今日餐盘 {{menuTray.count}} 道">{{menuTray.count}}</view>
+    <view class="tap-scale rx-tray-copy" bindtap="goMenu" aria-role="button">
       <view class="rx-tray-t">今日餐盘</view>
       <view class="rx-tray-s">{{menuTray.names}}</view>
     </view>
-    <view class="rx-tray-mini tap-scale" wx:if="{{menuTray.shoppingCount}}" catchtap="goShopping">买 {{menuTray.shoppingCount}}</view>
-    <view class="rx-tray-go tap-scale" catchtap="goMenu">
-      去点单
+    <view class="rx-tray-mini tap-scale" wx:if="{{menuTray.shoppingCount}}" catchtap="goShopping" aria-role="button" aria-label="买菜清单待买 {{menuTray.shoppingCount}} 样">买 {{menuTray.shoppingCount}}</view>
+    <view class="rx-tray-go tap-scale" catchtap="goMenu" aria-role="button" aria-label="去做菜">
+      去做菜
       <view class="rx-tray-arrow"></view>
     </view>
   </view>

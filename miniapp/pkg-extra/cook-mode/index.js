@@ -49,8 +49,7 @@ Page({
     finishing: false,
     finished: false,
     recipeId: '',
-    recipe: null,
-    dishName: '',
+    dishName: '',      // 整份菜谱不进 data（wxml 不渲染），放 this._recipe 给 onFinish 用
     dishImg: '',
     steps: [],
     ingredients: [],
@@ -65,7 +64,7 @@ Page({
     timerText: '00:00',
     running: false,
     hasTimer: false,
-    // 离开某一步时它还在跑 → 顶栏下方那枚小条接管显示，点一下回到那一步。
+    // 离开某一步时它还在跑 → 底部计时区接管显示，点一下回到那一步。
     // 为什么非做不可：真实做菜是并行的（炖着 20 分钟去看下一步的配料），
     // 旧实现 gotoStep 第一件事就是 clearTimer，那个倒计时既没提示也不保留，说没就没。
     bgIdx: -1,
@@ -86,7 +85,7 @@ Page({
 
   onLoad(options) {
     let sbh = 0;
-    // 顶栏右侧计时按钮避开微信胶囊：胶囊左缘到屏幕右缘的宽度作为 padding-right
+    // 顶栏菜名避开微信胶囊：胶囊左缘到屏幕右缘的宽度作为 padding-right
     let capsulePad = 19; // 兜底 = 原 38rpx
     try {
       const win = wx.getWindowInfo ? wx.getWindowInfo() : wx.getSystemInfoSync();
@@ -142,7 +141,13 @@ Page({
   },
 
   onShow() {
+    // 兜底：常亮被别处关掉过（如另一层烹饪模式卸载、切出小程序）时，回到本页重新打开
+    if (wx.setKeepScreenOn) {
+      wx.setKeepScreenOn({ keepScreenOn: true });
+    }
     if (this.data.dotsHint) {
+      // 首次进入 onLoad 已经设过一个：不先清，前一个就成了没人管的计时器
+      this._clearDotsHintTimer();
       this._dotsHintTimer = setTimeout(() => this.setData({ dotsHint: false }), 4000);
     }
     this.ensureTicker();
@@ -231,7 +236,8 @@ Page({
     if (failed || !recipe) {
       // failed（网络错误/缺参）→ loadError 显示可重试失败态；
       // 非 failed 且 recipe 为空（真没步骤）→ 沿用下方空数据守护
-      this.setData({ loading: false, recipe: null, steps: [], total: 0, loadError: failed });
+      this._recipe = null;
+      this.setData({ loading: false, steps: [], total: 0, loadError: failed });
       return;
     }
 
@@ -246,7 +252,6 @@ Page({
         index: i,
         text,
         image,
-        num: pad2(i + 1),
         cn: cnStep(i + 1),
         seconds: detectSeconds(text)
       };
@@ -265,9 +270,9 @@ Page({
       return { name, label: label || name, checked: false };
     });
 
+    this._recipe = recipe;
     this.setData({
       loading: false,
-      recipe,
       dishName: recipe.title || '今日菜谱',
       dishImg,
       steps,
@@ -514,7 +519,7 @@ Page({
     this.persistSlots();
   },
 
-  // 顶栏小条：跳回那个还在倒计时的步骤
+  // 计时区小条：跳回那个还在倒计时的步骤
   jumpToBgStep() {
     if (this.data.bgIdx >= 0) this.gotoStep(this.data.bgIdx);
   },
@@ -537,7 +542,8 @@ Page({
 
   // 完成 → 先请用户打个真实评分，保存成功后才清进度、上桌和离开。
   async onFinish() {
-    const { recipeId, recipe } = this.data;
+    const recipeId = this.data.recipeId;
+    const recipe = this._recipe;
     if (!recipeId) return;
     const title = recipe ? recipe.title : '';
     const gotoLog = () => {

@@ -9,10 +9,16 @@ const ROLE_MAP = {
   member: { label: '成员', badge: 'member' }
 };
 
+// 成员行副标题：有忌口先说忌口；徽标已经写了「管理员」，这里不再重复
+function memberSub(tags, isOwner) {
+  if (tags.length) return '忌口：' + tags.join('、');
+  return isOwner ? '家庭创建者' : '可以点菜、许愿，和大家一起维护菜单';
+}
+
 // 忌口标签池（唯一定义在 utils/constants.js，与菜谱页的关键词映射同源）
 const AVOID_OPTIONS = AVOID_TAGS;
 
-// 文字头像配色循环（复用 token 配色，见 wxss .mavt-*）
+// 文字头像配色循环（样式见 app.wxss .ava-*）
 const AVT_TONES = ['pine', 'gold', 'inkdeep', 'pop'];
 
 Page({
@@ -118,7 +124,7 @@ Page({
         roleLabel: roleInfo.label,
         roleBadge: roleInfo.badge,
         tone: AVT_TONES[idx % AVT_TONES.length],
-        sub: avoidTags.length ? '忌口：' + avoidTags.join('、') : (isOwner ? '管理员 · 家庭创建者' : '可以点菜、许愿，和大家一起维护菜单'),
+        sub: memberSub(avoidTags, isOwner),
         avoidTags,
         isSelf,
         isOwner,
@@ -207,7 +213,7 @@ Page({
         const tags = updated && Array.isArray(updated.avoidTags) ? updated.avoidTags : avoidTags;
         const members = this.data.members.map((m) =>
           m.userId === member.userId
-            ? { ...m, avoidTags: tags, sub: tags.length ? '忌口：' + tags.join('、') : (m.isOwner ? '管理员 · 家庭创建者' : '可以点菜、许愿，和大家一起维护菜单') }
+            ? { ...m, avoidTags: tags, sub: memberSub(tags, m.isOwner) }
             : m
         );
         this.setData({ members, editingMember: null });

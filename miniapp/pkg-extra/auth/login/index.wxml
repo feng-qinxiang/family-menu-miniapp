@@ -4,7 +4,7 @@
 
     <!-- Hero -->
     <view class="hero">
-      <image class="hero-img" src="/assets/dishes/chicken-congee.jpg" mode="aspectFill" />
+      <image class="hero-img" src="{{heroImage}}" mode="aspectFill" binderror="onHeroImageError" />
       <view class="hero-mask"></view>
 
       <view class="brandbar g-fade-down g-d1">
@@ -20,7 +20,6 @@
       <view class="hero-body">
         <text class="tag g-fade-up g-d2">欢迎回家</text>
         <view class="hero-title title-stroke g-fade-up g-d3">今天吃什么<text class="br"></text>一家人<text class="pop">说了算</text></view>
-        <view class="slogan g-fade-up g-d4">一家人的饭桌，<text class="pop">一家人</text>做主</view>
       </view>
     </view>
 
@@ -37,7 +36,7 @@
       </view>
 
       <view class="guest">
-        <text class="guest-link tap-scale" bindtap="onGuest">先随便逛逛 ›</text>
+        <text class="guest-link hit-88 tap-scale" aria-role="button" bindtap="onGuest">先随便逛逛 ›</text>
       </view>
 
       <view class="divider-deco">
@@ -48,7 +47,7 @@
 
       <view class="trust">
         <view class="ti" wx:for="{{trustList}}" wx:key="h">
-          <view class="tic"><text class="tic-glyph">{{item.icon}}</text></view>
+          <view class="tic"><image class="tic-ic" src="/assets/icons/lucide/{{item.icon}}.svg" mode="aspectFit" aria-hidden="true" /></view>
           <view class="ttx">
             <text class="th">{{item.h}}</text>
             <text class="ts">{{item.s}}</text>
@@ -57,7 +56,7 @@
       </view>
 
       <view class="tap-scale agree" bindtap="onToggleAgree">
-        <view class="tap-scale box {{agreed ? 'on' : ''}}">
+        <view class="tap-scale box {{agreed ? 'on' : ''}}" aria-role="checkbox" aria-checked="{{agreed}}" aria-label="同意用户协议与隐私政策">
           <text wx:if="{{agreed}}" class="check">✓</text>
         </view>
         <view class="tx">

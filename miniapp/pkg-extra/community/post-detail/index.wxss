@@ -3,7 +3,7 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background: var(--paper);
+  background: var(--c-surface);
 }
 
 /* 滚动区占满 nav-bar 与输入框之间 */
@@ -13,10 +13,11 @@
 }
 .body {
   box-sizing: border-box;
-  padding: 12rpx 46rpx 48rpx;
+  padding: 12rpx 32rpx 48rpx;
 }
 
 /* ===== 头像 ===== */
+/* 人名头像：暖中性底（与社区信息流一致）；红色只留给操作 */
 .ava {
   flex: none;
   display: flex;
@@ -25,124 +26,108 @@
   width: var(--ava-head);
   height: var(--ava-head);
   border-radius: calc(var(--ava-head) * var(--r-ava));
-  font-family: var(--serif);
   font-weight: 700;
   font-size: calc(var(--ava-head) * var(--ava-glyph) * var(--fs-mul, 1));
-  color: var(--anchor-contrast);
-  box-shadow: 0 4rpx 12rpx rgba(60, 40, 20, 0.12);
+  /* 底色和字色走全站 .ava-*（按名字取色） */
 }
-.ava-sm { width: var(--ava-cmt); height: var(--ava-cmt); font-size: calc(var(--ava-cmt) * var(--ava-glyph) * var(--fs-mul, 1)); }
-.ava-lin { background: linear-gradient(135deg, var(--pop), var(--orange)); }
-.ava-lan { background: linear-gradient(135deg, var(--pine), var(--cat-green)); }
-.ava-zhao { background: linear-gradient(135deg, var(--cat-purple-deep), var(--cat-purple-light)); }
-.ava-gold { background: linear-gradient(135deg, var(--gold-deep), var(--gold)); }
-.ava-pine { background: linear-gradient(135deg, var(--pine), var(--cat-green-light)); }
+.ava-sm { width: var(--ava-cmt); height: var(--ava-cmt); border-radius: calc(var(--ava-cmt) * var(--r-ava)); font-size: calc(var(--ava-cmt) * var(--ava-glyph) * var(--fs-mul, 1)); }
 
 /* ===== 作者块 ===== */
 .author {
   display: flex;
   align-items: center;
-  gap: 22rpx;
+  gap: 18rpx;
 }
 .acol { flex: 1; min-width: 0; }
 .aname {
-  font-size: calc(32rpx * var(--fs-mul, 1));
-  font-weight: 800;
+  font-size: var(--fs-body);
+  font-weight: 600;
   color: var(--ink);
-  letter-spacing: -0.4rpx;
+  letter-spacing: 0;
 }
 .atime {
   margin-top: 6rpx;
   font-size: var(--fs-cap);
   color: var(--mut-strong);
+  white-space: normal;
+  line-height: 1.5;
 }
 
 /* ===== 标题 ===== */
-.eyebrow-mt { margin-top: 42rpx; display: block; }
-.post-title {
-  margin-top: 14rpx;
-  font-size: var(--fs-h1);
-  line-height: 1.08;
-  letter-spacing: -2rpx;
-  /* title-stroke/title-shadow 已提供描边白字 */
-}
+.post-copy { padding-top: 24rpx; }
+.post-title { font-size: var(--fs-h2); font-weight: 600; line-height: 1.4; letter-spacing: 0; color: var(--ink); word-break: normal; overflow-wrap: break-word; }
 
 /* ===== 正文 ===== */
-.post-text { margin-top: 26rpx; }
+.post-text { margin-top: 16rpx; }
 .ptext-p {
-  font-size: calc(29rpx * var(--fs-mul, 1));
-  line-height: 1.75;
+  font-size: var(--fs-lg);
+  font-weight: 400;
+  line-height: 1.6;
   color: var(--ink-deep);
-  margin-bottom: 22rpx;
+  word-break: normal;
+  overflow-wrap: break-word;
+  text-align: left;
+  margin-bottom: 16rpx;
 }
 .ptext-p:last-child { margin-bottom: 0; }
-
-/* ===== 菜图 ===== */
-.dish-img {
-  width: 100%;
-  height: var(--photo-head-h);
-  border-radius: var(--r-card);
-  margin-top: 34rpx;
-  display: block;
-  box-shadow: var(--sh-card);
-}
-.imgcap {
-  margin-top: 18rpx;
-  text-align: center;
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: var(--fs-cap);
-  color: var(--mut-strong);
-}
 
 /* ===== 标签 ===== */
 .ptags {
   display: flex;
   flex-wrap: wrap;
-  gap: 16rpx;
-  margin-top: 30rpx;
+  flex: 1;
+  min-width: 0;
+  gap: 6rpx 16rpx;
 }
+/* 标签只读：浅底小胶囊，不带 #，不用强调色（不像链接） */
 .ptag {
-  font-size: var(--fs-cap);
-  font-weight: 700;
-  color: var(--gold-deep);
-  background: var(--paper-2);
-  padding: 12rpx 24rpx;
+  padding: 2rpx 16rpx;
   border-radius: var(--r-pill);
+  background: var(--paper);
+  font-size: var(--fs-cap);
+  font-weight: 500;
+  color: var(--mut-strong);
+  line-height: 1.5;
+  word-break: break-all;
 }
 
 /* ===== 关联菜谱卡 ===== */
 .recipe-card {
   display: flex;
   align-items: center;
-  gap: 26rpx;
-  background: var(--c-surface);
+  gap: 18rpx;
+  background: var(--paper);
   border-radius: var(--r-card);
   padding: var(--pad-card-sm);
-  margin-top: 38rpx;
+  margin-top: 12rpx;
   border: var(--bd-card);
-  box-shadow: var(--sh-card);
+  box-shadow: none;
 }
 .rc-img {
   width: var(--tile-rc);
   height: var(--tile-rc);
-  border-radius: var(--r-chip);
+  border-radius: var(--r-sm);   /* 嵌在 --r-card 卡里：原来 --r-chip(30rpx) 比外卡还圆 */
   flex: none;
 }
 .rc-mid { flex: 1; min-width: 0; }
 .rc-kick {
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: var(--fs-mini);
-  color: var(--gold-deep);
-  font-weight: 700;
+  font-size: var(--fs-cap);
+  color: var(--pine-ink);
+  font-weight: 600;
 }
 .rc-name {
   margin-top: 6rpx;
   font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--ink);
-  letter-spacing: -0.6rpx;
+  letter-spacing: 0;
+  white-space: normal;
+  word-break: break-all;
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
 }
 .rc-meta {
   margin-top: 10rpx;
@@ -151,10 +136,9 @@
 }
 .rc-go {
   flex: none;
-  width: 76rpx;
-  height: 76rpx;
-  border-radius: 26rpx;
-  background: var(--anchor);
+  width: 32rpx;
+  height: 88rpx;
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -162,83 +146,60 @@
 .rc-arrow {
   width: 18rpx;
   height: 18rpx;
-  border-top: 5rpx solid var(--paper);
-  border-right: 5rpx solid var(--paper);
+  border-top: 3rpx solid var(--mut-strong);
+  border-right: 3rpx solid var(--mut-strong);
   transform: translateX(-3rpx) rotate(45deg);
   border-radius: 2rpx;
 }
 
 /* ===== 操作栏 ===== */
-/* 实测（390×844 档）：可用宽 664rpx，五个胶囊按内容实际需要约 800rpx，
-   所以原来既不换行也不缩字号，只能被挤扁——「收藏 0」竖排成两行、
-   三个胶囊高度 38/22/58px 各不相同。改成：字号锁死不折行，
-   装不下就**整胶囊换到第二行**，两行都左对齐，观感与列表页动作行一致。 */
 .react-bar {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 14rpx 10rpx;
-  margin-top: 42rpx;
-  padding-bottom: 42rpx;
-  border-bottom: 2rpx solid var(--paper-2);
+  flex: none;
+  gap: 4rpx;
 }
 .react {
   display: flex;
   align-items: center;
-  gap: 12rpx;
+  flex-direction: column;
+  gap: 8rpx;
   flex: none;
-  white-space: nowrap;
-  padding: 18rpx 26rpx;
-  border-radius: var(--r-pill);
-  background: var(--paper-2);
-  color: var(--mut-strong);
-  font-size: var(--fs-sub);
-  font-weight: 700;
-}
-/* 图标一律 22rpx 见方：.ricon-heart / .ricon-star 是定宽高的 CSS 形状，
-   而 app.wxss 的 .ico-* 用 em（1em≈图标框），所以这里把字号压到 22rpx 让一排对齐。 */
-.react .ricon { font-size: calc(23rpx * var(--fs-mul, 1)); line-height: 1; }
-/* 几何心/星，不用 emoji */
-.ricon-heart,
-.ricon-star {
-  width: 22rpx;
-  height: 22rpx;
-  flex: none;
-}
-.ricon-heart {
-  border-radius: 50%;
-  border: 3rpx solid currentColor;
+  width: 88rpx;
+  min-height: 88rpx;
   box-sizing: border-box;
+  justify-content: center;
+  padding: 8rpx 0;
+  color: var(--mut-strong);
+  font-size: var(--fs-mini);
+  font-weight: 500;
 }
-.ricon-heart.on {
-  background: currentColor;
+.reaction-icon {
+  width: 32rpx;
+  height: 32rpx;
+  flex: none;
 }
-.ricon-star {
-  background: currentColor;
-  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-  opacity: 0.45;
-}
-.ricon-star.on { opacity: 1; }
-.react .n { font-weight: 800; }
-.react.liked { background: var(--pop-soft); color: var(--pop); }
-.react.fav-on { background: var(--pop-soft); color: var(--pop); }
-/* 原来这里靠 .react-end{margin-left:auto} 把评论顶到行尾；改成一排左对齐后
-   换行才不会跑出"半行右对齐"的孤儿胶囊，所以这个类连同它在 WXML 里的用法一起删。 */
+.reaction-icon { filter: brightness(0); opacity: .55; }
+.react.liked .reaction-icon, .react.fav-on .reaction-icon { filter: none; opacity: 1; animation: gPop var(--g-dur-fast) var(--g-back-out); }
+.react .n { font-weight: 500; word-break: break-all; line-height: 1.3; }
+.react.liked, .react.fav-on { color: var(--pop); }
 
 /* ===== 评论区 ===== */
-.csec { margin-top: 44rpx; }
+.csec { margin-top: 24rpx; padding-top: 20rpx; border-top: var(--bd-card); }
 .cs-head {
   display: flex;
-  align-items: baseline;
-  gap: 16rpx;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8rpx 12rpx;
 }
 .cs-title {
-  font-size: calc(36rpx * var(--fs-mul, 1));
-  font-weight: 900;
+  font-size: calc(32rpx * var(--fs-mul, 1));
+  font-weight: 700;
   color: var(--ink);
-  letter-spacing: -0.8rpx;
+  letter-spacing: 0;
 }
 .cnt {
+  margin-left: auto;
   font-size: var(--fs-sub);
   font-weight: 700;
   color: var(--mut-strong);
@@ -255,15 +216,15 @@
 .crow {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 16rpx;
 }
+.cmeta { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6rpx; }
 .cname {
   font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: 800;
   color: var(--ink);
-  flex: 1;
-  min-width: 0;
+  line-height: 1.5;
+  word-break: break-all;
 }
 .ctime {
   font-size: var(--fs-mini);
@@ -282,56 +243,53 @@
   flex: none;
   display: flex;
   align-items: center;
-  gap: 22rpx;
-  padding: 22rpx 34rpx calc(22rpx + env(safe-area-inset-bottom));
-  background: var(--glass);
+  gap: 10rpx;
+  padding: 14rpx 24rpx calc(14rpx + env(safe-area-inset-bottom));
+  background: var(--c-surface);
   border-top: 2rpx solid var(--paper-2);
+}
+.comment-compose { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10rpx; box-sizing: border-box; padding: 0 18rpx; border-radius: var(--r-pill); background: var(--paper-2); }
+.comment-compose.is-writing { border-radius: var(--r-md); }
+.compose-icon { width: 28rpx; height: 28rpx; flex: none; filter: brightness(0); opacity: .45; }
+/* 深色档：心形/书签 SVG 的描边写死是红色，原来 filter:none 让「未点赞」也显示成暗红，
+   和「已点赞」的红只差一点透明度；评论气泡 SVG 是浅色描边，三个图标两种颜色。
+   未激活一律压成单色浅灰（与首页 .hm-journey-icon 同一做法），激活态保持原色。 */
+@media (prefers-color-scheme: dark) {
+  .compose-icon { filter: none; opacity: .7; }
+  .react:not(.liked):not(.fav-on) .reaction-icon { filter: brightness(0) invert(1); opacity: .7; }
 }
 .field {
   flex: 1;
+  min-width: 0;
   box-sizing: border-box;
-  height: 84rpx;
-  border-radius: var(--r-pill);
-  background: var(--paper-2);
-  border: 2rpx solid var(--c-border);
-  padding: 0 34rpx;
+  min-height: 88rpx;
+  max-height: 200rpx;
+  width: 100%;
+  background: transparent;
+  border: 0;
+  padding: 24rpx 0;
   font-size: calc(25rpx * var(--fs-mul, 1));
   color: var(--ink);
 }
 .field-ph { color: var(--mut); }
 .send {
   flex: none;
-  width: 84rpx;
-  height: 84rpx;
-  border-radius: 50%;
-  background: var(--pop);
+  min-width: 104rpx;
+  min-height: 88rpx;
+  padding: 0 14rpx;
+  box-sizing: border-box;
+  border-radius: var(--r-pill);
+  font-size: var(--fs-cap);
+  font-weight: 700;
+  color: var(--anchor-contrast);
+  background: var(--pop-fill);
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: var(--sh-pop);
 }
 .send { position: relative; }
-/* 单手打字时拇指要够到发送键：视觉 84rpx 不变，命中区补到 88rpx */
-.send::after {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 88rpx;
-  height: 88rpx;
-  content: "";
-  transform: translate(-50%, -50%);
-}
 .send-busy { opacity: 0.55; }
-/* 发送箭头：CSS 三角 */
-.send-icon {
-  width: 18rpx;
-  height: 18rpx;
-  border-top: 5rpx solid var(--c-surface);
-  border-right: 5rpx solid var(--c-surface);
-  transform: translateX(-2rpx) rotate(45deg);
-  border-radius: 2rpx;
-}
-
 /* ===== 加载骨架 ===== */
 .loading { padding: 40rpx 30rpx; }
 .sk-line {
@@ -352,6 +310,9 @@
 /* ===== 作者/评论删除入口（仅 mine 可见） ===== */
 .adel {
   flex: none;
+  min-height: 88rpx;
+  display: flex;
+  align-items: center;
   font-size: var(--fs-cap);
   color: var(--mut);
   padding: 8rpx 4rpx 8rpx 20rpx;
@@ -366,39 +327,45 @@
 
 /* ===== 帖子图集 + 分享按钮 ===== */
 .pimgs {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12rpx;
-  margin: 26rpx 0 10rpx;
+  position: relative;
+  margin: 18rpx 0 0;
 }
 .pimg {
+  display: block;
   width: 100%;
-  aspect-ratio: 1;
-  border-radius: 14rpx;
+  height: var(--photo-head-h);
+  border-radius: var(--r-md);
   background: var(--paper-2);
 }
-/* 次级动作行：占满一整行、两端对齐（分享在左、举报在右）。
-   flex: 1 1 100% 是"强制另起一行"的写法，不依赖上面那排装不装得下。 */
-.react-sub {
-  display: flex;
-  flex: 1 1 100%;
-  align-items: center;
-  justify-content: space-between;
-}
-/* 分享 / 举报 = 次级文字动作（与社区列表页 .pa-report 同一层级：主操作是胶囊，
-   次级是弱色文字），所以不给胶囊底色。button 的 UA 默认样式要显式压掉。 */
+.post-gallery { height: var(--photo-head-h); border-radius: var(--r-md); overflow: hidden; }
+.post-photo-counter { position: absolute; right: 16rpx; bottom: 16rpx; pointer-events: none; padding: 8rpx 14rpx; border-radius: var(--r-pill); background: rgba(30, 25, 20, .64); color: #fff; font-size: var(--fs-mini); }
+.comment-empty { margin-top: 16rpx; padding: 24rpx; border-radius: var(--r-md); background: var(--paper-2); }   /* 原来贴着「全部评论」标题 */
+.comment-empty view { font-size: var(--fs-sub); font-weight: 700; color: var(--ink); }
+.comment-empty text { display: block; margin-top: 10rpx; font-size: var(--fs-cap); color: var(--mut-strong); line-height: 1.6; }
+.comment-retry { display: flex; align-items: center; gap: 16rpx; color: var(--mut-strong); font-size: var(--fs-cap); }
+.comment-retry > text { flex: 1; }
+.comment-retry > view { display: flex; align-items: center; min-height: 88rpx; color: var(--pop-deep); font-weight: 700; }
+.post-footer { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; margin-top: 16rpx; }
 .react-share,
 .react-report {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10rpx;
   background: transparent;
   border: none;
-  min-width: 0;
-  flex: 0 0 auto;
+  min-width: 88rpx;
+  min-height: 88rpx;
+  flex: none;
+  box-sizing: border-box;
   margin: 0;
-  padding: 18rpx 8rpx;
+  padding: 0 8rpx;
   line-height: inherit;
   color: var(--mut-strong);
-  font-size: inherit;
+  font-size: var(--fs-cap);
 }
+.react-share .ricon { font-size: var(--fs-sub); }
+.react-share { width: 120rpx; }
 .react-share::after {
   border: none;
 }
@@ -419,3 +386,7 @@
   color: var(--gold-deep);
   margin-left: 8rpx;
 }
+
+.rc-img-text { display: flex; align-items: center; justify-content: center; padding: 12rpx; box-sizing: border-box; background: var(--paper-2); color: var(--pine-ink); font-size: var(--fs-sub); text-align: center; word-break: break-all; }
+.rc-name, .rc-meta { white-space: normal; line-height: 1.5; word-break: break-all; }
+.adel, .cdel { min-height: 88rpx; min-width: 88rpx; display: flex; align-items: center; justify-content: center; box-sizing: border-box; }

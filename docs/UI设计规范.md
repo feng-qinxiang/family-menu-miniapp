@@ -9,38 +9,44 @@
 
 **精致美食杂志 + 大胆撞色**（warm 定稿，标杆 `artifacts/home-final-warm.html`）：
 
-- 奶油纸底 `#fbf8f3`、深墨文字 `#2c241b`、番茄红点睛 `#e8472a`（全站占比约 4%）、金 `#b08949`、墨绿 `#2f4a3a`
+- 奶油纸底 `#fbf8f3`、深墨文字 `#2c241b`、番茄红点睛 `#c8381f`（全站占比约 4%）、金 `#a58145`、墨绿 `#2f4a3a`
 - 深色大图 Hero + 暖光叠层 + 底部渐变；镂空白描边标题（`title-stroke`，Android 用 text-shadow 兜底）
 - 卡片白底小圆角（`--r-card: 16rpx`，下厨房式）+ 轻量暖阴影（`--sh-card`）
 - 头像一律「文字 + 品牌色」，禁止用菜图/占位图当头像
-- 底部导航固定 4 tab：今日 / 菜谱 / 冰箱 / 我的；二级页用 `nav-bar` 返回
+- 底部导航固定 5 tab：点菜 / 做菜 / 记录 / 社区 / 我的（唯一数据源 `utils/tabs.js`）；二级页用 `nav-bar` 返回
 
 ## 二、颜色 Token（app.wxss 权威定义）
 
 | Token | 浅色值 | 深色值 | 用途 |
 |-------|--------|--------|------|
 | `--paper` | #fbf8f3 | #1c1c1c | 页面底色 |
-| `--paper-2` | #f0ebe2 | #262626 | 次级底色/输入底 |
+| `--paper-2` | #f0ebe2 | #2e2e2e | 次级底色/输入底（深色档原 #262626 与卡面只差 1.03:1，2026-11 提亮） |
 | `--ink` | #2c241b | #efefef | 主文字 |
 | `--ink-deep` | #3a2e23 | #e2e2e2 | 深墨文字（深色档翻转为浅字色；暗卡底用 `--anchor`） |
-| `--mut` | #7a6e5d | #9a9a96 | 次要文字（≥AA 4.5:1） |
+| `--mut` | #716555 | #9a9a96 | 次要文字（纸底 #f0ebe2 上 4.79:1，≥AA） |
 | `--mut-2` | #b3a795 | #757570 | 弱提示（仅装饰） |
 | `--mut-strong` | #6b5f50 | #c4c0b8 | 强调次要文字 |
-| `--pop` | #e8472a | #ff6a4d | 主色/CTA/点睛 |
+| `--pop` | #c8381f | #ff6a4d | 主色文字/描边/点睛（白字 5.20:1；2026-11 由 #e8472a 加深以过 AA）。**实心红底用 `--pop-fill`** |
 | `--pop-soft` | #fdece6 | #3a2218 | 主色浅底 |
-| `--gold` / `--gold-deep` | #f4d9a8 / #b08949 | #8a6a3a / #c9a35c | eyebrow/徽章 |
-| `--pine` | #2f4a3a | #4e6b58 | 墨绿点缀 |
+| `--pop-deep` | #b3381f | #ff7a5c | 警示红字（深色档「深」即更亮：卡面 6.1:1）。渐变深端用 `--pop-deep-fill` |
+| `--gold` / `--gold-deep` | #f4d9a8 / #a58145 | #8a6a3a / #c9a35c | eyebrow/徽章。**深底上的金字用 `--gold-on-dark`** |
+| `--pine` | #2f4a3a | #4e6b58 | 墨绿底/点缀。**松绿文字用 `--pine-ink`** |
 | `--surface` | #ffffff | #242424 | 卡片/输入框底 |
 | `--line` / `--line-deep` | #e8e0d0 / #d5c9b8 | #333333 / #3a3a3a | 分隔线/描边 |
 | `--skeleton` | #efe4d7 | #2a2a2a | 骨架屏 |
-| `--anchor` | #3a2e23（两主题恒定） | 同左 | 深色锚点卡恒定底（今日菜单卡/餐盘托/激活片） |
+| `--anchor` | #3a2e23 | #735a44 | 深色锚点卡底（今日菜单卡/餐盘托/选中 chip/返回键）。深色档原值压在页面底上只有 1.29:1，提亮一档；浅字 6.1:1、浅金 4.7:1 |
 | `--anchor-contrast` | #fbf8f3（两主题恒定） | 同左 | 锚点卡/彩底/照片上的恒定浅字 |
+| `--pop-fill` / `--pop-deep-fill` | 同 `--pop` / `--pop-deep` | #c8381f / #a3301b | 红色实心底、红渐变（上面放浅字）。深色档 `--pop` 上浅字只有 2.7:1 |
+| `--gold-on-dark` | 同 `--gold` | #f4d9a8 | 锚点卡/照片/暗卡上的金字和金色小图形 |
+| `--pine-ink` | 同 `--pine` | #4eae8c | 松绿当文字色（深色档 `--pine` 当字只有约 2.6:1） |
+| `--seg-thumb` | 同 `--surface` | #666666 | 分段控件选中滑块（深色档卡面与轨道几乎同色） |
 | `--cook-bg` | #1a1410 | #111111 | 烹饪模式沉浸底 |
 
 - 深色模式真实机制（2026-09-12 实证修订）：**theme.json 变量只对 app.json/页面 json 的 `@` 引用生效，不注入 WXSS**。
   WXSS 深色由 `app.wxss` 的 `@media (prefers-color-scheme: dark)` 块实现（覆盖裸 `--themeX` 层 + 字面量 token 深色档）。
   **改深色值必须同步两处：theme.json dark 段 + app.wxss media 块。**
 - **铁律**：页面 WXSS 禁止新增十六进制色值；必须用 token。特殊场景（遮罩 mask、root-portal 变量副本）允许并在注释中说明
+- **深色档配对**（static-check 第 32 条拦截）：红色实心底写 `var(--pop-fill)`、金字写 `var(--gold-on-dark)`、松绿字写 `var(--pine-ink)`，不要直接用 `--pop` / `--gold` / `--pine`
 
 ## 三、字号标尺
 
@@ -70,9 +76,19 @@
 | 照片 hero 高度 | `--hero-h: 862rpx`（小 hero `--hero-h-sm: 620rpx`） |
 | 返回键 | 统一 `nav-bar` 组件或 88rpx 圆形浮钮 |
 | 按钮 | 最小高度 88rpx，圆角 `--r-card`，字号 `--fs-btn` |
-| 触达目标 | 可点元素 ≥ 88rpx；图片角标类删除钮 ≥ 56rpx |
+| 触达目标 | 可点元素 ≥ 88rpx；图片角标类删除钮 ≥ 56rpx。新写的命中区用 `var(--tap-min)`：宽度 < 375px 的屏上 88rpx 不足 44px，app.wxss 用媒体查询把它兜到 44px |
 | 弹窗 | 底部弹层用 `state-sheet`（自带滚动锁），确认弹窗用 `state-dialog` |
 | 空态 | 一律 `state-empty`（type: pop/gold/gray/search/offline） |
+
+## 四点五、2026-11 精简规则（截图评审后定）
+
+1. **按钮三级**：主 `.btn-pop`（红色实心，**每屏最多一个**）／次 `.btn-ghost`（白底细描边）／文字 `.btn-text`（「查看全部 ›」这类去处）。浅底页面不用深棕实心按钮当第二个主按钮。
+2. **一页一个标题**：二级页只留 nav-bar 标题；正文不再重复「眉题 + 大标题 + 副标题」。Tab 页保留一个大标题 + 至多一行说明。
+3. **不重复入口**：同一页里同一去处只出现一次；底部导航已有的四步（点菜/做菜/记录/社区）不在页内再画一遍。
+4. **空态分大小**：整页空用 `state-empty` 默认；页内一块空着用 `size="compact"`；零值统计（三个 0）不放大展示。
+5. **说人话**：不出现「自建」「总控」「机器审核」「用量待备齐」这类内部用语。
+6. **图标**：功能入口用 `assets/icons/lucide/*.svg` 线性图标，不用单个汉字方块当图标；单字方块只用于人名头像。
+7. **顶部避让**：右上角自定义按钮不得贴微信胶囊，至少留 24rpx；或干脆移走。
 
 ## 五、组件用法
 
@@ -97,6 +113,14 @@
 | 骨架屏 | `.skeleton` 底 + `.shimmer` 扫光 |
 | 数字变化 | 统计数字用 count-up（600ms cubic-out，参考 me 页实现） |
 | 弹层 | `state-sheet` 自带 g-fade-up 滑入 |
+| 状态切换 | 点赞 / 收藏 / 点菜成功，图标挂 `g-pop` 弹一下（挂在「已选中」状态上，状态一变就播一次） |
+| 进度条 | 填充条挂 `g-grow-x`：进页面从左长出，数值变化平滑伸缩 |
+| 空态 | `state-empty` 插画自带 `g-float` 轻浮动，页面不用再加 |
+| 内容替换 | 同一位置换内容要重播入场时，用单项列表按 id 做 key（参考首页「换一道」） |
+
+- 入场动画的 `animation-fill-mode` 一律 `backwards`，不要写 `both`：`both` 会让动画一直占着 transform / opacity，同一元素上的 `tap-scale` 和置灰都会失效
+- 系统开了「减弱动态效果」时，全部入场时长归零、浮动和扫光停掉（`app.wxss` 里统一处理，页面不用管）
+- 文字头像的底色用 `.ava-pine / .ava-gold / .ava-inkdeep`，按名字取色走 `utils/constants.js` 的 `avaTone()`；功能入口图标的浅色底用 `.tint-pop / .tint-info / .tint-pine / .tint-gold`。红色实底（`.ava-pop`）只给家庭成员页的固定排位用，不进按名字取色的池子
 
 - 微信小程序无 GSAP；设计稿中的滚动浮现/视差如需落地，用 `IntersectionObserver`（列表渲染完成后创建，onUnload disconnect）
 

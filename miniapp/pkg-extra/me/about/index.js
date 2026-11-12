@@ -1,10 +1,33 @@
 // 关于页 · 静态展示页（游客直进，无强制登录）
+
+// UpdateManager 是全局单例，回调挂上就一直在：原来每点一次「检查更新」挂一组，
+// 更新就绪时会连弹好几个重启框。挂一次（模块级，重进本页也不重挂），结果交给最近一次点击的 done。
+let umBound = false;
+let reportUpdate = null;
+function bindUpdateManager() {
+  if (umBound) return;
+  umBound = true;
+  const um = wx.getUpdateManager();
+  const report = (text) => { if (reportUpdate) reportUpdate(text); };
+  um.onCheckForUpdate((res) => report(res && res.hasUpdate ? '发现新版本，正在下载' : '当前已是最新版本'));
+  um.onUpdateReady(() => {
+    wx.showModal({
+      title: '更新就绪',
+      content: '新版本已下载完成，重启小程序即可生效。',
+      confirmText: '立即重启',
+      cancelText: '稍后',
+      success: (r) => { if (r.confirm) um.applyUpdate(); }
+    });
+  });
+  um.onUpdateFailed(() => report('更新检查失败，请稍后再试'));
+}
+
 Page({
   data: {
     statusBarHeight: 0,
     version: 'v1.0.0',
     year: 2026,
-    slogan: '一家人围着饭桌点菜，把每顿家常饭都吃成想念的味道。',
+    slogan: '一家人围着饭桌点菜，\n把每顿家常饭都吃成想念的味道。',
     // 产品能力事实（勿写虚构运营数据，审核会按虚假宣传驳回）
     stats: [
       { value: '8', unit: '人', label: '全家共享菜单' },
@@ -66,26 +89,14 @@ Page({
       wx.showToast({ title: '当前版本已是最新', icon: 'none' });
       return;
     }
-    const um = wx.getUpdateManager();
+    bindUpdateManager();
     let settled = false;
     const done = (text) => {
       if (settled) return;
       settled = true;
       wx.showToast({ title: text, icon: 'none' });
     };
-    um.onCheckForUpdate((res) => {
-      done(res && res.hasUpdate ? '发现新版本，正在下载' : '当前已是最新版本');
-    });
-    um.onUpdateReady(() => {
-      wx.showModal({
-        title: '更新就绪',
-        content: '新版本已下载完成，重启小程序即可生效。',
-        confirmText: '立即重启',
-        cancelText: '稍后',
-        success: (r) => { if (r.confirm) um.applyUpdate(); }
-      });
-    });
-    um.onUpdateFailed(() => done('更新检查失败，请稍后再试'));
+    reportUpdate = done;
     // onCheckForUpdate 在部分基础库不回调，3 秒兜底
     setTimeout(() => done('当前已是最新版本'), 3000);
   },

@@ -1,0 +1,132 @@
+{
+  "checkedAt": "2026-10-09T01:57:51.534Z",
+  "passed": true,
+  "checks": [
+    {
+      "file": "pages/recipes/index.wxml",
+      "passed": true,
+      "result": {
+        "success": true,
+        "codeLength": 33293
+      }
+    },
+    {
+      "file": "pages/recipes/index.wxss",
+      "passed": true,
+      "result": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38994
+      }
+    },
+    {
+      "file": "pages/pantry/index.wxml",
+      "passed": true,
+      "result": {
+        "success": true,
+        "codeLength": 33293
+      }
+    },
+    {
+      "file": "pages/shopping/index.wxml",
+      "passed": true,
+      "result": {
+        "success": true,
+        "codeLength": 33293
+      }
+    },
+    {
+      "file": "pages/shopping/index.wxss",
+      "passed": true,
+      "result": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38994
+      }
+    },
+    {
+      "file": "pkg-extra/community/post-detail/index.wxml",
+      "passed": true,
+      "result": {
+        "success": true,
+        "codeLength": 33293
+      }
+    },
+    {
+      "file": "pkg-extra/community/post-detail/index.wxss",
+      "passed": true,
+      "result": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38994
+      }
+    },
+    {
+      "file": "pkg-extra/me/settings/index.wxml",
+      "passed": true,
+      "result": {
+        "success": true,
+        "codeLength": 33293
+      }
+    },
+    {
+      "file": "pkg-extra/me/settings/index.wxss",
+      "passed": true,
+      "result": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38994
+      }
+    },
+    {
+      "file": "pages/pantry/index.wxss",
+      "passed": true,
+      "result": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38994
+      }
+    },
+    {
+      "file": "pkg-extra/me/notifications/index.wxss",
+      "passed": true,
+      "result": {
+        "success": true,
+        "files": 2,
+        "fileList": [
+          "comm",
+          "page"
+        ],
+        "totalCodeLength": 38994
+      }
+    },
+    {
+      "file": "pkg-extra/me/notifications/index.wxml",
+      "passed": true,
+      "result": {
+        "success": true,
+        "codeLength": 33293
+      }
+    }
+  ]
+}

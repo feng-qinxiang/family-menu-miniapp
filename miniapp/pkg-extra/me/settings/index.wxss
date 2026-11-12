@@ -3,26 +3,15 @@
   padding: 0 46rpx 50rpx;
 }
 
-/* —— Hero —— */
-.set-hero {
-  padding: 24rpx 0 12rpx;
-}
-.set-hero-title {
-  margin-top: 8rpx;
-  font-size: var(--fs-hero-lg);
-  font-weight: 900;
-  letter-spacing: -3rpx;
-  line-height: 1;
-  color: var(--ink);
-}
-
 /* —— 分组 —— */
 .set-group {
   margin-top: 12rpx;
 }
+.set-group:first-of-type .set-gtitle {
+  margin-top: 24rpx;   /* 导航栏已给出页名，首组贴近顶部 */
+}
 .set-gtitle {
   font-family: var(--serif);
-  font-style: italic;
   font-size: var(--fs-cap);
   letter-spacing: 1rpx;
   color: var(--gold-deep);
@@ -41,29 +30,13 @@
 .set-item {
   display: flex;
   align-items: center;
-  gap: 26rpx;
-  padding: 29rpx 32rpx;
+  gap: 20rpx;
+  min-height: var(--tap-min);
+  padding: 28rpx var(--pad-card-sm);
   border-bottom: 2rpx solid var(--c-border-light);
 }
 .set-item:last-child {
   border-bottom: none;
-}
-
-.set-ic {
-  width: 70rpx;
-  height: 70rpx;
-  border-radius: var(--r-md);
-  background: var(--paper-2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: none;
-  color: var(--ink-deep);
-}
-.set-glyph {
-  font-size: calc(36rpx * var(--fs-mul, 1));
-  font-weight: 800;
-  line-height: 1;
 }
 
 .set-mid {
@@ -90,13 +63,14 @@
   color: var(--mut-strong);
 }
 
-/* 右箭头雪佛龙：用边框旋转模拟 */
+/* 右箭头雪佛龙：用边框旋转模拟。
+   --line-deep 是分隔线色，压在白卡上只有 1.6:1（深色档 1.4:1，几乎看不见）；与关于页、创建家庭页同用 --mut-2 */
 .set-chev {
   flex: none;
   width: 16rpx;
   height: 16rpx;
-  border-right: 4rpx solid var(--line-deep);
-  border-top: 4rpx solid var(--line-deep);
+  border-right: 4rpx solid var(--mut-2);
+  border-top: 4rpx solid var(--mut-2);
   border-radius: 2rpx;
   transform: rotate(45deg);
 }
@@ -112,7 +86,7 @@
   transition: background 0.2s ease;
 }
 .set-sw.on {
-  background: var(--pop);
+  background: var(--pop-fill);
 }
 .set-sw-knob {
   position: absolute;
@@ -127,6 +101,11 @@
 }
 .set-sw.on .set-sw-knob {
   left: 41rpx;
+}
+/* 深色档关态：轨道 --c-border 翻成 #3a3a3a、滑块 --c-surface 翻成 #242424，两者 1.4:1，
+   关着的开关只剩一块看不出形状的灰。轨道换成 --mut-2（深色档 #757570，3.4:1），滑块重新浮出来 */
+@media (prefers-color-scheme: dark) {
+  .set-sw { background: var(--mut-2); }
 }
 
 /* —— 退出登录 红卡 —— */
@@ -157,3 +136,6 @@
 .set-ver-num {
   font-family: var(--serif);
 }
+
+/* 注销账号：危险操作，不进列表、不用红，弱化成底部文字链 */
+.set-delete { display: flex; align-items: center; justify-content: center; min-height: var(--tap-min); margin-top: 16rpx; font-size: var(--fs-sub); color: var(--mut-strong); }

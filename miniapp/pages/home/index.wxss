@@ -3,8 +3,21 @@
    全局 token / 工具类见 app.wxss，此处不重复定义配色
    ============================================================ */
 .mag-home {
+  --photo-hero-h: 624rpx;
   min-height: 100vh;
   background: var(--paper);
+}
+.mag-home.font-lg { --photo-hero-h: 760rpx; }
+
+/* 滚动后的页头复用导航组件，让内容从胶囊与状态栏下方经过。 */
+.hm-scroll-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 60;
+  background: var(--paper);
+  border-bottom: var(--bd-card);
 }
 
 /* ============ HERO ============ */
@@ -12,6 +25,7 @@
   position: relative;
   height: var(--photo-hero-h);
   overflow: hidden;
+  background: var(--anchor);   /* 换一道时大图是淡入的：底下垫深棕，不会先闪一下白纸色 */
 }
 .mh-hero-img {
   position: absolute;
@@ -23,80 +37,41 @@
   position: absolute;
   inset: 0;
   background: linear-gradient(180deg,
-    rgba(20, 14, 8, 0.62) 0%,
-    rgba(20, 14, 8, 0.38) 36%,
-    rgba(20, 14, 8, 0.5) 62%,
-    rgba(20, 14, 8, 0.88) 100%);
+    rgba(20, 14, 8, 0.55) 0%,
+    rgba(20, 14, 8, 0.12) 26%,
+    rgba(20, 14, 8, 0.45) 42%,
+    rgba(20, 14, 8, 0.86) 64%,
+    rgba(20, 14, 8, 0.94) 100%);
 }
 
 .mh-hero-top {
   position: absolute;
   top: calc(env(safe-area-inset-top) + 90rpx);
   left: 46rpx;
-  /* 首帧兜底要和 utils/capsule.js 的 FALLBACK_RIGHT（96px）一致：
-     JS 把 capsuleRight 塞进来之前，这两枚 88rpx 图标按钮会压在微信胶囊下面。 */
+  /* 首帧兜底与 utils/capsule.js 的 FALLBACK_RIGHT（96px）一致，问候语不伸到胶囊下 */
   right: 96px;
   z-index: 10;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
-.mh-hi {
-  font-size: var(--fs-sub);
-  letter-spacing: 1rpx;
-  font-weight: 600;
-  color: var(--anchor-contrast);
-  text-shadow: 0 2rpx 10rpx rgba(20, 14, 8, 0.65);
-}
+.mh-greet { flex: 1; min-width: 0; }
 .mh-name {
   font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 600;
   margin-top: 6rpx;
   color: var(--anchor-contrast);
   text-shadow: 0 2rpx 10rpx rgba(20, 14, 8, 0.65);
-}
-.mh-iconbtns { display: flex; gap: 18rpx; }
-.mh-iconbtn {
-  position: relative;
-  box-sizing: border-box;
-  /* 触控 88rpx（原 80rpx，顶部图标按钮偏小） */
-  width: 88rpx;
-  height: 88rpx;
-  border-radius: 50%;
-  background: rgba(20, 14, 8, 0.48);
-  border: 2rpx solid rgba(255, 255, 255, 0.55);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: visible;
-}
-.mh-cart-dot {
-  position: absolute;
-  top: -4rpx;
-  right: -4rpx;
-  width: 18rpx;
-  height: 18rpx;
-  border-radius: 50%;
-  background: var(--pop);
-  border: 3rpx solid var(--c-surface);
-  z-index: 2;
-}
-.mh-ico-glyph {
-  font-size: calc(25rpx * var(--fs-mul, 1));
-  font-weight: 800;
-  color: var(--anchor-contrast);
-  /* 原来写死 line-height/height: 26rpx，而字号会随 --fs-mul 放大到 28.75rpx
-     ——大字档下这个字符撑出自己 26rpx 的盒子，在 88rpx 圆钮里就不居中了。 */
-  line-height: 1;
-  display: block;
-  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 /* ---- hero body ---- */
 .mh-hero-body {
   position: absolute;
   left: 46rpx;
   right: 46rpx;
-  bottom: 40rpx;
+  bottom: 72rpx;   /* 40rpx + 下方 sheet 上叠的 32rpx */
   z-index: 10;
   color: var(--anchor-contrast);
 }
@@ -106,18 +81,17 @@
   letter-spacing: 1rpx;
   font-weight: 700;
   color: var(--anchor-contrast);
-  background: var(--pop);
-  padding: 8rpx 22rpx;
+  background: rgba(20, 14, 8, 0.4);   /* 角标降为暗色毛玻璃：同屏的红只留给「加入X餐」 */
+  padding: 6rpx 20rpx;
   border-radius: var(--r-pill);
-  border: 2rpx solid rgba(255, 255, 255, 0.65);   /* 白描边：红 pill 叠红汤/暖色菜图时保持辨识度 */
-  box-shadow: 0 4rpx 12rpx rgba(20, 14, 8, 0.3);
+  border: 2rpx solid rgba(255, 255, 255, 0.45);
 }
 .mh-hero-title {
-  font-size: calc(84rpx * var(--fs-mul, 1));
+  font-size: calc(66rpx * var(--fs-mul, 1));
   font-weight: 900;
-  line-height: 0.98;
-  letter-spacing: -3rpx;
-  margin: 12rpx 0 8rpx;
+  line-height: 1.12;
+  letter-spacing: -1rpx;
+  margin: 16rpx 0 12rpx;
   color: var(--anchor-contrast);
   text-shadow: 0 4rpx 24rpx rgba(20, 14, 8, 0.55);
   white-space: nowrap;   /* 长菜名不换行，靠分档缩字号（t6/t7/t9/t11）兜住 */
@@ -130,39 +104,42 @@
   text-shadow: 0 2rpx 8rpx rgba(20, 14, 8, 0.7), 0 10rpx 28rpx rgba(20, 14, 8, 0.45);
 }
 /* 长菜名分档缩字号（titleClass 由 dish-logic.decorateHero 输出），随基准 84rpx 等比降档 */
-.mh-hero-title.t6 { font-size: calc(76rpx * var(--fs-mul, 1)); }
-.mh-hero-title.t7 { font-size: calc(66rpx * var(--fs-mul, 1)); }
+.mh-hero-title.t6 { font-size: calc(62rpx * var(--fs-mul, 1)); }
+.mh-hero-title.t7 { font-size: calc(60rpx * var(--fs-mul, 1)); }
 .mh-hero-title.t9 { font-size: calc(56rpx * var(--fs-mul, 1)); }
-.mh-hero-title.t11 { font-size: calc(50rpx * var(--fs-mul, 1)); }
+.mh-hero-title.t11 {
+  font-size: calc(50rpx * var(--fs-mul, 1));
+  line-height: 1.12;
+  white-space: normal;
+  word-break: break-all;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 
 /* 暖光叠层：底部暖金 radial 提亮，对标 home-final.html */
 .mh-hero-glow {
   display: none;
 }
 .mh-hero-sub {
-  font-size: var(--fs-cap);
+  font-size: var(--fs-sub);
   color: rgba(255, 255, 255, 0.92);
   font-weight: 400;
   text-shadow: 0 2rpx 8rpx rgba(20, 14, 8, 0.55);
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-all;
 }
 .mh-hero-meta {
-  display: flex;
-  gap: 16rpx;
   margin-top: 10rpx;
-  flex-wrap: wrap;
-}
-.mh-m {
-  display: inline-flex;
-  align-items: center;
-  font-size: var(--fs-cap);
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.9);
+  font-size: var(--fs-sub);
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
   text-shadow: 0 2rpx 8rpx rgba(20, 14, 8, 0.55);
-}
-.mh-m + .mh-m::before {
-  content: "·";
-  margin-right: 16rpx;
-  opacity: 0.6;
 }
 .mh-hero-acts {
   display: flex;
@@ -178,26 +155,30 @@
   align-items: center;
   justify-content: center;
   height: 88rpx;
-  border-radius: var(--r-pill);
-  background: var(--pop);
+  min-height: 44px;
+  border-radius: var(--r-card);
+  background: var(--pop-fill);
   color: var(--anchor-contrast);
   font-size: calc(29rpx * var(--fs-mul, 1));
   font-weight: 800;
   box-shadow: var(--sh-pop);
 }
+.mh-hero-add.is-picked { background: var(--pine); box-shadow: none; }
 /* 换一道：圆形毛玻璃次按钮，与主按钮并排（决策动作同级，不再埋在文字链里） */
 .mh-hero-shuffle {
   /* 纯图标圆钮易被看成计时器：改胶囊 + 「换一道」文字，语义可读 */
   flex: none;
-  height: 80rpx;
-  padding: 0 26rpx;
+  box-sizing: border-box;
+  height: var(--tap-min);
+  min-height: 44px;
+  padding: 0 var(--pad-card-sm);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10rpx;
-  border-radius: 44rpx;
-  background: rgba(20, 14, 8, 0.48);
-  border: 2rpx solid rgba(255, 255, 255, 0.55);
+  border-radius: var(--r-card);
+  background: rgba(20, 14, 8, 0.24);
+  border: 2rpx solid rgba(255, 255, 255, 0.4);
 }
 .mh-shuffle-tx {
   font-size: calc(25rpx * var(--fs-mul, 1));
@@ -230,18 +211,28 @@
 /* ============ SHEET ============ */
 .mh-sheet {
   position: relative;
-  margin-top: -50rpx;
+  margin-top: -32rpx;   /* 上叠 hero，圆角接住照片底边，不再一刀切 */
   background: var(--paper);
-  border-radius: var(--r-sheet) var(--r-sheet) 0 0;
+  border-radius: calc(var(--r-sheet) * 2) calc(var(--r-sheet) * 2) 0 0;
   /* 底部留白必须含 tabBar 实高（--tabbar-h 已带安全区）。
      原来写死 186rpx：刘海机上 tabBar 实高 196rpx，最后一张卡被压在下面。 */
-  padding: 44rpx 0 calc(var(--tabbar-h) + 40rpx);
+  padding: 24rpx 0 calc(var(--tabbar-h) + 40rpx);
   z-index: 20;
 }
 .mh-pad { padding: 0 46rpx; }
+/* 今天这一桌卡底部：随机点菜 / 冰箱能做 两个文字按钮，不抢上方主动作 */
+.hm-pick-tools { display: flex; align-items: center; justify-content: space-around; flex-wrap: wrap; gap: 8rpx 32rpx; margin-top: 8rpx; border-top: 1rpx solid var(--c-border-light); }
+.hm-pick-tool { display: flex; align-items: center; gap: 10rpx; color: var(--gold-deep); font-size: var(--fs-sub); }
+.hm-pick-tool image { width: 30rpx; height: 30rpx; flex: none; filter: brightness(0); opacity: .6; }
+.hm-recipe-search { display: flex; align-items: center; gap: 16rpx; margin: 16rpx var(--page-gutter) 8rpx; padding: 0 20rpx; background: var(--c-surface); border: var(--bd-card); border-radius: var(--r-md); }
+.hm-search-icon { width: 30rpx; height: 30rpx; flex: none; }
+.hm-search-input { flex: 1; min-width: 0; min-height: 88rpx; font-size: var(--fs-sub); color: var(--ink); }
+.hm-search-placeholder { color: var(--mut); }
+.hm-search-submit { min-height: 88rpx; min-width: 88rpx; display: flex; align-items: center; justify-content: flex-end; font-size: var(--fs-sub); font-weight: 700; color: var(--pop-deep); }
 
 /* chips */
-.mh-chips { width: 100%; white-space: nowrap; }
+.hm-recipes-head { margin-top: 24rpx; }
+.mh-chips { width: 100%; margin: 12rpx 0 18rpx; white-space: nowrap; }
 .mh-chips-inner {
   display: inline-flex;
   gap: 18rpx;
@@ -261,193 +252,207 @@
   width: 404rpx;
 }
 
-/* 查看全部卡 */
-.mh-seeall-card {
-  flex: none;
-  width: 250rpx;
+/* ============ 家庭菜单 ============ */
+.hm-menu-card {
+  box-sizing: border-box;
+  padding: 20rpx var(--pad-card-sm);
+  border: var(--bd-card);
   border-radius: var(--r-card);
-  background: var(--paper-2);
-  border: none;   /* 实底与旁边菜卡同层级，不再用虚线 */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 18rpx;
-}
-.mh-sa-circle {
-  width: 100rpx;
-  height: 100rpx;
-  border-radius: 50%;
   background: var(--c-surface);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: var(--sh-soft);
+  box-shadow: var(--sh-card);
 }
-.mh-sa-t { font-size: calc(28rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--ink); }
-.mh-sa-s { font-size: calc(23rpx * var(--fs-mul, 1)); color: var(--mut-strong); font-weight: 600; }
-
-/* + 图标（菜单暗卡等仍用） */
-.mh-ico-plus, .mh-ico-plus-dark {
-  position: relative;
-  width: 32rpx;
-  height: 32rpx;
-}
-.mh-ico-plus::before, .mh-ico-plus::after,
-.mh-ico-plus-dark::before, .mh-ico-plus-dark::after {
-  content: "";
-  position: absolute;
-  background: var(--c-surface);
-  border-radius: 4rpx;
-}
-.mh-ico-plus::before, .mh-ico-plus-dark::before {
-  left: 50%; top: 0; transform: translateX(-50%);
-  width: 5rpx; height: 100%;
-}
-.mh-ico-plus::after, .mh-ico-plus-dark::after {
-  top: 50%; left: 0; transform: translateY(-50%);
-  width: 100%; height: 5rpx;
-}
-.mh-ico-plus-dark { width: 28rpx; height: 28rpx; }
-.mh-ico-plus-dark::before, .mh-ico-plus-dark::after { background: var(--pop); }
-
-/* 金色箭头 / hero 箭头 */
-.mh-ico-arrow-gold {
-  width: 22rpx;
-  height: 22rpx;
-  border-top: 4rpx solid var(--gold-deep);
-  border-right: 4rpx solid var(--gold-deep);
-  transform: rotate(45deg);
-  border-radius: 2rpx;
-}
-/* ============ 今日菜单 暗卡 ============ */
-.mh-menucard, .mh-empty-menu {
-  margin-top: 50rpx;
-}
-.mh-mc-eyebrow {
-  position: relative;
-  z-index: 2;
-  font-size: var(--fs-cap);
-  letter-spacing: 1rpx;
-  color: var(--gold);
-  font-weight: 700;
-}
-/* 当前餐次小标签：跟随 slotbar 联动显示 */
-.mh-mc-slot {
-  display: inline-block;
-  margin-left: 10rpx;
-  padding: 4rpx 16rpx;
-  font-size: var(--fs-mini);
-  font-weight: 700;
-  letter-spacing: 1rpx;
-  color: var(--gold);
-  border: 2rpx solid rgba(244, 217, 168, 0.45);
-  border-radius: var(--r-pill);
-  vertical-align: middle;
-}
-.mh-mc-title {
-  position: relative;
-  z-index: 2;
-  font-size: calc(46rpx * var(--fs-mul, 1));
-  font-weight: 900;
-  margin-top: 10rpx;
-  letter-spacing: -1rpx;
-  color: var(--anchor-contrast);
-}
-.mh-mc-names {
-  position: relative;
-  z-index: 2;
-  font-size: var(--fs-sub);
-  color: rgba(255, 255, 255, 0.78);
-  font-weight: 600;
-  margin-top: 14rpx;
-}
-/* 已上桌的菜在首页卡片划线弱化（与菜单页 is-done 呼应） */
-.mh-mc-name-done {
-  text-decoration: line-through;
-  opacity: 0.55;
-}
-.mh-mc-pile {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  margin-top: 26rpx;
-}
-.mh-mc-d {
-  width: 92rpx;
-  height: 92rpx;
-  border-radius: var(--r-md);
-  border: 4rpx solid var(--ink-deep);
-  margin-left: -22rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.25);
-}
-.mh-mc-d:first-child { margin-left: 0; }
-.mh-mc-bot {
-  position: relative;
-  z-index: 2;
+.hm-menu-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 34rpx;
-  padding-top: 30rpx;
-  border-top: 2rpx solid rgba(255, 255, 255, 0.13);
+  gap: 16rpx;
 }
-.mh-mc-stats { display: flex; gap: 50rpx; }
-.mh-mc-num {
-  font-size: var(--fs-stat);
-  font-weight: 900;
-  color: var(--anchor-contrast);
-  line-height: 1;
-  letter-spacing: -2rpx;
-}
-.mh-mc-u {
+.hm-menu-heading { min-width: 0; flex: 1; }
+.hm-menu-eyebrow {
+  color: var(--gold-deep);
   font-size: var(--fs-cap);
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.6);
-  margin-left: 4rpx;
+  font-weight: 700;
+  line-height: 1.4;
 }
-.mh-mc-cap {
-  font-size: var(--fs-mini);
-  color: rgba(255, 255, 255, 0.6);
-  letter-spacing: 0;
+.hm-menu-title {
+  margin-top: 4rpx;
+  color: var(--ink);
+  font-size: var(--fs-lg);
+  font-weight: 800;
+  line-height: 1.3;
+}
+.hm-menu-title-progress { font-size: var(--fs-cap); font-weight: 500; color: var(--mut-strong); }
+.hm-menu-open {
+  flex: none;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  color: var(--gold-deep);
+  font-size: var(--fs-cap);
+  font-weight: 700;
+}
+.hm-menu-list { margin-top: 12rpx; border-top: 1rpx solid var(--c-border-light); }
+.hm-menu-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  min-height: var(--tile-row-sm);
+  padding: 12rpx 0;
+  border-bottom: 1rpx solid var(--c-border-light);
+}
+.hm-menu-row:last-child { border-bottom: 0; }
+.hm-menu-thumb {
+  flex: none;
+  width: var(--tile-row-sm);
+  height: var(--tile-row-sm);
+  border-radius: var(--r-card);
+  background: var(--paper-2);
+}
+.hm-menu-copy { flex: 1; min-width: 0; }
+.hm-menu-mainline {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12rpx;
+}
+.hm-menu-dish-title {
+  flex: 1;
+  min-width: 0;
+  color: var(--ink);
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-all;
+}
+.hm-status {
+  flex: none;
+  padding: 5rpx 12rpx;
+  border-radius: var(--r-pill);
+  font-size: calc(21rpx * var(--fs-mul, 1));
+  font-weight: 700;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+.hm-status--todo { color: var(--mut-strong); background: var(--paper-2); }
+.hm-status--cooking { color: var(--pop-deep); background: var(--pop-soft); }
+.hm-status--done { color: var(--pine-ink); background: var(--c-accent-soft); }
+.hm-menu-byline {
   margin-top: 8rpx;
+  color: var(--mut-strong);
+  font-size: var(--fs-cap);
+  line-height: 1.4;
+  word-break: break-all;
 }
-.mh-mc-acts {
+.hm-menu-more {
+  box-sizing: border-box;
+  min-height: var(--tap-min);
+  padding: 4rpx 0;
   display: flex;
   align-items: center;
-  gap: 14rpx;
+  color: var(--gold-deep);
+  font-size: var(--fs-cap);
+  font-weight: 700;
 }
-.mh-mc-go2 {
+.hm-menu-summary {
+  margin-top: 6rpx;
+}
+.hm-menu-progress {
+  height: 6rpx;
+  overflow: hidden;
+  border-radius: var(--r-pill);
+  background: var(--paper-2);
+}
+.hm-menu-progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--pine);
+}
+.hm-menu-actions {
+  display: flex;
+  align-items: stretch;
+  gap: 12rpx;
+  margin-top: 12rpx;
+}
+.hm-menu-action-secondary {
+  box-sizing: border-box;
+  flex: none;
+  min-height: 44px;
+  padding: 12rpx var(--pad-card-sm);
   display: flex;
   align-items: center;
-  background: transparent;
-  color: rgba(255, 255, 255, 0.85);
-  border: 2rpx solid rgba(255, 255, 255, 0.35);
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8rpx;
+  border: var(--bd-card);
+  border-radius: var(--r-card);
+  background: var(--paper-2);
+  color: var(--mut-strong);
   font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: 700;
-  padding: 22rpx 32rpx;
-  min-height: 88rpx;
-  box-sizing: border-box;
-  border-radius: var(--r-pill);
 }
-.mh-mc-go {
+.hm-menu-shopping-count {
+  color: var(--gold-deep);
+  font-size: var(--fs-cap);
+  font-weight: 800;
+}
+.hm-menu-action-icon {
+  flex: none;
+  width: 30rpx;
+  height: 30rpx;
+}
+.hm-menu-action-secondary .hm-menu-action-icon {
+  filter: brightness(0);
+  opacity: 0.6;
+}
+.hm-menu-action-primary {
+  box-sizing: border-box;
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  padding: 20rpx var(--pad-card-sm);
   display: flex;
   align-items: center;
-  gap: 8rpx;
-  background: var(--pop);
-  color: var(--anchor-contrast);
-  font-size: calc(25rpx * var(--fs-mul, 1));
+  justify-content: center;
+  gap: 12rpx;
+  border-radius: var(--r-card);
+  /* 同屏只留 hero 一颗红；浅底页面不用深棕实心当第二主按钮（规范 四点五·1），这里走次按钮 */
+  background: var(--c-surface);
+  color: var(--ink);
+  border: var(--bd-card);
+  font-size: var(--fs-btn);
   font-weight: 800;
-  padding: 22rpx 36rpx;
-  min-height: 88rpx;
-  box-sizing: border-box;
-  border-radius: var(--r-pill);
-  box-shadow: var(--sh-pop);
+  line-height: 1.3;
 }
-.mh-mc-empty-hint {
+.hm-menu-action-primary .hm-menu-action-icon { filter: brightness(0); opacity: 0.6; }
+.hm-menu-empty-note {
+  margin-top: 8rpx;
+  color: var(--mut-strong);
   font-size: var(--fs-sub);
-  color: rgba(255, 255, 255, 0.72);
-  font-weight: 600;
+  line-height: 1.5;
+}
+.hm-menu-empty-top { display: flex; align-items: center; gap: 20rpx; }
+.hm-menu-empty-copy { flex: 1; min-width: 0; }
+.hm-menu-empty-plate { width: 112rpx; height: 112rpx; flex: none; }
+.font-lg .hm-menu-empty-plate { width: 88rpx; height: 88rpx; }
+.hm-menu-pick { margin-top: 22rpx; }
+
+.font-lg .hm-menu-head { align-items: flex-start; }
+.font-lg .hm-menu-mainline { flex-direction: column; gap: 6rpx; }
+.font-lg .hm-menu-dish-title { flex: none; width: 100%; }
+
+@media (prefers-color-scheme: dark) {
+  /* 这些 SVG 在浅色档靠 brightness(0) 压成黑色，深色档要翻成白色，否则黑图标落在深卡上看不见 */
+  .hm-pick-tool image,
+  .hm-menu-action-secondary .hm-menu-action-icon,
+  .hm-menu-action-primary .hm-menu-action-icon { filter: brightness(0) invert(1); }
+  /* 空盘插画是奶油色实底，深卡上会亮成一块白斑；压到 0.3，餐具与卡底的对比和浅色档相当 */
+  .hm-menu-empty-plate { opacity: 0.3; }
+  .hm-status--done { color: var(--c-success); background: var(--c-success-soft); }
+  .hm-menu-progress-fill { background: var(--c-success); }
 }
 
 /* 首页局部覆盖：section eyebrow 去衬线斜体，中文更亲切（不影响其他页面的全局 .eyebrow）。
@@ -460,168 +465,168 @@
 }
 
 /* ============ 家庭点菜：餐次选择器 + 许愿池 ============ */
+/* 餐次分段：与菜单页 .mn-seg 同一做法（浅轨道 + 白滑块），视觉 64rpx，热区撑到 --tap-min */
 .fp-slotbar {
   display: flex;
-  gap: 14rpx;
-  padding: 24rpx 46rpx 8rpx;
-  background: var(--paper);
+  margin: 4rpx 46rpx 20rpx;
+  padding: 6rpx;
+  background: var(--paper-2);
+  border-radius: var(--r-pill);
 }
 .fp-slot {
+  position: relative;
   flex: 1;
-  height: 88rpx;   /* 餐次切换条：原来 72rpx，手指常点到相邻档 */
+  min-width: 0;
+  min-height: 64rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: calc(25rpx * var(--fs-mul, 1));
-  font-weight: 700;
+  font-size: var(--fs-sub);
+  font-weight: 600;
   color: var(--mut-strong);
-  background: var(--paper-2);
-  border: 2rpx solid var(--c-border);
   border-radius: var(--r-pill);
 }
+.fp-slot::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: var(--tap-min); transform: translateY(-50%); }
 .fp-slot.on {
-  color: var(--anchor-contrast);
-  background: var(--anchor);
-  border-color: var(--anchor);
-}
-.fp-slot-week {
-  flex: none;
-  padding: 0 20rpx;
-  color: var(--gold-deep);
-  background: transparent;
-  border: none;   /* 跳转入口弱化为金色文字链，与前三个时段选择器区分语义 */
+  color: var(--ink);
+  background: var(--seg-thumb);
+  box-shadow: var(--sh-card);
   font-weight: 700;
 }
 
 .fp-wish {
   position: relative;
   z-index: 21;
-  margin: 16rpx 46rpx 24rpx;
+  margin: 24rpx 46rpx 0;
   background: var(--c-surface);
   border: var(--bd-card);
   border-radius: var(--r-card);
-  padding: var(--pad-card) var(--pad-card) var(--pad-card-sm);
+  padding: 20rpx var(--pad-card-sm);
   box-shadow: var(--sh-card);
 }
 .fp-wish-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 16rpx;
 }
-.fp-wish-head--toggle { cursor: pointer; }
+.fp-wish-head--toggle {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+.fp-wish-title { flex: 0 1 auto; min-width: 0; line-height: 1.5; }
 .fp-wish-eyebrow {
-  font-size: calc(23rpx * var(--fs-mul, 1));
+  font-size: var(--fs-lg);
   font-weight: 800;
-  letter-spacing: 2rpx;
-  color: var(--gold-deep);
-  margin-right: 14rpx;
-}
-.fp-wish-slot {
-  font-size: calc(32rpx * var(--fs-mul, 1));
-  font-weight: 900;
   color: var(--ink);
 }
-.fp-wish-count {
-  margin-left: 16rpx;
-  font-size: calc(23rpx * var(--fs-mul, 1));
+.fp-wish-meta {
+  margin-top: 4rpx;
+  font-size: var(--fs-cap);
   color: var(--mut-strong);
   font-weight: 600;
 }
 .fp-wish-caret {
+  flex: none;
   width: 20rpx;
   height: 20rpx;
   border-right: 4rpx solid var(--mut);
   border-bottom: 4rpx solid var(--mut);
   transform: rotate(45deg);
   transition: transform 0.2s;
-  margin-right: 8rpx;
+  margin: 0 auto 0 4rpx; /* 紧跟标题，右侧留空给「+ 我想吃」，两者不再挤在一起 */
 }
 .fp-wish-caret.up { transform: rotate(-135deg); }
 .fp-wish-add {
-  /* 触控 88rpx：原 60rpx，是许愿池的主操作 */
-  height: 88rpx;
+  flex: none;
+  min-height: 44px;
   padding: 0 22rpx;
   display: flex;
   align-items: center;
   border-radius: var(--r-pill);
-  background: var(--pop);
-  color: var(--anchor-contrast);
-  font-size: calc(25rpx * var(--fs-mul, 1));
-  font-weight: 800;
-  box-shadow: var(--sh-pop);
+  background: transparent;   /* 文字按钮：首屏红色只留给 hero「加入X餐」 */
+  color: var(--gold-deep);
+  font-size: var(--fs-sub);
+  font-weight: 700;
 }
 /* 展开态下头部补 margin-bottom */
 .fp-wish-head { margin-bottom: 0; }
 .fp-wish.expanded .fp-wish-head { margin-bottom: 18rpx; }
-.fp-wish-list { display: flex; flex-direction: column; gap: 12rpx; }
-.fp-wish-item {
+.fp-wish-preview {
+  min-height: 88rpx;
   display: flex;
   align-items: center;
   gap: 16rpx;
-  padding: 16rpx 18rpx;
-  background: var(--paper-2);
-  border-radius: var(--r-md);
+  padding: 16rpx;
+  margin-top: 12rpx;
+  background: var(--paper);
+  border-radius: var(--r-sm);   /* 内层圆角不大于外层心愿卡（--r-card） */
+  color: var(--mut-strong);
+  font-size: var(--fs-cap);
 }
-.fp-wish-text { flex: 1; min-width: 0; font-size: calc(28rpx * var(--fs-mul, 1)); font-weight: 700; color: var(--ink); }
+.fp-wish-preview-copy { flex: 1; min-width: 0; }
+.fp-wish-preview-by { margin-top: 6rpx; font-size: var(--fs-cap); }
+.fp-wish-preview-dish { color: var(--ink); font-size: calc(32rpx * var(--fs-mul, 1)); font-weight: 700; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; word-break: break-all; }
+.fp-wish-preview-rest { flex: none; font-size: var(--fs-cap); color: var(--gold-deep); }
+.fp-wish-list { display: flex; flex-direction: column; }
+.fp-wish-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+  padding: 18rpx 0 8rpx;
+  border-bottom: 2rpx solid var(--paper-2);
+}
+.fp-wish-item:last-child { border-bottom: 0; }
+.fp-wish-item-copy { display: flex; align-items: flex-start; gap: 14rpx; width: 100%; min-width: 0; }
+.fp-wish-avatar { width: 56rpx; height: 56rpx; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--paper-2); color: var(--mut-strong); font-size: var(--fs-cap); font-weight: 700; }
+.fp-wish-text {
+  flex: 1;
+  min-width: 0;
+  font-size: calc(28rpx * var(--fs-mul, 1));
+  font-weight: 700;
+  line-height: 1.45;
+  color: var(--ink);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-all;
+}
+.fp-wish-item-meta { display: flex; width: 100%; align-items: center; gap: 8rpx; }
 /* 待挑菜标记：纯文本心愿点击直达按关键词搜菜 */
 .fp-wish-pending {
   flex: none;
-  font-size: calc(21rpx * var(--fs-mul, 1));
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  font-size: var(--fs-cap);
   font-weight: 700;
   color: var(--gold-deep);
-  background: rgba(176, 137, 73, 0.12);
-  border-radius: 20rpx;
-  padding: 6rpx 14rpx;
+  padding: 0 8rpx;
 }
-.fp-wish-by { font-size: calc(23rpx * var(--fs-mul, 1)); color: var(--mut-strong); font-weight: 600; }
-/* 改：与 .fp-wish-del 同一套几何（视觉 64rpx，热区由 ::after 撑到 --tap-min）。
-   放「×」左边，删是最后一个（误触代价最大的那个离手最远）。 */
-.fp-wish-edit {
-  position: relative;
-  width: 64rpx;
-  height: 64rpx;
-  border-radius: 50%;
-  background: var(--c-surface);
+.fp-wish-by { flex: 1; min-width: 0; padding-left: 70rpx; font-size: var(--fs-cap); color: var(--mut-strong); font-weight: 600; }
+/* 操作占用独立的触控区域，避免相邻按钮的扩展热区重叠。 */
+.fp-wish-more {
+  flex: none;
+  box-sizing: border-box;
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: var(--r-card);
   display: flex; align-items: center; justify-content: center;
   font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: 700;
-  color: var(--mut);
-  border: 2rpx solid var(--c-border);
+  color: var(--mut-strong);
 }
-.fp-wish-edit::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: var(--tap-min);
-  height: var(--tap-min);
-  transform: translate(-50%, -50%);
-}
-.fp-wish-del {
-  position: relative;
-  width: 64rpx;   /* 视觉 64rpx，热区由 ::after 撑到 88rpx */
-  height: 64rpx;
-  border-radius: 50%;
-  background: var(--c-surface);
-  display: flex; align-items: center; justify-content: center;
-  font-size: calc(32rpx * var(--fs-mul, 1)); color: var(--mut);
-  border: 2rpx solid var(--c-border);
-}
-
-.fp-wish-del::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 88rpx;
-  height: 88rpx;
-  transform: translate(-50%, -50%);
-}
+.fp-wish-linked { color: var(--pine-ink); font-size: var(--fs-cap); }
 .fp-wish-confirm {
   margin-top: 22rpx;
-  min-height: 88rpx;
-  padding: 12rpx 24rpx;
-  border-radius: var(--r-pill);
+  min-height: 44px;
+  padding: 12rpx var(--pad-card-sm);
+  border-radius: var(--r-card);   /* 实心主按钮统一走 --r-card */
   background: var(--anchor);
   color: var(--anchor-contrast);
   font-size: calc(28rpx * var(--fs-mul, 1));
@@ -664,23 +669,10 @@
 .mh-hero--empty .mh-greet {
   margin-bottom: 40rpx;
 }
-.mh-hero--empty .mh-greet .mh-hi {
-  color: var(--gold);
-  font-size: calc(25rpx * var(--fs-mul, 1));
-}
 .mh-hero--empty .mh-greet .mh-name {
   color: var(--anchor-contrast);
   font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 700;
-}
-.mh-empty-eyebrow {
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: calc(25rpx * var(--fs-mul, 1));
-  color: var(--gold);
-  font-weight: 700;
-  letter-spacing: 1rpx;
-  margin-bottom: 12rpx;
 }
 .mh-empty-headline {
   font-size: calc(56rpx * var(--fs-mul, 1));
@@ -704,13 +696,22 @@
 .mh-empty-go {
   display: inline-flex;
   align-items: center;
-  padding: 20rpx 44rpx;
-  border-radius: var(--r-pill);
-  background: var(--pop);
+  min-height: 44px;
+  box-sizing: border-box;
+  padding: 20rpx 44rpx;   /* 例外：这是实心按钮不是卡，左右留白跟字号走 */
+  border-radius: var(--r-card);   /* 实心主按钮统一走 --r-card */
+  background: var(--pop-fill);
   color: var(--anchor-contrast);
   font-size: calc(28rpx * var(--fs-mul, 1));
   font-weight: 800;
   box-shadow: var(--sh-pop);
+}
+
+/* 深色档覆盖要写在被覆盖的规则之后：@media 不加权重，写在前面会被后面的浅色规则盖回去 */
+@media (prefers-color-scheme: dark) {
+  /* 已选菜谱：与「已上桌」同一个完成色（--pine 文字在深底上只有约 2.9:1） */
+  .fp-wish-linked { color: var(--c-success); }
+  /* 空态 hero 底是 --anchor 锚点色，而 --gold 深色档翻成 #8a6a3a，金字压在锚点底上不到 3:1 */
 }
 
 /* ============ 许愿弹窗（root-portal 渲染在页面根之外，不保证继承 page 变量；
@@ -719,11 +720,11 @@
 /* 注意：backdrop 与 modal 是 root-portal 下的兄弟节点，变量必须同时声明给两者 */
 .wish-backdrop,
 .wish-modal {
-  --pop: #e8472a;
+  --pop: #c8381f;
   --pop-soft: #fdece6;
   --pop-deep: #b3381f;
   --ink: #2c241b;
-  --mut: #7a6e5d;
+  --mut: #716555;
   --mut-2: #b3a795;
   --mut-strong: #6b5f50;
   --paper-2: #f0ebe2;
@@ -734,24 +735,29 @@
   --r-md: 24rpx;
   --r-card: 16rpx;
   --r-pill: 999rpx;
-  --sh-pop: 0 6rpx 16rpx rgba(232, 71, 42, 0.22);
+  --sh-pop: 0 6rpx 16rpx rgba(200, 56, 31, 0.22);
   --fs-cap: 23rpx;
+  --ink-deep: #3a2e23;          /* 「算了」按钮字色（原副本漏了这两项） */
+  --anchor-contrast: #fbf8f3;   /* 「许愿」按钮字色，两档恒定 */
+  --pop-fill: #c8381f;          /* 「许愿」红底（同 app.wxss --pop-fill） */
 }
 /* 深色模式副本：root-portal 不继承 page 变量，dark 值取 theme.json dark 段 */
 .wish-backdrop.is-dark,
 .wish-modal.is-dark {
   --pop: #ff6a4d;
   --pop-soft: #3a2218;
-  --pop-deep: #d94b30;
+  --pop-deep: #ff7a5c;
   --ink: #efefef;
   --mut: #9a9a96;
   --mut-2: #757570;
   --mut-strong: #c4c0b8;
-  --paper-2: #262626;
+  --paper-2: #2e2e2e;
   --c-surface: #242424;
   --line: #333333;
   --line-light: #333333;
   --sh-pop: 0 6rpx 16rpx rgba(0, 0, 0, 0.45);
+  --ink-deep: #e2e2e2;
+  --pop-fill: #c8381f;          /* 深色档 --pop 上放浅字只有 2.7:1，红底用品牌原红（4.9:1） */
 }
 
 .wish-backdrop {
@@ -801,7 +807,7 @@
   position: absolute;
   inset: -14rpx;
   border-radius: 50%;
-  border: 3rpx solid rgba(232, 71, 42, 0.18);
+  border: 3rpx solid rgba(200, 56, 31, 0.18);
 }
 .wish-modal-ic-glyph { font-size: calc(72rpx * var(--fs-mul, 1)); font-weight: 900; line-height: 1; color: var(--pop); }
 .wish-modal-title { font-size: calc(40rpx * var(--fs-mul, 1)); font-weight: 900; color: var(--ink); letter-spacing: -1rpx; line-height: 1.25; }
@@ -811,12 +817,12 @@
   width: 100%;
   box-sizing: border-box;
   height: 96rpx;
-  padding: 0 28rpx;
+  padding: 0 28rpx;   /* 例外：输入框不是卡表面；root-portal 里取不到 --pad-card，数值与它相同 */
   font-size: calc(29rpx * var(--fs-mul, 1));
   color: var(--ink);
   background: var(--paper-2);
   border: none;
-  border-radius: 28rpx;   /* 对齐 state-dialog 按钮圆角 */
+  border-radius: var(--r-card);   /* 与弹窗按钮、state-dialog 按钮同为 --r-card（原 28rpx） */
   transition: border-color .2s;
 }
 .wish-modal-input:focus,
@@ -832,7 +838,7 @@
 .wish-btn-ok {
   flex: 1;
   height: 100rpx;
-  border-radius: 28rpx;
+  border-radius: var(--r-card);   /* 弹窗块里已声明 --r-card 副本 */
   font-size: calc(32rpx * var(--fs-mul, 1));
   font-weight: 800;
   letter-spacing: 0.6rpx;
@@ -841,7 +847,7 @@
   justify-content: center;
 }
 .wish-btn-cancel { background: var(--paper-2); color: var(--ink-deep); }
-.wish-btn-ok { background: var(--pop); color: var(--anchor-contrast); box-shadow: 0 4rpx 8rpx rgba(180, 40, 20, 0.3), 0 20rpx 44rpx rgba(232, 71, 42, 0.4); }
+.wish-btn-ok { background: var(--pop-fill); color: var(--anchor-contrast); box-shadow: 0 4rpx 8rpx rgba(180, 40, 20, 0.3), 0 20rpx 44rpx rgba(200, 56, 31, 0.4); }
 .wish-btn-ok.off { opacity: 0.4; }
 
 /* ============ SKELETON ============ */
@@ -943,7 +949,7 @@
   height: 5rpx;
   margin-left: -24rpx;
   border-radius: 3rpx;
-  background: var(--pop);
+  background: var(--pop-fill);
 }
 .mh-load-error-title {
   font-size: calc(36rpx * var(--fs-mul, 1));
@@ -965,8 +971,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--r-pill);
-  background: var(--pop);
+  border-radius: var(--r-card);
+  background: var(--pop-fill);
   color: var(--anchor-contrast);
   font-size: var(--fs-btn);
   font-weight: 800;

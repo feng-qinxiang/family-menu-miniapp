@@ -1,34 +1,26 @@
 /* ============================================================
    pages/recipes · 紧凑页头 + 菜谱网格
    页头用 app.wxss 的 .cpt-head；全局 token / .chip / .g-fade 复用 app.wxss。
-   番茄红 --pop 只给本屏唯一主操作「+ 新建」，其余选中态一律墨色。
+   筛选与来源用浅底标记，加入菜单保留番茄红主操作。
    ============================================================ */
 .recipes-mag {
   min-height: 100vh;
   background: var(--paper);
-  /* 无餐盘浮条：只避开 tabBar（--tabbar-h 已含安全区） */
-  padding-bottom: calc(var(--tabbar-h) + 40rpx);
+  /* 本页是 navigateTo 进来的子页，没有 tabBar：无浮条时只让开安全区 */
+  padding-bottom: calc(env(safe-area-inset-bottom) + 40rpx);
 }
-/* 有餐盘浮条：浮条 bottom = --tabbar-h + 20rpx、高约 132rpx（88 徽标 + 2×22 内边距），再留 32rpx 缝 */
-.recipes-mag.rx-has-tray { padding-bottom: calc(var(--tabbar-h) + 184rpx); }
+/* 有餐盘浮条：浮条 bottom = 安全区 + 20rpx、高约 132rpx（88 徽标 + 2×22 内边距，大字档两行文案约 87rpx 仍不超过徽标），
+   再留 32rpx 缝 → 安全区 + 184rpx；.rx-sheet 另有 24rpx 底边距，最后一张卡停在浮条上方约 56rpx */
+.recipes-mag.rx-has-tray { padding-bottom: calc(env(safe-area-inset-bottom) + 184rpx); }
 
-/* ===== 页头主操作：+ 新建（本屏唯一红色） ===== */
-.rx-create {
-  display: flex; align-items: center; gap: 6rpx;
-  background: var(--pop); color: var(--anchor-contrast);
-  font-size: var(--fs-sub); font-weight: 800;
-  padding: 14rpx 26rpx; border-radius: var(--r-pill);
-  box-shadow: var(--sh-pop);
-}
-.rx-create-plus { font-size: var(--fs-lg); font-weight: 700; line-height: 1; }
+/* 新建：结果条里的文字按钮（.btn-text），只配一枚加号图标 */
+.rx-create { display: flex; align-items: center; gap: 6rpx; font-size: var(--fs-sub); color: var(--ink-deep); }
+.rx-create-ico { width: 28rpx; height: 28rpx; flex: none; filter: brightness(0); opacity: .75; }
 
 /* ===== 视觉小、热区 88rpx（宽度沿用元素自身，只纵向撑开，避免横向相邻元素互抢） ===== */
-.rx-create, .rx-chip, .rx-avd-ic, .rx-meal-pk-btn, .rx-qf-chip { position: relative; }
+.rx-create, .rx-meal-pk-btn { position: relative; }
 .rx-create::after,
-.rx-chip::after,
-.rx-avd-ic::after,
-.rx-meal-pk-btn::after,
-.rx-qf-chip::after {
+.rx-meal-pk-btn::after {
   content: '';
   position: absolute;
   left: 0; right: 0; top: 50%;
@@ -39,32 +31,34 @@
 .rx-sheet { padding: 0 0 24rpx; }
 
 /* ===== 搜索 + 筛选同一行 ===== */
-.rx-searchrow { display: flex; align-items: stretch; gap: 16rpx; margin: 0 48rpx; }
+.rx-searchrow { display: flex; align-items: center; margin: 0 24rpx; background: var(--paper-2); border-radius: var(--r-md); }
+.rx-searchrow.expanded { border-radius: var(--r-md) var(--r-md) 0 0; }
+.rx-searchrow.focus { outline: 2rpx solid var(--line-deep); outline-offset: 2rpx; }
 .rx-search {
   flex: 1; min-width: 0;
-  display: flex; align-items: center; gap: 18rpx;
-  min-height: 88rpx; box-sizing: border-box; padding: 0 28rpx;
-  background: var(--c-surface); border-radius: var(--r-chip);
-  border: var(--bd-card); box-shadow: var(--sh-card);
-  transition: box-shadow .2s var(--ease-out);
+  display: flex; align-items: center; gap: 12rpx;
+  min-height: var(--tap-min); box-sizing: border-box; padding: 0 20rpx;
 }
-.rx-search.focus { box-shadow: 0 0 0 4rpx var(--line-deep), var(--sh-card); }
 .rx-search-ico {
-  flex: none; width: 34rpx; height: 34rpx;
+  flex: none; width: 30rpx; height: 30rpx;
   background: no-repeat center/contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%239a8e7d' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-3-3'/%3E%3C/svg%3E");
 }
-.rx-search-input { flex: 1; font-size: calc(28rpx * var(--fs-mul, 1)); color: var(--ink); font-weight: 500; }
+.rx-search-input { flex: 1; min-width: 0; font-size: var(--fs-sub); color: var(--ink); font-weight: 400; }
 .rx-search-ph { color: var(--mut); font-weight: 500; }
+.rx-search-clear { flex: none; min-width: var(--tap-min); min-height: var(--tap-min); display: flex; align-items: center; justify-content: center; color: var(--mut-strong); }
+.rx-clear-icon { position: relative; width: 24rpx; height: 24rpx; }
+.rx-clear-icon::before, .rx-clear-icon::after { content: ''; position: absolute; left: 0; top: 50%; width: 100%; height: 3rpx; background: currentColor; transform: rotate(45deg); }
+.rx-clear-icon::after { transform: rotate(-45deg); }
 
-/* 筛选开关（原「点菜条件」整行卡片收成搜索框右侧一颗按钮） */
+/* 筛选与搜索共用背景，仅用短分隔线区分点击位置。 */
 .rx-filter-btn {
-  flex: none; display: flex; align-items: center; gap: 10rpx;
-  min-height: 88rpx; box-sizing: border-box; padding: 0 24rpx;
-  background: var(--c-surface); border-radius: var(--r-chip);
-  border: var(--bd-card); box-shadow: var(--sh-card);
+  position: relative; flex: none; display: flex; align-items: center; justify-content: center; gap: 10rpx;
+  min-height: var(--tap-min); min-width: 128rpx; box-sizing: border-box; padding: 0 16rpx;
   color: var(--mut-strong);
 }
-.rx-filter-btn.on { border: 2rpx solid var(--ink); color: var(--ink); }
+.rx-filter-btn::before { content: ''; position: absolute; left: 0; top: 28rpx; bottom: 28rpx; border-left: 2rpx solid var(--line-deep); }
+.rx-filter-btn.on { color: var(--pop-deep); }
+.rx-filter-dot { position: absolute; top: 16rpx; right: 12rpx; width: 8rpx; height: 8rpx; border-radius: 50%; background: var(--pop-fill); }
 /* 三条递减横线：用 currentColor 画，颜色跟着 token 走，深色模式自动翻转 */
 .rx-filter-ico {
   position: relative; flex: none;
@@ -77,55 +71,83 @@
 }
 .rx-filter-t {
   max-width: 140rpx; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
-  font-size: var(--fs-sub); font-weight: 800;
+  font-size: var(--fs-sub); font-weight: 500;
 }
 
-/* ===== 来源 chips + 忌口开关 ===== */
-.rx-srcrow { display: flex; align-items: center; }
-.rx-srcrow .rx-chips { flex: 1; min-width: 0; }
-/* 上下 12rpx 内边距 = (88 热区 − 64 视觉) / 2，热区不被 scroll-view 裁掉 */
-.rx-chips { width: 100%; white-space: nowrap; padding: 12rpx 0; margin-top: 8rpx; }
-.rx-chips-inner { display: inline-flex; gap: 16rpx; padding: 0 48rpx; }
-.rx-chip { min-height: 64rpx; padding: 0 24rpx; font-size: var(--fs-sub); font-weight: 700; }
-.rx-sdot { width: 14rpx; height: 14rpx; border-radius: 50%; background: var(--mut-2); }
-.rx-chip.on .rx-sdot { background: var(--gold); }
-.rx-sdot--owned { background: var(--mut-strong); }
-.rx-sdot--community { background: var(--pine); }
-.rx-sdot--imported { background: var(--gold-deep); }
+/* 一条横滑：两个挑菜动作 + 菜系（原来是挑菜行 + 左侧菜系栏两层，卡片只剩 2/3 宽） */
+.rx-chiprow { margin: 16rpx 0 8rpx; white-space: nowrap; }
+.rx-chiprow-in { display: inline-flex; align-items: center; gap: 12rpx; padding: 0 24rpx; }
+.rx-chip { flex: none; display: flex; align-items: center; min-height: var(--tap-min); }
+.rx-chip-t { display: flex; align-items: center; gap: 8rpx; box-sizing: border-box; min-height: 56rpx; padding: 0 22rpx; border-radius: var(--r-pill); border: 2rpx solid var(--line); background: var(--c-surface); color: var(--mut-strong); font-size: var(--fs-sub); font-weight: 600; }
+.rx-chip.on .rx-chip-t { background: var(--anchor); border-color: var(--anchor); color: var(--anchor-contrast); }
+.rx-chip-act .rx-chip-t { color: var(--ink); }
+.rx-chip-act.on .rx-chip-t { background: var(--pop-soft); border-color: var(--pop-soft); color: var(--pop-deep); }
+.rx-chip.on .rx-pick-icon { filter: brightness(0) invert(1); opacity: 1; }
+.rx-chip-act.on .rx-pick-icon { filter: brightness(0); opacity: 1; }
+.rx-chip-sep { flex: none; width: 2rpx; height: 36rpx; background: var(--line-deep); }
+.rx-current-filter { display: flex; flex-wrap: wrap; align-items: center; gap: 0 16rpx; margin: 0 24rpx; color: var(--mut-strong); font-size: var(--fs-sub); line-height: 1.5; word-break: break-all; }
+.rx-filter-caption { color: var(--mut); }
+.rx-filter-selected { display: flex; align-items: center; min-height: var(--tap-min); min-width: 88rpx; color: var(--pop-deep); font-weight: 700; }
+.rx-results { margin: 8rpx 24rpx 0; }
 
-.rx-avd-ic {
-  flex: none; margin: 8rpx 48rpx 0 8rpx;
-  display: flex; align-items: center; gap: 8rpx;
-  min-height: 64rpx; box-sizing: border-box; padding: 0 18rpx;
-  border-radius: var(--r-pill);
-  background: var(--paper-2); border: 2rpx solid var(--line-deep);
-}
-.rx-avd-ic.on { border-color: var(--ink); }
-.rx-avd-glyph { width: 18rpx; height: 18rpx; border-radius: 50%; background: var(--mut-2); }
-.rx-avd-ic.on .rx-avd-glyph { background: var(--ink); }
-.rx-avd-t { font-size: var(--fs-mini); font-weight: 700; color: var(--ink); }
+/* 随机挑菜与库存匹配共用一张结果卡，先预览再加入菜单。 */
+.rx-pick-icon { width: 28rpx; height: 28rpx; flex: none; filter: brightness(0); opacity: .65; }
+/* 左右 24rpx 与本页搜索条、挑菜栏、列表同一条边（原 --page-gutter 46rpx 让这张卡比上下都窄一圈） */
+.rx-picker { margin: 0 24rpx 16rpx; padding: 0 var(--pad-card-sm) 24rpx; border-radius: var(--r-card); background: var(--c-surface); border: var(--bd-card); box-shadow: none; }
+.rx-picker-head { display: flex; align-items: center; gap: 12rpx; }
+.rx-picker-label { flex: 1; min-width: 0; font-size: calc(32rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--ink); }
+.rx-picker-close { min-width: 88rpx; min-height: var(--tap-min); display: flex; align-items: center; justify-content: center; color: var(--mut); font-size: var(--fs-h2); }
+.rx-picker-stock { display: flex; flex-wrap: wrap; gap: 8rpx 20rpx; font-size: var(--fs-cap); color: var(--pop-deep); margin-top: 16rpx; line-height: 1.5; }
+.rx-stock-summary { padding: 0 20rpx 20rpx; margin-bottom: 24rpx; border-radius: var(--r-sm); /* 内层圆角不大于外层 .rx-picker */ background: var(--paper-2); }
+.rx-stock-head { display: flex; align-items: center; justify-content: space-between; gap: 12rpx; font-size: var(--fs-cap); font-weight: 700; }
+.rx-stock-link { display: flex; align-items: center; min-height: var(--tap-min); color: var(--mut-strong); font-size: var(--fs-mini); font-weight: 500; }
+.rx-stock-items { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14rpx 28rpx; }
+.rx-stock-item { min-width: 0; display: flex; align-items: baseline; gap: 8rpx; font-size: var(--fs-sub); line-height: 1.5; }
+.rx-stock-name { flex: 1; min-width: 0; word-break: break-all; }
+.rx-stock-amount { flex: none; max-width: 50%; color: var(--mut-strong); text-align: right; word-break: break-all; }
+.rx-stock-more { grid-column: 1 / -1; font-size: var(--fs-cap); color: var(--mut-strong); }
+.rx-stock-note { font-size: var(--fs-cap); color: var(--mut-strong); line-height: 1.5; }
+.rx-stock-note text { position: relative; display: inline-block; color: var(--pop-deep); }
+/* 「重试」是行内字，原热区只有一行字高：视觉不变，热区上下撑到 88rpx（同 .rx-create::after 写法；上方是「冰箱现有」文字，下方有 44rpx 留白，不抢别的点击） */
+.rx-stock-note text::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: var(--tap-min); transform: translateY(-50%); }
+.rx-picked-tags { font-size: var(--fs-cap); color: var(--mut-strong); margin-top: 4rpx; }
+.rx-picked-summary { font-size: var(--fs-cap); color: var(--mut-strong); line-height: 1.5; margin-top: 12rpx; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.rx-picked-main { display: flex; align-items: stretch; gap: 24rpx; }
+.rx-picked-photo { position: relative; width: 36%; min-height: 320rpx; flex: none; border-radius: var(--r-sm); /* 内层圆角不大于外层 .rx-picker */ overflow: hidden; background: var(--paper-2); }
+.rx-picked-thumb { position: absolute; inset: 0; width: 100%; height: 100%; }
+.rx-picked-copy { flex: 1; min-width: 0; }
+.rx-picked-name { font-size: var(--fs-lg); font-weight: 800; line-height: 1.4; color: var(--ink); word-break: break-all; }
+.rx-picked-meta { font-size: var(--fs-cap); color: var(--mut-strong); margin-top: 4rpx; }
+.rx-picked-ready { margin-top: 4rpx; font-size: var(--fs-cap); font-weight: 700; color: var(--pine-ink); }
+.rx-picked-priority { margin-top: 12rpx; color: var(--pop-deep); font-size: var(--fs-cap); line-height: 1.5; font-weight: 500; }
+.rx-picker-actions { display: flex; align-items: stretch; gap: 16rpx; margin-top: 20rpx; }
+.rx-picker-next, .rx-picker-add { min-height: var(--tap-min); flex: 1; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; border-radius: var(--r-card); padding: 0 12rpx; /* 例外：并排两颗按钮，不是卡 */ font-size: var(--fs-sub); font-weight: 700; }
+/* 卡内次按钮用 --paper-2（同首页「买食材」、做菜页「直接上桌」）：原 --paper 与白卡只差 1.05:1，深色档同样几乎看不出 */
+.rx-picker-next { background: var(--paper-2); color: var(--ink); flex-direction: column; padding: 10rpx 12rpx; }
+.rx-picker-next text { display: block; font-size: var(--fs-mini); color: var(--mut-strong); margin-top: 2rpx; }
+.rx-picker-add { background: var(--pop-fill); color: var(--anchor-contrast); }
+.rx-picker-empty { font-size: var(--fs-sub); color: var(--mut-strong); line-height: 1.6; padding: 12rpx 0 8rpx; }
+.rx-picker-note { font-size: var(--fs-cap); margin-top: 8rpx; }
+.rx-picker-retry { display: flex; align-items: center; min-height: var(--tap-min); color: var(--pop-deep); font-weight: 700; }
 
-/* ===== 点菜条件面板 ===== */
-.rx-quickfilters { margin: 12rpx 48rpx 0; padding: 20rpx 24rpx; background: var(--c-surface); border-radius: var(--r-chip); border: var(--bd-card); box-shadow: var(--sh-soft); }
-.rx-qf-row { display: flex; align-items: center; gap: 18rpx; min-height: 88rpx; }
-.rx-qf-label { flex: none; width: 72rpx; font-size: var(--fs-sub); font-weight: 800; color: var(--mut-strong); }
-.rx-qf-chips { display: flex; flex-wrap: wrap; gap: 14rpx; }
-.rx-qf-scroll { white-space: nowrap; }
-.rx-qf-chip { font-size: var(--fs-cap); font-weight: 700; color: var(--mut); padding: 12rpx var(--r-md); border-radius: var(--r-pill); background: var(--paper-2); }
-.rx-qf-chip.on { background: var(--anchor); color: var(--anchor-contrast); }
-.rx-qf-reset {
-  min-height: 88rpx; display: flex; align-items: center; justify-content: center;
-  font-size: var(--fs-sub); color: var(--mut-strong); font-weight: 700;
-}
+/* 筛选紧接搜索，用两行选项；小色块放在完整触控区内。 */
+.rx-quickfilters { margin: 0 24rpx; padding: 4rpx 12rpx 8rpx; background: var(--paper-2); border-radius: 0 0 var(--r-md) var(--r-md); }
+.rx-qf-row { display: flex; align-items: center; gap: 12rpx; min-height: var(--tap-min); }
+.rx-qf-row:first-child { border-top: var(--bd-card); }
+.rx-qf-label { flex: none; width: 64rpx; padding-left: 8rpx; box-sizing: border-box; font-size: var(--fs-cap); font-weight: 500; color: var(--mut-strong); }
+.rx-qf-chips { flex: 1; min-width: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4rpx; }
+.rx-qf-chip, .rx-qf-reset { display: flex; align-items: center; justify-content: center; min-height: var(--tap-min); min-width: 88rpx; color: var(--mut-strong); font-size: var(--fs-cap); font-weight: 500; }
+.rx-qf-text { display: flex; align-items: center; justify-content: center; box-sizing: border-box; min-height: 52rpx; padding: 0 10rpx; border-radius: var(--r-xs); white-space: nowrap; }
+.rx-qf-chip.on .rx-qf-text { background: var(--pop-soft); color: var(--pop-deep); font-weight: 700; }
+.rx-qf-reset .rx-qf-text { color: var(--mut); }
+.rx-qf-more { display: flex; align-items: center; min-height: var(--tap-min); padding-left: 8rpx; font-size: var(--fs-sub); color: var(--pine-ink); }
 
 /* ===== 结果条：N 道可点 + 点到下拉 同一行 ===== */
 .rx-listbar {
   display: flex; align-items: center; justify-content: space-between; gap: 16rpx;
-  margin: 12rpx 48rpx 12rpx;
+  margin: 0 0 12rpx; min-height: var(--tap-min); flex-wrap: wrap;
 }
-.rx-listbar-l { display: flex; align-items: baseline; gap: 14rpx; min-width: 0; }
-.rx-listbar-n { font-size: var(--fs-h2); font-weight: 900; color: var(--ink); line-height: 1.2; }
-.rx-listbar-hint { font-size: var(--fs-cap); color: var(--mut); white-space: nowrap; }
+.rx-listbar-n { flex: 1; min-width: 0; font-size: var(--fs-sub); font-weight: 700; color: var(--mut-strong); line-height: 1.2; }
 
 .rx-meal-picker { position: relative; flex: none; }
 .rx-meal-pk-btn {
@@ -134,6 +156,7 @@
   background: var(--paper-2); border-radius: var(--r-pill); border: 2rpx solid var(--line-deep);
 }
 .rx-meal-pk-l { font-size: var(--fs-mini); color: var(--mut-strong); font-weight: 700; }
+.rx-meal-caret { width: 12rpx; height: 12rpx; border-right: 3rpx solid var(--mut-strong); border-bottom: 3rpx solid var(--mut-strong); transform: translateY(-3rpx) rotate(45deg); }
 .rx-meal-pk-v { font-size: var(--fs-sub); color: var(--ink); font-weight: 800; }
 /* 透明全屏遮罩：点外部收起；z 压过餐盘浮条（z52） */
 .rx-drop-mask { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 53; }
@@ -151,7 +174,7 @@
 }
 .rx-meal-opt {
   display: flex; align-items: center; justify-content: space-between; gap: 30rpx;
-  min-height: 88rpx; padding: 0 26rpx; border-radius: var(--r-sm);
+  min-height: var(--tap-min); padding: 0 26rpx; border-radius: var(--r-sm);
   font-size: var(--fs-sub); font-weight: 700; color: var(--mut-strong);
 }
 .rx-meal-opt.on { color: var(--ink); font-weight: 900; background: var(--paper-2); }
@@ -160,14 +183,36 @@
 .rx-meal-opt.on .rx-meal-opt-x { opacity: 1; }
 
 /* ===== 网格 ===== */
-.rx-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24rpx; padding: 12rpx 48rpx 16rpx; }
+.rx-grid { display: grid; grid-template-columns: 1fr; gap: 16rpx; }
+.rx-stock-toggle { display: flex; align-items: center; justify-content: space-between; gap: 12rpx; min-height: 100rpx; padding: 8rpx; border-top: var(--bd-card); color: var(--ink); font-size: var(--fs-body); }
+.rx-stock-toggle switch { flex: none; }
+.rx-filter-hint { display: block; margin-top: 4rpx; color: var(--mut-strong); font-size: var(--fs-sub); }
+
+/* 条件确认复用全站底部弹层，关闭后保留输入。 */
+.rx-request-intro, .rx-request-note { font-size: var(--fs-body); color: var(--mut-strong); line-height: 1.6; }
+.rx-request-input { box-sizing: border-box; width: 100%; height: 164rpx; padding: 20rpx; margin: 24rpx 0; border: var(--bd-card); border-radius: var(--r-md); background: var(--paper-2); font-size: var(--fs-body); line-height: 1.6; color: var(--ink); }
+.rx-request-examples { margin: 0 0 24rpx; }
+.rx-request-example-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20rpx; }
+.rx-request-example { display: flex; flex-direction: column; justify-content: center; gap: 8rpx; min-height: 148rpx; padding: 16rpx 20rpx; box-sizing: border-box; border: var(--bd-card); border-radius: var(--r-md); font-size: var(--fs-cap); color: var(--mut-strong); line-height: 1.5; }
+.rx-request-example-title { font-size: var(--fs-sub); font-weight: 600; color: var(--ink); }
+.rx-request-preview { padding: 24rpx 28rpx; margin-bottom: 24rpx; background: var(--c-surface); border-radius: var(--r-md); }
+.rx-request-caption { display: block; font-size: var(--fs-sub); color: var(--mut-strong); margin-bottom: 12rpx; }
+.rx-request-labels { display: flex; flex-direction: column; gap: 16rpx; }
+.rx-request-labels > view { display: flex; gap: 24rpx; font-size: var(--fs-sub); line-height: 1.5; color: var(--pine-ink); }
+.rx-request-labels > view > text:first-child { flex: none; width: 88rpx; color: var(--mut-strong); }
+.rx-request-labels > view > text:last-child { flex: 1; min-width: 0; }
+.rx-request-warning { color: var(--pop-deep); font-size: var(--fs-sub); line-height: 1.6; padding: 16rpx 20rpx; border-left: 4rpx solid var(--pop-deep); background: var(--pop-soft); margin: 0 0 24rpx; }
+.rx-request-note { margin: 12rpx 0 20rpx; font-size: var(--fs-sub); }
+.rx-request-submit { min-height: 96rpx; display: flex; align-items: center; justify-content: center; background: var(--pine); color: var(--anchor-contrast); border-radius: var(--r-card); font-size: var(--fs-body); font-weight: 600; }
+.rx-request-submit::after { border: 0; }
+.rx-request-submit[disabled] { background: var(--paper-2); color: var(--mut-strong); }
 .rx-card-slot { min-width: 0; }
 .rx-card-slot .rc-card { width: 100%; }
 
 /* 上拉加载 */
 .rx-loadmore {
   display: flex; align-items: center; justify-content: center; gap: 14rpx;
-  margin: 4rpx 48rpx 0; min-height: 88rpx; padding: 16rpx 0;
+  margin: 12rpx 0 0; min-height: var(--tap-min); padding: 16rpx 0;
   font-size: calc(25rpx * var(--fs-mul, 1)); font-weight: 700; color: var(--mut);
   border-top: 2rpx solid var(--paper-2);
 }
@@ -177,7 +222,7 @@
 }
 
 /* 空状态附加 */
-.rx-empty-extra { margin-top: 20rpx; min-height: 88rpx; display: flex; align-items: center; justify-content: center; font-size: var(--fs-sub); font-weight: 700; color: var(--gold-deep); }
+.rx-empty-extra { margin-top: 20rpx; min-height: var(--tap-min); display: flex; align-items: center; justify-content: center; font-size: var(--fs-sub); font-weight: 700; color: var(--gold-deep); }
 
 /* 骨架 */
 .rx-skel { background: var(--c-surface); border-radius: var(--r-card); overflow: hidden; border: var(--bd-card); padding-bottom: var(--r-md); }
@@ -187,7 +232,7 @@
 
 /* ===== 餐盘浮条（有菜才出现）：深色锚点底，按钮用浅色反相，不和「+ 新建」抢红 ===== */
 .rx-tray {
-  position: fixed; left: 32rpx; right: 32rpx; bottom: calc(var(--tabbar-h) + 20rpx); z-index: 52;
+  position: fixed; left: 32rpx; right: 32rpx; bottom: calc(env(safe-area-inset-bottom) + 20rpx); z-index: 52;
   display: flex; align-items: center; gap: 20rpx;
   background: var(--anchor); border-radius: 38rpx; padding: 22rpx 24rpx;
   color: var(--anchor-contrast); box-shadow: 0 24rpx 60rpx rgba(40,28,18,.4);
@@ -202,12 +247,12 @@
 .rx-tray-t { font-size: var(--fs-cap); font-weight: 800; }
 .rx-tray-s { font-size: calc(23rpx * var(--fs-mul, 1)); color: rgba(255,255,255,.62); margin-top: 4rpx; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .rx-tray-mini {
-  flex: none; display: flex; align-items: center; min-height: 88rpx; box-sizing: border-box; padding: 0 20rpx;
-  font-size: calc(23rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--gold);
+  flex: none; display: flex; align-items: center; min-height: var(--tap-min); box-sizing: border-box; padding: 0 20rpx;
+  font-size: calc(23rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--gold-on-dark);
 }
 .rx-tray-go {
   flex: none; display: flex; align-items: center; gap: 10rpx;
-  min-height: 88rpx; box-sizing: border-box; padding: 0 28rpx; border-radius: var(--r-pill);
+  min-height: var(--tap-min); box-sizing: border-box; padding: 0 28rpx; border-radius: var(--r-card);   /* 例外：浮条按钮不是卡 */
   background: var(--anchor-contrast); color: var(--anchor); font-size: var(--fs-sub); font-weight: 800;
 }
 /* CSS 画的箭头，颜色跟文字走（原来是写死白色描边的 SVG，换浅底后会看不见） */
@@ -215,4 +260,16 @@
   width: 12rpx; height: 12rpx;
   border-top: 4rpx solid currentColor; border-right: 4rpx solid currentColor;
   transform: rotate(45deg);
+}
+
+/* 深色档覆盖放在文件末尾：@media 不加权重，写在被覆盖的规则之前会被盖回去 */
+@media (prefers-color-scheme: dark) {
+  /* 两枚 SVG 被 brightness(0) 压成黑色，深底上看不见：翻成白色（选中态的 opacity: 1 照常生效） */
+  .rx-pick-icon, .rx-create-ico { filter: brightness(0) invert(1); }
+  .rx-qf-more { color: var(--c-success); }
+  /* --pine 当文字在深底上只有约 2.9:1：与首页「已上桌」一样改用完成色 */
+  .rx-picked-ready,
+  .rx-request-labels > view { color: var(--c-success); }
+  /* 浮条底是 --anchor 锚点色，--gold 深色档翻成 #8a6a3a，「买 N」压在上面不到 3:1 */
+  .rx-tray-mini { color: var(--anchor-contrast); }
 }

@@ -1,0 +1,79 @@
+{
+  "passed": true,
+  "url": "http://127.0.0.1:8847/?v=20261104-skills#followup-update",
+  "checks": [
+    {
+      "name": "39 page catalogue retained",
+      "passed": true
+    },
+    {
+      "name": "three trial previews",
+      "passed": true
+    },
+    {
+      "name": "current native verification boundary visible",
+      "passed": true
+    },
+    {
+      "name": "old comparison and original retained",
+      "passed": true
+    },
+    {
+      "name": "new preview images loaded",
+      "passed": true
+    },
+    {
+      "name": "all referenced local images and zip accessible",
+      "passed": true
+    },
+    {
+      "name": "trial card opens recipes",
+      "passed": true
+    },
+    {
+      "name": "trial card opens pantry",
+      "passed": true
+    },
+    {
+      "name": "trial card opens request",
+      "passed": true
+    },
+    {
+      "name": "1344px gallery has no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "375px gallery has no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "320px gallery has no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "no gallery script errors",
+      "passed": true
+    }
+  ],
+  "cataloguePages": 39,
+  "resources": {
+    "checked": 127,
+    "failures": []
+  },
+  "widths": [
+    {
+      "viewport": 1344,
+      "scroll": 1329
+    },
+    {
+      "viewport": 375,
+      "scroll": 360
+    },
+    {
+      "viewport": 320,
+      "scroll": 305
+    }
+  ],
+  "errors": [],
+  "nativeWechatVerified": false
+}

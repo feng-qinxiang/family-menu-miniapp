@@ -50,6 +50,36 @@ public class EnhancedService {
 
     // ========== Weekly Menu ==========
 
+    public Map<String, String> ingredientPhotos(long familyId) {
+        Map<String, String> photos = new LinkedHashMap<>();
+        jdbcTemplate.query("SELECT ingredient_name, cover_image FROM ingredient_photo WHERE family_id = ?",
+                (org.springframework.jdbc.core.RowCallbackHandler) rs ->
+                        photos.put(rs.getString("ingredient_name"), rs.getString("cover_image")), familyId);
+        return photos;
+    }
+
+    @Transactional
+    public Map<String, String> saveIngredientPhoto(long familyId, long userId, ApiModels.IngredientPhotoRequest request) {
+        String name = request.ingredientName().trim();
+        String photo = request.coverImage().trim();
+        if (name.isEmpty()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "请输入食材名");
+        if (photo.isEmpty()) {
+            jdbcTemplate.update("DELETE FROM ingredient_photo WHERE family_id = ? AND ingredient_name = ?", familyId, name);
+        } else {
+            // 只绑定本人经现有上传接口保存的图片，不接受别人的上传地址或外链。
+            if (!photo.matches("/uploads/[a-f0-9]{32}\\.(jpg|jpeg|png|webp|gif|bmp|heic)")
+                    || !Boolean.TRUE.equals(jdbcTemplate.queryForObject(
+                    "SELECT COUNT(*) > 0 FROM uploaded_file WHERE user_id = ? AND url = ?", Boolean.class, userId, photo))) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "请选择自己上传的食材图片");
+            }
+            jdbcTemplate.update("""
+                    INSERT INTO ingredient_photo (family_id, ingredient_name, cover_image)
+                    VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE cover_image = VALUES(cover_image)
+                    """, familyId, name, photo);
+        }
+        return ingredientPhotos(familyId);
+    }
+
     public WeeklyMenuView generateWeeklyMenu(long familyId, long userId) {
         synchronized (weeklyMenuCache) {
             WeeklyMenuView cached = weeklyMenuCache.get(familyId);
@@ -329,8 +359,9 @@ public class EnhancedService {
     }
 
     /**
-     * 冰箱里「能做什么」：判定口径与 {@link PantryDeduction}（真正扣库存的那套）**逐字一致**——
+     * 冰箱里「能做什么」：用量判定与 {@link PantryDeduction}（真正扣库存的那套）一致——
      * 名称与单位都归一后完全相等、两边用量都要能解析出数字，不做同义词/包含式匹配。
+     * 已过期的库存不参与推荐，到期日为今天及未来三天的食材优先。
      *
      * 为什么必须一致：这一份数字会被冰箱页当成权威数据展示（`3/3` → 「食材都有，直接开火」），
      * 也会驱动首页推荐排序。原来这里用 {@code IngredientMatcher}（同义词 + 双向子串 + 不看单位），
@@ -344,10 +375,22 @@ public class EnhancedService {
         }
         // 用量写「适量/少许」的行不入索引：扣减侧不会动它们，这里也就不该说"有"
         Map<String, Double> pantryAmounts = new HashMap<>();
+        Set<String> expiringKeys = new HashSet<>();
+        LocalDate today = LocalDate.now();
         for (PantryItem item : pantry) {
+            LocalDate expiry = item.expiresAt() == null || item.expiresAt().isBlank()
+                    ? null : LocalDate.parse(item.expiresAt(), DATE_FMT);
+            // 到期当天仍算临期；已经过期的库存不能成为「现在能做」的依据。
+            if (expiry != null && expiry.isBefore(today)) {
+                continue;
+            }
             Double amount = PantryDeduction.parseAmount(item.amount());
             if (amount != null) {
-                pantryAmounts.merge(stockKey(item.ingredientName(), item.unit()), amount, Double::sum);
+                String key = stockKey(item.ingredientName(), item.unit());
+                pantryAmounts.merge(key, amount, Double::sum);
+                if (expiry != null && !expiry.isAfter(today.plusDays(3))) {
+                    expiringKeys.add(key);
+                }
             }
         }
         if (pantryAmounts.isEmpty()) {
@@ -384,6 +427,7 @@ public class EnhancedService {
             }
             int matched = 0;
             List<String> missing = new ArrayList<>();
+            Set<String> expiring = new LinkedHashSet<>();
             Map<String, Double> required = new HashMap<>();
             for (PantryDeduction.Needed need : PantryDeduction.mergeNeeded(ingredients)) {
                 required.put(stockKey(need.name(), need.unit()), need.amount());
@@ -395,17 +439,22 @@ public class EnhancedService {
                 if (PantryDeduction.parseAmount(ing[2]) != null
                         && pantryAmounts.getOrDefault(key, 0.0) >= required.getOrDefault(key, Double.POSITIVE_INFINITY)) {
                     matched++;
+                    if (expiringKeys.contains(key)) {
+                        expiring.add(name);
+                    }
                 } else if (name != null && !name.isBlank()) {
                     missing.add(name);
                 }
             }
             if (matched > 0) {
                 double rate = (double) matched / ingredients.size();
-                results.add(new PantryMatchResult(entry.getValue(), matched, ingredients.size(), rate, missing));
+                results.add(new PantryMatchResult(entry.getValue(), matched, ingredients.size(), rate, missing,
+                        new ArrayList<>(expiring)));
             }
         }
 
-        results.sort(Comparator.comparingDouble(PantryMatchResult::matchRate).reversed());
+        results.sort(Comparator.comparingDouble(PantryMatchResult::matchRate).reversed()
+                .thenComparing(result -> result.expiringIngredients().isEmpty()));
         return results.stream().limit(10).toList();
     }
 

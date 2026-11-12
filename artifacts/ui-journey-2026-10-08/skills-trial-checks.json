@@ -1,0 +1,154 @@
+{
+  "date": "2026-11-04",
+  "worktree": "/Users/xx/.codex/worktrees/meal-journey-ui/家庭点菜小程序",
+  "branch": "codex/meal-journey-ui",
+  "status": "local trial complete; native verification pending developer access",
+  "skills": [
+    {
+      "name": "ui-ux-pro-max",
+      "path": "/Users/xx/rjd/skills/ui-ux-pro-max",
+      "source": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill",
+      "entryExists": true
+    },
+    {
+      "name": "ui-design",
+      "path": "/Users/xx/rjd/skills/ui-design",
+      "source": "https://github.com/TencentCloudBase/CloudBase-AI-Toolkit",
+      "entryExists": true
+    },
+    {
+      "name": "miniprogram-development",
+      "path": "/Users/xx/rjd/skills/miniprogram-development",
+      "source": "https://github.com/TencentCloudBase/CloudBase-AI-Toolkit",
+      "entryExists": true
+    },
+    {
+      "name": "cloudbase-platform",
+      "path": "/Users/xx/rjd/skills/cloudbase-platform",
+      "source": "https://github.com/TencentCloudBase/CloudBase-AI-Toolkit",
+      "entryExists": true
+    },
+    {
+      "name": "wechat-miniprogram-skills",
+      "path": "/Users/xx/rjd/skills/wechat-miniprogram-skills",
+      "source": "https://github.com/larkwins/wechat-miniprogram-skills",
+      "entryExists": true
+    },
+    {
+      "name": "frontend-design",
+      "path": "/Users/xx/rjd/skills/frontend-design",
+      "source": "https://github.com/anthropics/skills/tree/main/skills/frontend-design",
+      "entryExists": true
+    },
+    {
+      "name": "order-skill",
+      "path": "/Users/xx/rjd/skills/order-skill",
+      "source": "https://github.com/TencentCloudBase/awesome-miniprogram-skills",
+      "entryExists": true
+    }
+  ],
+  "localChecksPassed": true,
+  "checks": {
+    "logicTests": [
+      {
+        "file": "miniapp/test/meal-request.test.js",
+        "passed": true
+      },
+      {
+        "file": "miniapp/test/recipe-pick.test.js",
+        "passed": true
+      },
+      {
+        "file": "miniapp/test/ui-followup.test.js",
+        "passed": true
+      },
+      {
+        "file": "miniapp/test/ui-refinement.test.js",
+        "passed": true
+      },
+      {
+        "file": "miniapp/test/ingredient-photo.test.js",
+        "passed": true
+      }
+    ],
+    "static": {
+      "file": "miniapp/test/static-check.js",
+      "passed": true,
+      "filesChecked": 348,
+      "javascriptParsed": 103,
+      "mainPackageMB": 1.52,
+      "existingReleaseConfigurationPlaceholdersRemain": true
+    },
+    "prototypeBrowser": {
+      "file": "skills-browser-checks.json",
+      "passed": true,
+      "checks": 32
+    },
+    "galleryBrowser": {
+      "file": "gallery-skills-evidence.json",
+      "passed": true,
+      "checks": 13,
+      "cataloguePages": 39,
+      "resourcesChecked": 127
+    },
+    "figmaLocalContract": {
+      "passed": true,
+      "screens": 17,
+      "boards": 2,
+      "nativeTextNodes": 575,
+      "connectedLinks": 128,
+      "network": "none",
+      "nativeFigmaRun": false,
+      "webEntryRedirectVerified": true,
+      "webScriptSyntaxVerified": true
+    },
+    "verifyPickerSyntaxOnly": true,
+    "sourceCredentialPatterns": {
+      "passed": true,
+      "scope": "task additions compared with saved backup; files without saved baseline scanned in full",
+      "files": 17,
+      "addedLinesScanned": 763,
+      "findings": []
+    },
+    "gitDiffWhitespaceCheckPassed": true
+  },
+  "wiring": {
+    "skillsRootLinksPassed": true,
+    "globalCheckExitCode": 1,
+    "unrelatedFinding": "Claude MCP entries missing: browser, codegraph, playwright",
+    "configurationChangedForFinding": false
+  },
+  "nativeWechat": {
+    "verified": false,
+    "status": "blocked",
+    "phase": "open worktree project",
+    "code": "APPID_ERROR",
+    "message": "登录用户不是该小程序的开发者",
+    "appidChanged": false,
+    "nativeCompilationPerformed": false
+  },
+  "nativeFigma": {
+    "verified": false,
+    "status": "not run in a real Figma file",
+    "offlinePackage": "figma-prototype/family-menu-figma-kit.zip"
+  },
+  "changes": [
+    "compact recipe toolbar and left category picker",
+    "large left image and right recipe information",
+    "compact pantry summary and collapsed reminder settings",
+    "explicit meal-condition confirmation using finite local rules"
+  ],
+  "preview": "http://127.0.0.1:8847/?v=20261104-skills#followup-update",
+  "prototype": "http://127.0.0.1:8847/figma-prototype/?v=20261104-skills#recipes",
+  "boundaries": {
+    "webUsesDesignSamples": true,
+    "modelServiceConnected": false,
+    "newRuntimeDependency": false,
+    "backendDeployed": false,
+    "databaseMigrationRun": false,
+    "realMealOrNotificationWritten": false,
+    "originalCheckoutEdited": false,
+    "committedOrPushed": false
+  },
+  "backup": "/var/folders/3y/jk4gpwpj34s6c6s76db7by600000gn/T/meal-skills-try-before-jnvfdd25"
+}

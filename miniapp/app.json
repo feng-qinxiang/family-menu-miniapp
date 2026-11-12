@@ -2,6 +2,7 @@
   "pages": [
     "pages/home/index",
     "pages/recipes/index",
+    "pages/cook-log/index",
     "pages/community/index",
     "pages/menu/index",
     "pages/me/index",
@@ -44,21 +45,17 @@
         "legal/deletion/index",
         "me/profile-edit/index"
       ]
-    },
-    {
-      "root": "pkg-preview",
-      "pages": [
-        "home-a/index",
-        "home-b/index",
-        "home-c/index",
-        "home-d/index",
-        "home-e/index"
-      ]
     }
   ],
   "preloadRule": {
     "pages/home/index": {
-      "network": "wifi",
+      "network": "all",
+      "packages": [
+        "pkg-extra"
+      ]
+    },
+    "pages/menu/index": {
+      "network": "all",
       "packages": [
         "pkg-extra"
       ]
@@ -66,32 +63,32 @@
   },
   "window": {
     "navigationBarTitleText": "家庭点菜",
-    "navigationBarBackgroundColor": "#fbf8f3",
-    "navigationBarTextStyle": "black",
-    "backgroundTextStyle": "dark",
-    "backgroundColor": "#fbf8f3"
+    "navigationBarBackgroundColor": "@themePaper",
+    "navigationBarTextStyle": "@navTextStyle",
+    "backgroundTextStyle": "@bgTextStyle",
+    "backgroundColor": "@themePaper"
   },
   "tabBar": {
     "custom": true,
     "color": "#857a68",
-    "selectedColor": "#e8472a",
+    "selectedColor": "#c8381f",
     "backgroundColor": "#fbf8f3",
     "list": [
       {
         "pagePath": "pages/home/index",
-        "text": "今日"
+        "text": "点菜"
       },
       {
-        "pagePath": "pages/recipes/index",
-        "text": "菜谱"
+        "pagePath": "pages/menu/index",
+        "text": "做菜"
+      },
+      {
+        "pagePath": "pages/cook-log/index",
+        "text": "记录"
       },
       {
         "pagePath": "pages/community/index",
         "text": "社区"
-      },
-      {
-        "pagePath": "pages/pantry/index",
-        "text": "冰箱"
       },
       {
         "pagePath": "pages/me/index",

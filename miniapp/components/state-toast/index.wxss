@@ -140,7 +140,7 @@
   gap: 14rpx;
   max-width: 640rpx;
   padding: 24rpx 36rpx;
-  background: var(--pop);
+  background: var(--pop-fill);
   border-radius: var(--r-pill);
   box-shadow: var(--sh-pop);
 }
@@ -231,7 +231,7 @@
   flex: none;
   font-size: var(--fs-sub);
   font-weight: 800;
-  color: var(--gold);
+  color: var(--gold-on-dark);
   padding: 12rpx 26rpx;
   border-radius: var(--r-pill);
   background: rgba(244, 217, 168, 0.14);

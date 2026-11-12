@@ -50,6 +50,8 @@ DELETE sl FROM shopping_list sl JOIN family f ON f.id = sl.family_id
   JOIN user_account u ON u.id = f.owner_user_id WHERE FIND_IN_SET(u.openid, @demo_users);
 DELETE pi FROM pantry_item pi JOIN family f ON f.id = pi.family_id
   JOIN user_account u ON u.id = f.owner_user_id WHERE FIND_IN_SET(u.openid, @demo_users);
+DELETE ip FROM ingredient_photo ip JOIN family f ON f.id = ip.family_id
+  JOIN user_account u ON u.id = f.owner_user_id WHERE FIND_IN_SET(u.openid, @demo_users);
 DELETE fw FROM family_wish fw JOIN family f ON f.id = fw.family_id
   JOIN user_account u ON u.id = f.owner_user_id WHERE FIND_IN_SET(u.openid, @demo_users);
 

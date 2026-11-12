@@ -1,104 +1,27 @@
-<!-- 会员开通确认 · 白底系统 sans，二级页 nav-bar 返回 -->
 <view class="pay-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
-  <nav-bar title="开通确认" show-back="{{true}}"></nav-bar>
-
+  <nav-bar title="开通确认" show-back="{{true}}" />
   <scroll-view class="pay-scroll" scroll-y enhanced show-scrollbar="{{false}}">
-    <!-- 商户信息 -->
-    <view class="merchant g-fade-up">
-      <view class="mlogo">
-        <image class="mlogo-img" src="/assets/dishes/{{coverImage}}" mode="aspectFill" />
+    <view class="pay-content">
+      <view class="pay-steps"><text>01 选择套餐</text><text class="on">02 确认开通</text><text>03 完成</text></view>
+      <view class="merchant card">
+        <view class="pay-plan-top"><view class="mlogo">家</view><view class="pay-plan-copy"><view class="mname">{{merchantName}}</view><view class="msub">{{productName}}</view></view><text class="pay-selected">已选套餐</text></view>
+        <view class="pay-plan-bottom"><text>{{durationDays}} 天服务期</text><view><text class="sym">¥</text><text class="big">{{payAmount}}</text></view></view>
       </view>
-      <view class="mname">{{merchantName}}</view>
-      <view class="msub">{{productName}}</view>
+      <view class="pay-section-title">订单明细</view>
+      <view class="rows card">
+        <view class="row"><text class="lbl">开通套餐</text><text class="val">{{productName}}</text></view>
+        <view class="row"><text class="lbl">服务时长</text><text class="val">{{durationDays}} 天</text></view>
+        <view class="row"><text class="lbl">套餐金额</text><text class="val">¥{{payAmount}}</text></view>
+        <view class="row pay-total"><text class="lbl">应付金额</text><text class="val val-pay">¥{{payAmount}}</text></view>
+      </view>
+      <view class="pay-section-title">支付方式</view>
+      <view class="paymethod card"><view class="pm-icon">微</view><view class="pm-info"><view class="pm-name">微信支付</view><view class="pm-note">在微信支付页面选择付款方式</view></view><view class="pm-check">✓</view></view>
+      <view class="pay-note">{{paymentEnabled ? '请核对套餐和金额，确认后进入支付。' : '会员开通暂未开放。'}}</view>
     </view>
-
-    <!-- 金额 -->
-    <view class="amount g-fade-up g-d1">
-      <text class="sym">¥</text><text class="big">{{payAmount}}</text>
-    </view>
-
-    <!-- 明细行 -->
-    <view class="rows g-fade-up g-d2">
-      <view class="row tap-scale" bindtap="onProductTap">
-        <text class="lbl">商品</text>
-        <view class="val">
-          <text class="ellipsis val-name">{{productName}}</text>
-          <view class="arrow"></view>
-        </view>
-      </view>
-
-      <!-- 开通方式：开发确认（选中） -->
-      <view class="row paymethod tap-scale" bindtap="onPayMethodTap">
-        <view class="pm-left">
-          <view class="pm-icon">
-            <text class="pm-icon-glyph">微</text>
-          </view>
-          <view class="pm-info">
-            <view class="pm-name">{{payMethod.name}}</view>
-            <view class="pm-bal">余额 ¥{{payMethod.balance}}</view>
-          </view>
-        </view>
-        <view class="pm-check">
-          <view class="pm-check-tick"></view>
-        </view>
-      </view>
-
-      <view class="row tap-scale" bindtap="onBankTap">
-        <text class="lbl">银行卡</text>
-        <view class="val">
-          <text class="sub">{{bankText}}</text>
-          <view class="arrow"></view>
-        </view>
-      </view>
-
-      <view class="row tap-scale" bindtap="onCouponTap">
-        <text class="lbl">优惠</text>
-        <view class="val">
-          <text class="disc">{{couponText}}</text>
-          <view class="arrow"></view>
-        </view>
-      </view>
-
-      <view class="row">
-        <text class="lbl">实付</text>
-        <view class="val">
-          <text class="val-pay">¥{{payAmount}}</text>
-          <text class="val-origin">¥{{originAmount}}</text>
-        </view>
-      </view>
-    </view>
-
-    <!-- 支付按钮 -->
-    <view class="payarea g-fade-up g-d3">
-      <button
-        class="btn-pay tap-scale {{paying ? 'is-paying' : ''}}"
-        disabled="{{paying}}"
-        bindtap="onPay"
-      >{{paying ? '开通中...' : '确认开通'}}</button>
-    </view>
-
-    <!-- 安全提示 -->
-    <view class="seccard g-fade-up g-d4">
-      <view class="sec-shield"></view>
-      <text>{{mockMode ? '联调模式：不发起真实扣款 · 仅写入会员状态' : '支付安全由微信支付保障'}}</text>
-    </view>
-
-    <view class="biometric g-fade-up g-d5">
-      <view class="ring tap-scale {{paying ? 'is-busy' : ''}}" bindtap="onPay">
-        <view class="ring-dot"></view>
-      </view>
-      <view class="bm-txt">{{paying ? '正在唤起支付…' : '确认后开通 ' + productName}}</view>
-      <view class="bm-alt tap-scale {{paying ? 'is-busy' : ''}}" bindtap="onPay">{{paying ? '处理中…' : '立即开通'}}</view>
-    </view>
-
-    <view class="pay-spacer safe-bottom"></view>
   </scroll-view>
-
-  <state-toast
-    visible="{{toast.visible}}"
-    type="{{toast.type}}"
-    text="{{toast.text}}"
-    duration="1600"
-    bind:close="onToastClose"
-  ></state-toast>
+  <view class="payarea safe-bottom">
+    <view class="pay-due"><text>应付</text><view>¥ <text>{{payAmount}}</text></view></view>
+    <button class="btn-pay tap-scale {{paying ? 'is-paying' : ''}} {{!paymentEnabled ? 'is-unavailable' : ''}}" disabled="{{paying || !paymentEnabled}}" bindtap="onPay">{{!paymentEnabled ? '暂未开放' : (paying ? '开通中…' : '确认开通')}}</button>
+  </view>
+  <state-toast visible="{{toast.visible}}" type="{{toast.type}}" text="{{toast.text}}" duration="1600" bind:close="onToastClose" />
 </view>

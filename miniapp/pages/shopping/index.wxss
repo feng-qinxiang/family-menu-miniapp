@@ -8,187 +8,22 @@
   background: var(--paper);
 }
 
-/* 二级页导航：透明覆盖在 hero 上，文字图标取白 */
-.mkt-nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 60;
-}
-.mkt-nav .navbar-title {
-  color: var(--anchor-contrast);
-  text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.35);
-}
-.mkt-nav .navbar-back {
-  background: rgba(255, 255, 255, 0.18);
-  border: 2rpx solid rgba(255, 255, 255, 0.24);
-}
-.mkt-nav .navbar-back-icon {
-  border-left-color: var(--anchor-contrast);
-  border-bottom-color: var(--anchor-contrast);
-}
-.mkt-nav--solid {
-  background: var(--paper);
-}
-.mkt-nav--solid .navbar-title {
-  color: var(--ink);
-  text-shadow: none;
-}
-.mkt-nav--solid .navbar-back {
-  background: var(--anchor);
-  border-color: transparent;
-}
-.mkt-nav--solid .navbar-back-icon {
-  border-left-color: var(--anchor-contrast);
-  border-bottom-color: var(--anchor-contrast);
-}
-
-/* ============ HERO ============ */
-.mkt-hero {
-  position: relative;
-  height: var(--photo-hero-h);
-  overflow: hidden;
-}
-.mkt-hero-img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-.mkt-hero-mask {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(20, 14, 8, 0.5) 0%,
-    rgba(20, 14, 8, 0) 28%,
-    rgba(20, 14, 8, 0.18) 52%,
-    rgba(20, 14, 8, 0.9) 100%
-  );
-}
-.mkt-hero-bignum {
-  position: absolute;
-  top: 150rpx;
-  right: 26rpx;
-  z-index: 2;
-  font-family: var(--serif);
-  font-size: calc(420rpx * var(--fs-mul, 1));
-  font-weight: 700;
-  line-height: 1;
-  color: rgba(255, 255, 255, 0.08);
-}
-.mkt-hero-body {
-  position: absolute;
-  left: 46rpx;
-  right: 46rpx;
-  bottom: var(--hero-body-above-sheet);
-  z-index: 10;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 30rpx;
-}
-.mkt-hero-left { flex: 1; min-width: 0; }
-.mkt-tag {
-  display: inline-block;
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: var(--fs-cap);
-  letter-spacing: 2rpx;
-  font-weight: 700;
-  color: var(--anchor-contrast);
-  background: var(--pop);
-  padding: 10rpx 26rpx;
-  border-radius: var(--r-xs);
-}
-.mkt-hero-title {
-  font-size: var(--fs-hero-xl);
-  line-height: 0.88;
-  letter-spacing: -6rpx;
-  margin: 28rpx 0 22rpx;
-  -webkit-text-stroke: 3rpx var(--c-surface);
-}
-.mkt-hero-sub {
-  font-size: var(--fs-cap);
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.86);
-  text-shadow: 0 2rpx 8rpx rgba(20, 14, 8, 0.55);
-}
-.mkt-hero-sub .b { color: var(--pop); font-weight: 900; }
-
-/* 进度环：conic-gradient 模拟 ring */
-.mkt-ring {
-  position: relative;
-  width: 178rpx;
-  height: 178rpx;
-  flex: none;
-}
-.mkt-ring-svg { position: absolute; inset: 0; }
-.mkt-ring-bg,
-.mkt-ring-fg,
-.mkt-ring-hole {
-  position: absolute;
-  border-radius: 50%;
-}
-.mkt-ring-bg {
-  inset: 0;
-  border: 18rpx solid rgba(255, 255, 255, 0.22);
-}
-.mkt-ring-fg { inset: 0; }
-.mkt-ring-hole {
-  inset: 18rpx;
-  background: transparent;
-}
-.mkt-ring-svg .mkt-ring-fg {
-  -webkit-mask: radial-gradient(transparent 52rpx, #000 53rpx);
-  mask: radial-gradient(transparent 52rpx, #000 53rpx);
-}
-.mkt-ring-txt {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-.mkt-ring-txt .big {
-  font-size: var(--fs-stat);
-  font-weight: 900;
-  letter-spacing: -2rpx;
-  line-height: 1;
-  color: var(--anchor-contrast);
-}
-.mkt-ring-txt .cap {
-  font-size: calc(21rpx * var(--fs-mul, 1));
-  color: rgba(255, 255, 255, 0.72);
-  margin-top: 6rpx;
-  letter-spacing: 1rpx;
-}
-
-/* ============ SHEET ============ */
-.mkt-sheet {
-  position: relative;
-  margin-top: -50rpx;
-  z-index: 20;
-  background: var(--paper);
-  border-radius: var(--r-sheet) var(--r-sheet) 0 0;
-  padding: 50rpx 0 calc(40rpx + env(safe-area-inset-bottom));
-}
-.mkt-pad { padding: 0 46rpx; }
+/* 工具页采用紧凑页头，清单直接进入首屏。 */
+.mkt-sheet { padding: 8rpx 0 calc(40rpx + env(safe-area-inset-bottom)); }
+.mkt-pad { padding: 0 var(--page-gutter); }
 
 /* 进度条卡片 */
-.mkt-pbar { margin: 0 46rpx 16rpx; padding: 32rpx 34rpx; }
+.mkt-pbar { margin: 0 var(--page-gutter) 16rpx; padding: 20rpx var(--pad-card-sm); box-shadow: none; }
 .mkt-pbar-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 20rpx;
+  margin-bottom: 12rpx;
 }
 .mkt-pbar-head .l { font-size: var(--fs-cap); font-weight: 800; color: var(--ink); }
 .mkt-pbar-head .r { font-size: var(--fs-cap); font-weight: 900; color: var(--pop); }
 .mkt-ptrack {
-  height: 18rpx;
+  height: 10rpx;
   border-radius: 12rpx;
   background: var(--paper-2);
   overflow: hidden;
@@ -196,9 +31,8 @@
 .mkt-pfill {
   height: 100%;
   border-radius: 12rpx;
-  background: linear-gradient(90deg, var(--orange), var(--pop));
-  box-shadow: 0 2rpx 8rpx rgba(232, 71, 42, 0.4);
-  transition: width 0.4s var(--g-power3-out);
+  background: linear-gradient(90deg, var(--orange), var(--pop-fill));
+  box-shadow: 0 2rpx 8rpx rgba(200, 56, 31, 0.4);
 }
 
 /* 分组标题 ghead 彩 dot */
@@ -206,7 +40,7 @@
   display: flex;
   align-items: center;
   gap: 18rpx;
-  margin: 50rpx 0 22rpx;
+  margin: 30rpx 0 16rpx;
 }
 .mkt-gdot {
   width: 20rpx;
@@ -215,11 +49,11 @@
   flex: none;
 }
 .mkt-gdot.veg { background: var(--pine); }
-.mkt-gdot.meat { background: var(--pop); }
+.mkt-gdot.meat { background: var(--pop-fill); }
 .mkt-gdot.spice { background: var(--gold-deep); }
 .mkt-gdot.other { background: var(--mut); }
-.mkt-gname { font-size: calc(36rpx * var(--fs-mul, 1)); font-weight: 900; color: var(--ink); letter-spacing: -1rpx; }
-.mkt-gen { font-family: var(--serif); font-style: italic; font-size: var(--fs-cap); color: var(--mut); font-weight: 700; }
+.mkt-gname { font-size: calc(32rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--ink); }
+.mkt-gen { font-family: var(--serif); font-size: var(--fs-cap); color: var(--mut); font-weight: 700; }
 .mkt-gcount {
   margin-left: auto;
   font-size: calc(23rpx * var(--fs-mul, 1));
@@ -233,16 +67,17 @@
 /* item */
 .mkt-item {
   display: flex;
-  align-items: center;
-  gap: 26rpx;
+  align-items: flex-start;
+  gap: 20rpx;
   background: var(--c-surface);
   border-radius: var(--r-card);
-  padding: 28rpx var(--pad-card);
-  margin-bottom: 22rpx;
+  padding: 16rpx var(--pad-card-sm);
+  margin-bottom: 12rpx;
   border: var(--bd-card);
-  box-shadow: var(--sh-raised);
+  box-shadow: none;
 }
 .mkt-check {
+  box-sizing: border-box;
   width: 52rpx;
   height: 52rpx;
   border-radius: 18rpx;
@@ -255,7 +90,7 @@
 .mkt-thumb {
   width: var(--tile-chip);
   height: var(--tile-chip);
-  border-radius: 22rpx;
+  border-radius: var(--r-sm);
   flex: none;
   background: var(--paper-2);
 }
@@ -267,32 +102,39 @@
   font-weight: 800;
   color: var(--ink);
 }
-.mkt-thumb--letter.veg { background: var(--c-accent-soft); color: var(--pine); }
+.mkt-thumb--letter.veg { background: var(--c-accent-soft); color: var(--pine-ink); }
 .mkt-thumb--letter.meat { background: var(--pop-soft); color: var(--pop); }
 .mkt-thumb--letter.seasoning,
 .mkt-thumb--letter.season,
 .mkt-thumb--letter.spice { background: var(--paper-2); color: var(--gold-deep); }
 .mkt-imid { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-.mkt-imid .nm { font-size: calc(32rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--ink); letter-spacing: -1rpx; }
-.mkt-imid .amt { font-size: var(--fs-sub); font-weight: 700; color: var(--pop); margin-top: 6rpx; }
-.mkt-tags { display: flex; flex-wrap: wrap; gap: 10rpx; margin-top: 14rpx; }
-.mkt-imid .src {
-  font-size: var(--fs-mini);
-  font-weight: 700;
+.mkt-namebar { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4rpx 16rpx; }
+.mkt-imid .nm { flex: 1 1 128rpx; min-width: 0; font-size: calc(32rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--ink); word-break: break-all; line-height: 1.4; }
+.mkt-imid .amt { max-width: 100%; margin-left: auto; font-size: var(--fs-sub); font-weight: 700; color: var(--pop); line-height: 1.4; word-break: break-all; }
+.mkt-tags { display: flex; flex-direction: column; gap: 4rpx; margin-top: 10rpx; }
+.mkt-tags .src {
+  font-size: var(--fs-cap);
+  font-weight: 500;
   color: var(--mut-strong);
-  background: var(--paper-2);
-  padding: 6rpx 18rpx;
+  padding: 0;
   border-radius: var(--r-pill);
+  line-height: 1.5;
 }
-.mkt-imid .src.pantry { color: var(--pine); background: var(--c-accent-soft); }
+.mkt-tags .src.pantry { color: var(--pine-ink); }
 .mkt-del {
   flex: none;
-  font-size: calc(25rpx * var(--fs-mul, 1));
+  font-size: var(--fs-lg);
   font-weight: 700;
   color: var(--mut);
-  padding: 26rpx 24rpx;   /* 触点 ≥88rpx（设计规范），原来的 64rpx 是自行放宽的 */
+  box-sizing: border-box;
+  min-height: 88rpx;
+  min-width: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
   border-radius: var(--r-sm);
-  background: var(--paper-2);
+  background: transparent;
 }
 
 /* done 态：灰底、删除线、绿勾 */
@@ -320,83 +162,87 @@
 .mkt-item.done .mkt-thumb { opacity: 0.45; }
 
 /* shead 已入篮 / 加购 */
-.mkt-shead { margin: 56rpx 0 14rpx; }
+.mkt-shead { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; margin: 28rpx 0 14rpx; font-size: calc(32rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--ink); }
+.mkt-section-count { font-size: var(--fs-cap); font-weight: 500; color: var(--mut-strong); }
+.mkt-stock { min-height: var(--tap-min); display: flex; align-items: center; padding: 0 24rpx; border-radius: var(--r-pill); border: 2rpx solid var(--line-deep); font-size: var(--fs-cap); font-weight: 600; color: var(--pine-ink); }
+.mkt-stock.is-busy { opacity: .5; }
 
-/* add bar 虚线 */
+/* 临时加购：一行输入 + 次级「添加」，常用食材在下方；配图缩成输入框左侧的小方块 */
 .mkt-addbar {
-  margin: 12rpx 46rpx 0;
-  display: flex;
-  gap: 16rpx;
-  align-items: center;
+  margin: 0 var(--page-gutter) 8rpx;
   background: var(--c-surface);
-  border: 3rpx dashed var(--line-deep);
+  border: var(--bd-card);
   border-radius: var(--r-card);
-  padding: 22rpx var(--pad-card-sm);
+  padding: 16rpx var(--pad-card-sm) 12rpx;
 }
-.mkt-add-ic {
-  width: 68rpx;
-  height: 68rpx;
-  border-radius: 22rpx;
-  background: var(--pop);
+.mkt-add-row { display: flex; align-items: center; gap: 12rpx; }
+.mkt-add-pic {
   flex: none;
+  box-sizing: border-box;
+  width: var(--tap-min);
+  height: var(--tap-min);
+  border-radius: var(--r-sm);
+  border: 2rpx dashed var(--line-deep);
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--anchor-contrast);
-  font-size: calc(40rpx * var(--fs-mul, 1));
-  font-weight: 700;
-  line-height: 1;
-  box-shadow: var(--sh-pop);
 }
+.mkt-add-pic-img { width: 100%; height: 100%; }
+.mkt-add-pic-txt { font-size: var(--fs-mini); color: var(--mut-strong); }
 .mkt-add-input {
   flex: 1;
+  width: 0;
+  box-sizing: border-box;
   min-width: 0;
-  border: none;
-  background: transparent;
-  font-size: calc(28rpx * var(--fs-mul, 1));
+  min-height: 88rpx;
+  border: var(--bd-card);
+  border-radius: var(--r-sm);
+  background: var(--paper-2);
+  padding: 0 16rpx;
+  font-size: var(--fs-body);
   font-weight: 600;
   color: var(--ink);
 }
-.mkt-add-input.sm { flex: 0 0 96rpx; }
-.mkt-ph { color: var(--mut-2); }
-.mkt-addbtn {
-  flex: none;
-  font-size: calc(25rpx * var(--fs-mul, 1));
-  font-weight: 800;
-  color: var(--anchor-contrast);
-  background: var(--anchor);
-  padding: 20rpx 30rpx;
-  border-radius: var(--r-md);
-}
+.mkt-add-quantity { display: flex; gap: 12rpx; margin-top: 12rpx; }
+.mkt-ph { color: var(--mut); font-weight: 400; }   /* 与冰箱页 .af-ph 同色；--mut-2 在输入底上只有约 2:1，而这几格没有标签，占位字就是标签 */
+/* 次级按钮：.btn .btn-ghost 给底色描边，这里只收窄左右留白 */
+.mkt-addbtn { flex: none; padding: 0 28rpx; }
+.mkt-addbtn.is-busy { opacity: .6; }
 
-/* quick 横滑 */
-.mkt-quicks { width: 100%; white-space: nowrap; padding: 26rpx 0 4rpx; }
-.mkt-quicks-inner { display: inline-flex; gap: 16rpx; padding: 0 46rpx; }
+/* quick 横滑：在加购卡内，左右贴卡边 */
+.mkt-quicks { width: 100%; white-space: nowrap; padding-top: 12rpx; }
+.mkt-quicks-inner { display: inline-flex; gap: 12rpx; }
 .mkt-quick {
   flex: none;
-  font-size: calc(25rpx * var(--fs-mul, 1));
-  font-weight: 700;
+  font-size: var(--fs-sub);
+  font-weight: 500;
   color: var(--mut-strong);
   background: var(--paper-2);
-  padding: 18rpx 30rpx;
+  box-sizing: border-box;
+  min-height: var(--tap-min);
+  display: inline-flex;
+  align-items: center;
+  padding: 0 26rpx;
   border-radius: var(--r-pill);
   white-space: nowrap;
 }
 .mkt-quick .plus { color: var(--mut); margin-right: 6rpx; font-weight: 700; }
 
-.mkt-refresh-wrap { margin-top: 50rpx; }
+.mkt-refresh-wrap { margin-top: 40rpx; }
 
-/* 骨架屏 */
+/* 骨架屏：形状对齐真行 .mkt-item（左侧图块 + 右侧文字），加载完不跳版 */
 .mkt-sk {
   display: flex;
-  align-items: center;
-  gap: 26rpx;
-  margin-bottom: 22rpx;
-  padding: 28rpx 30rpx;
+  align-items: flex-start;
+  gap: 20rpx;
+  margin-bottom: 12rpx;
+  padding: 16rpx var(--pad-card-sm);
+  box-shadow: none;
 }
-/* 骨架里的"方框"替身是 .mkt-check（52rpx、圆角 18），
-   原来写成 var(--r-sheet)=20rpx，勾选框加载完会长大一圈 */
-.mkt-sk-dot { width: 52rpx; height: 52rpx; border-radius: 18rpx; flex: none; }
+/* 图块替身 = 真行左侧的 .mkt-photo（--tile-list-wide、--r-sm）。
+   原来还是旧版 52rpx 勾选框的形状，行里换成图块后没跟着改，加载完整行长高一截 */
+.mkt-sk-dot { width: var(--tile-list-wide); height: var(--tile-list-wide); border-radius: var(--r-sm); flex: none; }
 .mkt-sk-lines { flex: 1; }
 .mkt-sk-line { height: 22rpx; border-radius: var(--r-xs); margin-top: 14rpx; width: 60%; }
 .mkt-sk-line.strong { width: 40%; height: 30rpx; margin-top: 0; }
@@ -404,7 +250,7 @@
 /* ====== 购物/库存 tab ====== */
 .sp-seg {
   display: flex;
-  margin: 28rpx 46rpx 20rpx;
+  margin: 0 var(--page-gutter) 24rpx;
   background: var(--paper-2);
   border-radius: var(--r-pill);
   padding: 6rpx;
@@ -413,22 +259,23 @@
 .sp-seg-item {
   flex: 1;
   /* 分段 tab 高度 88rpx */
-  height: 88rpx;
+  min-height: 88rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--fs-cap);
+  font-size: var(--fs-body);   /* 与点菜页 .mn-seg-item 同档 */
   font-weight: 700;
   color: var(--mut-strong);
   border-radius: var(--r-pill);
 }
 .sp-seg-item.on {
-  background: var(--anchor);
-  color: var(--anchor-contrast);
+  background: var(--seg-thumb);   /* 浅色档 = 卡面；深色档卡面与轨道同色，滑块会消失 */
+  color: var(--ink);
+  box-shadow: var(--sh-card);
 }
 
 /* 库存视图 */
-.sp-pantry-wrap { padding: 0 46rpx 32rpx; }
+.sp-pantry-wrap { padding: 0 var(--page-gutter) 32rpx; }
 .sp-pcat { margin-bottom: 30rpx; }
 .sp-pcat-head {
   display: flex;
@@ -465,20 +312,41 @@
   width: 88rpx; height: 88rpx;
   transform: translate(-50%, -50%);
 }
-.sp-pantry-empty { padding: 40rpx 0; }
-.sp-pantry-add-btn {
-  margin-top: 24rpx;
-  height: 88rpx;
-  border-radius: var(--r-pill);
-  background: var(--anchor);
-  color: var(--anchor-contrast);
-  font-size: var(--fs-cap);
-  font-weight: 800;
-  display: flex; align-items: center; justify-content: center;
-}
+.sp-pantry-empty { padding: 8rpx 0; }
+.sp-pantry-add-btn { margin-top: 24rpx; }
 .sp-pantry-form {
   display: flex;
   gap: 14rpx;
   margin-top: 18rpx;
   flex-wrap: wrap;
+}
+.sp-pantry-form > .mkt-add-input:first-child { flex-basis: 100%; }
+/* 内层圆角不大于外层 .mkt-item（--r-card） */
+.mkt-photo { position: relative; flex: none; width: var(--tile-list-wide); height: var(--tile-list-wide); overflow: hidden; border-radius: var(--r-sm); }
+.mkt-photo .mkt-thumb { width: 100%; height: 100%; padding: 0 12rpx; box-sizing: border-box; text-align: center; word-break: break-all; font-size: var(--fs-lg); line-height: 1.4; }
+.mkt-photo image.mkt-thumb { padding: 0; }
+.mkt-photo .mkt-thumb--letter { padding-bottom: 36rpx; }
+.mkt-photo .mkt-thumb--letter > text { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+.mkt-photo-hint { position: absolute; right: 6rpx; bottom: 6rpx; padding: 4rpx 10rpx; border-radius: var(--r-xs); background: var(--c-surface); color: var(--mut-strong); font-size: var(--fs-mini); line-height: 1.2; }
+.mkt-item-actions { display: flex; align-items: center; gap: 12rpx; margin-top: 12rpx; }
+.mkt-buy, .mkt-item-actions .mkt-del { box-sizing: border-box; display: flex; align-items: center; justify-content: center; min-height: 88rpx; margin: 0; padding: 0 16rpx; border-radius: var(--r-sm); font-size: var(--fs-cap); line-height: 1.4; }
+/* 「买好了」：每行都是实心深绿会把整张清单压得很重。改成松绿浅底 + 松绿字
+   （与冰箱页「挑一道/＋ 添加」的浅底按钮同一种次级实心），仍是整宽、88rpx 高、带勾；
+   「移除」保持白底细边灰字，比它弱一级 */
+.mkt-buy { flex: 1; min-width: 0; gap: 8rpx; background: var(--c-accent-soft); color: var(--pine-ink); font-weight: 700; }
+.mkt-buy image { width: 28rpx; height: 28rpx; flex: none; filter: brightness(0); }
+.mkt-item-actions .mkt-del { flex: none; width: 104rpx; min-width: 0; background: var(--c-surface); border: var(--bd-card); color: var(--mut-strong); font-weight: 500; }
+.mkt-buy::after, .mkt-item-actions .mkt-del::after { border: 0; }
+.mkt-bought { font-size: var(--fs-cap); color: var(--pine-ink); line-height: 1.5; margin-top: 12rpx; }
+.sp-pitem-copy { flex: 1; min-width: 0; }
+.sp-pitem-name { word-break: break-all; line-height: 1.5; }
+.sp-pitem-qty { margin-top: 8rpx; }
+.mkt-photo-note { font-size: var(--fs-mini); color: var(--mut); padding: 0 var(--page-gutter); margin-bottom: 16rpx; line-height: 1.5; }
+
+/* 深色档：--pine(#4e6b58) 当文字只有约 2.6:1，与首页/会员页同法换 --c-success；
+   「买好了」浅底在深色档是 #22302a，字和勾一起翻成浅色 */
+@media (prefers-color-scheme: dark) {
+  .mkt-tags .src.pantry, .mkt-bought, .mkt-thumb--letter.veg { color: var(--c-success); }
+  .mkt-buy { color: var(--ink); }
+  .mkt-buy image { filter: brightness(0) invert(1); }
 }

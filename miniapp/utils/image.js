@@ -1,6 +1,22 @@
 /**
- * 图片工具 — 按菜名落到本地图；unsplash 外链不当封面
+ * 图片工具 — 内置菜图由现有后端提供；unsplash 外链不当封面
  */
+const { resolveBaseUrl } = require('./env');
+const DISH_PLACEHOLDER = '/assets/dish-placeholder.svg';
+
+// 站内菜图和上传图显示时才补域名；上传链接的签名参数原样保留。
+function dishImageUrl(path) {
+  return typeof path === 'string' && (path.startsWith('/assets/dishes/') || path.startsWith('/uploads/'))
+    ? resolveBaseUrl().replace(/\/+$/, '') + path
+    : path;
+}
+
+function dishImagePath(url) {
+  const prefix = resolveBaseUrl().replace(/\/+$/, '');
+  return typeof url === 'string' && url.startsWith(prefix + '/assets/dishes/')
+    ? url.slice(prefix.length)
+    : url;
+}
 
 const LOCAL_DISHES = [
   'mapo-tofu', 'tomato-egg', 'hongshao-pork', 'kungpao-chicken', 'long-beans',
@@ -32,7 +48,7 @@ const TITLE_RULES = [
 ];
 
 function localPath(file) {
-  return `/assets/dishes/${file}.jpg`;
+  return dishImageUrl(`/assets/dishes/${file}.jpg`);
 }
 
 function localDishByTitle(title) {
@@ -47,30 +63,13 @@ function localDishByTitle(title) {
   return '';
 }
 
-const INGREDIENT_RULES = [
-  { kw: ['土豆', '马铃薯'], file: 'potato-shreds' },
-  { kw: ['时蔬', '青菜', '生菜', '空心菜', '西兰花'], file: 'stir-fry-veg' },
-  { kw: ['番茄', '西红柿'], file: 'tomato-egg' },
-  { kw: ['豆角'], file: 'long-beans' },
-  { kw: ['茄子'], file: 'sichuan-eggplant' },
-  { kw: ['鸡蛋'], file: 'tomato-egg' },
-  { kw: ['豆腐'], file: 'mapo-tofu' },
-  { kw: ['紫菜'], file: 'egg-drop-soup' }
-];
-
-/** 食材名落到本地菜图。对不上就空，不用哈希乱配。 */
-function localDishByIngredient(name) {
-  const n = String(name || '').trim();
-  if (!n) return '';
-  const byTitle = localDishByTitle(n);
-  if (byTitle) return byTitle;
-  for (let i = 0; i < INGREDIENT_RULES.length; i++) {
-    const rule = INGREDIENT_RULES[i];
-    for (let j = 0; j < rule.kw.length; j++) {
-      if (n.indexOf(rule.kw[j]) >= 0) return localPath(rule.file);
-    }
-  }
-  return '';
+// 食材只显示用户上传的照片；未上传的名称交给页面文字兜底。
+function ingredientImage(item, photos) {
+  if (!item) return '';
+  const explicit = item.coverImage || item.imageUrl;
+  if (typeof explicit === 'string' && explicit.trim()) return explicit.trim();
+  const name = String(item.ingredientName || item.name || '').trim();
+  return photos && Object.prototype.hasOwnProperty.call(photos, name) ? photos[name] || '' : '';
 }
 
 function fallbackDishImg(seed) {
@@ -94,20 +93,21 @@ function recipeDishImg(recipe) {
   const cover = recipe.coverImage || recipe.cover || recipe.dishImg || '';
   // 真实封面优先。以前"按菜名匹配本地图"排在它前面，结果是：用户传了自家实拍，
   // 只要菜名里带"番茄/紫菜/土豆"这类词，页面永远显示一张库存图而不是他传的那张。
-  if (cover && !isRemoteStock(cover)) return cover;
+  if (cover && !isRemoteStock(cover)) return dishImageUrl(cover);
   const byTitle = localDishByTitle(title);
   if (byTitle) return byTitle;
   return fallbackDishImg(recipe.id || title);
 }
 
+// 步骤没有自己的图就返回空串，调用方（菜谱详情、做菜模式）按 wx:if 不画图。
+// 原来回退到成品图：五个步骤挂五张一模一样的成品照，「鸡蛋打散」旁边是一盘炒好的番茄炒蛋。
 function stepDishImg(recipe, index, explicit) {
-  if (explicit) return explicit;
-  return recipeDishImg(recipe);
+  return explicit ? dishImageUrl(explicit) : '';
 }
 
-function onImgError(e, pageCtx, dataPath, seed) {
-  const fallback = localDishByTitle(seed) || fallbackDishImg(seed || dataPath);
-  pageCtx.setData({ [dataPath]: fallback });
+function onImgError(e, pageCtx, dataPath) {
+  // 网络图片失败后落到包内中性图，不再请求另一张网络菜图，避免断网时反复触发 error。
+  pageCtx.setData({ [dataPath]: DISH_PLACEHOLDER });
 }
 
 /* 用户上传的照片挂了**不能**换成库存菜图——那等于拿别人家的菜冒充邻居的实拍
@@ -124,8 +124,11 @@ module.exports = {
   LOCAL_DISHES,
   fallbackDishImg,
   recipeDishImg,
-  localDishByTitle,
-  localDishByIngredient,
+  localPath,
+  dishImageUrl,
+  dishImagePath,
+  DISH_PLACEHOLDER,
+  ingredientImage,
   stepDishImg,
   onImgError,
   onPhotoError

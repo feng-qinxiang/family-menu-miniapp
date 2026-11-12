@@ -9,14 +9,15 @@ page {
   --paper-2: var(--themePaper2, #f0ebe2);
   --ink: var(--themeInk, #2c241b);
   --ink-deep: var(--themeInkDeep, #3a2e23);   /* 深墨文字：深色档（media 块）翻转为浅字色 */
-  --anchor: #3a2e23;                           /* 深色锚点卡恒定底（今日菜单卡/餐盘托等）：两主题不翻转 */
+  --anchor: #3a2e23;                           /* 深色锚点卡底（今日菜单卡/餐盘托/选中 chip）：深色档提亮一档，见 media 块 */
   --anchor-contrast: #fbf8f3;                  /* 锚点卡上的恒定浅字（深色档不跟 --paper 翻转） */
-  --mut: var(--themeMut, #7a6e5d);
+  --seg-thumb: var(--c-surface);               /* 分段控件选中滑块：浅色档同卡面；深色档卡面与轨道几乎同色，单独提亮 */
+  --mut: var(--themeMut, #716555);
   --mut-2: var(--themeMut2, #b3a795);
   --mut-strong: var(--themeMutStrong, #6b5f50);    /* 强调次要文字（比 --mut 更深一档） */
   --gold: var(--themeGold, #f4d9a8);
-  --gold-deep: var(--themeGoldDeep, #a58145);
-  --pop: var(--themePop, #e8472a);
+  --gold-deep: var(--themeGoldDeep, #806230);   /* 浅底小字用：纸色上 5.35:1（原 #a58145 仅 3.4:1）；深色档见 media 块 */
+  --pop: var(--themePop, #c8381f);
   --pop-soft: var(--themePopSoft, #fdece6);
   --pine: var(--themePine, #2f4a3a);
   --wx: #07c160;
@@ -74,6 +75,8 @@ page {
   --tile-pick: 148rpx;    /* 图片选择网格的一格（菜谱编辑/导入） */
   --tile-img-pick: 132rpx;/* 发帖弹层的选图格（弹层宽度下 3 列的密度，与 --tile-pick 不同角色） */
   --tile-rc: 138rpx;      /* 帖子详情里「关联菜谱」卡的缩略图 */
+  --tile-list-wide: 168rpx; /* 左图右文列表：菜谱、记录、采购与厨房菜卡 */
+  --tile-list-tall: 220rpx; /* 纵向列表照片，容纳右侧用料与操作 */
   --ctl-x: 48rpx;         /* 圆形删除钮直径（几何件，字形与命中区随大字档等比放大） */
   --tap-min: 88rpx;       /* 全站最小命中区（::after 扩热区用） */
   /* 头像两档：同一个作者在社区列表是 84rpx、点进详情是 92rpx——同一个人换了个头。
@@ -113,11 +116,12 @@ page {
      里面的文字却错开 6px，并排看就是"没排版"。所以这里只钉"左右"这一个轴。 */
   --pad-card: 28rpx;      /* 标准卡表面的左右内边距（全站默认） */
   --pad-card-sm: 24rpx;   /* 紧凑卡：行内小卡、输入卡、嵌套卡 */
+  --page-gutter: 46rpx;
 
   /* —— 新 token：阴影 / 边框 —— */
   --sh-card: 0 2rpx 10rpx rgba(60, 40, 20, 0.05);   /* 轻量单层阴影（收敛自双层重投影） */
   --sh-soft: 0 4rpx 12rpx rgba(60, 40, 20, 0.06);
-  --sh-pop: 0 6rpx 16rpx rgba(232, 71, 42, 0.22);   /* 按钮红影收敛 */
+  --sh-pop: 0 6rpx 16rpx rgba(200, 56, 31, 0.22);   /* 按钮红影收敛 */
   /* 「抬起来的卡」只有一种投影。实测四个页面各写了一份近似值：
      0 24/50 .1（买菜清单、菜单）、0 26/58 .1（我的）、0 26/58 .12 与 0 30/70 .13（周菜单）——
      同一层级五种写法，并排看就是"有的卡更浮一点"。 */
@@ -125,7 +129,12 @@ page {
   --bd-card: 2rpx solid var(--themeBorderLight, #f1ece2);
 
   /* —— 扩展 token：语义色（UI 审计收敛，页面勿再写死 hex）—— */
-  --pop-deep: #b3381f;        /* 深番茄红：警示文字、番茄渐变深端 */
+  --pop-deep: #b3381f;        /* 深番茄红：警示文字（渐变深端用 --pop-deep-fill） */
+  --pop-fill: var(--pop);           /* 红色实心底（上面放浅字）：浅色档同 --pop；深色档另取更深的红，见 media 块 */
+  --pop-deep-fill: var(--pop-deep); /* 红色渐变深端（上面放浅字）：同上 */
+  --gold-on-dark: var(--gold);      /* 深底（锚点卡/照片/松绿底）上的金字和金色小图形：浅色档同 --gold；深色档 --gold 变暗金，见 media 块 */
+  --pine-ink: var(--pine);          /* 松绿当文字色：浅色档同 --pine；深色档 --pine 当字只有约 2.6:1，见 media 块 */
+  --shimmer-hi: rgba(255, 255, 255, 0.5);   /* 骨架屏扫光高光 */
   --pop-mist: #f6cfc4;        /* 浅红描边 */
   --orange: #f0853f;          /* 暖橙：--pop 的渐变伙伴 */
   --success: #3a9d5d;
@@ -139,7 +148,7 @@ page {
   --cook-surface: #2c241b;    /* 暗底上的卡底/药丸底 */
   --cook-line: #d5c9b8;       /* 暗底上的描边图标 */
   --cook-mark: #ffffff;       /* 亮底图标上的指针（时钟针）*/
-  --cook-pop: #e8472a;      /* 暗底上的品牌红填充（承载浅色文字，深色档不再提亮）*/
+  --cook-pop: #c8381f;      /* 暗底上的品牌红填充（承载浅色文字，深色档不再提亮）*/
   /* 自定义 tabBar 占位高度：数值来源是 custom-tab-bar/index.wxss 的 8rpx 上内边距 + 96rpx 高 + 24rpx 下内边距，
      改那里必须同步这里（tab 页上的弹层/悬浮按钮要靠它抬到栏上方）*/
   --tabbar-h: calc(env(safe-area-inset-bottom) + 128rpx);
@@ -165,7 +174,7 @@ page {
   --cat-plum-deep: #7a5fa0;
 
   /* —— 兼容层：旧 --c-* 重映射到新配色（未重做页面继续可用且自动套新色）—— */
-  --c-primary: #e8472a;
+  --c-primary: #c8381f;
   --c-primary-dark: #c23618;
   --c-primary-soft: #fdece6;
   --c-primary-light: #f7c9bd;
@@ -177,7 +186,7 @@ page {
   --c-gold-dark: #8d6517;
   --c-ink: #2c241b;
   --c-text: #2c241b;
-  --c-text-secondary: #7a6e5d;
+  --c-text-secondary: #716555;
   --c-text-muted: #9a8e7d;
   --c-bg: #fbf8f3;
   --c-bg-warm: #f0ebe2;
@@ -191,9 +200,9 @@ page {
   --c-warning-soft: var(--themeGoldSoft, #f9efda);
   --c-info: var(--themeInfo, #366d9f);
   --c-info-soft: var(--themeInfoSoft, #edf5fc);
-  --c-danger: #e8472a;
+  --c-danger: #c8381f;
   --c-danger-soft: #fdece6;
-  --c-food-red: #e8472a;
+  --c-food-red: #c8381f;
   --c-food-orange: #d4863a;
   --c-food-yellow: #c9a83e;
   --c-food-green: #2f4a3a;
@@ -204,7 +213,7 @@ page {
   --r-xl: 42rpx;
   --sh-card-hover: 0 14rpx 36rpx rgba(43, 30, 23, 0.12);
   --sh-float: 0 36rpx 80rpx rgba(120, 70, 30, 0.16);
-  --sh-primary: 0 16rpx 36rpx rgba(232, 71, 42, 0.4);
+  --sh-primary: 0 16rpx 36rpx rgba(200, 56, 31, 0.4);
   --sh-gold: 0 8rpx 22rpx rgba(176, 137, 73, 0.18);
   --w-bold: 800;
   --w-semi: 700;
@@ -240,7 +249,7 @@ page {
   page {
     /* —— 裸 --themeX 层（与 theme.json dark 段同值，改色先改 theme.json 再同步这里）—— */
     --themePaper: #1c1c1c;
-    --themePaper2: #262626;
+    --themePaper2: #2e2e2e;   /* 原 #262626 与卡面 #242424 只差 1.03:1，卡里的输入框、图块底看不见 */
     --themeInk: #efefef;
     --themeInkDeep: #e2e2e2;
     --themeMut: #9a9a96;
@@ -270,7 +279,14 @@ page {
     --themeGlassClear: rgba(36, 36, 36, 0);
 
     /* —— 字面量 token 深色档（theme.json 无这些键）—— */
-    --pop-deep: #d94b30;
+    --anchor: #735a44;       /* 原 #3a2e23 压在 #1c1c1c 上只有 1.29:1，选中 chip/返回键/锚点按钮几乎看不见；提亮后对页面底 2.7:1、对浅字 6.1:1、对浅金 4.7:1（再亮浅金字就不达标） */
+    --seg-thumb: #666666;    /* 卡面 #242424 与轨道几乎同色（原 1.03:1），滑块消失；提亮后对轨道 2.4:1、对浅字 5.0:1 */
+    --pop-deep: #ff7a5c;     /* 警示红字：原 #d94b30 在卡面上只有 3.7:1；深色档「深」即更亮，卡面 6.1:1 */
+    --pop-fill: #c8381f;     /* 红色实心底：--pop（#ff6a4d）上放浅字只有 2.7:1，填充改用品牌原红，浅字 4.9:1 */
+    --pop-deep-fill: #a3301b; /* 红色渐变深端：浅字 6.6:1 */
+    --gold-on-dark: #f4d9a8;  /* 深色档 --gold（#8a6a3a）压在锚点底上只有约 1.3:1；改用浅金，锚点底上 4.7:1 */
+    --pine-ink: #4eae8c;      /* 松绿文字：卡面 5.7:1（与 --themeSuccess 同值） */
+    --shimmer-hi: rgba(255, 255, 255, 0.06);   /* 白 .5 扫在 #2a2a2a 骨架上是一道刺眼亮条 */
     --pop-mist: #5a2a1e;
     --surface-pressed: #2e2e2e;
     --banner-grad-a: #2a241c;
@@ -293,13 +309,20 @@ page {
     --c-text-secondary: #9a9a96;
     --c-text-muted: #757570;
     --c-bg: #1c1c1c;
-    --c-bg-warm: #262626;
+    --c-bg-warm: #2e2e2e;   /* 同 --themePaper2 */
     --c-gold-soft: #332a1c;
     --c-gold-dark: #c9a35c;
     --c-warning: #c9a35c;
     --c-warning-soft: #332a1c;
     --c-danger-soft: #3a2218;
   }
+}
+
+/* 窄屏命中区兜底：88rpx 在宽度 < 375px 的屏上不足 44px（361px 宽只有 42.4px）。
+   不用 max(88rpx, 44px)：全站还没用过 CSS 数学函数，真机兼容没验证过；媒体查询 + 变量是本文件已有写法。
+   ponytail: 只兜住走 var(--tap-min) 的命中区；直接写死 88rpx 的约 100 处在窄屏仍是 42.4px，改到哪块时顺手换成 token */
+@media (max-width: 374px) {
+  page { --tap-min: 44px; }
 }
 
 /* ============ 大字模式（设置页开关，每页的可见根节点都要挂 .font-lg）============ */
@@ -331,7 +354,7 @@ page.font-lg, .font-lg {
 .container {
   box-sizing: border-box;
   min-height: 100vh;
-  padding: 22rpx 46rpx calc(env(safe-area-inset-bottom) + 60rpx);
+  padding: 22rpx var(--page-gutter) calc(env(safe-area-inset-bottom) + 60rpx);
 }
 .safe-bottom { padding-bottom: calc(env(safe-area-inset-bottom) + 16rpx); }
 .safe-top { padding-top: env(safe-area-inset-top); }
@@ -372,9 +395,11 @@ page.font-lg, .font-lg {
      interaction-audit 按类名识别可点元素，空包一层会被报成「可点但无事件」。
    capsuleTop / capsuleRight 来自 utils/capsule.js（全站唯一胶囊实现）。 */
 .cpt-head {
+  box-sizing: border-box;
   background: var(--paper);
-  padding-left: var(--ctl-x, 48rpx);
-  padding-right: var(--ctl-x, 48rpx);
+  padding-top: 24rpx;
+  padding-left: var(--page-gutter);
+  padding-right: var(--page-gutter);
   padding-bottom: 24rpx;
 }
 .cpt-row {
@@ -384,7 +409,7 @@ page.font-lg, .font-lg {
   min-height: 64rpx;
   gap: 16rpx;
 }
-.cpt-titles { min-width: 0; }
+.cpt-titles { flex: 1; min-width: 0; }
 .cpt-eyebrow {
   font-size: var(--fs-cap);
   font-weight: 700;
@@ -396,8 +421,9 @@ page.font-lg, .font-lg {
   margin-top: 4rpx;
   font-size: var(--fs-h1);
   font-weight: 900;
-  line-height: 1.15;
+  line-height: 1.3;
   color: var(--ink);
+  word-break: break-all;
 }
 .cpt-sub {
   margin-top: 12rpx;
@@ -406,6 +432,8 @@ page.font-lg, .font-lg {
   color: var(--mut);
 }
 .cpt-action { flex-shrink: 0; }
+.font-lg .cpt-row { flex-wrap: wrap; }
+.font-lg .cpt-titles { flex-basis: 360rpx; }
 
 /* Android 兜底（旧）：纯实心白字 + 多向白描边，仍保留以兼容历史用法 */
 .title-shadow {
@@ -414,50 +442,40 @@ page.font-lg, .font-lg {
   font-weight: 900;
 }
 
-/* ============ Section 标题（左红竖线 + Georgia eyebrow）============ */
+/* ============ Section 标题 ============
+   与新版页面的 .section-title 同档（36rpx / 800）：不再画左侧竖条、不再把半个标题染红。
+   番茄红只留给每屏唯一的主操作；.shead-bar / .pop 节点保留以兼容组件模板，样式上不再显示。 */
 .shead {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  margin: 56rpx 0 30rpx;
+  gap: 16rpx;
+  margin: 48rpx 0 22rpx;
 }
-.shead .shead-main { position: relative; padding-left: 28rpx; }
-.shead .shead-bar {
-  position: absolute;
-  left: 0;
-  top: 6rpx;
-  bottom: 6rpx;
-  width: 8rpx;
-  border-radius: 4rpx;
-  /* 竖条改中性墨色：番茄红只留给每屏唯一的主操作，分区标记再用红会和主操作抢注意力 */
-  background: var(--ink);
-}
+.shead .shead-main { position: relative; min-width: 0; }
+.shead .shead-bar { display: none; }
 .shead .eyebrow {
   font-family: var(--sans);
   font-style: normal;
   font-size: var(--fs-cap);
-  letter-spacing: 1rpx;
   color: var(--mut-strong);
-  font-weight: 700;
+  font-weight: 600;
 }
 .shead h2, .shead .shead-title {
-  font-size: calc(50rpx * var(--fs-mul, 1));
-  font-weight: 900;
+  font-size: calc(36rpx * var(--fs-mul, 1));
+  font-weight: 800;
   color: var(--ink);
-  letter-spacing: -2rpx;
-  margin-top: 10rpx;
-  /* 原来 0.96：区块标题是组件属性拼出来的（"家里常做的菜"这种 6-7 字），
-     窄屏或大字档一换行，两行字就互相压住 2rpx。留 1.1 仍然紧凑但不咬字。 */
-  line-height: 1.1;
+  margin-top: 4rpx;
+  line-height: 1.2;
   font-family: var(--sans);
 }
-.shead .shead-title .pop { color: var(--pop); }
+.shead .shead-title .pop { color: inherit; }
 .shead .seeall {
   font-size: var(--fs-sub);
   color: var(--mut-strong);
-  font-weight: 700;
+  font-weight: 600;
   flex: none;
-  padding-bottom: 6rpx;
+  padding-bottom: 4rpx;
 }
 
 /* ============ 通用 eyebrow / 标题 ============ */
@@ -500,8 +518,26 @@ page.font-lg, .font-lg {
   width: 268rpx;
   height: 268rpx;
   border-radius: 50%;
-  background: rgba(232, 71, 42, 0.16);
+  background: rgba(200, 56, 31, 0.16);
 }
+
+/* ============ 文字头像配色 ============
+   社区里按名字取色（utils/constants.js#avaTone），同一个人在列表、详情、评论里是同一个色；
+   红色那档只给家庭成员页按顺序轮用——社区里红色是「点赞 / 发帖」的颜色，头像不抢。
+   金色档是浅金底配深字：深色档的 --gold-deep 是亮金，上面放白字只有约 2:1。 */
+.ava-pine, .ava-inkdeep, .ava-pop { color: var(--anchor-contrast); }
+.ava-pine { background: var(--pine); }
+.ava-gold { background: var(--gold-on-dark); color: var(--anchor); }
+.ava-inkdeep { background: var(--anchor); }
+.ava-pop { background: var(--pop-fill); }
+
+/* ============ 功能入口图标的浅色底 ============
+   同一个功能在哪个页面都是同一个色：菜谱 / 收藏 = 红，冰箱 = 蓝，买菜 / 导入 = 绿，周菜单 = 金。
+   四个 soft token 深色档各有对应暗色，不用另写。挂在图标外面那层方块上，覆盖它原来的中性底 */
+.tint-pop { background: var(--pop-soft); }
+.tint-info { background: var(--c-info-soft); }
+.tint-pine { background: var(--c-accent-soft); }
+.tint-gold { background: var(--c-gold-soft); }
 
 /* ============ 按钮 ============ */
 .btn {
@@ -519,12 +555,16 @@ page.font-lg, .font-lg {
 .btn::after { border: none; }
 .btn.disabled { opacity: 0.6; }
 .btn-pop {
-  background: var(--pop);
+  background: var(--pop-fill);
   color: #fff;
   box-shadow: var(--sh-pop);
 }
 .btn-dark { background: var(--anchor); color: var(--anchor-contrast); }
 .btn-ghost { background: var(--c-surface); color: var(--ink); border: var(--bd-card); }
+/* 三级按钮（2026-11 统一）：主 = .btn-pop（每屏最多一个红色实心）；
+   次 = .btn-ghost（白底细描边）；文字 = .btn-text（无底无框，用于「查看全部 ›」这类去处）。
+   .btn-dark 仅保留给深底卡片内部，浅底页面不再用深棕实心当第二个主按钮。 */
+.btn-text { min-height: var(--tap-min); padding: 0 8rpx; background: transparent; color: var(--pop); font-weight: 700; }
 .btn-wx { background: var(--wx); color: #fff; }
 .btn-block { width: 100%; }
 
@@ -610,7 +650,7 @@ button[disabled] {
   font-size: calc(22rpx * var(--fs-mul, 1));
   font-weight: 700;
 }
-.tag-pop { background: var(--pop); color: #fff; }
+.tag-pop { background: var(--pop-fill); color: #fff; }
 .tag-glass { background: rgba(40, 30, 20, 0.55); color: #fff; }
 
 /* ============ 文本工具 ============ */
@@ -656,7 +696,7 @@ button[disabled] {
 .subtitle { color: var(--mut-strong); }
 .divider { height: 2rpx; margin: 24rpx 0; background: var(--paper-2); }
 .row { display: flex; align-items: center; justify-content: space-between; }
-.primary-btn { box-sizing: border-box; display: flex; align-items: center; justify-content: center; min-height: 88rpx; border-radius: var(--r-card); background: var(--pop); color: #fff; font-size: var(--fs-btn); font-weight: 800; box-shadow: var(--sh-pop); }
+.primary-btn { box-sizing: border-box; display: flex; align-items: center; justify-content: center; min-height: 88rpx; border-radius: var(--r-card); background: var(--pop-fill); color: #fff; font-size: var(--fs-btn); font-weight: 800; box-shadow: var(--sh-pop); }
 .ghost-btn { box-sizing: border-box; display: flex; align-items: center; justify-content: center; min-height: 88rpx; border-radius: var(--r-card); background: var(--c-surface); color: var(--ink); border: var(--bd-card); font-size: var(--fs-btn); font-weight: 700; }
 .accent-btn { box-sizing: border-box; display: flex; align-items: center; justify-content: center; min-height: 88rpx; border-radius: var(--r-card); background: var(--pine); color: #fff; font-size: var(--fs-btn); font-weight: 700; }
 .primary-btn::after, .ghost-btn::after, .accent-btn::after { border: none; }
@@ -679,7 +719,10 @@ page {
 }
 .g-fade-up, .g-fade-in, .g-fade-down, .g-fade-left, .g-fade-right, .g-scale-in {
   animation-duration: var(--g-dur);
-  animation-fill-mode: both;
+  /* backwards 而不是 both：只在「延迟等待 + 播放」期间占住样式，播完交还给元素自己。
+     原来用 both，播完后 transform / opacity 被动画永久占着——同一元素上的 .tap-scale 按下缩放
+     （社区帖子卡、清单行、首页大图文字区等 13 处）和禁用态的半透明都被盖掉，按了没反应。 */
+  animation-fill-mode: backwards;
   animation-timing-function: var(--g-power3-out);
 }
 .g-fade-up { animation-name: gFadeUp; }
@@ -695,6 +738,15 @@ page {
 @keyframes gFadeLeft { from { opacity: 0; transform: translateX(48rpx); } to { opacity: 1; transform: translateX(0); } }
 @keyframes gFadeRight { from { opacity: 0; transform: translateX(-48rpx); } to { opacity: 1; transform: translateX(0); } }
 @keyframes gScaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+/* 状态切换的回应：点赞 / 收藏 / 点菜成功时图标弹一下。挂在「已选中」的选择器上，状态一变就播一次 */
+.g-pop { animation: gPop var(--g-dur-fast) var(--g-back-out); }
+@keyframes gPop { 0% { transform: scale(0.6); } 60% { transform: scale(1.25); } 100% { transform: scale(1); } }
+/* 进度条：进页面时从左长出来，之后数值变化时平滑伸缩 */
+.g-grow-x { transform-origin: left center; animation: gGrowX var(--g-dur-slow) var(--g-power3-out) backwards; transition: width var(--g-dur) var(--g-power3-out); }
+@keyframes gGrowX { from { transform: scaleX(0); } }
+/* 空态插画轻轻浮动，页面不至于完全静止 */
+.g-float { animation: gFloat 3.2s ease-in-out infinite; }
+@keyframes gFloat { 50% { transform: translateY(-10rpx); } }
 .g-d1 { animation-delay: 0.06s; }
 .g-d2 { animation-delay: 0.12s; }
 .g-d3 { animation-delay: 0.18s; }
@@ -708,11 +760,18 @@ page {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.5) 50%, transparent 70%);
+  background: linear-gradient(100deg, transparent 30%, var(--shimmer-hi) 50%, transparent 70%);
   background-size: 200% 100%;
   animation: shimmer 1.2s ease-in-out infinite;
 }
 @keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+/* 系统开了「减弱动态效果」：时长归零，内容直接到位；循环类动画停掉 */
+@media (prefers-reduced-motion: reduce) {
+  page { --g-dur-fast: 0.01s; --g-dur: 0.01s; --g-dur-slow: 0.01s; }
+  .g-d1, .g-d2, .g-d3, .g-d4, .g-d5, .g-d6, .g-d7, .g-d8 { animation-delay: 0s; }
+  .g-float, .shimmer::after { animation: none; }
+  .rv-hold { opacity: 1; transform: none; }
+}
 @keyframes blink { 50% { opacity: 0; } }
 
 /* —— 图片加载失败兜底（.img-broken，由 binderror 确认后才会挂上）—— */

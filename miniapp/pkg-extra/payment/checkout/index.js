@@ -4,6 +4,7 @@
 // 套餐名与金额一律来自 utils/plans（后端权威），页面内不再写死价格。
 const api = require('../../../utils/api');
 const { loadPlans, FALLBACK } = require('../../../utils/plans');
+const features = require('../../../utils/features');
 
 // UI key（yearly/monthly）→ 兜底套餐；真实值由 loadPlans 覆盖
 function fallbackPlans() {
@@ -13,13 +14,11 @@ function fallbackPlans() {
 Page({
   data: {
     merchantName: '家庭点菜',
-    coverImage: 'kungpao-chicken.jpg',
     productName: FALLBACK.yearly.planName,
     payAmount: FALLBACK.yearly.priceFull,
     originAmount: FALLBACK.yearly.original,
-    payMethod: { name: '微信支付', balance: '0.00' },
-    bankText: '未绑定银行卡',
-    couponText: '暂无可用优惠',
+    durationDays: FALLBACK.yearly.durationDays,
+    paymentEnabled: features.PAYMENT,
     mockMode: false,
     paying: false,
     orderId: null,
@@ -27,7 +26,6 @@ Page({
   },
 
   async onLoad(query) {
-    const features = require('../../../utils/features');
     if (!features.PAYMENT) { features.leaveToHome(); return; }
   // 大字模式档位：进页读取（设置页改完回来重进生效）
   let fontScale = 'normal';
@@ -51,6 +49,7 @@ Page({
       productName: plan.planName,
       payAmount: plan.priceFull,
       originAmount: plan.original || plan.priceFull,
+      durationDays: plan.durationDays,
     };
     if (query && query.planName) patch.productName = decodeURIComponent(query.planName);
     if (query && query.amount) {
@@ -58,19 +57,6 @@ Page({
       if (!isNaN(amt) && amt > 0) patch.payAmount = Number(amt).toFixed(2);
     }
     this.setData(patch);
-  },
-
-  onProductTap() {
-    this.showToast('当前套餐：' + this.data.productName);
-  },
-  onPayMethodTap() {
-    this.showToast('当前使用微信支付');
-  },
-  onBankTap() {
-    this.showToast('未绑定银行卡');
-  },
-  onCouponTap() {
-    this.showToast('暂无可用优惠');
   },
 
   async onPay() {

@@ -2,17 +2,8 @@
 <view class="fav-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <nav-bar title="我的收藏" statusBarHeight="{{statusBarHeight}}"></nav-bar>
 
-  <scroll-view scroll-y class="fav-scroll">
+  <scroll-view scroll-y class="fav-scroll" enhanced show-scrollbar="{{false}}">
   <view class="container">
-
-    <!-- Hero：eyebrow + 镂空撞色标题 + 计数 -->
-    <view class="fav-head g-fade-up">
-      <view class="eyebrow-serif">收藏夹</view>
-      <view class="fav-title">
-        <text>我的</text><text class="pop">收藏</text>
-      </view>
-      <view class="fav-count">{{countText}}</view>
-    </view>
 
     <!-- Tabs：菜谱 / 帖子 -->
     <view class="fav-tabs g-fade-up g-d1">
@@ -50,17 +41,18 @@
           </view>
         </view>
         <state-empty wx:elif="{{loadError}}"
-          type="pop"
+          size="compact"
+          type="offline"
           title="收藏没加载出来"
           desc="网络或服务没响应，重新加载再试一次。"
           cta="重新加载"
-          ctaStyle="pop"
+          ctaStyle="ghost"
           bind:action="retryLoad"
         ></state-empty>
         <state-empty wx:elif="{{!loading}}"
           type="pop"
           title="还没有收藏"
-          desc="逛逛菜谱，点亮喜欢的那颗心，它们会乖乖待在这里等你"
+          desc="在菜谱详情点心形，就会收在这里"
           cta="去逛菜谱"
           ctaStyle="pop"
           bind:action="goRecipes"
@@ -76,20 +68,29 @@
           <view wx:for="{{posts}}" wx:key="id"
             class="fav-pcard tap-scale g-fade-up g-d{{index < 6 ? index + 1 : 6}}"
             data-id="{{item.id}}" bindtap="onPostTap">
-            <image wx:if="{{item.cover}}" class="fav-pthumb" src="{{item.cover}}" mode="aspectFill" lazy-load />
+            <image wx:if="{{item.cover}}" class="fav-pthumb {{item.coverBroken ? 'img-broken' : ''}}" src="{{item.cover}}" mode="aspectFill" lazy-load data-err-key="{{'posts[' + index + '].coverBroken'}}" binderror="onPhotoError" />
             <view class="fav-pmid">
               <view class="fav-ptag">{{item.tag}}</view>
               <view class="fav-ptitle clamp-2">{{item.title}}</view>
               <view class="fav-pby">
                 <view class="fav-pav" style="background: {{item.avatarColor}};">{{item.avatarText}}</view>
                 <text class="fav-pnm ellipsis">{{item.author}}</text>
-                <view class="fav-plk">
+                <view class="fav-plk" aria-label="{{item.likeCount}} 个赞">
                   <view class="fav-plk-dot"></view>{{item.likeCount}}
                 </view>
               </view>
             </view>
           </view>
         </view>
+        <state-empty wx:elif="{{loadError}}"
+          size="compact"
+          type="offline"
+          title="收藏没加载出来"
+          desc="网络或服务没响应，重新加载再试一次。"
+          cta="重新加载"
+          ctaStyle="ghost"
+          bind:action="retryLoad"
+        ></state-empty>
         <state-empty wx:elif="{{!loading}}"
           type="pop"
           title="还没有收藏帖子"

@@ -15,7 +15,8 @@
   padding: 0 24rpx;
 }
 
-/* 返回圆按钮：深棕 ink-deep，高度跟胶囊行对齐 */
+/* 返回圆按钮：浅底白圆 + 细描边 + 墨色箭头（2026-11 由深棕实心减重：它曾是每个二级页最重的元素）。
+   白圆自带底色，压在照片 hero 上也看得清；高度跟胶囊行对齐 */
 .navbar-back {
   display: flex;
   align-items: center;
@@ -23,7 +24,10 @@
   width: 64rpx;
   height: 64rpx;
   border-radius: 50%;
-  background: var(--anchor);
+  background: var(--c-surface);
+  border: 2rpx solid var(--line);
+  box-shadow: 0 2rpx 8rpx rgba(60, 40, 20, 0.08);
+  box-sizing: border-box;
   flex: none;
   position: relative;
 }
@@ -44,8 +48,8 @@
 .navbar-back-icon {
   width: 18rpx;
   height: 18rpx;
-  border-left: 5rpx solid var(--paper);
-  border-bottom: 5rpx solid var(--paper);
+  border-left: 4rpx solid var(--ink);
+  border-bottom: 4rpx solid var(--ink);
   transform: translateX(3rpx) rotate(45deg);
   border-radius: 2rpx;
 }

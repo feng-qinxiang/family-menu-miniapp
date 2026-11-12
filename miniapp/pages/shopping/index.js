@@ -7,12 +7,15 @@ const {
   getShoppingList,
   getTodayMenu,
   rebuildShoppingList,
-  toggleShoppingPurchased
+  toggleShoppingPurchased,
+  getIngredientPhotos
 } = require('../../utils/api');
 const { withScrollReveal, dispose: disposeScrollReveal } = require('../../behaviors/scroll-reveal');
 const { indexPantry, pantryHas } = require('../../utils/pantry-match');
 
-const { recipeDishImg, localDishByIngredient } = require('../../utils/image');
+const { ingredientImage, onPhotoError } = require('../../utils/image');
+const { editIngredientPhoto } = require('../../utils/ingredient-photo');
+const { runGuarded, guard, release } = require('../../utils/interaction');
 const { INGREDIENT_CATEGORIES, categoryOf } = require('../../utils/ingredients');
 const { shoppingEmptyReason } = require('../../utils/kitchen');
 
@@ -20,25 +23,25 @@ function pantryCategory(name) {
   return categoryOf(name);
 }
 
-function decoratePantryItem(it) {
+function decoratePantryItem(it, photos) {
   const name = it.ingredientName || it.name || '';
   const cat = pantryCategory(name);
   return {
     ...it,
-    cover: localDishByIngredient(name),
+    cover: ingredientImage(it, photos),
     initial: String(name || '菜').slice(0, 1),
     categoryKey: cat.key
   };
 }
 
-function groupPantry(items) {
+function groupPantry(items, photos) {
   const map = {};
   (items || []).forEach(it => {
     const cat = pantryCategory(it.ingredientName || it.name);
     if (!map[cat.key]) map[cat.key] = { key: cat.key, label: cat.label, items: [] };
-    map[cat.key].items.push(decoratePantryItem(it));
+    map[cat.key].items.push(decoratePantryItem(it, photos));
   });
-  return ['veg', 'meat', 'season', 'other'].map(k => map[k]).filter(Boolean);
+  return ['veg', 'meat', 'seasoning', 'other'].map(k => map[k]).filter(Boolean);
 }
 
 const ingredientCategories = INGREDIENT_CATEGORIES;
@@ -46,8 +49,8 @@ const ingredientCategories = INGREDIENT_CATEGORIES;
 Page({
   data: {
     tab: 'shopping',          // shopping | pantry
-    navSolid: false,
     pantryCategories: [],
+    ingredientPhotosFailed: false,
     pantryCount: 0,
     pantryError: false,
     newPantryItem: { ingredientName: '', amount: '', unit: '' },
@@ -59,8 +62,6 @@ Page({
       status: 'OPEN',
       items: []
     },
-    pendingItems: [],
-    purchasedItems: [],
     groupedPending: [],
     groupedPurchased: [],
     // 空清单的原因（'no-menu' / 'no-ingredients'）与对应文案，由 buildShoppingState 填
@@ -79,10 +80,15 @@ Page({
       { ingredientName: '青菜', amount: '1', unit: '把' }
     ],
     newItem: { ingredientName: '', amount: '', unit: '' },
+    newItemCover: '',
+    newItemCoverBroken: false,
     skeletonRows: [1, 2, 3],
     loading: true,
     loadError: false,
-    addItemSubmitting: false
+    addItemSubmitting: false,
+    pantryAdding: false,
+    stocking: false,
+    stockableCount: 0
   },
 
   onShow() {
@@ -90,11 +96,6 @@ Page({
     try { fontScale = wx.getStorageSync('font_scale') || 'normal'; } catch (e) { fontScale = 'normal'; }
     if (fontScale !== this.data.fontScale) this.setData({ fontScale });
     Promise.resolve(this.loadShoppingList(this._hasLoaded === true)).then(() => { this._hasLoaded = true; });
-  },
-
-  onPageScroll(e) {
-    const navSolid = (e.scrollTop || 0) > 80;
-    if (navSolid !== this.data.navSolid) this.setData({ navSolid });
   },
 
   async onPullDownRefresh() {
@@ -113,12 +114,16 @@ Page({
       const loaded = await Promise.all([
         getShoppingList(),
         getTodayMenu(),
-        getPantryItems()
+        getPantryItems(),
+        getIngredientPhotos().catch(() => null)
       ]);
       const shoppingList = loaded[0], todayMenu = loaded[1], pantryItems = loaded[2];
+      this._ingredientPhotos = loaded[3] || {};
+      this.setData({ ingredientPhotosFailed: loaded[3] === null });
       this._lastContext = { todayMenu, pantryItems };
-      this.applyShoppingList(shoppingList, { todayMenu, pantryItems, loading: false });
+      // 先落库存：buildShoppingState 的「放进冰箱」计数要按 _pantryItems 判重
       this.setPantryView(pantryItems);
+      this.applyShoppingList(shoppingList, { todayMenu, pantryItems, loading: false });
     } catch (err) {
       console.error('shopping load failed', err);
       this.setData({ loading: false, loadError: true });
@@ -132,17 +137,33 @@ Page({
 
   // 空态出口：没点菜去挑菜，点了菜没录用料去补用料——两条路都落在菜谱页
   goRecipes() {
-    wx.switchTab({ url: '/pages/recipes/index', fail() {} });
+    wx.navigateTo({ url: '/pages/recipes/index', fail() {} });
   },
 
   setPantryView(pantryItems) {
     const items = Array.isArray(pantryItems) ? pantryItems : [];
     this.setData({
-      pantryCategories: groupPantry(items),
+      pantryCategories: groupPantry(items, this._ingredientPhotos),
       pantryCount: items.length,
       // 拉到数据就说明这次没失败（重试成功后失败态要自动消失）
       pantryError: false
     });
+    this._pantryItems = items;
+  },
+
+  onIngredientPhotoError(e) { onPhotoError(e, this); },
+
+  async editIngredientPhoto(e) {
+    const name = e.currentTarget.dataset.name;
+    const photos = await runGuarded(this, 'ingredientPhoto', () => editIngredientPhoto(name, (this._ingredientPhotos || {})[name]), {
+      success: result => result ? '食材图片已保存' : '', fail: err => err.message || '保存失败，原图片已保留'
+    });
+    if (photos === undefined) return;
+    this._ingredientPhotos = photos;
+    this.setData({ ingredientPhotosFailed: false,
+      newItemCover: ingredientImage(this.data.newItem, photos), newItemCoverBroken: false });
+    this.applyShoppingList(this.data.shoppingList, this._lastContext || {});
+    this.setPantryView(this._pantryItems || []);
   },
 
   switchTab(e) {
@@ -176,19 +197,23 @@ Page({
     this.setData({ [`newPantryItem.${field}`]: e.detail.value });
   },
 
+  // 防连点同冰箱页 addItem：pantry_item 没有唯一键，连点会记入多条
   async addPantryEntry() {
+    if (this.data.pantryAdding) return;
     const { ingredientName, amount, unit } = this.data.newPantryItem;
     if (!(ingredientName || '').trim()) {
       wx.showToast({ title: '请输入食材名', icon: 'none' });
       return;
     }
+    this.setData({ pantryAdding: true });
     try {
       await addPantryItem({ ingredientName: ingredientName.trim(), amount, unit });
     } catch (err) {
+      this.setData({ pantryAdding: false });
       wx.showToast({ title: '添加失败', icon: 'none' });
       return;
     }
-    this.setData({ newPantryItem: { ingredientName: '', amount: '', unit: '' }, showPantryForm: false });
+    this.setData({ newPantryItem: { ingredientName: '', amount: '', unit: '' }, showPantryForm: false, pantryAdding: false });
     try {
       const items = await getPantryItems();
       this.setPantryView(items);
@@ -258,6 +283,17 @@ Page({
 
   async toggleItem(event) {
     const { id } = event.currentTarget.dataset;
+    // 同一项在途时忽略再点（同社区页点赞）：两条 PATCH 乱序到达，服务端最终状态会和界面相反
+    const key = `toggle-${id}`;
+    if (!guard(this, key)) return;
+    try {
+      await this.toggleItemOnce(id);
+    } finally {
+      release(this, key);
+    }
+  },
+
+  async toggleItemOnce(id) {
     const items = (this.data.shoppingList && this.data.shoppingList.items) || [];
     const idx = items.findIndex((it) => it.itemId === id);
     if (idx < 0) return;
@@ -284,7 +320,22 @@ Page({
 
   onNewItemInput(e) {
     const { field } = e.currentTarget.dataset;
-    this.setData({ [`newItem.${field}`]: e.detail.value });
+    const patch = { [`newItem.${field}`]: e.detail.value };
+    if (field === 'ingredientName') {
+      patch.newItemCover = ingredientImage({ ingredientName: e.detail.value }, this._ingredientPhotos);
+      patch.newItemCoverBroken = false;
+    }
+    this.setData(patch);
+  },
+
+  async editNewItemPhoto() {
+    if (this.data.addItemSubmitting) return;
+    const name = (this.data.newItem.ingredientName || '').trim();
+    if (!name) {
+      wx.showToast({ title: '先填写食材名，再添加图片', icon: 'none' });
+      return;
+    }
+    await this.editIngredientPhoto({ currentTarget: { dataset: { name } } });
   },
 
   async addItem() {
@@ -317,7 +368,8 @@ Page({
     } catch (err) {
       wx.hideLoading();
       this.setData({ addItemSubmitting: false });
-      wx.showToast({ title: '添加失败，请重试', icon: 'none' });
+      // api 层已经弹过服务端原文，用同一句，不拿通用文案盖掉
+      wx.showToast({ title: (err && err.message) || '添加失败，请重试', icon: 'none' });
       return;
     }
     if (result) {
@@ -333,13 +385,15 @@ Page({
       const nextState = this.buildShoppingState(result, context);
       if (shouldClearInput) {
         nextState.newItem = { ingredientName: '', amount: '', unit: '' };
+        nextState.newItemCover = '';
+        nextState.newItemCoverBroken = false;
       }
       nextState.addItemSubmitting = false;
       this.setData(nextState);
     } else {
       await this.loadShoppingList();
       if (shouldClearInput) {
-        this.setData({ newItem: { ingredientName: '', amount: '', unit: '' }, addItemSubmitting: false });
+        this.setData({ newItem: { ingredientName: '', amount: '', unit: '' }, newItemCover: '', newItemCoverBroken: false, addItemSubmitting: false });
       } else {
         this.setData({ addItemSubmitting: false });
       }
@@ -406,14 +460,15 @@ Page({
     const emptyReason = shoppingEmptyReason((context.todayMenu && context.todayMenu.items || []).length, totalCount);
     return {
       shoppingList: { ...normalized, items },
-      pendingItems,
-      purchasedItems,
+      // pendingItems / purchasedItems 不进 data：wxml 只渲染两个 grouped 列表，计数走 summary
       groupedPending: this.groupItems(pendingItems),
       groupedPurchased: this.groupItems(purchasedItems),
       emptyReason,
       emptyState: emptyReason === 'no-ingredients'
         ? { title: '还没有要买的', desc: '今天点的菜还没录用料，去菜谱里补上就能自动生成', cta: '去菜谱' }
         : { title: '今天还没点菜', desc: '先去菜谱挑几道，买菜清单会跟着长出来', cta: '去点菜' },
+      // 已买、冰箱里还没有同名食材的：可一键入库（按名字判重，避免来回勾选重复入库）
+      stockableCount: this.stockableItems(purchasedItems).length,
       summary: {
         totalCount,
         pendingCount,
@@ -424,6 +479,34 @@ Page({
           : (emptyReason === 'no-ingredients' ? '这几道菜还没录食材' : '今天还没点菜')
       }
     };
+  },
+
+  stockableItems(purchasedItems) {
+    const have = new Set((this._pantryItems || []).map((it) => String(it.ingredientName || it.name || '').trim()));
+    return purchasedItems.filter((it) => !have.has(String(it.ingredientName || '').trim()));
+  },
+
+  // 已入篮 → 冰箱：逐条 addPantryItem（后端无批量接口），中途失败也刷新，已入的不会再算进按钮
+  async stockPurchased() {
+    const items = this.stockableItems((this.data.shoppingList.items || []).filter((it) => it.purchased));
+    if (!items.length) return;
+    let added = 0;
+    await runGuarded(this, 'stock', async () => {
+      try {
+        for (const it of items) {
+          await addPantryItem({ ingredientName: it.ingredientName, amount: it.amount, unit: it.unit });
+          added += 1;
+        }
+      } finally {
+        await this.loadPantry();
+        this._lastContext = { ...(this._lastContext || {}), pantryItems: this._pantryItems };
+        this.applyShoppingList(this.data.shoppingList, this._lastContext);
+      }
+    }, {
+      onBusyChange: (stocking) => this.setData({ stocking }),
+      success: () => `已放进冰箱 ${added} 样`,
+      fail: () => (added ? `放进 ${added} 样，其余没成功，再点一次` : '没放进去，请重试')
+    });
   },
 
   enrichItems(items, context) {
@@ -446,23 +529,10 @@ Page({
         pantryText: inPantry ? '库存里已有' : '',
         categoryKey: category.key,
         categoryLabel: category.label,
-        cover: this.resolveItemCover(item.ingredientName, menuItems, sourceRecipes),
+        cover: ingredientImage(item, this._ingredientPhotos),
         initial: String(item.ingredientName || '菜').slice(0, 1)
       };
     });
-  },
-
-  resolveItemCover(ingredientName, menuItems, sourceRecipes) {
-    // 有来源菜谱时直接用该菜谱封面（菜单项的 recipe 含 title/coverImage）
-    if (Array.isArray(sourceRecipes) && sourceRecipes.length) {
-      for (let i = 0; i < menuItems.length; i++) {
-        const recipe = menuItems[i].recipe || {};
-        if (recipe.title && sourceRecipes.indexOf(recipe.title) !== -1) {
-          return recipeDishImg(recipe);
-        }
-      }
-    }
-    return localDishByIngredient(ingredientName);
   },
 
   findSourceRecipes(ingredientName, menuItems) {

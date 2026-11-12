@@ -1,6 +1,6 @@
-<!-- pages/kitchen/index · 厨房总控（多菜并行一屏管理） -->
+<!-- pkg-extra/kitchen/index · 做菜进度（这一餐几道菜一屏管理） -->
 <view class="kitchen {{fontScale === 'lg' ? 'font-lg' : ''}}">
-  <nav-bar title="厨房总控" show-back="{{true}}"></nav-bar>
+  <nav-bar class="k-nav" title="做菜进度" show-back="{{true}}"></nav-bar>
 
   <!-- 加载中 -->
   <view wx:if="{{loading}}" class="k-loading">
@@ -11,6 +11,7 @@
   <!-- 加载失败 -->
   <state-empty
     wx:elif="{{loadError}}"
+    size="compact"
     type="offline"
     title="厨房没连上"
     desc="网络开小差了，检查后再试一次"
@@ -21,7 +22,6 @@
   <!-- 这一餐还没点菜 -->
   <state-empty
     wx:elif="{{!groups.length}}"
-    type="gray"
     title="今天还没点菜"
     desc="先去菜谱里挑几道，再回来开火"
     cta="去点菜"
@@ -57,34 +57,34 @@
         wx:key="id"
         class="k-card {{item.main ? 'main' : ''}} {{item.status === 'done' ? 'is-done' : ''}}"
       >
-        <image class="k-img" src="{{item.img}}" mode="aspectFill" lazy-load />
-        <view class="k-main-flag" wx:if="{{item.main}}">主灶</view>
-
-        <view class="k-col">
+        <view class="k-card-head">
+          <image class="k-img {{item.coverBroken ? 'img-broken' : ''}}" src="{{item.img}}" mode="aspectFill" lazy-load data-id="{{item.id}}" data-err-key="{{'items[' + index + '].coverBroken'}}" binderror="onPhotoError" />
+          <view class="k-col">
           <view class="k-title-row">
-            <text class="k-title ellipsis">{{item.title}}</text>
-            <text class="k-tag {{item.status}}">{{item.status === 'done' ? '已上桌' : item.status === 'cooking' ? '烧着呢' : '待做'}}</text>
+            <text class="k-title">{{item.title}}</text>
           </view>
 
           <view class="k-meta">
             <text wx:if="{{item.timeCost}}">{{item.timeCost}} 分钟</text>
             <text wx:if="{{item.servings}}"> · {{item.servings}} 人份</text>
             <text wx:if="{{item.progressText}}"> · 做到 {{item.progressText}}</text>
-            <text wx:if="{{!item.timeCost && !item.servings && !item.progressText}}">· {{item.mealLabel}}</text>
+            <text wx:if="{{!item.timeCost && !item.servings && !item.progressText}}">{{item.mealLabel}}</text>
           </view>
-
-          <!-- 计时行 -->
+          <view class="k-status-row"><text class="k-main-flag" wx:if="{{item.main}}">主灶</text><text class="k-tag {{item.status}}">{{item.status === 'done' ? '已上桌' : item.status === 'cooking' ? '正在做' : '待开做'}}</text></view>
+          <!-- 本菜计时放在图片右侧，和菜名、状态一起查看 -->
           <view class="k-timer" wx:if="{{item.status !== 'done'}}">
-            <text class="k-clock {{item.timer && item.timer.running ? 'running' : ''}} {{item.timer ? '' : 'idle'}}">{{item.timer ? item.timerText : '未计时'}}</text>
+            <view class="k-timer-copy"><text class="k-timer-label">{{item.timer ? (item.timer.running ? '正在计时' : '计时已暂停') : '未计时'}}</text><text wx:if="{{item.timer}}" class="k-clock {{item.timer.running ? 'running' : ''}}">{{item.timerText}}</text></view>
             <view class="k-tbtns">
               <view
                 class="k-tbtn tap-scale {{item.timer && item.timer.running ? 'on' : ''}}"
                 data-index="{{index}}"
                 catchtap="toggleTimer"
-              >{{item.timer && item.timer.running ? '暂停' : (item.timer ? '继续' : '计时')}}</view>
+              >{{item.timer && item.timer.running ? '暂停' : (item.timer ? '继续' : '开始计时')}}</view>
               <view class="k-tbtn ghost tap-scale" data-index="{{index}}" catchtap="pickDuration">换时长</view>
             </view>
           </view>
+          </view>
+        </view>
 
           <!-- 动作行 -->
           <view class="k-acts" wx:if="{{item.status !== 'done'}}">
@@ -93,8 +93,10 @@
               data-id="{{item.recipeId}}"
               data-item="{{item.id}}"
               catchtap="startCook"
+              aria-role="button"
+              aria-label="{{item.status === 'cooking' ? '继续做' : '开做'}}{{item.title}}"
             >{{item.status === 'cooking' ? '继续做 ›' : '开做 ›'}}</view>
-            <view class="k-act ghost tap-scale" data-id="{{item.recipeId}}" data-index="{{index}}" catchtap="markCooked">上桌</view>
+            <view class="k-act ghost tap-scale" data-id="{{item.recipeId}}" data-index="{{index}}" catchtap="markCooked" aria-role="button" aria-label="{{item.title}}上桌">上桌</view>
           </view>
           <!-- 已上桌：晒到社区。菜刚出锅、照片刚拍，是「做菜 → 社区」最自然的入口 -->
           <!-- COMMUNITY 关闭时这条动作行整个不渲染（否则用户看到的是空动作行） -->
@@ -104,9 +106,10 @@
               data-id="{{item.recipeId}}"
               data-title="{{item.title}}"
               catchtap="shareCooked"
+              aria-role="button"
+              aria-label="把{{item.title}}晒到邻里厨房"
             >晒到邻里厨房 ›</view>
           </view>
-        </view>
       </view>
     </view>
 

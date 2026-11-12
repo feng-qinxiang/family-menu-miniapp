@@ -1,25 +1,14 @@
 <view class="vip-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
-  <!-- HERO -->
-  <view class="vip-hero">
-    <image class="vip-hero-img" src="/assets/dishes/shrimp-peas.jpg" mode="aspectFill" />
-    <view class="vip-hero-shade"></view>
-    <text class="vip-hero-bignum">VIP</text>
-    <view class="vip-hero-top" style="padding-top: {{navPad}};">
-      <view class="vip-backbtn tap-scale" bindtap="goBack">
-        <text class="vip-back-ico">‹</text>
-      </view>
-      <view class="vip-navtitle">会员中心</view>
-    </view>
-    <view class="vip-hero-body g-fade-up">
-      <text class="vip-tag">家庭云同步</text>
-      <view class="vip-hero-title title-stroke">家庭云<text class="pop">同步</text></view>
-      <view class="vip-hero-sub">菜谱、菜单、买菜清单全家实时共享，谁改了哪样大家都看得到。</view>
-      <view class="vip-hero-meta">
+  <nav-bar title="会员中心" />
+  <view class="cpt-head">
+      <view class="cpt-eyebrow">照顾好，全家的每一餐</view>
+      <view class="cpt-title">家庭云同步</view>
+      <view class="cpt-sub">菜谱、菜单、买菜清单全家共享，家的味道随时都在。</view>
+      <view class="vip-meta">
         <view class="vip-m">实时云同步</view>
-        <view class="vip-m">成员无限</view>
-        <view class="vip-m">{{priceMeta.yearly}}</view>
+        <view class="vip-m">最多 8 位家人</view>
+        <view wx:if="{{priceMeta.yearly}}" class="vip-m">{{priceMeta.yearly}}</view>
       </view>
-    </view>
   </view>
 
   <!-- SHEET -->
@@ -92,7 +81,7 @@
       <view class="btn btn-pop btn-block tap-scale {{activating ? 'disabled' : ''}}" bindtap="goCheckout">
         {{isVip ? '已开通 · ' + planName : '开通家庭同步 · ' + (selectedPlan === 'yearly' ? priceMeta.yearly : priceMeta.monthly)}}
       </view>
-      <view class="vip-note">连续包{{selectedPlan === 'yearly' ? '年' : '月'}}，可随时在设置中取消</view>
+      <view class="vip-note">单次付费，到期不会自动扣费，需要时再续费</view>
     </view>
   </view>
 </view>

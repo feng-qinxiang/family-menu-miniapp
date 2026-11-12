@@ -1,0 +1,72 @@
+{
+  "checkedAt": "2026-10-09T14:26:08.019378+00:00",
+  "passed": true,
+  "checks": [
+    {
+      "tool": "compile_wxml",
+      "file": "components/recipe-card/index.wxml",
+      "sha256": "329d8e11efb6d6605eab00715efdee72dcf9ac5d3b754eb6c272f5e002042b8e",
+      "result": {
+        "ok": true,
+        "tool": "compile_wxml",
+        "clientName": "Codex",
+        "result": {
+          "success": true,
+          "codeLength": 33293
+        }
+      }
+    },
+    {
+      "tool": "compile_wxss",
+      "file": "components/recipe-card/index.wxss",
+      "sha256": "9ac475120c9b1c35798d8efac117072096596c2e64b62ab6616aa93872ee2e77",
+      "result": {
+        "ok": true,
+        "tool": "compile_wxss",
+        "clientName": "Codex",
+        "result": {
+          "success": true,
+          "files": 2,
+          "fileList": [
+            "comm",
+            "page"
+          ],
+          "totalCodeLength": 38994
+        }
+      }
+    },
+    {
+      "tool": "compile_wxml",
+      "file": "pkg-extra/community/post-detail/index.wxml",
+      "sha256": "e2ca3fa5c461a3f3e81c36eb5bf877ea4075f3057b1014a00ca1e41c94e90d2f",
+      "result": {
+        "ok": true,
+        "tool": "compile_wxml",
+        "clientName": "Codex",
+        "result": {
+          "success": true,
+          "codeLength": 33293
+        }
+      }
+    },
+    {
+      "tool": "compile_wxss",
+      "file": "pkg-extra/community/post-detail/index.wxss",
+      "sha256": "65bae44e3e5e154bbdf9a6e79149fa76d3b91fea9978094ac930bd2fc942260f",
+      "result": {
+        "ok": true,
+        "tool": "compile_wxss",
+        "clientName": "Codex",
+        "result": {
+          "success": true,
+          "files": 2,
+          "fileList": [
+            "comm",
+            "page"
+          ],
+          "totalCodeLength": 38994
+        }
+      }
+    }
+  ]
+}

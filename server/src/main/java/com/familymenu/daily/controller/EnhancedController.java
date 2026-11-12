@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -82,5 +83,17 @@ public class EnhancedController {
     @GetMapping("/pantry/match")
     public List<PantryMatchResult> pantryMatch(@CurrentUser AuthUser user) {
         return enhancedService.matchRecipesWithPantry(requireFamily(user), user.userId());
+    }
+
+    @GetMapping("/ingredient-photos")
+    public Map<String, String> ingredientPhotos(@CurrentUser AuthUser user) {
+        return enhancedService.ingredientPhotos(requireFamily(user));
+    }
+
+    @PutMapping("/ingredient-photos")
+    @RequiresAuth
+    public Map<String, String> saveIngredientPhoto(@CurrentUser AuthUser user,
+            @Valid @RequestBody com.familymenu.daily.dto.ApiModels.IngredientPhotoRequest request) {
+        return enhancedService.saveIngredientPhoto(requireFamily(user), user.userId(), request);
     }
 }

@@ -3,7 +3,7 @@
 // 纯逻辑在 utils/kitchen.js（有 node 断言），本页只管数据与事件。
 const features = require('../../utils/features');
 const api = require('../../utils/api');
-const { recipeDishImg } = require('../../utils/image');
+const { recipeDishImg, onPhotoError: markPhotoBroken } = require('../../utils/image');
 const { mealTypeLabels, mealOrder } = require('../../utils/constants');
 const { runGuarded } = require('../../utils/interaction');
 const subscribe = require('../../utils/subscribe');
@@ -24,6 +24,12 @@ const DURATIONS = [
 ];
 
 Page({
+  onPhotoError(e) {
+    const group = this.data.groups.find(item => item.meal === this.data.activeMeal);
+    const item = group && group.items.find(row => String(row.id) === String(e.currentTarget.dataset.id));
+    if (item) item.coverBroken = true;
+    markPhotoBroken(e, this);
+  },
   data: {
     fontScale: 'normal',
     loading: true,
@@ -50,7 +56,14 @@ Page({
 
   // 从 cook-mode / 上桌操作回来：重拉菜单与本地计时，状态自动对齐
   onShow() {
+    this._hidden = false;
     if (this._hasLoaded) this.loadData();
+  },
+
+  // 进了烹饪模式等页面被盖住：tick 不停（停了会把离开期间到点的提醒吞掉，restoreTimer 对过期计时是静默删的），
+  // 只是不再每秒刷看不见的读秒。到点照样震动 + 提示，那是另一道菜的提醒，盖在做菜页上也该看到。
+  onHide() {
+    this._hidden = true;
   },
 
   onUnload() {
@@ -298,9 +311,11 @@ Page({
         wx.showToast({ title: `「${it.title}」时间到啦`, icon: 'none' });
         return;
       }
+      running.push(idx);
+      // 页面被盖住：不刷看不见的读秒（读秒按 baseAt 现算，回来 onShow 的 loadData 也会重算），到点那支照常处理
+      if (this._hidden) return;
       patch[`items[${idx}].timer.left`] = left;
       patch[`items[${idx}].timerText`] = fmtClock(left);
-      running.push(idx);
     });
     if (Object.keys(patch).length) this.setData(patch);
     if (!running.length) this.stopTick();
@@ -310,6 +325,9 @@ Page({
   async startCook(e) {
     const { id, item } = e.currentTarget.dataset;
     if (!id) return;
+    // 导航锁：与菜单页同一约定，连点会叠两层烹饪模式（上层退出时关掉常亮）
+    if (this._startingCook) return;
+    this._startingCook = true;
     // 先写「烧着呢」再跳：与菜单页同一约定，防止回来读到旧状态
     if (item) {
       try {
@@ -320,7 +338,8 @@ Page({
     }
     wx.navigateTo({
       url: `/pkg-extra/cook-mode/index?id=${id}&menuItemId=${item || ''}`,
-      fail: () => wx.showToast({ title: '页面打开失败，请重试', icon: 'none' })
+      fail: () => wx.showToast({ title: '页面打开失败，请重试', icon: 'none' }),
+      complete: () => { this._startingCook = false; }
     });
   },
 
@@ -388,7 +407,7 @@ Page({
   },
 
   goOrdering() {
-    wx.switchTab({ url: '/pages/recipes/index', fail: () => {} });
+    wx.navigateTo({ url: '/pages/recipes/index', fail: () => {} });
   },
 
   noop() {}

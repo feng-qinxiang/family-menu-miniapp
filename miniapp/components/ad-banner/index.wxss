@@ -20,7 +20,7 @@
   width: 150rpx;
   height: 150rpx;
   border-radius: 50%;
-  background: rgba(232, 71, 42, 0.1);
+  background: rgba(200, 56, 31, 0.1);
   content: "";
   pointer-events: none;
 }
@@ -35,7 +35,7 @@
   width: 78rpx;
   height: 78rpx;
   border-radius: var(--r-md);
-  background: var(--pop);
+  background: var(--pop-fill);
   color: var(--anchor-contrast);
   font-size: calc(25rpx * var(--fs-mul, 1));
   font-weight: var(--w-bold);

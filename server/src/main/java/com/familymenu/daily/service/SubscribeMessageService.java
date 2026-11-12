@@ -41,6 +41,7 @@ public class SubscribeMessageService {
     /** 事件类型：家人许愿 / 开饭提醒。同时是 application.yml 里模板配置的键名后缀。 */
     public static final String KIND_WISH = "wish";
     public static final String KIND_MEAL = "meal";
+    public static final String KIND_PANTRY = "pantry";
 
     /**
      * 消息字段名。必须与小程序后台申请到的模板字段**完全一致**，
@@ -72,6 +73,7 @@ public class SubscribeMessageService {
                                    JdbcTemplate jdbcTemplate,
                                    @Value("${wechat.subscribe.template-wish:}") String wishTemplate,
                                    @Value("${wechat.subscribe.template-meal:}") String mealTemplate,
+                                   @Value("${wechat.subscribe.template-pantry:}") String pantryTemplate,
                                    @Value("${wechat.subscribe.miniprogram-state:formal}") String miniprogramState) {
         this.wechatClient = wechatClient;
         this.jdbcTemplate = jdbcTemplate;
@@ -82,6 +84,7 @@ public class SubscribeMessageService {
         Map<String, String> configured = new LinkedHashMap<>();
         putIfPresent(configured, KIND_WISH, wishTemplate);
         putIfPresent(configured, KIND_MEAL, mealTemplate);
+        putIfPresent(configured, KIND_PANTRY, pantryTemplate);
         this.templates = Map.copyOf(configured);
 
         // 单线程 + 有界队列：家庭事件频次极低，一条线程足够；守线程池也避免影响应用退出
@@ -99,7 +102,7 @@ public class SubscribeMessageService {
 
         if (this.templates.isEmpty()) {
             log.info("SubscribeMessage disabled: no template id configured "
-                    + "(set WECHAT_SUBSCRIBE_TEMPLATE_WISH / WECHAT_SUBSCRIBE_TEMPLATE_MEAL to enable)");
+                    + "(set WECHAT_SUBSCRIBE_TEMPLATE_WISH / WECHAT_SUBSCRIBE_TEMPLATE_MEAL / WECHAT_SUBSCRIBE_TEMPLATE_PANTRY to enable)");
         } else {
             log.info("SubscribeMessage enabled for kinds={} miniprogramState={}", this.templates.keySet(), this.miniprogramState);
         }

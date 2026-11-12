@@ -4,15 +4,13 @@
 <view class="container {{fontScale === 'lg' ? 'font-lg' : ''}}">
   <!-- Hero -->
   <view class="head g-fade-up">
-    <view class="eyebrow-serif">有邀请码？</view>
-    <view class="title-stroke--ink hero-title">加入<text class="pop">家庭</text></view>
     <view class="lead">输入家人分享的 8 位邀请码，或扫描他们的二维码，一起共享菜单和买菜清单。</view>
   </view>
 
   <!-- 8 位邀请码 -->
   <view class="code-label g-fade-up g-d1">
     <text class="code-label-tx">8 位邀请码</text>
-    <view class="paste tap-scale" catchtap="onPaste">
+    <view class="paste hit-88 tap-scale" aria-role="button" aria-label="粘贴邀请码" catchtap="onPaste">
       <view class="paste-ic"></view>
       <text>粘贴</text>
     </view>
@@ -48,7 +46,7 @@
   <!-- 分隔 -->
   <view class="ln-divider g-fade-up g-d3">
     <view class="ln"></view>
-    <text class="ln-tx">找到家庭</text>
+    <text class="ln-tx">家庭信息</text>
     <view class="ln"></view>
   </view>
 
@@ -58,7 +56,7 @@
     <view class="famcard card">
       <view class="fc-top">
         <view class="fc-cover">
-          <image class="fc-cover-img" src="/assets/dishes/hongshao-pork.jpg" mode="aspectFill" />
+          <image class="fc-cover-img" src="{{heroImage}}" mode="aspectFill" binderror="onHeroImageError" />
           <view class="badge"><view class="badge-ic"></view></view>
         </view>
         <view class="fc-mid">
@@ -105,7 +103,7 @@
 
   <!-- 创建新家 -->
   <view class="createnew">
-    <text class="createnew-link tap-scale" catchtap="onCreate">还没有家庭？创建一个新家 ›</text>
+    <text class="createnew-link hit-88 tap-scale" aria-role="button" catchtap="onCreate">还没有家庭？创建一个新家 ›</text>
   </view>
 
   <view class="safe-bottom"></view>

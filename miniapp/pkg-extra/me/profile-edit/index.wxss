@@ -11,13 +11,6 @@
 }
 
 /* nav-bar 右侧保存文字 */
-.pe-navsave {
-  font-size: var(--fs-cap);
-  font-weight: 800;
-  color: var(--gold-deep);
-  letter-spacing: 1rpx;
-  padding: 8rpx 6rpx;
-}
 
 .pe-scroll {
   flex: 1;
@@ -26,21 +19,22 @@
   padding: 8rpx 0 40rpx;
 }
 
+/* 原资料没加载出来的重试行：整行可点，最小命中区走 token */
+.pe-loadfail {
+  display: flex;
+  align-items: center;
+  min-height: var(--tap-min);
+  padding: 0 46rpx;
+  font-size: var(--fs-cap);
+  color: var(--pop);
+}
+
 /* ===== 文字头像 ===== */
 .pe-avatar-wrap {
   display: flex;
   flex-direction: column;
   align-items: center;
   margin: 30rpx 0 16rpx;
-}
-.pe-eyebrow {
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: var(--fs-cap);
-  letter-spacing: 2rpx;
-  color: var(--gold-deep);
-  font-weight: 700;
-  margin-bottom: 24rpx;
 }
 .pe-avatar {
   position: relative;
@@ -51,7 +45,7 @@
   width: var(--ava-hero);
   height: var(--ava-hero);
   border-radius: calc(var(--ava-hero) * var(--r-ava));
-  background: var(--pop);
+  background: var(--pop-fill);
   border: 6rpx solid var(--c-surface);
   display: flex;
   align-items: center;
@@ -72,14 +66,15 @@
   box-shadow: var(--sh-card);
   background: var(--paper-2);
 }
+/* 角标往外挪、缩到 60rpx：原 74rpx 贴在右下角，会压住头像里那个字的笔画 */
 .pe-cam {
   position: absolute;
-  right: -4rpx;
-  bottom: -4rpx;
-  width: 74rpx;
-  height: 74rpx;
+  right: -16rpx;
+  bottom: -16rpx;
+  width: 60rpx;
+  height: 60rpx;
   border-radius: 50%;
-  background: var(--pop);
+  background: var(--pop-fill);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -87,9 +82,9 @@
   box-shadow: var(--sh-pop);
 }
 .pe-cam-icon {
-  width: 30rpx;
-  height: 24rpx;
-  border: 4rpx solid var(--c-surface);
+  width: 26rpx;
+  height: 20rpx;
+  border: 4rpx solid var(--anchor-contrast);   /* 红底白图标：恒浅 */
   border-radius: 6rpx;
   position: relative;
 }
@@ -102,7 +97,7 @@
   width: 12rpx;
   height: 12rpx;
   border-radius: 50%;
-  border: 3rpx solid var(--c-surface);
+  border: 3rpx solid var(--anchor-contrast);
 }
 .pe-avatar-hint {
   margin-top: 24rpx;
@@ -116,21 +111,21 @@
   padding: 0 46rpx;
   margin: 36rpx 0 16rpx;
   font-family: var(--serif);
-  font-style: italic;
   font-size: var(--fs-cap);
   letter-spacing: 1rpx;
   color: var(--gold-deep);
   font-weight: 700;
 }
 
-/* 行内说明文字：用于「忌口」等需要一句解释的字段 */
+/* 行内说明文字：用于「忌口」等需要一句解释的字段。
+   这句是在说「选了会影响点菜」，不是装饰：原 --fs-tiny + --mut-2 只有 19rpx / 2.4:1，改为 --fs-mini + --mut */
 .pe-hint {
   margin-top: 16rpx;
   font-family: var(--sans);
   font-style: normal;
-  font-size: var(--fs-tiny);
+  font-size: var(--fs-mini);
   line-height: 1.6;
-  color: var(--mut-2);
+  color: var(--mut);
   font-weight: 400;
   letter-spacing: 0;
 }
@@ -150,23 +145,6 @@
 }
 .pe-group .pe-frow:last-child {
   border-bottom: none;
-}
-.pe-fic {
-  width: 70rpx;
-  height: 70rpx;
-  border-radius: 22rpx;
-  background: var(--paper-2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: none;
-}
-.pe-ic-dot {
-  width: 26rpx;
-  height: 26rpx;
-  border-radius: var(--r-xs);
-  background: var(--pop);
-  opacity: 0.85;
 }
 .pe-flabel {
   font-size: calc(29rpx * var(--fs-mul, 1));
@@ -205,6 +183,11 @@
   transform: rotate(45deg);
   margin-left: 8rpx;
 }
+/* picker 是 .pe-picker 的外层，自己也要占满剩余宽度，生日值才和昵称一样靠右 */
+.pe-frow > picker {
+  flex: 1;
+  min-width: 0;
+}
 .pe-picker {
   flex: 1;
   display: flex;
@@ -228,7 +211,7 @@
 .pe-pill.on {
   background: var(--pop-soft);
   color: var(--pop);
-  border-color: rgba(232, 71, 42, 0.3);
+  border-color: rgba(200, 56, 31, 0.3);
 }
 
 /* 口味偏好：纵向 tags */
@@ -242,6 +225,9 @@
   align-items: center;
   gap: 24rpx;
 }
+/* 纵向行的小标题独占一行，不需要和别的行对齐列宽：
+   固定 132rpx 在大字档装不下「口味偏好」4 个字（33rpx × 4 ≈ 134rpx），会折成两行 */
+.pe-frow-head .pe-flabel { width: auto; }
 .pe-tagwrap {
   display: flex;
   flex-wrap: wrap;
@@ -255,13 +241,14 @@
 .pe-tag.on {
   background: var(--pop-soft);
   color: var(--pop);
-  border-color: rgba(232, 71, 42, 0.3);
+  border-color: rgba(200, 56, 31, 0.3);
 }
 
 /* ===== 保存按钮 ===== */
-/* padding 简写会盖掉 .safe-bottom，底部安全区写在这里 */
+/* padding 简写会盖掉 .safe-bottom，底部安全区写在这里。
+   左右走 --page-gutter：上面两张表单卡是 46rpx 页边距，按钮原先 28rpx、两边各宽出一截 */
 .pe-savebar {
-  padding: 48rpx 28rpx calc(40rpx + env(safe-area-inset-bottom));
+  padding: 48rpx var(--page-gutter) calc(40rpx + env(safe-area-inset-bottom));
 }
 .pe-savebar .btn {
   gap: 14rpx;
@@ -270,8 +257,8 @@
 .pe-save-check {
   width: 28rpx;
   height: 16rpx;
-  border-left: 5rpx solid var(--c-surface);
-  border-bottom: 5rpx solid var(--c-surface);
+  border-left: 5rpx solid var(--anchor-contrast);   /* 红底白勾：恒浅 */
+  border-bottom: 5rpx solid var(--anchor-contrast);
   transform: rotate(-45deg);
   margin-top: -6rpx;
 }

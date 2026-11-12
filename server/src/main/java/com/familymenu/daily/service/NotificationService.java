@@ -1,6 +1,7 @@
 package com.familymenu.daily.service;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -64,11 +65,27 @@ public class NotificationService {
         }
     }
 
+    /** 数据库唯一键负责去重：重启、重跑和多个实例都只生成一条站内消息。 */
+    public void notifyUserOnce(long userId, long familyId, String kind, String title, String body,
+                               String actionType, String eventKey) {
+        try {
+            jdbcTemplate.update("""
+                    INSERT INTO notification_message(user_id, family_id, kind, title, body_text, action_type, event_key)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                    """, userId, familyId, kind, title, body, actionType, eventKey);
+        } catch (DuplicateKeyException alreadySent) {
+            return;
+        }
+        // 只有写入成功的实例才尝试微信推送；普通数据库失败交给定时任务记录。
+        subscribeMessageService.sendAsync(userId, kind, title, body, pageFor(actionType));
+    }
+
     /** 站内动作类型 → 订阅消息被点击后跳转的小程序页面（微信要求不带前导斜杠）。 */
     private static String pageFor(String actionType) {
         return switch (actionType == null ? "" : actionType) {
             case "home" -> "pages/home/index";
             case "menu" -> "pages/menu/index";
+            case "pantry" -> "pages/pantry/index";
             default -> "";
         };
     }

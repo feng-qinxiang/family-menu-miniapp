@@ -27,13 +27,13 @@ VALUES (1, 1, 1, 'owner', 'ACTIVE');
 INSERT IGNORE INTO recipe (id, title, source_type, owner_user_id, family_id, cuisine, taste_tags_json, time_cost, servings, rating, summary, cover_image, status)
 VALUES
 (1, '番茄炒蛋', 'owned', 1, 1, '家常', '["鲜","酸甜","下饭"]', 10, 2, 4.8, '最经典的家常菜，酸甜开胃，10分钟搞定', '/assets/dishes/tomato-egg.jpg', 'ACTIVE'),
-(2, '红烧肉', 'owned', 1, 1, '川菜', '["咸甜","浓香","下饭"]', 60, 4, 4.9, '肥而不腻，入口即化的经典硬菜', '/assets/dishes/hongshao-pork.jpg', 'ACTIVE'),
+(2, '红烧肉', 'owned', 1, 1, '家常', '["咸甜","浓香","下饭"]', 60, 4, 4.9, '肥而不腻，入口即化的经典硬菜', '/assets/dishes/hongshao-pork.jpg', 'ACTIVE'),
 (3, '清炒时蔬', 'owned', 1, 1, '家常', '["清淡","爽口"]', 8, 2, 4.5, '当季蔬菜简单翻炒，健康快手', '/assets/dishes/stir-fry-veg.jpg', 'ACTIVE'),
 (4, '酸辣土豆丝', 'owned', 1, 1, '川菜', '["酸辣","爽脆","下饭"]', 15, 2, 4.7, '刀工练习经典菜，酸辣爽脆', '/assets/dishes/potato-shreds.jpg', 'ACTIVE'),
 (5, '可乐鸡翅', 'owned', 1, 1, '家常', '["甜","鲜香"]', 30, 3, 4.8, '小朋友最爱，甜香入味', '/assets/dishes/orange-chicken.jpg', 'ACTIVE'),
 (6, '麻婆豆腐', 'community', 1, 1, '川菜', '["麻辣","鲜香","下饭"]', 20, 3, 4.6, '麻辣鲜香，米饭杀手', '/assets/dishes/mapo-tofu.jpg', 'ACTIVE'),
 (7, '蒜蓉西兰花', 'owned', 1, 1, '家常', '["清淡","蒜香"]', 10, 2, 4.4, '低脂高纤，蒜香浓郁', '/assets/dishes/stir-fry-veg.jpg', 'ACTIVE'),
-(8, '糖醋排骨', 'community', 1, 1, '粤菜', '["酸甜","外酥里嫩"]', 40, 4, 4.9, '外酥里嫩，酸甜适口的宴客菜', '/assets/dishes/sweet-sour-chicken.jpg', 'ACTIVE');
+(8, '糖醋排骨', 'community', 1, 1, '家常', '["酸甜","外酥里嫩"]', 40, 4, 4.9, '外酥里嫩，酸甜适口的宴客菜', '/assets/dishes/sweet-sour-chicken.jpg', 'ACTIVE');
 
 -- Recipe ingredients
 INSERT IGNORE INTO recipe_ingredient (id, recipe_id, ingredient_name, amount, unit) VALUES
@@ -185,3 +185,8 @@ WHERE source_type = 'imported' AND taste_tags_json = '["导入","待确认"]';
 UPDATE recipe
 SET summary = '从导入页面整理保存'
 WHERE source_type = 'imported' AND summary LIKE '%导入保存%';
+
+-- 公共菜谱菜系纠错（2026-11）：红烧肉不是川菜、糖醋排骨不是粤菜，菜卡与筛选会误导用户。
+-- 只改平台库的这两条原值，用户自己改过的不动。
+UPDATE recipe SET cuisine = '家常' WHERE id = 2 AND title = '红烧肉' AND family_id = 1 AND cuisine = '川菜';
+UPDATE recipe SET cuisine = '家常' WHERE id = 8 AND title = '糖醋排骨' AND family_id = 1 AND cuisine = '粤菜';

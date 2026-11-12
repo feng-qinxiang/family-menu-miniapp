@@ -30,7 +30,7 @@
   width: 184rpx;
   height: 184rpx;
   border-radius: 50%;
-  background: rgba(232, 71, 42, 0.18);
+  background: rgba(200, 56, 31, 0.18);
 }
 .logo-mark {
   position: relative;
@@ -64,7 +64,7 @@
   letter-spacing: 1rpx;
 }
 .slogan {
-  max-width: 500rpx;
+  white-space: pre-line;   /* 在逗号处断成两行：原来限宽 500rpx，折行后第二行只剩「道。」 */
   margin-top: 30rpx;
   color: var(--mut-strong);
   font-size: var(--fs-cap);
@@ -102,7 +102,7 @@
   letter-spacing: -2rpx;
 }
 .st-unit {
-  color: var(--gold);
+  color: var(--gold-on-dark);
 }
 .st-l {
   margin-top: 10rpx;
@@ -120,7 +120,7 @@
 }
 .story-qm {
   position: absolute;
-  top: 28rpx;
+  top: 48rpx;   /* line-height .6 让字形往上溢出约 20rpx，原 28rpx 时引号顶到卡片上边 */
   right: 34rpx;
   font-family: var(--serif);
   font-size: calc(116rpx * var(--fs-mul, 1));
@@ -160,16 +160,16 @@
   width: 82rpx;
   height: 82rpx;
   border-radius: 26rpx;
-  background: var(--pop);
+  background: var(--pop-fill);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 12rpx 28rpx rgba(232, 71, 42, 0.32);
+  box-shadow: var(--sh-pop);   /* 原写死红晕 rgba(200,56,31,.32)，深色档不跟 token 换成暗影 */
 }
 .team-badge-heart {
   width: 34rpx;
   height: 34rpx;
-  background: var(--c-surface);
+  background: var(--anchor-contrast);   /* 红底白心：恒浅，--c-surface 深色档会变深灰 */
   -webkit-mask: radial-gradient(circle at 30% 35%, #000 99%, transparent 0) 0 0/50% 60% no-repeat,
     radial-gradient(circle at 70% 35%, #000 99%, transparent 0) 100% 0/50% 60% no-repeat,
     linear-gradient(#000 0 0) 50% 100%/72% 70% no-repeat;
@@ -224,7 +224,7 @@
   width: 26rpx;
   height: 26rpx;
   border-radius: var(--r-xs);
-  background: var(--pop);
+  background: var(--pop-fill);
 }
 .item-t {
   flex: 1;

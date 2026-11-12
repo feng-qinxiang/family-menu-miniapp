@@ -1,10 +1,12 @@
 {
   "light": {
+    "navTextStyle": "black",
+    "bgTextStyle": "dark",
     "themePaper": "#fbf8f3",
     "themePaper2": "#f0ebe2",
     "themeInk": "#2c241b",
     "themeInkDeep": "#3a2e23",
-    "themeMut": "#7a6e5d",
+    "themeMut": "#716555",
     "themeMut2": "#b3a795",
     "themeMutStrong": "#6b5f50",
     "themeSurface": "#ffffff",
@@ -15,10 +17,10 @@
     "themeSkeleton": "#efe4d7",
     "themeCookBg": "#1a1410",
     "themeBorderLight": "#f1ece2",
-    "themePop": "#e8472a",
+    "themePop": "#c8381f",
     "themePopSoft": "#fdece6",
     "themeGold": "#f4d9a8",
-    "themeGoldDeep": "#a58145",
+    "themeGoldDeep": "#806230",
     "themeGoldSoft": "#f9efda",
     "themePine": "#2f4a3a",
     "themePineSoft": "#e7efe9",
@@ -31,8 +33,10 @@
     "themeGlassClear": "rgba(251, 248, 243, 0)"
   },
   "dark": {
+    "navTextStyle": "white",
+    "bgTextStyle": "light",
     "themePaper": "#1c1c1c",
-    "themePaper2": "#262626",
+    "themePaper2": "#2e2e2e",
     "themeInk": "#efefef",
     "themeInkDeep": "#e2e2e2",
     "themeMut": "#9a9a96",

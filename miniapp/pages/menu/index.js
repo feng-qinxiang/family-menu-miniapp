@@ -5,7 +5,6 @@ const {
   getTodayMenu,
   getWeeklyMenu,
   generateWeeklyMenu,
-  rebuildShoppingList,
   addCookHistory,
   removeTodayMenuRecipe,
   updateMenuItemStatus,
@@ -13,11 +12,12 @@ const {
 } = require('../../utils/api');
 const { mealTypeLabels, mealOrder } = require('../../utils/constants');
 const { animateNumber, stopNumberAnim } = require('../../utils/count-up');
-const { fallbackDishImg, recipeDishImg, LOCAL_DISHES } = require('../../utils/image');
+const { localPath, recipeDishImg, LOCAL_DISHES, onImgError: handleImgError } = require('../../utils/image');
 const { runGuarded } = require('../../utils/interaction');
 const { shoppingEmptyReason } = require('../../utils/kitchen');
 const { indexPantry, pantryHas } = require('../../utils/pantry-match');
 const subscribe = require('../../utils/subscribe');
+const { withTabSelect } = require('../../behaviors/tab-select');
 
 function buildToday() {
   const d = new Date();
@@ -45,7 +45,7 @@ function hashIndex(seed, mod) {
 }
 
 function localDishImage(seed) {
-  return `/assets/dishes/${LOCAL_DISHES[hashIndex(seed, LOCAL_DISHES.length)]}.jpg`;
+  return localPath(LOCAL_DISHES[hashIndex(seed, LOCAL_DISHES.length)]);
 }
 
 function resolveImage(recipe, seed) {
@@ -70,10 +70,11 @@ Page({
     view: 'today',          // today | week (§3 segment)
     todayLabel: buildToday(),
     mealTimeLabel: mealTimeLabel(),
-    heroImage: '/assets/dishes/hot-sour-soup.jpg',
-    todayMenu: [],
     mealGroups: [],
     totalCount: 0,
+    doneCount: 0,
+    cookingCount: 0,
+    cookPercent: 0,
     totalTime: 0,
     totalServings: 0,
     shoppingPending: 0,
@@ -88,18 +89,20 @@ Page({
     loadError: '',
     // 兜底含安全区；量到胶囊时由 utils/capsule 的 bottom 覆盖
     heroMetaTop: 'calc(env(safe-area-inset-top) + 178rpx)',
+    capsuleTop: 'calc(env(safe-area-inset-top) + 178rpx)',
     statusBarHeight: 0
   },
 
   onLoad() {
     try {
-      this.setData({ heroMetaTop: getCapsule().bottom });
+      this.setData({ capsuleTop: getCapsule().bottom });
     } catch (e) {}
     // 预热订阅消息配置：喊开饭时要在点击手势里同步申请授权，不能临时去等网络
     subscribe.preload();
   },
 
   onShow() {
+    withTabSelect(this);
     let fontScale = 'normal';
     try { fontScale = wx.getStorageSync('font_scale') || 'normal'; } catch (e) { fontScale = 'normal'; }
     if (fontScale !== this.data.fontScale) this.setData({ fontScale });
@@ -138,6 +141,8 @@ Page({
       const pantryItems = Array.isArray(pantry) ? pantry : [];
 
       const totalCount = items.length;
+      const doneCount = items.filter(it => it.status === 'done').length;
+      const cookingCount = items.filter(it => it.status === 'cooking').length;
       const totalTime = items.reduce((sum, it) => sum + (it.recipe && it.recipe.timeCost ? Number(it.recipe.timeCost) : 0), 0);
       // 份量口径：单菜最大份数（每道菜按各自份数做），不是总人数。
       // 文案同步为「最多 N 份」，避免多道菜时被误读成"几个人吃"。
@@ -185,12 +190,6 @@ Page({
         });
       }
 
-      const heroItem = items[0];
-      const heroImage = resolveImage(
-        heroItem && heroItem.recipe,
-        (heroItem && heroItem.recipeId) || 'hot-sour-soup'
-      );
-
       // 菜篮子磁贴副标题：清单为空有两种原因，别都说成「食材已齐」
       // （清单只按菜谱用料聚合、不看冰箱，见 utils/kitchen.js#shoppingEmptyReason）
       const basketReason = shoppingEmptyReason(totalCount, shoppingItems.length);
@@ -198,12 +197,14 @@ Page({
         : basketReason === 'no-ingredients' ? '没录食材'
         : (pendingItems.length ? pendingItems.length + ' 样待买' : '食材已齐');
 
+      this._todayMenu = items;
       this.setData({
-        todayMenu: items,
         mealGroups: groups,
-        heroImage: items.length ? heroImage : '/assets/dishes/hot-sour-soup.jpg',
         mealTimeLabel: mealTimeLabel(),
         totalCount,
+        doneCount,
+        cookingCount,
+        cookPercent: totalCount ? Math.round(doneCount * 100 / totalCount) : 0,
         totalTime,
         totalServings: maxServings,
         shoppingPending: pendingItems.length,
@@ -245,7 +246,7 @@ Page({
     if (!id) return;
     const res = await wx.showModal({
       title: '撤掉这道菜？',
-      content: '撤掉后会重算购物清单',
+      content: '撤掉后会重算买菜清单',
       confirmText: '撤掉',
       cancelText: '保留'
     });
@@ -274,6 +275,10 @@ Page({
     wx.navigateTo({ url: '/pkg-extra/kitchen/index' });
   },
 
+  goCookLog() {
+    wx.switchTab({ url: '/pages/cook-log/index' });
+  },
+
   goShopping() {
     wx.navigateTo({ url: '/pages/shopping/index' });
   },
@@ -283,11 +288,11 @@ Page({
   },
 
   goPantry() {
-    wx.switchTab({ url: '/pages/pantry/index' });
+    wx.navigateTo({ url: '/pages/pantry/index' });
   },
 
   goAddRecipe() {
-    wx.switchTab({ url: '/pages/recipes/index' });
+    wx.navigateTo({ url: '/pages/recipes/index' });
   },
 
   // ====== §3 / §7 新增 ======
@@ -305,6 +310,10 @@ Page({
   async startCook(e) {
     const { id, item } = e.currentTarget.dataset;
     if (!id) return;
+    // 导航锁（同 vip/upgrade 的 activating）：连点会叠两层烹饪模式，
+    // 退出上层时它的 onUnload 关掉常亮，下层还在做菜屏幕却会灭。锁要在 await 之前拿。
+    if (this._startingCook) return;
+    this._startingCook = true;
     // 先写入「烧着呢」再跳转：此前是 fire-and-forget，跳到烹饪模式后立刻返回菜单
     // 会读到旧状态（onShow 重拉早于写入完成）。写入很快，等一下换来状态一致。
     if (item) {
@@ -317,7 +326,8 @@ Page({
     }
     wx.navigateTo({
       url: `/pkg-extra/cook-mode/index?id=${id}&menuItemId=${item || ''}`,
-      fail: () => wx.showToast({ title: '页面打开失败，请重试', icon: 'none' })
+      fail: () => wx.showToast({ title: '页面打开失败，请重试', icon: 'none' }),
+      complete: () => { this._startingCook = false; }
     });
   },
 
@@ -335,7 +345,7 @@ Page({
     let done = false;
     let recorded = false;
     let pantryDeducted = 0;
-    const menuItem = this.data.todayMenu.find((it) => String(it.itemId) === String(item));
+    const menuItem = (this._todayMenu || []).find((it) => String(it.itemId) === String(item));
     await runGuarded(this, `cooked-${item || id}`, async () => {
       const r = await addCookHistory({ recipeId: id,
         servings: Number(menuItem && menuItem.recipe && menuItem.recipe.servings) > 0 ? Number(menuItem.recipe.servings) : 2,
@@ -376,66 +386,48 @@ Page({
     });
   },
 
-  async buildShopping() {
-    if (!this.data.totalCount) {
-      wx.showToast({ title: '菜单还是空的', icon: 'none' });
-      return;
-    }
-    // 实测（2026-09-19）：重建会按「食材名+单位」把上一版的已买勾选恢复回去，手动条目也保留，
-    // 所以这里原先写"已勾的买好了会清掉"是把真相说反了（服务端 loadPreviousPurchasedMap 就是为留住它）。
-    const res = await wx.showModal({
-      title: '按今日菜单重新生成清单？',
-      content: '自动条目按当前菜单重算用量；已勾的「买好了」和你手动加的条目都会保留。',
-      confirmText: '重新生成',
-      cancelText: '取消'
-    });
-    if (!res.confirm) return;
-    const ok = await runGuarded(this, 'rebuild-shopping', () => rebuildShoppingList(), {
-      loading: '生成中',
-      success: '已生成',
-      fail: '生成失败'
-    });
-    if (ok === undefined) return;
-    if (this._navTimer) clearTimeout(this._navTimer);
-    this._navTimer = setTimeout(() => wx.navigateTo({ url: '/pages/shopping/index' }), 400);
-  },
-
-  onUnload() {
-    if (this._navTimer) {
-      clearTimeout(this._navTimer);
-      this._navTimer = null;
-    }
-  },
-
+  // 「重新生成本周菜单」会整份覆盖：已有计划时先确认（同 weekly-menu 的 regenerate）；
+  // 空态里的「生成本周菜单」没东西可覆盖，不确认。_genWeekly 挡连点。
   async genWeekly() {
-    wx.showLoading({ title: '排周菜单', mask: true });
+    if (this._genWeekly) return;
+    this._genWeekly = true;
     try {
-      await generateWeeklyMenu();
-      wx.hideLoading();
-      wx.showToast({ title: '已生成', icon: 'success' });
-      this.loadData();
-    } catch (err) {
-      wx.hideLoading();
-      wx.showToast({ title: '生成失败', icon: 'none' });
+      if ((this.data.weeklyDays || []).length) {
+        const res = await wx.showModal({
+          title: '重新排一版本周菜单？',
+          content: '会按全家口味重新生成七天安排，覆盖当前这一版。',
+          confirmText: '重新排',
+          cancelText: '取消'
+        });
+        if (!res.confirm) return;
+      }
+      wx.showLoading({ title: '排周菜单', mask: true });
+      try {
+        await generateWeeklyMenu();
+        wx.hideLoading();
+        wx.showToast({ title: '已生成', icon: 'success' });
+        this.loadData();
+      } catch (err) {
+        wx.hideLoading();
+        wx.showToast({ title: '生成失败', icon: 'none' });
+      }
+    } finally {
+      this._genWeekly = false;
     }
   },
 
   onShareAppMessage() {
-    const n = (this.data.todayMenu && this.data.todayMenu.length) || 0;
+    const n = (this._todayMenu || []).length;
     return {
       title: n > 0 ? '今天家里吃这些（' + n + ' 道）' : '今天的菜单，来看看吗',
       path: '/pages/menu/index'
     };
   },
 
-  // 图片加载失败兜底：coverImage 失效时用本地占位图（home 页同款策略）
-  onHeroImgError() {
-    this.setData({ heroImage: fallbackDishImg('hot-sour-soup') });
-  },
 
   onImgError(e) {
-    const { group, dish, seed } = e.currentTarget.dataset;
+    const { group, dish } = e.currentTarget.dataset;
     if (typeof group !== 'number' || typeof dish !== 'number') return;
-    this.setData({ [`mealGroups[${group}].items[${dish}].dishImage`]: fallbackDishImg(seed) });
+    handleImgError(e, this, `mealGroups[${group}].items[${dish}].dishImage`);
   },
 });

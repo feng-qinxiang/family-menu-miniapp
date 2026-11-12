@@ -1,34 +1,47 @@
 <view class="pantry-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
+  <nav-bar title="冰箱库存" show-back="{{true}}" />
   <state-loading visible="{{loading}}" text="冰箱开门中…" />
-
-  <!-- 紧凑页头（只有「今日」保留整幅照片 hero） -->
-  <view class="cpt-head g-fade-up" style="padding-top: {{capsuleTop}};">
-    <view class="cpt-row" style="padding-right: {{capsuleRight}};">
-      <view class="cpt-titles">
-        <view class="cpt-eyebrow">我的冰箱</view>
-        <view class="cpt-title">冰箱库存</view>
-      </view>
-    </view>
-    <view class="cpt-sub">家里现在有什么，点菜前先看一眼 · 做完菜按用量自动扣</view>
-    <!-- 统计一行字：空库不显示（三个 0 像坏了）；临期 >0 才出现且用 --pop-deep 当真实警示 -->
-    <view wx:if="{{pantrySummary.count}}" class="pstat-line">
-      <text>{{pantrySummary.count}} 种在库</text>
-      <text wx:if="{{pantrySummary.expiringCount}}" class="pstat-warn"> · {{pantrySummary.expiringCount}} 种临期</text>
-    </view>
-  </view>
 
   <!-- 内容层 -->
   <view class="psheet">
-    <!-- 现在有的：空库时空态自己会说「冰箱还空着」，不再叠一个区块标题 -->
-    <section-head
-      wx:if="{{!loaded || loadError || categories.length}}"
-      eyebrow="在库食材"
-      title="现在有的"
-    />
+    <view class="pantry-overview" wx:if="{{loaded && !loadError}}">
+    <view class="pantry-pick" wx:if="{{pantrySummary.count}}">
+      <view class="pantry-pick-head">
+        <view class="pantry-pick-copy">
+          <view class="pantry-pick-title">{{pantrySummary.expiringCount ? '今天先用 · ' + pantrySummary.expiringCount + ' 种临期' : '今天做点什么'}}</view>
+          <view class="pantry-pick-note">{{matchLoading ? '正在匹配家里的菜谱…' : (matchFailed ? '匹配暂未完成，可进入重试' : '能做 ' + matchReadyCount + ' 道菜 · 按菜谱用量')}}</view>
+        </view>
+        <view class="pantry-pick-btn tap-scale" bindtap="goRandomPick" aria-role="button">挑一道 ›</view>
+      </view>
+      <view class="pantry-priority" wx:if="{{pantrySummary.priorityText}}"><text>先用</text>{{pantrySummary.priorityText}}</view>
+    </view>
+    <view class="pantry-reminder">
+      <view class="pantry-reminder-toggle tap-scale" bindtap="toggleReminder" aria-role="button" aria-expanded="{{reminderExpanded}}" aria-label="{{reminderExpanded ? '收起临期提醒设置' : '展开临期提醒设置'}}"><view class="pantry-reminder-title"><image src="/assets/icons/lucide/bell.svg" mode="aspectFit" aria-hidden="true" />临期提醒<text class="pantry-reminder-short">提前 3 天</text></view><text>{{reminderExpanded ? '收起 ⌃' : '设置 ›'}}</text></view>
+      <block wx:if="{{reminderExpanded}}">
+      <view class="pantry-reminder-head">
+        <view class="pantry-reminder-title">微信与站内通知</view>
+        <button class="pantry-reminder-link tap-scale" size="mini" hover-class="none" bindtap="goNotifications" aria-label="查看临期消息"><text class="pantry-reminder-link-label">查看消息 ›</text></button>
+      </view>
+      <view class="pantry-reminder-row">
+        <view class="pantry-reminder-copy">
+          <view class="pantry-reminder-policy">提前 3 天 · 每日汇总一次</view>
+          <text>{{!reminderSettingsLoaded ? '正在获取微信提醒设置' : reminderTemplateReady ? (reminderSubscribed ? '已订阅一次，用完可再订' : '订阅一次，接收一条微信提醒') : '微信暂未开放，站内消息照常可看'}}</text>
+        </view>
+        <button class="pantry-reminder-button tap-scale {{reminderBusy ? 'is-busy' : ''}} {{reminderTemplateReady ? '' : 'is-unavailable'}}" size="mini" hover-class="none" bindtap="subscribeReminder" disabled="{{reminderBusy || !reminderSettingsLoaded}}"><text class="pantry-reminder-button-label">{{reminderBusy ? '保存中' : !reminderSettingsLoaded ? '加载中' : reminderTemplateReady ? (reminderSubscribed ? '再次订阅' : '订阅一次') : '提醒说明'}}</text></button>
+      </view>
+      </block>
+    </view>
+    </view>
+
+    <view class="pantry-list-head" wx:if="{{loaded && !loadError}}">
+      <view class="pantry-list-title">在库食材<text wx:if="{{pantrySummary.count}}" class="pantry-list-count">{{pantrySummary.count}} 种</text></view>
+      <view wx:if="{{pantrySummary.count || showAddForm}}" class="pantry-add tap-scale" bindtap="toggleAddForm" aria-role="button" aria-expanded="{{showAddForm}}" aria-label="{{showAddForm ? '收起添加食材' : '添加食材'}}">{{showAddForm ? '收起' : '＋ 添加'}}</view>
+    </view>
 
     <!-- 加载失败态 -->
     <state-empty
       wx:if="{{loadError}}"
+      size="compact"
       type="offline"
       title="冰箱没打开"
       desc="网络开小差了，检查后再试"
@@ -38,35 +51,39 @@
 
     <!-- 空态 -->
     <state-empty
-      wx:elif="{{loaded && !categories.length}}"
-      type="pop"
+      wx:elif="{{loaded && !pantrySummary.count && !showAddForm}}"
+      type="fridge"
+      size="compact"
       title="冰箱还空着"
-      desc="把家里有的食材记进来，点菜时就能先看能做什么"
+      desc="记下家里有的，点菜时先用现成的"
+      cta="添加食材"
+      bind:action="toggleAddForm"
     />
 
-    <!-- 添加食材：本页唯一主操作。放在空态正下方 / 列表之前，保证首屏可见、不被 tabBar 压住；
-         加载失败时主操作是「重新加载」，这里先不出 -->
+    <!-- 添加入口与库存标题合行，表单按需展开，不挤占食材列表。 -->
     <block wx:if="{{loaded && !loadError}}">
-      <view class="addcard tap-scale" bindtap="toggleAddForm">
-        <view class="add-pl"><view class="add-plus"></view></view>
-        <view class="add-at">
-          <view class="add-t">添加食材</view>
-          <view class="add-s">记下食材名、数量和到期日</view>
-        </view>
-        <view class="add-arrow {{showAddForm ? 'up' : ''}}"></view>
-      </view>
-
       <!-- 添加表单（展开）-->
       <view class="add-form" wx:if="{{showAddForm}}">
         <view class="af-row">
           <input class="af-input af-main" placeholder="食材名" placeholder-class="af-ph" value="{{newItem.ingredientName}}" bindinput="onNewInput" data-field="ingredientName" />
-          <input class="af-input af-sm" placeholder="量" placeholder-class="af-ph" value="{{newItem.amount}}" bindinput="onNewInput" data-field="amount" />
+          <input class="af-input af-sm" placeholder="数量" placeholder-class="af-ph" value="{{newItem.amount}}" bindinput="onNewInput" data-field="amount" />
           <input class="af-input af-sm" placeholder="单位" placeholder-class="af-ph" value="{{newItem.unit}}" bindinput="onNewInput" data-field="unit" />
         </view>
-        <input class="af-input af-date" placeholder="到期日 如 2026-06-20（选填）" placeholder-class="af-ph" value="{{newItem.expiresAt}}" bindinput="onNewInput" data-field="expiresAt" />
-        <view class="tap-scale btn btn-pop btn-block af-submit {{adding ? 'is-busy' : ''}}" bindtap="addItem">{{adding ? '保存中…' : '记入冰箱'}}</view>
+        <picker mode="date" value="{{newItem.expiresAt}}" bindchange="onNewInput" data-field="expiresAt">
+          <view class="af-input af-date">到期日 <text>{{newItem.expiresAt || '选填 · 点击选择日期'}}</text></view>
+        </picker>
+        <view class="tap-scale btn btn-pop btn-block af-submit {{adding ? 'is-busy' : ''}}" bindtap="addItem" aria-role="button">{{adding ? '保存中…' : '记入冰箱'}}</view>
       </view>
     </block>
+
+    <view class="pantry-filters" wx:if="{{loaded && !loadError && pantrySummary.count}}">
+      <view class="pantry-filter tap-scale {{pantryFilter === 'all' ? 'on' : ''}}" data-filter="all" bindtap="selectPantryFilter" aria-role="button" aria-selected="{{pantryFilter === 'all'}}">全部 {{pantrySummary.count}}</view>
+      <view class="pantry-filter tap-scale {{pantryFilter === 'expiring' ? 'on' : ''}}" data-filter="expiring" bindtap="selectPantryFilter" aria-role="button" aria-selected="{{pantryFilter === 'expiring'}}">临期 {{pantrySummary.expiringCount}}</view>
+      <view class="pantry-filter tap-scale {{pantryFilter === 'expired' ? 'on' : ''}}" data-filter="expired" bindtap="selectPantryFilter" aria-role="button" aria-selected="{{pantryFilter === 'expired'}}">过期 {{pantrySummary.expiredCount}}</view>
+    </view>
+    <view class="pantry-date-note" wx:if="{{loaded && !loadError && pantrySummary.undatedCount}}">{{pantrySummary.undatedCount}} 种未填到期日</view>
+    <view class="pantry-photo-note" wx:if="{{loaded && !loadError && ingredientPhotosFailed && categories.length}}">食材图片暂未同步</view>
+    <view class="pantry-filter-empty" wx:if="{{loaded && !loadError && pantrySummary.count && !categories.length}}">{{pantryFilter === 'expiring' ? '暂时没有 3 天内到期的食材' : '暂时没有过期食材'}}</view>
 
     <!-- 分类 + 商品列表 -->
     <view class="cat g-fade-up g-d{{cidx + 1}}" wx:for="{{categories}}" wx:for-item="cat" wx:for-index="cidx" wx:key="key">
@@ -77,40 +94,39 @@
       </view>
       <view class="pcard">
         <view
-          class="pitem {{it.expiringSoon ? 'warn' : ''}}"
+          class="pitem {{it.expiringSoon || it.expired ? 'warn' : ''}} {{it.expired ? 'expired' : ''}}"
           wx:for="{{cat.items}}"
           wx:for-item="it"
           wx:key="id"
         >
-          <view class="pi-dot"></view>
+          <view class="pi-thumb tap-scale {{it.expired ? 'expired' : ''}}" data-name="{{it.ingredientName}}" catchtap="editIngredientPhoto" aria-role="button" aria-label="为{{it.ingredientName}}拍照、从相册选图或恢复文字显示">
+            <image wx:if="{{it.cover && !it.coverBroken}}" class="pi-thumb-img" src="{{it.cover}}" mode="aspectFill" lazy-load data-id="{{it.id}}" binderror="onPhotoError" aria-hidden="true" />
+            <view wx:else class="pi-thumb-text"><text>{{it.ingredientName}}</text></view>
+            <text class="pi-thumb-hint">{{it.cover && !it.coverBroken ? '换图' : '拍照'}}</text>
+          </view>
           <view class="pi-mid">
-            <view class="pi-nm ellipsis">{{it.ingredientName}}</view>
-            <view class="pi-ex {{it.expiringSoon ? 'red' : ''}}">{{it.expiresText}}</view>
-          </view>
-          <view class="pi-qt">{{it.amountText}}</view>
-          <view class="pi-edit tap-scale" data-id="{{it.id}}" bindtap="openEditSheet">
-            <view class="pi-edit-pen"></view>
-          </view>
-          <view class="pi-del tap-scale" data-id="{{it.id}}" bindtap="removeItem">
-            <view class="pi-del-x"></view>
+            <view class="pi-main"><view class="pi-nm">{{it.ingredientName}}</view><view class="pi-qt">{{it.amountText}}</view></view>
+            <view class="pi-ex {{it.expiringSoon || it.expired ? 'red' : ''}}">{{it.expiresText}}</view>
+            <view class="pi-bottom">
+              <text class="pi-date">{{it.expiresAt ? '到期 ' + it.expiresAt : '日期待补充'}}</text>
+              <view class="pi-edit tap-scale" data-id="{{it.id}}" bindtap="openItemActions" aria-role="button" aria-label="管理{{it.ingredientName}}，编辑或删除">管理 ›</view>
+            </view>
           </view>
         </view>
       </view>
     </view>
 
     <!-- 现在就能做 -->
-    <section-head
-      wx:if="{{showMatch && matchResults.length}}"
-      eyebrow="现在能做"
-      title="现在就能做"
-      hint="按库存匹配"
-    />
+    <view wx:if="{{showMatch && matchResults.length}}" class="pantry-list-head pantry-match-head">
+      <view class="pantry-list-title">能做的菜</view>
+    </view>
 
     <!-- 匹配接口失败 ≠ 一道都做不了：这里原来只判 !matchResults.length，
          网络一抖就显示「还没匹配到菜谱」，把用户往"我家食材不行"上带。
          失败位 JS 里一直在置（matchRecipes 的 catch），只是没人读它。 -->
     <state-empty
       wx:if="{{showMatch && matchFailed}}"
+      size="compact"
       type="offline"
       title="现在能做没算出来"
       desc="匹配失败了，不是家里没食材"
@@ -131,6 +147,8 @@
       wx:key="id"
       bindtap="onMatchTap"
       data-id="{{item.id}}"
+      aria-role="button"
+      aria-label="查看{{item.title}}的用料"
     >
       <view class="mc-top">
         <image class="mc-ph" src="{{item.coverImage}}" mode="aspectFill" lazy-load />
@@ -138,14 +156,11 @@
           <view class="mc-h4 ellipsis">{{item.title}}</view>
           <view class="mc-meta">{{item.metaText}}</view>
           <view class="mc-miss ellipsis {{item.full ? 'full' : ''}}">{{item.missingText}}</view>
-        </view>
-        <view class="mc-badge">
-          <view class="mc-pct">{{item.haveText}}</view>
-          <view class="mc-lab">匹配</view>
+          <view class="mc-priority" wx:if="{{item.priorityText}}">{{item.priorityText}}</view><view class="mc-status"><text>{{item.haveText}} 样够用</text><text>查看用料 ›</text></view>
         </view>
       </view>
       <view class="mc-bar">
-        <view class="mc-bar-i {{item.full ? 'full' : ''}}" style="width: {{item.percentWidth}}%;"></view>
+        <view class="mc-bar-i g-grow-x {{item.full ? 'full' : ''}}" style="width: {{item.percentWidth}}%;"></view>
       </view>
     </view>
 
@@ -153,16 +168,21 @@
   </view>
 
   <!-- 编辑库存条目：字段与「添加食材」逐格对齐（同一页不给新增/编辑两套日期交互） -->
-  <state-sheet lift visible="{{editingId ? true : false}}" title="编辑食材" bind:close="closeEditSheet">
+  <state-sheet visible="{{editingId ? true : false}}" title="编辑食材" bind:close="closeEditSheet">
     <view class="af-row">
       <input class="af-input af-main" placeholder="食材名" placeholder-class="af-ph" value="{{editDraft.ingredientName}}" bindinput="onEditInput" data-field="ingredientName" />
-      <input class="af-input af-sm" placeholder="量" placeholder-class="af-ph" value="{{editDraft.amount}}" bindinput="onEditInput" data-field="amount" />
+      <input class="af-input af-sm" placeholder="数量" placeholder-class="af-ph" value="{{editDraft.amount}}" bindinput="onEditInput" data-field="amount" />
       <input class="af-input af-sm" placeholder="单位" placeholder-class="af-ph" value="{{editDraft.unit}}" bindinput="onEditInput" data-field="unit" />
     </view>
-    <input class="af-input af-date" placeholder="到期日 如 2026-06-20（选填，清空即删除）" placeholder-class="af-ph" value="{{editDraft.expiresAt}}" bindinput="onEditInput" data-field="expiresAt" />
+    <view class="af-date-row">
+      <picker class="af-date-picker" mode="date" value="{{editDraft.expiresAt}}" bindchange="onEditInput" data-field="expiresAt">
+        <view class="af-input af-date">到期日 <text>{{editDraft.expiresAt || '选填 · 点击选择日期'}}</text></view>
+      </picker>
+      <view wx:if="{{editDraft.expiresAt}}" class="af-date-clear tap-scale" bindtap="clearExpiry" aria-role="button" aria-label="清除到期日">清除</view>
+    </view>
     <view class="af-actions">
-      <view class="btn btn-ghost af-cancel tap-scale" catchtap="closeEditSheet">取消</view>
-      <view class="btn btn-pop af-save tap-scale {{editing ? 'is-busy' : ''}}" catchtap="saveEdit">{{editing ? '保存中…' : '保存'}}</view>
+      <view class="btn btn-ghost af-cancel tap-scale" catchtap="closeEditSheet" aria-role="button">取消</view>
+      <view class="btn btn-pop af-save tap-scale {{editing ? 'is-busy' : ''}}" catchtap="saveEdit" aria-role="button">{{editing ? '保存中…' : '保存'}}</view>
     </view>
   </state-sheet>
 </view>
