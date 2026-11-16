@@ -3,7 +3,11 @@ const assert = require('node:assert/strict');
 let definition;
 const navigation = [];
 global.Page = (page) => { definition = page; };
+let theme = 'light';
+const topColors = [];
 global.wx = {
+  getAppBaseInfo: () => ({ theme }),
+  setNavigationBarColor(options) { topColors.push(options.frontColor); },
   navigateTo(options) { navigation.push({ type: 'navigate', url: options.url }); },
   switchTab(options) { navigation.push({ type: 'tab', url: options.url }); }
 };
@@ -13,7 +17,7 @@ const features = require('../utils/features');
 const originalCommunity = features.COMMUNITY;
 const page = () => Object.assign({}, definition, {
   data: structuredClone(definition.data),
-  setData(patch) { Object.assign(this.data, patch); }
+  setData(patch, done) { Object.assign(this.data, patch); if (done) done(); }
 });
 const dish = (id, status, addedByName, mealType = 'dinner') => ({
   recipeId: id,
@@ -34,6 +38,31 @@ try {
   assert.equal(p.data.navSolid, true, 'Scrolling reserves the capsule and status-bar area');
   p.onPageScroll({ scrollTop: 0 });
   assert.equal(p.data.navSolid, false, 'Returning to the top restores the photo header');
+
+  // 顶上的时间电量：大图露在顶上用白字；滑出纸色顶栏、没有大图时跟主题（浅色黑字、深色白字）
+  const top = page();
+  Object.assign(top.data, { loading: false, heroRecipe: { id: 1 } });
+  top._syncTopText();
+  assert.equal(topColors.at(-1), '#ffffff', '大图露在顶上：白字');
+  top.onPageScroll({ scrollTop: 200 });
+  assert.equal(topColors.at(-1), '#000000', '滑出纸色顶栏：黑字');
+  top.onPageScroll({ scrollTop: 0 });
+  assert.equal(topColors.at(-1), '#ffffff', '滑回顶上：白字');
+  const calls = topColors.length;
+  top.onPageScroll({ scrollTop: 10 });
+  top._syncTopText();
+  assert.equal(topColors.length, calls, '颜色没变不重复调接口');
+  top.data.loading = true;
+  top._syncTopText();
+  assert.equal(topColors.at(-1), '#000000', '加载中顶上是纸色骨架：黑字');
+  top.data.loading = false;
+  top.data.heroRecipe = null;
+  top._syncTopText();
+  assert.equal(topColors.at(-1), '#000000', '没有大图：黑字');
+  theme = 'dark';
+  top.onPageScroll({ scrollTop: 200 });
+  assert.equal(topColors.at(-1), '#ffffff', '深色主题：白字');
+  theme = 'light';
   p.data.currentSlot = 'dinner';
   p.data.todayMenu = [
     dish(1, 'todo', '妈妈'),

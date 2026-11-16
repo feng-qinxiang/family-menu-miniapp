@@ -1,4 +1,4 @@
-const { getCapsule } = require('../../utils/capsule');
+const { getCapsule, setTopTextOnPhoto } = require('../../utils/capsule');
 
 const {
   addTodayMenuRecipe,
@@ -234,7 +234,13 @@ Page({
 
   onPageScroll(e) {
     const navSolid = (e.scrollTop || 0) > 80;
-    if (navSolid !== this.data.navSolid) this.setData({ navSolid });
+    if (navSolid !== this.data.navSolid) this.setData({ navSolid }, () => this._syncTopText());
+  },
+
+  // 大图露在顶上（和 wxml 里大图的显示条件一致、且还没滑出纸色顶栏）时，时间电量用白字
+  _syncTopText() {
+    const d = this.data;
+    setTopTextOnPhoto(this, !d.navSolid && !d.loading && !(d.loadError && !d.hasHomeData) && !!d.heroRecipe);
   },
 
   // ============ 餐次 / 许愿池 ============
@@ -526,7 +532,7 @@ Page({
   },
 
   async loadAll() {
-    this.setData({ loading: true, loadError: '' });
+    this.setData({ loading: true, loadError: '' }, () => this._syncTopText());
     // 超时兜底：避免接口挂死导致永久骨架/白屏
     const seq = (this._loadAllSeq = (this._loadAllSeq || 0) + 1);
     if (this._loadAllWatchdog) clearTimeout(this._loadAllWatchdog);
@@ -539,7 +545,7 @@ Page({
         loading: false,
         loadError: this.data.loadError || '加载超时，请重试',
         hasHomeData: this._inited ? this._syncHasHomeData() : false
-      });
+      }, () => this._syncTopText());
     }, 8000);
     try {
       // 禁用数组解构：该语法编译后依赖 @babel/runtime 辅助模块，未打包进小程序会整页白屏
@@ -606,7 +612,7 @@ Page({
       if (shownPending === shoppingPending) patch.shoppingPending = shoppingPending;
       patch.hasHomeData = this._syncHasHomeData(patch);
       // 首屏合成一次 setData（原先 patch + updateSlotMenu + applyFilters + 补发 hasHomeData 共 4 次）
-      this.setData(patch, () => withScrollReveal(this, { item: '.mh-rcard-slot' }));
+      this.setData(patch, () => { withScrollReveal(this, { item: '.mh-rcard-slot' }); this._syncTopText(); });
       if (shownPending !== shoppingPending) {
         animateNumber(this, 'shoppingPending', shoppingPending, { from: shownPending });
       }
@@ -623,7 +629,7 @@ Page({
         loading: false,
         loadError: (err && err.message) ? err.message : '加载失败',
         hasHomeData: soft ? this._syncHasHomeData({ loading: false }) : false
-      });
+      }, () => this._syncTopText());
     }
   },
 
@@ -724,7 +730,7 @@ Page({
    * _heroOffset 只在用户主动点「换一个」或切菜系时变化，所以同一天反复进出首页看到的是同一批推荐。
    */
   applyFilters(cuisine, recipesSource) {
-    this.setData(this._filterPatch(cuisine, recipesSource), () => withScrollReveal(this, { item: '.mh-rcard-slot' }));
+    this.setData(this._filterPatch(cuisine, recipesSource), () => { withScrollReveal(this, { item: '.mh-rcard-slot' }); this._syncTopText(); });
   },
 
   // 纯计算：返回推荐区字段；全部菜谱放实例属性 _allRecipes（wxml 只要计数，不进 data）

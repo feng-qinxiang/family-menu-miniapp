@@ -5,7 +5,7 @@ const path = require('node:path');
 const root = path.resolve(__dirname, '../..');
 const app = { globalData: { apiBaseUrl: 'https://images.example.test/' } };
 global.getApp = () => app;
-global.wx = { getStorageSync() {}, setStorageSync() {}, showToast() {}, navigateBack() {}, disableAlertBeforeUnload() {}, showModal: async () => ({ confirm: true }) };
+global.wx = { getStorageSync() {}, setStorageSync() {}, showToast() {}, navigateBack() {}, disableAlertBeforeUnload() {}, showModal: async () => ({ confirm: true }), setNavigationBarColor() {} };
 const image = require('../utils/image');
 const { LOCAL_DISHES, localPath, dishImageUrl, dishImagePath, recipeDishImg, stepDishImg, DISH_PLACEHOLDER } = image;
 const base = 'https://images.example.test';
@@ -242,6 +242,7 @@ async function main() {
     api.getCommunityPosts = async () => [{ id: 3, images: [stock] }, { id: 4, images: [relativeUpload] }, { id: 5 }];
     const detail = page('../pkg-extra/recipe-detail/index');
     await detail.loadRecipe(1);
+    assert.equal(detail._topTextWhite, true, '有菜照片压在顶上：时间电量用白字');
     assert.equal(detail.data.works[0].cover, base + stock, '大家晒的也兼容迁移前的菜图路径');
     assert.equal(detail.data.works[1].cover, base + relativeUpload);
     assert.equal(detail.data.works[2].cover, '', '无照片作品仍不配假图');

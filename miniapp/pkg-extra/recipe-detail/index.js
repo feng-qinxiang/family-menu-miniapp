@@ -15,6 +15,7 @@ const { editIngredientPhoto } = require('../../utils/ingredient-photo');
 const features = require('../../utils/features');
 const { composePostWithRecipe } = require('../../utils/post-share');
 const { indexPantry, pantryMatches } = require('../../utils/pantry-match');
+const { setTopTextOnPhoto } = require('../../utils/capsule');
 
 const difficultyLabels = { easy: '简单', medium: '中等', hard: '困难' };
 
@@ -212,10 +213,10 @@ Page({
         playingVideo: false,
         loadError: false,
         loading: false
-      });
+      }, () => this._syncTopText());
     } catch (err) {
       // 失败与"菜谱不存在"是两回事：都显示"可能已经删除"会让人以为菜没了
-      this.setData({ recipe: null, loadError: true, loading: false });
+      this.setData({ recipe: null, loadError: true, loading: false }, () => this._syncTopText());
       wx.showToast({ title: '加载详情失败', icon: 'none' });
     }
   },
@@ -442,8 +443,14 @@ Page({
     const show = top > 600 && !nearBottom;
     const showTopbar = top > this._topbarAt;
     if (show !== this.data.showQuickNav || showTopbar !== this.data.showTopbar) {
-      this.setData({ showQuickNav: show, showTopbar });
+      this.setData({ showQuickNav: show, showTopbar }, () => this._syncTopText());
     }
+  },
+
+  // 顶上露着菜的照片（还没换成实底顶栏）时，时间电量用白字；没照片时是浅色底的碗，跟主题走
+  _syncTopText() {
+    const r = this.data.recipe;
+    setTopTextOnPhoto(this, !!r && !r.coverPlain && !this.data.showTopbar);
   },
 
   backToTop() {

@@ -33,4 +33,22 @@ function getCapsule() {
   }
 }
 
-module.exports = { getCapsule };
+/**
+ * 顶上的时间、电量和右上角胶囊用白字还是黑字。
+ * 页面顶上露着深色照片时传 onPhoto=true 用白字；否则跟主题走（浅色黑字、深色白字，同 theme.json 的 navTextStyle）。
+ * 值没变就不调，滚动里反复调用也不会一直打接口。
+ */
+function setTopTextOnPhoto(page, onPhoto) {
+  let dark = false;
+  try { dark = (wx.getAppBaseInfo ? wx.getAppBaseInfo() : wx.getSystemInfoSync()).theme === 'dark'; } catch (e) {}
+  const white = !!onPhoto || dark;
+  if (page._topTextWhite === white) return;
+  page._topTextWhite = white;
+  wx.setNavigationBarColor({
+    frontColor: white ? '#ffffff' : '#000000',
+    backgroundColor: dark ? '#1c1c1c' : '#fbf8f3',
+    fail() { page._topTextWhite = undefined; }
+  });
+}
+
+module.exports = { getCapsule, setTopTextOnPhoto };

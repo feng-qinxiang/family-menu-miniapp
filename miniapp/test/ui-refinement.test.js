@@ -25,7 +25,7 @@ Object.assign(api, {
   getDashboard: async () => ({ ownedRecipes: [recipe] })
 });
 photo.editIngredientPhoto = async (name, cover) => { edits.push({ name, cover }); if (editResult instanceof Error) throw editResult; return editResult; };
-global.wx = { showToast() {}, showLoading() {}, hideLoading() {} };
+global.wx = { showToast() {}, showLoading() {}, hideLoading() {}, setNavigationBarColor() {} };
 global.Page = value => { definition = value; };
 function page(module, privateFields = []) {
   require(module);
