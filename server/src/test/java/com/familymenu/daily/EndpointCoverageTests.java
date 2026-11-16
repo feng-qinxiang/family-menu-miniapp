@@ -504,6 +504,48 @@ class EndpointCoverageTests {
         assertThat(steps.get(1).has("image")).as("无图步骤不应带 image 键").isFalse();
     }
 
+    /** 整道菜视频（recipe.videoUrl）和每一步自己的视频分开存、分开读；改菜谱时不传 = 不动，传空串 = 清掉。 */
+    @Test
+    void recipeVideoSeparateFromStepVideos() throws Exception {
+        String token = guestLogin();
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("title", "带视频菜谱 " + System.nanoTime());
+        body.put("cuisine", "家常");
+        body.put("tasteTags", List.of("清淡"));
+        body.put("videoUrl", "/uploads/whole.mp4");
+        body.put("steps", List.of(
+                Map.of("text", "切块"),
+                Map.of("text", "下锅", "video", "/uploads/step-2.mp4")
+        ));
+        body.put("ingredients", List.of(Map.of("name", "番茄", "amount", "2", "unit", "个")));
+        MvcResult created = postJson("/api/recipes", token, body);
+        assertThat(created.getResponse().getStatus()).isEqualTo(200);
+        long recipeId = json(created).get("id").asLong();
+
+        JsonNode detail = json(mockMvc.perform(get("/api/recipes/" + recipeId).header("X-Auth-Token", token))
+                .andExpect(status().isOk()).andReturn());
+        assertThat(detail.get("videoUrl").asText()).isEqualTo("/uploads/whole.mp4");
+        assertThat(detail.get("steps").get(0).has("video")).as("整道菜视频不能再塞进第 1 步").isFalse();
+        assertThat(detail.get("steps").get(1).get("video").asText()).isEqualTo("/uploads/step-2.mp4");
+
+        // 不传 videoUrl：整道菜视频保留
+        mockMvc.perform(put("/api/recipes/" + recipeId).header("X-Auth-Token", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(Map.of("title", "改名不动视频"))))
+                .andExpect(status().isOk());
+        detail = json(mockMvc.perform(get("/api/recipes/" + recipeId).header("X-Auth-Token", token)).andReturn());
+        assertThat(detail.get("videoUrl").asText()).isEqualTo("/uploads/whole.mp4");
+
+        // 传空串：清掉
+        mockMvc.perform(put("/api/recipes/" + recipeId).header("X-Auth-Token", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(Map.of("videoUrl", ""))))
+                .andExpect(status().isOk());
+        detail = json(mockMvc.perform(get("/api/recipes/" + recipeId).header("X-Auth-Token", token)).andReturn());
+        assertThat(detail.hasNonNull("videoUrl")).isFalse();
+        assertThat(detail.get("steps").get(1).get("video").asText()).isEqualTo("/uploads/step-2.mp4");
+    }
+
     /** 评分反哺：带分的做菜记录把菜谱 rating 更新为真实均分；不带分不动。 */
     @Test
     void cookScoreUpdatesRecipeRating() throws Exception {

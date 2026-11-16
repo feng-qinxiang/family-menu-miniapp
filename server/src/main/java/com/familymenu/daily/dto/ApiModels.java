@@ -186,6 +186,7 @@ public final class ApiModels {
             @NotEmpty @Size(max = 50) List<IngredientItem> ingredients,
             @Size(max = 255) String summary,
             @Size(max = 512) String coverImage,
+            @Size(max = 512) String videoUrl,
             @Size(max = 16) String difficulty
     ) {
     }
@@ -377,6 +378,8 @@ public final class ApiModels {
             List<IngredientItem> ingredients,
             String createdAt,
             String coverImage,
+            // 整道菜的教学视频；每一步自己的视频在 steps[i].video
+            String videoUrl,
             String difficulty,
             // 当前家庭做过次数与家人评价（取自 cook_history）
             Integer cookCount,
@@ -394,6 +397,8 @@ public final class ApiModels {
             List<IngredientItem> ingredients,
             String summary,
             String coverImage,
+            // 同 coverImage：null = 不改，空串 = 清掉
+            @Size(max = 512) String videoUrl,
             String difficulty
     ) {
     }

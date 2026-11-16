@@ -101,6 +101,9 @@ CREATE TABLE IF NOT EXISTS recipe (
     rating DECIMAL(3,1) NOT NULL DEFAULT 4.5,
     summary VARCHAR(255) NULL,
     cover_image VARCHAR(512) NULL,
+    -- 整道菜的教学视频（/uploads/ URL）；每一步自己的视频在 recipe_step.video_url。
+    -- 2026-11-16 以前整道菜视频借放在第 1 步的 video_url，老库迁移见 server/sql/migrate-recipe-video.sql
+    video_url VARCHAR(512) NULL,
     difficulty VARCHAR(16) NOT NULL DEFAULT 'medium',
     status VARCHAR(16) NOT NULL DEFAULT 'ACTIVE',
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,

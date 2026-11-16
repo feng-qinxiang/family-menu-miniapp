@@ -246,6 +246,7 @@ public class MysqlKitchenStore {
                         ? request.title() + "，适合家庭快手做法"
                         : request.summary(),
                 request.coverImage(),
+                request.videoUrl(),
                 normalizeDifficulty(request.difficulty())
         );
         saveSteps(recipeId, request.steps());
@@ -820,7 +821,7 @@ public class MysqlKitchenStore {
     public RecipeDetail getRecipeDetail(long recipeId, long userId, long familyId) {
         return jdbcTemplate.query("""
                         SELECT id, title, source_type, source_url, cuisine, taste_tags_json,
-                               time_cost, servings, rating, summary, cover_image, difficulty,
+                               time_cost, servings, rating, summary, cover_image, video_url, difficulty,
                                DATE_FORMAT(created_at, '%Y-%m-%d %H:%i') AS created_at
                         FROM recipe WHERE id = ? AND status = 'ACTIVE'
                   AND (source_type = 'community' OR family_id = ? OR is_public = 1 OR family_id IS NULL OR owner_user_id = ?)
@@ -845,6 +846,7 @@ public class MysqlKitchenStore {
                             loadIngredients(recipeId),
                             rs.getString("created_at"),
                             rs.getString("cover_image"),
+                            rs.getString("video_url"),
                             rs.getString("difficulty"),
                             countFamilyCooks(recipeId, familyId),
                             loadFamilyReviews(recipeId, familyId)
@@ -906,6 +908,10 @@ public class MysqlKitchenStore {
         if (request.coverImage() != null) {
             sql.append(", cover_image = ?");
             params.add(request.coverImage().isBlank() ? null : request.coverImage().trim());
+        }
+        if (request.videoUrl() != null) {
+            sql.append(", video_url = ?");
+            params.add(request.videoUrl().isBlank() ? null : request.videoUrl().trim());
         }
         if (request.difficulty() != null) {
             sql.append(", difficulty = ?");
@@ -1257,13 +1263,13 @@ public class MysqlKitchenStore {
 
     private long insertRecipe(long ownerId, long familyId, String title, String sourceType, String sourceUrl, String cuisine,
                               List<String> tags, int timeCost, int servings, double rating, String summary,
-                              String coverImage, String difficulty) {
+                              String coverImage, String videoUrl, String difficulty) {
         var keyHolder = new org.springframework.jdbc.support.GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement("""
                     INSERT INTO recipe(title, source_type, source_url, owner_user_id, family_id, cuisine, taste_tags_json,
-                                       time_cost, servings, rating, summary, cover_image, difficulty, status)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'ACTIVE')
+                                       time_cost, servings, rating, summary, cover_image, video_url, difficulty, status)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'ACTIVE')
                     """, Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, title);
             ps.setString(2, normalizeSourceType(sourceType));
@@ -1277,7 +1283,8 @@ public class MysqlKitchenStore {
             ps.setDouble(10, rating);
             ps.setString(11, summary);
             ps.setString(12, coverImage == null || coverImage.isBlank() ? null : coverImage.trim());
-            ps.setString(13, difficulty);
+            ps.setString(13, videoUrl == null || videoUrl.isBlank() ? null : videoUrl.trim());
+            ps.setString(14, difficulty);
             return ps;
         }, keyHolder);
         Number key = keyHolder.getKey();
