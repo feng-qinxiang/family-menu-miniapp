@@ -28,19 +28,18 @@ const LOCAL_DISHES = [
 
 // 菜名 → 内置照片。一条规则只在「名字里带这个词的菜，端上来就长照片里这样」时才成立：
 // 文件名不等于照片内容——hongshao-pork 拍的是青红椒咕咾肉，orange-chicken 是盖饭上的橙子鸡块，
-// sweet-sour-chicken 是芝麻鸡块，wontons 是一盘蒸饺，lo-mein 主体是牛肉芦笋，
-// 所以红烧肉、可乐鸡翅、糖醋排骨、西兰花、馄饨、拌面都没有可用的照片，不设规则。
+// sweet-sour-chicken 是芝麻鸡块，wontons 是一盘蒸饺，lo-mein 主体是牛肉芦笋，egg-drop-soup 是带芦笋的浓蛋花汤（没紫菜），
+// fried-rice 是鸡块彩椒炒饭，potato-shreds 是干辣椒花椒的酸辣土豆丝，
+// 所以红烧肉、可乐鸡翅、糖醋排骨、西兰花、馄饨、拌面、蛋花汤、炒饭都没有可用的照片，不设规则；土豆丝只认酸辣土豆丝。
 const TITLE_RULES = [
   { kw: ['番茄炒蛋', '西红柿炒鸡', '西红柿炒蛋'], file: 'tomato-egg' },
   { kw: ['麻婆豆腐'], file: 'mapo-tofu' },
   { kw: ['宫保鸡'], file: 'kungpao-chicken' },
   { kw: ['清炒时蔬', '炒青菜', '蒜蓉青菜', '菜心'], file: 'stir-fry-veg' },
   { kw: ['香菇滑鸡'], file: 'mushroom-chicken' },
-  { kw: ['炒饭'], file: 'fried-rice' },
   { kw: ['酸辣汤'], file: 'hot-sour-soup' },
-  { kw: ['紫菜蛋花', '蛋花汤'], file: 'egg-drop-soup' },
   { kw: ['干煸豆角', '干煸四季豆'], file: 'long-beans' },
-  { kw: ['土豆丝'], file: 'potato-shreds' },
+  { kw: ['酸辣土豆丝'], file: 'potato-shreds' },
   { kw: ['鱼香茄子', '红烧茄子', '烧茄子'], file: 'sichuan-eggplant' },
   { kw: ['牛肉炒西兰花', '西兰花炒牛肉'], file: 'beef-broccoli' },
   { kw: ['荷兰豆炒虾', '虾仁荷兰豆'], file: 'shrimp-peas' }

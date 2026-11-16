@@ -112,13 +112,13 @@ INSERT IGNORE INTO recipe_step (id, recipe_id, step_no, step_text) VALUES
 -- 第二批示例菜谱（同上，属公共菜谱库）
 INSERT IGNORE INTO recipe (id, title, source_type, owner_user_id, family_id, cuisine, taste_tags_json, time_cost, servings, rating, summary, cover_image, status)
 VALUES
-  (101, '紫菜蛋花汤', 'owned', 1, 1, '汤羹', '["清淡","快手","晚餐"]', 8, 3, 4.6, '晚饭收尾的清爽热汤', '/assets/dishes/egg-drop-soup.jpg', 'ACTIVE'),
-  (102, '青椒土豆丝', 'owned', 1, 1, '家常', '["脆爽","省钱","快手"]', 10, 3, 4.4, '冰箱常备食材也能炒出香气', '/assets/dishes/potato-shreds.jpg', 'ACTIVE'),
+  (101, '紫菜蛋花汤', 'owned', 1, 1, '汤羹', '["清淡","快手","晚餐"]', 8, 3, 4.6, '晚饭收尾的清爽热汤', NULL, 'ACTIVE'),
+  (102, '青椒土豆丝', 'owned', 1, 1, '家常', '["脆爽","省钱","快手"]', 10, 3, 4.4, '冰箱常备食材也能炒出香气', NULL, 'ACTIVE'),
   (103, '香菇滑鸡', 'owned', 1, 1, '粤菜', '["鲜香","蒸菜","少油"]', 28, 3, 4.7, '电饭煲蒸格也能完成的嫩滑鸡肉', '/assets/dishes/mushroom-chicken.jpg', 'ACTIVE'),
   (104, '酸辣汤', 'community', 1, NULL, '川菜', '["酸辣","开胃","汤羹"]', 18, 4, 4.6, '下雨天最适合的一碗酸辣热汤', '/assets/dishes/hot-sour-soup.jpg', 'ACTIVE'),
   (105, '牛肉炒西兰花', 'community', 1, NULL, '家常', '["高蛋白","清爽","便当"]', 20, 3, 4.8, '肉菜均衡的工作日晚餐', '/assets/dishes/beef-broccoli.jpg', 'ACTIVE'),
   (106, '鲜肉馄饨', 'owned', 1, 1, '面点', '["早餐","孩子爱吃","可冷冻"]', 38, 4, 4.5, '周末包好冷冻，早晨十分钟上桌', NULL, 'ACTIVE'),
-  (107, '扬州炒饭', 'owned', 1, 1, '主食', '["快手","剩饭改造","孩子爱吃"]', 14, 2, 4.5, '剩米饭和鸡蛋的稳定发挥', '/assets/dishes/fried-rice.jpg', 'ACTIVE'),
+  (107, '扬州炒饭', 'owned', 1, 1, '主食', '["快手","剩饭改造","孩子爱吃"]', 14, 2, 4.5, '剩米饭和鸡蛋的稳定发挥', NULL, 'ACTIVE'),
   (108, '家常拌面', 'community', 1, NULL, '面食', '["快手","香辣","夜宵"]', 12, 2, 4.3, '不想开大火时的拌面方案', NULL, 'ACTIVE');
 
 -- 种子菜谱对全部家庭可见：用显式 is_public 标记，取代历史上按 family_id = 1 判断的做法
@@ -201,3 +201,8 @@ UPDATE recipe SET cover_image = NULL WHERE id = 8 AND title = '糖醋排骨' AND
 -- 同上（2026-11-12 补）：鲜肉馄饨配的 wontons.jpg 是一盘蒸饺，家常拌面配的 lo-mein.jpg 主体是牛肉芦笋。
 UPDATE recipe SET cover_image = NULL WHERE id = 106 AND title = '鲜肉馄饨' AND family_id = 1 AND cover_image = '/assets/dishes/wontons.jpg';
 UPDATE recipe SET cover_image = NULL WHERE id = 108 AND title = '家常拌面' AND family_id IS NULL AND cover_image = '/assets/dishes/lo-mein.jpg';
+-- 同上（2026-11-16 补）：紫菜蛋花汤的照片没有紫菜、有芦笋；青椒土豆丝借的是酸辣土豆丝的照片（干辣椒花椒，没青椒）；
+-- 扬州炒饭的照片是鸡块彩椒炒饭，没有火腿。
+UPDATE recipe SET cover_image = NULL WHERE id = 101 AND title = '紫菜蛋花汤' AND family_id = 1 AND cover_image = '/assets/dishes/egg-drop-soup.jpg';
+UPDATE recipe SET cover_image = NULL WHERE id = 102 AND title = '青椒土豆丝' AND family_id = 1 AND cover_image = '/assets/dishes/potato-shreds.jpg';
+UPDATE recipe SET cover_image = NULL WHERE id = 107 AND title = '扬州炒饭' AND family_id = 1 AND cover_image = '/assets/dishes/fried-rice.jpg';
