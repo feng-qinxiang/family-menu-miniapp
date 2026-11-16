@@ -69,6 +69,18 @@ assert.deepStrictEqual(ingredientsInStep('加冰糖', ['糖', '冰糖']), [1]);
 assert.deepStrictEqual(ingredientsInStep('五花肉 切块焯水', ['五花肉']), [0]);
 // 一步没提到任何配料 → 不高亮（而不是退化成"全都算"）
 assert.deepStrictEqual(ingredientsInStep('大火收汁即可', ['五花肉', '冰糖']), []);
+// 步骤换了个说法也认得：蛋液=鸡蛋、豆腐=嫩豆腐、豆瓣酱=郫县豆瓣酱、鸡翅=鸡翅中、葱花=香葱、醋=米醋、西红柿=番茄
+const tomatoEgg = ['鸡蛋', '番茄', '葱花', '盐', '糖'];
+assert.deepStrictEqual(ingredientsInStep('热锅凉油，倒入蛋液炒至凝固盛出', tomatoEgg), [0]);
+assert.deepStrictEqual(ingredientsInStep('西红柿切块备用', tomatoEgg), [1]);
+assert.deepStrictEqual(ingredientsInStep('热油炒牛肉末，下豆瓣酱炒出红油', ['嫩豆腐', '牛肉末', '郫县豆瓣酱']), [1, 2]);
+assert.deepStrictEqual(ingredientsInStep('加水烧开下豆腐', ['嫩豆腐', '牛肉末']), [0]);
+assert.deepStrictEqual(ingredientsInStep('锅中少许油煎鸡翅至两面金黄', ['鸡翅中', '可乐']), [0]);
+assert.deepStrictEqual(ingredientsInStep('加盐调味，撒葱花即可出锅', ['紫菜', '鸡蛋', '香葱']), [2]);
+assert.deepStrictEqual(ingredientsInStep('沿锅边淋醋保持脆爽', ['土豆', '青椒', '米醋']), [2]);
+// 放宽后不能乱认：「生抽」认过就划掉，「老抽」不借它的「抽」；「五花肉」不靠一个「肉」字命中
+assert.deepStrictEqual(ingredientsInStep('倒入可乐和生抽', ['生抽', '老抽', '可乐']), [0, 2]);
+assert.deepStrictEqual(ingredientsInStep('加开水没过肉', ['五花肉']), []);
 assert.deepStrictEqual(ingredientsInStep('', ['盐']), []);
 assert.deepStrictEqual(ingredientsInStep('加盐', null), []);
 

@@ -103,19 +103,39 @@ function parseLocalDate(value) {
  * @param {string[]} names 整份配料的名字（同序返回下标）
  * @returns {number[]} 命中的配料下标
  */
+// 步骤里常换个说法的料（用料写「番茄」，步骤写「西红柿」）
+const STEP_SYNONYMS = [['番茄', '西红柿'], ['土豆', '马铃薯']];
+// 短名字里只带一个这种字时，步骤里单写这个字也算（「香葱」↔「葱花」、「米醋」↔「醋」、「鸡蛋」↔「蛋液」）
+const STEP_CORE_CHARS = '葱姜蒜醋糖盐蛋';
+
+// 一样料在步骤里还可能怎么写：同义词；三个字以上取头尾至少两个字（「嫩豆腐」→「豆腐」、
+// 「鸡翅中」→「鸡翅」、「郫县豆瓣酱」→「豆瓣酱」）；三个字以内只带一个核心字的取那个字
+function stepAliases(name) {
+  const out = [];
+  STEP_SYNONYMS.forEach((pair) => { if (pair.indexOf(name) !== -1) pair.forEach((w) => { if (w !== name) out.push(w); }); });
+  for (let n = name.length - 1; n >= 2; n -= 1) out.push(name.slice(0, n), name.slice(-n));
+  const cores = name.length <= 3 ? name.split('').filter((c) => STEP_CORE_CHARS.indexOf(c) !== -1) : [];
+  if (cores.length === 1 && name.length > 1) out.push(cores[0]);
+  return out;
+}
+
 function ingredientsInStep(stepText, names) {
-  const text = String(stepText || '').replace(/\s+/g, '');
+  let text = String(stepText || '').replace(/\s+/g, '');
   if (!text || !Array.isArray(names) || !names.length) return [];
-  const hits = [];
-  names.forEach((raw, idx) => {
-    const name = String(raw || '').replace(/\s+/g, '');
-    if (name && text.indexOf(name) !== -1) hits.push({ idx, name });
-  });
-  if (hits.length < 2) return hits.map((h) => h.idx);
-  // 长名字优先：短名字被长名字包含时丢弃（「糖」vs「冰糖」）
-  const kept = hits.filter((h) => !hits.some((o) => o !== h && o.name.length > h.name.length
-    && o.name.indexOf(h.name) !== -1));
-  return kept.map((h) => h.idx);
+  const list = names.map((raw, idx) => ({ idx, name: String(raw || '').replace(/\s+/g, '') })).filter((it) => it.name);
+  const hit = new Set();
+  // 认到一个就从正文里划掉，后面的短名字和别名不会再借它命中（「冰糖」认过，「糖」不再算；「生抽」认过，「老抽」的「抽」也不算）
+  const take = (it, word) => {
+    if (hit.has(it.idx) || text.indexOf(word) === -1) return;
+    hit.add(it.idx);
+    text = text.split(word).join('\u0000');
+  };
+  // 先认全名（长的先认），再认别名（长的先认）
+  list.slice().sort((a, b) => b.name.length - a.name.length).forEach((it) => take(it, it.name));
+  const aliases = [];
+  list.forEach((it) => stepAliases(it.name).forEach((word) => aliases.push({ it, word })));
+  aliases.sort((a, b) => b.word.length - a.word.length).forEach((a) => take(a.it, a.word));
+  return Array.from(hit).sort((a, b) => a - b);
 }
 
 module.exports = {
