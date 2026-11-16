@@ -76,15 +76,63 @@
   </div>
 </section>
 
+<h1 style="margin-top:36px">第二批 · 2026-11-16</h1>
+<p class="lead">按你点的五件事，一次改一处，每处单独提交。</p>
+
+<section>
+  <h2>7. 顶上的时间、电量在深色照片上看得清<small>提交 0289f7c</small></h2>
+  <p>首页大图和菜谱详情的照片露在顶上时，时间、信号、电量和右上角胶囊换成白字；往下滑出纸色顶栏、没照片的菜、加载中还是黑字；深色模式一直白字。</p>
+  <div class="pair">
+    <figure><figcaption class="before">改前：首页</figcaption><img src="screens/statusbar-home-before.jpg" alt="改前：首页"></figure>
+    <figure><figcaption class="after">改后：首页</figcaption><img src="screens/statusbar-home-after.jpg" alt="改后：首页"></figure>
+  </div>
+  <div class="pair">
+    <figure><figcaption class="before">改前：菜谱详情</figcaption><img src="screens/statusbar-detail-before.jpg" alt="改前：菜谱详情"></figure>
+    <figure><figcaption class="after">改后：菜谱详情</figcaption><img src="screens/statusbar-detail-after.jpg" alt="改后：菜谱详情"></figure>
+  </div>
+</section>
+
+<section>
+  <h2>8. 「买好了」没点的时候不再像已经买好<small>提交 9063120</small></h2>
+  <p>原来是浅绿底带对勾，看着像「已买好」。改成白底细边加一个空心圈，像一个还没打勾的框；点了照旧挪到下面「已入篮」，划掉显示（screens/shopping-buy-after-bought.jpg）。</p>
+  <div class="pair">
+    <figure><figcaption class="before">改前</figcaption><img src="screens/shopping-buy-before.jpg" alt="改前"></figure>
+    <figure><figcaption class="after">改后</figcaption><img src="screens/shopping-buy-after.jpg" alt="改后"></figure>
+  </div>
+</section>
+
+<section>
+  <h2>9. 「我的」菜谱数算对了<small>提交 3070de8</small></h2>
+  <p>原来把平台内置的 11 道菜也算成自家的，所以写「11 道菜谱」、首页写「全部 16」。现在只数自己建的和导入的，和菜谱库「我建的」一个算法；一道都没有写「还没存菜谱」，有的话写「存了 N 道菜谱」（screens/me-count-after-3.jpg 是临时把数字设成 3 拍的样子）。</p>
+  <div class="pair">
+    <figure><figcaption class="before">改前</figcaption><img src="screens/me-count-before.jpg" alt="改前"></figure>
+    <figure><figcaption class="after">改后</figcaption><img src="screens/me-count-after.jpg" alt="改后"></figure>
+  </div>
+</section>
+
+<section>
+  <h2>10. 做菜步骤亮出这一步要用的料<small>提交 283e633</small></h2>
+  <p>原来只认一字不差的料名，「倒入蛋液」认不出是鸡蛋，16 道内置菜 48 步里有 11 步一样都不亮。现在「蛋液」亮鸡蛋、「豆腐」亮嫩豆腐、「豆瓣酱」亮郫县豆瓣酱、「葱花」亮香葱、「醋」亮米醋；剩下 4 步不亮，是那几步本来没提到用料（比如「大火收汁即可」）。</p>
+  <div class="pair">
+    <figure><figcaption class="before">改前：番茄炒蛋第 3 步</figcaption><img src="screens/cook-step-before.jpg" alt="改前：番茄炒蛋第 3 步"></figure>
+    <figure><figcaption class="after">改后：番茄炒蛋第 3 步</figcaption><img src="screens/cook-step-after.jpg" alt="改后：番茄炒蛋第 3 步"></figure>
+  </div>
+</section>
+
+<section>
+  <h2>11. 买菜清单每样收成一行<small>提交 89feeaa</small></h2>
+  <p>原来左边一大块里又写一遍名字、按钮另起一行，一屏三样半；现在一样一行：小方块（没照片只写第一个字）、名字和用量、右边「买好了」和 ×，一屏六样多。× 点了照旧先问「移除这一项？」；换照片的提示在列表底下说一次（screens/shopping-compact-after-bottom.jpg）。大字模式、深色模式、很长的名字都看过，排得开。</p>
+  <div class="pair">
+    <figure><figcaption class="before">改前</figcaption><img src="screens/shopping-compact-before.jpg" alt="改前"></figure>
+    <figure><figcaption class="after">改后</figcaption><img src="screens/shopping-compact-after.jpg" alt="改后"></figure>
+  </div>
+</section>
+
 <section>
   <h2>这几处没改，等你定</h2>
   <ul>
     <li>九道菜缺照片：红烧肉、可乐鸡翅、蒜蓉西兰花、糖醋排骨、鲜肉馄饨、家常拌面、紫菜蛋花汤、青椒土豆丝、扬州炒饭。你给照片，或者同意我去找可以商用的图。哪张原来的照片你觉得也行，放回去是一行改动。</li>
     <li>「今天这一桌」从第一屏挪到了菜的下面，要往下滑一点才看到。不喜欢可以单独退回这一处。</li>
     <li>没照片的菜在首页那一排排到了最后：头 6 格是有照片的菜，后 4 格是碗，其余的在首页看不到（菜谱库里都在）。打开首页第一屏看到的头两格仍是照片。补上照片会自动回来。</li>
-    <li>买菜清单每样食材占一大块，一屏只看得到两样半。</li>
-    <li>买菜清单的「✓ 买好了」按钮是绿底带对勾，没点的时候看着也像已经买好了。</li>
-    <li>做菜步骤每一步下面都列着整道菜的全部用料。</li>
-    <li>「我的」写「11 道菜谱」，首页写「全部 16」：一个数自家存的，一个数能看到的全部。</li>
   </ul>
 </section>
