@@ -27,6 +27,7 @@
         "weekly-menu/index",
         "recipes/search/index",
         "cook-mode/index",
+        "quick-order/index",
         "cook-log/index",
         "auth/login/index",
         "auth/login-phone/index",

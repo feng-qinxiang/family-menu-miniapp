@@ -1,0 +1,67 @@
+<!-- 一句话点菜：上面一问一答，下面输入框。确认卡只画「计划」，不管计划是规则还是大模型给的 -->
+<view class="qo-page {{fontScale === 'lg' ? 'font-lg' : ''}}">
+  <nav-bar title="一句话点菜" status-bar-height="{{statusBarHeight}}" />
+
+  <view wx:if="{{loading}}" class="qo-loading">正在看今天的菜单…</view>
+
+  <view wx:elif="{{loadError}}" class="qo-error">
+    <state-empty type="offline" title="菜单没加载出来" desc="网络开小差了，检查后再试一次" cta="重新加载" bind:action="loadContext" />
+  </view>
+
+  <block wx:else>
+    <scroll-view class="qo-talk" scroll-y enhanced show-scrollbar="{{false}}" scroll-with-animation scroll-into-view="{{scrollTo}}">
+      <view class="qo-intro">
+        <view class="qo-intro-title">说一句，帮你改今天的菜单</view>
+        <view class="qo-intro-sub">加菜、撤菜、换菜都行；改之前先给你看一眼，点了确认才算数。</view>
+        <view class="qo-examples" wx:if="{{examples.length}}">
+          <view wx:for="{{examples}}" wx:key="*this" class="chip tap-scale qo-example" data-text="{{item}}" bindtap="useExample" aria-role="button" aria-label="填入：{{item}}">{{item}}</view>
+        </view>
+      </view>
+
+      <view wx:for="{{turns}}" wx:key="id" wx:for-item="turn" wx:for-index="ti" class="qo-turn">
+        <view class="qo-said">{{turn.said}}</view>
+        <view wx:if="{{turn.thinking}}" class="qo-text">正在听…</view>
+        <view wx:elif="{{turn.text}}" class="qo-text">{{turn.text}}</view>
+        <view wx:else class="card qo-card {{turn.state === 'cancelled' ? 'qo-card--closed' : ''}}">
+          <view class="qo-card-head">
+            <text class="qo-card-title">{{turn.state === 'done' ? '已改好' : (turn.state === 'cancelled' ? '没有改' : (turn.state === 'failed' ? '没改完' : '确认一下'))}}</text>
+            <text wx:if="{{turn.state === 'open'}}" class="qo-card-note">点了确认才会改</text>
+          </view>
+
+          <view wx:if="{{turn.view.showMeals && turn.state === 'open'}}" class="qo-meals">
+            <text class="qo-meals-label">加到</text>
+            <view wx:for="{{turn.view.meals}}" wx:key="key" class="chip tap-scale {{item.on ? 'on' : ''}}" data-turn="{{ti}}" data-meal="{{item.key}}" bindtap="chooseMeal" aria-role="button" aria-pressed="{{item.on}}" aria-label="加到{{item.label}}">{{item.label}}</view>
+          </view>
+
+          <view wx:for="{{turn.view.lines}}" wx:key="index" wx:for-item="line" class="qo-line">
+            <view wx:if="{{line.title}}" class="qo-act">
+              <text class="qo-op qo-op--{{line.op}}">{{line.verb}}</text>
+              <text class="qo-dish">{{line.title}}</text>
+              <text class="qo-meal">{{line.mealLabel}}</text>
+            </view>
+            <block wx:else>
+              <view class="qo-ask">{{line.ask}}</view>
+              <view wx:if="{{line.candidates.length && turn.state === 'open'}}" class="qo-cands">
+                <view wx:for="{{line.candidates}}" wx:key="index" wx:for-item="cand" wx:for-index="ci" class="chip tap-scale" data-turn="{{ti}}" data-item="{{line.index}}" data-cand="{{ci}}" bindtap="pick" aria-role="button" aria-label="选{{cand}}">{{cand}}</view>
+              </view>
+            </block>
+          </view>
+
+          <view wx:if="{{turn.state === 'open'}}" class="qo-acts">
+            <view class="btn btn-ghost tap-scale qo-btn" data-turn="{{ti}}" bindtap="cancel" aria-role="button">不改了</view>
+            <view class="btn btn-pop tap-scale qo-btn {{turn.view.canConfirm ? '' : 'is-off'}}" data-turn="{{ti}}" bindtap="confirm" aria-role="button" aria-disabled="{{!turn.view.canConfirm}}">{{turn.view.canConfirm ? '确认修改' : '先选好上面的菜'}}</view>
+          </view>
+          <view wx:elif="{{turn.state === 'done'}}" class="qo-go tap-scale" bindtap="goMenu" aria-role="button">看今天的菜单 ›</view>
+          <view wx:elif="{{turn.state === 'failed'}}" class="qo-fail">{{turn.failText}}</view>
+        </view>
+      </view>
+      <view id="qo-end" class="qo-end"></view>
+    </scroll-view>
+
+    <view class="qo-bar">
+      <input class="qo-input" value="{{input}}" bindinput="onInput" bindconfirm="send" confirm-type="send" maxlength="60"
+        placeholder="比如：晚饭加个番茄炒蛋" placeholder-class="qo-ph" aria-label="说一句要怎么改菜单" />
+      <view class="qo-send tap-scale {{input ? '' : 'is-off'}}" bindtap="send" aria-role="button" aria-disabled="{{!input}}">发送</view>
+    </view>
+  </block>
+</view>

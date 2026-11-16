@@ -808,6 +808,11 @@ Page({
     openTodayMenu();
   },
 
+  // 一句话点菜：带上当前选中的餐次，句子里没说哪一餐就加到这一餐（和「加入X餐」一致）
+  goQuickOrder() {
+    wx.navigateTo({ url: `/pkg-extra/quick-order/index?slot=${this.data.currentSlot}` });
+  },
+
   goShopping() {
     wx.navigateTo({ url: '/pages/shopping/index' });
   },

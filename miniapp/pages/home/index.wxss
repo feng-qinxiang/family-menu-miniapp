@@ -66,6 +66,21 @@
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+.mh-hero-top .mh-name { flex: 1; min-width: 0; }
+/* 和「今日推荐」角标同一种暗色毛玻璃胶囊；热区靠 ::after 撑到 88rpx */
+.mh-quick {
+  position: relative;
+  flex: none;
+  margin: 0 12rpx 0 16rpx;
+  padding: 8rpx 22rpx;
+  border-radius: var(--r-pill);
+  border: 2rpx solid rgba(255, 255, 255, 0.45);
+  background: rgba(20, 14, 8, 0.4);
+  color: var(--anchor-contrast);
+  font-size: var(--fs-cap);
+  font-weight: 700;
+}
+.mh-quick::after { content: ''; position: absolute; left: 0; right: 0; top: -20rpx; bottom: -20rpx; }
 /* ---- hero body ---- */
 .mh-hero-body {
   position: absolute;

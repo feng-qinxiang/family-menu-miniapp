@@ -1,0 +1,102 @@
+/* 一句话点菜：配色、按钮、chip 全用 app.wxss 的 token 和 .card/.btn/.chip，本文件只排版 */
+.qo-page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+}
+.qo-loading { padding: 80rpx var(--page-gutter); text-align: center; font-size: var(--fs-sub); color: var(--mut-strong); }
+.qo-error { padding-top: 40rpx; }
+
+.qo-talk { flex: 1; min-height: 0; }
+.qo-intro { padding: 24rpx var(--page-gutter) 8rpx; }
+.qo-intro-title { font-size: var(--fs-h2); font-weight: 800; color: var(--ink); }
+.qo-intro-sub { margin-top: 10rpx; font-size: var(--fs-sub); line-height: 1.5; color: var(--mut-strong); }
+.qo-examples { display: flex; flex-wrap: wrap; gap: 16rpx; margin-top: 24rpx; }
+
+.qo-turn { padding: 24rpx var(--page-gutter) 0; }
+/* 自己说的话靠右，回话靠左：一眼分得出谁说的 */
+.qo-said {
+  margin-left: auto;
+  width: fit-content;
+  max-width: 80%;
+  padding: 18rpx 26rpx;
+  border-radius: var(--r-md) var(--r-md) 8rpx var(--r-md);
+  background: var(--anchor);
+  color: var(--anchor-contrast);
+  font-size: var(--fs-body);
+  line-height: 1.5;
+}
+.qo-text {
+  margin-top: 18rpx;
+  width: fit-content;
+  max-width: 88%;
+  padding: 18rpx 26rpx;
+  border-radius: var(--r-md) var(--r-md) var(--r-md) 8rpx;
+  background: var(--paper-2);
+  color: var(--ink);
+  font-size: var(--fs-body);
+  line-height: 1.6;
+}
+
+.qo-card { margin-top: 18rpx; }
+.qo-card--closed { opacity: 0.72; }
+.qo-card-head { display: flex; align-items: baseline; justify-content: space-between; }
+.qo-card-title { font-size: var(--fs-lg); font-weight: 800; color: var(--ink); }
+.qo-card-note { font-size: var(--fs-cap); color: var(--mut-strong); }
+
+.qo-meals { display: flex; align-items: center; flex-wrap: wrap; gap: 12rpx; margin-top: 20rpx; }
+.qo-meals-label { font-size: var(--fs-sub); color: var(--mut-strong); margin-right: 4rpx; }
+
+.qo-line { padding: 20rpx 0; }
+.qo-line + .qo-line { border-top: 2rpx solid var(--line); }
+.qo-act { display: flex; align-items: baseline; gap: 16rpx; }
+.qo-op { flex: none; font-size: var(--fs-sub); font-weight: 800; }
+.qo-op--add { color: var(--pine-ink); }
+.qo-op--remove { color: var(--pop-deep); }
+.qo-dish { flex: 1; min-width: 0; font-size: var(--fs-lg); font-weight: 700; color: var(--ink); }
+.qo-meal { flex: none; font-size: var(--fs-sub); color: var(--mut-strong); }
+.qo-ask { font-size: var(--fs-body); color: var(--ink); line-height: 1.5; }
+.qo-cands { display: flex; flex-wrap: wrap; gap: 12rpx; margin-top: 16rpx; }
+
+.qo-acts { display: flex; gap: 16rpx; margin-top: 20rpx; }
+.qo-btn { flex: 1; }
+.qo-btn.is-off { opacity: 0.45; box-shadow: none; }
+.qo-go { margin-top: 12rpx; min-height: var(--tap-min); display: flex; align-items: center; font-size: var(--fs-body); font-weight: 700; color: var(--pop); }
+.qo-fail { margin-top: 12rpx; font-size: var(--fs-sub); line-height: 1.5; color: var(--pop-deep); }
+.qo-end { height: 32rpx; }
+
+.qo-bar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 16rpx var(--page-gutter) calc(env(safe-area-inset-bottom) + 16rpx);
+  border-top: 2rpx solid var(--line);
+  background: var(--paper);
+}
+.qo-input {
+  flex: 1;
+  min-width: 0;
+  height: var(--tap-min);
+  padding: 0 28rpx;
+  border-radius: var(--r-pill);
+  background: var(--c-surface);
+  border: var(--bd-card);
+  font-size: var(--fs-body);
+  color: var(--ink);
+}
+.qo-ph { color: var(--mut); }
+.qo-send {
+  flex: none;
+  height: var(--tap-min);
+  padding: 0 32rpx;
+  display: flex;
+  align-items: center;
+  border-radius: var(--r-pill);
+  background: var(--anchor);
+  color: var(--anchor-contrast);
+  font-size: var(--fs-btn);
+  font-weight: 700;
+}
+.qo-send.is-off { opacity: 0.45; }

@@ -47,6 +47,8 @@
 
     <view class="mh-hero-top" style="top: {{capsuleTop}}; right: {{capsuleRight}};">
       <view class="mh-name">{{currentUser.nickname || '家人'}}，今天想吃点啥</view>
+      <!-- 回答上面那句问话：说一句就能加菜、撤菜、换菜 -->
+      <view class="mh-quick tap-scale" catchtap="goQuickOrder" aria-role="button" aria-label="一句话点菜">一句话点菜 ›</view>
     </view>
 
     <view wx:for="{{[heroRecipe.id]}}" wx:key="*this" class="tap-scale mh-hero-body g-fade-up g-d2" data-id="{{heroRecipe.id}}" bindtap="goDetail">
