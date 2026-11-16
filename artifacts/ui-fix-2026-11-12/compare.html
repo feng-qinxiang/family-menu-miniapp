@@ -129,6 +129,66 @@
 </section>
 
 <section>
+  <h2>12. 编辑页每一步能加一段视频<small>提交 c63617b、a1993ed、5018a74</small></h2>
+  <p>每一步「加一张图」旁边并排「加一段视频」，传好以后两格一起长高，× 可以移除。选视频和整道菜教学视频是同一套：最长 60 秒、不超过 20MB（面板上写着）；从相册挑的超长、超大的视频现在当场说原因，不再传半天只得到一句「上传失败」。整道菜教学视频单独存了，不再借放在第 1 步，所以第 1 步也能有自己的视频；老数据用迁移脚本挪过去（上线时 migrate-prod.sh 会一起跑）。顺手修了一个老问题：步骤图、步骤视频存的是带域名、带签名的地址，生产开了签名以后 7 天就会打不开，现在和封面一样存干净的地址。</p>
+  <div class="pair">
+    <figure><figcaption class="before">改前</figcaption><img src="screens/stepvideo-edit-before.png" alt="改前：每一步只有加一张图"></figure>
+    <figure><figcaption class="after">改后（第 2 步已传视频）</figcaption><img src="screens/stepvideo-edit-after.png" alt="改后：图和视频并排"></figure>
+  </div>
+  <div class="pair" style="margin-top:20px">
+    <figure><figcaption class="after">点「加一段视频」</figcaption><img src="screens/stepvideo-edit-sheet.png" alt="第 3 步的视频面板"></figure>
+    <figure></figure>
+  </div>
+</section>
+
+<section>
+  <h2>13. 菜谱详情每一步按「视频 → 图片 → 文字」显示<small>提交 c29f27e</small></h2>
+  <p>这一步有视频就放视频（有图就拿图当封面），没视频放图，都没有只放字。顶上「教学视频」卡以前拿的是「第一个带视频的步骤」，第 2 步一传视频，顶上放的就成了第 2 步的视频；现在它只放整道菜那段。</p>
+  <div class="pair">
+    <figure><figcaption class="before">改前：第 2 步的视频看不到</figcaption><img src="screens/stepvideo-detail-before.png" alt="改前"></figure>
+    <figure><figcaption class="after">改后：第 1 步有图有视频放视频，第 2 步放视频</figcaption><img src="screens/stepvideo-detail-both.png" alt="改后"></figure>
+  </div>
+  <div class="pair" style="margin-top:20px">
+    <figure><figcaption class="after">顶上卡片放的是整道菜视频</figcaption><img src="screens/stepvideo-detail-whole-playing.png" alt="整道菜视频在播"></figure>
+    <figure></figure>
+  </div>
+</section>
+
+<section>
+  <h2>14. 做菜模式也按「视频 → 图片 → 文字」，还能看整道菜视频<small>提交 1ca1f3c</small></h2>
+  <p>规则和详情页一样。这一步没有自己的视频、菜谱又有教学视频时，正文下面多一个「看整道菜教学视频」，点了全屏放，关掉回到这一步，计时照走。</p>
+  <div class="pair">
+    <figure><figcaption class="before">改前：第 2 步</figcaption><img src="screens/stepvideo-cook-before.png" alt="改前"></figure>
+    <figure><figcaption class="after">改后：第 2 步放它自己的视频</figcaption><img src="screens/stepvideo-cook-after-step2.png" alt="改后第 2 步"></figure>
+  </div>
+  <div class="pair" style="margin-top:20px">
+    <figure><figcaption class="after">第 3 步没视频：可以看整道菜视频</figcaption><img src="screens/stepvideo-cook-after-step3.png" alt="改后第 3 步"></figure>
+    <figure><figcaption class="after">点了全屏放（模拟器里画面是灰的，长度 3 秒对得上）</figcaption><img src="screens/stepvideo-cook-lesson-playing.png" alt="全屏放整道菜视频"></figure>
+  </div>
+</section>
+
+<section>
+  <h2>15. 一句话点菜<small>提交 07c6b81、ef6f305</small></h2>
+  <p>首页问候旁边多了「一句话点菜 ›」。说「晚饭加个红烧肉和可乐鸡翅」「午饭不要红烧肉了」「把红烧肉换成糖醋排骨」，先出确认卡，点「确认修改」才真的改今天的菜单；点「不改了」或者接着说下一句，数据都不动。没说哪一餐就用首页选中的那一餐，卡上能改；换菜没说哪一餐就换在原来那一餐。菜名认不准（比如只说「番茄」）就列出候选让你点，选好之前确认按钮点不了。只能改今天的，说「明天」会直接告诉你。这一轮没接大模型、没接语音；以后换大模型只换「听懂」那一步，确认卡不用动。</p>
+  <div class="pair">
+    <figure><figcaption class="before">改前：首页</figcaption><img src="screens/quickorder-home-before.jpg" alt="改前首页"></figure>
+    <figure><figcaption class="after">改后：问候旁边的入口</figcaption><img src="screens/quickorder-home-after.png" alt="改后首页"></figure>
+  </div>
+  <div class="pair" style="margin-top:20px">
+    <figure><figcaption class="after">加菜：先确认</figcaption><img src="screens/quickorder-add-confirm.png" alt="加菜确认卡"></figure>
+    <figure><figcaption class="after">认不准：列候选</figcaption><img src="screens/quickorder-candidates.png" alt="候选"></figure>
+  </div>
+  <div class="pair" style="margin-top:20px">
+    <figure><figcaption class="after">换菜：先撤后加，同一餐</figcaption><img src="screens/quickorder-replace-confirm.png" alt="换菜确认卡"></figure>
+    <figure><figcaption class="after">点「不改了」：菜单没动</figcaption><img src="screens/quickorder-remove-cancelled.png" alt="取消"></figure>
+  </div>
+  <div class="pair" style="margin-top:20px">
+    <figure><figcaption class="after">改完去看今天的菜单</figcaption><img src="screens/quickorder-menu-after.png" alt="今天的菜单"></figure>
+    <figure></figure>
+  </div>
+</section>
+
+<section>
   <h2>这几处没改，等你定</h2>
   <ul>
     <li>九道菜缺照片：红烧肉、可乐鸡翅、蒜蓉西兰花、糖醋排骨、鲜肉馄饨、家常拌面、紫菜蛋花汤、青椒土豆丝、扬州炒饭。你给照片，或者同意我去找可以商用的图。哪张原来的照片你觉得也行，放回去是一行改动。</li>
