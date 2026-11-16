@@ -1,6 +1,6 @@
 // pages/cook-mode/index.js · 烹饪模式（沉浸暗底分步引导）
 const api = require('../../utils/api');
-const { recipeDishImg, stepDishImg, onPhotoError: markPhotoBroken } = require('../../utils/image');
+const { recipeDishImg, stepDishImg, dishImageUrl, onPhotoError: markPhotoBroken } = require('../../utils/image');
 const { restoreTimerSlots } = require('../../utils/kitchen');
 const { ingredientsInStep } = require('../../utils/dish-logic');
 const { runGuarded } = require('../../utils/interaction');
@@ -51,6 +51,7 @@ Page({
     recipeId: '',
     dishName: '',      // 整份菜谱不进 data（wxml 不渲染），放 this._recipe 给 onFinish 用
     dishImg: '',
+    lessonVideo: '',   // 整道菜的教学视频：这一步没有自己的视频时给个入口
     steps: [],
     ingredients: [],
     current: 0,        // 当前步索引
@@ -218,6 +219,18 @@ Page({
     });
   },
 
+  // 全屏放整道菜教学视频，关掉就回到这一步（计时照走）
+  playLessonVideo() {
+    const url = this.data.lessonVideo;
+    if (!url) return;
+    wx.previewMedia({
+      sources: [{ url, type: 'video' }],
+      fail(err) {
+        if (!/cancel/i.test((err && err.errMsg) || '')) wx.showToast({ title: '视频没打开，再试一次', icon: 'none' });
+      }
+    });
+  },
+
   async loadDetail(recipeId) {
     this.setData({ loading: true, loadError: false });
     let recipe = null;
@@ -252,6 +265,7 @@ Page({
         index: i,
         text,
         image,
+        video: dishImageUrl(st && st.video) || '',
         cn: cnStep(i + 1),
         seconds: detectSeconds(text)
       };
@@ -275,6 +289,7 @@ Page({
       loading: false,
       dishName: recipe.title || '今日菜谱',
       dishImg,
+      lessonVideo: dishImageUrl(recipe.videoUrl) || '',
       steps,
       ingredients,
       total: steps.length

@@ -49,13 +49,23 @@
     <!-- 图文一起滚动，长步骤也给底部操作留足空间。 -->
     <scroll-view class="stepwrap" scroll-y enhanced show-scrollbar="{{false}}" scroll-with-animation scroll-top="{{stepTop}}">
     <view class="stepwrap-pad">
-    <view wx:if="{{steps[current].image}}" class="stepimg g-fade-in">
+    <!-- 这一步有视频放视频（有图拿图当封面），没视频放图，都没有只放字 -->
+    <view wx:if="{{steps[current].video}}" class="stepimg g-fade-in">
+      <video class="stepimg-pic" src="{{steps[current].video}}" poster="{{steps[current].image}}"
+        controls show-center-play-btn object-fit="cover" />
+    </view>
+    <view wx:elif="{{steps[current].image}}" class="stepimg g-fade-in">
       <image class="stepimg-pic {{steps[current].imgBroken ? 'img-broken' : ''}}" src="{{steps[current].image}}" mode="aspectFill"
         data-err-key="{{'steps[' + current + '].imgBroken'}}" binderror="onPhotoError" />
       <view class="stepimg-mask"></view>
     </view>
 
-      <view class="steptext {{steps[current].image ? '' : 'steptext--solo'}}">{{steps[current].text}}</view>
+      <view class="steptext {{steps[current].image || steps[current].video ? '' : 'steptext--solo'}}">{{steps[current].text}}</view>
+
+      <!-- 这一步没有自己的视频：整道菜的教学视频也能看 -->
+      <view wx:if="{{lessonVideo && !steps[current].video}}" class="lesson tap-scale" catchtap="playLessonVideo" aria-role="button" aria-label="看整道菜教学视频">
+        <view class="lesson-ic"></view><text>看整道菜教学视频</text>
+      </view>
 
       <!-- 食材 tags（点一下勾选：备齐一样勾一样）。当前步骤正文里点到名的料会高亮：
            服务端步骤与配料之间没有结构化关联，靠 utils/dish-logic.js 的文本匹配挑出来，

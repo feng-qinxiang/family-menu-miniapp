@@ -264,6 +264,30 @@
 /* 这一步没有配图：正文就是整屏唯一的主角，再放大一档（灶台边隔着一臂远也能看清） */
 .steptext--solo { margin-top: 8rpx; font-size: calc(var(--fs-h1) * var(--fs-mul, 1)); line-height: 1.5; }
 
+/* 整道菜教学视频入口：和食材 tag 同一种暗底胶囊，点了全屏放 */
+.lesson {
+  display: inline-flex;
+  align-items: center;
+  gap: 14rpx;
+  min-height: 88rpx;
+  margin-top: 24rpx;
+  padding: 14rpx 28rpx;
+  box-sizing: border-box;
+  border-radius: var(--r-pill);
+  background: var(--cook-surface);
+  border: 2rpx solid rgba(255, 255, 255, 0.1);
+  color: var(--cook-ink);
+  font-size: calc(28rpx * var(--fs-mul, 1));
+  font-weight: 700;
+}
+.lesson-ic {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 12rpx 0 12rpx 20rpx;
+  border-color: transparent transparent transparent var(--cook-pop);
+}
+
 /* 食材 tags */
 .ings {
   display: flex;
