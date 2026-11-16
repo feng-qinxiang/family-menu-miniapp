@@ -64,10 +64,10 @@
   border-radius: var(--r-pill);
 }
 
-/* item */
+/* item：一样一行——小料图 + 名字用量 + 右侧「买好了」「×」（原来左边 168rpx 大图块、按钮另起一行，一屏只放得下三样半） */
 .mkt-item {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 20rpx;
   background: var(--c-surface);
   border-radius: var(--r-card);
@@ -108,11 +108,14 @@
 .mkt-thumb--letter.season,
 .mkt-thumb--letter.spice { background: var(--paper-2); color: var(--gold-deep); }
 .mkt-imid { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-.mkt-namebar { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4rpx 16rpx; }
-.mkt-imid .nm { flex: 1 1 128rpx; min-width: 0; font-size: calc(32rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--ink); word-break: break-all; line-height: 1.4; }
-.mkt-imid .amt { max-width: 100%; margin-left: auto; font-size: var(--fs-sub); font-weight: 700; color: var(--pop); line-height: 1.4; word-break: break-all; }
-.mkt-tags { display: flex; flex-direction: column; gap: 4rpx; margin-top: 10rpx; }
+.mkt-namebar { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4rpx 16rpx; }
+.mkt-imid .nm { min-width: 0; font-size: calc(32rpx * var(--fs-mul, 1)); font-weight: 800; color: var(--ink); word-break: break-all; line-height: 1.4; }
+.mkt-imid .amt { max-width: 100%; font-size: var(--fs-sub); font-weight: 700; color: var(--pop); line-height: 1.4; word-break: break-all; }
+.mkt-tags { display: flex; flex-direction: column; gap: 4rpx; margin-top: 4rpx; }
 .mkt-tags .src {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-size: var(--fs-cap);
   font-weight: 500;
   color: var(--mut-strong);
@@ -121,21 +124,6 @@
   line-height: 1.5;
 }
 .mkt-tags .src.pantry { color: var(--pine-ink); }
-.mkt-del {
-  flex: none;
-  font-size: var(--fs-lg);
-  font-weight: 700;
-  color: var(--mut);
-  box-sizing: border-box;
-  min-height: 88rpx;
-  min-width: 88rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  border-radius: var(--r-sm);
-  background: transparent;
-}
 
 /* done 态：灰底、删除线、绿勾 */
 .mkt-item.done {
@@ -234,15 +222,14 @@
 /* 骨架屏：形状对齐真行 .mkt-item（左侧图块 + 右侧文字），加载完不跳版 */
 .mkt-sk {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 20rpx;
   margin-bottom: 12rpx;
   padding: 16rpx var(--pad-card-sm);
   box-shadow: none;
 }
-/* 图块替身 = 真行左侧的 .mkt-photo（--tile-list-wide、--r-sm）。
-   原来还是旧版 52rpx 勾选框的形状，行里换成图块后没跟着改，加载完整行长高一截 */
-.mkt-sk-dot { width: var(--tile-list-wide); height: var(--tile-list-wide); border-radius: var(--r-sm); flex: none; }
+/* 图块替身 = 真行左侧的 .mkt-photo（清单行里是 --tile-chip、--r-sm），加载完不跳版 */
+.mkt-sk-dot { width: var(--tile-chip); height: var(--tile-chip); border-radius: var(--r-sm); flex: none; }
 .mkt-sk-lines { flex: 1; }
 .mkt-sk-line { height: 22rpx; border-radius: var(--r-xs); margin-top: 14rpx; width: 60%; }
 .mkt-sk-line.strong { width: 40%; height: 30rpx; margin-top: 0; }
@@ -328,16 +315,20 @@
 .mkt-photo .mkt-thumb--letter { padding-bottom: 36rpx; }
 .mkt-photo .mkt-thumb--letter > text { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
 .mkt-photo-hint { position: absolute; right: 6rpx; bottom: 6rpx; padding: 4rpx 10rpx; border-radius: var(--r-xs); background: var(--c-surface); color: var(--mut-strong); font-size: var(--fs-mini); line-height: 1.2; }
-.mkt-item-actions { display: flex; align-items: center; gap: 12rpx; margin-top: 12rpx; }
-.mkt-buy, .mkt-item-actions .mkt-del { box-sizing: border-box; display: flex; align-items: center; justify-content: center; min-height: 88rpx; margin: 0; padding: 0 16rpx; border-radius: var(--r-sm); font-size: var(--fs-cap); line-height: 1.4; }
+/* 清单行里的料图缩回 --tile-chip，只写第一个字（同菜谱详情的用料表）；换图入口在列表底下说一次 */
+.mkt-item .mkt-photo { width: var(--tile-chip); height: var(--tile-chip); }
+.mkt-item .mkt-photo .mkt-thumb--letter { padding: 0; }
+.mkt-photo-note--foot { margin: 8rpx 0 0; }
+.mkt-item-actions { flex: none; display: flex; align-items: center; gap: 12rpx; }
 /* 「买好了」：没买的时候是白底松绿细边 + 空心圈，像一个还没打勾的框；
    原来的绿底带勾看着像「已经买好了」。点了这样就挪到「已入篮」。
-   仍是整宽、88rpx 高；「移除」保持白底灰边灰字，比它弱一级 */
-.mkt-buy { flex: 1; min-width: 0; gap: 12rpx; background: var(--c-surface); border: 2rpx solid currentColor; color: var(--pine-ink); font-weight: 700; }
+   88rpx 高；「×」用同页「家里已有」的小圆，比它弱一级 */
+.mkt-buy { box-sizing: border-box; display: flex; align-items: center; justify-content: center; flex: none; min-height: 88rpx; margin: 0; padding: 0 22rpx; gap: 12rpx; border-radius: var(--r-sm); background: var(--c-surface); border: 2rpx solid currentColor; color: var(--pine-ink); font-size: var(--fs-cap); font-weight: 700; line-height: 1.4; }
 .mkt-buy-box { flex: none; width: 30rpx; height: 30rpx; box-sizing: border-box; border: 3rpx solid currentColor; border-radius: 50%; }
-.mkt-item-actions .mkt-del { flex: none; width: 104rpx; min-width: 0; background: var(--c-surface); border: var(--bd-card); color: var(--mut-strong); font-weight: 500; }
-.mkt-buy::after, .mkt-item-actions .mkt-del::after { border: 0; }
-.mkt-bought { font-size: var(--fs-cap); color: var(--pine-ink); line-height: 1.5; margin-top: 12rpx; }
+.mkt-buy::after { border: 0; }
+/* style v2 的 button:not([size=mini]) 默认 width: 184px，优先级比单个类名高，要两级类名才盖得住 */
+.mkt-item-actions .mkt-buy { width: auto; }
+.mkt-bought { font-size: var(--fs-cap); color: var(--pine-ink); line-height: 1.5; margin-top: 4rpx; }
 .sp-pitem-copy { flex: 1; min-width: 0; }
 .sp-pitem-name { word-break: break-all; line-height: 1.5; }
 .sp-pitem-qty { margin-top: 8rpx; }
