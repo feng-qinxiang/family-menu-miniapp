@@ -95,7 +95,7 @@
             <view class="mkt-namebar"><text class="nm">{{food.ingredientName}}</text><text class="amt">{{food.amount}} {{food.unit}}</text></view>
             <view class="mkt-tags" wx:if="{{food.sourceText || food.pantryText}}"><text class="src" wx:if="{{food.sourceText}}">{{food.sourceText}}</text><text class="src pantry" wx:if="{{food.pantryText}}">{{food.pantryText}}</text></view>
             <view class="mkt-item-actions">
-              <button class="mkt-buy tap-scale" hover-class="none" data-id="{{food.itemId}}" data-purchased="{{food.purchased}}" catchtap="toggleItem" aria-label="{{food.ingredientName}}买好了"><image src="/assets/icons/lucide/check.svg" mode="aspectFit" aria-hidden="true" /><text>买好了</text></button>
+              <button class="mkt-buy tap-scale" hover-class="none" data-id="{{food.itemId}}" data-purchased="{{food.purchased}}" catchtap="toggleItem" aria-label="{{food.ingredientName}}买好了"><view class="mkt-buy-box" aria-hidden="true"></view><text>买好了</text></button>
               <button class="mkt-del tap-scale" hover-class="none" data-id="{{food.itemId}}" catchtap="deleteItem" aria-label="移除{{food.ingredientName}}">移除</button>
             </view>
           </view>

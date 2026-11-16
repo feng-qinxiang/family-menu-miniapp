@@ -330,11 +330,11 @@
 .mkt-photo-hint { position: absolute; right: 6rpx; bottom: 6rpx; padding: 4rpx 10rpx; border-radius: var(--r-xs); background: var(--c-surface); color: var(--mut-strong); font-size: var(--fs-mini); line-height: 1.2; }
 .mkt-item-actions { display: flex; align-items: center; gap: 12rpx; margin-top: 12rpx; }
 .mkt-buy, .mkt-item-actions .mkt-del { box-sizing: border-box; display: flex; align-items: center; justify-content: center; min-height: 88rpx; margin: 0; padding: 0 16rpx; border-radius: var(--r-sm); font-size: var(--fs-cap); line-height: 1.4; }
-/* 「买好了」：每行都是实心深绿会把整张清单压得很重。改成松绿浅底 + 松绿字
-   （与冰箱页「挑一道/＋ 添加」的浅底按钮同一种次级实心），仍是整宽、88rpx 高、带勾；
-   「移除」保持白底细边灰字，比它弱一级 */
-.mkt-buy { flex: 1; min-width: 0; gap: 8rpx; background: var(--c-accent-soft); color: var(--pine-ink); font-weight: 700; }
-.mkt-buy image { width: 28rpx; height: 28rpx; flex: none; filter: brightness(0); }
+/* 「买好了」：没买的时候是白底松绿细边 + 空心圈，像一个还没打勾的框；
+   原来的绿底带勾看着像「已经买好了」。点了这样就挪到「已入篮」。
+   仍是整宽、88rpx 高；「移除」保持白底灰边灰字，比它弱一级 */
+.mkt-buy { flex: 1; min-width: 0; gap: 12rpx; background: var(--c-surface); border: 2rpx solid currentColor; color: var(--pine-ink); font-weight: 700; }
+.mkt-buy-box { flex: none; width: 30rpx; height: 30rpx; box-sizing: border-box; border: 3rpx solid currentColor; border-radius: 50%; }
 .mkt-item-actions .mkt-del { flex: none; width: 104rpx; min-width: 0; background: var(--c-surface); border: var(--bd-card); color: var(--mut-strong); font-weight: 500; }
 .mkt-buy::after, .mkt-item-actions .mkt-del::after { border: 0; }
 .mkt-bought { font-size: var(--fs-cap); color: var(--pine-ink); line-height: 1.5; margin-top: 12rpx; }
@@ -343,10 +343,8 @@
 .sp-pitem-qty { margin-top: 8rpx; }
 .mkt-photo-note { font-size: var(--fs-mini); color: var(--mut); padding: 0 var(--page-gutter); margin-bottom: 16rpx; line-height: 1.5; }
 
-/* 深色档：--pine(#4e6b58) 当文字只有约 2.6:1，与首页/会员页同法换 --c-success；
-   「买好了」浅底在深色档是 #22302a，字和勾一起翻成浅色 */
+/* 深色档：--pine(#4e6b58) 当文字只有约 2.6:1，与首页/会员页同法换 --c-success
+   （「买好了」用的 --pine-ink 在深色档已经是浅松绿，不用另写） */
 @media (prefers-color-scheme: dark) {
   .mkt-tags .src.pantry, .mkt-bought, .mkt-thumb--letter.veg { color: var(--c-success); }
-  .mkt-buy { color: var(--ink); }
-  .mkt-buy image { filter: brightness(0) invert(1); }
 }
