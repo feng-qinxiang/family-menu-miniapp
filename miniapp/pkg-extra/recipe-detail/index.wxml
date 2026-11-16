@@ -92,7 +92,10 @@
           <view class="rd-sno">{{index + 1}}</view>
           <view class="rd-stx">
             <view class="rd-stx-p">{{item.text}}</view>
-            <image wx:if="{{item.image}}" class="rd-step-img {{item.imgBroken ? 'img-broken' : ''}}" src="{{item.image}}" mode="aspectFill" lazy-load
+            <!-- 这一步有视频放视频（有图就拿图当封面），没视频放图，都没有只放字 -->
+            <video wx:if="{{item.video}}" class="rd-step-img rd-step-video" src="{{item.video}}" poster="{{item.image}}"
+              controls show-center-play-btn object-fit="cover" />
+            <image wx:elif="{{item.image}}" class="rd-step-img {{item.imgBroken ? 'img-broken' : ''}}" src="{{item.image}}" mode="aspectFill" lazy-load
               bindtap="previewStepImage" data-url="{{item.image}}"
               data-err-key="{{'recipe.steps[' + index + '].imgBroken'}}" binderror="onPhotoError" />
             <view wx:if="{{item.tip}}" class="rd-tip">

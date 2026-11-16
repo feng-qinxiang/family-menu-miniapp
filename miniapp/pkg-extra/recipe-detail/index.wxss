@@ -291,6 +291,7 @@
   border-radius: 20rpx;
   background: var(--paper-2);
 }
+.rd-step-video { display: block; overflow: hidden; background: var(--anchor); }
 .rd-tip {
   display: inline-flex;
   align-items: center;

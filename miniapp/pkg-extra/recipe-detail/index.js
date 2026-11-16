@@ -150,12 +150,12 @@ Page({
       const totalCount = ingredients.length;
       const missCount = totalCount - haveCount;
       const rawSteps = Array.isArray(recipe.steps) ? recipe.steps : [];
-      // 服务端已返回结构化步骤 {text,image,video}；教学视频仍只认第一个带 video 的步骤
-      const videoStep = rawSteps.find((s) => s && s.video) || null;
-      const videoUrl = (videoStep && videoStep.video) || recipe.videoUrl || '';
+      // 整道菜的教学视频单独一列；每一步自己的视频在 steps[i].video（有视频放视频、没视频放图、都没有只放字）
+      const videoUrl = dishImageUrl(recipe.videoUrl) || '';
       const steps = rawSteps.map((s, i) => ({
         text: (s && s.text) || '',
         image: stepDishImg(recipe, i, s && s.image),
+        video: dishImageUrl(s && s.video) || '',
         tip: (rawSteps[i] && rawSteps[i].tip) || ''
       }));
       // 后端评价结构 {nickname, score, remark, cookedAt} → 视图结构 {author, when, score, content}
