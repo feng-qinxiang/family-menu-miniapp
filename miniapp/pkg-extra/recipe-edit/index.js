@@ -41,7 +41,7 @@ Page({
       summary: '',
       ingredients: [{ name: '', amount: '', unit: '' }],
       videoUrl: '',
-      steps: [{ text: '', image: '' }]
+      steps: [{ text: '', image: '', video: '' }]
     },
     tasteTagsText: '',
     formQuality: {
@@ -118,9 +118,9 @@ Page({
       ? recipe.steps.map((s) => ({
           text: (s && s.text) || '',
           image: dishImageUrl(s && s.image) || '',
-          video: (s && s.video) || ''
+          video: dishImageUrl(s && s.video) || ''
         }))
-      : [{ text: '', image: '' }];
+      : [{ text: '', image: '', video: '' }];
     const form = {
       title: recipe.title || '',
       cuisine: recipe.cuisine || '',
@@ -134,7 +134,8 @@ Page({
       ingredients: (recipe.ingredients && recipe.ingredients.length)
         ? recipe.ingredients
         : [{ name: '', amount: '', unit: '' }],
-      videoUrl: (steps.find((st) => st.video) || {}).video || recipe.videoUrl || '',
+      // 整道菜的教学视频单独一列；每一步自己的视频在 steps[i].video
+      videoUrl: dishImageUrl(recipe.videoUrl) || '',
       steps
     };
     this.setData({
@@ -324,6 +325,23 @@ Page({
     this.syncLeave();
   },
 
+  // 每一步自己的视频：和教学视频共用选视频 / 上传（同样 60 秒、20MB 的限制）
+  chooseStepVideo(e) {
+    this.setData({
+      mediaSheet: { visible: true, mode: 'stepVideo', index: Number(e.currentTarget.dataset.index) }
+    });
+  },
+
+  async removeStepVideo(e) {
+    const { index } = e.currentTarget.dataset;
+    if ((this.data.form.steps[Number(index)] || {}).video) {
+      const res = await wx.showModal({ title: '移除这一步的视频？', confirmText: '移除', cancelText: '取消' });
+      if (!res.confirm) return;
+    }
+    this.setData({ [`form.steps[${index}].video`]: '' });
+    this.syncLeave();
+  },
+
   chooseLessonVideo() {
     this.setData({
       mediaSheet: { visible: true, mode: 'video', index: 0 }
@@ -353,7 +371,7 @@ Page({
   },
 
   // 统一的「传完落地」：成功才写进表单并关面板；失败留 pendingUpload 供重试。
-  // 三个入口（封面 / 步骤图 / 视频）共用，避免各自维护一份「失败只弹 toast」的分支。
+  // 四个入口（封面 / 步骤图 / 教学视频 / 步骤视频）共用，避免各自维护一份「失败只弹 toast」的分支。
   _applyUpload(tempPath, url) {
     if (!url) {
       this.setData({ pendingUpload: { tempPath, mode: this.data.mediaSheet.mode }, uploading: false });
@@ -372,6 +390,11 @@ Page({
       return;
     }
     const index = this.data.mediaSheet.index;
+    if (mode === 'stepVideo') {
+      this.setData({ [`form.steps[${index}].video`]: url, 'mediaSheet.visible': false, pendingUpload: null, uploading: false });
+      this.syncLeave();
+      return;
+    }
     this.setData({
       [`form.steps[${index}].image`]: url,
       [`stepImageErrors[${index}]`]: '',
@@ -409,10 +432,7 @@ Page({
   async pickVideoFromAlbum() {
     if (this.data.uploading) return;
     const path = await chooseVideo();
-    if (!path) {
-      wx.showToast({ title: '没有选到视频', icon: 'none' });
-      return;
-    }
+    if (!path) return; // 取消不打扰；超时长 / 超大小 / 选失败 chooseVideo 已经说过原因
     return this._uploadTemp(path);
   },
 
@@ -426,7 +446,7 @@ Page({
   },
 
   addStep() {
-    const steps = this.data.form.steps.concat([{ text: '', image: '' }]);
+    const steps = this.data.form.steps.concat([{ text: '', image: '', video: '' }]);
     this.setData({ 'form.steps': steps, editingStep: steps.length - 1 });
     this.refreshQuality();
   },
@@ -434,13 +454,13 @@ Page({
   async removeStep(e) {
     const { index } = e.currentTarget.dataset;
     const step = this.data.form.steps[Number(index)] || {};
-    if ((step.text && step.text.trim()) || step.image) {
+    if ((step.text && step.text.trim()) || step.image || step.video) {
       const res = await wx.showModal({ title: `删除第 ${Number(index) + 1} 步？`, confirmText: '删除', cancelText: '取消' });
       if (!res.confirm) return;
     }
     const steps = this.data.form.steps.filter((_, i) => i !== Number(index));
     this.setData({
-      'form.steps': steps.length ? steps : [{ text: '', image: '' }],
+      'form.steps': steps.length ? steps : [{ text: '', image: '', video: '' }],
       stepImageErrors: this.data.stepImageErrors.filter((_, i) => i !== Number(index))
     });
     this.refreshQuality();
@@ -551,13 +571,14 @@ Page({
       coverImage: dishImagePath(form.coverImage) || '',
       tasteTags: form.tasteTags.filter(Boolean),
       summary: form.summary.trim(),
-        ingredients: form.ingredients.filter((i) => i.name.trim()),
-        // 教学视频只挂第 0 步（页面约定，与详情页 hoist 取法一致）
-        steps: form.steps.filter((s) => s.text.trim()).map((s, i) => ({
-          text: s.text,
-          image: dishImagePath(s.image) || '',
-          video: i === 0 ? (form.videoUrl || '') : ''
-        })),
+      // 整道菜的教学视频单独存（空串 = 清掉）；每一步带自己的视频
+      videoUrl: dishImagePath(form.videoUrl) || '',
+      ingredients: form.ingredients.filter((i) => i.name.trim()),
+      steps: form.steps.filter((s) => s.text.trim()).map((s) => ({
+        text: s.text,
+        image: dishImagePath(s.image) || '',
+        video: dishImagePath(s.video) || ''
+      })),
       sourceType: 'owned'
     };
 

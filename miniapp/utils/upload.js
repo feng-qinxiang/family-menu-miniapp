@@ -82,6 +82,18 @@ function chooseVideo() {
         maxDuration: 60,
         success(res) {
           const file = (res.tempFiles || [])[0];
+          // maxDuration 只管现拍；相册里挑的在这里按同样的 60 秒、20MB（服务端上限）拦，
+          // 不然传上去只会得到一句「上传失败」，重试也永远过不去
+          if (file && file.duration > 60.5) {
+            wx.showToast({ title: '视频超过 60 秒，剪短再传', icon: 'none' });
+            resolve('');
+            return;
+          }
+          if (file && file.size > 20 * 1024 * 1024) {
+            wx.showToast({ title: '视频超过 20MB，换短一点的', icon: 'none' });
+            resolve('');
+            return;
+          }
           resolve(file ? file.tempFilePath : '');
         },
         fail(err) {

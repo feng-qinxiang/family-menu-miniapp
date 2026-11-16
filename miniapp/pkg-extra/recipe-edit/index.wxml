@@ -106,10 +106,18 @@
         <text class="rc-step-n">{{index + 1}}</text>
         <text class="tap-scale rc-step-del" data-index="{{index}}" bindtap="removeStep" aria-role="button" aria-label="删除第 {{index + 1}} 步">删除</text>
       </view>
-      <view class="tap-scale rc-shot" wx:if="{{!item.image}}" data-index="{{index}}" bindtap="chooseStepImage">加一张图</view>
-      <view class="tap-scale rc-shot has" wx:else>
-        <image class="rc-shot-img" src="{{item.image === stepImageErrors[index] ? imagePlaceholder : item.image}}" mode="aspectFill" lazy-load data-index="{{index}}" bindtap="chooseStepImage" data-err-key="stepImageErrors[{{index}}]" data-url="{{item.image}}" binderror="onImageError" />
-        <view class="tap-scale rc-cover-x" data-index="{{index}}" catchtap="removeStepImage" aria-role="button" aria-label="移除第 {{index + 1}} 步的配图">×</view>
+      <!-- 这一步的图和视频并排：两样都能传，详情页和做菜模式先放视频、没视频放图 -->
+      <view class="rc-media-row {{item.image || item.video ? 'tall' : ''}}">
+        <view class="tap-scale rc-shot" wx:if="{{!item.image}}" data-index="{{index}}" bindtap="chooseStepImage">加一张图</view>
+        <view class="tap-scale rc-shot has" wx:else>
+          <image class="rc-shot-img" src="{{item.image === stepImageErrors[index] ? imagePlaceholder : item.image}}" mode="aspectFill" lazy-load data-index="{{index}}" bindtap="chooseStepImage" data-err-key="stepImageErrors[{{index}}]" data-url="{{item.image}}" binderror="onImageError" />
+          <view class="tap-scale rc-cover-x" data-index="{{index}}" catchtap="removeStepImage" aria-role="button" aria-label="移除第 {{index + 1}} 步的配图">×</view>
+        </view>
+        <view class="tap-scale rc-shot" wx:if="{{!item.video}}" data-index="{{index}}" bindtap="chooseStepVideo">加一段视频</view>
+        <view class="rc-shot has" wx:else>
+          <video class="rc-shot-img" src="{{item.video}}" controls object-fit="cover" show-fullscreen-btn="{{false}}" />
+          <view class="tap-scale rc-cover-x" data-index="{{index}}" catchtap="removeStepVideo" aria-role="button" aria-label="移除第 {{index + 1}} 步的视频">×</view>
+        </view>
       </view>
       <textarea
         wx:if="{{editingStep === index}}"
@@ -164,14 +172,15 @@
   </view>
 </state-sheet>
 
-<state-sheet visible="{{mediaSheet.visible}}" title="{{mediaSheet.mode === 'video' ? '教学视频' : (mediaSheet.mode === 'cover' ? '封面' : '步骤配图')}}" bind:close="closeMediaSheet">
+<state-sheet visible="{{mediaSheet.visible}}" title="{{mediaSheet.mode === 'video' ? '教学视频' : (mediaSheet.mode === 'stepVideo' ? '第 ' + (mediaSheet.index + 1) + ' 步的视频' : (mediaSheet.mode === 'cover' ? '封面' : '步骤配图'))}}" bind:close="closeMediaSheet">
   <!-- 上传失败留的原路径：重试即重传，不必让用户从头再挑一次 -->
   <view wx:if="{{pendingUpload}}" class="rc-retry">
     <view class="rc-retry-txt">上次上传没成功</view>
     <view class="rc-retry-btn tap-scale {{uploading ? 'is-busy' : ''}}" catchtap="retryUpload">重试</view>
   </view>
-  <view wx:if="{{mediaSheet.mode === 'video'}}" class="rc-pick">
+  <view wx:if="{{mediaSheet.mode === 'video' || mediaSheet.mode === 'stepVideo'}}" class="rc-pick">
     <view class="rc-pick-btn tap-scale {{uploading ? 'is-busy' : ''}}" catchtap="pickVideoFromAlbum">从相册或拍摄</view>
+    <view class="rc-pick-note">最长 60 秒，不超过 20MB</view>
   </view>
   <view wx:else class="rc-pick">
     <view class="rc-pick-btn tap-scale {{uploading ? 'is-busy' : ''}}" catchtap="pickImageFromAlbum">从相册或拍摄</view>

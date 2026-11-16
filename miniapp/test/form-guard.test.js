@@ -140,6 +140,28 @@ const leaveModals = () => calls.modals.filter((t) => t === LEAVE_TEXT).length;
     assert.equal(p.data.form.title, '红烧肉');
     assert.equal(p.data.leaveDirty, false, '重新加载回来是原样，不拦返回');
   }
+  // recipe-edit 视频：整道菜视频单独存 videoUrl，每一步带自己的视频；第 1 步不再被塞整道菜视频
+  {
+    stubs.getRecipeDetail = () => Promise.resolve({ id: 6, title: '番茄炒蛋', cuisine: '家常', tasteTags: ['下饭'],
+      videoUrl: 'https://cdn.example.com/whole.mp4',
+      ingredients: [{ name: '番茄', amount: '2', unit: '个' }],
+      steps: [{ text: '切块' }, { text: '下锅', video: 'https://cdn.example.com/step2.mp4' }] });
+    const p = makePage(editDef);
+    p.onLoad({ id: '6' });
+    await flush();
+    assert.equal(p.data.form.videoUrl, 'https://cdn.example.com/whole.mp4');
+    assert.equal(p.data.form.steps[0].video, '', '整道菜视频不能落到第 1 步');
+    assert.equal(p.data.form.steps[1].video, 'https://cdn.example.com/step2.mp4');
+    modalAnswer = true;
+    await p.removeStepVideo({ currentTarget: { dataset: { index: 1 } } });
+    assert.equal(p.data.form.steps[1].video, '', '确认后移除这一步的视频');
+    p.setData({ 'form.steps[0].video': 'https://cdn.example.com/step1.mp4' });
+    const before = calls.updates.length;
+    await p.submit();
+    const sent = calls.updates[before];
+    assert.equal(sent.videoUrl, 'https://cdn.example.com/whole.mp4');
+    assert.deepEqual(sent.steps.map((s) => s.video), ['https://cdn.example.com/step1.mp4', '']);
+  }
   // profile-edit：原资料没拉到时保存会用默认值清空头像/生日/口味，必须拦住；成功保存不能连存两次
   {
     stubs.getCurrentUser = () => Promise.reject(new Error('offline'));
