@@ -26,7 +26,7 @@
         <image class="mag-chev" src="/assets/icons/lucide/chevron-right.svg" mode="aspectFit" aria-hidden="true" />
       </view>
       <!-- 统计只读一行小字：去处已在下面「菜谱库」和底栏「记录」，不再做成第二个入口；0 也不放大 -->
-      <view class="mag-id-stats" wx:if="{{!loading && !loadError}}">{{savedCount}} 道菜谱 · 本月做了 {{monthCookCount}} 次</view>
+      <view class="mag-id-stats" wx:if="{{!loading && !loadError}}">{{savedCount ? '存了 ' + savedCount + ' 道菜谱' : '还没存菜谱'}} · 本月做了 {{monthCookCount}} 次</view>
     </view>
 
     <!-- VIP banner（支付开关关闭时隐藏） -->

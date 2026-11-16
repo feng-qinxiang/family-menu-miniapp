@@ -143,9 +143,11 @@ function page(module, privateFields = []) {
       assert.deepEqual(items(), [], `${name}: 成功的空库存清空分组`);
       stockItems = [{ id: 1, ingredientName: '番茄', amount: '2', unit: '个' }];
     }
+    api.getDashboard = async () => ({ ownedRecipes: [{ id: 1, sourceType: 'owned', mine: true }, { id: 2, sourceType: 'owned', mine: false }], importedRecipes: [{ id: 3, sourceType: 'imported' }] });
     const me = page('../pages/me/index');
     await me.loadProfile();
     assert.equal(me.data.monthCookCount, 1, '本月统计排除历史月份和无效日期');
+    assert.equal(me.data.savedCount, 2, '菜谱数只算我建的和导入的，公共菜谱库的内置菜不算');
     assert.equal(me.data.profile.nickname, '掌勺人');
     const postDetail = page('../pkg-extra/community/post-detail/index');
     postDetail.setData({ postId: '201', post: { author: '家人', title: '晚饭', images: ['/uploaded/work.jpg'], cover: '/recipe/cover.jpg' } });

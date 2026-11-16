@@ -127,10 +127,11 @@ Page({
         score: Math.max(0, Math.min(5, Number(h.score) || 0))
       }));
 
-      // 收藏/菜谱库存数：dashboard 优先
+      // 自己存的菜谱数 = 我建的 + 导入的，和菜谱库「我建的」筛选同一口径（recipe.mine === true）：
+      // 公共菜谱库的 sourceType 也是 owned，只按 sourceType 数会把平台内置菜算成自家的
       let savedCount = 0;
       if (dashboard) {
-        savedCount = (Array.isArray(dashboard.ownedRecipes) ? dashboard.ownedRecipes.length : 0)
+        savedCount = (Array.isArray(dashboard.ownedRecipes) ? dashboard.ownedRecipes.filter(r => r && r.mine === true).length : 0)
           + (Array.isArray(dashboard.importedRecipes) ? dashboard.importedRecipes.length : 0);
       }
 
