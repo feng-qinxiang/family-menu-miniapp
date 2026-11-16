@@ -48,6 +48,18 @@ class UploadPathNormalizerTests {
     }
 
     @Test
+    void recipeStepMediaIsNormalizedToo() throws Exception {
+        // 步骤是自己读 JsonNode 的（兼容纯文本 / 旧字符串格式），不经过上面的 String 反序列化器
+        com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+        com.familymenu.daily.dto.ApiModels.RecipeStep step = com.familymenu.daily.dto.ApiModels.RecipeStep.from(mapper.readTree(
+                "{\"text\":\"下锅\",\"image\":\"https://api.family.example.com/uploads/a.png?e=1&k=2\","
+                        + "\"video\":\"http://127.0.0.1:9088/uploads/b.mp4\"}"));
+        assertThat(step.image()).isEqualTo("/uploads/a.png");
+        assertThat(step.video()).isEqualTo("/uploads/b.mp4");
+        assertThat(com.familymenu.daily.dto.ApiModels.RecipeStep.from(mapper.readTree("{\"text\":\"切\"}")).video()).isNull();
+    }
+
+    @Test
     void neverTouchesExternalImages() {
         String ext = "https://cdn.other.com/photos/a.png?e=1&k=2";
         assertThat(UploadPathNormalizer.UploadPathStringDeserializer.stripSignature(ext)).isEqualTo(ext);

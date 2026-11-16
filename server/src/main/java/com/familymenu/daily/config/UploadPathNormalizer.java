@@ -30,7 +30,7 @@ public class UploadPathNormalizer {
         return module;
     }
 
-    static class UploadPathStringDeserializer extends StringDeserializer {
+    public static class UploadPathStringDeserializer extends StringDeserializer {
 
         private static final String PREFIX = "/uploads/";
 
@@ -53,7 +53,7 @@ public class UploadPathNormalizer {
          *
          * 外链一律不碰：只有 {@code /uploads/} 紧跟在 host 之后才算站内上传图。
          */
-        static String stripSignature(String value) {
+        public static String stripSignature(String value) {
             if (value == null) {
                 return null;
             }

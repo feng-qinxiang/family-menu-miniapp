@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.familymenu.daily.config.UploadPathNormalizer;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -40,10 +41,7 @@ public final class ApiModels {
                 if (raw.startsWith("{")) {
                     try {
                         JsonNode parsed = MAPPER.readTree(raw);
-                        return new RecipeStep(
-                                parsed.path("text").asText(""),
-                                parsed.hasNonNull("image") ? parsed.get("image").asText() : null,
-                                parsed.hasNonNull("video") ? parsed.get("video").asText() : null);
+                        return new RecipeStep(parsed.path("text").asText(""), media(parsed, "image"), media(parsed, "video"));
                     } catch (Exception ignored) {
                         // 非法 JSON：按纯文本保留，不让一条脏数据毁掉整道菜谱
                         return new RecipeStep(raw, null, null);
@@ -51,10 +49,15 @@ public final class ApiModels {
                 }
                 return new RecipeStep(raw, null, null);
             }
-            return new RecipeStep(
-                    node.path("text").asText(""),
-                    node.hasNonNull("image") ? node.get("image").asText() : null,
-                    node.hasNonNull("video") ? node.get("video").asText() : null);
+            return new RecipeStep(node.path("text").asText(""), media(node, "image"), media(node, "video"));
+        }
+
+        // 这里自己读 JsonNode，绕过了 UploadPathNormalizer 的 String 反序列化器，得手动归一：
+        // 不然小程序回传的「带域名 / 带签名」地址原样进库，签名过期后步骤图、步骤视频永久 404
+        private static String media(JsonNode node, String key) {
+            return node.hasNonNull(key)
+                    ? UploadPathNormalizer.UploadPathStringDeserializer.stripSignature(node.get(key).asText())
+                    : null;
         }
     }
 
