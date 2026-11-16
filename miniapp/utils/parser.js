@@ -4,7 +4,9 @@ const XHS_LINK = /https?:\/\/(www\.)?xiaohongshu\.com\/\S+|https?:\/\/xhslink\.c
 const ANY_URL = /https?:\/\/\S+/;
 // 自然语言"想法"输入的解析线索：烹饪动词（识别步骤子句）与菜名提示（做个X/想吃X）
 const COOK_VERB = /焯|炖|炒|蒸|煮|烤|煎|炸|拌|腌|卤|烧|切|剁|捞|沥|收汁|下锅|出锅|装盘|调味/;
-const TITLE_HINT = /(?:做个|做道|做一道|想做|想吃|来个|来道|整个|试试)([\u4e00-\u9fa5]{2,10})/;
+// 「想要这道菜」的说法：导入时用来认菜名，一句话点菜时用来认「加菜」
+const WANT_VERBS = '做个|做道|做一道|想做|想吃|来个|来道|整个|试试';
+const TITLE_HINT = new RegExp(`(?:${WANT_VERBS})([\\u4e00-\\u9fa5]{2,10})`);
 // 食材名里的动词杂质（"排骨买500克"→"排骨"）
 const ING_NOISE = /买|用|备好|准备|需要|放|加|要/g;
 
@@ -181,4 +183,174 @@ function buildNotes({ url, isXhs, ingredients, steps }) {
   return notes;
 }
 
-module.exports = { parseRecipeText, DIFFICULTY_LABELS };
+// ———— 一句话点菜（规则版）————
+// 把一句话变成一份「计划」，页面和确认卡只认计划、不认规则：以后换成大模型，
+// 只要它吐出同样形状的计划，页面不用动。计划只是「打算怎么改」，真正改数据要等用户点确认。
+//
+// plan = {
+//   intent: 'add' | 'remove' | 'replace' | '',   // 加菜 / 撤菜 / 换菜；'' = 没听懂
+//   mealType: 'breakfast' | 'lunch' | 'dinner', // 加菜加到哪一餐
+//   mealGuessed: boolean,                       // 句子里没说餐次，用的是入口带来的默认餐次
+//   notToday: boolean,                          // 说的是明天以后：菜单只能改今天的
+//   items: [{
+//     role: 'add' | 'remove',
+//     query: string,                            // 句子里说的菜名
+//     recipe: { id, title, mealType? } | null,  // 认准的那道；撤菜时带它在今天哪一餐
+//     candidates: [{ id, title, mealType? }],   // 没认准时让人点的候选；也为空 = 没找到
+//     missing: boolean                          // 撤菜时菜单里没这道，candidates 是这一餐已点的菜
+//   }]
+// }
+const MEAL_RULES = [
+  { mealType: 'breakfast', label: '早饭', pattern: /早饭|早餐|早上|早晨|今早/ },
+  { mealType: 'lunch', label: '午饭', pattern: /午饭|午餐|中午|中饭/ },
+  { mealType: 'dinner', label: '晚饭', pattern: /晚饭|晚餐|晚上|今晚|夜宵|宵夜/ }
+];
+const MEAL_LABELS = { breakfast: '早饭', lunch: '午饭', dinner: '晚饭' };
+const NOT_TODAY = /明天|明早|明晚|明儿|后天|下周|星期[一二三四五六日天]|周[一二三四五六日天]/;
+// 「把 A 换成 B」：左边撤、右边加；单个「换」后面跟着个/一/道时是「换个 B」，算加菜
+const REPLACE_MARK = /换成|改成|换为|改为|替换成|换(?![个一道])/;
+const REMOVE_VERB = /不要|不吃|不做|别做|去掉|删掉|删了|撤掉|撤了|撤下|拿掉|取消|划掉/;
+const ADD_VERB = new RegExp(`${WANT_VERBS}|换个|换一道|换道|加|添|点|安排|吃`);
+const CLAUSE_SPLIT = /[，,。；;！!？?\n]+/;
+const CHUNK_SPLIT = /和|与|跟|及|、|还有|以及|\s+/;
+const LEAD_NOISE = /^(?:把|将|给|再|也|就|还|的|我|我们|帮我|今天|今日|一个|一道|一份|个|道|份|些|点)+/;
+const TAIL_NOISE = /(?:的|了|吧|呢|啊|呀|哦|嘛|一下|这道|这个)+$/;
+const EMPTY_QUERY = /^(?:菜|饭|东西|什么|啥|菜单|一个|个)?$/;
+const MAX_CANDIDATES = 6;
+// 同一样东西的两种叫法（和做菜步骤认料共用一份）：比菜名前先统一成第一种
+const { STEP_SYNONYMS } = require('./dish-logic');
+function sameName(s) {
+  return STEP_SYNONYMS.reduce((acc, pair) => pair.slice(1).reduce((t, w) => t.split(w).join(pair[0]), acc), s);
+}
+
+function detectMeal(text) {
+  const hit = MEAL_RULES.find((r) => r.pattern.test(text));
+  return hit ? hit.mealType : '';
+}
+
+// 句子里说的菜名 → 菜谱：先找完整菜名（长的先认、认到就划掉），剩下的字再按包含 / 字面相近去猜
+function matchDishes(segment, pool) {
+  const found = [];
+  let rest = segment;
+  pool.slice().sort((a, b) => b.title.length - a.title.length).forEach((r) => {
+    if (!r.title) return;
+    // 同名的两条（撤菜时同一道菜点在两餐）：名字已经划掉了，先在认到的里找
+    const same = found.find((f) => f.query === r.title);
+    if (same) { same.candidates.push(r); return; }
+    if (rest.indexOf(r.title) === -1) return;
+    found.push({ query: r.title, candidates: [r], pos: segment.indexOf(r.title) });
+    rest = rest.split(r.title).join(' ');
+  });
+  found.forEach((f) => {
+    f.recipe = f.candidates.length === 1 ? f.candidates[0] : null;
+    if (f.recipe) f.candidates = [];
+  });
+  MEAL_RULES.forEach((r) => { rest = rest.replace(new RegExp(r.pattern.source, 'g'), ' '); });
+  rest = rest.replace(new RegExp(REMOVE_VERB.source, 'g'), ' ')
+    .replace(new RegExp(REPLACE_MARK.source, 'g'), ' ')
+    .replace(new RegExp(ADD_VERB.source, 'g'), ' ')
+    .replace(/菜单里|菜单上|菜单/g, ' ');
+  rest.split(CHUNK_SPLIT).forEach((raw) => {
+    const query = raw.replace(LEAD_NOISE, '').replace(TAIL_NOISE, '').trim();
+    if (EMPTY_QUERY.test(query) || !/[\u4e00-\u9fa5]/.test(query)) return;
+    const q = sameName(query);
+    const contains = pool.filter((r) => sameName(r.title).indexOf(q) !== -1 || q.indexOf(sameName(r.title)) !== -1);
+    // ponytail: 字面相近只数共有的字，「鸡」能猜到「可乐鸡翅」「香菇滑鸡」；同音字、没登记的别名认不出，换大模型时整段替掉
+    const chars = Array.from(new Set(q.split('')));
+    const similar = contains.length ? contains : pool
+      .map((r) => ({ r, n: chars.filter((c) => sameName(r.title).indexOf(c) !== -1).length }))
+      .filter((x) => x.n >= Math.min(2, chars.length) && x.n * 2 >= chars.length)
+      .sort((a, b) => b.n - a.n || a.r.title.length - b.r.title.length)
+      .map((x) => x.r);
+    // 只有一道菜名包含它、且说了两个字以上，才直接认定（确认卡上照样写全名给人看）
+    const sure = contains.length === 1 && query.length >= 2;
+    const pos = segment.indexOf(query);
+    found.push({ query, recipe: sure ? contains[0] : null, candidates: sure ? [] : similar.slice(0, MAX_CANDIDATES), pos: pos < 0 ? segment.length : pos });
+  });
+  // 长菜名先认是为了不被短的截胡；给人看时按说的先后排回来
+  return found.sort((a, b) => a.pos - b.pos);
+}
+
+// 换菜没说餐次时，加的那道跟着撤掉的那道走（「把红烧肉换成糖醋排骨」= 红烧肉在哪一餐就换在哪一餐）
+function settleMeal(plan) {
+  const removed = plan.items.find((it) => it.role === 'remove' && it.recipe);
+  if (plan.mealGuessed && removed && removed.recipe.mealType) plan.mealType = removed.recipe.mealType;
+  return plan;
+}
+
+/**
+ * @param {string} text 用户说的一句话
+ * @param {{recipes: Array<{id,title}>, menu: Array<{id,title,mealType}>, mealType?: string}} ctx
+ *   recipes 是能点的菜；menu 是今天已点的菜（id 是菜谱 id）；mealType 是没说餐次时用的默认餐次
+ */
+function planMenuCommand(text, ctx) {
+  const say = String(text || '').trim();
+  const recipes = ((ctx && ctx.recipes) || []).filter((r) => r && r.id != null && r.title);
+  const menu = ((ctx && ctx.menu) || []).filter((r) => r && r.id != null && r.title);
+  const said = detectMeal(say);
+  const plan = {
+    intent: '',
+    mealType: said || (ctx && ctx.mealType) || 'dinner',
+    mealGuessed: !said,
+    notToday: NOT_TODAY.test(say),
+    items: []
+  };
+  if (!say || plan.notToday) return plan;
+  // 撤菜只在今天已点的菜里找：说了餐次就只找那一餐
+  const removable = said ? menu.filter((m) => (m.mealType || 'dinner') === said) : menu;
+  let lastRole = 'add';
+  say.split(CLAUSE_SPLIT).filter(Boolean).forEach((clause) => {
+    const parts = [];
+    const swap = clause.match(REPLACE_MARK);
+    if (swap) {
+      parts.push({ role: 'remove', text: clause.slice(0, swap.index), said: true });
+      parts.push({ role: 'add', text: clause.slice(swap.index + swap[0].length), said: true });
+    } else if (REMOVE_VERB.test(clause)) {
+      parts.push({ role: 'remove', text: clause, said: true });
+    } else {
+      const said = ADD_VERB.test(clause);
+      parts.push({ role: said ? 'add' : lastRole, text: clause, said });
+    }
+    parts.forEach((part) => {
+      const pool = part.role === 'remove' ? removable : recipes;
+      // 没有「加 / 撤 / 换」的字、也对不上任何菜（「今天天气不错」）：不当成点菜
+      const dishes = matchDishes(part.text, pool).filter((d) => part.said || d.recipe || d.candidates.length);
+      if (dishes.length) lastRole = part.role;
+      dishes.forEach((d) => {
+        const item = { role: part.role, query: d.query, recipe: d.recipe || null, candidates: d.candidates, missing: false };
+        // 撤菜：菜单里没这道 → 把这一餐已点的菜列出来，让人点要撤哪道
+        if (part.role === 'remove' && !item.recipe && !item.candidates.length) {
+          item.missing = true;
+          item.candidates = removable.slice(0, MAX_CANDIDATES);
+        }
+        plan.items.push(item);
+      });
+    });
+  });
+  const roles = plan.items.map((it) => it.role);
+  const adds = roles.indexOf('add') !== -1;
+  const removes = roles.indexOf('remove') !== -1;
+  plan.intent = adds && removes ? 'replace' : (adds ? 'add' : (removes ? 'remove' : ''));
+  return settleMeal(plan);
+}
+
+// 用户在确认卡上点了某个候选：返回新的计划（不改原对象）
+function pickCandidate(plan, index, candidate) {
+  const items = plan.items.map((it, i) => (i === index ? { ...it, recipe: candidate, candidates: [], missing: false } : it));
+  return settleMeal({ ...plan, items });
+}
+
+// 确认后要调的接口：先撤后加；有没认准的就不给动作（确认按钮不可点）
+function planActions(plan) {
+  if (!plan || !plan.intent || !plan.items.length || plan.items.some((it) => !it.recipe)) return [];
+  return plan.items.slice()
+    .sort((a, b) => (a.role === b.role ? 0 : (a.role === 'remove' ? -1 : 1)))
+    .map((it) => ({
+      op: it.role,
+      recipeId: it.recipe.id,
+      title: it.recipe.title,
+      mealType: it.role === 'remove' ? (it.recipe.mealType || plan.mealType) : plan.mealType
+    }));
+}
+
+module.exports = { parseRecipeText, DIFFICULTY_LABELS, planMenuCommand, pickCandidate, planActions, MEAL_LABELS };

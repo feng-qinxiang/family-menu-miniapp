@@ -144,5 +144,6 @@ module.exports = {
   recipesFromPosts,
   todayDateKey,
   parseLocalDate,
-  ingredientsInStep
+  ingredientsInStep,
+  STEP_SYNONYMS
 };
