@@ -83,7 +83,7 @@
 
   /* ---- 布局 ---- */
   --nav-w: 236px;
-  --ctl-h: 32px;
+  --ctl-h: 34px;
   --ctl-h-sm: 28px;
   /* 顶栏高度：面包屑 + 标题两行加内边距的真实高度。
      它同时是表头吸顶的下沉量 —— 值偏小表头会被顶栏压住一条。 */
@@ -280,8 +280,8 @@ body {
   border: 1px solid var(--line-2);
   background: var(--surface);
   color: var(--ink);
-  font-size: 13.5px;
-  font-weight: 500;
+  font-size: var(--fs-13);
+  font-weight: 600;
   font-family: inherit;
   cursor: pointer;
   white-space: nowrap;
@@ -291,12 +291,17 @@ body {
 .btn:active { background: var(--line); }
 .btn:disabled { opacity: .5; cursor: not-allowed; }
 
-/* 主按钮：扁平实心，单强调色（不再用渐变） */
+/* 按钮三级，跟小程序一致：
+   主 = .btn.primary 番茄红实心（一屏最多一个，对应小程序 .btn-pop）；
+   次 = .btn 白底细描边（对应 .btn-ghost）；
+   表格行内 = 文字按钮（对应 .btn-text，见下方 td.actions）。
+   「通过 / 恢复」这类正向操作用 .primary-sm：松绿字，不再是黑色实心块。 */
 .btn.primary {
   background: var(--pop);
   border-color: var(--pop);
   color: #fff;
-  font-weight: 600;
+  font-weight: 700;
+  box-shadow: 0 3px 8px rgba(200, 56, 31, .22);
 }
 .btn.primary:hover { background: var(--pop-dark); border-color: var(--pop-dark); }
 .btn.primary:active { background: #9c2f1a; }
@@ -308,27 +313,28 @@ body {
 .btn.danger { color: var(--danger); border-color: rgba(179, 38, 30, .28); background: var(--surface); }
 .btn.danger:hover { background: var(--danger-soft); border-color: rgba(179, 38, 30, .45); }
 
-.btn.small { height: 30px; padding: 0 10px; font-size: 12.5px; border-radius: var(--r-sm); }
+.btn.small { height: var(--ctl-h); padding: 0 12px; font-size: var(--fs-13); }
 
 /* 表格内的操作按钮：弱化为「文字按钮」，避免一行几十个实心块 */
 td.actions .btn {
   border-color: transparent;
   background: transparent;
   color: var(--ink-2);
-  font-weight: 500;
+  font-weight: 600;
   padding: 0 8px;
   height: 28px;
 }
-td.actions .btn:hover { background: var(--hover); border-color: var(--line-2); color: var(--ink); }
-td.actions .btn.primary-sm { color: var(--ink); }
+td.actions .btn:hover { background: var(--hover); border-color: transparent; color: var(--ink); }
+td.actions .btn.primary-sm { color: var(--pine); background: transparent; border-color: transparent; }
+td.actions .btn.primary-sm:hover { background: var(--ok-soft); }
 td.actions .btn.danger { color: var(--danger); border-color: transparent; background: transparent; }
 td.actions .btn.danger:hover { background: var(--danger-soft); border-color: transparent; }
 
-.btn.primary-sm { background: var(--ink); border-color: var(--ink); color: #fff; }
-.btn.primary-sm:hover { background: #000; border-color: #000; }
+.btn.primary-sm { color: var(--pine); border-color: rgba(47, 74, 58, .35); }
+.btn.primary-sm:hover { background: var(--ok-soft); border-color: var(--pine); }
 .btn.block { width: 100%; height: 46px; margin-top: 24px; font-size: 15px; letter-spacing: .08em; }
-.btn.dark { background: var(--ink); border-color: var(--ink); color: #fff; }
-.btn.dark:hover { background: #000; border-color: #000; }
+.btn.dark { background: var(--anchor); border-color: var(--anchor); color: var(--paper); }
+.btn.dark:hover { background: var(--ink); border-color: var(--ink); }
 
 .icon-btn {
   width: var(--ctl-h);
@@ -890,9 +896,7 @@ th, td {
 th {
   color: var(--mut);
   font-weight: 600;
-  font-size: var(--fs-11);
-  letter-spacing: .06em;
-  text-transform: uppercase;
+  font-size: var(--fs-12);
   white-space: nowrap;
   background: var(--surface-2);
   user-select: none;
@@ -967,7 +971,7 @@ td.id-cell { color: var(--mut); font-variant-numeric: tabular-nums; }
   border: 1px solid var(--line-2);
   border-radius: var(--r-md);
   background: var(--surface);
-  font-size: var(--fs-12);
+  font-size: var(--fs-13);
   font-family: inherit;
   color: var(--ink);
   transition: border-color .15s, box-shadow .15s;
@@ -984,18 +988,19 @@ td.id-cell { color: var(--mut); font-variant-numeric: tabular-nums; }
 
 .filter-chip {
   height: var(--ctl-h);
-  padding: 0 13px;
+  padding: 0 14px;
   border-radius: 999px;
-  border: 1px solid var(--line-2);
-  background: var(--surface);
-  color: var(--ink-2);
-  font-size: var(--fs-12);
+  border: 1px solid transparent;
+  background: #f2ece2;
+  color: #6b5f50;
+  font-size: var(--fs-13);
+  font-weight: 600;
   font-family: inherit;
   cursor: pointer;
   transition: border-color .14s, background .14s, color .14s;
 }
-.filter-chip:hover { border-color: var(--line-strong); background: var(--hover); }
-.filter-chip.on { background: var(--ink); border-color: var(--ink); color: #fff; font-weight: 600; }
+.filter-chip:hover { background: #ebe3d6; color: var(--ink); }
+.filter-chip.on { background: var(--anchor); border-color: var(--anchor); color: var(--paper); }
 
 .pill {
   display: inline-block;
@@ -1039,12 +1044,12 @@ th.sortable.sorted .sort-ind { opacity: 1; color: var(--pop); }
 
 .date-range { display: inline-flex; align-items: center; gap: 6px; }
 .date-range input[type="date"] {
-  height: 30px;
+  height: var(--ctl-h);
   padding: 0 8px;
   border: 1px solid var(--line-2);
   border-radius: var(--r-md);
   background: var(--surface);
-  font-size: 12.5px;
+  font-size: var(--fs-13);
   font-family: inherit;
   color: var(--ink);
 }
