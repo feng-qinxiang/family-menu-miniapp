@@ -180,7 +180,8 @@ body {
   position: relative;
   padding: 46px 40px;
   color: #fff;
-  background: linear-gradient(160deg, #26362c 0%, #1e2a23 46%, #171b19 100%);
+  /* 跟侧栏同一个深棕（小程序 --anchor），点缀用小程序的浅金 --gold */
+  background: linear-gradient(160deg, #46382a 0%, #3a2e23 46%, #2a2119 100%);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -193,7 +194,7 @@ body {
   right: -120px;
   top: -110px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(168, 121, 44, .22), transparent 68%);
+  background: radial-gradient(circle, rgba(244, 217, 168, .18), transparent 68%);
 }
 .brand-mark {
   position: relative;
@@ -219,9 +220,9 @@ body {
   width: 17px;
   height: 17px;
   border-radius: 50%;
-  background: rgba(168, 121, 44, .16);
-  border: 1px solid rgba(168, 121, 44, .5);
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d8b071' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><path d='M5 12.5l4.5 4.5L19 7'/></svg>");
+  background: rgba(244, 217, 168, .14);
+  border: 1px solid rgba(244, 217, 168, .45);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f4d9a8' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><path d='M5 12.5l4.5 4.5L19 7'/></svg>");
   background-size: 10px 10px;
   background-position: center;
   background-repeat: no-repeat;
