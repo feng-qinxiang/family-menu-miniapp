@@ -1009,14 +1009,14 @@
         labels: labels,
         series: [
           { name: '新增用户', color: '#2f4a3a', values: series.map(function (p) { return Number(p.newUsers || 0); }) },
-          { name: '新增帖子', color: '#c2402a', values: series.map(function (p) { return Number(p.newPosts || 0); }) },
-          { name: '新增评论', color: '#a8792c', values: series.map(function (p) { return Number(p.newComments || 0); }) }
+          { name: '新增帖子', color: '#c8381f', values: series.map(function (p) { return Number(p.newPosts || 0); }) },
+          { name: '新增评论', color: '#806230', values: series.map(function (p) { return Number(p.newComments || 0); }) }
         ]
       }) + '</div>' : '<div class="empty">趋势数据暂时不可用</div>') +
       '<div class="chart-legend">' +
       '<span><i class="legend-dot" style="background:#2f4a3a"></i>新增用户</span>' +
-      '<span><i class="legend-dot" style="background:#c2402a"></i>新增帖子</span>' +
-      '<span><i class="legend-dot" style="background:#a8792c"></i>新增评论</span>' +
+      '<span><i class="legend-dot" style="background:#c8381f"></i>新增帖子</span>' +
+      '<span><i class="legend-dot" style="background:#806230"></i>新增评论</span>' +
       '</div></div>';
 
     var revenueCard = '<div class="card"><h2>收入趋势</h2>' +
@@ -1024,7 +1024,7 @@
       (series.length ? '<div class="chart-wrap">' + barChart({
         labels: labels,
         values: series.map(function (p) { return Number(p.revenueFen || 0) / 100; }),
-        color: '#c2402a',
+        color: '#c8381f',
         format: function (v) {
           if (v >= 10000) return Math.round(v / 1000) + 'k';
           if (v >= 1000) return (v / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
