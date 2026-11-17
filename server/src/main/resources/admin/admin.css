@@ -916,6 +916,19 @@ td.actions .btn + .btn { margin-left: 6px; }
 td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
 td.nowrap { white-space: nowrap; }
 td.id-cell { color: var(--mut); font-variant-numeric: tabular-nums; }
+/* 编号列只占自己那么宽、字放淡：原来右对齐又被均分拉宽，勾选框和编号之间空出一大截，
+   真正要看的标题/作者被挤到右边 */
+td.num:first-child, th.num:first-child, td.pick + td.num, th.pick + th.num { width: 1%; }
+td.num:first-child, td.pick + td.num { color: var(--mut); }
+/* 表格里的家庭名是「点开看家庭详情」的入口：做成松绿文字链接，不再是每行一个描边按钮 */
+td:not(.actions) > .btn[data-famdetail] {
+  height: auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--pine);
+}
+td:not(.actions) > .btn[data-famdetail]:hover { background: none; text-decoration: underline; }
 
 .cell-user { display: flex; align-items: center; gap: 9px; line-height: 1.35; }
 .avatar {
