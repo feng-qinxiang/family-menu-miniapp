@@ -840,6 +840,8 @@ tr.empty-row > td {
 /* 金额那张卡的说明更长：让小折线让位（缩窄），而不是把说明挤成两行 */
 .spark { flex: 0 1 96px; min-width: 0; }
 
+.dash-label { margin: 0 0 8px; font-size: var(--fs-14); font-weight: 700; color: var(--ink-2); }
+.dash-label .muted { font-weight: 400; font-size: var(--fs-13); }
 .todo-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(168px, 1fr));

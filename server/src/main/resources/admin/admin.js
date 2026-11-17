@@ -995,7 +995,10 @@
         '<div class="todo-label">' + escapeHtml(label) + ' ›</div></div>';
     }
 
-    var todos = '<div class="todo-grid">' +
+    var pendingTotal = Number(d.pendingPostCount || 0) + Number(d.pendingCommentCount || 0) +
+      Number(d.pendingReportCount || 0) + Number(d.openFeedbackCount || 0) + Number(d.pendingImportCount || 0);
+    var todos = '<h2 class="dash-label">待处理' + (pendingTotal ? '' : '<span class="muted"> · 都处理完了</span>') + '</h2>' +
+      '<div class="todo-grid">' +
       todo('待审帖子', d.pendingPostCount, 'posts', 'PENDING') +
       todo('待审评论', d.pendingCommentCount, 'comments', 'PENDING') +
       todo('待处理举报', d.pendingReportCount, 'reports', 'PENDING') +
@@ -1062,7 +1065,8 @@
       }).join('') : '<div class="empty">暂无操作记录</div>') + '</div></div>';
 
     setPageHeader('数据更新于 ' + fmtTime(d.generatedAt));
-    $('panelRoot').innerHTML = kpis + todos +
+    // 待处理排最前：打开后台第一件事是看有没有要处理的，指标是第二眼
+    $('panelRoot').innerHTML = todos + '<h2 class="dash-label">核心指标</h2>' + kpis +
       '<div class="split-2" style="margin-bottom:16px">' + trendCard + revenueCard + '</div>' +
       '<div class="split-2">' + hotCard + recentCard + '</div>' +
       '<div style="margin-top:16px">' + auditCard + '</div>';
