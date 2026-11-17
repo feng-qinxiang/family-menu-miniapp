@@ -1,0 +1,274 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>管理端界面 · 改前改后</title>
+<style>
+  body { margin: 0; padding: 24px 32px 48px; background: #fbf8f3; color: #2c241b; font: 16px/1.5 -apple-system, "PingFang SC", sans-serif; }
+  h1 { font-size: 26px; margin: 0 0 4px; }
+  .lead { color: #716555; margin: 0 0 24px; }
+  section { background: #fff; border-radius: 12px; padding: 20px 24px; margin-bottom: 20px; }
+  h2 { font-size: 20px; margin: 0 0 4px; }
+  h2 small { font-size: 13px; font-weight: normal; color: #a39684; margin-left: 8px; }
+  h3 { font-size: 16px; margin: 18px 0 8px; }
+  p { margin: 0 0 14px; color: #5c5246; }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .pair + .pair { margin-top: 18px; }
+  figure { margin: 0; text-align: center; }
+  figcaption { font-weight: 600; margin-bottom: 6px; }
+  figcaption.before { color: #9b8f80; }
+  figcaption.after { color: #c8381f; }
+  img { max-width: 100%; border-radius: 10px; border: 1px solid #ece5d8; }
+  ul { margin: 0 0 14px; padding-left: 20px; color: #5c5246; }
+  li { margin: 4px 0; }
+</style>
+
+<h1>管理端界面 · 改前改后</h1>
+<p class="lead">方向跟小程序这次一致：同一套颜色、字体、按钮和表单。一共 7 处改动，每处单独提交，不满意哪一处可以单独退回（跟我说「退回第 N 节」就行）。<br>
+截图都是 1440×900 的电脑屏幕，用的是本机的开发数据。功能和数据都没动：13 项点击检查都过了（全程没有发一个修改请求），后台的 61 个接口测试也全过。</p>
+
+<section>
+  <h2>管理端现有的 15 个页面</h2>
+  <ul>
+    <li>登录</li>
+    <li>概览：数据看板</li>
+    <li>内容：内容治理（帖子）、评论管理、举报审核、导入审核</li>
+    <li>用户：用户管理</li>
+    <li>家庭数据：家庭与成员、今日菜单、买菜清单、冰箱库存</li>
+    <li>运营：订单管理、反馈工单</li>
+    <li>系统：菜谱治理、审计日志</li>
+  </ul>
+  <p>其中 7 个页面是「状态筛选 + 表格 + 行内操作」的列表页，4 个是家庭数据（冰箱库存能编辑，其余只读）。所以前 4 节是全局的样式统一，后 3 节是页面结构的调整。</p>
+</section>
+<section>
+  <h2>1. 颜色换成小程序那一套<small>提交 7fe379d</small></h2>
+  <p>原来是冷灰底、近黑字、砖红。现在跟小程序用同一组颜色：</p>
+  <ul>
+    <li>底色：暖米色（小程序的纸色）</li>
+    <li>文字：暖墨色</li>
+    <li>主色：番茄红</li>
+    <li>辅助色：松绿</li>
+    <li>「待审核」这类标签：深金色</li>
+    <li>只换颜色，位置和大小都没动</li>
+  </ul>
+  <h3>数据看板</h3>
+  <div class="pair">
+    <figure><figcaption class="before">改前</figcaption><img src="screens/dashboard-before.png" alt="改前：数据看板"></figure>
+    <figure><figcaption class="after">改后</figcaption><img src="screens/dashboard-s1.png" alt="改后：数据看板"></figure>
+  </div>
+  <h3>内容治理</h3>
+  <div class="pair">
+    <figure><figcaption class="before">改前</figcaption><img src="screens/posts-before.png" alt="改前：内容治理"></figure>
+    <figure><figcaption class="after">改后</figcaption><img src="screens/posts-s1.png" alt="改后：内容治理"></figure>
+  </div>
+</section>
+
+<section>
+  <h2>2. 按钮、筛选标签、输入框统一<small>提交 8dbeef0</small></h2>
+  <p>照小程序的做法改了这几处：</p>
+  <ul>
+    <li>按钮分三级：主按钮红色实心，一屏最多一个；次按钮白底细边；表格里的操作是文字按钮</li>
+    <li>「通过 / 恢复」这类正向操作改成松绿色，原来是黑色实心块；「下架 / 封禁」还是红色</li>
+    <li>筛选标签：浅米色底，选中变深棕，跟小程序的筛选片一样</li>
+    <li>输入框、按钮、筛选标签、日期框统一 34 像素高，原来 30、32、36 混着用</li>
+    <li>表头字号跟正文一致，去掉了原来拉开的字距</li>
+  </ul>
+  <h3>评论管理</h3>
+  <div class="pair">
+    <figure><figcaption class="before">改前</figcaption><img src="screens/comments-s1.png" alt="改前：评论管理"></figure>
+    <figure><figcaption class="after">改后</figcaption><img src="screens/comments-s2.png" alt="改后：评论管理"></figure>
+  </div>
+  <h3>用户管理</h3>
+  <div class="pair">
+    <figure><figcaption class="before">改前</figcaption><img src="screens/users-s1.png" alt="改前：用户管理"></figure>
+    <figure><figcaption class="after">改后</figcaption><img src="screens/users-s2.png" alt="改后：用户管理"></figure>
+  </div>
+</section>
+
+<section>
+  <h2>3. 侧边栏换深棕，只在有待办时显示数字<small>提交 a0eb9a4</small></h2>
+  <p>侧边栏从墨绿换成小程序的深棕。原来每个入口后面挂一个灰色的「0」，现在只有真有待办时才亮出红色数字，一眼就知道该去哪。行距也收紧了，电脑屏幕上 14 个入口一屏都能放下，「审计日志」不用再滚侧栏才能看到。</p>
+  <h3>审计日志（注意左下角）</h3>
+  <div class="pair">
+    <figure><figcaption class="before">改前</figcaption><img src="screens/audit-s2.png" alt="改前：审计日志（注意左下角）"></figure>
+    <figure><figcaption class="after">改后</figcaption><img src="screens/audit-s3.png" alt="改后：审计日志（注意左下角）"></figure>
+  </div>
+</section>
+
+<section>
+  <h2>4. 登录页换成同一套颜色<small>提交 8c79f14</small></h2>
+  <p>左侧品牌区换成跟侧边栏一样的深棕，勾号和光晕改成小程序的浅金色。右侧表单在第 1、2 节已经跟着变了。</p>
+  <div class="pair">
+    <figure><figcaption class="before">改前</figcaption><img src="screens/login-before.png" alt="改前："></figure>
+    <figure><figcaption class="after">改后</figcaption><img src="screens/login-after.png" alt="改后："></figure>
+  </div>
+</section>
+
+<section>
+  <h2>5. 「导出 Excel」都放到筛选行最右边<small>提交 65b0d34</small></h2>
+  <p>原来 9 个页面的导出按钮在说明文字右上角，评论和用户这 2 个页面在筛选行里，位置不统一。现在全部放在筛选行最右边，筛选完顺手就能导出。按钮做的事没变。</p>
+  <h3>审计日志</h3>
+  <div class="pair">
+    <figure><figcaption class="before">改前</figcaption><img src="screens/audit-s3.png" alt="改前：审计日志"></figure>
+    <figure><figcaption class="after">改后</figcaption><img src="screens/audit-s5.png" alt="改后：审计日志"></figure>
+  </div>
+  <h3>内容治理</h3>
+  <div class="pair">
+    <figure><figcaption class="before">改前</figcaption><img src="screens/posts-s3.png" alt="改前：内容治理"></figure>
+    <figure><figcaption class="after">改后</figcaption><img src="screens/posts-s5.png" alt="改后：内容治理"></figure>
+  </div>
+</section>
+
+<section>
+  <h2>6. 表格：编号列收窄，家庭名改成可点的文字<small>提交 e3651b8</small></h2>
+  <p>编号列原来又宽又靠右，勾选框和编号之间空出一大截，标题和作者被挤到右边。现在编号列只占自己那么宽，颜色也放淡了。今日菜单、买菜清单、冰箱库存里的家庭名原来每行都是一个带边框的按钮，现在改成松绿色文字，点了照样打开家庭详情，行也矮了，一屏能多看几行。</p>
+  <h3>今日菜单</h3>
+  <div class="pair">
+    <figure><figcaption class="before">改前</figcaption><img src="screens/menus-s5.png" alt="改前：今日菜单"></figure>
+    <figure><figcaption class="after">改后</figcaption><img src="screens/menus-s6.png" alt="改后：今日菜单"></figure>
+  </div>
+  <h3>内容治理</h3>
+  <div class="pair">
+    <figure><figcaption class="before">改前</figcaption><img src="screens/posts-s5.png" alt="改前：内容治理"></figure>
+    <figure><figcaption class="after">改后</figcaption><img src="screens/posts-s6.png" alt="改后：内容治理"></figure>
+  </div>
+</section>
+
+<section>
+  <h2>7. 数据看板：「待处理」挪到最上面<small>提交 3b924e2</small></h2>
+  <p>打开后台第一件事是看有没有要处理的，所以「待审帖子 / 评论 / 举报 / 反馈 / 导入」这一排挪到了最上面，指标放第二排，各加了一个小标题。全部为 0 时标题后面写「都处理完了」；有待办时卡片照旧变红，点了直接跳到对应列表。</p>
+  <div class="pair">
+    <figure><figcaption class="before">改前</figcaption><img src="screens/dashboard-s5.png" alt="改前："></figure>
+    <figure><figcaption class="after">改后</figcaption><img src="screens/dashboard-s7.png" alt="改后："></figure>
+  </div>
+</section>
+
+<h1 style="margin-top:36px">逐页总览 · 15 个页面改前 / 改后</h1>
+<p class="lead">上面 7 处全部叠在一起后的样子。</p>
+
+<section>
+  <h2>登录</h2>
+  <div class="pair">
+    <figure><figcaption class="before">改前</figcaption><img src="screens/login-before.png" alt="改前：登录"></figure>
+    <figure><figcaption class="after">改后</figcaption><img src="screens/login-after.png" alt="改后：登录"></figure>
+  </div>
+</section>
+
+<section>
+  <h2>数据看板</h2>
+  <div class="pair">
+    <figure><figcaption class="before">改前</figcaption><img src="screens/dashboard-before.png" alt="改前：数据看板"></figure>
+    <figure><figcaption class="after">改后</figcaption><img src="screens/dashboard-after.png" alt="改后：数据看板"></figure>
+  </div>
+</section>
+
+<section>
+  <h2>内容治理</h2>
+  <div class="pair">
+    <figure><figcaption class="before">改前</figcaption><img src="screens/posts-before.png" alt="改前：内容治理"></figure>
+    <figure><figcaption class="after">改后</figcaption><img src="screens/posts-after.png" alt="改后：内容治理"></figure>
+  </div>
+</section>
+
+<section>
+  <h2>评论管理</h2>
+  <div class="pair">
+    <figure><figcaption class="before">改前</figcaption><img src="screens/comments-before.png" alt="改前：评论管理"></figure>
+    <figure><figcaption class="after">改后</figcaption><img src="screens/comments-after.png" alt="改后：评论管理"></figure>
+  </div>
+</section>
+
+<section>
+  <h2>举报审核</h2>
+  <div class="pair">
+    <figure><figcaption class="before">改前</figcaption><img src="screens/reports-before.png" alt="改前：举报审核"></figure>
+    <figure><figcaption class="after">改后</figcaption><img src="screens/reports-after.png" alt="改后：举报审核"></figure>
+  </div>
+</section>
+
+<section>
+  <h2>导入审核</h2>
+  <div class="pair">
+    <figure><figcaption class="before">改前</figcaption><img src="screens/imports-before.png" alt="改前：导入审核"></figure>
+    <figure><figcaption class="after">改后</figcaption><img src="screens/imports-after.png" alt="改后：导入审核"></figure>
+  </div>
+</section>
+
+<section>
+  <h2>用户管理</h2>
+  <div class="pair">
+    <figure><figcaption class="before">改前</figcaption><img src="screens/users-before.png" alt="改前：用户管理"></figure>
+    <figure><figcaption class="after">改后</figcaption><img src="screens/users-after.png" alt="改后：用户管理"></figure>
+  </div>
+</section>
+
+<section>
+  <h2>家庭与成员</h2>
+  <div class="pair">
+    <figure><figcaption class="before">改前</figcaption><img src="screens/families-before.png" alt="改前：家庭与成员"></figure>
+    <figure><figcaption class="after">改后</figcaption><img src="screens/families-after.png" alt="改后：家庭与成员"></figure>
+  </div>
+</section>
+
+<section>
+  <h2>今日菜单</h2>
+  <div class="pair">
+    <figure><figcaption class="before">改前</figcaption><img src="screens/menus-before.png" alt="改前：今日菜单"></figure>
+    <figure><figcaption class="after">改后</figcaption><img src="screens/menus-after.png" alt="改后：今日菜单"></figure>
+  </div>
+</section>
+
+<section>
+  <h2>买菜清单</h2>
+  <div class="pair">
+    <figure><figcaption class="before">改前</figcaption><img src="screens/shopping-before.png" alt="改前：买菜清单"></figure>
+    <figure><figcaption class="after">改后</figcaption><img src="screens/shopping-after.png" alt="改后：买菜清单"></figure>
+  </div>
+</section>
+
+<section>
+  <h2>冰箱库存</h2>
+  <div class="pair">
+    <figure><figcaption class="before">改前</figcaption><img src="screens/pantry-before.png" alt="改前：冰箱库存"></figure>
+    <figure><figcaption class="after">改后</figcaption><img src="screens/pantry-after.png" alt="改后：冰箱库存"></figure>
+  </div>
+</section>
+
+<section>
+  <h2>订单管理</h2>
+  <div class="pair">
+    <figure><figcaption class="before">改前</figcaption><img src="screens/orders-before.png" alt="改前：订单管理"></figure>
+    <figure><figcaption class="after">改后</figcaption><img src="screens/orders-after.png" alt="改后：订单管理"></figure>
+  </div>
+</section>
+
+<section>
+  <h2>反馈工单</h2>
+  <div class="pair">
+    <figure><figcaption class="before">改前</figcaption><img src="screens/feedback-before.png" alt="改前：反馈工单"></figure>
+    <figure><figcaption class="after">改后</figcaption><img src="screens/feedback-after.png" alt="改后：反馈工单"></figure>
+  </div>
+</section>
+
+<section>
+  <h2>菜谱治理</h2>
+  <div class="pair">
+    <figure><figcaption class="before">改前</figcaption><img src="screens/recipes-before.png" alt="改前：菜谱治理"></figure>
+    <figure><figcaption class="after">改后</figcaption><img src="screens/recipes-after.png" alt="改后：菜谱治理"></figure>
+  </div>
+</section>
+
+<section>
+  <h2>审计日志</h2>
+  <div class="pair">
+    <figure><figcaption class="before">改前</figcaption><img src="screens/audit-before.png" alt="改前：审计日志"></figure>
+    <figure><figcaption class="after">改后</figcaption><img src="screens/audit-after.png" alt="改后：审计日志"></figure>
+  </div>
+</section>
+
+<section>
+  <h2>上线要做什么</h2>
+  <ul>
+    <li>不用跑数据库迁移，也不用改配置：这次只改了后台的三个静态文件（admin.css、admin.js 各一部分，index.html 没动），跟后端一起打包发布就行。</li>
+    <li>浏览器不用手动清缓存：后台的静态文件本来就设了「每次回服务器校验」，发布后刷新一次就是新样子。</li>
+    <li>小程序那边上次说的 <code>migrate-prod.sh</code>（菜谱整道菜视频那一列）还是要跑，跟这次后台改动无关。</li>
+  </ul>
+</section>
