@@ -1079,9 +1079,9 @@
 
   function renderReports() {
     var rows = state.reports;
-    var head = pageHead('用户举报的帖子在这里处置：下架或忽略',
-      '<button class="btn small" id="exportReports">导出 Excel</button>') +
-      toolbar(chips([['PENDING', '待处理'], ['REMOVED', '已下架'], ['IGNORED', '已忽略'], ['', '全部']], state.reportFilter, 'rptfilter'));
+    var head = pageHead('用户举报的帖子在这里处置：下架或忽略', '') +
+      toolbar(chips([['PENDING', '待处理'], ['REMOVED', '已下架'], ['IGNORED', '已忽略'], ['', '全部']], state.reportFilter, 'rptfilter') +
+        '<span class="spacer"></span><button class="btn small" id="exportReports">导出 Excel</button>');
     var body = rows.length ? rows.map(function (r) {
       var pending = r.status === 'PENDING';
       var pill = pending ? '<span class="pill pending">待处理</span>'
@@ -1144,9 +1144,9 @@
 
   function renderPosts() {
     var rows = state.posts;
-    var head = pageHead('先审后发：待审核的帖子只有作者本人可见',
-      '<button class="btn small" id="exportPosts">导出 Excel</button>') +
-      toolbar(chips([['PENDING', '待审核'], ['APPROVED', '已发布'], ['REMOVED', '已下架'], ['', '全部']], state.postFilter, 'postfilter'));
+    var head = pageHead('先审后发：待审核的帖子只有作者本人可见', '') +
+      toolbar(chips([['PENDING', '待审核'], ['APPROVED', '已发布'], ['REMOVED', '已下架'], ['', '全部']], state.postFilter, 'postfilter') +
+        '<span class="spacer"></span><button class="btn small" id="exportPosts">导出 Excel</button>');
     var body = rows.length ? rows.map(function (p) {
       var removed = p.auditStatus === 'REMOVED';
       var pending = p.auditStatus === 'PENDING';
@@ -1474,9 +1474,9 @@
 
   function renderFeedback() {
     var rows = state.feedback;
-    var head = pageHead('用户提交的 bug / 建议 / 投诉',
-      '<button class="btn small" id="exportFeedback">导出 Excel</button>') +
-      toolbar(chips([['OPEN', '待处理'], ['PROCESSING', '处理中'], ['CLOSED', '已关闭'], ['', '全部']], state.feedbackFilter, 'fbfilter'));
+    var head = pageHead('用户提交的 bug / 建议 / 投诉', '') +
+      toolbar(chips([['OPEN', '待处理'], ['PROCESSING', '处理中'], ['CLOSED', '已关闭'], ['', '全部']], state.feedbackFilter, 'fbfilter') +
+        '<span class="spacer"></span><button class="btn small" id="exportFeedback">导出 Excel</button>');
     var body = rows.length ? rows.map(function (f) {
       var pill = f.status === 'CLOSED' ? 'ok' : (f.status === 'PROCESSING' ? 'pending' : 'bad');
       return '<tr><td class="num">' + escapeHtml(String(f.id)) + '</td>' +
@@ -1631,9 +1631,9 @@
   function renderFamilies() {
     var p = state.families;
     var rows = p.items || [];
-    var head = pageHead('每个家庭有多少人、多少菜谱与菜单；点「查看」看成员、菜单与库存',
-      '<button class="btn small" id="exportFamilies">导出 Excel</button>') +
-      toolbar(searchBoxHtml('familySearch', '搜家庭名 / 创建者昵称', state.familyKeyword, 'familySearchBtn'));
+    var head = pageHead('每个家庭有多少人、多少菜谱与菜单；点「查看」看成员、菜单与库存', '') +
+      toolbar(searchBoxHtml('familySearch', '搜家庭名 / 创建者昵称', state.familyKeyword, 'familySearchBtn') +
+        '<span class="spacer"></span><button class="btn small" id="exportFamilies">导出 Excel</button>');
     var body = rows.length ? rows.map(function (f) {
       return '<tr><td class="num">' + escapeHtml(String(f.familyId)) + '</td>' +
         '<td><div class="name">' + escapeHtml(f.name || '—') + '</div></td>' +
@@ -1772,10 +1772,10 @@
   function renderMenus() {
     var p = state.menus;
     var rows = p.items || [];
-    var head = pageHead('各家庭每天点了哪些菜。默认按日期倒序，可用日期筛选某一天',
-      '<button class="btn small" id="exportMenus">导出 Excel</button>') +
+    var head = pageHead('各家庭每天点了哪些菜。默认按日期倒序，可用日期筛选某一天', '') +
       toolbar(dayFilterHtml('menu', state.menuDate) +
-        searchBoxHtml('menuSearch', '搜家庭名', state.menuKeyword, 'menuSearchBtn'));
+        searchBoxHtml('menuSearch', '搜家庭名', state.menuKeyword, 'menuSearchBtn') +
+        '<span class="spacer"></span><button class="btn small" id="exportMenus">导出 Excel</button>');
     var body = rows.length ? rows.map(function (m) {
       return '<tr><td class="num">' + escapeHtml(String(m.menuId)) + '</td>' +
         '<td><button class="btn small" data-famdetail="' + escapeHtml(String(m.familyId)) + '">' +
@@ -1816,10 +1816,10 @@
   function renderShopping() {
     var p = state.shopping;
     var rows = p.items || [];
-    var head = pageHead('清单由当天菜单的食材自动汇总，家庭在买菜时逐项勾选',
-      '<button class="btn small" id="exportShopping">导出 Excel</button>') +
+    var head = pageHead('清单由当天菜单的食材自动汇总，家庭在买菜时逐项勾选', '') +
       toolbar(dayFilterHtml('shop', state.shoppingDate) +
-        chips([['OPEN', '进行中'], ['CLOSED', '已结束'], ['', '全部']], state.shoppingFilter, 'shopfilter'));
+        chips([['OPEN', '进行中'], ['CLOSED', '已结束'], ['', '全部']], state.shoppingFilter, 'shopfilter') +
+        '<span class="spacer"></span><button class="btn small" id="exportShopping">导出 Excel</button>');
     var body = rows.length ? rows.map(function (s) {
       var total = Number(s.totalCount || 0);
       var bought = Number(s.purchasedCount || 0);
@@ -1862,9 +1862,9 @@
   function renderPantry() {
     var p = state.pantry;
     var rows = p.items || [];
-    var head = pageHead('家庭现有食材与保质期；过期的会标红，方便解释「为什么推荐里没有这道菜」',
-      '<button class="btn small" id="exportPantry">导出 Excel</button>') +
-      toolbar(searchBoxHtml('pantrySearch', '搜食材 / 家庭名', state.pantryKeyword, 'pantrySearchBtn'));
+    var head = pageHead('家庭现有食材与保质期；过期的会标红，方便解释「为什么推荐里没有这道菜」', '') +
+      toolbar(searchBoxHtml('pantrySearch', '搜食材 / 家庭名', state.pantryKeyword, 'pantrySearchBtn') +
+        '<span class="spacer"></span><button class="btn small" id="exportPantry">导出 Excel</button>');
     var body = rows.length ? rows.map(function (i) {
       var exp = pantryExpiry(i.expiresAt);
       return '<tr><td class="num">' + escapeHtml(String(i.id)) + '</td>' +
@@ -2067,10 +2067,10 @@
     var rows = state.orders;
     var paid = rows.filter(function (o) { return o.status === 'PAID'; });
     var revenue = paid.reduce(function (a, o) { return a + Number(o.amountFen || 0); }, 0);
-    var head = pageHead('共 ' + fmtNum(state.orderTotal) + ' 笔 · 本页已支付 ' + paid.length + ' 笔 ' + fmtMoney(revenue),
-      '<button class="btn small" id="exportOrders">导出 Excel</button>') +
+    var head = pageHead('共 ' + fmtNum(state.orderTotal) + ' 笔 · 本页已支付 ' + paid.length + ' 笔 ' + fmtMoney(revenue), '') +
       toolbar(chips([['PENDING', '待支付'], ['PAID', '已支付'], ['CLOSED', '已关闭'], ['REFUNDED', '已退款'], ['', '全部']], state.orderFilter, 'orderfilter') +
-        dateRangeHtml('order', state.orderFrom, state.orderTo));
+        dateRangeHtml('order', state.orderFrom, state.orderTo) +
+        '<span class="spacer"></span><button class="btn small" id="exportOrders">导出 Excel</button>');
     var body = rows.length ? rows.map(function (o) {
       var pill = o.status === 'PAID' ? 'ok' : (o.status === 'PENDING' ? 'pending' : 'bad');
       return '<tr><td class="num">' + escapeHtml(String(o.orderId)) + '</td>' +
@@ -2158,13 +2158,13 @@
   function renderAudit() {
     var rows = state.audit;
     var kw = (state.auditKeyword || '').trim();
-    var head = pageHead('所有管理写操作都会留痕' + (kw ? '（已按「' + kw + '」过滤）' : ''),
-      '<button class="btn small" id="exportAudit">导出 Excel</button>') +
+    var head = pageHead('所有管理写操作都会留痕' + (kw ? '（已按「' + kw + '」过滤）' : ''), '') +
       toolbar('<input id="auditSearch" type="search" placeholder="搜操作人 / 动作 / 对象 / 详情" value="' +
         escapeHtml(state.auditKeyword) + '" class="text-input" style="width:260px" />' +
         '<button class="btn small" id="auditSearchBtn">搜索</button>' +
         (kw ? '<button class="btn small" id="auditClearBtn">清除</button>' : '') +
-        dateRangeHtml('audit', state.auditFrom, state.auditTo));
+        dateRangeHtml('audit', state.auditFrom, state.auditTo) +
+        '<span class="spacer"></span><button class="btn small" id="exportAudit">导出 Excel</button>');
     var body = rows.length ? rows.map(function (a) {
       return '<tr><td class="num">' + escapeHtml(String(a.id)) + '</td>' +
         '<td><div class="cell-user">' + avatarHtml(a.actorNickname) + '<span class="name">' +
